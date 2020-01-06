@@ -25,7 +25,7 @@ org.cyclops.integrateddynamics.api.part.read
 org.cyclops.integrateddynamics.api.part.write
 org.cyclops.integrateddynamics.api.path
 org.cyclops.integrateddynamics.block
-org.cyclops.integrateddynamics.block.collidable
+org.cyclops.integrateddynamics.block.shapes
 org.cyclops.integrateddynamics.capability.cable
 org.cyclops.integrateddynamics.capability.dynamiclight
 org.cyclops.integrateddynamics.capability.dynamicredstone
@@ -39,7 +39,7 @@ org.cyclops.integrateddynamics.capability.path
 org.cyclops.integrateddynamics.capability.valueinterface
 org.cyclops.integrateddynamics.capability.variablecontainer
 org.cyclops.integrateddynamics.capability.variablefacade
-org.cyclops.integrateddynamics.client.gui
+org.cyclops.integrateddynamics.client.gui.container
 org.cyclops.integrateddynamics.client.model
 org.cyclops.integrateddynamics.client.render.model
 org.cyclops.integrateddynamics.client.render.part
@@ -59,7 +59,6 @@ org.cyclops.integrateddynamics.core.evaluate.operator
 org.cyclops.integrateddynamics.core.evaluate.variable
 org.cyclops.integrateddynamics.core.evaluate.variable.gui
 org.cyclops.integrateddynamics.core.helper
-org.cyclops.integrateddynamics.core.helper.obfuscation
 org.cyclops.integrateddynamics.core.ingredient
 org.cyclops.integrateddynamics.core.inventory.container
 org.cyclops.integrateddynamics.core.inventory.container.slot
@@ -69,7 +68,6 @@ org.cyclops.integrateddynamics.core.logicprogrammer.event
 org.cyclops.integrateddynamics.core.network
 org.cyclops.integrateddynamics.core.network.diagnostics
 org.cyclops.integrateddynamics.core.network.event
-org.cyclops.integrateddynamics.core.network.packet
 org.cyclops.integrateddynamics.core.part
 org.cyclops.integrateddynamics.core.part.aspect
 org.cyclops.integrateddynamics.core.part.aspect.build
@@ -90,6 +88,7 @@ org.cyclops.integrateddynamics.fluid
 org.cyclops.integrateddynamics.infobook
 org.cyclops.integrateddynamics.infobook.pageelement
 org.cyclops.integrateddynamics.inventory.container
+org.cyclops.integrateddynamics.inventory.slot
 org.cyclops.integrateddynamics.item
 org.cyclops.integrateddynamics.metadata
 org.cyclops.integrateddynamics.network
@@ -105,3 +104,4 @@ org.cyclops.integrateddynamics.recipe
 org.cyclops.integrateddynamics.tileentity
 org.cyclops.integrateddynamics.world.biome
 org.cyclops.integrateddynamics.world.gen
+org.cyclops.integrateddynamics.world.gen.feature
