@@ -68,7 +68,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @Override
     protected Map<Class<? extends INetworkEvent>, IEventAction> constructNetworkEventActions() {
         Map<Class<? extends INetworkEvent>, IEventAction> actions = super.constructNetworkEventActions();
-        IEventAction<P, S, VariableContentsUpdatedEvent> updateEventListener = (network, target, state, event) -> NetworkHelpers
+        IEventAction<P, S, INetworkEvent> updateEventListener = (network, target, state, event) -> NetworkHelpers
                 .getPartNetwork(network).ifPresent(partNetwork -> onVariableContentsUpdated(partNetwork, target, state));
         actions.put(VariableContentsUpdatedEvent.class, updateEventListener);
         actions.put(NetworkElementAddEvent.Post.class, updateEventListener);
