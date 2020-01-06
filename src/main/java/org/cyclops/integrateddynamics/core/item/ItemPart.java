@@ -166,7 +166,6 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             list.add(new TranslationTextComponent(L10NValues.GENERAL_ITEM_ID, id));
         }
         getPart().loadTooltip(itemStack, list);
-        L10NHelpers.addOptionalInfo(list, getPart().getTranslationKeyBase());
         super.addInformation(itemStack, world, list, flag);
     }
 

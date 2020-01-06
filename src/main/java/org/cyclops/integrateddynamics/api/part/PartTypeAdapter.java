@@ -33,7 +33,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public String getTranslationKey() {
-        return translationKey != null ? translationKey : (translationKey = getTranslationKeyBase() + ".name");
+        return translationKey != null ? translationKey : (translationKey = getTranslationKeyBase());
     }
 
     @Override

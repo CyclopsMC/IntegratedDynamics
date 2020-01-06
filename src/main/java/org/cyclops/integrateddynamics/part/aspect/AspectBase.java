@@ -49,11 +49,11 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     @Override
     public String getTranslationKey() {
-        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix() + ".name");
+        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix());
     }
 
     protected String getUnlocalizedPrefix() {
-        return "aspect.aspects." + getModId() + "." + getUnlocalizedType();
+        return "aspect." + getModId() + "." + getUnlocalizedType();
     }
 
     protected abstract String getUnlocalizedType();

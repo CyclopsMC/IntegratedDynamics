@@ -52,7 +52,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     protected String getUnlocalizedPrefix() {
-        return "valuetype.valuetypes." + getModId() + getTypeNamespace() + getTypeName();
+        return "valuetype." + getModId() + getTypeNamespace() + getTypeName();
     }
 
     protected String getTypeNamespace() {
@@ -61,7 +61,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public String getTranslationKey() {
-        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix() + ".name");
+        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix());
     }
 
     @Override

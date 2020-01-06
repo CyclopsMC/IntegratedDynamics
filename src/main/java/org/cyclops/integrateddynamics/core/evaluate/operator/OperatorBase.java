@@ -74,7 +74,7 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public String getUnlocalizedCategoryName() {
-        return getUnlocalizedCategoryPrefix() + ".name";
+        return getUnlocalizedCategoryPrefix();
     }
 
     @Override
@@ -83,11 +83,11 @@ public abstract class OperatorBase implements IOperator {
     }
 
     protected String getUnlocalizedPrefix() {
-        return "operator.operators." + getModId() + "." + getUnlocalizedType() + "." + getOperatorName();
+        return "operator." + getModId() + "." + getUnlocalizedType() + "." + getOperatorName();
     }
 
     protected String getUnlocalizedCategoryPrefix() {
-        return "operator.operators." + getModId() + "." + getUnlocalizedType();
+        return "operator." + getModId() + "." + getUnlocalizedType();
     }
 
     protected String getOperatorName() {
