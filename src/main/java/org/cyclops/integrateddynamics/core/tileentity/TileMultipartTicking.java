@@ -142,6 +142,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             // TODO: pre-1.14: getWorld().checkLight(getPos());
         }
         cachedState = null;
+        BlockHelpers.markForUpdate(getWorld(), getPos());
     }
 
     public IModelData getConnectionState() {

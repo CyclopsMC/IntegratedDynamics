@@ -59,9 +59,7 @@ import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
-import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
-import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.Map;
 import java.util.Optional;
