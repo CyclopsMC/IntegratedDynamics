@@ -51,6 +51,11 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
     }
 
     @Override
+    protected boolean isScrollAnywhere() {
+        return true;
+    }
+
+    @Override
     public void init() {
         buttons.clear();
         super.init();
