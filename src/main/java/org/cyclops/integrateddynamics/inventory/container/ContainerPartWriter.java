@@ -30,6 +30,7 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipar
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -144,7 +145,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
                 // Update state
                 ValueNotifierHelpers.setValue(this, enabledId, partState.isEnabled());
-                ValueNotifierHelpers.setValue(this, activeAspectId, partState.getActiveAspect().getTranslationKey());
+                ValueNotifierHelpers.setValue(this, activeAspectId, partState.getActiveAspect() != null ? partState.getActiveAspect().getTranslationKey() : "");
             }
         } catch (PartStateException e) {
             player.closeScreen();
@@ -176,6 +177,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         return ValueNotifierHelpers.getValueBoolean(this, enabledId);
     }
 
+    @Nullable
     public IAspect getPartStateActiveAspect() {
         return AspectRegistry.getInstance().getAspect(ValueNotifierHelpers.getValueString(this, activeAspectId));
     }

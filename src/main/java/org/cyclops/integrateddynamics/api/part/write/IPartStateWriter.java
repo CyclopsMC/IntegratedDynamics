@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -60,6 +61,7 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
     /**
      * @return The currently active aspect for this part, can be null.
      */
+    @Nullable
     public IAspectWrite getActiveAspect();
 
     /**
