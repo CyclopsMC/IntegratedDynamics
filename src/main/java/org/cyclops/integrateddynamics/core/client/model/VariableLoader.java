@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -14,11 +13,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.core.datastructure.MapWrapper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Map;
 
 /**
  * Custom model loader for the variable item.
@@ -31,6 +33,7 @@ public class VariableLoader implements ICustomModelLoader {
 
     public VariableLoader() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+        registerModelLoaderReloadListener();
     }
 
     private void onClientSetup(FMLClientSetupEvent event) {
@@ -50,6 +53,39 @@ public class VariableLoader implements ICustomModelLoader {
             ModelLoader modelLoader = (ModelLoader) getLoader.invoke(vanillaLoader);
             modelLoader.putModel(LOCATION, loadModel(modelLoader, LOCATION_RAW));
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void registerModelLoaderReloadListener() {
+        // This is another ugly hack.
+        // The first ugly hack does not handle reload events.
+        // Since the reload event will call ModelLoaderRegistry.cache.clear() before actual model reloading,
+        // we wrap over that cache object, and hook into the clear method,
+        // so that we can inject our custom models before the loading starts.
+        // Note that we can not make use of this hack during mod loading because VariableLoader
+        // has not always being constructed by the initial ModelLoaderRegistry.cache.clear() call.
+        Class<?> clazz = null;
+        try {
+            clazz = Class.forName("net.minecraftforge.client.model.ModelLoaderRegistry");
+            Field fieldCache = clazz.getDeclaredField("cache");
+            fieldCache.setAccessible(true);
+
+            // Remove final modified
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(fieldCache, fieldCache.getModifiers() & ~Modifier.FINAL);
+
+            Map<ResourceLocation, IUnbakedModel> cacheOld = (Map<ResourceLocation, IUnbakedModel>) fieldCache.get(null);
+            fieldCache.set(null, new MapWrapper<ResourceLocation, IUnbakedModel>(cacheOld) {
+                @Override
+                public void clear() {
+                    super.clear();
+                    onClientSetup(null);
+                }
+            });
+
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
