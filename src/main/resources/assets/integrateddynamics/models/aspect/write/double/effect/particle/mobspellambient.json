@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:aspects/write/double/effect/particle"
+    "layer0": "integrateddynamics:aspect/write/double/effect/particle"
   }
 }

@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ItemLayerModel;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
@@ -36,6 +37,12 @@ public class VariableModel implements IUnbakedModel {
 
     public VariableModel(BlockModel base) {
         this.base = base;
+    }
+
+    public void loadSubModels(ModelLoader modelLoader) {
+        for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
+            provider.loadModels(modelLoader);
+        }
     }
 
     public static void addAdditionalModels(ImmutableSet.Builder<ResourceLocation> builder) {

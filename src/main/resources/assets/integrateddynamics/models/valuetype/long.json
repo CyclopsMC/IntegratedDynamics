@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:valuetypes/long"
+    "layer0": "integrateddynamics:valuetype/long"
   }
 }

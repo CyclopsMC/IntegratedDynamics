@@ -7,8 +7,7 @@ import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.ModelLoader;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -29,9 +28,8 @@ public class ValueTypeVariableModelProvider implements IVariableModelProvider<Ba
             try {
                 ResourceLocation resourceLocation = ValueTypes.REGISTRY.getValueTypeModel(valueType);
                 if(resourceLocation != null) {
-                    IModel model = ModelLoaderRegistry.getModel(resourceLocation);
-                    IBakedModel bakedValueTypeModel = model.bake(modelBakery, spriteGetter, sprite, format);
-                    bakedModels.put(valueType, bakedValueTypeModel);
+                    IBakedModel bakedModel = modelBakery.getBakedModel(resourceLocation, sprite, spriteGetter, format);
+                    bakedModels.put(valueType, bakedModel);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -43,6 +41,13 @@ public class ValueTypeVariableModelProvider implements IVariableModelProvider<Ba
     @Override
     public Collection<ResourceLocation> getDependencies() {
         return ValueTypes.REGISTRY.getValueTypeModels();
+    }
+
+    @Override
+    public void loadModels(ModelLoader modelLoader) {
+        for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
+            modelLoader.getSpecialModels().add(ValueTypes.REGISTRY.getValueTypeModel(valueType));
+        }
     }
 
 }

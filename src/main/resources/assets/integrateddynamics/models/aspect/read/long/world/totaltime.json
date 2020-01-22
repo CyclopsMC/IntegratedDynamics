@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:aspects/read/long/world/totaltime"
+    "layer0": "integrateddynamics:aspect/read/long/world/totaltime"
   }
 }

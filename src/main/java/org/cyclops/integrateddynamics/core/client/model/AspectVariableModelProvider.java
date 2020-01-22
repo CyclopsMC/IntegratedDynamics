@@ -7,8 +7,7 @@ import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.ModelLoader;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -27,9 +26,9 @@ public class AspectVariableModelProvider implements IVariableModelProvider<Baked
                                                                     ISprite sprite, VertexFormat format) {
         Map<IAspect, IBakedModel> bakedModels = Maps.newHashMap();
         for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
-            IModel model = ModelLoaderRegistry.getModelOrLogError(Aspects.REGISTRY.getAspectModel(aspect), "Could not find a model for aspect " + aspect.getTranslationKey());
-            IBakedModel bakedAspectModel = model.bake(modelBakery, spriteGetter, sprite, format);
-            bakedModels.put(aspect, bakedAspectModel);
+            ResourceLocation resourceLocation = Aspects.REGISTRY.getAspectModel(aspect);
+            IBakedModel bakedModel = modelBakery.getBakedModel(resourceLocation, sprite, spriteGetter, format);
+            bakedModels.put(aspect, bakedModel);
         }
         return new BakedMapVariableModelProvider<>(bakedModels);
     }
@@ -37,6 +36,13 @@ public class AspectVariableModelProvider implements IVariableModelProvider<Baked
     @Override
     public Collection<ResourceLocation> getDependencies() {
         return Aspects.REGISTRY.getAspectModels();
+    }
+
+    @Override
+    public void loadModels(ModelLoader modelLoader) {
+        for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
+            modelLoader.getSpecialModels().add(Aspects.REGISTRY.getAspectModel(aspect));
+        }
     }
 
 }

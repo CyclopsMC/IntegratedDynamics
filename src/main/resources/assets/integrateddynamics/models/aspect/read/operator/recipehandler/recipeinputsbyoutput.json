@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:aspects/read/operator/recipehandler/recipeoutput"
+    "layer0": "integrateddynamics:aspect/read/operator/recipehandler/recipeoutput"
   }
 }

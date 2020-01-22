@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -31,6 +32,12 @@ public interface IVariableModelProvider<B extends IVariableModelProvider.IBakedM
      * @return All models this provider depends on and should thus be loaded.
      */
     public Collection<ResourceLocation> getDependencies();
+
+    /**
+     * Load all required models for this model provider into the given model loader.
+     * @param modelLoader A model loader.
+     */
+    void loadModels(ModelLoader modelLoader);
 
     /**
      * Provider for baked models.

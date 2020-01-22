@@ -7,8 +7,8 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.client.key.IKeyRegistry;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
@@ -40,6 +40,8 @@ public class ClientProxy extends ClientProxyComponent {
     public ClientProxy() {
         super(new CommonProxy());
         MinecraftForge.EVENT_BUS.register(this);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onPreTextureStitch);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onPostTextureStitch);
     }
 
     @Override
@@ -61,8 +63,14 @@ public class ClientProxy extends ClientProxyComponent {
         ClientRegistry.registerKeyBinding(FOCUS_LP_RENAME);
     }
 
-    @SubscribeEvent
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
+    public void onPreTextureStitch(TextureStitchEvent.Pre event) {
+        event.addSprite(SlotVariable.VARIABLE_EMPTY);
+        for (ItemMatchType itemMatchType : ItemMatchType.values()) {
+            event.addSprite(itemMatchType.getSlotSpriteName());
+        }
+    }
+
+    public void onPostTextureStitch(TextureStitchEvent.Post event) {
         event.getMap().getSprite(SlotVariable.VARIABLE_EMPTY);
         for (ItemMatchType itemMatchType : ItemMatchType.values()) {
             event.getMap().getSprite(itemMatchType.getSlotSpriteName());

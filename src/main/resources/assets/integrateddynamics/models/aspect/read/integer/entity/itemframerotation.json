@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:aspects/read/integer/entity/itemframerotation"
+    "layer0": "integrateddynamics:aspect/read/integer/entity/itemframerotation"
   }
 }

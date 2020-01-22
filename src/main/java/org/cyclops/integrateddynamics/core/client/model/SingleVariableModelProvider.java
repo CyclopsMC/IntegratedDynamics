@@ -7,8 +7,7 @@ import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.ModelLoader;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
@@ -30,8 +29,7 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     public BakedSingleVariableModelProvider bakeOverlayModels(ModelBakery modelBakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format) {
         IBakedModel bakedModel = null;
         try {
-            IModel model = ModelLoaderRegistry.getModel(this.model);
-            bakedModel = model.bake(modelBakery, spriteGetter, sprite, format);
+            bakedModel = modelBakery.getBakedModel(this.model, sprite, spriteGetter, format);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,6 +39,11 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     @Override
     public Collection<ResourceLocation> getDependencies() {
         return ImmutableList.of(model);
+    }
+
+    @Override
+    public void loadModels(ModelLoader modelLoader) {
+        modelLoader.getSpecialModels().add(model);
     }
 
 }

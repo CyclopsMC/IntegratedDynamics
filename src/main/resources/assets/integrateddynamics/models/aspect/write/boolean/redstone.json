@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:aspects/write/boolean/redstone"
+    "layer0": "integrateddynamics:aspect/write/boolean/redstone"
   }
 }

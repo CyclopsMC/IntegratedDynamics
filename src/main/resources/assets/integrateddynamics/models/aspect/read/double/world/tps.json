@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:aspects/read/double/world/tps"
+    "layer0": "integrateddynamics:aspect/read/double/world/tps"
   }
 }

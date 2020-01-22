@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:aspects/read/nbt/block/tile"
+    "layer0": "integrateddynamics:aspect/read/nbt/block/tile"
   }
 }

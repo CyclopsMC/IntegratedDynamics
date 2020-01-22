@@ -1,6 +1,6 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "integrateddynamics:aspects/write/list/charsetpipe/shifterfluid"
+    "layer0": "integrateddynamics:aspect/write/list/charsetpipe/shifterfluid"
   }
 }
