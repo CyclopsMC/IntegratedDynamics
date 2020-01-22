@@ -64,16 +64,20 @@ public class ClientProxy extends ClientProxyComponent {
     }
 
     public void onPreTextureStitch(TextureStitchEvent.Pre event) {
-        event.addSprite(SlotVariable.VARIABLE_EMPTY);
-        for (ItemMatchType itemMatchType : ItemMatchType.values()) {
-            event.addSprite(itemMatchType.getSlotSpriteName());
+        if (event.getMap().getBasePath().equals("textures")) {
+            event.addSprite(SlotVariable.VARIABLE_EMPTY);
+            for (ItemMatchType itemMatchType : ItemMatchType.values()) {
+                event.addSprite(itemMatchType.getSlotSpriteName());
+            }
         }
     }
 
     public void onPostTextureStitch(TextureStitchEvent.Post event) {
-        event.getMap().getSprite(SlotVariable.VARIABLE_EMPTY);
-        for (ItemMatchType itemMatchType : ItemMatchType.values()) {
-            event.getMap().getSprite(itemMatchType.getSlotSpriteName());
+        if (event.getMap().getBasePath().equals("textures")) {
+            event.getMap().getSprite(SlotVariable.VARIABLE_EMPTY);
+            for (ItemMatchType itemMatchType : ItemMatchType.values()) {
+                event.getMap().getSprite(itemMatchType.getSlotSpriteName());
+            }
         }
     }
 }
