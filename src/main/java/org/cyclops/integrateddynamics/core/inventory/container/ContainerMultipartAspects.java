@@ -141,10 +141,10 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
 
     @Override
     public void onScroll(int firstRow) {
-        super.onScroll(firstRow);
         for (int i = 0; i < getUnfilteredItemCount(); i++) {
             disableSlot(i);
         }
+        super.onScroll(firstRow);
     }
 
     @Override

@@ -109,10 +109,10 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
 
     @Override
     public void onScroll(int firstRow) {
-        super.onScroll(firstRow);
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
             disableSlotOutput(i);
         }
+        super.onScroll(firstRow);
     }
 
     @Override
