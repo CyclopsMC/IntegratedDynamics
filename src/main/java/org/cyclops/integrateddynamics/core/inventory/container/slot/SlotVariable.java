@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  */
 public class SlotVariable extends SlotSingleItem {
 
-    public static ResourceLocation VARIABLE_EMPTY = new ResourceLocation(Reference.MOD_ID, "slots/variable_empty");
+    public static ResourceLocation VARIABLE_EMPTY = new ResourceLocation(Reference.MOD_ID, "slot/variable_empty");
 
     /**
      * Make a new instance.

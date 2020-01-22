@@ -70,7 +70,7 @@ public enum ItemMatchType {
 
     public ResourceLocation getSlotSpriteName() {
         return new ResourceLocation(Reference.MOD_ID,
-                "slots/" + this.name().toLowerCase(Locale.ENGLISH));
+                "slot/" + this.name().toLowerCase(Locale.ENGLISH));
     }
 
     public IPrototypeHandler getPrototypeHandler() {
