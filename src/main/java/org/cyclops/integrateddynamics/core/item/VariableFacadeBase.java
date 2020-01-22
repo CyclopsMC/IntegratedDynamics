@@ -51,7 +51,7 @@ public abstract class VariableFacadeBase implements IVariableFacade {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void addInformation(List<ITextComponent> list, World world) {
-        list.add(new TranslationTextComponent("item.items.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
+        list.add(new TranslationTextComponent("item.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
     }
 
 }

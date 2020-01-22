@@ -39,8 +39,8 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     public void init() {
         super.init();
         addButton(new ButtonText(this.guiLeft + 133,  this.guiTop + 8,
-                L10NHelpers.localize("item.items.integrateddynamics.labeller.button.write"),
-                L10NHelpers.localize("item.items.integrateddynamics.labeller.button.write"), button -> {
+                L10NHelpers.localize("item.integrateddynamics.labeller.button.write"),
+                L10NHelpers.localize("item.integrateddynamics.labeller.button.write"), button -> {
             ItemStack itemStack = getContainer().getItemStack();
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             IVariableFacade variableFacade = registry.handle(itemStack);

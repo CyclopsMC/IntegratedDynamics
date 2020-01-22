@@ -38,7 +38,7 @@ public class ItemVariable extends Item {
         IVariableFacade variableFacade = getVariableFacade(itemStack);
         variableFacade.addInformation(list, world);
         if (variableFacade != VariableFacadeHandlerRegistry.DUMMY_FACADE && Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
-            list.add(new TranslationTextComponent("item.items.integrateddynamics.variable.warning"));
+            list.add(new TranslationTextComponent("item.integrateddynamics.variable.warning"));
         }
         super.addInformation(itemStack, world, list, flag);
     }
