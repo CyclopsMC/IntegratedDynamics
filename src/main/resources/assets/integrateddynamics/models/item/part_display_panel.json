@@ -1,6 +1,7 @@
 {
   "parent": "integrateddynamics:block/panel",
   "textures": {
+    "-1": "cyclopscore:block/empty",
     "back" : "integrateddynamics:part/panel_back_inactive",
     "front": "integrateddynamics:part/panel_front_dark"
   }

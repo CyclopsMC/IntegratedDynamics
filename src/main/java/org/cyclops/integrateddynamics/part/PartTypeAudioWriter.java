@@ -16,7 +16,7 @@ public class PartTypeAudioWriter extends PartTypeWriteBase<PartTypeAudioWriter, 
     public PartTypeAudioWriter(String name) {
         super(name);
         AspectRegistry.getInstance().register(this, Lists.<IAspect>newArrayList(
-                Aspects.Write.Audio.INTEGER_PIANO_NOTE,
+                Aspects.Write.Audio.INTEGER_HARP_NOTE,
                 Aspects.Write.Audio.INTEGER_BASEDRUM_NOTE,
                 Aspects.Write.Audio.INTEGER_SNARE_NOTE,
                 Aspects.Write.Audio.INTEGER_HAT_NOTE,

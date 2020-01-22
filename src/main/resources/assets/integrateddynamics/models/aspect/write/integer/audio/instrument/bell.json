@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "integrateddynamics:aspect/write/integer/audio/instrument/bell"
+  }
+}

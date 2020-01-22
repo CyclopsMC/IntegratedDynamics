@@ -776,7 +776,7 @@ public class Aspects {
 
         public static final class Audio {
 
-            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PIANO_NOTE =
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_HARP_NOTE =
                     AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
                             .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.HARP), "harp")
                             .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();

@@ -1,4 +1,6 @@
 {
+  "_comment": "Dummy blockstate",
   "variants": {
+    "": { "model": "integrateddynamics:block/menril_resin" }
   }
 }
