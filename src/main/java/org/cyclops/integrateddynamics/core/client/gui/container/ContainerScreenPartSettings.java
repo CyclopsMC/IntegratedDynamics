@@ -107,7 +107,7 @@ public class ContainerScreenPartSettings extends ContainerScreenExtended<Contain
             numberFieldUpdateInterval.setVisible(true);
             numberFieldUpdateInterval.setTextColor(16777215);
             numberFieldUpdateInterval.setCanLoseFocus(true);
-            numberFieldUpdateInterval.setMinValue(container.getPartType().getMinimumUpdateInterval(container.getPartState()));
+            numberFieldUpdateInterval.setMinValue(container.getLastMinUpdateValue());
         }
 
         if (isFieldPriorityEnabled()) {

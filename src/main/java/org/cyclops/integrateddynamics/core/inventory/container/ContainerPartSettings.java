@@ -50,6 +50,7 @@ public class ContainerPartSettings extends InventoryContainer {
     private final int lastPriorityValueId;
     private final int lastChannelValueId;
     private final int lastSideValueId;
+    private final int lastMinUpdateValueId;
 
     public ContainerPartSettings(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
         this(id, playerInventory, new Inventory(0),
@@ -70,6 +71,7 @@ public class ContainerPartSettings extends InventoryContainer {
         lastPriorityValueId = getNextValueId();
         lastChannelValueId = getNextValueId();
         lastSideValueId = getNextValueId();
+        lastMinUpdateValueId = getNextValueId();
 
         putButtonAction(ContainerPartSettings.BUTTON_SAVE, (s, containerExtended) -> {
             if(!world.isRemote()) {
@@ -102,6 +104,10 @@ public class ContainerPartSettings extends InventoryContainer {
         return lastUpdateValueId;
     }
 
+    public int getLastMinUpdateValueId() {
+        return lastMinUpdateValueId;
+    }
+
     protected int getPlayerInventoryOffsetY() {
         return 107;
     }
@@ -113,6 +119,7 @@ public class ContainerPartSettings extends InventoryContainer {
         ValueNotifierHelpers.setValue(this, lastChannelValueId, getPartType().getChannel(getPartState()));
         Direction targetSide = getPartType().getTargetSideOverride(getPartState());
         ValueNotifierHelpers.setValue(this, lastSideValueId, targetSide == null ? -1 : targetSide.ordinal());
+        ValueNotifierHelpers.setValue(this, lastMinUpdateValueId, getPartType().getMinimumUpdateInterval(getPartState()));
     }
 
     public int getLastUpdateValue() {
@@ -129,6 +136,10 @@ public class ContainerPartSettings extends InventoryContainer {
 
     public int getLastSideValue() {
         return ValueNotifierHelpers.getValueInt(this, lastSideValueId);
+    }
+
+    public int getLastMinUpdateValue() {
+        return ValueNotifierHelpers.getValueInt(this, lastMinUpdateValueId);
     }
 
     public IPartState getPartState() {

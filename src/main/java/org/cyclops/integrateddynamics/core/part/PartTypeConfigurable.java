@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.part;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
@@ -46,8 +47,7 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
             @Override
             public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
                 Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
-                PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
-                return new ContainerPartSettings(id, playerInventory, partState.getInventory(),
+                return new ContainerPartSettings(id, playerInventory, new Inventory(0),
                         data.getRight(), Optional.of(data.getLeft()), data.getMiddle());
             }
         });
