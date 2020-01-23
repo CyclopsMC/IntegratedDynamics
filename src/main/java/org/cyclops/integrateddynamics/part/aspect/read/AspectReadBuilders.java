@@ -122,7 +122,7 @@ public class AspectReadBuilders {
 
     // --------------- Generic properties ---------------
     public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_LISTINDEX =
-            new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.listindex.name", VALIDATOR_INTEGER_POSITIVE);
+            new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.listindex", VALIDATOR_INTEGER_POSITIVE);
     public static final IAspectProperties LIST_PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
             PROPERTY_LISTINDEX
     ));
@@ -133,7 +133,7 @@ public class AspectReadBuilders {
     public static final class Audio {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_RANGE =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.range.name", VALIDATOR_INTEGER_POSITIVE);
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.range", VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectProperties NOTE_PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_RANGE
         ));
@@ -214,7 +214,7 @@ public class AspectReadBuilders {
     public static final class Fluid {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_TANKID =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.tankid.name", VALIDATOR_INTEGER_POSITIVE);
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.tankid", VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectProperties PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROP_TANKID
         ));
@@ -266,7 +266,7 @@ public class AspectReadBuilders {
     public static final class Inventory {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_SLOTID =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid.name", VALIDATOR_INTEGER_POSITIVE);
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.slotid", VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectProperties PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_SLOTID
         ));
@@ -338,7 +338,7 @@ public class AspectReadBuilders {
     public static final class Network {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_CHANNEL =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.channel.name");
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.channel");
         public static final IAspectProperties PROPERTIES = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_CHANNEL
         ));
@@ -373,11 +373,11 @@ public class AspectReadBuilders {
     public static final class Redstone {
 
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_INTERVAL =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.interval.name", VALIDATOR_INTEGER_POSITIVE);
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.interval", VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_LENGTH =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.length.name", VALIDATOR_INTEGER_POSITIVE);
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.length", VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROPERTY_OFFSET =
-                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.offset.name", VALIDATOR_INTEGER_POSITIVE);
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.offset", VALIDATOR_INTEGER_POSITIVE);
         public static final IAspectProperties PROPERTIES_CLOCK = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROPERTY_INTERVAL,
                 PROPERTY_LENGTH,

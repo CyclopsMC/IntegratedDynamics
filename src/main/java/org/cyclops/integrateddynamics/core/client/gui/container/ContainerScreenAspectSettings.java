@@ -129,7 +129,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
             RenderHelpers.drawScaledCenteredString(font, label, 88, 10, 0,
                     1.0F, 140, Helpers.RGBToInt(10, 10, 10));
             if (RenderHelpers.isPointInRegion(this.guiLeft + 40, this.guiTop, 110, 20, mouseX, mouseY)) {
-                String unlocalizedInfo = activeProperty.getTranslationKey().replaceFirst("\\.name$", ".info");
+                String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
                 if (I18n.hasKey(unlocalizedInfo)) {
                     drawTooltip(Lists.newArrayList(new TranslationTextComponent(unlocalizedInfo)
                             .applyTextStyle(TextFormatting.GRAY)), mouseX - this.guiLeft, mouseY - this.guiTop + 20);
