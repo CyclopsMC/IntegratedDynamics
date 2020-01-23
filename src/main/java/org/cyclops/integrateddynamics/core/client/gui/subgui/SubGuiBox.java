@@ -120,6 +120,11 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
     }
 
     @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        return subGuiHolder.keyPressed(typedChar, keyCode, modifiers);
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton);
         for (int i = 0; i < this.buttonList.size(); ++i) {
@@ -180,6 +185,11 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
 
         @Override
         public boolean charTyped(char typedChar, int keyCode) {
+            return false;
+        }
+
+        @Override
+        public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
             return false;
         }
 

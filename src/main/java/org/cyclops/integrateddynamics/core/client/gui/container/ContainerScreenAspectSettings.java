@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValue
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeStringRenderPattern;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -153,6 +154,16 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
+            return this.subGuiHolder.keyPressed(typedChar, keyCode, modifiers);
+        } else {
+            saveSetting();
+            return super.keyPressed(typedChar, keyCode, modifiers);
+        }
     }
 
     @Override

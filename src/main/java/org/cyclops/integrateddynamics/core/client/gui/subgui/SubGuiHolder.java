@@ -63,6 +63,16 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        for(ISubGui subGui : getSubGuis()) {
+            if(subGui.keyPressed(typedChar, keyCode, modifiers)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         for(ISubGui subGui : getSubGuis()) {
             if (subGui.mouseClicked(mouseX, mouseY, mouseButton)) {

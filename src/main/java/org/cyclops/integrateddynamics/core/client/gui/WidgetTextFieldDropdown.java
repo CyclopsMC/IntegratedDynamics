@@ -51,34 +51,6 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        selectedDropdownPossibility = null;
-        if (!possibilities.isEmpty()) {
-            switch (keyCode) {
-                case GLFW.GLFW_KEY_UP:
-                    if (visiblePossibilitiesIndex >= 0) {
-                        visiblePossibilitiesIndex--;
-                    } else {
-                        visiblePossibilitiesIndex = visiblePossibilities.size() - 1;
-                    }
-                    return true;
-                case GLFW.GLFW_KEY_TAB:
-                case GLFW.GLFW_KEY_DOWN:
-                    if (visiblePossibilitiesIndex < visiblePossibilities.size() - 1) {
-                        visiblePossibilitiesIndex++;
-                    } else {
-                        visiblePossibilitiesIndex = 0;
-                    }
-                    return true;
-                case GLFW.GLFW_KEY_KP_ENTER:
-                case GLFW.GLFW_KEY_ENTER:
-                case GLFW.GLFW_KEY_RIGHT:
-                    if (visiblePossibilitiesIndex >= 0
-                            && visiblePossibilitiesIndex < visiblePossibilities.size()) {
-                        selectVisiblePossibility(visiblePossibilitiesIndex);
-                        return true;
-                    }
-            }
-        }
         if (super.charTyped(typedChar, keyCode)) {
             // Remove all colors and formatting when changing text
             if(getText().contains("§")) {
@@ -104,6 +76,39 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
         return false;
     }
 
+    @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        selectedDropdownPossibility = null;
+        if (!possibilities.isEmpty()) {
+            switch (typedChar) {
+                case GLFW.GLFW_KEY_UP:
+                    if (visiblePossibilitiesIndex >= 0) {
+                        visiblePossibilitiesIndex--;
+                    } else {
+                        visiblePossibilitiesIndex = visiblePossibilities.size() - 1;
+                    }
+                    return true;
+                case GLFW.GLFW_KEY_TAB:
+                case GLFW.GLFW_KEY_DOWN:
+                    if (visiblePossibilitiesIndex < visiblePossibilities.size() - 1) {
+                        visiblePossibilitiesIndex++;
+                    } else {
+                        visiblePossibilitiesIndex = 0;
+                    }
+                    return true;
+                case GLFW.GLFW_KEY_KP_ENTER:
+                case GLFW.GLFW_KEY_ENTER:
+                case GLFW.GLFW_KEY_RIGHT:
+                    if (visiblePossibilitiesIndex >= 0
+                            && visiblePossibilitiesIndex < visiblePossibilities.size()) {
+                        selectVisiblePossibility(visiblePossibilitiesIndex);
+                        return true;
+                    }
+            }
+        }
+        return super.keyPressed(typedChar, keyCode, modifiers);
+    }
+
     protected void selectVisiblePossibility(int index) {
         visiblePossibilitiesIndex = index;
         selectPossibility(visiblePossibilities.get(visiblePossibilitiesIndex));
@@ -120,10 +125,10 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public void renderBg(Minecraft minecraft, int mouseX, int mouseY) {
-        super.renderBg(minecraft, mouseX, mouseY);
+    public void renderButton(int mouseX, int mouseY, float partialTicks) {
+        super.renderButton(mouseX, mouseY, partialTicks);
         if (this.getVisible() && isFocused()) {
-            FontRenderer fontRenderer = minecraft.getRenderManager().getFontRenderer();
+            FontRenderer fontRenderer = Minecraft.getInstance().getRenderManager().getFontRenderer();
             int yOffset = fontRenderer.FONT_HEIGHT + 3;
 
             int x = this.x;

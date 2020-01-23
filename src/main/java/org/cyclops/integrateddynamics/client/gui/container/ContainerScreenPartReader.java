@@ -40,7 +40,7 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
     protected void drawAdditionalElementInfo(ContainerPartReader<P, S> container, int index, IAspectRead aspect) {
         // Get current aspect value
         Pair<ITextComponent, Integer> readValues = container.getReadValue(aspect);
-        if(readValues != null) {
+        if(readValues != null && readValues.getLeft() != null) {
             RenderHelpers.drawScaledCenteredString(font, readValues.getLeft().getFormattedText(), this.guiLeft + offsetX + 16,
                     this.guiTop + offsetY + 39 + container.getAspectBoxHeight() * index,
                     70, readValues.getRight());

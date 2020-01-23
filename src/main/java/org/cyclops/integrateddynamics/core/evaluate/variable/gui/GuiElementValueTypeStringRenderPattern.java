@@ -77,15 +77,27 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (searchField.charTyped(typedChar, keyCode)) {
-            element.setInputString(searchField.getText());
-            if (container instanceof IDirtyMarkListener) {
-                ((IDirtyMarkListener) container).onDirty();
-            }
-            IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerValueTypeStringValueChangedPacket(element.getInputString()));
+            onTyped();
             return true;
         }
         return super.charTyped(typedChar, keyCode);
+    }
+
+    @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        if (searchField.keyPressed(typedChar, keyCode, modifiers)) {
+            onTyped();
+        }
+        return true;
+    }
+
+    private void onTyped() {
+        element.setInputString(searchField.getText());
+        if (container instanceof IDirtyMarkListener) {
+            ((IDirtyMarkListener) container).onDirty();
+        }
+        IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                new LogicProgrammerValueTypeStringValueChangedPacket(element.getInputString()));
     }
 
     @Override

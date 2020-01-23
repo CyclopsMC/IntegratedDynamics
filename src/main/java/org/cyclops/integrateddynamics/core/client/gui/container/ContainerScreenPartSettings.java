@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -182,6 +183,35 @@ public class ContainerScreenPartSettings extends ContainerScreenExtended<Contain
     }
 
     @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
+            if (isFieldSideEnabled()) {
+                if (this.dropdownFieldSide.keyPressed(typedChar, keyCode, modifiers)) {
+                    return true;
+                }
+            }
+            if (isFieldUpdateIntervalEnabled()) {
+                if (this.numberFieldUpdateInterval.keyPressed(typedChar, keyCode, modifiers)) {
+                    return true;
+                }
+            }
+            if (isFieldPriorityEnabled()) {
+                if (this.numberFieldPriority.keyPressed(typedChar, keyCode, modifiers)) {
+                    return true;
+                }
+            }
+            if (isFieldChannelEnabled()) {
+                if (this.numberFieldChannel.keyPressed(typedChar, keyCode, modifiers)) {
+                    return true;
+                }
+            }
+            return true;
+        } else {
+            return super.keyPressed(typedChar, keyCode, modifiers);
+        }
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         if (isFieldSideEnabled()) {
             if (this.dropdownFieldSide.mouseClicked(mouseX, mouseY, mouseButton)) {
@@ -262,6 +292,9 @@ public class ContainerScreenPartSettings extends ContainerScreenExtended<Contain
         }
         if (isFieldUpdateIntervalEnabled() && valueId == getContainer().getLastUpdateValueId()) {
             numberFieldUpdateInterval.setText(Integer.toString(getContainer().getLastUpdateValue()));
+        }
+        if (isFieldUpdateIntervalEnabled() && valueId == getContainer().getLastMinUpdateValueId()) {
+            numberFieldUpdateInterval.setMinValue(getContainer().getLastMinUpdateValue());
         }
         if (isFieldPriorityEnabled() && valueId == getContainer().getLastPriorityValueId()) {
             numberFieldPriority.setText(Integer.toString(getContainer().getLastPriorityValue()));
