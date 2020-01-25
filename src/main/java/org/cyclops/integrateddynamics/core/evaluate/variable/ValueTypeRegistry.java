@@ -102,7 +102,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     @Override
     public IValueTypeVariableFacade getVariableFacade(int id, CompoundNBT tag) {
         if(!tag.contains("typeName", Constants.NBT.TAG_STRING)
-                || !tag.contains("value", Constants.NBT.TAG_STRING)) {
+                || !tag.contains("value")) {
             return INVALID_FACADE;
         }
         IValueType type = getValueType(tag.getString("typeName"));
