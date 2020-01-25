@@ -315,7 +315,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         public void readFromNBT(CompoundNBT tag) {
             super.readFromNBT(tag);
             if(tag.contains("displayValueType", Constants.NBT.TAG_STRING)
-                    && tag.contains("displayValue", Constants.NBT.TAG_COMPOUND)) {
+                    && tag.contains("displayValue")) {
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("displayValueType"));
                 if(valueType != null) {
                     INBT serializedValue = tag.get("displayValue");
