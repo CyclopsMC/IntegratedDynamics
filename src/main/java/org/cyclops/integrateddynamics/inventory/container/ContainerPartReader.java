@@ -53,7 +53,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     private final BiMap<Integer, IAspectRead> readColorIds = HashBiMap.create();
 
     public ContainerPartReader(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
-        this(id, playerInventory, new SimpleInventory(packetBuffer.readInt(), 1),
+        this(id, playerInventory, new SimpleInventory(0, 1),
                 PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
@@ -79,6 +79,16 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
             readValueIds.put(getNextValueId(), aspectRead);
             readColorIds.put(getNextValueId(), aspectRead);
         }
+    }
+
+    @Override
+    protected boolean isAssertInventorySize() {
+        return false;
+    }
+
+    @Override
+    protected int getSizeInventory() {
+        return getPartType().getReadAspects().size() * 2;
     }
 
     @Override

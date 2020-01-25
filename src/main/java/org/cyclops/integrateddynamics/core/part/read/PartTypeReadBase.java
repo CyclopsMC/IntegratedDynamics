@@ -152,8 +152,6 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
 
     @Override
     public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
-        // Write inventory size
-        packetBuffer.writeInt(getReadAspects().size());
         // Write part position
         PacketCodec.write(packetBuffer, pos);
 
