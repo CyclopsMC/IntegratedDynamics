@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeDropdownList;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeOperatorValueChangedPacket;
 
@@ -39,6 +40,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
 
     @Setter
     private IOperator selectedOperator = null;
+    private GuiElementValueTypeDropdownList<IOperator, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> innerGuiElement;
 
     public ValueTypeOperatorLPElement() {
         super(ValueTypes.OPERATOR);
@@ -46,9 +48,14 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         for (IOperator operator : Operators.REGISTRY.getOperators()) {
             operatorEntries.add(new OperatorDropdownEntry(operator));
         }
+        this.innerGuiElement = new GuiElementValueTypeDropdownList<>(getValueType(), getRenderPattern());
         getInnerGuiElement().setDropdownPossibilities(operatorEntries);
         getInnerGuiElement().setDropdownEntryListener(this);
-        getInnerGuiElement().setDefaultInputString(""); // We don't want the default one to show up by default.
+    }
+
+    @Override
+    public GuiElementValueTypeDropdownList<IOperator, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> getInnerGuiElement() {
+        return innerGuiElement;
     }
 
     @Override
@@ -102,14 +109,14 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     @Override
     @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight, ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-        return new RenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+        return new RenderPatternOperator(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
-    public static class RenderPattern<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends ValueTypeLPElementRenderPattern {
+    public static class RenderPatternOperator<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends ValueTypeOperatorLPElementRenderPattern {
 
         private final ValueTypeOperatorLPElement element;
 
-        public RenderPattern(ValueTypeOperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight, ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+        public RenderPatternOperator(ValueTypeOperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight, ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             this.element = element;
         }

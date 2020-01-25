@@ -4,7 +4,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeDropdownList;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeDropdownListRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeStringRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
@@ -12,13 +15,13 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class ValueTypeLPElementRenderPattern extends GuiElementValueTypeStringRenderPattern<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
+public class ValueTypeOperatorLPElementRenderPattern extends GuiElementValueTypeDropdownListRenderPattern<IOperator, RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
         implements IRenderPatternValueTypeTooltip {
 
     private boolean renderTooltip = true;
 
-    public ValueTypeLPElementRenderPattern(ValueTypeLPElementBase element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                           ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+    public ValueTypeOperatorLPElementRenderPattern(ValueTypeOperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
+                                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         super(element.getInnerGuiElement(), baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

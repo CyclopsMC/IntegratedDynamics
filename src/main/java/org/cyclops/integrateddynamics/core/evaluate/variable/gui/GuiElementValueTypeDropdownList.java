@@ -21,43 +21,41 @@ import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * GUI element for value type that can be read from and written to strings.
+ * GUI element for value type that are displayed using a dropdown list.
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeString<G extends AbstractGui, C extends Container> implements IGuiInputElement<RenderPattern, G, C> {
+public class GuiElementValueTypeDropdownList<T, G extends AbstractGui, C extends Container> implements IGuiInputElement<RenderPattern, G, C>, IDropdownEntryListener<T> {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
     private final IConfigRenderPattern renderPattern;
-    private String defaultInputString;
     private String inputString;
+    private Set<IDropdownEntry<T>> dropdownPossibilities = Collections.emptySet();
+    private IDropdownEntryListener<T> dropdownEntryListener = null;
 
-    public GuiElementValueTypeString(IValueType valueType, IConfigRenderPattern renderPattern) {
+    public GuiElementValueTypeDropdownList(IValueType valueType, IConfigRenderPattern renderPattern) {
         this.valueType = valueType;
         this.validator = Predicates.alwaysTrue();
         this.renderPattern = renderPattern;
-        defaultInputString = ValueHelpers.toString(getValueType().getDefault());
-    }
-
-    public void setInputString(String inputString, GuiElementValueTypeStringRenderPattern subGui) {
-        this.inputString = inputString;
-        if(subGui != null) {
-            subGui.getTextField().setText(inputString);
-        }
     }
 
     public void setValidator(Predicate<IValue> validator) {
@@ -81,7 +79,7 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
 
     @Override
     public void activate() {
-        this.inputString = defaultInputString;
+        this.inputString = "";
     }
 
     @Override
@@ -113,10 +111,17 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
     }
 
     @Override
+    public void onSetDropdownPossiblity(IDropdownEntry dropdownEntry) {
+        if (dropdownEntryListener != null) {
+            dropdownEntryListener.onSetDropdownPossiblity(dropdownEntry);
+        }
+    }
+
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public GuiElementValueTypeStringRenderPattern<?, G, C> createSubGui(int baseX, int baseY,
-                                                                        int maxWidth, int maxHeight, G gui, C container) {
-        return new GuiElementValueTypeStringRenderPattern<>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+    public GuiElementValueTypeDropdownListRenderPattern<T, ?, G, C> createSubGui(int baseX, int baseY,
+                                                                                 int maxWidth, int maxHeight, G gui, C container) {
+        return new GuiElementValueTypeDropdownListRenderPattern<>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     @OnlyIn(Dist.CLIENT)

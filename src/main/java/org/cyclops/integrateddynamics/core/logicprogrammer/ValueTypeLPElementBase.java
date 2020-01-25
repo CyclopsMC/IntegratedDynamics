@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -25,10 +26,10 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgram
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -39,17 +40,19 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Getter
     private final IValueType<?> valueType;
-    @Getter
-    private GuiElementValueTypeString<ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> innerGuiElement;
 
     public ValueTypeLPElementBase(IValueType<?> valueType) {
         this.valueType = valueType;
-        this.innerGuiElement = new GuiElementValueTypeString<>(this.valueType, getRenderPattern());
+    }
+
+    @Nullable
+    public IGuiInputElement<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> getInnerGuiElement() {
+        return null;
     }
 
     @Override
     public void loadTooltip(List<ITextComponent> lines) {
-        getInnerGuiElement().loadTooltip(lines);
+        getValueType().loadTooltip(lines, true, null);
     }
 
     @Override
@@ -153,8 +156,8 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean isFocused(ISubGuiBox subGui) {
-        if (subGui instanceof ValueTypeLPElementRenderPattern) {
-            return ((ValueTypeLPElementRenderPattern) subGui).getSearchField().isFocused();
+        if (subGui instanceof ValueTypeStringLPElementRenderPattern) {
+            return ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().isFocused();
         }
         return false;
     }
@@ -162,8 +165,8 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
-        if (subGui instanceof ValueTypeLPElementRenderPattern) {
-            ((ValueTypeLPElementRenderPattern) subGui).getSearchField().focused = focused;
+        if (subGui instanceof ValueTypeStringLPElementRenderPattern) {
+            ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().focused = focused;
         }
     }
 

@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
@@ -17,8 +18,16 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
 
+    private GuiElementValueTypeString<ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> innerGuiElement;
+
     public ValueTypeStringLPElement(IValueType valueType) {
         super(valueType);
+        this.innerGuiElement = new GuiElementValueTypeString<>(getValueType(), getRenderPattern());
+    }
+
+    @Override
+    public GuiElementValueTypeString<ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> getInnerGuiElement() {
+        return innerGuiElement;
     }
 
     @Override
@@ -64,20 +73,20 @@ public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean isFocused(ISubGuiBox subGui) {
-        return ((ValueTypeLPElementRenderPattern) subGui).getSearchField().isFocused();
+        return ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().isFocused();
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
-        ((ValueTypeLPElementRenderPattern) subGui).getSearchField().focused = focused;
+        ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().focused = focused;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                    ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-        return new ValueTypeLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+        return new ValueTypeStringLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
 }

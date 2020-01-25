@@ -8,28 +8,35 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.container.Container;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
+import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
 import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeStringValueChangedPacket;
+
+import java.util.Set;
 
 /**
  * A render pattern for value types that can be read from and written to strings.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends RenderPattern<GuiElementValueTypeString<G, C>, G, C> {
+public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBox, G extends AbstractGui, C extends Container>
+        extends RenderPattern<GuiElementValueTypeDropdownList<T, G, C>, G, C> implements IDropdownEntryListener<T> {
 
     @Getter
-    protected final GuiElementValueTypeString<G, C> element;
+    protected final GuiElementValueTypeDropdownList<T, G, C> element;
     @Getter
-    private WidgetTextFieldExtended textField = null;
+    private WidgetTextFieldDropdown<T> searchField = null;
 
-    public GuiElementValueTypeStringRenderPattern(GuiElementValueTypeString<G, C> element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  G gui, C container) {
+    public GuiElementValueTypeDropdownListRenderPattern(GuiElementValueTypeDropdownList<T, G, C> element,
+                                                        int baseX, int baseY, int maxWidth, int maxHeight,
+                                                        G gui, C container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
         this.element = element;
     }
@@ -40,33 +47,38 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         int searchWidth = getElement().getRenderPattern().getWidth() - 28;
         int searchX = getX() + 14;
         int searchY = getY() + 6;
-        this.textField = new WidgetTextFieldExtended(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.FONT_HEIGHT + 3, L10NHelpers.localize(this.getElement().getValueType().getTranslationKey()), true);
-        this.textField.setMaxStringLength(64);
-        this.textField.setEnableBackgroundDrawing(false);
-        this.textField.setVisible(true);
-        this.textField.setTextColor(16777215);
-        this.textField.setCanLoseFocus(true);
+        this.searchField = new WidgetTextFieldDropdown<>(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
+                fontRenderer.FONT_HEIGHT + 3, L10NHelpers.localize("gui.cyclopscore.search"), true, getDropdownPossibilities());
+        this.searchField.setDropdownEntryListener(this);
+        this.searchField.setMaxStringLength(64);
+        this.searchField.setEnableBackgroundDrawing(false);
+        this.searchField.setVisible(true);
+        this.searchField.setTextColor(16777215);
+        this.searchField.setCanLoseFocus(true);
         String value = element.getInputString();
         if (value == null) {
-            value = element.getDefaultInputString();
+            value = "";
         }
-        this.textField.setText(value);
-        element.setInputString(textField.getText());
-        this.textField.setWidth(searchWidth);
-        this.textField.x = guiLeft + (searchX + searchWidth) - this.textField.getWidth();
+        this.searchField.setText(value);
+        element.setInputString(searchField.getText());
+        this.searchField.setWidth(searchWidth);
+        this.searchField.x = guiLeft + (searchX + searchWidth) - this.searchField.getWidth();
+    }
+
+    protected Set<IDropdownEntry<T>> getDropdownPossibilities() {
+        return element.getDropdownPossibilities();
     }
 
     @Override
     public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         // Textbox
-        textField.render(mouseX, mouseY, partialTicks);
+        searchField.render(mouseX, mouseY, partialTicks);
     }
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        if (textField.charTyped(typedChar, keyCode)) {
+        if (searchField.charTyped(typedChar, keyCode)) {
             onTyped();
             return true;
         }
@@ -75,14 +87,14 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
 
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (textField.keyPressed(typedChar, keyCode, modifiers)) {
+        if (searchField.keyPressed(typedChar, keyCode, modifiers)) {
             onTyped();
         }
         return true;
     }
 
     private void onTyped() {
-        element.setInputString(textField.getText());
+        element.setInputString(searchField.getText());
         if (container instanceof IDirtyMarkListener) {
             ((IDirtyMarkListener) container).onDirty();
         }
@@ -92,7 +104,11 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        return textField.mouseClicked(mouseX, mouseY, mouseButton) || super.mouseClicked(mouseX, mouseY, mouseButton);
+        return searchField.mouseClicked(mouseX, mouseY, mouseButton) || super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
+    @Override
+    public void onSetDropdownPossiblity(IDropdownEntry dropdownEntry) {
+        element.onSetDropdownPossiblity(dropdownEntry);
+    }
 }
