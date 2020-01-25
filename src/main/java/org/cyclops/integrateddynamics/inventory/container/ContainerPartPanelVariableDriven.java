@@ -33,7 +33,7 @@ import java.util.Optional;
  * Container for display parts.
  * @author rubensworks
  */
-public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>>
+public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>>
         extends ContainerMultipart<P, S> {
 
     private static final int SLOT_X = 79;
@@ -43,13 +43,13 @@ public class ContainerPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S
     private final int readColorId;
     private final int readErrorsId;
 
-    public ContainerPartDisplay(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
+    public ContainerPartPanelVariableDriven(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
         this(id, playerInventory, new Inventory(packetBuffer.readInt()),
                 Optional.empty(), Optional.empty(), readPart(packetBuffer));
     }
 
-    public ContainerPartDisplay(int id, PlayerInventory playerInventory, IInventory inventory,
-                                Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
+    public ContainerPartPanelVariableDriven(int id, PlayerInventory playerInventory, IInventory inventory,
+                                            Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
         super(RegistryEntries.CONTAINER_PART_DISPLAY, id, playerInventory, inventory, target, partContainer, partType);
 
         readValueId = getNextValueId();

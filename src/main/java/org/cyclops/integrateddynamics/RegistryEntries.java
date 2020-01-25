@@ -152,7 +152,7 @@ public class RegistryEntries {
     @ObjectHolder("integrateddynamics:on_the_dynamics_of_integration")
     public static final ContainerType<ContainerOnTheDynamicsOfIntegration> CONTAINER_ON_THE_DYNAMICS_OF_INTEGRATION = null;
     @ObjectHolder("integrateddynamics:part_display")
-    public static final ContainerType<ContainerPartDisplay> CONTAINER_PART_DISPLAY = null;
+    public static final ContainerType<ContainerPartPanelVariableDriven> CONTAINER_PART_DISPLAY = null;
     @ObjectHolder("integrateddynamics:part_reader")
     public static final ContainerType<ContainerPartReader> CONTAINER_PART_READER = null;
     @ObjectHolder("integrateddynamics:part_settings")

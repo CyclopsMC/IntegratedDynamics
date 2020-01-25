@@ -13,7 +13,7 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.core.client.gui.container.ContainerScreenMultipart;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
-import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
+import org.cyclops.integrateddynamics.inventory.container.ContainerPartPanelVariableDriven;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -22,14 +22,14 @@ import org.lwjgl.glfw.GLFW;
  * @author rubensworks
  */
 public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>>
-        extends ContainerScreenMultipart<P, S, ContainerPartDisplay<P, S>> {
+        extends ContainerScreenMultipart<P, S, ContainerPartPanelVariableDriven<P, S>> {
 
     private static final int ERROR_X = 104;
     private static final int ERROR_Y = 16;
     private static final int OK_X = 104;
     private static final int OK_Y = 16;
 
-    public ContainerScreenPartDisplay(ContainerPartDisplay<P, S> container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenPartDisplay(ContainerPartPanelVariableDriven<P, S> container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, title);
     }
 

@@ -53,8 +53,7 @@ import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
-import org.cyclops.integrateddynamics.inventory.container.ContainerPartDisplay;
-import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
+import org.cyclops.integrateddynamics.inventory.container.ContainerPartPanelVariableDriven;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -199,9 +198,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             @Override
             public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
                 Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
-                PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
-                return new ContainerPartDisplay<>(id, playerInventory, partState.getInventory(),
-                        Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypePanelDisplay) data.getMiddle());
+                PartTypePanelVariableDriven.State partState = (PartTypePanelVariableDriven.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
+                return new ContainerPartPanelVariableDriven(id, playerInventory, partState.getInventory(),
+                        Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypePanelVariableDriven<?, ?>) data.getMiddle());
             }
         });
     }
@@ -210,7 +209,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
         // Write inventory size
         IPartContainer partContainer = PartHelpers.getPartContainerChecked(pos);
-        PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) partContainer.getPartState(pos.getSide());
+        PartTypePanelVariableDriven.State partState = (PartTypePanelVariableDriven.State) partContainer.getPartState(pos.getSide());
         packetBuffer.writeInt(partState.getInventory().getSizeInventory());
 
         super.writeExtraGuiData(packetBuffer, pos, player);
