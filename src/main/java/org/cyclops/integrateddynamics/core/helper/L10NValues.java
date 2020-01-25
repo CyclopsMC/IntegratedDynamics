@@ -10,7 +10,7 @@ public class L10NValues {
 
     public static final String NS = APIReference.API_OWNER;
 
-    public static final String GENERAL_ENERGY_UNIT = "general." + NS + ".energy_unit.name";
+    public static final String GENERAL_ENERGY_UNIT = "general." + NS + ".energy_unit";
     public static final String GENERAL_ERROR_NONETWORK = "general." + NS + ".error.no_network";
     public static final String GENERAL_ITEM_ID = "item.items." + NS + ".general.id";
     public static final String GENERAL_TRUE = "general." + NS + ".true";

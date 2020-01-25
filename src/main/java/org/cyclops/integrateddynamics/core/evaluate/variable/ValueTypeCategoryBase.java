@@ -56,7 +56,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
 
     @Override
     public String getTranslationKey() {
-        return getUnlocalizedPrefix() + ".name";
+        return getUnlocalizedPrefix();
     }
 
     @Override

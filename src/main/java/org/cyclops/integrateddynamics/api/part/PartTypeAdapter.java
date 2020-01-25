@@ -32,9 +32,11 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     private String translationKey = null;
 
     @Override
-    public String getTranslationKey() {
-        return translationKey != null ? translationKey : (translationKey = getTranslationKeyBase());
+    public final String getTranslationKey() {
+        return translationKey != null ? translationKey : (translationKey = createTranslationKey());
     }
+
+    protected abstract String createTranslationKey();
 
     @Override
     public boolean isSolid(S state) {

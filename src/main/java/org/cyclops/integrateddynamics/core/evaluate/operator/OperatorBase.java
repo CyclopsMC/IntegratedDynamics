@@ -69,7 +69,7 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public String getTranslationKey() {
-        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix() + ".name");
+        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix());
     }
 
     @Override

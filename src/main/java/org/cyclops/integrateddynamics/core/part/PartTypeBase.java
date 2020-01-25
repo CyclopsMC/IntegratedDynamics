@@ -109,7 +109,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public String getTranslationKeyBase() {
+    protected String createTranslationKey() {
         return "parttype." + getMod().getModId() + "." + getName();
     }
 

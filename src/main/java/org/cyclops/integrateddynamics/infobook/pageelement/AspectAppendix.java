@@ -65,7 +65,7 @@ public class AspectAppendix extends SectionAppendix {
         int yOffset = 5;
         gui.drawOuterBorder(x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
         gui.drawTextBanner(x + width / 2, y - 2 - yOffset);
-        gui.drawScaledCenteredString(L10NHelpers.localize("aspect.aspects.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
+        gui.drawScaledCenteredString(L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
         RenderHelper.enableGUIStandardItemLighting();
         Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(itemStack, x, y);

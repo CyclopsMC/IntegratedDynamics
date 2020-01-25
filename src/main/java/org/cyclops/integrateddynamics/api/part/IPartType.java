@@ -46,12 +46,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public String getName();
 
     /**
-     * @return The unlocalized base name of this part. (Without the .name suffix)
-     */
-    public String getTranslationKeyBase();
-
-    /**
-     * @return The unlocalized name of this part. (With the .name suffix)
+     * @return The unlocalized name of this part.
      */
     public String getTranslationKey();
 

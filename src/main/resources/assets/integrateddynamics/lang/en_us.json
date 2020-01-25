@@ -348,7 +348,7 @@
     "aspect.integrateddynamics.tooltip.value_type_name": "§eType: §r%s",
     "aspect.integrateddynamics.tooltip.part_id": "§e§oPart ID: §r§o%s",
     "aspect.integrateddynamics.error.invalid_type": "This aspect expects %s, but %s was given.",
-    "aspect.integrateddynamics": "Aspect",
+    "aspect.integrateddynamics.name": "Aspect",
 
     "_comment": "# Audio aspects",
     "aspect.integrateddynamics.read.integer.audio.instrument.harp": "Harp Note",

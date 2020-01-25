@@ -18,7 +18,7 @@ public class MechanicalDryingBasinRecipeAppendix extends DryingBasinRecipeAppend
 
     @Override
     protected String getUnlocalizedTitle() {
-        return "tile.blocks.integrateddynamics.mechanical_drying_basin.name";
+        return "tile.blocks.integrateddynamics.mechanical_drying_basin";
     }
 
     protected ItemStack getCrafter() {

@@ -18,7 +18,7 @@ public class MechanicalSqueezerRecipeAppendix extends SqueezerRecipeAppendix {
 
     @Override
     protected String getUnlocalizedTitle() {
-        return "tile.blocks.integrateddynamics.mechanical_squeezer.name";
+        return "tile.blocks.integrateddynamics.mechanical_squeezer";
     }
 
     @Override
