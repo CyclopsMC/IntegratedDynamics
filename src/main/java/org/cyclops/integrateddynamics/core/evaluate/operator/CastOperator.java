@@ -40,7 +40,7 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
 
     @Override
     public String getUniqueName() {
-        return "operator.operators." + getModId() + ".cast" + from.getTranslationKey() + "$" + to.getTranslationKey();
+        return "operator." + getModId() + ".cast" + from.getTranslationKey() + "$" + to.getTranslationKey();
     }
 
     @Override
@@ -50,12 +50,12 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
 
     @Override
     protected String getUnlocalizedPrefix() {
-        return "operator.operators." + getModId() + "." + getUnlocalizedType();
+        return "operator." + getModId() + "." + getUnlocalizedType();
     }
 
     @Override
     public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
-        lines.add(new TranslationTextComponent("operator.operators.integrateddynamics.cast.tooltip",
+        lines.add(new TranslationTextComponent("operator.integrateddynamics.cast.tooltip",
                 new TranslationTextComponent(from.getTranslationKey()),
                 new TranslationTextComponent(to.getTranslationKey())));
         super.loadTooltip(lines, appendOptionalInfo);

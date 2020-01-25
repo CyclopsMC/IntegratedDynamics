@@ -30,7 +30,7 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
 
   @Override
   public String getUniqueName() {
-    return "operator.operators." + getModId() + ".parse." + to.getTranslationKey();
+    return "operator." + getModId() + ".parse." + to.getTranslationKey();
   }
 
   @Override
@@ -40,12 +40,12 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
 
   @Override
   protected String getUnlocalizedPrefix() {
-    return "operator.operators." + getModId() + "." + getUnlocalizedType();
+    return "operator." + getModId() + "." + getUnlocalizedType();
   }
 
   @Override
   public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
-    lines.add(new TranslationTextComponent("operator.operators.integrateddynamics.parse.tooltip",
+    lines.add(new TranslationTextComponent("operator.integrateddynamics.parse.tooltip",
             new TranslationTextComponent(to.getTranslationKey()))
     );
     super.loadTooltip(lines, appendOptionalInfo);
