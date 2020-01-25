@@ -184,6 +184,11 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
         }
 
         @Override
+        public void tick() {
+
+        }
+
+        @Override
         public boolean charTyped(char typedChar, int keyCode) {
             return false;
         }

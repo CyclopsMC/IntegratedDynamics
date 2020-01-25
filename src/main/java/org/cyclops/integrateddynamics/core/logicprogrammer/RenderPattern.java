@@ -49,6 +49,11 @@ public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C 
     }
 
     @Override
+    public void tick() {
+
+    }
+
+    @Override
     public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();

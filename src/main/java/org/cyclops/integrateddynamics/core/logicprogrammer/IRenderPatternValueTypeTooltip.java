@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
@@ -13,9 +15,10 @@ import java.util.List;
  */
 public interface IRenderPatternValueTypeTooltip {
 
-    public default List<String> getValueTypeTooltip(IValueType<?> valueType) {
-        List<String> lines = Lists.newLinkedList();
-        lines.add(valueType.getDisplayColorFormat() + L10NHelpers.localize(valueType.getTranslationKey()));
+    public default List<ITextComponent> getValueTypeTooltip(IValueType<?> valueType) {
+        List<ITextComponent> lines = Lists.newLinkedList();
+        lines.add(new TranslationTextComponent(valueType.getTranslationKey())
+                .applyTextStyles(valueType.getDisplayColorFormat()));
         return lines;
     }
 

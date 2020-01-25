@@ -13,6 +13,8 @@ public interface ISubGui {
 
     public void init(int guiLeft, int guiTop);
 
+    public void tick();
+
     public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY);
 
     public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY);

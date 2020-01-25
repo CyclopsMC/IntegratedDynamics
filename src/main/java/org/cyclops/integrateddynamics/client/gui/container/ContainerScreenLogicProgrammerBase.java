@@ -75,6 +75,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        subGuiHolder.tick();
+    }
+
     protected int getScrollX() {
         return 5;
     }
@@ -257,8 +263,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         return false;
     }
 
-    @Override
-    public boolean charTyped(char typedChar, int keyCode) {
+    protected boolean handleKeyCode(int keyCode) {
         if(keyCode != GLFW.GLFW_KEY_LEFT_SHIFT && keyCode != GLFW.GLFW_KEY_RIGHT_SHIFT) {
             ContainerLogicProgrammerBase container = getContainer();
             int pageSize = container.getPageSize();
@@ -299,15 +304,27 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     || GLFW.GLFW_KEY_ENTER == keyCode || GLFW.GLFW_KEY_KP_ENTER == keyCode)) {
                 if (container.getActiveElement() != null) {
                     container.getActiveElement().setFocused(operatorConfigPattern, true);
+                    setSearchFieldFocussed(false);
                 }
                 return true;
-            } else if (!subGuiHolder.charTyped(typedChar, keyCode)
-                    && (keyCode == GLFW.GLFW_KEY_ESCAPE || !isElementFocused)) {
-                // All others
-                return super.charTyped(typedChar, keyCode);
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean charTyped(char typedChar, int keyCode) {
+        return handleKeyCode(keyCode) || subGuiHolder.charTyped(typedChar, keyCode) || super.charTyped(typedChar, keyCode);
+    }
+
+    @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
+            if (handleKeyCode(typedChar) || this.subGuiHolder.keyPressed(typedChar, keyCode, modifiers)) {
+                return true;
+            }
+        }
+        return super.keyPressed(typedChar, keyCode, modifiers);
     }
 
     @Override
@@ -322,6 +339,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     relativeStep = activated ? i : -1;
                     if (activated) {
                         container.getActiveElement().setFocused(operatorConfigPattern, true);
+                        setSearchFieldFocussed(false);
                         return true;
                     }
                 }

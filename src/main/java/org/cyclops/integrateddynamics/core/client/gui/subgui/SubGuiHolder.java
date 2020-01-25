@@ -39,6 +39,13 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
+    public void tick() {
+        for(ISubGui subGui : getSubGuis()) {
+            subGui.tick();
+        }
+    }
+
+    @Override
     public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         for(ISubGui subGui : getSubGuis()) {
             subGui.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);

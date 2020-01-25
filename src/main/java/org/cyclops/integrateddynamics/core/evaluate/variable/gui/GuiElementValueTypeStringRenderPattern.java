@@ -58,6 +58,12 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        textField.tick();
+    }
+
+    @Override
     public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         // Textbox

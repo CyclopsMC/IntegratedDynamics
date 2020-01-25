@@ -117,8 +117,13 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
+    protected boolean isAssertInventorySize() {
+        return false;
+    }
+
+    @Override
     protected int getSizeInventory() {
-        return 0;
+        return 1;
     }
 
     public void setActiveElementById(String typeId, String elementId) {
