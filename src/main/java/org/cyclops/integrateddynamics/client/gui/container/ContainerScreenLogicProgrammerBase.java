@@ -61,6 +61,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
+    protected Rectangle getScrollRegion() {
+        return new Rectangle(this.guiLeft + 19, this.guiTop + 18, 57, 178);
+    }
+
+    @Override
     public void init() {
         super.init();
         subGuiHolder.init(this.guiLeft, this.guiTop);

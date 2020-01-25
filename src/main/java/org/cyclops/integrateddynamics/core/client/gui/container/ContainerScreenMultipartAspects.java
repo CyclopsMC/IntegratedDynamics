@@ -51,8 +51,8 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
     }
 
     @Override
-    protected boolean isScrollAnywhere() {
-        return true;
+    protected Rectangle getScrollRegion() {
+        return new Rectangle(this.guiLeft + 9, this.guiTop + 18, 160, 105);
     }
 
     @Override
