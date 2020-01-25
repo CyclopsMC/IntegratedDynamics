@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
@@ -61,15 +62,17 @@ public abstract class BlockContainerCabled extends BlockTile {
     @Override
     public void onPlayerDestroy(IWorld world, BlockPos blockPos, BlockState blockState) {
         CableHelpers.onCableRemoving((World) world, blockPos, true, false);
+        Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables((World) world, blockPos);
         super.onPlayerDestroy(world, blockPos, blockState);
-        CableHelpers.onCableRemoved((World) world, blockPos, CableHelpers.getExternallyConnectedCables((World) world, blockPos));
+        CableHelpers.onCableRemoved((World) world, blockPos, connectedCables);
     }
 
     @Override
-    public void onExplosionDestroy(World world, BlockPos blockPos, Explosion explosion) {
+    public void onBlockExploded(BlockState state, World world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.onCableRemoving(world, blockPos, true, false);
-        super.onExplosionDestroy(world, blockPos, explosion);
-        CableHelpers.onCableRemoved(world, blockPos, CableHelpers.getExternallyConnectedCables(world, blockPos));
+        Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
+        super.onBlockExploded(state, world, blockPos, explosion);
+        CableHelpers.onCableRemoved(world, blockPos, connectedCables);
     }
 
     @SuppressWarnings("deprecation")

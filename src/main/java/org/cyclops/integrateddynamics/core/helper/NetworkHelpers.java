@@ -33,6 +33,7 @@ import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Network helper methods.
@@ -215,13 +216,14 @@ public class NetworkHelpers {
      * @return The optionally created part network.
      * Can be absent if the starting position did not have a {@link IPathElement} capability.
      */
-    public static LazyOptional<INetwork> initNetwork(World world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<INetwork> initNetwork(World world, BlockPos pos, @Nullable Direction side) {
         return TileHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY)
                 .map(pathElement -> {
                     Network network = Network.initiateNetworkSetup(SidedPathElement.of(pathElement, side));
                     network.initialize();
-                    return network;
-                });
+                    return Optional.<INetwork>of(network);
+                })
+                .orElse(Optional.empty());
     }
 
     /**

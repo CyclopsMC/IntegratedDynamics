@@ -183,7 +183,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         partContainer.update();
 
         // Revalidate network if that hasn't happened yet
-        if (getNetwork() == null && getWorld() != null && !getWorld().isRemote) {
+        if (getWorld() != null && !getWorld().isRemote && getNetwork() == null) {
             NetworkHelpers.revalidateNetworkElements(getWorld(), getPos());
         }
     }

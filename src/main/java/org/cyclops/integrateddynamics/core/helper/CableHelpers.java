@@ -327,6 +327,7 @@ public class CableHelpers {
         BlockState blockState = world.getBlockState(pos);
         if (cable == null) return;
 
+        Collection<Direction> connectedCables = getCableConnections(cable);
         CableHelpers.onCableRemoving(world, pos, false, false);
         // If the cable has no parts or is not fakeable, remove the block,
         // otherwise mark the cable as being fake.
@@ -340,7 +341,7 @@ public class CableHelpers {
         } else if (!player.isCreative()) {
             ItemStackHelpers.spawnItemStackToPlayer(world, pos, cable.getItemStack(), player);
         }
-        CableHelpers.onCableRemoved(world, pos, getCableConnections(cable));
+        CableHelpers.onCableRemoved(world, pos, connectedCables);
 
         ItemBlockCable.playBreakSound(world, pos, blockState);
     }

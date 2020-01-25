@@ -61,6 +61,7 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -123,17 +124,11 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
     }
 
     @Override
-    public void onPlayerDestroy(IWorld world, BlockPos blockPos, BlockState blockState) {
-        CableHelpers.onCableRemoving((World) world, blockPos, true, false);
-        super.onPlayerDestroy(world, blockPos, blockState);
-        CableHelpers.onCableRemoved((World) world, blockPos, CableHelpers.getExternallyConnectedCables((World) world, blockPos));
-    }
-
-    @Override
-    public void onExplosionDestroy(World world, BlockPos blockPos, Explosion explosion) {
+    public void onBlockExploded(BlockState state, World world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.onCableRemoving(world, blockPos, true, false);
-        super.onExplosionDestroy(world, blockPos, explosion);
-        CableHelpers.onCableRemoved(world, blockPos, CableHelpers.getExternallyConnectedCables(world, blockPos));
+        Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
+        super.onBlockExploded(state, world, blockPos, explosion);
+        CableHelpers.onCableRemoved(world, blockPos, connectedCables);
     }
 
     @Override
