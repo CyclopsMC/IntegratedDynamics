@@ -16,7 +16,7 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
 
     protected int getMaxRenderDistance() {
-        return GeneralConfig.partOverlayRenderdistance;
+        return (int) Math.pow(GeneralConfig.partOverlayRenderdistance, 2);
     }
 
     protected boolean shouldRender(BlockPos pos) {
