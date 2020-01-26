@@ -502,12 +502,13 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
                     // Draw tooltips
                     if (gui.isPointInRegion(slotX, slotY, 16, 16, mouseX, mouseY)) {
-                        String name = "valuetype.valuetypes.integrateddynamics.ingredients.match."
+                        String name = "valuetype.integrateddynamics.ingredients.match."
                                 + this.element.inputStacks.get(slot.getSlotIndex()).getRight().name().toLowerCase(Locale.ENGLISH);
                         gui.drawTooltip(Lists.newArrayList(
-                                L10NHelpers.localize(name + ".desc") + " "
-                                        + TextFormatting.RESET + TextFormatting.ITALIC
-                                        + L10NHelpers.localize("valuetype.valuetypes.integrateddynamics.ingredients.info")
+                                new TranslationTextComponent(name + ".desc")
+                                        .appendText(" ")
+                                        .applyTextStyles(TextFormatting.ITALIC)
+                                        .appendSibling(new TranslationTextComponent("valuetype.integrateddynamics.ingredients.info"))
                         ), mouseX - guiLeft, mouseY - guiTop - 15);
                     }
                 }

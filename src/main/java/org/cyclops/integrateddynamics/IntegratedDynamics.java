@@ -9,6 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -174,7 +175,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         MinecraftForge.EVENT_BUS.register(NoteBlockEventReceiver.getInstance());
         MinecraftForge.EVENT_BUS.register(new NetworkCapabilityConstructors());
         if (MinecraftHelpers.isClientSide()) {
-            MinecraftForge.EVENT_BUS.register(IntegratedDynamicsSoundEvents.class);
+            FMLJavaModLoadingContext.get().getModEventBus().register(IntegratedDynamicsSoundEvents.class);
         }
     }
 
