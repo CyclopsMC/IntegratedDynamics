@@ -77,7 +77,7 @@ public class LabelsWorldStorage extends WorldStorage {
      * @param label The onLabelPacket
      */
     public void put(int variableId, @Nonnull String label) {
-        if(MinecraftHelpers.isClientSide()) {
+        if(MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new ActionLabelPacket(variableId, label));
         } else {
             putUnsafe(variableId, label);
@@ -90,7 +90,7 @@ public class LabelsWorldStorage extends WorldStorage {
      * @param variableId The variable id.
      */
     public void remove(int variableId) {
-        if(MinecraftHelpers.isClientSide()) {
+        if(MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new ActionLabelPacket(variableId, null));
         } else {
             removeUnsafe(variableId);
@@ -109,16 +109,9 @@ public class LabelsWorldStorage extends WorldStorage {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if(!MinecraftHelpers.isClientSide()) {
+        if(!MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (ServerPlayerEntity) event.getPlayer());
         }
     }
 
-    @Override
-    public void afterLoad() {
-        super.afterLoad();
-        // Fix all null labels
-        // TODO: remove in 1.13
-        labels.entrySet().removeIf(integerStringEntry -> integerStringEntry.getValue() == null);
-    }
 }

@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
 import org.cyclops.integrateddynamics.network.packet.ItemStackRenamePacket;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Gui for the labeller.
@@ -81,6 +82,16 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
             return super.charTyped(typedChar, keyCode);
         }
         return true;
+    }
+
+    @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
+            if (this.searchField.keyPressed(typedChar, keyCode, modifiers)) {
+                return true;
+            }
+        }
+        return super.keyPressed(typedChar, keyCode, modifiers);
     }
 
     @Override
