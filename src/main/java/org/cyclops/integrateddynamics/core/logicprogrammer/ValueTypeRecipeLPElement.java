@@ -508,7 +508,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                                 new TranslationTextComponent(name + ".desc")
                                         .appendText(" ")
                                         .applyTextStyles(TextFormatting.ITALIC)
-                                        .appendSibling(new TranslationTextComponent("valuetype.integrateddynamics.ingredients.info"))
+                                        .appendSibling(new TranslationTextComponent("valuetype.integrateddynamics.ingredients.slot.info"))
                         ), mouseX - guiLeft, mouseY - guiTop - 15);
                     }
                 }

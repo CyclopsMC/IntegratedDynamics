@@ -257,7 +257,7 @@
     "valuetype.integrateddynamics.ingredients": "Ingredients",
     "valuetype.integrateddynamics.recipe": "Recipe",
 
-    "valuetype.integrateddynamics.ingredients.info": "Shift click to change.",
+    "valuetype.integrateddynamics.ingredients.slot.info": "Shift click to change.",
     "valuetype.integrateddynamics.ingredients.match.itemmeta": "Item Meta",
     "valuetype.integrateddynamics.ingredients.match.itemmeta.desc": "§cMatch by §nitem type§r§c and §nmeta value§r.",
     "valuetype.integrateddynamics.ingredients.match.item": "Item",
