@@ -314,13 +314,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        return handleKeyCode(keyCode) || subGuiHolder.charTyped(typedChar, keyCode) || super.charTyped(typedChar, keyCode);
+        return subGuiHolder.charTyped(typedChar, keyCode) || handleKeyCode(keyCode) || super.charTyped(typedChar, keyCode);
     }
 
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
         if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
-            if (handleKeyCode(typedChar) || this.subGuiHolder.keyPressed(typedChar, keyCode, modifiers)) {
+            if (this.subGuiHolder.keyPressed(typedChar, keyCode, modifiers) || handleKeyCode(typedChar)) {
                 return true;
             }
         }

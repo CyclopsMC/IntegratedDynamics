@@ -72,19 +72,23 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        if (textField.charTyped(typedChar, keyCode)) {
-            onTyped();
-            return true;
+        if (textField.isFocused()) {
+            if (textField.charTyped(typedChar, keyCode)) {
+                onTyped();
+                return true;
+            }
         }
         return super.charTyped(typedChar, keyCode);
     }
 
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (textField.keyPressed(typedChar, keyCode, modifiers)) {
+        if (textField.isFocused()) {
+            textField.keyPressed(typedChar, keyCode, modifiers);
             onTyped();
+            return true;
         }
-        return true;
+        return super.keyPressed(typedChar, keyCode, modifiers);
     }
 
     private void onTyped() {

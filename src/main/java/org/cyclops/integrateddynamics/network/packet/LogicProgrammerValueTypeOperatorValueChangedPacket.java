@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.ByteNBT;
 import net.minecraft.nbt.EndNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.world.World;
@@ -35,7 +36,7 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 		try {
 			this.operatorValue = ValueHelpers.serializeRaw(value);
 		} catch (Exception e) {
-			this.operatorValue = new EndNBT();
+			this.operatorValue = new ByteNBT((byte) 0);
 		}
     }
 

@@ -78,19 +78,23 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        if (searchField.charTyped(typedChar, keyCode)) {
-            onTyped();
-            return true;
+        if (searchField.isFocused()) {
+            if (searchField.charTyped(typedChar, keyCode)) {
+                onTyped();
+                return true;
+            }
         }
         return super.charTyped(typedChar, keyCode);
     }
 
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (searchField.keyPressed(typedChar, keyCode, modifiers)) {
+        if (searchField.isFocused()) {
+            searchField.keyPressed(typedChar, keyCode, modifiers);
             onTyped();
+            return true;
         }
-        return true;
+        return super.keyPressed(typedChar, keyCode, modifiers);
     }
 
     private void onTyped() {

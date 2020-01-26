@@ -49,28 +49,32 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
         this(fontrenderer, x, y, width, height, narrationMessage, background, Collections.emptySet());
     }
 
+    protected void refreshDropdownList() {
+        // Remove all colors and formatting when changing text
+        if(getText().contains("§")) {
+            setText(getText().replaceAll("§.", ""));
+        }
+        if (!possibilities.isEmpty()) {
+            visiblePossibilities = Lists.newArrayList();
+            for (IDropdownEntry<T> possibility : possibilities) {
+                if (possibility.getMatchString().toLowerCase().contains(getText().toLowerCase())) {
+                    visiblePossibilities.add(possibility);
+                }
+            }
+            visiblePossibilitiesIndex = -1;
+            if (visiblePossibilities.size() == 1 && visiblePossibilities.get(0).getMatchString().equals(getText())) {
+                selectedDropdownPossibility = visiblePossibilities.get(0);
+            }
+            if (dropdownEntryListener != null) {
+                dropdownEntryListener.onSetDropdownPossiblity(selectedDropdownPossibility);
+            }
+        }
+    }
+
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (super.charTyped(typedChar, keyCode)) {
-            // Remove all colors and formatting when changing text
-            if(getText().contains("§")) {
-                setText(getText().replaceAll("§.", ""));
-            }
-            if (!possibilities.isEmpty()) {
-                visiblePossibilities = Lists.newArrayList();
-                for (IDropdownEntry<T> possibility : possibilities) {
-                    if (possibility.getMatchString().toLowerCase().contains(getText().toLowerCase())) {
-                        visiblePossibilities.add(possibility);
-                    }
-                }
-                visiblePossibilitiesIndex = -1;
-                if (visiblePossibilities.size() == 1 && visiblePossibilities.get(0).getMatchString().equals(getText())) {
-                    selectedDropdownPossibility = visiblePossibilities.get(0);
-                }
-                if (dropdownEntryListener != null) {
-                    dropdownEntryListener.onSetDropdownPossiblity(selectedDropdownPossibility);
-                }
-            }
+            refreshDropdownList();
             return true;
         }
         return false;
@@ -106,7 +110,11 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                     }
             }
         }
-        return super.keyPressed(typedChar, keyCode, modifiers);
+        if (super.keyPressed(typedChar, keyCode, modifiers)) {
+            refreshDropdownList();
+            return true;
+        }
+        return false;
     }
 
     protected void selectVisiblePossibility(int index) {
