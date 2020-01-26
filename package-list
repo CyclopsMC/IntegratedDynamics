@@ -52,6 +52,7 @@ org.cyclops.integrateddynamics.core.client.gui
 org.cyclops.integrateddynamics.core.client.gui.container
 org.cyclops.integrateddynamics.core.client.gui.subgui
 org.cyclops.integrateddynamics.core.client.model
+org.cyclops.integrateddynamics.core.datastructure
 org.cyclops.integrateddynamics.core.evaluate
 org.cyclops.integrateddynamics.core.evaluate.build
 org.cyclops.integrateddynamics.core.evaluate.expression
