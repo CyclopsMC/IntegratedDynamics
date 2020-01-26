@@ -47,7 +47,7 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
             }
             first = false;
             sb.appendSibling(value.getType().toCompactString(value));
-            if(sb.toString().length() > 10) {
+            if(sb.getUnformattedComponentText().length() > 10) {
                 sb.appendText("...");
                 break;
             }
