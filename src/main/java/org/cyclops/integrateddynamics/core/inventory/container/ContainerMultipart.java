@@ -4,22 +4,17 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
-import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
-import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -37,12 +32,6 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
     private final Optional<IPartContainer> partContainer;
     private final P partType;
     private final World world;
-
-    protected static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
-        String name = packetBuffer.readString();
-        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(name),
-                String.format("Could not find a part by name %s", name));
-    }
 
     public ContainerMultipart(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory, IInventory inventory,
                               Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {

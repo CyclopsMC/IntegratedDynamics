@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,7 +36,7 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
     }
 
     public LogicProgrammerSetElementInventory(IValueType listValueType, int baseX, int baseY) {
-    	this.listValueType = listValueType.getTranslationKey();
+    	this.listValueType = listValueType.getUniqueName().toString();
 		this.baseX = baseX;
 		this.baseY = baseY;
     }
@@ -57,7 +58,7 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
 			ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.openContainer;
 			ILogicProgrammerElement element = container.getActiveElement();
 			if (element instanceof ValueTypeListLPElement || element instanceof ValueTypeIngredientsLPElement) {
-				IValueType valueType = ValueTypes.REGISTRY.getValueType(this.listValueType);
+				IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(this.listValueType));
 				if (valueType != null) {
 					((ContainerLogicProgrammerBase) player.openContainer).setElementInventory(
 							valueType.createLogicProgrammerElement(), baseX, baseY);

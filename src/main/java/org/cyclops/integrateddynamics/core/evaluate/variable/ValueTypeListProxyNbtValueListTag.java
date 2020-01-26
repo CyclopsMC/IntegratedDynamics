@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
+import org.cyclops.integrateddynamics.Reference;
 
 /**
  * A list of NBT tags.
@@ -32,8 +32,8 @@ public class ValueTypeListProxyNbtValueListTag extends ValueTypeListProxyNbtValu
     public static class Factory extends ValueTypeListProxyNbtValueListGeneric.Factory<ValueTypeListProxyNbtValueListTag, ListNBT, ValueTypeNbt, ValueTypeNbt.ValueNbt> {
 
         @Override
-        public String getName() {
-            return "nbt.listValueTag";
+        public ResourceLocation getName() {
+            return new ResourceLocation(Reference.MOD_ID, "nbt.list_value_tag");
         }
 
         @Override

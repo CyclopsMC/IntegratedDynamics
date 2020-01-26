@@ -223,10 +223,10 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         if(newActive != null) {
             ILogicProgrammerElementType type = newActive.getType();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerActivateElementPacket(type.getName(), type.getName(newActive)));
+                    new LogicProgrammerActivateElementPacket(type.getUniqueName(), type.getName(newActive)));
         } else {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerActivateElementPacket("", ""));
+                    new LogicProgrammerActivateElementPacket(new ResourceLocation(""), new ResourceLocation("")));
         }
         return activate;
     }

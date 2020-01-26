@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 
 /**
@@ -19,7 +20,7 @@ public interface IOperatorSerializer<O extends IOperator> {
     /**
      * @return The unique name of this serializer.
      */
-    public String getUniqueName();
+    public ResourceLocation getUniqueName();
 
     /**
      * Serialize the given operator.

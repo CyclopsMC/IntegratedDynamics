@@ -4,6 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 import javax.annotation.Nullable;
@@ -41,7 +42,7 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @return The handler.
      */
     @Nullable
-    public IVariableFacadeHandler getHandler(String type);
+    public IVariableFacadeHandler getHandler(ResourceLocation type);
 
     /**
      * @return All registered handler names.

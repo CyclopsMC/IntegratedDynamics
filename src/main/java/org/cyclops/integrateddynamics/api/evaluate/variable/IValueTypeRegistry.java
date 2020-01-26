@@ -39,7 +39,7 @@ public interface IValueTypeRegistry extends IRegistry, IVariableFacadeHandler<IV
      * @param name The unique name.
      * @return The value type or null if not found.
      */
-    public IValueType getValueType(String name);
+    public IValueType getValueType(ResourceLocation name);
 
     /**
      * Register a model resource location for the given value type.

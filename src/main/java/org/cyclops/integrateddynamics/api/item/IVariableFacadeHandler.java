@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.api.item;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
@@ -22,7 +22,7 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
     /**
      * @return The unique name of this type used to identity variables to this handler.
      */
-    public String getTypeId();
+    public ResourceLocation getUniqueName();
 
     /**
      * Get the variable facade for the given tag.

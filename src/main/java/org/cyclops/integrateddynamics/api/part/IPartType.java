@@ -43,7 +43,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * @return The unique name for this part type.
      */
-    public String getName();
+    public ResourceLocation getUniqueName();
 
     /**
      * @return The unlocalized name of this part.

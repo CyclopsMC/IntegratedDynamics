@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -16,7 +17,7 @@ public abstract class ValueTypeListProxyPositioned<T extends IValueType<V>, V ex
     private DimPos pos;
     private Direction side;
 
-    public ValueTypeListProxyPositioned(String name, T valueType, DimPos pos, Direction side) {
+    public ValueTypeListProxyPositioned(ResourceLocation name, T valueType, DimPos pos, Direction side) {
         super(name, valueType);
         this.pos = pos;
         this.side = side;

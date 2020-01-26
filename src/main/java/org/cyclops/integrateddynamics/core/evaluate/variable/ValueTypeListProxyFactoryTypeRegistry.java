@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Maps;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -37,14 +38,14 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
         if(factories.containsKey(proxyFactory.getName())) {
             throw new RuntimeException(String.format("A list proxy factory by name '%s' already exists.", proxyFactory.getName()));
         }
-        factories.put(proxyFactory.getName(), proxyFactory);
+        factories.put(proxyFactory.getName().toString(), proxyFactory);
         return proxyFactory;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> IProxyFactory<T, V, P> getFactory(String name) {
-        return factories.get(name);
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> IProxyFactory<T, V, P> getFactory(ResourceLocation name) {
+        return factories.get(name.toString());
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
         }
         INBT serialized = factory.serialize(proxy);
         CompoundNBT tag = new CompoundNBT();
-        tag.putString("proxyName", proxy.getName());
+        tag.putString("proxyName", proxy.getName().toString());
         tag.put("serialized", serialized);
         return tag;
     }
@@ -74,7 +75,7 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
         }
         String name = tag.getString("proxyName");
         INBT actualValue = tag.get("serialized");
-        IProxyFactory<T, V, P> factory = getFactory(name);
+        IProxyFactory<T, V, P> factory = getFactory(new ResourceLocation(name));
         if(factory == null) {
             throw new SerializationException(String.format("No deserialization factory exists for the list proxy type name '%s'.", name));
         }

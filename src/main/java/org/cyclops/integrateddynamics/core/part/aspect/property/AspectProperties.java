@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.part.aspect.property;
 import com.google.common.collect.Maps;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.Level;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -69,7 +70,7 @@ public class AspectProperties implements IAspectProperties {
         ListNBT map = new ListNBT();
         for(Map.Entry<IAspectPropertyTypeInstance, IValue> entry : values.entrySet()) {
             CompoundNBT nbtEntry = new CompoundNBT();
-            nbtEntry.putString("key", entry.getKey().getType().getTranslationKey());
+            nbtEntry.putString("key", entry.getKey().getType().getUniqueName().toString());
             nbtEntry.putString("label", entry.getKey().getTranslationKey());
             nbtEntry.put("value", ValueHelpers.serializeRaw(entry.getValue()));
             map.add(nbtEntry);
@@ -85,7 +86,7 @@ public class AspectProperties implements IAspectProperties {
         for(int i = 0; i < map.size(); i++) {
             CompoundNBT nbtEntry = map.getCompound(i);
             String valueTypeName = nbtEntry.getString("key");
-            IValueType type = ValueTypes.REGISTRY.getValueType(valueTypeName);
+            IValueType type = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valueTypeName));
             if(type == null) {
                 IntegratedDynamics.clog(Level.ERROR, String.format("Could not find value type with name %s, skipping loading.", valueTypeName));
             } else {

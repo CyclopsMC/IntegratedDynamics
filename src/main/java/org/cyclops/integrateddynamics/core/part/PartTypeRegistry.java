@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Maps;
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;
@@ -31,12 +32,12 @@ public final class PartTypeRegistry implements IPartTypeRegistry {
 
     @Override
     public <P extends IPartType<P, S>, S extends IPartState<P>> P register(P partType) {
-        if(partTypes.containsKey(partType.getName())) {
+        if(partTypes.containsKey(partType.getUniqueName())) {
             throw new DuplicatePartTypeException(String.format("Tried to register a part type %s with name %s while " +
-                    "the registry already container %s for that name.", partType, partType.getName(),
-                    partTypes.get(partType.getName())));
+                    "the registry already container %s for that name.", partType, partType.getUniqueName(),
+                    partTypes.get(partType.getUniqueName())));
         }
-        partTypes.put(partType.getName(), partType);
+        partTypes.put(partType.getUniqueName().toString(), partType);
         return partType;
     }
 
@@ -46,8 +47,8 @@ public final class PartTypeRegistry implements IPartTypeRegistry {
     }
 
     @Override
-    public IPartType getPartType(String partName) {
-        return partTypes.get(partName);
+    public IPartType getPartType(ResourceLocation partName) {
+        return partTypes.get(partName.toString());
     }
 
     public static class DuplicatePartTypeException extends RuntimeException {

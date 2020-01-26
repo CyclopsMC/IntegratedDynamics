@@ -5,6 +5,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.tuple.Triple;
@@ -45,6 +46,11 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     public AspectBase(ModBase mod, IAspectProperties defaultProperties) {
         this.mod = mod;
         this.defaultProperties = defaultProperties == null ? createDefaultProperties() : defaultProperties;
+    }
+
+    @Override
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(getModId(), getTranslationKey());
     }
 
     @Override

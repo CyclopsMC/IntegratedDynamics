@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
@@ -32,8 +34,8 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
     }
 
     public PredicateOperator(Predicate<V> predicate, T inputType, List<V> rawValues) {
-        super("pred", "pred", new IValueType[]{inputType},
-                ValueTypes.BOOLEAN, variables -> ValueTypeBoolean.ValueBoolean.of(
+        super("pred", "pred",
+                new IValueType[]{inputType}, ValueTypes.BOOLEAN, variables -> ValueTypeBoolean.ValueBoolean.of(
                         predicate.test(variables.getValue(0))), IConfigRenderPattern.PREFIX_1);
         this.inputType = inputType;
         this.rawValues = rawValues;
@@ -57,8 +59,8 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         }
 
         @Override
-        public String getUniqueName() {
-            return "predicate";
+        public ResourceLocation getUniqueName() {
+            return new ResourceLocation(Reference.MOD_ID, "predicate");
         }
 
         @Override
@@ -77,7 +79,7 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         public PredicateOperator<IValueType<IValue>, IValue> deserialize(INBT value) throws EvaluationException {
             try {
                 CompoundNBT tag = (CompoundNBT) value;
-                IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
+                IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
                 ListNBT list = (ListNBT) tag.get("values");
                 List<IValue> values = Lists.newArrayList();
                 for (INBT subTag : list) {

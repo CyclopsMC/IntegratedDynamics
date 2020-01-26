@@ -1,8 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
@@ -39,8 +40,10 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     }
 
     @Override
-    public String getUniqueName() {
-        return "operator." + getModId() + ".cast" + from.getTranslationKey() + "$" + to.getTranslationKey();
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(Reference.MOD_ID, "operator." + getModId() + ".cast"
+                + from.getUniqueName().toString().replaceAll(":", "_") + "__"
+                + to.getUniqueName().toString().replaceAll(":", "_"));
     }
 
     @Override

@@ -158,7 +158,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
 
     @Override
     public String getUniqueName(ValueOperator a) {
-        return a.getRawValue().getUniqueName();
+        return a.getRawValue().getUniqueName().toString();
     }
 
     @ToString

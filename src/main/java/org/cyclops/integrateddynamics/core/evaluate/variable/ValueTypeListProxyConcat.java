@@ -2,9 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraftforge.common.util.Constants;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import net.minecraft.util.ResourceLocation;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -49,8 +48,8 @@ public class ValueTypeListProxyConcat<T extends IValueType<V>, V extends IValue>
     public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyConcat<IValueType<IValue>, IValue>> {
 
         @Override
-        public String getName() {
-            return "concat";
+        public ResourceLocation getName() {
+            return new ResourceLocation(Reference.MOD_ID, "concat");
         }
 
         @Override

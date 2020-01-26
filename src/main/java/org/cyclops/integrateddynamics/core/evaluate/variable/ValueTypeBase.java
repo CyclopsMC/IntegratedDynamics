@@ -51,6 +51,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         return false;
     }
 
+    @Override
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(getModId(), getTypeName());
+    }
+
     protected String getUnlocalizedPrefix() {
         return "valuetype." + getModId() + getTypeNamespace() + getTypeName();
     }

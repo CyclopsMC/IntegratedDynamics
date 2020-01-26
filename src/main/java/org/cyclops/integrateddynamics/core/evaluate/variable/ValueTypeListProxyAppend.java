@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -43,20 +44,20 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
     public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyAppend<IValueType<IValue>, IValue>> {
 
         @Override
-        public String getName() {
-            return "append";
+        public ResourceLocation getName() {
+            return new ResourceLocation(Reference.MOD_ID, "append");
         }
 
         @Override
         protected void serializeNbt(ValueTypeListProxyAppend<IValueType<IValue>, IValue> value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.putString("valueType", value.value.getType().getTranslationKey());
+            tag.putString("valueType", value.value.getType().getUniqueName().toString());
             tag.put("value", ValueHelpers.serializeRaw(value.value));
             tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
         }
 
         @Override
         protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
+            IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
             IValue value = ValueHelpers.deserializeRaw(valueType, tag.get("value"));
             IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.get("sublist"));
             return new ValueTypeListProxyAppend<>(list, value);

@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -18,19 +18,18 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
 
   private final T2 to;
 
-  public ParseOperator(final T2 to, OperatorBase.IFunction operator) {
+  public ParseOperator(final T2 to, IFunction operator) {
     super("parse_" + to.getTypeName(),
-        "parse_" + to.getTranslationKey(),
-        constructInputVariables(1, ValueTypes.STRING),
-        to,
-        operator,
-        IConfigRenderPattern.PREFIX_1_LONG);
+            "parse_" + to.getTranslationKey(),
+            constructInputVariables(1, ValueTypes.STRING),
+            to,
+            operator, IConfigRenderPattern.PREFIX_1_LONG);
     this.to = to;
   }
 
   @Override
-  public String getUniqueName() {
-    return "operator." + getModId() + ".parse." + to.getTranslationKey();
+  public ResourceLocation getUniqueName() {
+    return new ResourceLocation(getModId(), "operator." + getModId() + ".parse." + to.getTranslationKey());
   }
 
   @Override

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -67,9 +68,9 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
     public static class Serializer implements IOperatorSerializer<PositionedOperator> {
 
         private final Class<? extends PositionedOperator> clazz;
-        private final String uniqueName;
+        private final ResourceLocation uniqueName;
 
-        public Serializer(Class<? extends PositionedOperator> clazz, String uniqueName) {
+        public Serializer(Class<? extends PositionedOperator> clazz, ResourceLocation uniqueName) {
             this.clazz = clazz;
             this.uniqueName = uniqueName;
         }
@@ -80,7 +81,7 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
         }
 
         @Override
-        public String getUniqueName() {
+        public ResourceLocation getUniqueName() {
             return this.uniqueName;
         }
 

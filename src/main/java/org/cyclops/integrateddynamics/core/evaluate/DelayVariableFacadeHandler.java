@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.item.DelayVariableFacade;
@@ -27,8 +27,8 @@ public class DelayVariableFacadeHandler implements IVariableFacadeHandler<IDelay
     }
 
     @Override
-    public String getTypeId() {
-        return "delay";
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(Reference.MOD_ID, "delay");
     }
 
     @Override

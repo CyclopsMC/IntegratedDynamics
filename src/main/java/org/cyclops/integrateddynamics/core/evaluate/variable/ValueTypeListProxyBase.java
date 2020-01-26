@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -18,10 +19,10 @@ import java.util.Iterator;
  */
 public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends IValue> implements IValueTypeListProxy<T, V> {
 
-    private final String name;
+    private final ResourceLocation name;
     private final T valueType;
 
-    public ValueTypeListProxyBase(String name, T valueType) {
+    public ValueTypeListProxyBase(ResourceLocation name, T valueType) {
         this.name = name;
         this.valueType = valueType;
     }
@@ -32,7 +33,7 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
     }
 
     @Override
-    public String getName() {
+    public ResourceLocation getName() {
         return name;
     }
 

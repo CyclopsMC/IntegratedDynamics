@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -35,8 +36,8 @@ public abstract class OperatorBase implements IOperator {
     private String translationKey = null;
     private int recursiveInvocations;
 
-    protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
-                           IFunction function, @Nullable IConfigRenderPattern renderPattern) {
+    protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes,
+                           IValueType outputType, IFunction function, @Nullable IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
@@ -63,8 +64,8 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public String getUniqueName() {
-        return getTranslationKey();
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(getModId(), getTranslationKey());
     }
 
     @Override

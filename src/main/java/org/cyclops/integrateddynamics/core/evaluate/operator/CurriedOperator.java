@@ -3,9 +3,11 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
@@ -55,8 +57,8 @@ public class CurriedOperator implements IOperator {
     }
 
     @Override
-    public String getUniqueName() {
-        return "curriedOperator";
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation("curried_operator");
     }
 
     @Override
@@ -157,8 +159,8 @@ public class CurriedOperator implements IOperator {
         }
 
         @Override
-        public String getUniqueName() {
-            return "curry";
+        public ResourceLocation getUniqueName() {
+            return new ResourceLocation(Reference.MOD_ID, "curry");
         }
 
         @Override
@@ -174,7 +176,7 @@ public class CurriedOperator implements IOperator {
                 }
                 CompoundNBT valueTag = new CompoundNBT();
                 IValueType valueType = value.getType();
-                valueTag.putString("valueType", valueType.getTranslationKey());
+                valueTag.putString("valueType", valueType.getUniqueName().toString());
                 valueTag.put("value", ValueHelpers.serializeRaw(value));
                 list.add(valueTag);
             }
@@ -198,7 +200,7 @@ public class CurriedOperator implements IOperator {
             IVariable[] variables = new IVariable[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT valuetag = list.getCompound(i);
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(valuetag.getString("valueType"));
+                IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valuetag.getString("valueType")));
                 IValue value = ValueHelpers.deserializeRaw(valueType, valuetag.get("value"));
                 variables[i] = new Variable(valueType, value);
             }

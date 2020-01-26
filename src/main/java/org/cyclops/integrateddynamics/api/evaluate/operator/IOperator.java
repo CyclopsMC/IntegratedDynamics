@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -23,7 +24,7 @@ public interface IOperator {
     /**
      * @return The unique name for this operator, only used for internal storage.
      */
-    public String getUniqueName();
+    public ResourceLocation getUniqueName();
 
     /**
      * @return The unique unlocalized name for this operator.

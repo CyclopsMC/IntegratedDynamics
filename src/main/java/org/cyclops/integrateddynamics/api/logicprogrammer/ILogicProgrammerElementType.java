@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
+import net.minecraft.util.ResourceLocation;
+
 import java.util.List;
 
 /**
@@ -15,19 +17,19 @@ public interface ILogicProgrammerElementType<E extends ILogicProgrammerElement> 
      * @param name The name, already namespaced for this type.
      * @return The element.
      */
-    public E getByName(String name);
+    public E getByName(ResourceLocation name);
 
     /**
      * Get the name from given element, no need to namespace.
      * @param element The element.
      * @return The unique name.
      */
-    public String getName(E element);
+    public ResourceLocation getName(E element);
 
     /**
      * @return Unique name.
      */
-    public String getName();
+    public ResourceLocation getUniqueName();
 
     /**
      * @return All the elements this type can have.

@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -36,6 +38,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     @Override
     public String getTypeName() {
         return "boolean";
+    }
+
+    @Override
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(Reference.MOD_ID, "dummy");
     }
 
     @Override

@@ -54,7 +54,6 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     private Item item;
     @Getter
     private Block block;
-    @Getter
     private final String name;
     @Getter
     private final PartRenderPosition partRenderPosition;
@@ -69,6 +68,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         registerBlock();
     }
 
+    @Override
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(getMod().getModId(), getTranslationKey());
+    }
+
     protected ModBase getMod() {
         return IntegratedDynamics._instance;
     }
@@ -78,7 +82,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * This is mainly used for the block model.
      */
     protected void registerBlock() {
-        BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + getName(),
+        BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + this.name,
                 (eConfig)        -> block = createBlock(eConfig),
                 (eConfig, block) -> item  = createItem(eConfig, block)) {};
         getMod().getConfigHandler().addConfigurable(blockConfig);
@@ -105,12 +109,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getBlockModelPath() {
-        return new ResourceLocation(getMod().getModId(), "part_" + getName());
+        return new ResourceLocation(getMod().getModId(), "part_" + this.name);
     }
 
     @Override
     protected String createTranslationKey() {
-        return "parttype." + getMod().getModId() + "." + getName();
+        return "parttype." + getMod().getModId() + "." + this.name;
     }
 
     @SuppressWarnings("unchecked")
@@ -189,7 +193,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
-        packetBuffer.writeString(this.getName());
+        packetBuffer.writeString(this.getUniqueName().toString());
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {

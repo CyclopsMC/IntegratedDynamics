@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.ByteArrayNBT;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
+import org.cyclops.integrateddynamics.Reference;
 
 /**
  * An NBT byte array wrapper
@@ -30,8 +32,8 @@ public class ValueTypeListProxyNbtValueListByte extends ValueTypeListProxyNbtVal
     public static class Factory extends ValueTypeListProxyNbtValueListGeneric.Factory<ValueTypeListProxyNbtValueListByte, ByteArrayNBT, ValueTypeInteger, ValueTypeInteger.ValueInteger> {
 
         @Override
-        public String getName() {
-            return "nbt.listValueByte";
+        public ResourceLocation getName() {
+            return new ResourceLocation(Reference.MOD_ID, "nbt.list_value_byte");
         }
 
         @Override

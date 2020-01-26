@@ -10,6 +10,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
@@ -57,7 +58,7 @@ public class ContainerAspectSettings extends InventoryContainer {
 
     protected static IAspect<?, ?> readAspect(PacketBuffer packetBuffer) {
         String name = packetBuffer.readString();
-        return Objects.requireNonNull(AspectRegistry.getInstance().getAspect(name),
+        return Objects.requireNonNull(AspectRegistry.getInstance().getAspect(new ResourceLocation(name)),
                 String.format("Could not find an aspect by name %s", name));
     }
 

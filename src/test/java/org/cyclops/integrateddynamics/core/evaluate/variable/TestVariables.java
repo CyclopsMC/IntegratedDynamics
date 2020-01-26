@@ -171,45 +171,45 @@ public class TestVariables {
 
         // Make empty list
         CompoundNBT tagEmptySerialized = new CompoundNBT();
-        tagEmptySerialized.putString("valueType", "valuetype.valuetypes.integrateddynamics.any.name");
+        tagEmptySerialized.putString("valueType", "integrateddynamics:any");
         tagEmptySerialized.put("values", new ListNBT());
         CompoundNBT tagEmpty = new CompoundNBT();
-        tagEmpty.putString("proxyName", "materialized");
+        tagEmpty.putString("proxyName", "integrateddynamics:materialized");
         tagEmpty.put("serialized", tagEmptySerialized);
 
         // Make string list
         CompoundNBT tagStringSerialized = new CompoundNBT();
-        tagStringSerialized.putString("valueType", "valuetype.valuetypes.integrateddynamics.string.name");
+        tagStringSerialized.putString("valueType", "integrateddynamics:string");
         ListNBT listString = new ListNBT();
         listString.add(new StringNBT("a"));
         listString.add(new StringNBT("b"));
         tagStringSerialized.put("values", listString);
         CompoundNBT tagString = new CompoundNBT();
-        tagString.putString("proxyName", "materialized");
+        tagString.putString("proxyName", "integrateddynamics:materialized");
         tagString.put("serialized", tagStringSerialized);
         
         // Make nested list
         CompoundNBT tagStringNestedSerialized = new CompoundNBT();
-        tagStringNestedSerialized.putString("valueType", "valuetype.valuetypes.integrateddynamics.list.name");
+        tagStringNestedSerialized.putString("valueType", "integrateddynamics:list");
         // --> 1
         CompoundNBT tagStringNestedSub1Serialized = new CompoundNBT();
-        tagStringNestedSub1Serialized.putString("valueType", "valuetype.valuetypes.integrateddynamics.string.name");
+        tagStringNestedSub1Serialized.putString("valueType", "integrateddynamics:string");
         ListNBT listStringNestedSub1 = new ListNBT();
         listStringNestedSub1.add(new StringNBT("a"));
         listStringNestedSub1.add(new StringNBT("b"));
         tagStringNestedSub1Serialized.put("values", listStringNestedSub1);
         CompoundNBT tagStringNestedSub1 = new CompoundNBT();
-        tagStringNestedSub1.putString("proxyName", "materialized");
+        tagStringNestedSub1.putString("proxyName", "integrateddynamics:materialized");
         tagStringNestedSub1.put("serialized", tagStringNestedSub1Serialized);
         // --> 2
         CompoundNBT tagStringNestedSub2Serialized = new CompoundNBT();
-        tagStringNestedSub2Serialized.putString("valueType", "valuetype.valuetypes.integrateddynamics.string.name");
+        tagStringNestedSub2Serialized.putString("valueType", "integrateddynamics:string");
         ListNBT listStringNestedSub2 = new ListNBT();
         listStringNestedSub2.add(new StringNBT("c"));
         listStringNestedSub2.add(new StringNBT("d"));
         tagStringNestedSub2Serialized.put("values", listStringNestedSub2);
         CompoundNBT tagStringNestedSub2 = new CompoundNBT();
-        tagStringNestedSub2.putString("proxyName", "materialized");
+        tagStringNestedSub2.putString("proxyName", "integrateddynamics:materialized");
         tagStringNestedSub2.put("serialized", tagStringNestedSub2Serialized);
         // <--
         ListNBT tagStringNestedSerializedArray = new ListNBT();
@@ -217,24 +217,24 @@ public class TestVariables {
         tagStringNestedSerializedArray.add(tagStringNestedSub2);
         tagStringNestedSerialized.put("values", tagStringNestedSerializedArray);
         CompoundNBT tagStringNested = new CompoundNBT();
-        tagStringNested.putString("proxyName", "materialized");
+        tagStringNested.putString("proxyName", "integrateddynamics:materialized");
         tagStringNested.put("serialized", tagStringNestedSerialized);
 
         // Make heterogeneous list
         CompoundNBT tagHeterogeneousSerialized = new CompoundNBT();
-        tagHeterogeneousSerialized.putString("valueType", "valuetype.valuetypes.integrateddynamics.any.name");
+        tagHeterogeneousSerialized.putString("valueType", "integrateddynamics:any");
         ListNBT listHeterogeneous = new ListNBT();
         CompoundNBT valueHeterogeneous1 = new CompoundNBT();
         CompoundNBT valueHeterogeneous2 = new CompoundNBT();
-        valueHeterogeneous1.putString("valueType", "valuetype.valuetypes.integrateddynamics.integer.name");
+        valueHeterogeneous1.putString("valueType", "integrateddynamics:integer");
         valueHeterogeneous1.putInt("value", 42);
-        valueHeterogeneous2.putString("valueType", "valuetype.valuetypes.integrateddynamics.string.name");
+        valueHeterogeneous2.putString("valueType", "integrateddynamics:string");
         valueHeterogeneous2.putString("value", "hello");
         listHeterogeneous.add(valueHeterogeneous1);
         listHeterogeneous.add(valueHeterogeneous2);
         tagHeterogeneousSerialized.put("values", listHeterogeneous);
         CompoundNBT tagHeterogeneous = new CompoundNBT();
-        tagHeterogeneous.putString("proxyName", "materialized");
+        tagHeterogeneous.putString("proxyName", "integrateddynamics:materialized");
         tagHeterogeneous.put("serialized", tagHeterogeneousSerialized);
 
         assertThat("serializing empty list",

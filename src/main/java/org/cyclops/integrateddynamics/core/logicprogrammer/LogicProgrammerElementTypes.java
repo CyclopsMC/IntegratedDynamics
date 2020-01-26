@@ -24,7 +24,7 @@ public class LogicProgrammerElementTypes {
         if(e2 == null) {
             return false;
         }
-        return e1.getType().getName().equals(e2.getType().getName()) && e1.getType().getName(e1).equals(e2.getType().getName(e2));
+        return e1.getType().getUniqueName().equals(e2.getType().getUniqueName()) && e1.getType().getName(e1).equals(e2.getType().getName(e2));
     }
 
 }

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 import java.util.List;
@@ -28,6 +29,6 @@ public interface ILogicProgrammerElementTypeRegistry extends IRegistry {
      * @param name The name.
      * @return The type.
      */
-    public ILogicProgrammerElementType getType(String name);
+    public ILogicProgrammerElementType getType(ResourceLocation name);
 
 }

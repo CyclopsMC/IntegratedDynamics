@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.part.write;
 
 import com.google.common.collect.Maps;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -36,14 +37,14 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
 
     @Override
     public void writeToNBT(CompoundNBT tag) {
-        if (this.activeAspect != null) tag.putString("activeAspectName", this.activeAspect.getTranslationKey());
+        if (this.activeAspect != null) tag.putString("activeAspectName", this.activeAspect.getUniqueName().toString());
         NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, tag);
         super.writeToNBT(tag);
     }
 
     @Override
     public void readFromNBT(CompoundNBT tag) {
-        IAspect aspect = Aspects.REGISTRY.getAspect(tag.getString("activeAspectName"));
+        IAspect aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(tag.getString("activeAspectName")));
         if (aspect instanceof IAspectWrite) {
             this.activeAspect = (IAspectWrite) aspect;
         }
@@ -101,7 +102,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
 
     @Override
     public List<ITextComponent> getErrors(IAspectWrite aspect) {
-        List<ITextComponent> errors = errorMessages.get(aspect.getTranslationKey());
+        List<ITextComponent> errors = errorMessages.get(aspect.getUniqueName().toString());
         if(errors == null) {
             return Collections.emptyList();
         }
@@ -111,9 +112,9 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     @Override
     public void addError(IAspectWrite aspect, ITextComponent error) {
         if(error == null) {
-            errorMessages.remove(aspect.getTranslationKey());
+            errorMessages.remove(aspect.getUniqueName().toString());
         } else {
-            CollectionHelpers.addToMapList(errorMessages, aspect.getTranslationKey(), error);
+            CollectionHelpers.addToMapList(errorMessages, aspect.getUniqueName().toString(), error);
         }
         onDirty();
         sendUpdate(); // We want this error messages to be sent to the client(s).

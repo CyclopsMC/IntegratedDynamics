@@ -5,6 +5,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
@@ -145,7 +146,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
                 // Update state
                 ValueNotifierHelpers.setValue(this, enabledId, partState.isEnabled());
-                ValueNotifierHelpers.setValue(this, activeAspectId, partState.getActiveAspect() != null ? partState.getActiveAspect().getTranslationKey() : "");
+                ValueNotifierHelpers.setValue(this, activeAspectId, partState.getActiveAspect() != null ? partState.getActiveAspect().getUniqueName().toString() : "");
             }
         } catch (PartStateException e) {
             player.closeScreen();
@@ -179,7 +180,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     @Nullable
     public IAspect getPartStateActiveAspect() {
-        return AspectRegistry.getInstance().getAspect(ValueNotifierHelpers.getValueString(this, activeAspectId));
+        return AspectRegistry.getInstance().getAspect(new ResourceLocation(ValueNotifierHelpers.getValueString(this, activeAspectId)));
     }
 
 }

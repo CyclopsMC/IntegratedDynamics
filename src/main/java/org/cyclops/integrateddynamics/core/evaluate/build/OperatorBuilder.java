@@ -236,8 +236,7 @@ public class OperatorBuilder<O> {
                     Objects.requireNonNull(operatorBuilder.operatorName),
                     Objects.requireNonNull(operatorBuilder.inputTypes),
                     Objects.requireNonNull(operatorBuilder.outputType),
-                    Objects.requireNonNull(deriveFunction(operatorBuilder)),
-                    Objects.requireNonNull(operatorBuilder.renderPattern));
+                    Objects.requireNonNull(deriveFunction(operatorBuilder)), Objects.requireNonNull(operatorBuilder.renderPattern));
             this.modId = Objects.requireNonNull(operatorBuilder.modId);
             this.unlocalizedType = deriveUnlocalizedType(operatorBuilder);
             this.conditionalOutputTypeDeriver = operatorBuilder.conditionalOutputTypeDeriver;

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -25,6 +26,11 @@ import java.util.List;
  * @author rubensworks
  */
 public interface IAspect<V extends IValue, T extends IValueType<V>> {
+
+    /**
+     * @return The unique name for this aspecy, only used for internal storage.
+     */
+    public ResourceLocation getUniqueName();
 
     /**
      * @return The unique unlocalized name for this aspect.
@@ -123,7 +129,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
         @Override
         public int compare(IAspect o1, IAspect o2) {
-            return o1.getTranslationKey().compareTo(o2.getTranslationKey());
+            return o1.getUniqueName().compareTo(o2.getUniqueName());
         }
     }
 

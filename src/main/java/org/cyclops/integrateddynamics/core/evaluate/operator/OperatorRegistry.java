@@ -13,9 +13,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.JSONUtils;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -70,7 +72,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     @Override
     public <O extends IOperator> O register(O operator) {
         operators.add(operator);
-        namedOperators.put(operator.getUniqueName(), operator);
+        namedOperators.put(operator.getUniqueName().toString(), operator);
         inputTypedOperators.put(ImmutableList.copyOf(operator.getInputTypes()), operator);
         outputTypedOperators.put(operator.getOutputType(), operator);
         categoryOperators.put(operator.getUnlocalizedCategoryName(), operator);
@@ -83,8 +85,8 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public IOperator getOperator(String uniqueName) {
-        return namedOperators.get(uniqueName);
+    public IOperator getOperator(ResourceLocation uniqueName) {
+        return namedOperators.get(uniqueName.toString());
     }
 
     @Override
@@ -105,7 +107,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     @Override
     public void registerSerializer(IOperatorSerializer serializer) {
         serializers.add(serializer);
-        namedSerializers.put(serializer.getUniqueName(), serializer);
+        namedSerializers.put(serializer.getUniqueName().toString(), serializer);
     }
 
     @Override
@@ -113,7 +115,7 @@ public class OperatorRegistry implements IOperatorRegistry {
         for (IOperatorSerializer serializer : serializers) {
             if (serializer.canHandle(value)) {
                 CompoundNBT tag = new CompoundNBT();
-                tag.putString("serializer", serializer.getUniqueName());
+                tag.putString("serializer", serializer.getUniqueName().toString());
                 tag.put("value", serializer.serialize(value));
                 return tag;
             }
@@ -136,8 +138,8 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public String getTypeId() {
-        return "operator";
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(Reference.MOD_ID, "operator");
     }
 
     @Override
@@ -170,7 +172,7 @@ public class OperatorRegistry implements IOperatorRegistry {
         JsonElement operatorElement = element.get("operator");
         IOperator operator = null;
         if (operatorElement != null && !operatorElement.isJsonNull()) {
-            operator = Operators.REGISTRY.getOperator(JSONUtils.getString(element, "operator"));
+            operator = Operators.REGISTRY.getOperator(new ResourceLocation(JSONUtils.getString(element, "operator")));
             if (operator == null) {
                 throw new JsonSyntaxException("Unknown operator type '" + JSONUtils.getString(element, "operator")
                         + "', valid types are: " + Operators.REGISTRY.getOperators().stream()

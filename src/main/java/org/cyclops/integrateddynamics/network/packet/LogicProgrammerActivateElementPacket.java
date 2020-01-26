@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,9 +26,9 @@ public class LogicProgrammerActivateElementPacket extends PacketCodec {
 
     }
 
-    public LogicProgrammerActivateElementPacket(String typeId, String elementId) {
-		this.typeId = typeId;
-        this.elementId = elementId;
+    public LogicProgrammerActivateElementPacket(ResourceLocation typeId, ResourceLocation elementId) {
+		this.typeId = typeId.toString();
+        this.elementId = elementId.toString();
     }
 
 	@Override
@@ -44,7 +45,8 @@ public class LogicProgrammerActivateElementPacket extends PacketCodec {
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
 		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			((ContainerLogicProgrammerBase) player.openContainer).setActiveElementById(typeId, elementId);
+			((ContainerLogicProgrammerBase) player.openContainer).setActiveElementById(
+					new ResourceLocation(typeId), new ResourceLocation(elementId));
 		}
 	}
 	

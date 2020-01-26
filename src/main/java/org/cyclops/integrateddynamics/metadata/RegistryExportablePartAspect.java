@@ -21,7 +21,7 @@ public class RegistryExportablePartAspect implements IRegistryExportable {
         for (IPartType partType : PartTypes.REGISTRY.getPartTypes()) {
             JsonArray array = new JsonArray();
             for (IAspect aspect : Aspects.REGISTRY.getAspects(partType)) {
-                array.add(aspect.getTranslationKey());
+                array.add(aspect.getUniqueName().toString());
             }
             element.add(partType.getTranslationKey(), array);
         }

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.part;
 
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 import java.util.Collection;
@@ -29,6 +30,6 @@ public interface IPartTypeRegistry extends IRegistry {
      * @param partName The unique part type name.
      * @return The associated part type or null.
      */
-    public IPartType getPartType(String partName);
+    public IPartType getPartType(ResourceLocation partName);
 
 }

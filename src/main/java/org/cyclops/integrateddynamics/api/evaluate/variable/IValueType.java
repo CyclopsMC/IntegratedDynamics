@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -38,6 +39,11 @@ public interface IValueType<V extends IValue> {
      * @return The name of this type without any prefixes.
      */
     public String getTypeName();
+
+    /**
+     * @return The unique name for this value type, only used for internal storage.
+     */
+    public ResourceLocation getUniqueName();
 
     /**
      * @return The unique name of this type that will also be used for display.
@@ -160,7 +166,7 @@ public interface IValueType<V extends IValue> {
 
         @Override
         public int compare(IValueType<?> o1, IValueType<?> o2) {
-            return o1.getTranslationKey().compareTo(o2.getTranslationKey());
+            return o1.getUniqueName().compareTo(o2.getUniqueName());
         }
     }
 

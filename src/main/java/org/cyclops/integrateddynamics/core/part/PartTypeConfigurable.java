@@ -19,7 +19,6 @@ import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
-import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -56,7 +55,7 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
     @Override
     public void writeExtraGuiDataSettings(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
         PacketCodec.write(packetBuffer, pos);
-        packetBuffer.writeString(this.getName());
+        packetBuffer.writeString(this.getUniqueName().toString());
     }
 
 }

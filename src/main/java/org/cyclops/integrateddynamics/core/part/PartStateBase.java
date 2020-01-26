@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
@@ -87,7 +88,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         ListNBT list = new ListNBT();
         for(Map.Entry<IAspect, IAspectProperties> entry : aspectProperties.entrySet()) {
             CompoundNBT entryTag = new CompoundNBT();
-            entryTag.putString("key", entry.getKey().getTranslationKey());
+            entryTag.putString("key", entry.getKey().getUniqueName().toString());
             if(entry.getValue() != null) {
                 entryTag.put("value", entry.getValue().toNBT());
             }
@@ -103,7 +104,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         if(list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT entryTag = list.getCompound(i);
-                IAspect key = Aspects.REGISTRY.getAspect(entryTag.getString("key"));
+                IAspect key = Aspects.REGISTRY.getAspect(new ResourceLocation(entryTag.getString("key")));
                 IAspectProperties value = null;
                 if (entryTag.contains("value")) {
                     value = new AspectProperties();

@@ -9,6 +9,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.JsonDeserializers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
@@ -57,7 +58,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     @Override
     public <V extends IValue, T extends IValueType<V>> T register(T valueType) {
-        valueTypes.put(valueType.getTranslationKey(), valueType);
+        valueTypes.put(valueType.getUniqueName().toString(), valueType);
         return valueType;
     }
 
@@ -67,8 +68,8 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public IValueType getValueType(String name) {
-        return valueTypes.get(name);
+    public IValueType getValueType(ResourceLocation name) {
+        return valueTypes.get(name.toString());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -95,8 +96,8 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public String getTypeId() {
-        return "valuetype";
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(Reference.MOD_ID, "valuetype");
     }
 
     @Override
@@ -105,7 +106,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
                 || !tag.contains("value")) {
             return INVALID_FACADE;
         }
-        IValueType type = getValueType(tag.getString("typeName"));
+        IValueType type = getValueType(new ResourceLocation(tag.getString("typeName")));
         if(type == null) {
             return INVALID_FACADE;
         }
@@ -115,7 +116,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     @Override
     public void setVariableFacade(CompoundNBT tag, IValueTypeVariableFacade variableFacade) {
-        tag.putString("typeName", variableFacade.getValueType().getTranslationKey());
+        tag.putString("typeName", variableFacade.getValueType().getUniqueName().toString());
         tag.put("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
     }
 

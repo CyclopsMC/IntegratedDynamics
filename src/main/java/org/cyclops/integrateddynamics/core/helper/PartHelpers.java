@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -138,7 +139,7 @@ public class PartHelpers {
      * @param partType The part type to write.
      */
     public static void writePartTypeToNBT(CompoundNBT partTag, Direction side, IPartType partType) {
-        partTag.putString("__partType", partType.getName());
+        partTag.putString("__partType", partType.getUniqueName().toString());
         partTag.putString("__side", side.getName());
     }
 
@@ -159,7 +160,7 @@ public class PartHelpers {
         } catch (Exception e) {
             e.printStackTrace();
             IntegratedDynamics.clog(Level.ERROR,  String.format("The part %s at position %s was errored " +
-                    "and is removed.", part.getName(), pos));
+                    "and is removed.", part.getUniqueName(), pos));
             return false;
         }
     }
@@ -190,7 +191,7 @@ public class PartHelpers {
      */
     public static Pair<Direction, IPartType> readPartTypeFromNBT(@Nullable INetwork network, BlockPos pos, CompoundNBT partTag) {
         String partTypeName = partTag.getString("__partType");
-        IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(partTypeName));
+        IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(new ResourceLocation(partTypeName)));
         if(partType != null) {
             Direction side = Direction.byName(partTag.getString("__side"));
             if (side != null) {
@@ -198,7 +199,7 @@ public class PartHelpers {
             } else {
                 IntegratedDynamics.clog(Level.WARN, String.format("The part %s at position %s was at an invalid " +
                                 "side and removed.",
-                        partType.getName(), pos));
+                        partType.getUniqueName(), pos));
             }
         } else {
             IntegratedDynamics.clog(Level.WARN, String.format("The part %s at position %s was unknown and removed.",
@@ -445,7 +446,7 @@ public class PartHelpers {
      */
     public static void openContainerAspectSettings(ServerPlayerEntity player, PartPos pos, IAspect<?, ?> aspect) {
         NetworkHooks.openGui(player, aspect.getPropertiesContainerProvider(pos),
-                packetBuffer -> packetBuffer.writeString(aspect.getTranslationKey()));
+                packetBuffer -> packetBuffer.writeString(aspect.getUniqueName().toString()));
     }
 
     /**
@@ -487,7 +488,7 @@ public class PartHelpers {
      */
     public static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
         String name = packetBuffer.readString();
-        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(name),
+        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(new ResourceLocation(name)),
                 String.format("Could not find a part by name %s", name));
     }
 

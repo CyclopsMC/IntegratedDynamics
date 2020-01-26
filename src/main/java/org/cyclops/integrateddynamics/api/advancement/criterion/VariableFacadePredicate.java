@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.util.JSONUtils;
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -44,7 +45,7 @@ public class VariableFacadePredicate<V extends IVariableFacade> {
             JsonElement typeElement = jsonobject.get("type");
             if (typeElement != null && !typeElement.isJsonNull()) {
                 String type = JSONUtils.getString(jsonobject, "type");
-                handler = VARIABLE_FACADE_HANDLER_REGISTRY.getHandler(type);
+                handler = VARIABLE_FACADE_HANDLER_REGISTRY.getHandler(new ResourceLocation(type));
                 if (handler == null) {
                     throw new JsonSyntaxException("Unknown variable type '" + type + "', valid types are: "
                             + VARIABLE_FACADE_HANDLER_REGISTRY.getHandlerNames());

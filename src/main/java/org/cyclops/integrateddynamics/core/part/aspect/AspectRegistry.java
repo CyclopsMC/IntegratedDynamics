@@ -15,6 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
@@ -95,7 +96,7 @@ public final class AspectRegistry implements IAspectRegistry {
             partAspects.put(partType, aspects);
         }
         aspects.add(aspect);
-        unlocalizedAspects.put(aspect.getTranslationKey(), aspect);
+        unlocalizedAspects.put(aspect.getUniqueName().toString(), aspect);
     }
 
     @Override
@@ -148,8 +149,8 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public IAspect getAspect(String translationKey) {
-        return unlocalizedAspects.get(translationKey);
+    public IAspect getAspect(ResourceLocation name) {
+        return unlocalizedAspects.get(name.toString());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -171,8 +172,8 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public String getTypeId() {
-        return "aspect";
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(Reference.MOD_ID, "aspect");
     }
 
     @Override
@@ -182,7 +183,7 @@ public final class AspectRegistry implements IAspectRegistry {
             return INVALID_FACADE;
         }
         int partId = tag.getInt("partId");
-        IAspect aspect = getAspect(tag.getString("aspectName"));
+        IAspect aspect = getAspect(new ResourceLocation(tag.getString("aspectName")));
         if(aspect == null) {
             return INVALID_FACADE;
         }
@@ -192,7 +193,7 @@ public final class AspectRegistry implements IAspectRegistry {
     @Override
     public void setVariableFacade(CompoundNBT tag, IAspectVariableFacade variableFacade) {
         tag.putInt("partId", variableFacade.getPartId());
-        tag.putString("aspectName", variableFacade.getAspect().getTranslationKey());
+        tag.putString("aspectName", variableFacade.getAspect().getUniqueName().toString());
     }
 
     @Override
@@ -200,10 +201,10 @@ public final class AspectRegistry implements IAspectRegistry {
         JsonElement aspectElement = element.get("aspect");
         IAspect aspect = null;
         if (aspectElement != null && !aspectElement.isJsonNull()) {
-            aspect = Aspects.REGISTRY.getAspect(JSONUtils.getString(element, "aspect"));
+            aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(JSONUtils.getString(element, "aspect")));
             if (aspect == null) {
                 throw new JsonSyntaxException("Unknown aspect type '" + JSONUtils.getString(element, "aspect") + "', valid types are: "
-                        + Aspects.REGISTRY.getAspects().stream().map(IAspect::getTranslationKey).collect(Collectors.toList()));
+                        + Aspects.REGISTRY.getAspects().stream().map(IAspect::getUniqueName).collect(Collectors.toList()));
             }
         }
         return new AspectVariablePredicate(valueType, valuePredicate, aspect);

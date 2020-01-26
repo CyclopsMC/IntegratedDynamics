@@ -2678,10 +2678,10 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_BY_NAME = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
             .inputType(ValueTypes.STRING).output(ValueTypes.OPERATOR)
-            .symbol("op_by_name").operatorName("byName")
+            .symbol("op_by_name").operatorName("by_name")
             .function(input -> {
                 ValueTypeString.ValueString name = input.getValue(0);
-                IOperator operator = Operators.REGISTRY.getOperator(name.getRawValue());
+                IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.tryCreate(name.getRawValue()));
                 if (operator == null) {
                     throw new EvaluationException("Could not find the operator with name " + name.getRawValue());
                 }
@@ -2740,7 +2740,7 @@ public final class Operators {
      * The NBT boolean value
      */
     public static final IOperator NBT_VALUE_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.BOOLEAN).operatorName("valueBoolean").symbol("NBT.boolean")
+            .output(ValueTypes.BOOLEAN).operatorName("value_boolean").symbol("NBT.boolean")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(
                     o -> o.map(tag -> tag instanceof NumberNBT && ((NumberNBT) tag).getByte() != 0).orElse(false)
             )).build());
@@ -2749,7 +2749,7 @@ public final class Operators {
      * The NBT integer value
      */
     public static final IOperator NBT_VALUE_INTEGER = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.INTEGER).operatorName("valueInteger").symbol("NBT.integer")
+            .output(ValueTypes.INTEGER).operatorName("value_integer").symbol("NBT.integer")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_INT.build(
                     o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getInt() : 0).orElse(0)
             )).build());
@@ -2758,7 +2758,7 @@ public final class Operators {
      * The NBT long value
      */
     public static final IOperator NBT_VALUE_LONG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LONG).operatorName("valueLong").symbol("NBT.long")
+            .output(ValueTypes.LONG).operatorName("value_long").symbol("NBT.long")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_LONG.build(
                     o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getLong() : 0).orElse(0L)
             )).build());
@@ -2767,7 +2767,7 @@ public final class Operators {
      * The NBT double value
      */
     public static final IOperator NBT_VALUE_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.DOUBLE).operatorName("valueDouble").symbol("NBT.double")
+            .output(ValueTypes.DOUBLE).operatorName("value_double").symbol("NBT.double")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_DOUBLE.build(
                     o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getDouble() : 0).orElse(0D)
             )).build());
@@ -2776,7 +2776,7 @@ public final class Operators {
      * The NBT string value
      */
     public static final IOperator NBT_VALUE_STRING = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.STRING).operatorName("valueString").symbol("NBT.string")
+            .output(ValueTypes.STRING).operatorName("value_string").symbol("NBT.string")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(
                     o -> o.map(tag -> tag instanceof StringNBT ? tag.getString() : "").orElse("")
             )).build());
@@ -2785,7 +2785,7 @@ public final class Operators {
      * The NBT tag value
      */
     public static final IOperator NBT_VALUE_TAG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.NBT).operatorName("valueTag").symbol("NBT.tag")
+            .output(ValueTypes.NBT).operatorName("value_tag").symbol("NBT.tag")
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_NBT.build(
                     o -> o.map(tag -> tag instanceof CompoundNBT ? (CompoundNBT) tag : new CompoundNBT()).orElseGet(CompoundNBT::new)
             )).build());
@@ -2794,7 +2794,7 @@ public final class Operators {
      * The NBT tag list value
      */
     public static final IOperator NBT_VALUE_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("valueListTag").symbol("NBT.list_tag")
+            .output(ValueTypes.LIST).operatorName("value_list_tag").symbol("NBT.list_tag")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0);
                 ValueTypeString.ValueString key = variables.getValue(1);
@@ -2805,7 +2805,7 @@ public final class Operators {
      * The NBT boolean list value
      */
     public static final IOperator NBT_VALUE_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("valueListByte").symbol("NBT.list_byte")
+            .output(ValueTypes.LIST).operatorName("value_list_byte").symbol("NBT.list_byte")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0);
                 ValueTypeString.ValueString key = variables.getValue(1);
@@ -2816,7 +2816,7 @@ public final class Operators {
      * The NBT int list value
      */
     public static final IOperator NBT_VALUE_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("valueListInt").symbol("NBT.list_int")
+            .output(ValueTypes.LIST).operatorName("value_list_int").symbol("NBT.list_int")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0);
                 ValueTypeString.ValueString key = variables.getValue(1);
@@ -2849,7 +2849,7 @@ public final class Operators {
     public static final IOperator NBT_WITH_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.BOOLEAN)
-            .operatorName("withBoolean").symbol("NBT.with_boolean")
+            .operatorName("with_boolean").symbol("NBT.with_boolean")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeBoolean.ValueBoolean value = input.getRight().getValue(0);
                 CompoundNBT tag = input.getLeft();
@@ -2862,7 +2862,7 @@ public final class Operators {
      */
     public static final IOperator NBT_WITH_SHORT = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.INTEGER)
-            .operatorName("withShort").symbol("NBT.with_short")
+            .operatorName("with_short").symbol("NBT.with_short")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeInteger.ValueInteger value = input.getRight().getValue(0);
                 CompoundNBT tag = input.getLeft();
@@ -2875,7 +2875,7 @@ public final class Operators {
      */
     public static final IOperator NBT_WITH_INTEGER = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.INTEGER)
-            .operatorName("withInteger").symbol("NBT.with_integer")
+            .operatorName("with_integer").symbol("NBT.with_integer")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeInteger.ValueInteger value = input.getRight().getValue(0);
                 CompoundNBT tag = input.getLeft();
@@ -2888,7 +2888,7 @@ public final class Operators {
      */
     public static final IOperator NBT_WITH_LONG = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LONG)
-            .operatorName("withLong").symbol("NBT.with_long")
+            .operatorName("with_long").symbol("NBT.with_long")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeLong.ValueLong value = input.getRight().getValue(0);
                 CompoundNBT tag = input.getLeft();
@@ -2901,7 +2901,7 @@ public final class Operators {
      */
     public static final IOperator NBT_WITH_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.DOUBLE)
-            .operatorName("withDouble").symbol("NBT.with_double")
+            .operatorName("with_double").symbol("NBT.with_double")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeDouble.ValueDouble value = input.getRight().getValue(0);
                 CompoundNBT tag = input.getLeft();
@@ -2914,7 +2914,7 @@ public final class Operators {
      */
     public static final IOperator NBT_WITH_FLOAT = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.DOUBLE)
-            .operatorName("withFloat").symbol("NBT.with_float")
+            .operatorName("with_float").symbol("NBT.with_float")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeDouble.ValueDouble value = input.getRight().getValue(0);
                 CompoundNBT tag = input.getLeft();
@@ -2927,7 +2927,7 @@ public final class Operators {
      */
     public static final IOperator NBT_WITH_STRING = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING)
-            .operatorName("withString").symbol("NBT.with_string")
+            .operatorName("with_string").symbol("NBT.with_string")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeString.ValueString value = input.getRight().getValue(0);
                 CompoundNBT tag = input.getLeft();
@@ -2940,7 +2940,7 @@ public final class Operators {
      */
     public static final IOperator NBT_WITH_TAG = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.NBT)
-            .operatorName("withTag").symbol("NBT.with_tag")
+            .operatorName("with_tag").symbol("NBT.with_tag")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeNbt.ValueNbt value = input.getRight().getValue(0);
                 CompoundNBT tag = input.getLeft();
@@ -2954,7 +2954,7 @@ public final class Operators {
     public static final IOperator NBT_WITH_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("withListTag").symbol("NBT.with_tag_list")
+            .operatorName("with_list_tag").symbol("NBT.with_tag_list")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
                 @Override
                 public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
@@ -2982,7 +2982,7 @@ public final class Operators {
     public static final IOperator NBT_WITH_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("withListByte").symbol("NBT.with_byte_list")
+            .operatorName("with_list_byte").symbol("NBT.with_byte_list")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
                 @Override
                 public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
@@ -3010,7 +3010,7 @@ public final class Operators {
     public static final IOperator NBT_WITH_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("withListInt").symbol("NBT.with_int_list")
+            .operatorName("with_list_int").symbol("NBT.with_int_list")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
                 @Override
                 public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
@@ -3038,7 +3038,7 @@ public final class Operators {
     public static final IOperator NBT_WITH_LIST_LONG = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("withListLong").symbol("NBT.with_list_long")
+            .operatorName("with_list_long").symbol("NBT.with_list_long")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
                 @Override
                 public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
@@ -3143,7 +3143,7 @@ public final class Operators {
      * Set an ingredient item
      */
     public static final IOperator INGREDIENTS_WITH_ITEM = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_ITEMSTACK
-            .operatorName("withItem").symbol("Ingr.with_item")
+            .operatorName("with_item").symbol("Ingr.with_item")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1);
@@ -3160,7 +3160,7 @@ public final class Operators {
      * Set an ingredient fluid
      */
     public static final IOperator INGREDIENTS_WITH_FLUID = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_FLUIDSTACK
-            .operatorName("withFluid").symbol("Ingr.with_fluid")
+            .operatorName("with_fluid").symbol("Ingr.with_fluid")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1);
@@ -3177,7 +3177,7 @@ public final class Operators {
      * Set an ingredient energy
      */
     public static final IOperator INGREDIENTS_WITH_ENERGY = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_INTEGER
-            .operatorName("withEnergy").symbol("Ingr.with_energy")
+            .operatorName("with_energy").symbol("Ingr.with_energy")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1);
@@ -3194,7 +3194,7 @@ public final class Operators {
      * Set the list of items
      */
     public static final IOperator INGREDIENTS_WITH_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
-            .operatorName("withItems").symbol("Ingr.with_items")
+            .operatorName("with_items").symbol("Ingr.with_items")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0);
                 ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> list = variables.getValue(1);
@@ -3210,7 +3210,7 @@ public final class Operators {
      * Set the list of fluids
      */
     public static final IOperator INGREDIENTS_WITH_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
-            .operatorName("withFluids").symbol("Ingr.with_fluids")
+            .operatorName("with_fluids").symbol("Ingr.with_fluids")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0);
                 ValueTypeList.ValueList<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> list = variables.getValue(1);
@@ -3227,7 +3227,7 @@ public final class Operators {
      */
     public static final IOperator INGREDIENTS_WITH_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
             .renderPattern(IConfigRenderPattern.INFIX_VERYLONG)
-            .operatorName("withEnergies").symbol("Ingr.with_energies")
+            .operatorName("with_energies").symbol("Ingr.with_energies")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0);
                 ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = variables.getValue(1);
@@ -3276,7 +3276,7 @@ public final class Operators {
      */
     public static final IOperator RECIPE_WITH_INPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_INFIX
             .output(ValueTypes.OBJECT_RECIPE)
-            .operatorName("withInput").symbol("Recipe.with_in")
+            .operatorName("with_input").symbol("Recipe.with_in")
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe valueRecipe = variables.getValue(0);
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(1);
@@ -3303,7 +3303,7 @@ public final class Operators {
      */
     public static final IOperator RECIPE_WITH_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_INFIX
             .output(ValueTypes.OBJECT_RECIPE)
-            .operatorName("withOutput").symbol("Recipe.with_out")
+            .operatorName("with_output").symbol("Recipe.with_out")
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe valueRecipe = variables.getValue(0);
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(1);
@@ -3326,7 +3326,7 @@ public final class Operators {
      */
     public static final IOperator RECIPE_WITH_INPUT_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_PREFIX
             .output(ValueTypes.OBJECT_RECIPE)
-            .operatorName("withInputOutput").symbol("Recipe.with_io")
+            .operatorName("with_input_output").symbol("Recipe.with_io")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients valueIn = variables.getValue(0);
                 ValueObjectTypeIngredients.ValueIngredients valueOut = variables.getValue(1);

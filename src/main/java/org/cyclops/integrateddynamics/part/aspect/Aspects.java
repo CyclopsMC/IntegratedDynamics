@@ -35,6 +35,7 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.IValueInterface;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -511,7 +512,7 @@ public class Aspects {
                             ))).appendKind("recipeoutputbyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerOutput.class, "positionedRecipeHandlerOutput"));
+                        PositionedOperatorRecipeHandlerOutput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_output")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEINPUTS =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(input ->
@@ -520,7 +521,7 @@ public class Aspects {
                             ))).appendKind("recipeinputsbyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerInputs.class, "positionedRecipeHandlerInputs"));
+                        PositionedOperatorRecipeHandlerInputs.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_inputs")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPESBYINPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -529,7 +530,7 @@ public class Aspects {
                             ))).appendKind("recipesbyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipesByInput.class, "positionedRecipeHandlerRecipesByInput"));
+                        PositionedOperatorRecipeHandlerRecipesByInput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_input")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPESBYOUTPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -538,7 +539,7 @@ public class Aspects {
                             ))).appendKind("recipesbyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipesByOutput.class, "positionedRecipeHandlerRecipesByOutput"));
+                        PositionedOperatorRecipeHandlerRecipesByOutput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_output")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYINPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -547,7 +548,7 @@ public class Aspects {
                             ))).appendKind("recipebyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipeByInput.class, "positionedRecipeHandlerRecipeByInput"));
+                        PositionedOperatorRecipeHandlerRecipeByInput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_input")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYOUTPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -556,7 +557,7 @@ public class Aspects {
                             ))).appendKind("recipebyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipeByOutput.class, "positionedRecipeHandlerRecipeByOutput"));
+                        PositionedOperatorRecipeHandlerRecipeByOutput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_output")));
             }
 
             public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IEnergyStorage>

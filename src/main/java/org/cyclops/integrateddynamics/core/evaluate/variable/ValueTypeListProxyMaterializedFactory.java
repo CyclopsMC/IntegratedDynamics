@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -17,8 +19,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyF
 public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProxyFactoryTypeRegistry.IProxyFactory<IValueType<IValue>, IValue, ValueTypeListProxyMaterialized<IValueType<IValue>, IValue>> {
 
     @Override
-    public String getName() {
-        return "materialized";
+    public ResourceLocation getName() {
+        return new ResourceLocation(Reference.MOD_ID, "materialized");
     }
 
     @Override
@@ -36,7 +38,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
                 heterogeneous = true;
             }
         } catch (EvaluationException e) {}
-        tag.putString("valueType", valueType.getTranslationKey());
+        tag.putString("valueType", valueType.getUniqueName().toString());
         tag.put("values", list);
 
         // Store values
@@ -44,7 +46,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
             INBT valueSerialized = ValueHelpers.serializeRaw(value);
             if(heterogeneous) {
                 CompoundNBT valueTag = new CompoundNBT();
-                valueTag.putString("valueType", value.getType().getTranslationKey());
+                valueTag.putString("valueType", value.getType().getUniqueName().toString());
                 valueTag.put("value", valueSerialized);
                 list.add(valueTag);
             } else {
@@ -69,7 +71,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
         }
 
         String valueTypeName = tag.getString("valueType");
-        IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(valueTypeName);
+        IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valueTypeName));
         if (valueType == null) {
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", valueTypeName));
         }
@@ -83,7 +85,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
             INBT valueSerialized;
             if (heterogeneous) {
                 String subValueTypeName = ((CompoundNBT) valueTag).getString("valueType");
-                elementValueType = ValueTypes.REGISTRY.getValueType(subValueTypeName);
+                elementValueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(subValueTypeName));
                 if (elementValueType == null) {
                     throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", subValueTypeName));
                 }

@@ -1,8 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.item.ProxyVariableFacade;
@@ -26,8 +27,8 @@ public class ProxyVariableFacadeHandler implements IVariableFacadeHandler<IProxy
     }
 
     @Override
-    public String getTypeId() {
-        return "proxy";
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(Reference.MOD_ID, "proxy");
     }
 
     @Override

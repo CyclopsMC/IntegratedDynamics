@@ -19,7 +19,7 @@ public abstract class ValueTypeListProxyEntityBase<T extends IValueType<V>, V ex
     private String world;
     private int entity;
 
-    public ValueTypeListProxyEntityBase(String name, T valueType, World world, Entity entity) {
+    public ValueTypeListProxyEntityBase(ResourceLocation name, T valueType, World world, Entity entity) {
         super(name, valueType);
         this.world = (world == null ? DimensionType.OVERWORLD : world.getDimension().getType()).getRegistryName().toString();
         this.entity = entity == null ? -1 : entity.getEntityId();

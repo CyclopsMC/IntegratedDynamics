@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -38,8 +40,8 @@ public class ValueTypeListProxyTail<T extends IValueType<V>, V extends IValue> e
     public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyTail<IValueType<IValue>, IValue>> {
 
         @Override
-        public String getName() {
-            return "tail";
+        public ResourceLocation getName() {
+            return new ResourceLocation(Reference.MOD_ID, "tail");
         }
 
         @Override

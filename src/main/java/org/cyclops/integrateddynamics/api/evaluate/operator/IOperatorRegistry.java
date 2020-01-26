@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -33,7 +34,7 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
      * @param operatorName The unique operator name.
      * @return The corresponding operator or null.
      */
-    public IOperator getOperator(String operatorName);
+    public IOperator getOperator(ResourceLocation operatorName);
 
     /**
      * Get the operators with the given input value types in that specific order.

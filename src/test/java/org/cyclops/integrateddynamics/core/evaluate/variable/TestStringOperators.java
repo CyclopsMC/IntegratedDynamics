@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -94,7 +95,7 @@ public class TestStringOperators {
             }
 
             @Override
-            public String getName() {
+            public ResourceLocation getName() {
                 return null;
             }
 

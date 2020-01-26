@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -58,7 +59,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public void registerHandler(IVariableFacadeHandler variableFacadeHandler) {
-        handlers.put(variableFacadeHandler.getTypeId(), variableFacadeHandler);
+        handlers.put(variableFacadeHandler.getUniqueName().toString(), variableFacadeHandler);
     }
 
     @Override
@@ -80,7 +81,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
         String type = tagCompound.getString("_type");
         int id = tagCompound.getInt("_id");
-        IVariableFacadeHandler handler = getHandler(type);
+        IVariableFacadeHandler handler = getHandler(new ResourceLocation(type));
         if(handler != null) {
             return handler.getVariableFacade(id, tagCompound);
         }
@@ -89,8 +90,8 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Nullable
     @Override
-    public IVariableFacadeHandler getHandler(String type) {
-        return handlers.get(type);
+    public IVariableFacadeHandler getHandler(ResourceLocation type) {
+        return handlers.get(type.toString());
     }
 
     @Override
@@ -100,7 +101,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public <F extends IVariableFacade> void write(CompoundNBT tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
-        tagCompound.putString("_type", handler.getTypeId());
+        tagCompound.putString("_type", handler.getUniqueName().toString());
         tagCompound.putInt("_id", variableFacade.getId());
         handler.setVariableFacade(tagCompound, variableFacade);
     }

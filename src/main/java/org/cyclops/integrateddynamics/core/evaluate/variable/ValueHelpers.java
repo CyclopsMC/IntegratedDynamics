@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -160,7 +161,7 @@ public class ValueHelpers {
      */
     public static CompoundNBT serialize(IValue value) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putString("valueType", value.getType().getTranslationKey());
+        tag.putString("valueType", value.getType().getUniqueName().toString());
         tag.put("value", serializeRaw(value));
         return tag;
     }
@@ -171,7 +172,7 @@ public class ValueHelpers {
      * @return The value.
      */
     public static IValue deserialize(CompoundNBT tag) {
-        IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
+        IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
         if (valueType == null) {
             return null;
         }

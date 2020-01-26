@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.ResourceLocation;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 
@@ -21,18 +23,18 @@ public class SingleLPElementType<E extends ILogicProgrammerElement> implements I
     }
 
     @Override
-    public E getByName(String name) {
+    public E getByName(ResourceLocation name) {
         return constructor.construct();
     }
 
     @Override
-    public String getName(E element) {
-        return "";
+    public ResourceLocation getName(E element) {
+        return new ResourceLocation("");
     }
 
     @Override
-    public String getName() {
-        return "single:" + id;
+    public ResourceLocation getUniqueName() {
+        return new ResourceLocation(Reference.MOD_ID, "single_" + id);
     }
 
     @Override

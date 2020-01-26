@@ -89,7 +89,7 @@ public class TestOperatorOperators {
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
 
-        sAnd = new DummyVariableString(ValueTypeString.ValueString.of("operator.integrateddynamics.logical.and"));
+        sAnd = new DummyVariableString(ValueTypeString.ValueString.of("integrateddynamics:operator.integrateddynamics.logical.and"));
     }
 
     /**

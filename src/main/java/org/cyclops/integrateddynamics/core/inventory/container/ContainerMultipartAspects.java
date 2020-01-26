@@ -78,7 +78,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
 
         for (final IAspect aspect : getUnfilteredItems()) {
             if (aspect.hasProperties()) {
-                String buttonId = "button_aspect_" + aspect.getTranslationKey();
+                String buttonId = "button_aspect_" + aspect.getUniqueName();
                 aspectPropertyButtons.put(aspect, buttonId);
                 putButtonAction(buttonId, (s, containerExtended) -> {
                     if (!world.isRemote()) {

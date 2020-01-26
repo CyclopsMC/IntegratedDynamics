@@ -8,13 +8,12 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
@@ -126,7 +125,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         return 1;
     }
 
-    public void setActiveElementById(String typeId, String elementId) {
+    public void setActiveElementById(ResourceLocation typeId, ResourceLocation elementId) {
         ILogicProgrammerElementType type = LogicProgrammerElementTypes.REGISTRY.getType(typeId);
         if (type != null) {
             ILogicProgrammerElement element = type.getByName(elementId);

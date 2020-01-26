@@ -3,10 +3,12 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
@@ -37,8 +39,8 @@ public class CombinedOperator extends OperatorBase {
 
     public CombinedOperator(String symbol, String operatorName, OperatorsFunction function, IValueType[] inputTypes,
                             IValueType outputType, @Nullable IConfigRenderPattern configRenderPattern) {
-        super(symbol, operatorName, inputTypes,
-                outputType, function, configRenderPattern);
+        super(symbol, operatorName,
+                inputTypes, outputType, function, configRenderPattern);
         this.unlocalizedType = "virtual";
     }
 
@@ -379,8 +381,8 @@ public class CombinedOperator extends OperatorBase {
         }
 
         @Override
-        public String getUniqueName() {
-            return "combined." + functionName;
+        public ResourceLocation getUniqueName() {
+            return new ResourceLocation(Reference.MOD_ID, "combined." + functionName);
         }
 
         @Override

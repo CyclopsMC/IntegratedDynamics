@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipart;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
@@ -45,7 +46,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
 
     public ContainerPartPanelVariableDriven(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
         this(id, playerInventory, new Inventory(packetBuffer.readInt()),
-                Optional.empty(), Optional.empty(), readPart(packetBuffer));
+                Optional.empty(), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
     public ContainerPartPanelVariableDriven(int id, PlayerInventory playerInventory, IInventory inventory,

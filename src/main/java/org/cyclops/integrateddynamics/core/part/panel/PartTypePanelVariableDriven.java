@@ -16,6 +16,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -304,7 +305,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.writeToNBT(tag);
             IValue value = getDisplayValue();
             if(value != null) {
-                tag.putString("displayValueType", value.getType().getTranslationKey());
+                tag.putString("displayValueType", value.getType().getUniqueName().toString());
                 tag.put("displayValue", ValueHelpers.serializeRaw(value));
             }
             tag.putInt("facingRotation", facingRotation.ordinal());
@@ -315,7 +316,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.readFromNBT(tag);
             if(tag.contains("displayValueType", Constants.NBT.TAG_STRING)
                     && tag.contains("displayValue")) {
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("displayValueType"));
+                IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("displayValueType")));
                 if(valueType != null) {
                     INBT serializedValue = tag.get("displayValue");
                     ITextComponent deserializationError = valueType.canDeserialize(serializedValue);
