@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.client.render.part;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
@@ -9,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.image.Images;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -102,6 +104,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
                 if (renderer == null) {
                     renderer = ValueTypeWorldRenderers.DEFAULT;
                 }
+                RenderHelpers.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
                 renderer.renderValue(partContainer, x, y, z, partialTick, destroyStage, direction, partType, value, rendererDispatcher, distanceAlpha);
             } else if (!partState.getInventory().isEmpty()) {
                 drawError(rendererDispatcher, distanceAlpha);
