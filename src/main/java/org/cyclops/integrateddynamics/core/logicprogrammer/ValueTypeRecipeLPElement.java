@@ -182,11 +182,11 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
         // Fill input fluid slot
         slot = 9;
-        FluidStack fluidStackInput = null;
+        FluidStack fluidStackInput = FluidStack.EMPTY;
         if (fluidInputs.size() > 0) {
             fluidStackInput = fluidInputs.get(0);
         }
-        putStackInContainer(container, slot, fluidStackInput == null ? ItemStack.EMPTY : getFluidBucket(fluidStackInput));
+        putStackInContainer(container, slot, fluidStackInput.isEmpty() ? ItemStack.EMPTY : getFluidBucket(fluidStackInput));
         inputFluidAmount = String.valueOf(FluidHelpers.getAmount(fluidStackInput));
         if (MinecraftHelpers.isClientSideThread()) {
             refreshInputFluidAmountBox();
@@ -205,11 +205,11 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
         // Fill output fluid slot
         slot = 13;
-        FluidStack fluidStackOutput = null;
+        FluidStack fluidStackOutput = FluidStack.EMPTY;
         if (fluidOutputs.size() > 0) {
             fluidStackOutput = fluidOutputs.get(0);
         }
-        putStackInContainer(container, slot, fluidStackOutput == null ? ItemStack.EMPTY : getFluidBucket(fluidStackOutput));
+        putStackInContainer(container, slot, fluidStackOutput.isEmpty() ? ItemStack.EMPTY : getFluidBucket(fluidStackOutput));
         outputFluidAmount = String.valueOf(FluidHelpers.getAmount(fluidStackOutput));
         if (MinecraftHelpers.isClientSideThread()) {
             refreshOutputFluidAmountBox();
@@ -253,10 +253,10 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     @Override
     public ITextComponent validate() {
-        if (!inputFluid.isEmpty() && Helpers.getFluidStack(inputFluid) == null) {
+        if (!inputFluid.isEmpty() && Helpers.getFluidStack(inputFluid).isEmpty()) {
             return new TranslationTextComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
         }
-        if (!outputFluid.isEmpty() && Helpers.getFluidStack(outputFluid) == null) {
+        if (!outputFluid.isEmpty() && Helpers.getFluidStack(outputFluid).isEmpty()) {
             return new TranslationTextComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
         }
         try {
@@ -335,7 +335,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         List<IPrototypedIngredientAlternatives<ItemStack, Integer>> items = itemStacks.stream()
                 .map(stack -> stack.getRight().getPrototypeHandler().getPrototypesFor(stack.getLeft()))
                 .collect(Collectors.toList());
-        List<IPrototypedIngredientAlternatives<FluidStack, Integer>> fluids = fluidStack != null
+        List<IPrototypedIngredientAlternatives<FluidStack, Integer>> fluids = !fluidStack.isEmpty()
                 ? Collections.singletonList(new PrototypedIngredientAlternativesList<>(
                         Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.FLUID | FluidMatch.NBT))))
                 : Collections.emptyList();
