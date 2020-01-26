@@ -74,7 +74,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public boolean canWriteElementPre() {
-        return MinecraftHelpers.isClientSide() ? listValueType != null : serverValue != null;
+        return MinecraftHelpers.isClientSideThread() ? listValueType != null : serverValue != null;
     }
 
     protected List<IValue> constructValues() {
@@ -91,7 +91,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IValue getValue() {
-        return MinecraftHelpers.isClientSide()
+        return MinecraftHelpers.isClientSideThread()
                 ? ValueTypeList.ValueList.ofList(listValueType, constructValues()) : serverValue;
     }
 
@@ -114,7 +114,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             subElements.put(index, subElement);
             subElement.activate();
         }
-        if (MinecraftHelpers.isClientSide()) {
+        if (MinecraftHelpers.isClientSideThread()) {
             masterGui.setActiveElement(activeElement);
             masterGui.container.onDirty();
         }
@@ -150,10 +150,10 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public ITextComponent validate() {
-        if(!MinecraftHelpers.isClientSide()) {
+        if(!MinecraftHelpers.isClientSideThread()) {
             return serverValue == null ? new StringTextComponent("") : null;
         }
-        if(MinecraftHelpers.isClientSide()) {
+        if(MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeListValueChangedPacket(
                     listValueType == null ? ValueTypes.LIST.getDefault() : ValueTypeList.ValueList.ofList(listValueType, constructValues())));
         }
@@ -295,7 +295,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            return super.mouseClicked(mouseX, mouseY, mouseButton) || valueTypeSelector.mouseClicked(mouseX, mouseY, mouseButton);
+            return valueTypeSelector.mouseClicked(mouseX, mouseY, mouseButton) || super.mouseClicked(mouseX, mouseY, mouseButton);
         }
 
         @Override

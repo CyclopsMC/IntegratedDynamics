@@ -99,7 +99,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     public void onSetDropdownPossiblity(IDropdownEntry dropdownEntry) {
         OperatorDropdownEntry operatorDropdownEntry = (OperatorDropdownEntry) dropdownEntry;
         selectedOperator = operatorDropdownEntry == null ? null : operatorDropdownEntry.getValue();
-        if (MinecraftHelpers.isClientSide()) {
+        if (MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeOperatorValueChangedPacket(
                             ValueTypeOperator.ValueOperator.of(selectedOperator)));

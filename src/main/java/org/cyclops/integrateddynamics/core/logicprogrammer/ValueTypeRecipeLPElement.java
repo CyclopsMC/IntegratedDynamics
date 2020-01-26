@@ -118,7 +118,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             if (inputFluidAmount.equalsIgnoreCase("0")) {
                 int amount = FluidHelpers.getAmount(Helpers.getFluidStack(inputFluid));
                 inputFluidAmount = Integer.toString(amount);
-                if (MinecraftHelpers.isClientSide() && lastGui != null) {
+                if (MinecraftHelpers.isClientSideThread() && lastGui != null) {
                     refreshInputFluidAmountBox();
                 }
             }
@@ -131,7 +131,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             if (outputFluidAmount.equalsIgnoreCase("0")) {
                 int amount = FluidHelpers.getAmount(Helpers.getFluidStack(outputFluid));
                 outputFluidAmount = Integer.toString(amount);
-                if (MinecraftHelpers.isClientSide() && lastGui != null) {
+                if (MinecraftHelpers.isClientSideThread() && lastGui != null) {
                     refreshOutputFluidAmountBox();
                 }
             }
@@ -188,7 +188,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
         putStackInContainer(container, slot, fluidStackInput == null ? ItemStack.EMPTY : getFluidBucket(fluidStackInput));
         inputFluidAmount = String.valueOf(FluidHelpers.getAmount(fluidStackInput));
-        if (MinecraftHelpers.isClientSide()) {
+        if (MinecraftHelpers.isClientSideThread()) {
             refreshInputFluidAmountBox();
         }
 
@@ -211,7 +211,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
         putStackInContainer(container, slot, fluidStackOutput == null ? ItemStack.EMPTY : getFluidBucket(fluidStackOutput));
         outputFluidAmount = String.valueOf(FluidHelpers.getAmount(fluidStackOutput));
-        if (MinecraftHelpers.isClientSide()) {
+        if (MinecraftHelpers.isClientSideThread()) {
             refreshOutputFluidAmountBox();
         }
     }

@@ -102,7 +102,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IValue getValue() {
-        return MinecraftHelpers.isClientSide()
+        return MinecraftHelpers.isClientSideThread()
                 ? ValueObjectTypeIngredients.ValueIngredients.of(constructValues()) : serverValue;
     }
 
@@ -164,10 +164,10 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     @Override
     public ITextComponent validate() {
-        if(!MinecraftHelpers.isClientSide()) {
+        if(!MinecraftHelpers.isClientSideThread()) {
             return serverValue == null ? new StringTextComponent("") : null;
         }
-        if(MinecraftHelpers.isClientSide()) {
+        if(MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeIngredientsValueChangedPacket(
                             ValueObjectTypeIngredients.ValueIngredients.of(constructValues())));
