@@ -147,18 +147,20 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
 
         private final IValueTypeListProxy<T, V> value;
         private int index = 0;
+        private int length;
 
         public ListFactoryIterator(IValueTypeListProxy<T, V> value) {
             this.value = value;
+            try {
+                this.length = this.value.getLength();
+            } catch (EvaluationException e) {
+                this.length = 0;
+            }
         }
 
         @Override
         public boolean hasNext() {
-            try {
-                return index < value.getLength();
-            } catch (EvaluationException e) {
-                return false;
-            }
+            return index < length;
         }
 
         @Override
