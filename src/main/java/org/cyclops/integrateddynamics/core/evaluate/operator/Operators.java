@@ -55,6 +55,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
@@ -1470,7 +1471,7 @@ public final class Operators {
                 ItemStack b = valueStack1.getRawValue();
                 boolean equal = false;
                 if(!a.isEmpty() && !b.isEmpty()) {
-                    equal = a.isItemEqual(b) && ItemStack.areItemStackTagsEqual(a, b);
+                    equal = a.isItemEqual(b) && ItemMatch.areItemStacksEqual(a, b, ItemMatch.NBT);
                 } else if(a.isEmpty() && b.isEmpty()) {
                     equal = true;
                 }
@@ -1489,7 +1490,7 @@ public final class Operators {
                 ItemStack b = valueStack1.getRawValue();
                 boolean equal = false;
                 if(!a.isEmpty() && !b.isEmpty()) {
-                    equal = ItemStack.areItemsEqual(a, b);
+                    equal = ItemMatch.areItemStacksEqual(a, b, ItemMatch.ITEM | ItemMatch.DAMAGE);
                 } else if(a.isEmpty() && b.isEmpty()) {
                     equal = true;
                 }
@@ -1508,7 +1509,7 @@ public final class Operators {
                 ItemStack b = valueStack1.getRawValue();
                 boolean equal = false;
                 if(!a.isEmpty() && !b.isEmpty()) {
-                    equal = ItemStack.areItemsEqualIgnoreDurability(a, b);
+                    equal = ItemMatch.areItemStacksEqual(a, b, ItemMatch.ITEM);
                 } else if(a.isEmpty() && b.isEmpty()) {
                     equal = true;
                 }
