@@ -526,7 +526,7 @@
         </input>
         <output>
             <item meta="7" amount="4">minecraft:dye</item>
-            <item meta="7" amount="4" chance="0.5">minecraft:dye</item>
+            <item meta="7" amount="2" chance="0.5">minecraft:dye</item>
         </output>
         <properties>
             <duration>5</duration>
