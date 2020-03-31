@@ -26,7 +26,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         IValueTypeNullable<ValueObjectTypeBlock.ValueBlock> {
 
     public ValueObjectTypeBlock() {
-        super("block");
+        super("block", ValueObjectTypeBlock.ValueBlock.class);
     }
 
     public static String getBlockDisplayNameUsSafe(IBlockState blockState) throws NoSuchMethodException {

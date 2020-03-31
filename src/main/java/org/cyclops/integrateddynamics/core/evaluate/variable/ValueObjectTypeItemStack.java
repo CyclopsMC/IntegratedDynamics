@@ -34,7 +34,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         IValueTypeNullable<ValueObjectTypeItemStack.ValueItemStack> {
 
     public ValueObjectTypeItemStack() {
-        super("itemstack");
+        super("itemstack", ValueObjectTypeItemStack.ValueItemStack.class);
     }
 
     public static String getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {

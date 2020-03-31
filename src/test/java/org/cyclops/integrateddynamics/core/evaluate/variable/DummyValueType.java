@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
@@ -88,6 +90,11 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     @Override
     public ValueTypeLPElementBase createLogicProgrammerElement() {
         return null;
+    }
+
+    @Override
+    public DummyValue cast(IValue value) throws EvaluationException {
+        return (DummyValue) value;
     }
 
     @ToString

@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +38,7 @@ public class PositionedOperatorRecipeHandlerOutput<T extends IValueType<V>, V ex
 
         @Override
         public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
-            ValueObjectTypeIngredients.ValueIngredients ingredients = variables.getValue(0);
+            ValueObjectTypeIngredients.ValueIngredients ingredients = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
             IRecipeHandler recipeHandler = this.getOperator().getRecipeHandler();
             if (recipeHandler != null && ingredients.getRawValue().isPresent()) {
                 Pair<Pair<DimPos, EnumFacing>, ValueObjectTypeIngredients.ValueIngredients> key =

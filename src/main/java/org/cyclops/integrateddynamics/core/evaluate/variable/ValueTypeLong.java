@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implements IValueTypeNumber<ValueTypeLong.ValueLong> {
 
     public ValueTypeLong() {
-        super("long", Helpers.RGBToInt(215, 254, 23), TextFormatting.YELLOW.toString());
+        super("long", Helpers.RGBToInt(215, 254, 23), TextFormatting.YELLOW.toString(), ValueTypeLong.ValueLong.class);
     }
 
     @Override

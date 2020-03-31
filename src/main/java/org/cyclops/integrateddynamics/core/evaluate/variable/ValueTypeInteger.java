@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueInteger> implements IValueTypeNumber<ValueTypeInteger.ValueInteger> {
 
     public ValueTypeInteger() {
-        super("integer", Helpers.RGBToInt(243, 150, 4), TextFormatting.GOLD.toString());
+        super("integer", Helpers.RGBToInt(243, 150, 4), TextFormatting.GOLD.toString(), ValueTypeInteger.ValueInteger.class);
     }
 
     @Override

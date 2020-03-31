@@ -29,7 +29,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     private static final String SIGNATURE_LINK = "->";
 
     public ValueTypeOperator() {
-        super("operator", Helpers.RGBToInt(43, 231, 47), TextFormatting.DARK_GREEN.toString());
+        super("operator", Helpers.RGBToInt(43, 231, 47), TextFormatting.DARK_GREEN.toString(), ValueTypeOperator.ValueOperator.class);
     }
 
     @Override

@@ -11,7 +11,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolean> {
 
     public ValueTypeBoolean() {
-        super("boolean", Helpers.RGBToInt(43, 47, 231), TextFormatting.BLUE.toString());
+        super("boolean", Helpers.RGBToInt(43, 47, 231), TextFormatting.BLUE.toString(), ValueTypeBoolean.ValueBoolean.class);
     }
 
     @Override
