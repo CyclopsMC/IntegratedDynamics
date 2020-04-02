@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
@@ -84,7 +85,7 @@ public class CompositionalOperator extends OperatorBase {
                 for(AppliedOperatorBuilder builder : builders) {
                     IValueType[] subInputTypes = builder.getInputTypes();
                     for(int i = 0; i < subInputTypes.length; i++) {
-                        if(inputTypes[i] != null && !inputTypes[i].correspondsTo(subInputTypes[i])) {
+                        if(inputTypes[i] != null && !ValueHelpers.correspondsTo(inputTypes[i], subInputTypes[i])) {
                             throw new IllegalArgumentException(String.format("An composed operator expected type %s " +
                                     "at position %s, while a type of %s was found.", inputTypes[i], i, subInputTypes[i]));
                         } else if(inputTypes[i] == null) {

@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.part.aspect.AspectBase;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -50,7 +51,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
         IVariable variable = partTypeWriter.getActiveVariable(network, partNetwork, target, writerState);
         if(variable != null
                 && writerState.getErrors(this).isEmpty()
-                && getValueType().correspondsTo(variable.getType())) {
+                && ValueHelpers.correspondsTo(getValueType(), variable.getType())) {
             if(writerState.isDeactivated() || writerState.checkAndResetFirstTick()) {
                 onActivate(partTypeWriter, target, writerState);
             }
