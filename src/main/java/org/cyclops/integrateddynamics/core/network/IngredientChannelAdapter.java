@@ -71,10 +71,12 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         while (it.hasNext()) {
             PartPos pos = it.next();
             // Skip if the position is not loaded
-            if (!pos.getPos().isLoaded()) {
+            if (!pos.getPos().isLoaded() || network.isPositionDisabled(pos)) {
                 continue;
             }
+            this.network.disablePosition(pos);
             sum = Math.addExact(sum, this.network.getPositionedStorage(pos).getMaxQuantity());
+            this.network.enablePosition(pos);
         }
         return sum;
     }
