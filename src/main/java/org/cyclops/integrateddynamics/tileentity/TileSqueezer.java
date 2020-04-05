@@ -2,7 +2,10 @@ package org.cyclops.integrateddynamics.tileentity;
 
 import lombok.Getter;
 import lombok.experimental.Delegate;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
@@ -14,13 +17,13 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
+import org.cyclops.cyclopscore.helper.CraftingHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
@@ -29,8 +32,11 @@ import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.cyclops.integrateddynamics.core.recipe.custom.RecipeHandlerSqueezer;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * A part entity for squeezing stuff.
@@ -48,8 +54,7 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
     @Getter
     private int itemHeight = 1;
 
-    private SingleCache<ItemStack,
-            IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>> recipeCache;
+    private SingleCache<ItemStack, Optional<RecipeSqueezer>> recipeCache;
 
     public TileSqueezer() {
         super(RegistryEntries.TILE_ENTITY_SQUEEZER);
@@ -79,12 +84,11 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
 
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(
-                new SingleCache.ICacheUpdater<ItemStack,
-                        IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent>>() {
+                new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeSqueezer>>() {
                     @Override
-                    public IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> getNewValue(ItemStack key) {
-                        IngredientRecipeComponent recipeInput = new IngredientRecipeComponent(key);
-                        return getRegistry().findRecipeByInput(recipeInput);
+                    public Optional<RecipeSqueezer> getNewValue(ItemStack key) {
+                        IInventory recipeInput = new Inventory(key);
+                        return CraftingHelpers.findServerRecipe(getRegistry(), recipeInput, getWorld());
                     }
 
                     @Override
@@ -94,7 +98,8 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
                 });
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(RegistryEntries.BLOCK_SQUEEZER)));
+        // TODO: recipe handler, make generic one in CC
+        //addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(RegistryEntries.BLOCK_SQUEEZER)));
     }
 
     public SimpleInventory getInventory() {
@@ -119,12 +124,11 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
         return super.write(tag);
     }
 
-    protected IRecipeRegistry<BlockSqueezer, IngredientRecipeComponent,
-            IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> getRegistry() {
-        return RegistryEntries.BLOCK_SQUEEZER.getRecipeRegistry();
+    protected IRecipeType<RecipeSqueezer> getRegistry() {
+        return RegistryEntries.RECIPETYPE_SQUEEZER;
     }
 
-    public IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> getCurrentRecipe() {
+    public Optional<RecipeSqueezer> getCurrentRecipe() {
         return recipeCache.get(getInventory().getStackInSlot(0).copy());
     }
 
@@ -137,23 +141,27 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
                 Arrays.stream(Direction.AxisDirection.values())
                         .map(axisDirection -> Direction.getFacingFromAxis(axisDirection, axis))
                         .forEach(side -> {
-                            IFluidHandler handler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
-                            if (!getTank().isEmpty() && handler != null) {
-                                FluidStack fluidStack = new FluidStack(getTank().getFluid(),
-                                        Math.min(100, getTank().getFluidAmount()));
-                                if (handler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
-                                    int filled = handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
-                                    getTank().drain(filled, IFluidHandler.FluidAction.EXECUTE);
-                                }
+                            if (!getTank().isEmpty()) {
+                                TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+                                        .ifPresent(handler -> {
+                                            FluidStack fluidStack = new FluidStack(getTank().getFluid(),
+                                                    Math.min(100, getTank().getFluidAmount()));
+                                            if (handler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
+                                                int filled = handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
+                                                getTank().drain(filled, IFluidHandler.FluidAction.EXECUTE);
+                                            }
+                                        });
                             }
                         });
             } else {
-                if (itemHeight == 7 && getCurrentRecipe() != null) {
-                    IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> recipe = getCurrentRecipe();
+                if (itemHeight == 7) {
+                    Optional<RecipeSqueezer> recipeOptional = getCurrentRecipe();
+                    if (recipeOptional.isPresent()) {
+                        RecipeSqueezer recipe = recipeOptional.get();
                         getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
-                        for (IngredientRecipeComponent recipeComponent : recipe.getOutput().getSubIngredientComponents()) {
-                            if (recipeComponent.getChance() == 1.0F || recipeComponent.getChance() >= getWorld().rand.nextFloat()) {
-                                ItemStack resultStack = recipeComponent.getFirstItemStack().copy();
+                        for (RecipeSqueezer.ItemStackChance itemStackChance : recipe.getOutputItems()) {
+                            if (itemStackChance.getChance() == 1.0F || itemStackChance.getChance() >= getWorld().rand.nextFloat()) {
+                                ItemStack resultStack = itemStackChance.getItemStack().copy();
                                 for (Direction side : Direction.values()) {
                                     if (!resultStack.isEmpty() && side != Direction.UP) {
                                         IItemHandler itemHandler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
@@ -167,9 +175,10 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
                                 }
                             }
                         }
-                        if (recipe.getOutput().getFluidStack() != null) {
-                            getTank().fill(recipe.getOutput().getFluidStack(), IFluidHandler.FluidAction.EXECUTE);
+                        if (!recipe.getOutputFluid().isEmpty()) {
+                            getTank().fill(recipe.getOutputFluid(), IFluidHandler.FluidAction.EXECUTE);
                         }
+                    }
                 }
             }
         }

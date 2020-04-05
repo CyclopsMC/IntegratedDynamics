@@ -2,17 +2,15 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalDryingBasin;
 
 /**
  * Mechanical drying basin recipes.
  * @author rubensworks
  */
 public class MechanicalDryingBasinRecipeAppendix extends DryingBasinRecipeAppendix {
-    public MechanicalDryingBasinRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
+    public MechanicalDryingBasinRecipeAppendix(IInfoBook infoBook, RecipeMechanicalDryingBasin recipe) {
         super(infoBook, recipe);
     }
 

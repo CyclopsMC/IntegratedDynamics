@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -16,12 +18,6 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeInput;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeOutput;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
@@ -30,16 +26,14 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.network.MechanicalMachineNetworkElement;
 
+import java.util.Optional;
+
 /**
  * An abstract machine base tile entity that is able to process recipes by consuming energy.
  * @param <RCK> The recipe cache key type.
- * @param <M> The machine type.
- * @param <I> The recipe input type.
- * @param <O> The recipe output type.
- * @param <P> The recipe properties type.
+ * @param <R> The recipe type.
  */
-public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>, I extends IRecipeInput,
-        O extends IRecipeOutput, P extends IRecipeProperties> extends TileCableConnectableInventory
+public abstract class TileMechanicalMachine<RCK, R extends IRecipe> extends TileCableConnectableInventory
         implements IEnergyStorage {
 
     /**
@@ -54,7 +48,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     @NBTPersist
     private int sleep = -1;
 
-    private SingleCache<RCK, IRecipe<I, O, P>> recipeCache;
+    private SingleCache<RCK, Optional<R>> recipeCache;
 
     public TileMechanicalMachine(TileEntityType<?> type, int inventorySize) {
         super(type, inventorySize, 64);
@@ -85,7 +79,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     /**
      * @return A new cache updater instance.
      */
-    protected abstract SingleCache.ICacheUpdater<RCK, IRecipe<I, O, P>> createCacheUpdater();
+    protected abstract SingleCache.ICacheUpdater<RCK, Optional<R>> createCacheUpdater();
 
     /**
      * @return The available input slots.
@@ -166,7 +160,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     /**
      * @return The recipe registry this machine should work with..
      */
-    protected abstract IRecipeRegistry<M, I, O, P> getRecipeRegistry();
+    protected abstract IRecipeType<? extends R> getRecipeRegistry();
 
     /**
      * @return The current recipe cache key that is used to determine the current input of a recipe.
@@ -176,7 +170,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     /**
      * @return The currently applicable recipe.
      */
-    public IRecipe<I, O, P> getCurrentRecipe() {
+    public Optional<R> getCurrentRecipe() {
         return recipeCache.get(getCurrentRecipeCacheKey());
     }
 
@@ -191,14 +185,16 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
      * @return The current maximum progress.
      */
     public int getMaxProgress() {
-        return this.getCurrentRecipe() != null ? getRecipeDuration(getCurrentRecipe()) : 0;
+        return this.getCurrentRecipe()
+                .map(this::getRecipeDuration)
+                .orElse(0);
     }
 
     /**
      * @param recipe A recipe.
      * @return The duration of a given recipe.
      */
-    public abstract int getRecipeDuration(IRecipe<I, O, P> recipe);
+    public abstract int getRecipeDuration(R recipe);
 
     /**
      * Finalize a recipe.
@@ -208,7 +204,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
      * @param simulate If finalization should be simulated.
      * @return If finalization was successful.
      */
-    protected abstract boolean finalizeRecipe(IRecipe<I, O, P> recipe, boolean simulate);
+    protected abstract boolean finalizeRecipe(R recipe, boolean simulate);
 
     @Override
     protected void updateTileEntity() {
@@ -218,8 +214,9 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
                 this.sleep--;
                 this.markDirty();
             } else if (canWork()) {
-                IRecipe<I, O, P> recipe = getCurrentRecipe();
-                if (recipe != null) {
+                Optional<R> recipeOptional = getCurrentRecipe();
+                if (recipeOptional.isPresent()) {
+                    R recipe = recipeOptional.get();
                     if (progress == 0 && !finalizeRecipe(recipe, true)) {
                         sleep = SLEEP_TIME;
                     } else if (progress < getMaxProgress()) {

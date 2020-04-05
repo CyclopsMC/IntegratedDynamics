@@ -1,22 +1,16 @@
 package org.cyclops.integrateddynamics.metadata;
 
 import com.google.gson.JsonObject;
-import org.cyclops.cyclopscore.metadata.RegistryExportableRecipeAbstract;
+import org.cyclops.cyclopscore.metadata.IRegistryExportable;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
 import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
 
 /**
  * Mechanical squeezer recipe exporter.
  */
-public class RegistryExportableMechanicalSqueezerRecipe extends RegistryExportableRecipeAbstract<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> {
-
-    public RegistryExportableMechanicalSqueezerRecipe() {
-        super(() -> RegistryEntries.BLOCK_MECHANICAL_SQUEEZER.getRecipeRegistry(), "mechanical_squeezer_recipe");
-    }
+public class RegistryExportableMechanicalSqueezerRecipe implements IRegistryExportable {
 
     public JsonObject serializeRecipe(IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
         JsonObject object = RegistryExportableSqueezerRecipe.serializeRecipeIO(recipe);
@@ -28,4 +22,13 @@ public class RegistryExportableMechanicalSqueezerRecipe extends RegistryExportab
         return object;
     }
 
+    @Override
+    public JsonObject export() {
+        return null; // TODO
+    }
+
+    @Override
+    public String getName() {
+        return "mechanical_squeezer_recipe";
+    }
 }

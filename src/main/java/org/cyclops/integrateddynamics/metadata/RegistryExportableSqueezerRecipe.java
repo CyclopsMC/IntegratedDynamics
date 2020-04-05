@@ -17,11 +17,7 @@ import java.util.List;
 /**
  * Squeezer recipe exporter.
  */
-public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAbstract<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> {
-
-    public RegistryExportableSqueezerRecipe() {
-        super(() -> RegistryEntries.BLOCK_SQUEEZER.getRecipeRegistry(), "squeezer_recipe");
-    }
+public class RegistryExportableSqueezerRecipe implements IRegistryExportable {
 
     public static JsonObject serializeRecipeIO(IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, ?> recipe) {
         JsonObject object = new JsonObject();
@@ -63,4 +59,13 @@ public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAb
         return serializeRecipeIO(recipe);
     }
 
+    @Override
+    public JsonObject export() {
+        return null; // TODO
+    }
+
+    @Override
+    public String getName() {
+        return "squeezer_recipe";
+    }
 }

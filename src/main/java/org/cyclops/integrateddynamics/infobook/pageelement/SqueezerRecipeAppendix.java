@@ -10,10 +10,8 @@ import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoSection;
 import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
 import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
  * Squeezer recipes.
  * @author rubensworks
  */
-public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, ?>> {
+public class SqueezerRecipeAppendix extends RecipeAppendix<RecipeSqueezer> {
 
     private static final int SLOT_INPUT_OFFSET_X = 16;
     private static final int SLOT_OFFSET_Y = 23;
@@ -33,10 +31,10 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
 
     private final List<AdvancedButtonEnum> resultItems;
 
-    public SqueezerRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, ?> recipe) {
+    public SqueezerRecipeAppendix(IInfoBook infoBook, RecipeSqueezer recipe) {
         super(infoBook, recipe);
         resultItems = Lists.newArrayList();
-        for (int i = 0; i < recipe.getOutput().getIngredients().size(); i++) {
+        for (int i = 0; i < recipe.getOutputItems().size(); i++) {
             resultItems.add(AdvancedButtonEnum.create());
         }
     }
@@ -48,7 +46,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
 
     @Override
     protected int getHeightInner() {
-        return (recipe.getOutput().getFluidStack() != null ? SLOT_OFFSET_Y : 0) + resultItems.size() * SLOT_OFFSET_Y - 3;
+        return (recipe.getOutputFluid() != null ? SLOT_OFFSET_Y : 0) + resultItems.size() * SLOT_OFFSET_Y - 3;
     }
 
     @Override
@@ -74,18 +72,18 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<IRecipe<IngredientRec
 
         // Prepare items
         int tick = getTick(gui);
-        ItemStack inputItem = recipe.getInput().getIngredient() == null ? null : prepareItemStacks(recipe.getInput().getItemStacks(), tick);
-        List<ItemStack> outputItems = recipe.getOutput().getSubIngredientComponents().stream()
-                .map(component -> component.getIngredient() == null ? null : prepareItemStacks(component.getItemStacks(), tick))
+        ItemStack inputItem = recipe.getInputIngredient() == null ? null : prepareItemStacks(recipe.getInputIngredient().getMatchingStacks(), tick);
+        List<ItemStack> outputItems = recipe.getOutputItems().stream()
+                .map(RecipeSqueezer.ItemStackChance::getItemStack)
                 .collect(Collectors.toList());
-        FluidStack outputFluid = recipe.getOutput().getFluidStack();
+        FluidStack outputFluid = recipe.getOutputFluid();
 
         // Items
         renderItem(gui, x + SLOT_INPUT_OFFSET_X, y, inputItem, mx, my, INPUT_ITEM);
         int slotOffset = 0;
         for (int i = 0; i < outputItems.size(); i++) {
             renderItem(gui, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputItems.get(i), mx, my, resultItems.get(i),
-                    recipe.getOutput().getSubIngredientComponents().get(i).getChance());
+                    recipe.getOutputItems().get(i).getChance());
             slotOffset += SLOT_OFFSET_Y;
         }
         if (outputFluid != null) {

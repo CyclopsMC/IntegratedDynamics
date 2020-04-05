@@ -2,17 +2,15 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
 
 /**
  * Mechanical squeezer recipes.
  * @author rubensworks
  */
 public class MechanicalSqueezerRecipeAppendix extends SqueezerRecipeAppendix {
-    public MechanicalSqueezerRecipeAppendix(IInfoBook infoBook, IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, ?> recipe) {
+    public MechanicalSqueezerRecipeAppendix(IInfoBook infoBook, RecipeMechanicalSqueezer recipe) {
         super(infoBook, recipe);
     }
 

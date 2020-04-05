@@ -1,0 +1,8 @@
+{
+  "type": "integrateddynamics:drying_basin",
+  "item": "minecraft:rotten_flesh",
+  "duration": 100,
+  "result": {
+    "item": "minecraft:leather"
+  }
+}

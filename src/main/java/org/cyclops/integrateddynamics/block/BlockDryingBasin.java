@@ -18,19 +18,13 @@ import org.cyclops.cyclopscore.block.BlockTileGui;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
 
 /**
  * A block for drying stuff.
  * @author rubensworks
  */
-public class BlockDryingBasin extends BlockTileGui implements IMachine<BlockDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
+public class BlockDryingBasin extends BlockTileGui {
 
     private static final VoxelShape SHAPE_RAYTRACE = makeCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D);
     private static final VoxelShape SHAPE = VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(
@@ -103,11 +97,6 @@ public class BlockDryingBasin extends BlockTileGui implements IMachine<BlockDryi
         return TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class)
                 .map(tile -> tile.getInventory().getStackInSlot(0) != null ? 15 : 0)
                 .orElse(0);
-    }
-
-    @Override
-    public IRecipeRegistry<BlockDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
-        return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
 
     @Override

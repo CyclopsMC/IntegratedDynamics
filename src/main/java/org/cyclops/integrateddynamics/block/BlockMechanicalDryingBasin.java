@@ -13,12 +13,6 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidUtil;
-import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.block.BlockTileGuiCabled;
 import org.cyclops.integrateddynamics.tileentity.TileMechanicalDryingBasin;
 
@@ -26,7 +20,7 @@ import org.cyclops.integrateddynamics.tileentity.TileMechanicalDryingBasin;
  * A block that can expose variables.
  * @author rubensworks
  */
-public class BlockMechanicalDryingBasin extends BlockTileGuiCabled implements IMachine<BlockMechanicalDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
+public class BlockMechanicalDryingBasin extends BlockTileGuiCabled {
 
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
@@ -54,8 +48,4 @@ public class BlockMechanicalDryingBasin extends BlockTileGuiCabled implements IM
         return false;
     }
 
-    @Override
-    public IRecipeRegistry<BlockMechanicalDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
-        return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
-    }
 }

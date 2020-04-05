@@ -17,7 +17,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
@@ -26,49 +25,42 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.BlockTile;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
 /**
  * A block for squeezing stuff.
  * @author rubensworks
  */
-public class BlockSqueezer extends BlockTile implements IMachine<BlockSqueezer, IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> {
+public class BlockSqueezer extends BlockTile {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
     public static final IntegerProperty HEIGHT = IntegerProperty.create("height", 1, 7); // 1 is heighest, 7 is lowest
 
-    private static final VoxelShape[] SHAPES_RAYTRACE = {
+    private static final VoxelShape[] SHAPES_BLOCK = {
             null,
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 1F, 16.0F),
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 0.875F, 16.0F),
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 0.75F, 16.0F),
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 0.625, 16.0F),
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 0.5F, 16.0F),
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 0.375F, 16.0F),
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 0.25F, 16.0F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 16F, 16.0F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 14F, 16.0F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 12F, 16.0F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 105, 16.0F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 8F, 16.0F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 6F, 16.0F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 4F, 16.0F),
     };
     private static final VoxelShape[] SHAPES_STICKS = {
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 0.125F),
-            makeCuboidShape(1.0F, 0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 0.125F),
-            makeCuboidShape(0.0F, 0.0F, 1.0F, 0.125F, 1.0F, 1.0F - 0.125F),
-            makeCuboidShape(1.0F, 0.0F, 1.0F, 1.0F - 0.125F, 1.0F, 1.0F - 0.125F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 2F, 16.0F, 2F),
+            makeCuboidShape(16.0F, 0.0F, 0.0F, 14F, 16.0F, 2F),
+            makeCuboidShape(0.0F, 0.0F, 16.0F, 2F, 16.0F, 14F),
+            makeCuboidShape(16.0F, 0.0F, 16.0F, 14F, 16.0F, 14F),
     };
     private static final VoxelShape[] SHAPES = {
             null,
-            VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(SHAPES_RAYTRACE[1], SHAPES_STICKS), IBooleanFunction.ONLY_FIRST),
-            VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(SHAPES_RAYTRACE[2], SHAPES_STICKS), IBooleanFunction.ONLY_FIRST),
-            VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(SHAPES_RAYTRACE[3], SHAPES_STICKS), IBooleanFunction.ONLY_FIRST),
-            VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(SHAPES_RAYTRACE[4], SHAPES_STICKS), IBooleanFunction.ONLY_FIRST),
-            VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(SHAPES_RAYTRACE[5], SHAPES_STICKS), IBooleanFunction.ONLY_FIRST),
-            VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(SHAPES_RAYTRACE[6], SHAPES_STICKS), IBooleanFunction.ONLY_FIRST),
-            VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(SHAPES_RAYTRACE[7], SHAPES_STICKS), IBooleanFunction.ONLY_FIRST),
+            VoxelShapes.or(SHAPES_BLOCK[1], SHAPES_STICKS),
+            VoxelShapes.or(SHAPES_BLOCK[2], SHAPES_STICKS),
+            VoxelShapes.or(SHAPES_BLOCK[3], SHAPES_STICKS),
+            VoxelShapes.or(SHAPES_BLOCK[4], SHAPES_STICKS),
+            VoxelShapes.or(SHAPES_BLOCK[5], SHAPES_STICKS),
+            VoxelShapes.or(SHAPES_BLOCK[6], SHAPES_STICKS),
+            VoxelShapes.or(SHAPES_BLOCK[7], SHAPES_STICKS),
     };
 
     public BlockSqueezer(Properties properties) {
@@ -182,7 +174,12 @@ public class BlockSqueezer extends BlockTile implements IMachine<BlockSqueezer, 
 
     @Override
     public VoxelShape getRaytraceShape(BlockState blockState, IBlockReader world, BlockPos blockPos) {
-        return SHAPES_RAYTRACE[blockState.get(HEIGHT)];
+        return SHAPES_BLOCK[blockState.get(HEIGHT)];
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
+        return SHAPES_BLOCK[blockState.get(HEIGHT)];
     }
 
     @Override
@@ -205,11 +202,6 @@ public class BlockSqueezer extends BlockTile implements IMachine<BlockSqueezer, 
     @Override
     public boolean isSolid(BlockState p_200124_1_) {
         return false;
-    }
-
-    @Override
-    public IRecipeRegistry<BlockSqueezer, IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DummyPropertiesComponent> getRecipeRegistry() {
-        return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
 
 }

@@ -11,13 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidUtil;
-import org.cyclops.cyclopscore.recipe.custom.api.IMachine;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.block.BlockTileGuiCabled;
 import org.cyclops.integrateddynamics.tileentity.TileMechanicalSqueezer;
 
@@ -25,7 +18,7 @@ import org.cyclops.integrateddynamics.tileentity.TileMechanicalSqueezer;
  * A block that can expose variables.
  * @author rubensworks
  */
-public class BlockMechanicalSqueezer extends BlockTileGuiCabled implements IMachine<BlockMechanicalSqueezer, IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> {
+public class BlockMechanicalSqueezer extends BlockTileGuiCabled {
 
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
@@ -47,8 +40,4 @@ public class BlockMechanicalSqueezer extends BlockTileGuiCabled implements IMach
                 || super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
     }
 
-    @Override
-    public IRecipeRegistry<BlockMechanicalSqueezer, IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
-        return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
-    }
 }

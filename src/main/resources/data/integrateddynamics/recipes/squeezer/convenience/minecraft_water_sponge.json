@@ -1,0 +1,15 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "minecraft:wet_sponge",
+  "result": {
+    "items": [
+      {
+        "item": "minecraft:sponge"
+      }
+    ],
+    "fluid": {
+      "fluid": "minecraft:water",
+      "amount": 50
+    }
+  }
+}

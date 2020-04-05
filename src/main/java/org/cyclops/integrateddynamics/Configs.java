@@ -24,6 +24,14 @@ import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.recipe.ItemBlockEnergyContainerCombinationRecipeConfig;
 import org.cyclops.integrateddynamics.core.recipe.ItemNbtClearRecipeConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeSerializerDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeSerializerMechanicalDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeSerializerMechanicalSqueezerConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeSerializerSqueezerConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeTypeDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeTypeMechanicalDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeTypeMechanicalSqueezerConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeTypeSqueezerConfig;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTickingConfig;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
 import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
@@ -159,7 +167,17 @@ public class Configs {
         configHandler.addConfigurable(new ContainerProxyConfig());
         configHandler.addConfigurable(new ContainerVariablestoreConfig());
 
+        // Recipe types
+        configHandler.addConfigurable(new RecipeTypeDryingBasinConfig());
+        configHandler.addConfigurable(new RecipeTypeMechanicalDryingBasinConfig());
+        configHandler.addConfigurable(new RecipeTypeSqueezerConfig());
+        configHandler.addConfigurable(new RecipeTypeMechanicalSqueezerConfig());
+
         // Recipes
+        configHandler.addConfigurable(new RecipeSerializerDryingBasinConfig());
+        configHandler.addConfigurable(new RecipeSerializerMechanicalDryingBasinConfig());
+        configHandler.addConfigurable(new RecipeSerializerSqueezerConfig());
+        configHandler.addConfigurable(new RecipeSerializerMechanicalSqueezerConfig());
         configHandler.addConfigurable(new ItemVariableCopyRecipeConfig());
         configHandler.addConfigurable(new ItemFacadeRecipeConfig());
         for(int i = 1; i < 9; i++) {

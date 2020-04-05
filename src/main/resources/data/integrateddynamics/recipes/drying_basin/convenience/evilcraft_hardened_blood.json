@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:drying_basin",
+  "fluid": {
+    "fluid": "integrateddynamics:evilcraft:blood",
+    "amount": 1000
+  },
+  "duration": 400,
+  "result": {
+    "item": "integrateddynamics:hardened_blood"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "evilcraft"
+    }
+  ]
+}

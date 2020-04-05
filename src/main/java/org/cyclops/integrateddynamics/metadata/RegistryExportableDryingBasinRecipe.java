@@ -21,11 +21,7 @@ import java.util.List;
 /**
  * Drying basin recipe exporter.
  */
-public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecipeAbstract<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> {
-
-    public RegistryExportableDryingBasinRecipe() {
-        super(() -> RegistryEntries.BLOCK_DRYING_BASIN.getRecipeRegistry(), "drying_basin_recipe");
-    }
+public class RegistryExportableDryingBasinRecipe implements IRegistryExportable {
 
     public static JsonObject serializeRecipeIO(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
         JsonObject object = new JsonObject();
@@ -67,4 +63,13 @@ public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecip
         return serializeRecipeIO(recipe);
     }
 
+    @Override
+    public JsonObject export() {
+        return null; // TODO
+    }
+
+    @Override
+    public String getName() {
+        return "drying_basin_recipe";
+    }
 }

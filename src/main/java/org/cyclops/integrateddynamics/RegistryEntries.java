@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
@@ -18,6 +20,10 @@ import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalDryingBasin;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 import org.cyclops.integrateddynamics.inventory.container.*;
 import org.cyclops.integrateddynamics.item.ItemFacade;
 import org.cyclops.integrateddynamics.item.ItemVariable;
@@ -174,6 +180,20 @@ public class RegistryEntries {
     @ObjectHolder("integrateddynamics:tree_menril")
     public static final WorldFeatureTreeMenril WORLD_FEATURE_TREE_MENRIL = null;
 
+    // Recipe types are not Forge registries unfortunately...
+    public static IRecipeType<RecipeDryingBasin> RECIPETYPE_DRYING_BASIN = null;
+    public static IRecipeType<RecipeMechanicalDryingBasin> RECIPETYPE_MECHANICAL_DRYING_BASIN = null;
+    public static IRecipeType<RecipeSqueezer> RECIPETYPE_SQUEEZER = null;
+    public static IRecipeType<RecipeMechanicalSqueezer> RECIPETYPE_MECHANICAL_SQUEEZER = null;
+
+    @ObjectHolder("integrateddynamics:drying_basin")
+    public static final IRecipeSerializer<RecipeDryingBasin> RECIPESERIALIZER_DRYING_BASIN = null;
+    @ObjectHolder("integrateddynamics:mechanical_drying_basin")
+    public static final IRecipeSerializer<RecipeMechanicalDryingBasin> RECIPESERIALIZER_MECHANICAL_DRYING_BASIN = null;
+    @ObjectHolder("integrateddynamics:squeezer")
+    public static final IRecipeSerializer<RecipeSqueezer> RECIPESERIALIZER_SQUEEZER = null;
+    @ObjectHolder("integrateddynamics:mechanical_squeezer")
+    public static final IRecipeSerializer<RecipeMechanicalSqueezer> RECIPESERIALIZER_MECHANICAL_SQUEEZER = null;
     @ObjectHolder("integrateddynamics:crafting_special_facade")
     public static final SpecialRecipeSerializer<ItemFacadeRecipe> RECIPESERIALIZER_FACADE = null;
     @ObjectHolder("integrateddynamics:crafting_special_variable_copy")

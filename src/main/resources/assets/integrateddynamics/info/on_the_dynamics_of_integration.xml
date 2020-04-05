@@ -22,10 +22,7 @@
                 <item />
                 <fluid amount="1000">menrilresin</fluid>
             </appendix>
-            <appendix type="integrateddynamics:drying_basin_recipe">
-                <item>integrateddynamics:crystalized_menril_block</item>
-                <fluid />
-            </appendix>
+            <appendix type="integrateddynamics:drying_basin_recipe">integrateddynamics:drying_basin/crystalized_menril_block</appendix>
             <appendix type="advancement_rewards" id="integrateddynamics:meneglin_basics">
                 <advancements>
                     <advancement id="integrateddynamics:meneglin_basics/meneglin_discovery" />

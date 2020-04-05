@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * A base container for {@link TileMechanicalMachine}.
  * @author rubensworks
  */
-public class ContainerMechanicalMachine<T extends TileMechanicalMachine<?, ?, ?, ?, ?>> extends InventoryContainer {
+public class ContainerMechanicalMachine<T extends TileMechanicalMachine<?, ?>> extends InventoryContainer {
 
     private final Optional<T> tileSupplier;
     private final Supplier<Integer> variableMaxProgress;

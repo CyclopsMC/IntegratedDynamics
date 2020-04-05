@@ -1,0 +1,12 @@
+{
+  "type": "integrateddynamics:drying_basin",
+  "item": "minecraft:light_blue_terracotta",
+  "fluid": {
+    "fluid": "minecraft:water",
+    "amount": 250
+  },
+  "duration": 100,
+  "result": {
+    "item": "minecraft:terracotta"
+  }
+}

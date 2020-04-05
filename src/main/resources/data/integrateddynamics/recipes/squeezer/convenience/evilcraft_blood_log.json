@@ -1,0 +1,16 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "evilcraft:undead_log",
+  "result": {
+    "fluid": {
+      "fluid": "evilcraft:blood",
+      "amount": 100
+    }
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "evilcraft"
+    }
+  ]
+}

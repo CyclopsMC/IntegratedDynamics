@@ -166,7 +166,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
 
         Advancements.load();
 
-        // Initialize info book
+        // Register info book
         putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
         getRegistryManager().getRegistry(IInfoBookRegistry.class).registerInfoBook(
                 OnTheDynamicsOfIntegrationBook.getInstance(), "/assets/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");

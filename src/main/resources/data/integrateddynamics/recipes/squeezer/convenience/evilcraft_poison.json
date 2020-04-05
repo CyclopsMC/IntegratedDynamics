@@ -1,0 +1,18 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "tag": "material_poisonous"
+  },
+  "result": {
+    "fluid": {
+      "fluid": "evilcraft:poison",
+      "amount": 250
+    }
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "evilcraft"
+    }
+  ]
+}
