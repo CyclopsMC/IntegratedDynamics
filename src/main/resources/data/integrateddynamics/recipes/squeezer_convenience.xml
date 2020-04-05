@@ -155,6 +155,8 @@
         </output>
     </recipe>
 
+    <!-- TODO: continue converting to JSON after this -->
+
     <recipe type="integrateddynamics:squeezer">
         <tag>convenience</tag>
         <condition type="mod">forestry</condition>
