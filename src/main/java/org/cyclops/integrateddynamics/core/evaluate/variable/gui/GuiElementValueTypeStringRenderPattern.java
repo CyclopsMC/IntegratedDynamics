@@ -47,7 +47,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         this.searchField = new GuiTextFieldDropdown(0, fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
                 fontRenderer.FONT_HEIGHT + 3, true, getDropdownPossibilities());
         this.searchField.setDropdownEntryListener(this);
-        this.searchField.setMaxStringLength(64);
+        this.searchField.setMaxStringLength(512);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
         this.searchField.setTextColor(16777215);
