@@ -221,15 +221,21 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return fluidHandler.getContainer();
     }
 
-    @Override
-    public boolean canWriteElementPre() {
-        boolean inputValid = inputStacks.stream().anyMatch(stack -> !stack.getLeft().isEmpty())
+    protected boolean isInputValid() {
+        return inputStacks.stream().anyMatch(stack -> !stack.getLeft().isEmpty())
                 || !inputFluid.isEmpty() || !inputFluidAmount.equalsIgnoreCase("0")
                 || !inputEnergy.equalsIgnoreCase("0");
-        boolean outputValid = outputStacks.stream().anyMatch(stack -> !stack.isEmpty())
+    }
+
+    protected boolean isOutputValid() {
+        return outputStacks.stream().anyMatch(stack -> !stack.isEmpty())
                 || !outputFluid.isEmpty() || !outputFluidAmount.equalsIgnoreCase("0")
                 || !outputEnergy.equalsIgnoreCase("0");
-        return inputValid && outputValid;
+    }
+
+    @Override
+    public boolean canWriteElementPre() {
+        return isInputValid() == isOutputValid(); // Not &&, because we also allow fully blank recipes
     }
 
     @Override
@@ -388,6 +394,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IValue getValue() {
+        if (!isInputValid() && !isOutputValid()) {
+            return ValueObjectTypeRecipe.ValueRecipe.of(null);
+        }
         return ValueObjectTypeRecipe.ValueRecipe.of(
                 new RecipeDefinition(getInputs(this.inputStacks, this.inputFluid,
                         Integer.parseInt(this.inputFluidAmount), Integer.parseInt(this.inputEnergy)),
