@@ -3,12 +3,8 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.client.render.tileentity.RenderTileEntitySqueezer;
-import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
 /**
  * Config for {@link BlockSqueezer}.
@@ -27,10 +23,4 @@ public class BlockSqueezerConfig extends BlockConfig {
         );
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onRegistered() {
-        super.onRegistered();
-        getMod().getProxy().registerRenderer(TileSqueezer.class, new RenderTileEntitySqueezer());
-    }
 }

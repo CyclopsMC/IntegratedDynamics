@@ -1,21 +1,26 @@
 package org.cyclops.integrateddynamics.client.render.tileentity;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Renderer for the item inside the {@link org.cyclops.integrateddynamics.block.BlockDryingBasin}.
@@ -23,68 +28,55 @@ import org.lwjgl.opengl.GL11;
  * @author rubensworks
  *
  */
-public class RenderTileEntityDryingBasin extends TileEntityRenderer<TileDryingBasin> implements RenderHelpers.IFluidContextRender {
+public class RenderTileEntityDryingBasin extends TileEntityRenderer<TileDryingBasin> {
 
-    private TileDryingBasin lastTile;
-
-	@Override
-	public void render(TileDryingBasin tile, double x, double y, double z, float partialTickTime, int partialDamage) {
-        if(tile != null) {
-            if(!tile.getInventory().getStackInSlot(0).isEmpty()) {
-                GlStateManager.pushMatrix();
-                float var10 = (float) (x - 0.5F);
-                float var11 = (float) (y - 0.5F);
-                float var12 = (float) (z - 0.5F);
-                GlStateManager.translatef(var10, var11, var12);
-                renderItem(tile.getWorld(), tile.getInventory().getStackInSlot(0), tile.getRandomRotation());
-                GlStateManager.popMatrix();
-            }
-
-            lastTile = tile;
-            RenderHelpers.renderTileFluidContext(tile.getTank().getFluid(), x, y, z, tile, this);
-        }
-	}
-	
-	private void renderItem(World world, ItemStack itemStack, float rotation) {
-        GlStateManager.pushMatrix();
-        if (itemStack.getItem() instanceof BlockItem) {
-            GlStateManager.translatef(1F, 1.2F, 1F);
-            GlStateManager.scalef(0.6F, 0.6F, 0.6F);
-        } else {
-            GlStateManager.translatef(1F, 1.2F, 1F);
-            GlStateManager.rotatef(25F, 1, 0, 0);
-            GlStateManager.rotatef(25F, 0, 1, 0);
-            GlStateManager.rotatef(rotation, 0, 1, 0);
-        }
-        
-        GlStateManager.pushTextureAttributes();
-        RenderHelper.enableStandardItemLighting();
-        RenderHelpers.renderItem(itemStack);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.popAttributes();
-        GlStateManager.enableLighting();
-        GlStateManager.popMatrix();
+    public RenderTileEntityDryingBasin(TileEntityRendererDispatcher tileEntityRendererDispatcher) {
+        super(tileEntityRendererDispatcher);
     }
 
     @Override
-    public void renderFluid(FluidStack fluid) {
-        double height = (fluid.getAmount() * 0.7D) / FluidHelpers.BUCKET_VOLUME + 0.23D + 0.01D;
-        int brightness = lastTile.getWorld().getCombinedLight(lastTile.getPos(), fluid.getFluid().getAttributes().getLuminosity(fluid));
-        int l2 = brightness >> 0x10 & 0xFFFF;
-        int i3 = brightness & 0xFFFF;
+    public void render(TileDryingBasin tile, float partialTicks, MatrixStack matrixStack,
+                       IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay) {
+        if(tile != null) {
+            if(!tile.getInventory().getStackInSlot(0).isEmpty()) {
+                matrixStack.push();
+                matrixStack.translate(-0.5F, -0.5F, -0.5F);
+                renderItem(matrixStack, renderTypeBuffer, tile.getInventory().getStackInSlot(0), tile.getRandomRotation());
+                matrixStack.pop();
+            }
 
-        TextureAtlasSprite icon = RenderHelpers.getFluidIcon(lastTile.getTank().getFluid(), Direction.UP);
+            FluidStack fluid = tile.getTank().getFluid();
+            RenderHelpers.renderFluidContext(fluid, matrixStack, () -> {
+                float height = (float) ((fluid.getAmount() * 0.7D) / FluidHelpers.BUCKET_VOLUME + 0.23D + 0.01D);
+                int brightness = Math.max(combinedLight, fluid.getFluid().getAttributes().getLuminosity(fluid));
+                int l2 = brightness >> 0x10 & 0xFFFF;
+                int i3 = brightness & 0xFFFF;
 
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder worldRenderer = t.getBuffer();
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
+                TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluid, Direction.UP);
+                Triple<Float, Float, Float> color = Helpers.intToRGB(fluid.getFluid().getAttributes().getColor(tile.getWorld(), tile.getPos()));
 
-        worldRenderer.pos(0.0625F, height, 0.0625F).tex(icon.getMinU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(0.0625F, height, 0.9375F).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(0.9375F, height, 0.9375F).tex(icon.getMaxU(), icon.getMinV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
-        worldRenderer.pos(0.9375F, height, 0.0625F).tex(icon.getMaxU(), icon.getMaxV()).lightmap(l2, i3).color(1F, 1, 1, 1).endVertex();
+                IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.getText(icon.getAtlasTexture().getTextureLocation()));
+                Matrix4f matrix = matrixStack.getLast().getMatrix();
+                vb.pos(matrix, 0.0625F, height, 0.0625F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMinU(), icon.getMaxV()).lightmap(l2, i3).endVertex();
+                vb.pos(matrix, 0.0625F, height, 0.9375F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).endVertex();
+                vb.pos(matrix, 0.9375F, height, 0.9375F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMaxU(), icon.getMinV()).lightmap(l2, i3).endVertex();
+                vb.pos(matrix, 0.9375F, height, 0.0625F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMaxU(), icon.getMaxV()).lightmap(l2, i3).endVertex();
+            });
+        }
+	}
+	
+	private void renderItem(MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, ItemStack itemStack, float rotation) {
+        if (itemStack.getItem() instanceof BlockItem) {
+            matrixStack.translate(1F, 1.2F, 1F);
+            matrixStack.scale(0.6F, 0.6F, 0.6F);
+        } else {
+            matrixStack.translate(1F, 1.2F, 1F);
+            matrixStack.rotate(Vector3f.XP.rotationDegrees(25F));
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(25F));
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(rotation));
+        }
 
-        t.draw();
+        Minecraft.getInstance().getItemRenderer().renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer);
     }
 
 }

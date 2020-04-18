@@ -13,7 +13,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -57,7 +56,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
             e.printStackTrace();
         }
-        return new EndNBT();
+        return EndNBT.INSTANCE;
     }
 
     @Override

@@ -2,8 +2,9 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -41,36 +42,41 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             .getRenderer(ValueTypes.OBJECT_INGREDIENTS);
 
     @Override
-    public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, Direction direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher, float alpha) {
+    public void renderValue(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                            Direction direction, IPartType partType, IValue value, float partialTicks,
+                            MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                            int combinedLight, int combinedOverlay, float alpha) {
         Optional<IRecipeDefinition> recipeOptional = ((ValueObjectTypeRecipe.ValueRecipe) value).getRawValue();
         if(recipeOptional.isPresent()) {
             IRecipeDefinition recipe = recipeOptional.get();
 
-            GlStateManager.pushMatrix();
-            GlStateManager.scaled(0.5, 0.5, 1);
+            matrixStack.push();
+            matrixStack.scale(0.5F, 0.5F, 1F);
 
-            GlStateManager.pushMatrix();
-            GlStateManager.scaled(0.3, 0.3, 1);
-            rendererDispatcher.getFontRenderer().drawString(L10NHelpers.localize("gui.integrateddynamics.input_short"), 8, 15, Helpers.RGBToInt(255, 255, 255));
-            rendererDispatcher.getFontRenderer().drawString(L10NHelpers.localize("gui.integrateddynamics.output_short"), 46, 15, Helpers.RGBToInt(255, 255, 255));
-            GlStateManager.popMatrix();
+            matrixStack.push();
+            matrixStack.scale(0.3F, 0.3F, 1F);
+            rendererDispatcher.getFontRenderer().renderString(L10NHelpers.localize("gui.integrateddynamics.input_short"), 8, 15, Helpers.RGBToInt(255, 255, 255),
+                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
+            rendererDispatcher.getFontRenderer().renderString(L10NHelpers.localize("gui.integrateddynamics.output_short"), 46, 15, Helpers.RGBToInt(255, 255, 255),
+                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
+            matrixStack.pop();
 
-            GlStateManager.translatef(0, 2 * DisplayPartOverlayRenderer.MAX / 3, 0);
-            renderInput(partContainer, x, y, z, partialTick,
-                    destroyStage, direction, partType, recipe, rendererDispatcher, alpha);
-            GlStateManager.translatef(DisplayPartOverlayRenderer.MAX, 0, 0);
-            INGREDIENTS_RENDERER.renderValue(partContainer, x, y, z, partialTick,
-                    destroyStage, direction, partType, ValueObjectTypeIngredients.ValueIngredients.of(recipe.getOutput()), rendererDispatcher, alpha);
+            matrixStack.translate(0, 2 * DisplayPartOverlayRenderer.MAX / 3, 0);
+            renderInput(rendererDispatcher, partContainer, direction, partType, recipe, partialTicks,
+                    matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
+            matrixStack.translate(DisplayPartOverlayRenderer.MAX, 0, 0);
+            INGREDIENTS_RENDERER.renderValue(rendererDispatcher, partContainer, direction, partType,
+                    ValueObjectTypeIngredients.ValueIngredients.of(recipe.getOutput()), partialTicks,
+                    matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
 
-            GlStateManager.popMatrix();
+            matrixStack.pop();
         }
     }
 
-    protected void renderInput(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                               int destroyStage, Direction direction, IPartType partType, IRecipeDefinition recipe,
-                               TileEntityRendererDispatcher rendererDispatcher, float alpha) {
+    protected void renderInput(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                               Direction direction, IPartType partType, IRecipeDefinition recipe, float partialTicks,
+                               MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                               int combinedLight, int combinedOverlay, float alpha) {
         // Get a list of all values
         int ingredientCount = recipe.getInputComponents().stream().mapToInt((c) -> recipe.getInputs(c).size()).sum();
         List<IValue> values = Lists.newArrayListWithExpectedSize(ingredientCount);
@@ -87,7 +93,8 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         }
 
         // Render ingredients in a square matrix
-        IngredientsValueTypeWorldRenderer.renderGrid(partContainer, x, y, z, partialTick, destroyStage, direction, partType, values, rendererDispatcher, alpha);
+        IngredientsValueTypeWorldRenderer.renderGrid(rendererDispatcher, partContainer, direction, partType, values,
+                partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
     }
 
     protected <T, M> Stream<List<IPrototypedIngredient>> enhanceRecipeInputs(IngredientComponent<T, M> ingredientComponent,

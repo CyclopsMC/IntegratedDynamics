@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -33,12 +34,12 @@ public abstract class BlockContainerCabled extends BlockTile {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
-                                    BlockRayTraceResult blockRayTraceResult) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+                                             BlockRayTraceResult blockRayTraceResult) {
         ItemStack heldItem = player.getHeldItem(hand);
-        if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getFace()) && player.isSneaking()) {
+        if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getFace()) && player.isCrouching()) {
             world.destroyBlock(pos, true);
-            return true;
+            return ActionResultType.SUCCESS;
         }
         return super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
     }

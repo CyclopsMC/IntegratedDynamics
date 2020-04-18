@@ -9,16 +9,12 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * An invisible light source with variable intensity.
@@ -38,12 +34,6 @@ public class BlockInvisibleLight extends Block {
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(LIGHT);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @SuppressWarnings("deprecation")
@@ -74,7 +64,7 @@ public class BlockInvisibleLight extends Block {
     }
 
     @Override
-    public int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos) {
+    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
         return world.getBlockState(pos).get(LIGHT);
     }
 

@@ -33,7 +33,7 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
 
     @Override
     public INBT serialize(ValueLong value) {
-        return new LongNBT(value.getRawValue());
+        return LongNBT.valueOf(value.getRawValue());
     }
 
     @Override

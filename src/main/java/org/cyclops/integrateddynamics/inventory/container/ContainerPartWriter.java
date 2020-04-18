@@ -90,8 +90,8 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     @Override
     protected void enableSlot(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex);
-        slot.xPos = SLOT_X;
-        slot.yPos = SLOT_Y + ASPECT_BOX_HEIGHT * row;
+        setSlotPosX(slot, SLOT_X);
+        setSlotPosY(slot, SLOT_Y + ASPECT_BOX_HEIGHT * row);
     }
 
     @Override

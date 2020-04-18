@@ -32,7 +32,7 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
 
     @Override
     public INBT serialize(ValueBoolean value) {
-        return new ByteNBT(value.getRawValue() ? (byte) 1 : (byte) 0);
+        return ByteNBT.valueOf(value.getRawValue() ? (byte) 1 : (byte) 0);
     }
 
     @Override

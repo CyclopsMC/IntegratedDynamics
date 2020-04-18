@@ -3,7 +3,8 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
@@ -27,9 +28,10 @@ import java.util.List;
 public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
-    public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, Direction direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher, float alpha) {
+    public void renderValue(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                            Direction direction, IPartType partType, IValue value, float partialTicks,
+                            MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                            int combinedLight, int combinedOverlay, float alpha) {
         Optional<IMixedIngredients> ingredientsOptional = ((ValueObjectTypeIngredients.ValueIngredients) value).getRawValue();
         if(ingredientsOptional.isPresent()) {
             IMixedIngredients ingredients = ingredientsOptional.get();
@@ -44,17 +46,19 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
             }
 
             // Render ingredients in a square matrix
-            renderGrid(partContainer, x, y, z, partialTick, destroyStage, direction, partType, values, rendererDispatcher, alpha);
+            renderGrid(rendererDispatcher, partContainer, direction, partType, values, partialTicks,
+                    matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
         }
     }
 
-    public static void renderGrid(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                  int destroyStage, Direction direction, IPartType partType, List<IValue> values,
-                                  TileEntityRendererDispatcher rendererDispatcher, float alpha) {
-        GlStateManager.pushMatrix();
+    public static void renderGrid(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                                  Direction direction, IPartType partType, List<IValue> values, float partialTicks,
+                                  MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                                  int combinedLight, int combinedOverlay, float alpha) {
+        matrixStack.push();
         int matrixRadius = getSmallestSquareFrom(values.size());
-        double scale = (double) 1 / matrixRadius;
-        GlStateManager.scaled(scale, scale, 1);
+        float scale = 1 / matrixRadius;
+        matrixStack.scale(scale, scale, 1);
         for (int i = 0; i < matrixRadius; i++) {
             for (int j = 0; j < matrixRadius; j++) {
                 int realIndex = i * matrixRadius + j;
@@ -63,21 +67,21 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
                 }
                 IValue renderValue = values.get(realIndex);
                 if (renderValue != null) {
-                    GlStateManager.pushMatrix();
-                    GlStateManager.translatef(j * DisplayPartOverlayRenderer.MAX, i * DisplayPartOverlayRenderer.MAX, 0);
+                    matrixStack.push();
+                    matrixStack.translate(j * DisplayPartOverlayRenderer.MAX, i * DisplayPartOverlayRenderer.MAX, 0);
 
                     // Call value renderer for each value
                     IValueTypeWorldRenderer renderer = ValueTypeWorldRenderers.REGISTRY.getRenderer(renderValue.getType());
                     if (renderer == null) {
                         renderer = ValueTypeWorldRenderers.DEFAULT;
                     }
-                    renderer.renderValue(partContainer, x, y, z, partialTick,
-                            destroyStage, direction, partType, renderValue, rendererDispatcher, alpha);
-                    GlStateManager.popMatrix();
+                    renderer.renderValue(rendererDispatcher, partContainer, direction, partType, renderValue,
+                            partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
+                    matrixStack.pop();
                 }
             }
         }
-        GlStateManager.popMatrix();
+        matrixStack.pop();
     }
 
     @Nullable

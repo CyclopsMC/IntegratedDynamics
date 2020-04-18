@@ -30,17 +30,4 @@ public class BlockCableConfig extends BlockConfig {
                 );
     }
 
-    @Override
-    public void onRegistered() {
-        super.onRegistered();
-        if(MinecraftHelpers.isClientSide()) {
-            registerClientSide();
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void registerClientSide() {
-        IntegratedDynamics._instance.getProxy().registerRenderer(TileMultipartTicking.class, new RenderCable());
-    }
-
 }

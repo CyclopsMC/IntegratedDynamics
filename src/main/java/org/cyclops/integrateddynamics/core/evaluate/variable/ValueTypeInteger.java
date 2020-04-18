@@ -34,7 +34,7 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
 
     @Override
     public INBT serialize(ValueInteger value) {
-        return new IntNBT(value.getRawValue());
+        return IntNBT.valueOf(value.getRawValue());
     }
 
     @Override

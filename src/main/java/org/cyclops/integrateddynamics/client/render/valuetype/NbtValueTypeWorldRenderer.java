@@ -1,8 +1,9 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -29,9 +30,10 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     private static final float MARGIN_FACTOR = 1.1F;
 
     @Override
-    public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, Direction direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {
+    public void renderValue(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                            Direction direction, IPartType partType, IValue value, float partialTicks,
+                            MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                            int combinedLight, int combinedOverlay, float alpha) {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float maxWidth = 0;
 
@@ -58,25 +60,24 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         float singleHeight = fontRenderer.FONT_HEIGHT;
         float totalHeight = singleHeight * lines.size();
 
-        GlStateManager.pushMatrix();
-        GlStateManager.enableRescaleNormal();
+        matrixStack.push();
 
         float scaleX = MAX / (maxWidth * MARGIN_FACTOR);
         float scaleY = MAX / (totalHeight * MARGIN_FACTOR);
         float scale = Math.min(scaleX, scaleY); // Maintain aspect ratio
         float newWidth = maxWidth * scale;
         float newHeight = totalHeight * scale;
-        GlStateManager.translatef((MAX - newWidth) / 2, (MAX - newHeight) / 2, 0F);
-        GlStateManager.scalef(scale, scale, 1F);
+        matrixStack.translate((MAX - newWidth) / 2, (MAX - newHeight) / 2, 0F);
+        matrixStack.scale(scale, scale, 1F);
 
         int offset = 0;
         for(String line : lines) {
-            int color = Helpers.addAlphaToColor(ValueTypes.NBT.getDisplayColor(), distanceAlpha);
-            rendererDispatcher.getFontRenderer().drawString(line, 0, offset, color);
+            int color = Helpers.addAlphaToColor(ValueTypes.NBT.getDisplayColor(), alpha);
+            rendererDispatcher.getFontRenderer().renderString(line, 0, offset, color,
+                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
             offset += singleHeight;
         }
 
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.popMatrix();
+        matrixStack.pop();
     }
 }

@@ -946,9 +946,9 @@ public class TestNbtOperators {
         CompoundNBT tsasa = new CompoundNBT();
         tsasa.putString("a", "a");
         ListNBT tlist = new ListNBT();
-        tlist.add(new ByteNBT((byte) 5));
-        tlist.add(new ByteNBT((byte) 4));
-        tlist.add(new ByteNBT((byte) 3));
+        tlist.add(ByteNBT.valueOf((byte) 5));
+        tlist.add(ByteNBT.valueOf((byte) 4));
+        tlist.add(ByteNBT.valueOf((byte) 3));
 
         IValue res1 = Operators.NBT_WITH_LIST_BYTE.evaluate(new IVariable[]{nsasa, sc, lints});
         assertThat("result is a listbyte", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
@@ -988,9 +988,9 @@ public class TestNbtOperators {
         CompoundNBT tsasa = new CompoundNBT();
         tsasa.putString("a", "a");
         ListNBT tlist = new ListNBT();
-        tlist.add(new IntNBT(5));
-        tlist.add(new IntNBT(4));
-        tlist.add(new IntNBT(3));
+        tlist.add(IntNBT.valueOf(5));
+        tlist.add(IntNBT.valueOf(4));
+        tlist.add(IntNBT.valueOf(3));
 
         IValue res1 = Operators.NBT_WITH_LIST_INT.evaluate(new IVariable[]{nsasa, sc, lints});
         assertThat("result is a listint", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
@@ -1030,9 +1030,9 @@ public class TestNbtOperators {
         CompoundNBT tsasa = new CompoundNBT();
         tsasa.putString("a", "a");
         ListNBT tlist = new ListNBT();
-        tlist.add(new LongNBT(5));
-        tlist.add(new LongNBT(4));
-        tlist.add(new LongNBT(3));
+        tlist.add(LongNBT.valueOf(5));
+        tlist.add(LongNBT.valueOf(4));
+        tlist.add(LongNBT.valueOf(3));
 
         IValue res1 = Operators.NBT_WITH_LIST_LONG.evaluate(new IVariable[]{nsasa, sc, llongs});
         assertThat("result is a listlong", res1, instanceOf(ValueTypeNbt.ValueNbt.class));

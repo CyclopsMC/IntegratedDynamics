@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.inventory.container.slot;
 
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
@@ -24,6 +25,6 @@ public class SlotVariable extends SlotSingleItem {
      */
     public SlotVariable(IInventory inventory, int index, int x, int y) {
         super(inventory, index, x, y, RegistryEntries.ITEM_VARIABLE);
-        setBackgroundName(SlotVariable.VARIABLE_EMPTY.toString());
+        setBackground(AtlasTexture.LOCATION_BLOCKS_TEXTURE, SlotVariable.VARIABLE_EMPTY);
     }
 }

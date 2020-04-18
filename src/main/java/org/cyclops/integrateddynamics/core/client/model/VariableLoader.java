@@ -1,35 +1,20 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.model.BlockModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ICustomModelLoader;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.logging.log4j.Level;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.core.datastructure.MapWrapper;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Map;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.VanillaResourceType;
 
 /**
  * Custom model loader for the variable item.
  * @author rubensworks
  */
-public class VariableLoader implements ICustomModelLoader {
-
-    private static final ResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, "variable"), "inventory");
-    private static final ResourceLocation LOCATION_RAW = new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, "item/variable_raw"), "inventory");
+public class VariableLoader implements IModelLoader<VariableModel> {
 
     public VariableLoader() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
@@ -42,7 +27,7 @@ public class VariableLoader implements ICustomModelLoader {
         // We have to retrieve the model loader from ModelLoader$VanillaLoader, as that is the only place where an instance is stored.
 
         // The following code emulates: ModelLoader.VanillaLoader.INSTANCE.getLoader().putModel(LOCATION, loadModel(LOCATION));
-        Class<?> clazz = null;
+        /*Class<?> clazz = null;
         try {
             clazz = Class.forName("net.minecraftforge.client.model.ModelLoader$VanillaLoader");
             Field fieldInstance = clazz.getField("INSTANCE");
@@ -54,7 +39,8 @@ public class VariableLoader implements ICustomModelLoader {
             modelLoader.putModel(LOCATION, loadModel(modelLoader, LOCATION_RAW));
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
-        }
+        }*/
+        // TODO: rm?
     }
 
     private void registerModelLoaderReloadListener() {
@@ -65,7 +51,7 @@ public class VariableLoader implements ICustomModelLoader {
         // so that we can inject our custom models before the loading starts.
         // Note that we can not make use of this hack during mod loading because VariableLoader
         // has not always being constructed by the initial ModelLoaderRegistry.cache.clear() call.
-        Class<?> clazz = null;
+        /*Class<?> clazz = null;
         try {
             clazz = Class.forName("net.minecraftforge.client.model.ModelLoaderRegistry");
             Field fieldCache = clazz.getDeclaredField("cache");
@@ -87,38 +73,34 @@ public class VariableLoader implements ICustomModelLoader {
 
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
-        }
+        }*/
+        // TODO: rm?
     }
 
     @Override
-    public boolean accepts(ResourceLocation modelLocation) {
-        return modelLocation.equals(LOCATION);
+    public IResourceType getResourceType() {
+        return VanillaResourceType.MODELS;
     }
 
-    public IUnbakedModel loadModel(ModelLoader modelLoader, ResourceLocation modelLocation) {
+    // TODO: rm?
+    /*public IUnbakedModel loadModel(ModelLoader modelLoader, ResourceLocation modelLocation) {
         IUnbakedModel model = loadModel(modelLocation);
         if (model instanceof VariableModel) {
             ((VariableModel) model).loadSubModels(modelLoader);
         }
         return model;
-    }
-
-    @Override
-    public IUnbakedModel loadModel(ResourceLocation modelLocation) {
-        try {
-            BlockModel modelBlock = ModelHelpers.loadModelBlock(modelLocation);
-            VariableModel model = new VariableModel(modelBlock);
-            return model;
-        } catch (IOException e) {
-            IntegratedDynamics.clog(Level.ERROR, String.format("The model %s could not be loaded.", modelLocation));
-            e.printStackTrace();
-        }
-        return ModelLoaderRegistry.getMissingModel();
-    }
+    }*/
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
 
+    }
+
+    @Override
+    public VariableModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+        modelContents.remove("loader");
+        BlockModel modelBlock = deserializationContext.deserialize(modelContents, BlockModel.class);
+        return new VariableModel(modelBlock);
     }
 
 }

@@ -2,10 +2,10 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.IModelTransform;
+import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
@@ -26,10 +26,11 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBakery modelBakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format) {
+    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter,
+                                                              IModelTransform transform, ResourceLocation location) {
         IBakedModel bakedModel = null;
         try {
-            bakedModel = modelBakery.getBakedModel(this.model, sprite, spriteGetter, format);
+            bakedModel = modelBakery.getBakedModel(this.model, transform, spriteGetter);
         } catch (Exception e) {
             e.printStackTrace();
         }

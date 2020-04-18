@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -76,12 +77,13 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
         }
 
         @Override
-        public boolean onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
+        public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getHeldItem(hand);
-            if(CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getFace(), direction)) {
-                return true;
+            ActionResultType actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getFace(), direction);
+            if(actionResult.isSuccessOrConsume()) {
+                return actionResult;
             }
-            return false;
+            return ActionResultType.PASS;
         }
 
     }

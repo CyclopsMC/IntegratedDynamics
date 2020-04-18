@@ -6,6 +6,7 @@ import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -34,13 +35,13 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player,
-                                    Hand hand, BlockRayTraceResult rayTraceResult) {
+    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player,
+                                             Hand hand, BlockRayTraceResult rayTraceResult) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, blockPos, rayTraceResult.getFace())
-                && player.isSneaking()) {
+                && player.isCrouching()) {
             world.destroyBlock(blockPos, true);
-            return true;
+            return ActionResultType.SUCCESS;
         }
         return super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
     }

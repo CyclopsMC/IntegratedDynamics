@@ -11,6 +11,7 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -81,9 +82,9 @@ public class BlockSqueezer extends BlockTile {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
         if (world.isRemote()) {
-            return true;
+            return ActionResultType.SUCCESS;
         } else if(world.getBlockState(blockPos).get(BlockSqueezer.HEIGHT) == 1) {
             return TileHelpers.getSafeTile(world, blockPos, TileSqueezer.class)
                     .map(tile -> {
@@ -94,23 +95,23 @@ public class BlockSqueezer extends BlockTile {
                             player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
                             tile.getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
                             tile.sendUpdate();
-                            return true;
+                            return ActionResultType.SUCCESS;
                         } else if(player.inventory.addItemStackToInventory(tileStack)){
                             tile.getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
                             tile.sendUpdate();
-                            return true;
+                            return ActionResultType.SUCCESS;
                         } else if (!itemStack.isEmpty() && tile.getInventory().getStackInSlot(0).isEmpty()) {
                             tile.getInventory().setInventorySlotContents(0, itemStack.split(1));
                             if (itemStack.getCount() <= 0)
                                 player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
                             tile.sendUpdate();
-                            return true;
+                            return ActionResultType.SUCCESS;
                         }
-                        return false;
+                        return ActionResultType.PASS;
                     })
-                    .orElse(false);
+                    .orElse(ActionResultType.PASS);
         }
-        return false;
+        return ActionResultType.PASS;
     }
 
     @Override
@@ -119,16 +120,16 @@ public class BlockSqueezer extends BlockTile {
         super.onLanded(worldIn, entityIn);
         if(!entityIn.getEntityWorld().isRemote() && motionY <= -0.37D && entityIn instanceof LivingEntity) {
             // Same way of deriving blockPos as is done in Entity#moveEntity
-            int i = MathHelper.floor(entityIn.posX);
-            int j = MathHelper.floor(entityIn.posY - 0.2D);
-            int k = MathHelper.floor(entityIn.posZ);
+            int i = MathHelper.floor(entityIn.getPosX());
+            int j = MathHelper.floor(entityIn.getPosY() - 0.2D);
+            int k = MathHelper.floor(entityIn.getPosZ());
             BlockPos blockPos = new BlockPos(i, j, k);
             BlockState blockState = worldIn.getBlockState(blockPos);
 
             // The faster the entity is falling, the more steps to advance by
             int steps = 1 + MathHelper.floor((-motionY - 0.37D) * 5);
 
-            if((entityIn.posY - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
+            if((entityIn.getPosY() - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
                 if (blockState.getBlock() == this) { // Just to be sure...
                     int newHeight = Math.min(7, blockState.get(HEIGHT) + steps);
                     entityIn.getEntityWorld().setBlockState(blockPos, blockState.with(HEIGHT, newHeight));
@@ -149,7 +150,7 @@ public class BlockSqueezer extends BlockTile {
                     worldIn.setBlockState(pos, state.with(HEIGHT, 1));
                     for(Entity entity : worldIn.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos, pos.add(1, 1, 1)))) {
                         entity.getMotion().add(0, 0.25F, 0);
-                        entity.posY += 0.5F;
+                        entity.setMotion(0, 1, 0);
                     }
                     return;
                 }
@@ -197,11 +198,6 @@ public class BlockSqueezer extends BlockTile {
     @Override
     public int getComparatorInputOverride(BlockState blockState, World world, BlockPos blockPos) {
         return (int) (((double) blockState.get(HEIGHT) - 1) / 6D * 15D);
-    }
-
-    @Override
-    public boolean isSolid(BlockState p_200124_1_) {
-        return false;
     }
 
 }

@@ -52,7 +52,7 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
         // This could be cached if this would prove to be a bottleneck
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), aspect);
         Rectangle pos = getElementPosition(container, index, true);
-        RenderHelper.enableGUIStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         itemRenderer.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
 
         // Render error symbol

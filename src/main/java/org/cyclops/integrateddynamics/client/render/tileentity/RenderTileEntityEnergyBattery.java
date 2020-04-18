@@ -1,18 +1,16 @@
 package org.cyclops.integrateddynamics.client.render.tileentity;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Renderer for rendering the energy overlay on the {@link org.cyclops.integrateddynamics.block.BlockEnergyBattery}.
@@ -22,12 +20,12 @@ import org.lwjgl.opengl.GL11;
  */
 public class RenderTileEntityEnergyBattery extends TileEntityRenderer<TileEnergyBattery> {
 
-    private static final double OFFSET = 0.001D;
-    private static final double MINY = 0D;
-    private static final double MAXY = 1D;
-    private static final double MIN = 0D - OFFSET;
-    private static final double MAX = 1D + OFFSET;
-    private static double[][][] coordinates = {
+    private static final float OFFSET = 0.001F;
+    private static final float MINY = 0F;
+    private static final float MAXY = 1F;
+    private static final float MIN = 0F - OFFSET;
+    private static final float MAX = 1F + OFFSET;
+    private static float[][][] coordinates = {
             { // DOWN
                     {MIN, MINY, MIN},
                     {MIN, MINY, MAX},
@@ -66,42 +64,30 @@ public class RenderTileEntityEnergyBattery extends TileEntityRenderer<TileEnergy
             }
     };
 
-	@Override
-	public void render(TileEnergyBattery tile, double x, double y, double z, float partialTickTime, int partialDamage) {
+    public RenderTileEntityEnergyBattery(TileEntityRendererDispatcher tileEntityRendererDispatcher) {
+        super(tileEntityRendererDispatcher);
+    }
+
+    @Override
+	public void render(TileEnergyBattery tile, float partialTicks, MatrixStack matrixStack,
+                       IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay) {
         if(tile != null && tile.getEnergyStored() > 0) {
-            double height = (double) tile.getEnergyStored() / tile.getMaxEnergyStored();
+            float height = tile.getEnergyStored() / tile.getMaxEnergyStored();
 
             // Re-scale height to [0.125, 0.875] range as the energy bar does not take up 100% of the height.
-            height = (height * 12 / 16) + 0.125D;
+            height = (height * 12 / 16) + 0.125F;
 
-            int brightness = tile.getWorld().getCombinedLight(tile.getPos(), 15);
-            int l2 = brightness >> 0x10 & 0xFFFF;
-            int i3 = brightness & 0xFFFF;
+            int l2 = combinedLight >> 0x10 & 0xFFFF;
+            int i3 = combinedLight & 0xFFFF;
 
-            GlStateManager.pushMatrix();
-
-            // Correct color & lighting
-            GlStateManager.color4f(1, 1, 1, 1);
-            GlStateManager.disableLighting();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-            // Set to current relative player location
-            GlStateManager.translated(x, y, z);
-
-            // Set blockState textures
-            Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+            matrixStack.push();
 
             for(Direction side : Direction.Plane.HORIZONTAL) {
                 TextureAtlasSprite icon = RegistryEntries.BLOCK_ENERGY_BATTERY.iconOverlay;
 
-                Tessellator t = Tessellator.getInstance();
-                BufferBuilder worldRenderer = t.getBuffer();
-                worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
-
-                double[][] c = coordinates[side.ordinal()];
-                double replacedMaxV = icon.getMaxV();
-                double replacedMinV = ((icon.getMinV() - icon.getMaxV()) * height + icon.getMaxV());
+                float[][] c = coordinates[side.ordinal()];
+                float replacedMaxV = icon.getMaxV();
+                float replacedMinV = (icon.getMinV() - icon.getMaxV()) * height + icon.getMaxV();
 
                 float r = 1.0F;
                 float g = 1.0F;
@@ -116,17 +102,15 @@ public class RenderTileEntityEnergyBattery extends TileEntityRenderer<TileEnergy
                     b = 0.60F + 0.40F * tickFactor;
                 }
 
-                worldRenderer.pos(c[0][0], c[0][1] * height, c[0][2]).tex(icon.getMinU(), replacedMaxV).lightmap(l2, i3).color(r, g, b, 1).endVertex();
-                worldRenderer.pos(c[1][0], c[1][1] * height, c[1][2]).tex(icon.getMinU(), replacedMinV).lightmap(l2, i3).color(r, g, b, 1).endVertex();
-                worldRenderer.pos(c[2][0], c[2][1] * height, c[2][2]).tex(icon.getMaxU(), replacedMinV).lightmap(l2, i3).color(r, g, b, 1).endVertex();
-                worldRenderer.pos(c[3][0], c[3][1] * height, c[3][2]).tex(icon.getMaxU(), replacedMaxV).lightmap(l2, i3).color(r, g, b, 1).endVertex();
-
-                t.draw();
+                IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.getText(icon.getAtlasTexture().getTextureLocation()));
+                Matrix4f matrix = matrixStack.getLast().getMatrix();
+                vb.pos(matrix, c[0][0], c[0][1] * height, c[0][2]).color(r, g, b, 1).tex(icon.getMinU(), replacedMaxV).lightmap(l2, i3).endVertex();
+                vb.pos(matrix, c[1][0], c[1][1] * height, c[1][2]).color(r, g, b, 1).tex(icon.getMinU(), replacedMinV).lightmap(l2, i3).endVertex();
+                vb.pos(matrix, c[2][0], c[2][1] * height, c[2][2]).color(r, g, b, 1).tex(icon.getMaxU(), replacedMinV).lightmap(l2, i3).endVertex();
+                vb.pos(matrix, c[3][0], c[3][1] * height, c[3][2]).color(r, g, b, 1).tex(icon.getMaxU(), replacedMaxV).lightmap(l2, i3).endVertex();
             }
 
-            GlStateManager.enableLighting();
-            //GlStateManager.disableDepth();
-            GlStateManager.popMatrix();
+            matrixStack.pop();
         }
 	}
 

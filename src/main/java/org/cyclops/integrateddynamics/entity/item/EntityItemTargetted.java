@@ -76,9 +76,9 @@ public class EntityItemTargetted extends ItemEntity {
 		}
 		BlockPos target = getTarget();
 
-		double dx = this.posX - target.getX();
-		double dy = this.posY - (target.getY() + 1F);
-		double dz = this.posZ - target.getZ();
+		double dx = this.getPosX() - target.getX();
+		double dy = this.getPosY() - (target.getY() + 1F);
+		double dz = this.getPosZ() - target.getZ();
 		double strength = -0.1;
 
 		double d = MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
@@ -108,20 +108,20 @@ public class EntityItemTargetted extends ItemEntity {
 		float ageMultiplier = (float) (rand.nextDouble() * 2.5D + 10D);
 
 		ParticleBlur blur = new ParticleBlur(new ParticleBlurData(red, green, blue, scale, ageMultiplier),
-				world, this.posX, this.posY + 0.5D, this.posZ,
+				world, this.getPosX(), this.getPosY() + 0.5D, this.getPosZ(),
 				0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2);
 		Minecraft.getInstance().particles.addEffect(blur);
 
 		if (rand.nextInt(5) == 0) {
 			BlockPos target = getTarget();
 
-			double dx = this.posX - (target.getX() + 0.5F);
-			double dy = this.posY - (target.getY() + 1F);
-			double dz = this.posZ - (target.getZ() + 0.5F);
+			double dx = this.getPosX() - (target.getX() + 0.5F);
+			double dy = this.getPosY() - (target.getY() + 1F);
+			double dz = this.getPosZ() - (target.getZ() + 0.5F);
 			double factor = rand.nextDouble();
-			double x = this.posX - dx * factor;
-			double y = this.posY - dy * factor;
-			double z = this.posZ - dz * factor;
+			double x = this.getPosX() - dx * factor;
+			double y = this.getPosY() - dy * factor;
+			double z = this.getPosZ() - dz * factor;
 			ParticleBlur blur2 = new ParticleBlur(new ParticleBlurData(red, green, blue, scale, ageMultiplier),
 					world, x, y, z,
 					-0.02 * dx, -0.02 * dy, -0.02 * dz);

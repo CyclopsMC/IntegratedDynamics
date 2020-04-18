@@ -1,13 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.ToString;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.EndNBT;
 import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -74,7 +71,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
 
     @Override
     public INBT serialize(ValueRecipe value) {
-        if(!value.getRawValue().isPresent()) return new EndNBT();
+        if(!value.getRawValue().isPresent()) return EndNBT.INSTANCE;
         return IRecipeDefinition.serialize(value.getRawValue().get());
     }
 

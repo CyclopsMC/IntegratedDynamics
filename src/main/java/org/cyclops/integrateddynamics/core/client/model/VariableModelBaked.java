@@ -5,13 +5,13 @@ import com.google.common.collect.Maps;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.client.model.data.IModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
@@ -61,12 +61,22 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
         variableFacade.addModelOverlay(this, quads, this.rand, this.modelData);
 
-        return new PerspectiveMapWrapper(new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.isGui3d(),
-                this.getParticleTexture(), this.getItemCameraTransforms(), this.getOverrides()), ModelHelpers.DEFAULT_PERSPECTIVE_TRANSFORMS_ITEM);
+        return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.func_230044_c_(), this.isGui3d(),
+                this.getParticleTexture(), this.getItemCameraTransforms(), this.getOverrides());
+    }
+
+    @Override
+    public boolean func_230044_c_() {
+        return false;
     }
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
         return this.baseModel.getParticleTexture();
+    }
+
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS_ITEM;
     }
 }

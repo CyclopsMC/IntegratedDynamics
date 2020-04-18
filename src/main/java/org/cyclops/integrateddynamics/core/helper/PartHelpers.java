@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -411,15 +412,15 @@ public class PartHelpers {
      * @param player The player opening the gui.
      * @param pos The part position.
      * @param partType The part type.
-     * @return If the part has a container provider.
+     * @return The action result.
      */
-    public static boolean openContainerPart(ServerPlayerEntity player, PartPos pos, IPartType<?, ?> partType) {
+    public static ActionResultType openContainerPart(ServerPlayerEntity player, PartPos pos, IPartType<?, ?> partType) {
         return partType.getContainerProvider(pos)
                 .map(containerProvider -> {
                     NetworkHooks.openGui(player, containerProvider, packetBuffer -> partType.writeExtraGuiData(packetBuffer, pos, player));
-                    return true;
+                    return ActionResultType.SUCCESS;
                 })
-                .orElse(false);
+                .orElse(ActionResultType.PASS);
     }
 
     /**

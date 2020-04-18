@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -20,9 +21,10 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     private static final float MARGIN_FACTOR = 1.1F;
 
     @Override
-    public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, Direction direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {
+    public void renderValue(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                            Direction direction, IPartType partType, IValue value, float partialTicks,
+                            MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                            int combinedLight, int combinedOverlay, float alpha) {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float maxWidth = 0;
 
@@ -35,26 +37,25 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         float singleHeight = fontRenderer.FONT_HEIGHT;
         float totalHeight = singleHeight * lines.length;
 
-        GlStateManager.pushMatrix();
-        GlStateManager.enableRescaleNormal();
+        matrixStack.push();
 
         float scaleX = DisplayPartOverlayRenderer.MAX / (maxWidth * MARGIN_FACTOR);
         float scaleY = DisplayPartOverlayRenderer.MAX / (totalHeight * MARGIN_FACTOR);
         float scale = Math.min(scaleX, scaleY); // Maintain aspect ratio
         float newWidth = maxWidth * scale;
         float newHeight = totalHeight * scale;
-        GlStateManager.translatef((DisplayPartOverlayRenderer.MAX - newWidth) / 2, (DisplayPartOverlayRenderer.MAX - newHeight) / 2, 0F);
-        GlStateManager.scalef(scale, scale, 1F);
+        matrixStack.translate((DisplayPartOverlayRenderer.MAX - newWidth) / 2, (DisplayPartOverlayRenderer.MAX - newHeight) / 2, 0F);
+        matrixStack.scale(scale, scale, 1F);
 
         int offset = 0;
         for(String line : lines) {
-            int color = Helpers.addAlphaToColor(value.getType().getDisplayColor(), distanceAlpha);
-            rendererDispatcher.getFontRenderer().drawString(polishLine(line), 0, offset, color);
+            int color = Helpers.addAlphaToColor(value.getType().getDisplayColor(), alpha);
+            rendererDispatcher.getFontRenderer().renderString(polishLine(line), 0, offset, color,
+                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
             offset += singleHeight;
         }
 
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.popMatrix();
+        matrixStack.pop();
     }
 
     protected String polishLine(String line) {

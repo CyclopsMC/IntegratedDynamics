@@ -67,9 +67,9 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     public INBT serialize(ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if(uuid.isPresent()) {
-            return new StringNBT(uuid.get().toString());
+            return StringNBT.valueOf(uuid.get().toString());
         }
-        return new StringNBT("");
+        return StringNBT.valueOf("");
     }
 
     @Override

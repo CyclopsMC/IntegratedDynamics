@@ -99,22 +99,22 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     @Override
     protected void enableSlot(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex);
-        slot.xPos = SLOT_IN_X;
-        slot.yPos = SLOT_IN_Y + getAspectBoxHeight() * row;
+        setSlotPosX(slot, SLOT_IN_X);
+        setSlotPosY(slot, SLOT_IN_Y + getAspectBoxHeight() * row);
     }
 
     protected void disableSlotOutput(int slotIndex) {
         Slot slot = getSlot(slotIndex + getUnfilteredItemCount());
         // Yes I know this is ugly.
         // If you are reading this and know a better way, please tell me.
-        slot.xPos = Integer.MIN_VALUE;
-        slot.yPos = Integer.MIN_VALUE;
+        setSlotPosX(slot, Integer.MIN_VALUE);
+        setSlotPosY(slot, Integer.MIN_VALUE);
     }
 
     protected void enableSlotOutput(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex + getUnfilteredItemCount());
-        slot.xPos = SLOT_OUT_X;
-        slot.yPos = SLOT_OUT_Y + getAspectBoxHeight() * row;
+        setSlotPosX(slot, SLOT_OUT_X);
+        setSlotPosY(slot, SLOT_OUT_X + getAspectBoxHeight() * row);
     }
 
     @Override

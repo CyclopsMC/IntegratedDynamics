@@ -7,6 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -164,20 +165,20 @@ public class CableHelpers {
      * @param side The side of the block the player right-clicked on.
      * @param cableConnectionHit The side identifying the cable connection that is being activated,
      *                           this will be null if the center part of the cable is activated.
-     * @return True if further actions should halt.
+     * @return Action result.
      */
-    public static boolean onCableActivated(World world, BlockPos pos, BlockState state, PlayerEntity player,
-                                           ItemStack heldItem, Direction side, @Nullable Direction cableConnectionHit) {
+    public static ActionResultType onCableActivated(World world, BlockPos pos, BlockState state, PlayerEntity player,
+                                                    ItemStack heldItem, Direction side, @Nullable Direction cableConnectionHit) {
         ICable cable = CableHelpers.getCable(world, pos, side).orElse(null);
         if (cable == null) {
-            return false;
+            return ActionResultType.PASS;
         }
 
         if(WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
             if (world.isRemote()) {
-                return true; // Don't do anything client-side
+                return ActionResultType.SUCCESS; // Don't do anything client-side
             }
-            if (player.isSneaking()) {
+            if (player.isCrouching()) {
                 removeCable(world, pos, player);
             } else if (cableConnectionHit != null) {
                 // Disconnect cable side
@@ -194,7 +195,6 @@ public class CableHelpers {
                 // Reinit the networks for this block and the disconnected neighbour.
                 NetworkHelpers.initNetwork(world, pos, side);
                 NetworkHelpers.initNetwork(world, pos.offset(cableConnectionHit), side.getOpposite());
-                return true;
             } else if (cableConnectionHit == null) {
                 // Reconnect cable side
                 BlockPos neighbourPos = pos.offset(side);
@@ -217,11 +217,10 @@ public class CableHelpers {
                     NetworkHelpers.initNetwork(world, pos, side);
                     NetworkHelpers.initNetwork(world, neighbourPos, side.getOpposite());
                 }
-                return true;
             }
-            return true;
+            return ActionResultType.SUCCESS;
         }
-        return false;
+        return ActionResultType.PASS;
     }
 
     /**

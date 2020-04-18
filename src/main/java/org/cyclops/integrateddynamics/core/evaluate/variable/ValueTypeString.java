@@ -33,7 +33,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
 
     @Override
     public INBT serialize(ValueString value) {
-        return new StringNBT(value.getRawValue());
+        return StringNBT.valueOf(value.getRawValue());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
@@ -44,7 +44,7 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
                     getGuiLeftTotal() + getValueX(), getGuiTopTotal() + getValueY(), 70, readValueColor);
         }
 
-        GlStateManager.color3f(1, 1, 1);
+        RenderSystem.color3f(1, 1, 1);
         displayErrors.drawBackground(getContainer().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
                 this.guiLeft, this.guiTop, ok);
     }

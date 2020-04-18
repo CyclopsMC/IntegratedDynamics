@@ -4,6 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -91,16 +92,16 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
         }
 
         @Override
-        public boolean onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
+        public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getHeldItem(hand);
-            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isSneaking()) {
+            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isCrouching()) {
                 if (!world.isRemote()) {
                     destroy(world, blockPos, player, true);
                     world.notifyNeighborsOfStateChange(blockPos, state.getBlock());
                 }
-                return true;
+                return ActionResultType.SUCCESS;
             }
-            return false;
+            return ActionResultType.PASS;
         }
 
     }

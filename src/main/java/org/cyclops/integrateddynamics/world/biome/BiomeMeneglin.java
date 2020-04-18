@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.world.biome;
 
-import net.minecraft.block.FlowerBlock;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.SharedSeedRandom;
@@ -17,13 +17,11 @@ import net.minecraft.world.gen.feature.MultipleRandomFeatureConfig;
 import net.minecraft.world.gen.feature.structure.MineshaftConfig;
 import net.minecraft.world.gen.feature.structure.MineshaftStructure;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
-import net.minecraft.world.gen.placement.FrequencyConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Meneglin biome.
@@ -46,8 +44,8 @@ public class BiomeMeneglin extends Biome {
                 .parent(null));
 
         // Structures
-        this.addStructure(Feature.MINESHAFT, new MineshaftConfig(0.004D, MineshaftStructure.Type.NORMAL));
-        this.addStructure(Feature.STRONGHOLD, IFeatureConfig.NO_FEATURE_CONFIG);
+        this.addStructure(Feature.MINESHAFT.withConfiguration(new MineshaftConfig(0.004D, MineshaftStructure.Type.NORMAL)));
+        this.addStructure(Feature.STRONGHOLD.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
 
         // Features
         DefaultBiomeFeatures.addCarvers(this);
@@ -58,16 +56,11 @@ public class BiomeMeneglin extends Biome {
         DefaultBiomeFeatures.addStoneVariants(this);
         DefaultBiomeFeatures.addOres(this);
         DefaultBiomeFeatures.addSedimentDisks(this);
-        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(RegistryEntries.WORLD_FEATURE_TREE_MENRIL,
-                IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(1, 0.1F, 1)));
-        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(Feature.RANDOM_SELECTOR,
-                new MultipleRandomFeatureConfig(new Feature[]{Feature.NORMAL_TREE, Feature.FANCY_TREE},
-                        new IFeatureConfig[]{IFeatureConfig.NO_FEATURE_CONFIG, IFeatureConfig.NO_FEATURE_CONFIG},
-                        new float[]{0.2F, 0.1F}, Feature.NORMAL_TREE, IFeatureConfig.NO_FEATURE_CONFIG),
-                Placement.COUNT_EXTRA_HEIGHTMAP,
-                new AtSurfaceWithExtraConfig(3, 0.1F, 1)));
-        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(RegistryEntries.WORLD_FEATURE_FLOWERS_MENRIL,
-                IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_HEIGHTMAP_32, new FrequencyConfig(70)));
+        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Feature.RANDOM_SELECTOR
+                .withConfiguration(new MultipleRandomFeatureConfig(ImmutableList.of(
+                        Feature.FANCY_TREE.withConfiguration(DefaultBiomeFeatures.FANCY_TREE_CONFIG).func_227227_a_(0.1F)
+                ), Feature.NORMAL_TREE.withConfiguration(DefaultBiomeFeatures.OAK_TREE_CONFIG)))
+                .withPlacement(Placement.COUNT_EXTRA_HEIGHTMAP.configure(new AtSurfaceWithExtraConfig(3, 0.1F, 1))));
         DefaultBiomeFeatures.addDefaultFlowers(this);
         DefaultBiomeFeatures.addGrass(this);
         DefaultBiomeFeatures.addMushrooms(this);
@@ -101,18 +94,19 @@ public class BiomeMeneglin extends Biome {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public int getGrassColor(BlockPos blockPos) {
+    public int getGrassColor(double p_225528_1_, double p_225528_3_) {
         return Helpers.RGBToInt(85, 221, 168);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public int getFoliageColor(BlockPos blockPos) {
+    public int getFoliageColor() {
         return Helpers.RGBToInt(128, 208, 185);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public int getSkyColorByTemp(float temp) {
+    public int getSkyColor() {
         return Helpers.RGBToInt(178, 238, 233);
     }
 }

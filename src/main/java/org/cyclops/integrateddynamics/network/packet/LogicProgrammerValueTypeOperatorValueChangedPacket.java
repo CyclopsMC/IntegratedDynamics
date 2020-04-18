@@ -36,7 +36,7 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 		try {
 			this.operatorValue = ValueHelpers.serializeRaw(value);
 		} catch (Exception e) {
-			this.operatorValue = new ByteNBT((byte) 0);
+			this.operatorValue = ByteNBT.valueOf((byte) 0);
 		}
     }
 

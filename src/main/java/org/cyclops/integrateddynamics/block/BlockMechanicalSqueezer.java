@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -35,9 +36,11 @@ public class BlockMechanicalSqueezer extends BlockTileGuiCabled {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
-        return FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, rayTraceResult.getFace())
-                || super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
+    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
+        if (FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, rayTraceResult.getFace())) {
+            return ActionResultType.SUCCESS;
+        }
+        return super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
     }
 
 }

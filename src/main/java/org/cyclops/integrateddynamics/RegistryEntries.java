@@ -31,6 +31,7 @@ import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipe;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipe;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
+import org.cyclops.integrateddynamics.world.biome.BiomeMeneglin;
 import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureFlowersMenril;
 import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureTreeMenril;
 
@@ -179,6 +180,8 @@ public class RegistryEntries {
     public static final WorldFeatureFlowersMenril WORLD_FEATURE_FLOWERS_MENRIL = null;
     @ObjectHolder("integrateddynamics:tree_menril")
     public static final WorldFeatureTreeMenril WORLD_FEATURE_TREE_MENRIL = null;
+    @ObjectHolder("integrateddynamics:biome_meneglin")
+    public static final BiomeMeneglin BIOME_MENEGLIN = null;
 
     // Recipe types are not Forge registries unfortunately...
     public static IRecipeType<RecipeDryingBasin> RECIPETYPE_DRYING_BASIN = null;

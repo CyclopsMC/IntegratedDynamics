@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.world.gen.feature;
 
 import com.google.common.collect.Lists;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.IFeatureConfig;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.feature.TreeFeatureConfig;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.fml.config.ModConfig;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.WorldFeatureConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.world.gen.TreeMenril;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class WorldFeatureTreeMenrilConfig extends WorldFeatureConfig {
         super(
                 IntegratedDynamics._instance,
                 "tree_menril",
-                eConfig -> new WorldFeatureTreeMenril(NoFeatureConfig::deserialize, false)
+                eConfig -> new WorldFeatureTreeMenril(TreeFeatureConfig::func_227338_a_)
         );
     }
 
@@ -44,11 +44,17 @@ public class WorldFeatureTreeMenrilConfig extends WorldFeatureConfig {
     public void onForgeRegistered() {
         super.onForgeRegistered();
 
-        // Register
+        // Register feature in Meneglin biome
+        // We must do this here because the biomes are constructed before the features.
+        RegistryEntries.BIOME_MENEGLIN.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, ((WorldFeatureTreeMenril) getInstance())
+                .withConfiguration(TreeMenril.getMenrilTreeConfig())
+                .withPlacement(Placement.COUNT_EXTRA_HEIGHTMAP.configure(new AtSurfaceWithExtraConfig(1, 0.1F, 1))));
+
+        // Register feature in other biomes
         GenerationStage.Decoration decoration = GenerationStage.Decoration.VEGETAL_DECORATION;
-        ConfiguredFeature<?> feature = Biome.createDecoratedFeature((WorldFeatureTreeMenril) getInstance(),
-                IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_EXTRA_HEIGHTMAP,
-                new AtSurfaceWithExtraConfig(wildMenrilTreeChance, 0.1F, 1));
+        ConfiguredFeature<?, ?> feature = ((WorldFeatureTreeMenril) getInstance())
+                .withConfiguration(TreeMenril.getMenrilTreeConfig())
+                .withPlacement(Placement.COUNT_EXTRA_HEIGHTMAP.configure(new AtSurfaceWithExtraConfig(1, 0.1F, 1)));
 
         Biomes.PLAINS.addFeature(decoration, feature);
         Biomes.MOUNTAINS.addFeature(decoration, feature);
@@ -78,7 +84,5 @@ public class WorldFeatureTreeMenrilConfig extends WorldFeatureConfig {
         Biomes.DARK_FOREST_HILLS.addFeature(decoration, feature);
         Biomes.SNOWY_TAIGA_MOUNTAINS.addFeature(decoration, feature);
         Biomes.GIANT_SPRUCE_TAIGA_HILLS.addFeature(decoration, feature);
-
-
     }
 }

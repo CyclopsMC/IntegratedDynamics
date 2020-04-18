@@ -8,6 +8,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -124,11 +125,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public boolean onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
-                                   ItemStack heldItem, BlockRayTraceResult hit) {
+    public ActionResultType onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
+                                            ItemStack heldItem, BlockRayTraceResult hit) {
         // Drop through if the player is sneaking
-        if(player.isSneaking()) {
-            return false;
+        if(player.isCrouching()) {
+            return ActionResultType.PASS;
         }
 
         PartPos partPos = PartPos.of(world, pos, hit.getFace());
@@ -136,9 +137,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             if (!world.isRemote()) {
                 return PartHelpers.openContainerPart((ServerPlayerEntity) player, partPos, this);
             }
-            return true;
+            return ActionResultType.SUCCESS;
         }
-        return false;
+        return ActionResultType.PASS;
     }
 
     @Override

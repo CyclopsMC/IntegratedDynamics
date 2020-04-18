@@ -33,7 +33,7 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
 
     @Override
     public INBT serialize(ValueDouble value) {
-        return new DoubleNBT(value.getRawValue());
+        return DoubleNBT.valueOf(value.getRawValue());
     }
 
     @Override

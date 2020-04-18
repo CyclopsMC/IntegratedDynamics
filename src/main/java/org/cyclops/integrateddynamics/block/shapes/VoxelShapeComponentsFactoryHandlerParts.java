@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -82,21 +83,21 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         }
 
         @Override
-        public boolean onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
+        public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getHeldItem(hand);
-            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isSneaking()) {
+            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isCrouching()) {
                 // Remove part from cable
                 if (!world.isRemote()) {
                     destroy(world, blockPos, player, true);
                     ItemBlockCable.playBreakSound(world, blockPos, state);
                 }
-                return true;
+                return ActionResultType.SUCCESS;
             } else if(CableHelpers.isNoFakeCable(world, blockPos, hit.getFace())) {
                 // Delegate activated call to part
                 return partContainer.getPart(direction).onPartActivated(partContainer.getPartState(direction), blockPos, world,
                         player, hand, heldItem, hit.withFace(direction));
             }
-            return false;
+            return ActionResultType.PASS;
         }
 
     }

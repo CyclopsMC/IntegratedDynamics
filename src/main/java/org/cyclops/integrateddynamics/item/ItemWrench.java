@@ -33,7 +33,7 @@ public class ItemWrench extends Item {
     @Override
     public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
         BlockState blockState = context.getWorld().getBlockState(context.getPos());
-        if(!context.getWorld().isRemote() || context.getPlayer().isSneaking()) {
+        if(!context.getWorld().isRemote() || context.getPlayer().isCrouching()) {
             return ActionResultType.PASS;
         } else if(blockState.rotate(context.getWorld(), context.getPos(), Rotation.CLOCKWISE_90) != blockState) {
             context.getPlayer().swingArm(context.getHand());

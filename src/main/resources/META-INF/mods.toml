@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[28.1,)"
+loaderVersion="[31.1,)"
 issueTrackerURL="https://github.com/CyclopsMC/IntegratedDynamics/issues"
 [[mods]]
 modId="integrateddynamics"
@@ -14,18 +14,18 @@ Take full and automated control of your appliances.
 [[dependencies.integrateddynamics]]
     modId="cyclopscore"
     mandatory=true
-    versionRange="[1.6.1,)"
+    versionRange="[1.6.2,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
     modId="forge"
     mandatory=true
-    versionRange="[28.1,)"
+    versionRange="[31.1,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.4]"
+    versionRange="[1.15.2]"
     ordering="NONE"
     side="BOTH"

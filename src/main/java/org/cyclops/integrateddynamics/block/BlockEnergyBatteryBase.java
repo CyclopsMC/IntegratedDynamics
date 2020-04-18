@@ -3,12 +3,10 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.Direction;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -28,11 +26,6 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     }
 
     @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
-    }
-
-    @Override
     public String getEneryContainerNBTName() {
         return "energy";
     }
@@ -45,10 +38,11 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     public abstract boolean isCreative();
 
     @Override
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
-                                    BlockRayTraceResult blockRayTraceResult) {
-        if (super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult)) {
-            return true;
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+                                             BlockRayTraceResult blockRayTraceResult) {
+        ActionResultType superActionResult = super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
+        if (superActionResult.isSuccessOrConsume()) {
+            return superActionResult;
         }
 
         if (player.getHeldItem(hand).isEmpty()) {
@@ -56,12 +50,12 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
                     .map(tile -> {
                         player.sendStatusMessage(Helpers.getLocalizedEnergyLevel(
                                 tile.getEnergyStored(), tile.getMaxEnergyStored()), true);
-                        return true;
+                        return ActionResultType.SUCCESS;
                     })
-                    .orElse(false);
+                    .orElse(ActionResultType.PASS);
         }
 
-        return false;
+        return ActionResultType.PASS;
     }
 
     /**

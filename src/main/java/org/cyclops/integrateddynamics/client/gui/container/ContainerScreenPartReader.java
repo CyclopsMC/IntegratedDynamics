@@ -51,7 +51,7 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), aspect);
         Rectangle pos = getElementPosition(container, index, true);
 
-        RenderHelper.enableGUIStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         itemRenderer.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
     }
 

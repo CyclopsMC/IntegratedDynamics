@@ -67,7 +67,7 @@ public class AspectAppendix extends SectionAppendix {
         gui.drawTextBanner(x + width / 2, y - 2 - yOffset);
         gui.drawScaledCenteredString(L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
-        RenderHelper.enableGUIStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(itemStack, x, y);
 
         // Base information

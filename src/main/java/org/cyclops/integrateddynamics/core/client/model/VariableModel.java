@@ -1,29 +1,25 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.BlockModel;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ItemModelGenerator;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.SimpleBakedModel;
-import net.minecraft.client.renderer.texture.ISprite;
+import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.CompositeModel;
+import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.client.model.geometry.IModelGeometry;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -31,7 +27,7 @@ import java.util.function.Function;
  * Model for a variant of a variable item.
  * @author rubensworks
  */
-public class VariableModel implements IUnbakedModel {
+public class VariableModel implements IUnbakedModel, IModelGeometry<VariableModel> {
 
     private final BlockModel base;
 
@@ -63,57 +59,56 @@ public class VariableModel implements IUnbakedModel {
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors) {
-        Collection<ResourceLocation> textures = Sets.newHashSet();
-
+    public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         base.parent = ModelHelpers.MODEL_GENERATED; // To enable texture resolving
 
+        Set<Material> textures = Sets.newHashSet(base.resolveTextureName("particle"));
+
         // Loop over all textures for the default layers and add them to the collection if available.
-        if(base.getRootModel().name.equals("generation marker")) {
-            for(String textureName : ItemModelGenerator.LAYERS) {
-                String path = base.resolveTextureName(textureName);
-                ResourceLocation resourceLocation = new ResourceLocation(path);
-                if(!path.equals(textureName)) {
-                    textures.add(resourceLocation);
-                }
-            }
+        if(base.getRootModel() == ModelBakery.MODEL_GENERATED) {
+            ItemModelGenerator.LAYERS.forEach((p_228814_2_) -> {
+                textures.add(base.resolveTextureName(p_228814_2_));
+            });
         }
 
         // Loop over all textures in this model and add them to the collection.
-        for(String textureName : base.textures.values()) {
-            if(!textureName.startsWith("#")) {
-                textures.add(new ResourceLocation(textureName));
-            }
+        for(Either<Material, String> texture : base.textures.values()) {
+            texture.ifLeft(textures::add);
         }
 
         return textures;
     }
 
-    @Override
     @Nullable
-    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter,
-                            ISprite sprite, VertexFormat format) {
-        TextureAtlasSprite textureAtlasSprite = spriteGetter.apply(new ResourceLocation(base.resolveTextureName("layer0")));
-        BlockModel itemModel = ModelHelpers.MODEL_GENERATOR.makeItemModel(Minecraft.getInstance().getTextureMap()::getSprite, base);
-        SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(itemModel, itemModel.getOverrides(bakery, itemModel, spriteGetter, format)));
-        itemModel.textures.put("layer0", textureAtlasSprite.getName().toString());
+    @Override
+    public IBakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter,
+                                 IModelTransform transform, ResourceLocation location) {
+        Material textureName = base.resolveTextureName("layer0");
+        BlockModel itemModel = ModelHelpers.MODEL_GENERATOR.makeItemModel(spriteGetter, base);
+        SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(itemModel.customData, itemModel.getOverrides(bakery, itemModel, spriteGetter)));
+        itemModel.textures.put("layer0", Either.left(textureName));
+        TextureAtlasSprite textureAtlasSprite = spriteGetter.apply(textureName);
         builder.setTexture(textureAtlasSprite);
-        for (BakedQuad bakedQuad : ItemLayerModel.getQuadsForSprite(0, textureAtlasSprite, format, Optional.empty())) {
+        for (BakedQuad bakedQuad : ItemLayerModel.getQuadsForSprite(0, textureAtlasSprite, transform.getRotation())) {
             builder.addGeneralQuad(bakedQuad);
         }
         IBakedModel baseModel = builder.build();
         VariableModelBaked bakedModel = new VariableModelBaked(baseModel);
 
         for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
-            bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakery, spriteGetter, sprite, format));
+            bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakery, spriteGetter, transform, location));
         }
 
         return bakedModel;
     }
 
     @Override
-    public IModelState getDefaultState() {
-        return TRSRTransformation.identity();
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
+       return bakeModel(bakery, spriteGetter, modelTransform, modelLocation);
     }
 
+    @Override
+    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+        return getTextures(modelGetter, missingTextureErrors);
+    }
 }

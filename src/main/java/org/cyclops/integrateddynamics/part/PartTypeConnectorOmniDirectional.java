@@ -7,6 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -182,17 +183,17 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public boolean onPartActivated(State partState, BlockPos pos, World world, PlayerEntity player, Hand hand, ItemStack heldItem, BlockRayTraceResult hit) {
+    public ActionResultType onPartActivated(State partState, BlockPos pos, World world, PlayerEntity player, Hand hand, ItemStack heldItem, BlockRayTraceResult hit) {
         // Drop through if the player is sneaking
-        if(player.isSneaking() || !partState.isEnabled()) {
-            return false;
+        if(player.isCrouching() || !partState.isEnabled()) {
+            return ActionResultType.PASS;
         }
         if (world.isRemote()) {
             player.sendStatusMessage(new TranslationTextComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
                     partState.getGroupId()), true);
         }
 
-        return true;
+        return ActionResultType.SUCCESS;
     }
 
     public static class State extends PartTypeConnector.State<PartTypeConnectorOmniDirectional> {

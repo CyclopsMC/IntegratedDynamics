@@ -3,7 +3,10 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -54,15 +57,15 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             PlayerEntity player = Minecraft.getInstance().player;
             float partialTicks = event.getPartialTicks();
 
-            double offsetX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
-            double offsetY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
-            double offsetZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
+            double offsetX = player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * (double) partialTicks;
+            double offsetY = player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * (double) partialTicks;
+            double offsetZ = player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * (double) partialTicks;
 
-            GlStateManager.enableBlend();
-            GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.lineWidth(6.0F);
-            GlStateManager.disableTexture();
-            GlStateManager.depthMask(false);
+            RenderSystem.enableBlend();
+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            RenderSystem.lineWidth(6.0F);
+            RenderSystem.disableTexture();
+            RenderSystem.depthMask(false);
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (Iterator<PartPos> it = partList.iterator(); it.hasNext(); ) {
@@ -75,16 +78,17 @@ public class NetworkDiagnosticsPartOverlayRenderer {
                                 .offset(partPos.getPos().getBlockPos())
                                 .offset(-offsetX, -offsetY, -offsetZ)
                                 .expand(0.05, 0.05, 0.05);
-                        WorldRenderer.drawSelectionBoundingBox(bb, 1.0F, 0.2F, 0.1F, 0.8F);
+                        WorldRenderer.drawBoundingBox(event.getMatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource().getBuffer(RenderType.getLines()),
+                                bb, 1.0F, 0.2F, 0.1F, 0.8F);
                     } else {
                         it.remove();
                     }
                 }
             }
 
-            GlStateManager.depthMask(true);
-            GlStateManager.enableTexture();
-            GlStateManager.disableBlend();
+            RenderSystem.depthMask(true);
+            RenderSystem.enableTexture();
+            RenderSystem.disableBlend();
         }
     }
 

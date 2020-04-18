@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -137,11 +137,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             if(container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
 
-                GlStateManager.disableAlphaTest();
+                RenderSystem.disableAlphaTest();
                 Triple<Float, Float, Float> rgb = Helpers.intToRGB(element.getColor());
                 boolean hover = LogicProgrammerElementTypes.areEqual(container.getActiveElement(), element)
                         || isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY));
-                GlStateManager.color4f(colorSmoothener(rgb.getLeft(), hover), colorSmoothener(rgb.getMiddle(), hover),
+                RenderSystem.color4f(colorSmoothener(rgb.getLeft(), hover), colorSmoothener(rgb.getMiddle(), hover),
                         colorSmoothener(rgb.getRight(), hover), 1);
 
                 // Background
@@ -149,14 +149,14 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 blit(guiLeft + offsetX + ITEM_POSITION.x,
                         guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
 
-                GlStateManager.enableAlphaTest();
+                RenderSystem.enableAlphaTest();
                 // Arrow
                 if(hover) {
                     blit(guiLeft + offsetX + ITEM_POSITION.x,
                             guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16);
                 }
-                GlStateManager.disableAlphaTest();
-                GlStateManager.color3f(1, 1, 1);
+                RenderSystem.disableAlphaTest();
+                RenderSystem.color3f(1, 1, 1);
 
                 // Operator info
                 String aspectName = element.getSymbol();

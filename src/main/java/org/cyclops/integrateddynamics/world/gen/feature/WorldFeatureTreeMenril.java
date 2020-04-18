@@ -9,12 +9,11 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.gen.IWorldGenerationReader;
-import net.minecraft.world.gen.feature.AbstractTreeFeature;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.feature.AbstractSmallTreeFeature;
+import net.minecraft.world.gen.feature.TreeFeatureConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogFilled;
-import org.cyclops.integrateddynamics.block.BlockMenrilLogFilledConfig;
 
 import java.util.List;
 import java.util.Random;
@@ -25,11 +24,10 @@ import java.util.function.Function;
  * The Menril tree feature.
  * @author rubensworks
  */
-public class WorldFeatureTreeMenril extends AbstractTreeFeature<NoFeatureConfig> {
+public class WorldFeatureTreeMenril extends AbstractSmallTreeFeature<TreeFeatureConfig> {
 
-    public WorldFeatureTreeMenril(Function<Dynamic<?>, ? extends NoFeatureConfig> configIn, boolean doBlockNotifyIn) {
-        super(configIn, doBlockNotifyIn);
-        this.setSapling((net.minecraftforge.common.IPlantable) RegistryEntries.BLOCK_MENRIL_SAPLING);
+    public WorldFeatureTreeMenril(Function<Dynamic<?>, TreeFeatureConfig> configIn) {
+        super(configIn);
     }
 
     protected int baseHeight() {
@@ -40,21 +38,14 @@ public class WorldFeatureTreeMenril extends AbstractTreeFeature<NoFeatureConfig>
         return 4;
     }
 
-    public BlockState getLeaves() {
-        return RegistryEntries.BLOCK_MENRIL_LEAVES.getDefaultState();
-    }
-
-    public BlockState getLogs() {
-        return RegistryEntries.BLOCK_MENRIL_LOG.getDefaultState();
-    }
-
     public BlockState getLogsFilled() {
         return RegistryEntries.BLOCK_MENRIL_LOG_FILLED.getDefaultState();
     }
 
     @Override
-    protected boolean place(Set<BlockPos> changedBlocks, IWorldGenerationReader world, Random rand,
-                            BlockPos blockPos, MutableBoundingBox boundingBox) {
+    protected boolean func_225557_a_(IWorldGenerationReader world, Random rand, BlockPos blockPos,
+                                     Set<BlockPos> changedBlocksTrunk, Set<BlockPos> changedBlocksFoliage,
+                                     MutableBoundingBox boundingBox, TreeFeatureConfig config) {
         int treeHeight = rand.nextInt(baseHeightRandomRange()) + baseHeight();
         int worldHeight = world.getMaxHeight();
         Block block;
@@ -86,7 +77,7 @@ public class WorldFeatureTreeMenril extends AbstractTreeFeature<NoFeatureConfig>
 
                             if ((xPos != center | zPos != center) &&
                                     !((yOffset == y + treeHeight || yOffset == y - 5 + treeHeight) && (xPos == center || zPos == center))) {
-                                this.setLogState(changedBlocks, world, loopPos, getLeaves(), boundingBox);
+                                this.func_227219_b_(world, rand, loopPos, changedBlocksFoliage, boundingBox, config);
                             }
                         }
                     }
@@ -114,13 +105,11 @@ public class WorldFeatureTreeMenril extends AbstractTreeFeature<NoFeatureConfig>
 
                 for(Pair<Boolean, BlockPos> pair : logLocations) {
                     BlockPos loopPos = pair.getRight();
-                    boolean filled = BlockMenrilLogFilledConfig.filledMenrilLogChance > 0
-                            && rand.nextInt(BlockMenrilLogFilledConfig.filledMenrilLogChance) == 0;
-                    BlockState logs = filled ? getLogsFilled()
-                            .with(BlockMenrilLogFilled.SIDE, Direction.Plane.HORIZONTAL.random(rand)) : getLogs();
-                    this.setLogState(changedBlocks, world, loopPos, logs
-                                    .with(LogBlock.AXIS, pair.getLeft() ? Direction.Axis.X : Direction.Axis.Y),
-                            boundingBox);
+                    BlockState logs = config.trunkProvider.getBlockState(rand, loopPos);
+                    logs = logs.getBlock() instanceof BlockMenrilLogFilled
+                            ? logs.with(BlockMenrilLogFilled.SIDE, Direction.Plane.HORIZONTAL.random(rand))
+                            : logs;
+                    this.func_227217_a_(world, loopPos, logs.with(LogBlock.AXIS, pair.getLeft() ? Direction.Axis.X : Direction.Axis.Y), boundingBox);
                 }
 
                 return true;

@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -194,8 +195,8 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public boolean onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand, ItemStack heldItem, BlockRayTraceResult hit) {
-        return false;
+    public ActionResultType onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand, ItemStack heldItem, BlockRayTraceResult hit) {
+        return ActionResultType.PASS;
     }
 
     @Override

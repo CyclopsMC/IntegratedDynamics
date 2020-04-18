@@ -6,25 +6,24 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.ILightReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.common.model.TRSRTransformation;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
@@ -36,8 +35,6 @@ import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import javax.annotation.Nonnull;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -49,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel {
 
-    private static final Cache<Triple<IRenderState, Direction, BlockRenderLayer>, List<BakedQuad>> CACHE_QUADS = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
+    private static final Cache<Triple<IRenderState, Direction, RenderType>, List<BakedQuad>> CACHE_QUADS = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
 
     private static final int RADIUS = 4;
     private static final int TEXTURE_SIZE = 16;
@@ -65,19 +62,16 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     private final float[][][] quadVertexes = makeQuadVertexes(MIN, MAX, 1.00F);
 
-    protected static final ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> TRANSFORMS =
-            ModelHelpers.modifyDefaultTransforms(ImmutableMap.of(
-                    ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
-                            new Vector3f(0, 1f / 32, 0),
-                            TRSRTransformation.quatFromXYZDegrees(new Vector3f(0, 45, 0)),
-                            new Vector3f(0.4F, 0.4F, 0.4F),
-                            null)),
-                    ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
-                            new Vector3f(0, 1f / 32, 0),
-                            TRSRTransformation.quatFromXYZDegrees(new Vector3f(0, 225, 0)),
-                            new Vector3f(0.4F, 0.4F, 0.4F),
-                            null))
-            ));
+    protected static final ItemCameraTransforms TRANSFORMS = ModelHelpers.modifyDefaultTransforms(ImmutableMap.of(
+            ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, new ItemTransformVec3f(
+                    new Vector3f(0, 45, 0),
+                    new Vector3f(0, 1f / 32, 0),
+                    new Vector3f(0.4F, 0.4F, 0.4F)),
+            ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, new ItemTransformVec3f(
+                    new Vector3f(0, 225, 0),
+                    new Vector3f(0, 1f / 32, 0),
+                    new Vector3f(0.4F, 0.4F, 0.4F))
+    ));
 
     public CableModelBase(BlockState blockState, Direction facing, Random rand, IModelData modelData) {
         super(blockState, facing, rand, modelData);
@@ -189,7 +183,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     @Override
     public List<BakedQuad> getGeneralQuads() {
-        Triple<IRenderState, Direction, BlockRenderLayer> cacheKey = null;
+        Triple<IRenderState, Direction, RenderType> cacheKey = null;
         List<BakedQuad> cachedQuads = null;
         if (GeneralConfig.cacheCableModels) {
             IRenderState renderState = getRenderState(modelData);
@@ -201,7 +195,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         if (cachedQuads == null) {
             List<BakedQuad> ret = Lists.newLinkedList();
             TextureAtlasSprite texture = getParticleTexture();
-            boolean renderCable = isItemStack() || (isRealCable(modelData) && MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID);
+            boolean renderCable = isItemStack() || (isRealCable(modelData) && MinecraftForgeClient.getRenderLayer() == RenderType.getSolid());
             Optional<BlockState> blockStateHolder = getFacade(modelData);
             for (Direction side : Direction.values()) {
                 boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
@@ -244,7 +238,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                             );
                             i++;
                             ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
-                            ret.add(new BakedQuad(data, -1, realSide, texture, true, DefaultVertexFormats.ITEM));
+                            ret.add(new BakedQuad(data, -1, realSide, texture, true));
                         }
                     } else {
                         addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
@@ -283,7 +277,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull IEnviromentBlockReader world, @Nonnull BlockPos pos,
+    public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos,
                                    @Nonnull BlockState state, @Nonnull IModelData tileData) {
         return TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class)
                 .map(TileMultipartTicking::getConnectionState)
@@ -291,10 +285,13 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        TRSRTransformation tr = ModelHelpers.DEFAULT_PERSPECTIVE_TRANSFORMS.get(cameraTransformType);
-        Matrix4f mat = null;
-        if(tr != null && !tr.equals(TRSRTransformation.identity())) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrixVec();
-        return Pair.of(this, mat);
+    public boolean func_230044_c_() {
+        return false; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
     }
+
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return TRANSFORMS;
+    }
+
 }

@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -21,56 +23,41 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItem
 public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
-    public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, Direction direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher, float alpha) {
+    public void renderValue(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                            Direction direction, IPartType partType, IValue value, float partialTicks,
+                            MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                            int combinedLight, int combinedOverlay, float alpha) {
         ItemStack itemStackOptional = ((ValueObjectTypeItemStack.ValueItemStack) value).getRawValue();
         if(!itemStackOptional.isEmpty()) {
             // ItemStack
-            renderItemStack(itemStackOptional, alpha);
+            renderItemStack(matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemStackOptional, alpha);
 
             // Stack size
-            GlStateManager.pushMatrix();
-            GlStateManager.translatef(7F, 8.5F, 0.3F);
+            matrixStack.push();
+            matrixStack.translate(7F, 8.5F, 0.3F);
             String stackSize = String.valueOf(itemStackOptional.getCount());
             float scale = 1F / ((float) stackSize.length() + 1F);
-            GlStateManager.scalef(scale, scale, 1F);
-            rendererDispatcher.getFontRenderer().drawString(stackSize,
-                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)));
-            GlStateManager.popMatrix();
+            matrixStack.scale(scale, scale, 1F);
+            rendererDispatcher.getFontRenderer().renderString(stackSize,
+                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)), false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
+            matrixStack.pop();
         }
     }
 
-    public static void renderItemStack(ItemStack itemStack, float alpha) {
+    public static void renderItemStack(MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay, ItemStack itemStack, float alpha) {
         // ItemStack
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(0, 0, -1F);
-        GlStateManager.scaled(0.78, 0.78, 0.01);
+        matrixStack.push();
+        matrixStack.translate(0, 0, -1F);
+        matrixStack.scale(0.78F, 0.78F, 0.01F);
 
         ItemRenderer renderItem = Minecraft.getInstance().getItemRenderer();
-        GlStateManager.pushMatrix();
-        GlStateManager.rotatef(40f, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotatef(95F, 1.0F, 0.0F, 0.0F);
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.popMatrix();
+        matrixStack.rotate(Vector3f.YP.rotationDegrees(40f));
+        matrixStack.rotate(Vector3f.XP.rotationDegrees(95F));
 
-        // Inspired by: https://github.com/jaquadro/StorageDrawers/blob/1.10/src/com/jaquadro/minecraft/storagedrawers/client/renderer/TileEntityDrawersRenderer.java#L180
+        // Inspired by: https://github.com/jaquadro/StorageDrawers/blob/1.15/src/main/java/com/jaquadro/minecraft/storagedrawers/client/renderer/TileEntityDrawersRenderer.java
 
-        GlStateManager.enablePolygonOffset();
-        GlStateManager.polygonOffset(-1, -1);
+        renderItem.renderItem(itemStack, ItemCameraTransforms.TransformType.GUI, combinedLight, combinedOverlay, matrixStack, renderTypeBuffer);
 
-        GlStateManager.pushTextureAttributes();
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.popAttributes();
-
-        renderItem.renderItemIntoGUI(itemStack, 0, 0);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlphaTest();
-
-        GlStateManager.disablePolygonOffset();
-
-        GlStateManager.popMatrix();
-        RenderHelper.disableStandardItemLighting();
+        matrixStack.pop();
     }
 }

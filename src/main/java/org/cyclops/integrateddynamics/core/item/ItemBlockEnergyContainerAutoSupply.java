@@ -73,7 +73,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     }
 
     public ItemStack toggleActivation(ItemStack itemStack, World world, PlayerEntity player) {
-        if(player.isSneaking()) {
+        if(player.isCrouching()) {
             if(!world.isRemote()) {
                 ItemStack activated = itemStack.copy();
                 activated.setDamage(1 - activated.getDamage());

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -71,7 +71,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C 
                     baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
                     0, 1, 0);
         }
-        GlStateManager.color3f(1, 1, 1);
+        RenderSystem.color3f(1, 1, 1);
     }
 
     @Override

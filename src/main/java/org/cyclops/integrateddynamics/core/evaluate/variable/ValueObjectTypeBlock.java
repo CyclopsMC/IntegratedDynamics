@@ -65,7 +65,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
     @Override
     public INBT serialize(ValueBlock value) {
-        if(!value.getRawValue().isPresent()) return new EndNBT();
+        if(!value.getRawValue().isPresent()) return EndNBT.INSTANCE;
         return BlockHelpers.serializeBlockState(value.getRawValue().get());
     }
 

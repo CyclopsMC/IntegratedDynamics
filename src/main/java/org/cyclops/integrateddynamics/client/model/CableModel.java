@@ -4,10 +4,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -66,7 +66,7 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean shouldRenderParts(IModelData modelData) {
-        return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT
+        return MinecraftForgeClient.getRenderLayer() == RenderType.getCutout()
                 && ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null) != null;
     }
 
@@ -94,4 +94,5 @@ public class CableModel extends CableModelBase {
     public IBakedModel handleItemState(ItemStack stack, World world, LivingEntity entity) {
         return new CableModel(stack, world, entity);
     }
+
 }

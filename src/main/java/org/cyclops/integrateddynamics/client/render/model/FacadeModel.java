@@ -74,4 +74,9 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
     public TextureAtlasSprite getParticleTexture() {
         return RenderHelpers.getBakedModel(Blocks.STONE.getDefaultState()).getParticleTexture();
     }
+
+    @Override
+    public boolean func_230044_c_() {
+        return false; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
+    }
 }

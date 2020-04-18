@@ -65,7 +65,7 @@ public class ItemBlockCable extends BlockItem {
         // Then check if the target is covered by an unreal cable at the given side.
         if(checkCableAt(world, target, side.getOpposite())) return true;
         // Skips client-side entity collision detection for placing cables.
-        return (!this.func_219987_d() || blockState.isValidPosition(context.getWorld(), context.getPos()));
+        return (!this.checkPosition() || blockState.isValidPosition(context.getWorld(), context.getPos()));
     }
 
     protected boolean attempItemUseTarget(ItemUseContext context, BlockPos pos, Direction side, BlockCable blockCable, boolean offsetAdded) {

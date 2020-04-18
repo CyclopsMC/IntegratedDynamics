@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -243,16 +244,16 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public boolean onPartActivated(final S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
-                                   ItemStack heldItem, BlockRayTraceResult hit) {
+    public ActionResultType onPartActivated(final S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
+                                            ItemStack heldItem, BlockRayTraceResult hit) {
         if(WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getFace())) {
             WrenchHelpers.wrench(player, heldItem, world, pos, hit.getFace(), new WrenchHelpers.IWrenchAction<Void>() {
                 @Override
                 public void onWrench(PlayerEntity player, BlockPos pos, Void parameter) {
-                    partState.setFacingRotation(partState.getFacingRotation().rotateAround(Direction.Axis.Y));
+                    partState.setFacingRotation(partState.getFacingRotation().rotateY());
                 }
             });
-            return true;
+            return ActionResultType.SUCCESS;
         }
         return super.onPartActivated(partState, pos, world, player, hand, heldItem, hit);
     }

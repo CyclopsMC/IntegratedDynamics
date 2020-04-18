@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -40,8 +41,8 @@ public class BlockDryingBasin extends BlockTileGui {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player,
-                                    Hand hand, BlockRayTraceResult rayTraceResult) {
+    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player,
+                                             Hand hand, BlockRayTraceResult rayTraceResult) {
         return TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class)
                 .map(tile -> {
                     ItemStack itemStack = player.inventory.getCurrentItem();
@@ -53,31 +54,31 @@ public class BlockDryingBasin extends BlockTileGui {
                         player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
                         tile.getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
                         tile.sendUpdate();
-                        return true;
+                        return ActionResultType.SUCCESS;
                     } else if(player.inventory.addItemStackToInventory(tileStack)){
                         tile.getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
                         tile.sendUpdate();
-                        return true;
+                        return ActionResultType.SUCCESS;
                     } else if (itemFluidHandler != null && !tank.isFull()
                             && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
                         ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
                         InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
                         tile.sendUpdate();
-                        return true;
+                        return ActionResultType.SUCCESS;
                     } else if (itemFluidHandler != null && !tank.isEmpty() &&
                             FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
                         ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
                         InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
-                        return true;
+                        return ActionResultType.SUCCESS;
                     } else if (!itemStack.isEmpty() && tileStack.isEmpty()) {
                         tile.getInventory().setInventorySlotContents(0, itemStack.split(1));
                         if(itemStack.getCount() <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
                         tile.sendUpdate();
-                        return true;
+                        return ActionResultType.SUCCESS;
                     }
-                    return false;
+                    return ActionResultType.PASS;
                 })
-                .orElse(false);
+                .orElse(ActionResultType.PASS);
     }
 
     @Override
@@ -107,10 +108,5 @@ public class BlockDryingBasin extends BlockTileGui {
     @Override
     public VoxelShape getRaytraceShape(BlockState blockState, IBlockReader world, BlockPos blockPos) {
         return SHAPE_RAYTRACE;
-    }
-
-    @Override
-    public boolean isSolid(BlockState blockState) {
-        return false;
     }
 }

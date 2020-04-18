@@ -58,7 +58,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
 
     @Override
     public INBT serialize(ValueIngredients value) {
-        if(!value.getRawValue().isPresent()) return new EndNBT();
+        if(!value.getRawValue().isPresent()) return EndNBT.INSTANCE;
         return IMixedIngredients.serialize(value.getRawValue().get());
     }
 

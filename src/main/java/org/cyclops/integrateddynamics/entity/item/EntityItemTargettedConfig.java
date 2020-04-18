@@ -24,8 +24,7 @@ public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted>
                 eConfig -> EntityType.Builder.<EntityItemTargetted>create(EntityItemTargetted::new, EntityClassification.MISC)
                         .immuneToFire()
                         .setShouldReceiveVelocityUpdates(true)
-                        .size(0.25F, 0.25F),
-                EntityItemTargetted.class
+                        .size(0.25F, 0.25F)
         );
     }
 

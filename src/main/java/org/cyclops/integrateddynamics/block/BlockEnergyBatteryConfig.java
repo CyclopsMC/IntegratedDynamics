@@ -4,14 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.client.render.tileentity.RenderTileEntityEnergyBattery;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainerAutoSupply;
-import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
 /**
  * Config for {@link BlockEnergyBattery}.
@@ -44,13 +40,6 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
                 (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block,
                         (new Item.Properties()).group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onRegistered() {
-        super.onRegistered();
-        getMod().getProxy().registerRenderer(TileEnergyBattery.class, new RenderTileEntityEnergyBattery());
     }
 
 }

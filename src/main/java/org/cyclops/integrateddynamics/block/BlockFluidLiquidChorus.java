@@ -15,7 +15,6 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 /**
  * A block for the Liquid Chorus fluid.
  * @author rubensworks
- * TODO: doesn't seem to be rendering properly due to Forge not fully handling Fluid rendering yet.
  */
 public class BlockFluidLiquidChorus extends FlowingFluidBlock {
 
@@ -30,14 +29,14 @@ public class BlockFluidLiquidChorus extends FlowingFluidBlock {
         // Simulate chorus-eating
         if (entityIn instanceof LivingEntity) {
             LivingEntity entityLiving = (LivingEntity) entityIn;
-            double d0 = entityLiving.posX;
-            double d1 = entityLiving.posY;
-            double d2 = entityLiving.posZ;
+            double d0 = entityLiving.getPosX();
+            double d1 = entityLiving.getPosY();
+            double d2 = entityLiving.getPosZ();
 
             for (int i = 0; i < 16; ++i) {
-                double d3 = entityLiving.posX + (entityLiving.getRNG().nextDouble() - 0.5D) * 16.0D;
-                double d4 = MathHelper.clamp(entityLiving.posY + (double) (entityLiving.getRNG().nextInt(16) - 8), 0.0D, (double) (worldIn.getActualHeight() - 1));
-                double d5 = entityLiving.posZ + (entityLiving.getRNG().nextDouble() - 0.5D) * 16.0D;
+                double d3 = entityLiving.getPosX() + (entityLiving.getRNG().nextDouble() - 0.5D) * 16.0D;
+                double d4 = MathHelper.clamp(entityLiving.getPosY() + (double) (entityLiving.getRNG().nextInt(16) - 8), 0.0D, (double) (worldIn.getActualHeight() - 1));
+                double d5 = entityLiving.getPosZ() + (entityLiving.getRNG().nextDouble() - 0.5D) * 16.0D;
 
                 if (entityLiving.isPassenger()) {
                     entityLiving.stopRiding();

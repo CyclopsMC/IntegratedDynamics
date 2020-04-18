@@ -2,11 +2,11 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.platform.GlStateManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,6 +16,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -37,7 +38,6 @@ import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtende
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -291,7 +291,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     public Slot createSlot(IInventory temporaryInputSlots, int slotId, int x, int y) {
         Slot slot = ILogicProgrammerElement.createSlotDefault(this, temporaryInputSlots, slotId, x, y);
         if (slotId < 9) {
-            slot.setBackgroundName(getDefaultItemMatch().getSlotSpriteName().toString());
+            slot.setBackground(AtlasTexture.LOCATION_BLOCKS_TEXTURE, getDefaultItemMatch().getSlotSpriteName());
         }
         return slot;
     }
@@ -301,7 +301,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         if (slotId >= 4 && slotId < 13 && mouseButton == 0 && clickType == ClickType.QUICK_MOVE) {
             int id = slotId - 4;
             this.inputStacks.set(id, Pair.of(this.inputStacks.get(id).getLeft(), this.inputStacks.get(id).getRight().next()));
-            slot.setBackgroundName(this.inputStacks.get(id).getRight().getSlotSpriteName().toString());
+            slot.setBackground(AtlasTexture.LOCATION_BLOCKS_TEXTURE, this.inputStacks.get(id).getRight().getSlotSpriteName());
             return true;
         }
 
@@ -489,14 +489,12 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     int slotY = slot.yPos;
                     // Only render if the slot has a stack, otherwise vanilla will already render the overlay.
                     if (slot.getHasStack() && slot.isEnabled()) {
-                        TextureAtlasSprite textureatlassprite = slot.getBackgroundSprite();
-                        if (textureatlassprite != null) {
-                            GlStateManager.disableLighting();
-                            GlStateManager.disableDepthTest();
-                            GlStateManager.color3f(1, 1, 1);
-                            RenderHelpers.bindTexture(slot.getBackgroundLocation());
-                            this.blit(slotX, slotY, 0, 16, 16, textureatlassprite);
-                            GlStateManager.enableDepthTest();
+                        com.mojang.datafixers.util.Pair<ResourceLocation, ResourceLocation> slotTexturePair = slot.func_225517_c_();
+                        if (slotTexturePair != null) {
+                            // Adapted from ContainerScreen#drawSlot
+                            TextureAtlasSprite textureatlassprite = Minecraft.getInstance().getAtlasSpriteGetter(slotTexturePair.getFirst()).apply(slotTexturePair.getSecond());
+                            Minecraft.getInstance().getTextureManager().bindTexture(textureatlassprite.getAtlasTexture().getTextureLocation());
+                            blit(slotX, slotY, this.getBlitOffset(), 16, 16, textureatlassprite);
                         }
                     }
 

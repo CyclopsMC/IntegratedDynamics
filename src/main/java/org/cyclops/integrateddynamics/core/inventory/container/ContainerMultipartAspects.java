@@ -8,7 +8,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -24,7 +23,6 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
-import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
@@ -32,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -128,8 +125,8 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         Slot slot = getSlot(slotIndex);
         // Yes I know this is ugly.
         // If you are reading this and know a better way, please tell me.
-        slot.xPos = Integer.MIN_VALUE;
-        slot.yPos = Integer.MIN_VALUE;
+        setSlotPosX(slot, Integer.MIN_VALUE);
+        setSlotPosY(slot, Integer.MIN_VALUE);
     }
 
     protected abstract void enableSlot(int slotIndex, int row);

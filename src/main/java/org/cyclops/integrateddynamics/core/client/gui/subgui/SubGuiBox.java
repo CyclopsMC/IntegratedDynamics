@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui.subgui;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
@@ -53,7 +53,7 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
     @Override
     public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         textureManager.bindTexture(TEXTURE);
-        GlStateManager.color3f(1, 1, 1);
+        RenderSystem.color3f(1, 1, 1);
 
         int textureWidth = 19;
         int textureHeight = textureWidth;

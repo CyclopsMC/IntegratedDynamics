@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.proxy;
 
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -52,7 +54,7 @@ public class ClientProxy extends ClientProxyComponent {
     @Override
     public void registerEventHooks() {
         super.registerEventHooks();
-        ModelLoaderRegistry.registerLoader(new VariableLoader());
+        ModelLoaderRegistry.registerLoader(new ResourceLocation(Reference.MOD_ID, "variable"), new VariableLoader());
         MinecraftForge.EVENT_BUS.register(NetworkDiagnosticsPartOverlayRenderer.getInstance());
     }
 
@@ -64,7 +66,7 @@ public class ClientProxy extends ClientProxyComponent {
     }
 
     public void onPreTextureStitch(TextureStitchEvent.Pre event) {
-        if (event.getMap().getBasePath().equals("textures")) {
+        if (event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE)) {
             event.addSprite(SlotVariable.VARIABLE_EMPTY);
             for (ItemMatchType itemMatchType : ItemMatchType.values()) {
                 event.addSprite(itemMatchType.getSlotSpriteName());
@@ -73,7 +75,7 @@ public class ClientProxy extends ClientProxyComponent {
     }
 
     public void onPostTextureStitch(TextureStitchEvent.Post event) {
-        if (event.getMap().getBasePath().equals("textures")) {
+        if (event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE)) {
             event.getMap().getSprite(SlotVariable.VARIABLE_EMPTY);
             for (ItemMatchType itemMatchType : ItemMatchType.values()) {
                 event.getMap().getSprite(itemMatchType.getSlotSpriteName());

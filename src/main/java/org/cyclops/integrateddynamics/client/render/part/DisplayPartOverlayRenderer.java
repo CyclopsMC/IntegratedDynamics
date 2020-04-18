@@ -1,8 +1,9 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
@@ -10,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.image.Images;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -31,8 +31,8 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     protected static final float pixel = 0.0625F;  // 0.0625 == 1/16
 
     @Override
-    protected void setMatrixOrientation(Direction direction) {
-        super.setMatrixOrientation(direction);
+    protected void setMatrixOrientation(MatrixStack matrixStack, Direction direction) {
+        super.setMatrixOrientation(matrixStack, direction);
         float translateX = -1F - direction.getXOffset() + 4 * pixel;
         float translateY = 1F - direction.getYOffset() - 4 * pixel;
         float translateZ = direction.getZOffset() - pixel + 0.0025F;
@@ -50,13 +50,13 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
             translateX += 1F;
             translateY -= 1F;
         }
-        GlStateManager.translatef(translateX, translateY, translateZ);
+        matrixStack.translate(translateX, translateY, translateZ);
     }
 
     @Override
-    public void renderPartOverlay(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                                  int destroyStage, Direction direction, IPartType partType,
-                                  TileEntityRendererDispatcher rendererDispatcher) {
+    public void renderPartOverlay(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                                  Direction direction, IPartType partType, float partialTicks, MatrixStack matrixStack,
+                                  IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay) {
         BlockPos pos = partContainer.getPosition().getBlockPos();
         if(!shouldRender(pos)) return;
 
@@ -66,22 +66,12 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
         float distanceAlpha = Math.min(1.0F, distanceFactor);
         if(distanceAlpha < 0.05F) distanceAlpha = 0.05F; // Can't be 0 because the MC font renderer doesn't handle 0 alpha's properly.
 
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.alphaFunc(516, 0.1F);
-        GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.pushMatrix();
-        GlStateManager.pushTextureAttributes();
-        GlStateManager.disableLighting();
+        matrixStack.push();
 
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         float scale = 0.04F;
-        GlStateManager.translatef((float) x, (float) y, (float) z);
-        setMatrixOrientation(direction);
-        GlStateManager.scalef(scale, scale, scale);
-        GlStateManager.scalef(1, -1, 1);
-        GlStateManager.disableRescaleNormal();
+        setMatrixOrientation(matrixStack, direction);
+        matrixStack.scale(scale, scale, scale);
+        matrixStack.scale(1, -1, 1);
 
         IPartState partStateUnsafe = partContainer.getPartState(direction);
         if(!(partStateUnsafe instanceof PartTypePanelDisplay.State)) {
@@ -93,9 +83,9 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
                 return;
             }
             int rotation = partState.getFacingRotation().ordinal() - 2;
-            GlStateManager.translatef(6, 6, 0);
-            GlStateManager.rotatef(rotation * 90, 0, 0, 1);
-            GlStateManager.translatef(-6, -6, 0);
+            matrixStack.translate(6, 6, 0);
+            matrixStack.rotate(Vector3f.ZP.rotationDegrees(rotation));
+            matrixStack.translate(-6, -6, 0);
 
             IValue value = partState.getDisplayValue();
             if (value != null && partState.isEnabled()) {
@@ -104,19 +94,13 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
                 if (renderer == null) {
                     renderer = ValueTypeWorldRenderers.DEFAULT;
                 }
-                RenderHelpers.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-                renderer.renderValue(partContainer, x, y, z, partialTick, destroyStage, direction, partType, value, rendererDispatcher, distanceAlpha);
+                renderer.renderValue(rendererDispatcher, partContainer, direction, partType, value, partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
             } else if (!partState.getInventory().isEmpty()) {
                 drawError(rendererDispatcher, distanceAlpha);
             }
         }
 
-        GlStateManager.enableLighting();
-        GlStateManager.popAttributes();
-        GlStateManager.popMatrix();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.disableBlend();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        matrixStack.pop();
     }
 
     protected void drawError(TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {

@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -37,10 +38,12 @@ public class BlockMechanicalDryingBasin extends BlockTileGuiCabled {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
-        return FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, Direction.UP)
-                || FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, Direction.DOWN)
-                || super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
+    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
+        if (FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, Direction.UP)
+                || FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, Direction.DOWN)) {
+            return ActionResultType.SUCCESS;
+        }
+        return super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
     }
 
     @Override

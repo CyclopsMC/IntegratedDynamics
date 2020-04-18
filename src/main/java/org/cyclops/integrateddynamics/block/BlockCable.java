@@ -12,7 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -24,10 +24,9 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelProperty;
@@ -142,7 +141,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         /*
             Wrench: sneak + right-click anywhere on cable to remove cable
                     right-click on a cable side to disconnect on that side
@@ -153,8 +152,11 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
         if(tile != null) {
             BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.forEntity(player))
                     .rayTrace(pos, player);
-            if(rayTraceResult != null && rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, hand, rayTraceResult)) {
-                return true;
+            if(rayTraceResult != null) {
+                ActionResultType actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, hand, rayTraceResult);
+                if (actionResultType.isSuccessOrConsume()) {
+                    return actionResultType;
+                }
             }
         }
         return super.onBlockActivated(state, world, pos, player, hand, hit);
@@ -209,7 +211,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
     }
 
     @Override
-    public void tick(BlockState state, World world, BlockPos pos, Random rand) {
+    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand) {
         super.tick(state, world, pos, rand);
         TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class)
                 .ifPresent(tile -> {
@@ -267,14 +269,6 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
     }
 
     @Override
-    public boolean doesSideBlockRendering(BlockState state, IEnviromentBlockReader world, BlockPos pos, Direction face) {
-        return super.doesSideBlockRendering(state, world, pos, face)
-                || CableHelpers.getFacade(world, pos)
-                .map(b -> b.isOpaqueCube(world, pos))
-                .orElse(false);
-    }
-
-    @Override
     public boolean isNormalCube(BlockState blockState, IBlockReader world, BlockPos pos) {
         return false;
     }
@@ -290,17 +284,6 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
         } else {
             return super.addHitEffects(blockState, world, target, particleManager);
         }
-    }
-
-    @Override
-    public boolean canRenderInLayer(BlockState blockState, BlockRenderLayer layer) {
-        return true;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
     }
 
     /* --------------- Start IDynamicRedstone --------------- */
@@ -343,7 +326,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
     /* --------------- Start IDynamicLight --------------- */
 
     @Override
-    public int getLightValue(BlockState blockState, IEnviromentBlockReader world, BlockPos pos) {
+    public int getLightValue(BlockState blockState, IBlockReader world, BlockPos pos) {
         int light = 0;
         for(Direction side : Direction.values()) {
             IDynamicLight dynamicLight = TileHelpers.getCapability(world, pos, side, DynamicLightConfig.CAPABILITY).orElse(null);

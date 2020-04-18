@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
+import net.minecraft.client.renderer.model.IModelTransform;
+import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 
@@ -21,12 +21,12 @@ public interface IVariableModelProvider<B extends IVariableModelProvider.IBakedM
      * Load the models for this provider.
      * @param modelBakery The model state.
      * @param spriteGetter The texture retriever.
-     * @param sprite The sprite.
-     * @param format The vertex format.
+     * @param transform The model transformation.
+     * @param location The model location.
      * @return The baked moderl provider.
      */
-    public B bakeOverlayModels(ModelBakery modelBakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter,
-                               ISprite sprite, VertexFormat format);
+    public B bakeOverlayModels(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter,
+                               IModelTransform transform, ResourceLocation location);
 
     /**
      * @return All models this provider depends on and should thus be loaded.

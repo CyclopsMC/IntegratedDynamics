@@ -28,11 +28,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.ByteNBT;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.LongNBT;
+import net.minecraft.nbt.NBTTypes;
 import net.minecraft.nbt.NumberNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.state.IProperty;
@@ -1911,7 +1911,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ISSNEAKING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_sneaking").operatorName("issneaking")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
-                entity -> entity != null && entity.isSneaking()
+                entity -> entity != null && entity.isCrouching()
             )).build());
 
     /**
@@ -1986,7 +1986,7 @@ public final class Operators {
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
                     double eyeHeight = entity.getEyeHeight();
                     Vec3d lookVec = entity.getLookVec();
-                    Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
+                    Vec3d origin = new Vec3d(entity.getPosX(), entity.getPosY() + eyeHeight, entity.getPosZ());
                     Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
                     RayTraceContext rayTraceContext = new RayTraceContext(origin, direction, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, entity);
@@ -2020,7 +2020,7 @@ public final class Operators {
                     AxisAlignedBB boundingBox = entity.getBoundingBox()
                             .expand(lookVec.scale(reachDistance))
                             .grow(1.0D, 1.0D, 1.0D);
-                    EntityRayTraceResult entityraytraceresult = ProjectileHelper.func_221273_a(entity, origin, direction,
+                    EntityRayTraceResult entityraytraceresult = ProjectileHelper.rayTraceEntities(entity, origin, direction,
                             boundingBox, e -> !e.isSpectator() && e.canBeCollidedWith(), reachDistanceSquared);
                     if (entityraytraceresult != null) {
                         Entity entity1 = entityraytraceresult.getEntity();
@@ -2728,7 +2728,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(tag -> {
                 if (tag.isPresent()) {
                     try {
-                        return INBT.NBT_TYPES[tag.get().getId()];
+                        return NBTTypes.func_229710_a_(tag.get().getId()).func_225648_a_();
                     } catch (IndexOutOfBoundsException e) {
 
                     }
@@ -2997,7 +2997,7 @@ public final class Operators {
                                     value.getType(), 1, ValueTypes.INTEGER);
                             throw new EvaluationException(error);
                         }
-                        list.add(new ByteNBT((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
+                        list.add(ByteNBT.valueOf((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
                     }
                     tag.put(input.getMiddle(), list);
                     return tag;
@@ -3025,7 +3025,7 @@ public final class Operators {
                                     value.getType(), 1, ValueTypes.INTEGER);
                             throw new EvaluationException(error);
                         }
-                        list.add(new IntNBT(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
+                        list.add(IntNBT.valueOf(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
                     }
                     tag.put(input.getMiddle(), list);
                     return tag;
@@ -3053,7 +3053,7 @@ public final class Operators {
                                     value.getType(), 1, ValueTypes.LONG);
                             throw new EvaluationException(error);
                         }
-                        list.add(new LongNBT(((ValueTypeLong.ValueLong) valueNbt).getRawValue()));
+                        list.add(LongNBT.valueOf(((ValueTypeLong.ValueLong) valueNbt).getRawValue()));
                     }
                     tag.put(input.getMiddle(), list);
                     return tag;

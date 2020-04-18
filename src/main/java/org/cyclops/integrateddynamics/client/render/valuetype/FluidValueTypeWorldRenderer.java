@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
@@ -25,18 +25,23 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFlui
 public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
-    public void renderValue(IPartContainer partContainer, double x, double y, double z, float partialTick,
-                            int destroyStage, Direction direction, IPartType partType, IValue value,
-                            TileEntityRendererDispatcher rendererDispatcher, float alpha) {
+    public void renderValue(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+                            Direction direction, IPartType partType, IValue value, float partialTicks,
+                            MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                            int combinedLight, int combinedOverlay, float alpha) {
         FluidStack fluidStack = ((ValueObjectTypeFluidStack.ValueFluidStack) value).getRawValue();
         if (!fluidStack.isEmpty()) {
+            int brightness = Math.max(combinedLight, fluidStack.getFluid().getAttributes().getLuminosity(fluidStack));
+            int l2 = brightness >> 0x10 & 0xFFFF;
+            int i3 = brightness & 0xFFFF;
+
             // Fluid
-            GlStateManager.pushMatrix();
-            GlStateManager.enableRescaleNormal();
-            BufferBuilder worldRenderer = Tessellator.getInstance().getBuffer();
-            worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStack, Direction.NORTH);
-            RenderHelpers.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+            matrixStack.push();
+            TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStack, Direction.UP);
+            Triple<Float, Float, Float> color = Helpers.intToRGB(fluidStack.getFluid().getAttributes().getColor(rendererDispatcher.world, rendererDispatcher.renderInfo.getBlockPos()));
+
+            IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.getText(icon.getAtlasTexture().getTextureLocation()));
+            Matrix4f matrix = matrixStack.getLast().getMatrix();
 
             float min = 0F;
             float max = 12.5F;
@@ -44,28 +49,20 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             float u2 = icon.getMaxU();
             float v1 = icon.getMinV();
             float v2 = icon.getMaxV();
-            Triple<Float, Float, Float> colorParts = RenderHelpers.getFluidVertexBufferColor(fluidStack);
-            float r = colorParts.getLeft();
-            float g = colorParts.getMiddle();
-            float b = colorParts.getRight();
-            worldRenderer.pos((double)max, (double)max, 0).tex((double)u2, (double)v2).color(r, g, b, alpha).endVertex();
-            worldRenderer.pos((double)max, (double)min, 0).tex((double)u2, (double)v1).color(r, g, b, alpha).endVertex();
-            worldRenderer.pos((double)min, (double)min, 0).tex((double)u1, (double)v1).color(r, g, b, alpha).endVertex();
-            worldRenderer.pos((double)min, (double)max, 0).tex((double)u1, (double)v2).color(r, g, b, alpha).endVertex();
-            Tessellator.getInstance().draw();
-            GlStateManager.popMatrix();
+            vb.pos(matrix, max, max, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).tex(u2, v2).lightmap(l2, i3).endVertex();
+            vb.pos(matrix, max, min, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).tex(u2, v1).lightmap(l2, i3).endVertex();
+            vb.pos(matrix, min, min, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).tex(u1, v1).lightmap(l2, i3).endVertex();
+            vb.pos(matrix, min, max, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).tex(u1, v2).lightmap(l2, i3).endVertex();
 
             // Stack size
-            GlStateManager.pushMatrix();
-            GlStateManager.translatef(7F, 8.5F, 0.1F);
-            GlStateManager.pushMatrix();
+            matrixStack.translate(7F, 8.5F, 0.1F);
             String string = String.valueOf(fluidStack.getAmount());
             float scale = ((float) 5) / (float) rendererDispatcher.getFontRenderer().getStringWidth(string);
-            GlStateManager.scalef(scale, scale, 1F);
+            matrixStack.scale(scale, scale, 1F);
             rendererDispatcher.getFontRenderer().drawString(string,
                     0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)));
-            GlStateManager.popMatrix();
-            GlStateManager.popMatrix();
+            matrixStack.pop();
         }
     }
+
 }

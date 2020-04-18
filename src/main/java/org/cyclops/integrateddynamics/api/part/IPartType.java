@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -273,10 +274,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param hand The hand in use by the player.
      * @param heldItem The held item.
      * @param hit The ray trace hit result.
-     * @return True if the further processing should be stopped.
+     * @return The action result.
      */
-    public boolean onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
-                                   ItemStack heldItem, BlockRayTraceResult hit);
+    public ActionResultType onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
+                                            ItemStack heldItem, BlockRayTraceResult hit);
 
     /**
      * Get the base block state that will be rendered for this part.

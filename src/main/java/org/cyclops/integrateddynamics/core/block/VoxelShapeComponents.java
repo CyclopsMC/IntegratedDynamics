@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.AxisRotation;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -225,7 +226,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
 
         double eyeHeight = entity.getEntityWorld().isRemote() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
         Vec3d lookVec = entity.getLookVec();
-        Vec3d origin = new Vec3d(entity.posX, entity.posY + eyeHeight, entity.posZ);
+        Vec3d origin = new Vec3d(entity.getPosX(), entity.getPosY() + eyeHeight, entity.getPosZ());
         Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
         return rayTrace(origin, direction, pos);
@@ -390,10 +391,10 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
          * @param player The player.
          * @param hand The hand.
          * @param hit The ray trace result.
-         * @return If further handling should stop.
+         * @return Action result.
          */
-        public boolean onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player,
-                                        Hand hand, BlockRayTraceResultComponent hit);
+        public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player,
+                                                 Hand hand, BlockRayTraceResultComponent hit);
 
     }
 

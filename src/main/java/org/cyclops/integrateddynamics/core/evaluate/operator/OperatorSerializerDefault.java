@@ -24,7 +24,7 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
 
     @Override
     public INBT serialize(IOperator operator) {
-        return new StringNBT(operator.getUniqueName().toString());
+        return StringNBT.valueOf(operator.getUniqueName().toString());
     }
 
     @Override
