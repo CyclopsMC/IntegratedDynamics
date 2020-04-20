@@ -1,0 +1,7 @@
+{
+    "parent": "integrateddynamics:block/part_writer",
+    "textures": {
+        "back" : "integrateddynamics:part/entity_reader_back",
+        "front": "integrateddynamics:part/entity_writer_front_active"
+    }
+}

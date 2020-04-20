@@ -66,8 +66,7 @@ public class CableModel extends CableModelBase {
 
     @Override
     protected boolean shouldRenderParts(IModelData modelData) {
-        return MinecraftForgeClient.getRenderLayer() == RenderType.getCutout()
-                && ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null) != null;
+        return ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null) != null;
     }
 
     @Override

@@ -1,0 +1,7 @@
+{
+    "parent": "integrateddynamics:block/part_reader",
+    "textures": {
+        "back": "integrateddynamics:part/network_reader_back",
+        "front": "integrateddynamics:part/network_reader_front"
+    }
+}

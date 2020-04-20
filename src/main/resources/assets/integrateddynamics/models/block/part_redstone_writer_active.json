@@ -1,0 +1,7 @@
+{
+    "parent": "integrateddynamics:block/part_writer",
+    "textures": {
+        "back" : "integrateddynamics:part/redstone_reader_back",
+        "front": "integrateddynamics:part/redstone_writer_front_active"
+    }
+}

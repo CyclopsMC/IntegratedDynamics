@@ -1,7 +1,3 @@
 {
-  "parent": "integrateddynamics:block/reader",
-  "textures": {
-    "back" : "integrateddynamics:part/audio_reader_back",
-    "front": "integrateddynamics:part/audio_reader_front"
-  }
+  "parent": "integrateddynamics:block/part_audio_reader"
 }
