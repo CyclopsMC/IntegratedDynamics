@@ -114,7 +114,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     protected void enableSlotOutput(int slotIndex, int row) {
         Slot slot = getSlot(slotIndex + getUnfilteredItemCount());
         setSlotPosX(slot, SLOT_OUT_X);
-        setSlotPosY(slot, SLOT_OUT_X + getAspectBoxHeight() * row);
+        setSlotPosY(slot, SLOT_OUT_Y + getAspectBoxHeight() * row);
     }
 
     @Override
