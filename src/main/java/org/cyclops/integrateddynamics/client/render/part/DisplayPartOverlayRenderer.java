@@ -75,11 +75,11 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
 
         IPartState partStateUnsafe = partContainer.getPartState(direction);
         if(!(partStateUnsafe instanceof PartTypePanelDisplay.State)) {
-            drawError(rendererDispatcher, distanceAlpha);
+            drawError(rendererDispatcher, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
         } else {
             PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) partStateUnsafe;
             if (partState.getFacingRotation() == null) {
-                drawError(rendererDispatcher, distanceAlpha);
+                drawError(rendererDispatcher, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
                 return;
             }
             int rotation = partState.getFacingRotation().ordinal() - 2;
@@ -96,14 +96,15 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
                 }
                 renderer.renderValue(rendererDispatcher, partContainer, direction, partType, value, partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
             } else if (!partState.getInventory().isEmpty()) {
-                drawError(rendererDispatcher, distanceAlpha);
+                drawError(rendererDispatcher, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
             }
         }
 
         matrixStack.pop();
     }
 
-    protected void drawError(TileEntityRendererDispatcher rendererDispatcher, float distanceAlpha) {
-        Images.ERROR.drawWorldWithAlpha(rendererDispatcher.textureManager, 12.5F, 12.5F, distanceAlpha);
+    protected void drawError(TileEntityRendererDispatcher rendererDispatcher, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                             int combinedLight, int combinedOverlay, float distanceAlpha) {
+        Images.ERROR.drawWorldWithAlpha(rendererDispatcher.textureManager, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, 12.5F, 12.5F, distanceAlpha);
     }
 }

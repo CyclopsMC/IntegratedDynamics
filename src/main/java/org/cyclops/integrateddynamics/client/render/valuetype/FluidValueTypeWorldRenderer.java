@@ -59,8 +59,9 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             String string = String.valueOf(fluidStack.getAmount());
             float scale = ((float) 5) / (float) rendererDispatcher.getFontRenderer().getStringWidth(string);
             matrixStack.scale(scale, scale, 1F);
-            rendererDispatcher.getFontRenderer().drawString(string,
-                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)));
+            rendererDispatcher.getFontRenderer().renderString(string,
+                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)),
+                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
             matrixStack.pop();
         }
     }

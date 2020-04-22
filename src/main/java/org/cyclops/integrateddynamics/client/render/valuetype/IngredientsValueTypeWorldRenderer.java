@@ -57,7 +57,7 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
                                   int combinedLight, int combinedOverlay, float alpha) {
         matrixStack.push();
         int matrixRadius = getSmallestSquareFrom(values.size());
-        float scale = 1 / matrixRadius;
+        float scale = 1F / matrixRadius;
         matrixStack.scale(scale, scale, 1);
         for (int i = 0; i < matrixRadius; i++) {
             for (int j = 0; j < matrixRadius; j++) {

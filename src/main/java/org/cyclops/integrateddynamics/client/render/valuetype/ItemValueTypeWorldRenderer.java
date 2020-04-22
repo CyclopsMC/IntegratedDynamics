@@ -4,7 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
@@ -47,16 +48,24 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     public static void renderItemStack(MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay, ItemStack itemStack, float alpha) {
         // ItemStack
         matrixStack.push();
-        matrixStack.translate(0, 0, -1F);
-        matrixStack.scale(0.78F, 0.78F, 0.01F);
+        matrixStack.translate(6.2, 6.2, 0.1F);
+        matrixStack.scale(16F, -16F, 16F);
+        matrixStack.scale(0.74F, 0.74F, 0.01F);
 
         ItemRenderer renderItem = Minecraft.getInstance().getItemRenderer();
-        matrixStack.rotate(Vector3f.YP.rotationDegrees(40f));
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(95F));
 
         // Inspired by: https://github.com/jaquadro/StorageDrawers/blob/1.15/src/main/java/com/jaquadro/minecraft/storagedrawers/client/renderer/TileEntityDrawersRenderer.java
 
-        renderItem.renderItem(itemStack, ItemCameraTransforms.TransformType.GUI, combinedLight, combinedOverlay, matrixStack, renderTypeBuffer);
+        IBakedModel itemModel = renderItem.getItemModelWithOverrides(itemStack, null, null);
+        if (itemModel.isGui3d()) {
+            RenderHelper.setupGui3DDiffuseLighting();
+        } else {
+            RenderHelper.setupGuiFlatDiffuseLighting();
+        }
+
+        renderItem.renderItem(itemStack, ItemCameraTransforms.TransformType.GUI, false, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemModel);
+
+        RenderHelper.setupGuiFlatDiffuseLighting();
 
         matrixStack.pop();
     }
