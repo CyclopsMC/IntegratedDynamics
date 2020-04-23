@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:part_block_reader_item"
+      "item": "integrateddynamics:part_block_reader"
     },
     "title": {
       "translate": "advancement.integrateddynamics.block_reading"
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "integrateddynamics:part_block_reader_item"
+            "item": "integrateddynamics:part_block_reader"
           }
         ]
       }

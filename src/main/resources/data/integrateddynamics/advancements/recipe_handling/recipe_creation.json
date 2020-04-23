@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": "{\"typeName\":\"valuetype.valuetypes.integrateddynamics.recipe.name\",\"partId\":1,\"_type\":\"valuetype\",\"value\":\"{output:{\\\"minecraft:itemstack\\\":[{id:\\\"minecraft:chest\\\",Count:1b,Damage:0s}]},input:{\\\"minecraft:itemstack\\\":[[{condition:3,prototype:{id:\\\"minecraft:chest\\\",Count:1b,Damage:0s}}]]}}\",\"_id\":1}"
+      "nbt": "{_type:\"integrateddynamics:valuetype\",typeName:\"integrateddynamics:recipe\",_id:1,value:{output:{\"minecraft:itemstack\":[{id:\"minecraft:stone\",Count:1b}]},input:{\"minecraft:itemstack\":[{val:[{prototype:{id:\"minecraft:stone\",Count:1b},condition:1}],type:0b}]}}}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.recipe_creation"
@@ -18,8 +18,8 @@
       "conditions": {
         "block": "integrateddynamics:logic_programmer",
         "variable_facade": {
-          "type": "valuetype",
-          "valuetype": "valuetype.valuetypes.integrateddynamics.recipe.name"
+          "type": "integrateddynamics:valuetype",
+          "valuetype": "integrateddynamics:recipe"
         }
       }
     }

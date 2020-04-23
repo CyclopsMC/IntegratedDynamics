@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:part_display_panel_item"
+      "item": "integrateddynamics:part_display_panel"
     },
     "title": {
       "translate": "advancement.integrateddynamics.value_displaying"
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "integrateddynamics:part_display_panel_item"
+            "item": "integrateddynamics:part_display_panel"
           }
         ]
       }

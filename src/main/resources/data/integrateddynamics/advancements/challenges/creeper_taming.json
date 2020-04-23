@@ -1,8 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:skull",
-      "damage": 4
+      "item": "minecraft:creeper_head"
     },
     "title": {
       "translate": "advancement.integrateddynamics.creeper_taming"
@@ -17,15 +16,15 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "display_panel",
+        "parttype": "integrateddynamics:display_panel",
         "variable": {
-          "type": "operator",
-          "operator": "operator.operators.integrateddynamics.entity.health.name",
+          "type": "integrateddynamics:operator",
+          "operator": "integrateddynamics:entity_health",
           "input": {
             "0": {
-              "valuetype": "valuetype.valuetypes.integrateddynamics.entity.name",
+              "valuetype": "integrateddynamics:entity",
               "value": {
-                "entity_class": "net.minecraft.entity.monster.EntityCreeper"
+                "entity": "minecraft:creeper"
               }
             }
           }

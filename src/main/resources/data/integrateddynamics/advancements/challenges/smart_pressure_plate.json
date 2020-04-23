@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": "{\"_type\":\"aspect\",\"aspectName\":\"aspect.aspects.integrateddynamics.read.entity.entity.name\",\"_id\":1,\"partId\":1}"
+      "nbt": "{_type:\"integrateddynamics:aspect\",aspectName:\"integrateddynamics:read_entity_entity\",_id:1,partIds:1}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.smart_pressure_plate"
@@ -17,18 +17,18 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_writer_aspect",
       "conditions": {
-        "parttype": "redstone_writer",
+        "parttype": "integrateddynamics:redstone_writer",
         "variable": {
-          "type": "operator",
-          "operator": "operator.operators.integrateddynamics.relational.equals.name",
+          "type": "integrateddynamics:operator",
+          "operator": "integrateddynamics:relational_equals",
           "input": {
             "0": {
-              "type": "operator",
-              "operator": "operator.operators.integrateddynamics.string.name.name",
+              "type": "integrateddynamics:operator",
+              "operator": "integrateddynamics:string_name",
               "input": {
                 "0": {
-                  "type": "aspect",
-                  "aspect": "aspect.aspects.integrateddynamics.read.entity.entity.name"
+                  "type": "integrateddynamics:aspect",
+                  "aspect": "integrateddynamics:read_entity_entity"
                 }
               }
             }

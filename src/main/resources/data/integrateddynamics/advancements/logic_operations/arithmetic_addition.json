@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": "{\"typeName\":\"valuetype.valuetypes.integrateddynamics.integer.name\",\"partId\":1,\"_type\":\"valuetype\",\"value\":\"20\",\"_id\":1}"
+      "nbt": "{typeName:\"integrateddynamics:integer\",partId:1,_type:\"integrateddynamics:valuetype\",value:20,_id:1}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.arithmetic_addition"
@@ -22,10 +22,10 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "display_panel",
+        "parttype": "integrateddynamics:display_panel",
         "variable": {
-          "type": "operator",
-          "operator": "operator.operators.integrateddynamics.arithmetic.addition.name"
+          "type": "integrateddynamics:operator",
+          "operator": "integrateddynamics:arithmetic_addition"
         }
       }
     }

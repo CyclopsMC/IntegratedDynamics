@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:part_inventory_reader_item"
+      "item": "integrateddynamics:part_inventory_reader"
     },
     "title": {
       "translate": "advancement.integrateddynamics.inventory_reading"
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "integrateddynamics:part_inventory_reader_item"
+            "item": "integrateddynamics:part_inventory_reader"
           }
         ]
       }

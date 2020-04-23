@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": "{\"aspectName\":\"aspect.aspects.integrateddynamics.read.list.recipehandler.recipes.name\",\"partId\":1,\"_type\":\"aspect\",\"_id\":1}"
+      "nbt": "{aspectName:\"integrateddynamics:read_list_recipehandler_recipes\",partId:1,_type:\"integrateddynamics:aspect\",_id:1}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.recipe_reading"
@@ -16,8 +16,8 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_reader_aspect",
       "conditions": {
-        "parttype": "machine_reader",
-        "aspect": "aspect.aspects.integrateddynamics.read.list.recipehandler.recipes.name"
+        "parttype": "integrateddynamics:machine_reader",
+        "aspect": "integrateddynamics:read_list_recipehandler_recipes"
       }
     }
   }

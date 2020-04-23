@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": "{\"_type\":\"operator\",\"_id\":1,\"operatorName\":\"operator.operators.integrateddynamics.operator.filter.name\",\"variableIds\":[I;1,1]}"
+      "nbt": "{_type:\"integrateddynamics:operator\",_id:1,operatorName:\"integrateddynamics:operator_filter\",variableIds:[I;1,1]}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.dynamic_list_filtering"
@@ -16,12 +16,12 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "display_panel",
+        "parttype": "integrateddynamics:display_panel",
         "variable": {
-          "type": "operator",
-          "operator": "operator.operators.integrateddynamics.operator.filter.name",
-          "valuetype": "valuetype.valuetypes.integrateddynamics.list.name",
-          "value": "materialized;valuetype.valuetypes.integrateddynamics.integer.name\\;10"
+          "type": "integrateddynamics:operator",
+          "operator": "integrateddynamics:operator_filter",
+          "valuetype": "integrateddynamics:list",
+          "value": "{proxyName:\"integrateddynamics:materialized\",serialized:{valueType:\"integrateddynamics:integer\",values:[10]}}"
         }
       }
     }

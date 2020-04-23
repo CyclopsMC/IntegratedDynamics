@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.JSONUtils;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -52,12 +54,16 @@ public class ValuePredicate<V extends IValue> {
                     throw new JsonSyntaxException("A value '" + valueString + "' requires a corresponding valueType to be defined");
                 }
                 try {
-                    value = ValueHelpers.deserializeRaw(valueType, JsonToNBT.getTagFromJson(valueString));
+                    INBT tag = JsonToNBT.getTagFromJson(valueString);
+                    if (((CompoundNBT) tag).contains("Primitive")) {
+                        tag = ((CompoundNBT) tag).get("Primitive");
+                    }
+                    value = ValueHelpers.deserializeRaw(valueType, tag);
                 } catch (CommandSyntaxException e) {
                     e.printStackTrace();
                 }
             } else if (valueType != null && valueElement.isJsonObject()) {
-                return valueType.deserializeValuePredicate(valueElement.getAsJsonObject(), value);
+                return valueType.deserializeValuePredicate(valueElement.getAsJsonObject(), null);
             }
 
             if (value == null) {

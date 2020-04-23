@@ -1,8 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:variable_transformer",
-      "durability": 0
+      "item": "integrateddynamics:variable_transformer_output"
     },
     "title": {
       "translate": "advancement.integrateddynamics.variable_output"
@@ -31,8 +30,7 @@
       "conditions": {
         "items": [
           {
-            "item": "integrateddynamics:variable_transformer",
-            "data": 0
+            "item": "integrateddynamics:variable_transformer_output"
           }
         ]
       }

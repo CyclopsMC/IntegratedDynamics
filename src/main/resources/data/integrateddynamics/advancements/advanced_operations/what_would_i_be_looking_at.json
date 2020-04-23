@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": "{\"typeName\":\"valuetype.valuetypes.integrateddynamics.block.name\",\"partId\":1,\"_type\":\"valuetype\",\"value\":\"minecraft:stone$0\",\"_id\":1}"
+      "nbt": "{typeName:\"integrateddynamics:block\",partId:1,_type:\"integrateddynamics:valuetype\",value:{Name:\"minecraft:stone\"},_id:1}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.what_would_i_be_looking_at"
@@ -16,10 +16,10 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "display_panel",
+        "parttype": "integrateddynamics:display_panel",
         "variable": {
-          "type": "operator",
-          "operator": "operator.operators.integrateddynamics.entity.targetblock.name"
+          "type": "integrateddynamics:operator",
+          "operator": "integrateddynamics:entity_targetblock"
         }
       }
     }

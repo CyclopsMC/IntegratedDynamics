@@ -209,7 +209,7 @@
     "advancement.integrateddynamics.creeper_taming": "Creeper Taming",
     "advancement.integrateddynamics.creeper_taming.desc": "Show the HP of a Creeper in a Display Panel",
     "advancement.integrateddynamics.sponge_step_sound": "Sponge Step Sound",
-    "advancement.integrateddynamics.sponge_step_sound.desc": "Play the step sound of a wet Sponge block",
+    "advancement.integrateddynamics.sponge_step_sound.desc": "Play the step sound of a Wet Sponge block",
     "advancement.integrateddynamics.recursive_recursion": "Recursive Recursion",
     "advancement.integrateddynamics.recursive_recursion.desc": "Create an infinite List, and display it in a Display Panel",
     "advancement.integrateddynamics.tool_for_obsidian": "Tools for Obsidian?",

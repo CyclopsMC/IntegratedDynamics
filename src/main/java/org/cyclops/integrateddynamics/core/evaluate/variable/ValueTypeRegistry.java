@@ -110,7 +110,12 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
         if(type == null) {
             return INVALID_FACADE;
         }
-        IValue value = ValueHelpers.deserializeRaw(type, tag.get("value"));
+        IValue value;
+        try {
+            value = ValueHelpers.deserializeRaw(type, tag.get("value"));
+        } catch (IllegalArgumentException e) {
+            return INVALID_FACADE;
+        }
         return new ValueTypeVariableFacade(id, type, value);
     }
 

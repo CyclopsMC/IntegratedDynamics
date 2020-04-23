@@ -71,7 +71,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(getMod().getModId(), getTranslationKey());
+        return new ResourceLocation(getMod().getModId(), this.name);
     }
 
     protected ModBase getMod() {

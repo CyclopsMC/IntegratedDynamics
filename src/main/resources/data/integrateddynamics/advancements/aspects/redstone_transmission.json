@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": "{\"aspectName\":\"aspect.aspects.integrateddynamics.write.integer.redstone.name\",\"partId\":1,\"_type\":\"aspect\",\"_id\":1}"
+      "nbt": "{aspectName:\"integrateddynamics:write_integer_redstone\",partId:1,_type:\"integrateddynamics:aspect\",_id:1}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.redstone_transmission"
@@ -16,13 +16,13 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_writer_aspect",
       "conditions": {
-        "parttype": "redstone_writer",
-        "aspect": "aspect.aspects.integrateddynamics.write.integer.redstone.name",
+        "parttype": "integrateddynamics:redstone_writer",
+        "aspect": "integrateddynamics:write_integer_redstone",
         "variable": {
-          "type": "aspect",
-          "aspect": "aspect.aspects.integrateddynamics.read.integer.redstone.value.name",
-          "valuetype": "valuetype.valuetypes.integrateddynamics.integer.name",
-          "value": "15"
+          "type": "integrateddynamics:aspect",
+          "aspect": "integrateddynamics:read_integer_redstone_value",
+          "valuetype": "integrateddynamics:integer",
+          "value": "{Primitive:15}"
         }
       }
     }

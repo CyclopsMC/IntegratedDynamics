@@ -6,15 +6,19 @@ import com.google.gson.JsonSyntaxException;
 import lombok.ToString;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -97,20 +101,20 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
     @Override
     public ValuePredicate<ValueEntity> deserializeValuePredicate(JsonObject element, @Nullable IValue value) {
-        JsonElement jsonElement = element.get("entity_class");
-        String className = jsonElement != null && !jsonElement.isJsonNull() ? jsonElement.getAsString() : null;
-        Class<?> clazz = null;
-        if (className != null) {
+        JsonElement jsonElement = element.get("entity");
+        String entityTypeName = jsonElement != null && !jsonElement.isJsonNull() ? jsonElement.getAsString() : null;
+        EntityType<? extends Entity> entityType = null;
+        if (entityTypeName != null) {
             try {
-                clazz = Class.forName(className);
-            } catch (ClassNotFoundException e) {
-                throw new JsonSyntaxException("Could not find the container class with name '" + className + "'");
+                entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entityTypeName));
+            } catch (ResourceLocationException e) {
+                throw new JsonSyntaxException("Invalid entity type name '" + entityTypeName + "'");
             }
-            if (clazz.isAssignableFrom(Entity.class)) {
-                throw new JsonSyntaxException("The class '" + className + "' is not an entity class");
+            if (entityType == null) {
+                throw new JsonSyntaxException("Could not find the entity type '" + entityTypeName + "'");
             }
         }
-        return new ValueEntityPredicate(this, value, (Class<? extends Entity>) clazz);
+        return new ValueEntityPredicate(this, value, entityType);
     }
 
     @Override
@@ -205,18 +209,18 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
     public static class ValueEntityPredicate extends ValuePredicate<ValueEntity> {
 
-        private final Class<? extends Entity> clazz;
+        private final EntityType<? extends Entity> entityType;
 
-        public ValueEntityPredicate(@Nullable IValueType valueType, @Nullable IValue value, @Nullable Class<? extends Entity> clazz) {
+        public ValueEntityPredicate(@Nullable IValueType valueType, @Nullable IValue value, @Nullable EntityType<? extends Entity> entityType) {
             super(valueType, value);
-            this.clazz = clazz;
+            this.entityType = entityType;
         }
 
         @Override
         protected boolean testTyped(ValueEntity value) {
             return super.testTyped(value)
-                    && (clazz == null
-                        || (value.getRawValue().isPresent() && clazz.isInstance(value.getRawValue().get())));
+                    && (entityType == null
+                        || (value.getRawValue().isPresent() && value.getRawValue().get().getType() == entityType));
         }
     }
 

@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "item": "integrateddynamics:variable",
-      "nbt": "{\"_type\":\"valuetype\",\"typeName\":\"valuetype.valuetypes.integrateddynamics.list.name\",\"_id\":1,\"value\":\"materialized;valuetype.valuetypes.integrateddynamics.integer.name\\\\;1\\\\;10\\\\;100\"}"
+      "nbt": "{_type:\"integrateddynamics:valuetype\",typeName:\"integrateddynamics:list\",_id:1,value:{proxyName:\"integrateddynamics:materialized\",serialized:{valueType:\"integrateddynamics:integer\",values:[1,10,100]}}}"
     },
     "title": {
       "translate": "advancement.integrateddynamics.recursive_recursion"
@@ -17,9 +17,9 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "display_panel",
+        "parttype": "integrateddynamics:display_panel",
         "variable": {
-          "valuetype": "valuetype.valuetypes.integrateddynamics.list.name",
+          "valuetype": "integrateddynamics:list",
           "value": {
             "infinite_list": true
           }

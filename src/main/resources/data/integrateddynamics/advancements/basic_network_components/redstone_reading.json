@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:part_redstone_reader_item"
+      "item": "integrateddynamics:part_redstone_reader"
     },
     "title": {
       "translate": "advancement.integrateddynamics.redstone_reading"
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "integrateddynamics:part_redstone_reader_item"
+            "item": "integrateddynamics:part_redstone_reader"
           }
         ]
       }
