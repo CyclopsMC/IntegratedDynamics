@@ -11,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.client.particle.ParticleBlur;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -68,12 +67,12 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
                     float blue = colors.getRight() + rand.nextFloat() * 0.1F - 0.05F;
                     float ageMultiplier = 17F;
 
-                    ParticleBlur blur = new ParticleBlur(new ParticleBlurData(red, green, blue, scale, ageMultiplier),
-                            Minecraft.getInstance().world, tx, ty, tz,
+                    Minecraft.getInstance().worldRenderer.addParticle(
+                            new ParticleBlurData(red, green, blue, scale, ageMultiplier), false,
+                            tx, ty, tz,
                             -(direction.getXOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
                             -(direction.getYOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
                             -(direction.getZOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F));
-                    Minecraft.getInstance().particles.addEffect(blur);
                 }
             }
         }
