@@ -48,6 +48,10 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         return block instanceof BlockEnergyBatteryBase && ((BlockEnergyBatteryBase) block).isCreative();
     }
 
+    public void setEnergyStored(int energy) {
+        this.energy = energy;
+    }
+
     @Override
     public int getEnergyStored() {
         if(isCreative()) return Integer.MAX_VALUE;
