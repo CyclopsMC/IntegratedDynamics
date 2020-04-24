@@ -69,7 +69,11 @@ public class PartTypeEffectWriter extends PartTypeWriteBase<PartTypeEffectWriter
                 Aspects.Write.Effect.createForParticle(ParticleTypes.NAUTILUS),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.DOLPHIN),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE),
-                Aspects.Write.Effect.createForParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE)
+                Aspects.Write.Effect.createForParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE),
+                Aspects.Write.Effect.createForParticle(ParticleTypes.DRIPPING_HONEY),
+                Aspects.Write.Effect.createForParticle(ParticleTypes.FALLING_HONEY),
+                Aspects.Write.Effect.createForParticle(ParticleTypes.LANDING_HONEY),
+                Aspects.Write.Effect.createForParticle(ParticleTypes.FALLING_NECTAR)
         ));
     }
 
