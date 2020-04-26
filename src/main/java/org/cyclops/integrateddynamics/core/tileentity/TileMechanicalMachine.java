@@ -300,7 +300,11 @@ public abstract class TileMechanicalMachine<RCK, R extends IRecipe> extends Tile
         return stored - newEnergy;
     }
 
-    protected void setEnergy(int energy) {
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
         int lastEnergy = this.energy;
         if (lastEnergy != energy) {
             this.energy = energy;

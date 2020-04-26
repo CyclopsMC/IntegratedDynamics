@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
+import org.cyclops.integrateddynamics.block.BlockProxy;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class ItemBlockProxy extends ItemBlockNBT {
     @Override
     public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
         if(itemStack.getTag() != null) {
-            int id = itemStack.getTag().getInt("proxyId");
+            int id = itemStack.getTag().getInt(BlockProxy.NBT_ID);
             list.add(new TranslationTextComponent(L10NValues.GENERAL_ITEM_ID, id));
         }
         super.addInformation(itemStack, world, list, flag);

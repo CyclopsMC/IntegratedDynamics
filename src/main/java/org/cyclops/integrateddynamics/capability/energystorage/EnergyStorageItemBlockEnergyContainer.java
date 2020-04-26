@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
  * Energy Battery implementation for ItemBlock's.
  * @author rubensworks
  */
-public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapacity {
+public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapacity, IEnergyStorageMutable {
 
     private final ItemBlockEnergyContainer itemBlockEnergyContainer;
     private final ItemStack itemStack;
@@ -70,7 +70,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         int stored = getEnergyStored();
         int energyReceived = Math.min(getMaxEnergyStored() - stored, energy);
         if(!simulate) {
-            setEnergy(itemStack, stored + energyReceived);
+            setItemStackEnergy(itemStack, stored + energyReceived);
         }
         return energyReceived;
     }
@@ -82,12 +82,12 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         int stored = getEnergyStored();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {
-            setEnergy(itemStack, newEnergy);
+            setItemStackEnergy(itemStack, newEnergy);
         }
         return stored - newEnergy;
     }
 
-    protected void setEnergy(ItemStack itemStack, int energy) {
+    protected void setItemStackEnergy(ItemStack itemStack, int energy) {
         if(isCreative()) return;
         CompoundNBT tag = itemStack.getOrCreateTag();
         tag.putInt(itemBlockEnergyContainer.get().getEneryContainerNBTName(), energy);
@@ -101,5 +101,10 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         } else {
             tag.putInt(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName(), capacity);
         }
+    }
+
+    @Override
+    public void setEnergy(int energy) {
+        setItemStackEnergy(itemStack, energy);
     }
 }

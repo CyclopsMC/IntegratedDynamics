@@ -21,7 +21,8 @@ public class BlockProxyConfig extends BlockConfig {
                 eConfig -> new BlockProxy(Block.Properties.create(Material.ANVIL)
                         .hardnessAndResistance(5.0F)
                         .sound(SoundType.METAL)),
-                (eConfig, block) -> new ItemBlockProxy(block, new Item.Properties())
+                (eConfig, block) -> new ItemBlockProxy(block, new Item.Properties()
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 

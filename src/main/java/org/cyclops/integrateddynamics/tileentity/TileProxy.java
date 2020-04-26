@@ -17,7 +17,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -55,6 +54,7 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
 
     @NBTPersist
     @Getter
+    @Setter
     private int proxyId = -1;
 
     @Setter
@@ -119,14 +119,6 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
     public void generateNewProxyId() {
         this.proxyId = IntegratedDynamics.globalCounters.getNext(GLOBALCOUNTER_KEY);
         markDirty();
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        if(!MinecraftHelpers.isClientSide() && this.proxyId == -1) {
-            generateNewProxyId();
-        }
     }
 
     @Override

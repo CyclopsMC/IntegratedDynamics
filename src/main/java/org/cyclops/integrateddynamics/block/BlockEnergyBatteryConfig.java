@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.client.render.tileentity.ItemStackTileEntityEnergyBatteryRender;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainerAutoSupply;
 
 /**
@@ -38,7 +39,9 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
                         .sound(SoundType.METAL)
                         .hardnessAndResistance(5.0F)),
                 (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block,
-                        (new Item.Properties()).group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        new Item.Properties()
+                                .group(IntegratedDynamics._instance.getDefaultItemGroup())
+                                .setISTER(() -> ItemStackTileEntityEnergyBatteryRender::new))
         );
     }
 

@@ -109,4 +109,16 @@ public class BlockDryingBasin extends BlockTileGui {
     public VoxelShape getRaytraceShape(BlockState blockState, IBlockReader world, BlockPos blockPos) {
         return SHAPE_RAYTRACE;
     }
+
+    @Override
+    public void onReplaced(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+        if (oldState.getBlock() != newState.getBlock()) {
+            TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class)
+                    .ifPresent(tile -> {
+                        InventoryHelpers.dropItems(world, tile.getInventory(), blockPos);
+                        world.updateComparatorOutputLevel(blockPos, oldState.getBlock());
+                    });
+            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+        }
+    }
 }

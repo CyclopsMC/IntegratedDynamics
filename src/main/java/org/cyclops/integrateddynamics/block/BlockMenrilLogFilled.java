@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LogBlock;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -30,11 +31,9 @@ public class BlockMenrilLogFilled extends LogBlock {
         builder.add(AXIS, SIDE);
     }
 
-    // TODO: loot table
-    /*@Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockReader world, BlockPos blockPos, BlockState blockStatedata, int fortune) {
-        drops.add(new ItemStack(getItemDropped(blockStatedata, RANDOM, fortune)));
-        drops.add(new ItemStack(ItemCrystalizedMenrilChunkConfig._instance.getItemInstance(), 1 + RANDOM.nextInt(3 + fortune)));
-    }*/
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return this.getDefaultState().with(SIDE, context.getPlacementHorizontalFacing().getOpposite());
+    }
 
 }

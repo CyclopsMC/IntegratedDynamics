@@ -72,6 +72,7 @@
     "block.integrateddynamics.energy_battery.info": "Place in crafting grid with other Energy Batteries to increase capacity. Shift + Right click to auto-supply.",
     "block.integrateddynamics.energy_battery.info.auto_supply": "Auto-supply: %s",
     "block.integrateddynamics.energy_battery_creative": "Creative Energy Battery",
+    "block.integrateddynamics.energy_battery_creative.info.auto_supply": "Auto-supply: %s",
     "block.integrateddynamics.logic_programmer": "Logic Programmer",
     "block.integrateddynamics.coal_generator": "Generator",
     "block.integrateddynamics.coal_generator.info": "Produces energy from fuel items",

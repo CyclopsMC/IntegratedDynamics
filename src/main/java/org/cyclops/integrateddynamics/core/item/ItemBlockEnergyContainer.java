@@ -5,7 +5,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -51,7 +50,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
     }
 
     protected LazyOptional<IEnergyStorage> getEnergyBattery(ItemStack itemStack) {
-        return itemStack.getCapability(CapabilityEnergy.ENERGY, null);
+        return itemStack.getCapability(CapabilityEnergy.ENERGY);
     }
 	
     @OnlyIn(Dist.CLIENT)
@@ -98,15 +97,4 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         });
     }
 
-    @Override
-    protected boolean itemStackDataToTile(ItemStack itemStack, TileEntity tile) {
-        return getEnergyBattery(itemStack)
-                .map(energyStorage -> {
-                    TileEnergyBattery battery = (TileEnergyBattery) tile;
-                    battery.setEnergyStored(energyStorage.getEnergyStored());
-                    battery.setCapacity(energyStorage.getMaxEnergyStored());
-                    return true;
-                })
-                .orElse(false);
-    }
 }

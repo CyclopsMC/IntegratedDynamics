@@ -8,6 +8,8 @@ import net.minecraft.world.World;
 import org.cyclops.commoncapabilities.api.capability.wrench.WrenchTarget;
 import org.cyclops.integrateddynamics.Capabilities;
 
+import javax.annotation.Nullable;
+
 /**
  * Helper methods related to items.
  * @author rubensworks
@@ -23,7 +25,7 @@ public final class WrenchHelpers {
      * @param side The side that is being wrenched.
      * @return If the wrenching can continue with the held item.
      */
-    public static boolean isWrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, Direction side) {
+    public static boolean isWrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, @Nullable Direction side) {
         if(heldItem == null) {
             return false;
         }

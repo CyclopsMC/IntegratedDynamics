@@ -1,13 +1,17 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.core.block.BlockContainerCabled;
@@ -69,4 +73,22 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
             stored = energyStorage.receiveEnergy(max, false);
         }
     }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        if (!world.isRemote()) {
+            TileHelpers.getSafeTile(world, blockPos, TileEnergyBattery.class)
+                    .ifPresent(tile -> itemStackToTile(itemStack, tile));
+        }
+        super.onBlockPlacedBy(world, blockPos, state, placer, itemStack);
+    }
+
+    public static void itemStackToTile(ItemStack itemStack, TileEnergyBattery tile) {
+        itemStack.getCapability(CapabilityEnergy.ENERGY)
+                .ifPresent(energyStorage -> {
+                    tile.setEnergyStored(energyStorage.getEnergyStored());
+                    tile.setCapacity(energyStorage.getMaxEnergyStored());
+                });
+    }
+
 }

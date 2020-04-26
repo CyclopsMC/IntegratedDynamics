@@ -75,6 +75,8 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
+import org.cyclops.integrateddynamics.loot.conditions.LootConditions;
+import org.cyclops.integrateddynamics.loot.functions.LootFunctions;
 import org.cyclops.integrateddynamics.metadata.RegistryExportables;
 import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -165,6 +167,8 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         super.setup(event);
 
         Advancements.load();
+        LootFunctions.load();
+        LootConditions.load();
 
         // Register info book
         putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);

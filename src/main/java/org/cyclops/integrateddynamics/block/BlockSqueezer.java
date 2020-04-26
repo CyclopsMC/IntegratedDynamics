@@ -25,6 +25,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.BlockTile;
+import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
 
@@ -198,6 +199,18 @@ public class BlockSqueezer extends BlockTile {
     @Override
     public int getComparatorInputOverride(BlockState blockState, World world, BlockPos blockPos) {
         return (int) (((double) blockState.get(HEIGHT) - 1) / 6D * 15D);
+    }
+
+    @Override
+    public void onReplaced(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+        if (oldState.getBlock() != newState.getBlock()) {
+            TileHelpers.getSafeTile(world, blockPos, TileSqueezer.class)
+                    .ifPresent(tile -> {
+                        InventoryHelpers.dropItems(world, tile.getInventory(), blockPos);
+                        world.updateComparatorOutputLevel(blockPos, oldState.getBlock());
+                    });
+            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+        }
     }
 
 }

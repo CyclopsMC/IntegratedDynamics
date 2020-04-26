@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -16,10 +15,13 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.block.BlockTileGui;
+import org.cyclops.cyclopscore.helper.InventoryHelpers;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
+import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -40,7 +42,8 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, blockPos, rayTraceResult.getFace())
                 && player.isCrouching()) {
-            world.destroyBlock(blockPos, true);
+            Block.spawnDrops(blockState, world, blockPos, blockState.hasTileEntity() ? world.getTileEntity(blockPos) : null, player, heldItem);
+            world.destroyBlock(blockPos, false);
             return ActionResultType.SUCCESS;
         }
         return super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
@@ -97,5 +100,14 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
     public void observedNeighborChange(BlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
         super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null, changedBlockPos);
+    }
+
+    @Override
+    public void onReplaced(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+        if (oldState.getBlock() != newState.getBlock()) {
+            TileHelpers.getSafeTile(world, blockPos, TileCableConnectableInventory.class)
+                    .ifPresent(tile -> InventoryHelpers.dropItems(world, tile.getInventory(), blockPos));
+            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+        }
     }
 }
