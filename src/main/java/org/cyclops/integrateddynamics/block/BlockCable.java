@@ -135,7 +135,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement {
         BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.forEntity(player))
                 .rayTrace(pos, player);
         if (rayTraceResult != null && rayTraceResult.getComponent().destroy(world, pos, player, false)) {
-            return true;
+            return false;
         }
         return rayTraceResult != null && super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
