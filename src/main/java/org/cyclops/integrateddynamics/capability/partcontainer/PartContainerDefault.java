@@ -124,6 +124,7 @@ public abstract class PartContainerDefault implements IPartContainer {
                 // Drop all parts types as item.
                 List<ItemStack> itemStacks = Lists.newLinkedList();
                 networkElement.addDrops(itemStacks, dropMainElement, saveState);
+                // TODO: call IPartType#spawnDrops
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
                         if (!player.isCreative()) {

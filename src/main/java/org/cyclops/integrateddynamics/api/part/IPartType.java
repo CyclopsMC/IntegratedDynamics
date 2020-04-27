@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -19,14 +20,21 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
+import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.storage.loot.LootTables;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.loot.LootParametersExtended;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -203,6 +211,40 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param state The state
      */
     public void afterNetworkReAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state);
+
+    // TODO: doc
+    public default ResourceLocation getLootTable() {
+        return LootTables.EMPTY;
+    }
+
+    public default List<ItemStack> getDrops(ServerWorld world, BlockPos pos, Direction side, P partType, S partState,
+                                            @Nullable Entity entity, ItemStack tool, @Nullable Float explosionRadius) {
+        ResourceLocation resourcelocation = this.getLootTable();
+        if (resourcelocation == LootTables.EMPTY) {
+            return Collections.emptyList();
+        } else {
+            LootContext lootContext = new LootContext.Builder(world)
+                    .withRandom(world.rand)
+                    .withParameter(LootParametersExtended.PARAM_PART_TYPE, partType)
+                    .withParameter(LootParametersExtended.PARAM_PART_STATE, partState)
+                    .withParameter(LootParameters.POSITION, pos)
+                    .withParameter(LootParametersExtended.PARAM_SIDE, side)
+                    .withParameter(LootParameters.TOOL, tool)
+                    .withNullableParameter(LootParameters.THIS_ENTITY, entity)
+                    .withNullableParameter(LootParameters.EXPLOSION_RADIUS, explosionRadius)
+                    .build(LootParametersExtended.SET_PART);
+            LootTable loottable = world.getServer().getLootTableManager().getLootTableFromLocation(resourcelocation);
+            return loottable.generate(lootContext);
+        }
+    }
+
+    public default void spawnDrops(World world, BlockPos pos, Direction side, P partType, S partState,
+                                   @Nullable Entity entity, ItemStack tool, @Nullable Float explosionRadius) {
+        if (world instanceof ServerWorld) {
+            getDrops((ServerWorld) world, pos, side, partType, partState, entity, tool, explosionRadius)
+                    .forEach((itemStack) -> Block.spawnAsEntity(world, pos, itemStack));
+        }
+    }
 
     /**
      * Get the itemstack from the given state.
