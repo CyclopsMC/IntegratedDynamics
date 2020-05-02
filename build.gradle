@@ -67,6 +67,12 @@ configurations {
     shadow
 }
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
 repositories {
     mavenCentral()
 	mavenLocal()
