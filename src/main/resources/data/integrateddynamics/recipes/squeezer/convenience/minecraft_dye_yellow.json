@@ -1,0 +1,16 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "item": "minecraft:dandelion"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:yellow_dye",
+          "count": 4
+        }
+      }
+    ]
+  }
+}

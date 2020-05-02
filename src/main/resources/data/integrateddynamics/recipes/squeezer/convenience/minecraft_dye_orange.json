@@ -1,0 +1,16 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "item": "minecraft:orange_tulip"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:orange_dye",
+          "count": 4
+        }
+      }
+    ]
+  }
+}

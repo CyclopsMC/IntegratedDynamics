@@ -1,0 +1,13 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "item": "minecraft:red_tulip"
+  },
+  "result": {
+    "items": [
+      {
+        "item": "minecraft:red_dye"
+      }
+    ]
+  }
+}

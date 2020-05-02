@@ -1,0 +1,20 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "minecraft:obsidian",
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/obsidian"
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/obsidian"
+      }
+    }
+  ]
+}

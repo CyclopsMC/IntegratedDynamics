@@ -25,7 +25,7 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
         implements IRecipeSerializer<RecipeSqueezer> {
 
     protected static RecipeSqueezer.ItemStackChance getJsonItemStackChance(JsonObject json) {
-        ItemStack itemStack = RecipeSerializerHelpers.getJsonItemStack(json, "item", true);
+        ItemStack itemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(json, true);
         float chance = JSONUtils.getFloat(json, "chance", 1.0F);
         return new RecipeSqueezer.ItemStackChance(itemStack, chance);
     }

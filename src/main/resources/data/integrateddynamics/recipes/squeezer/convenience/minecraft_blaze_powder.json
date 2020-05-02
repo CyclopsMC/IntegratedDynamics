@@ -1,0 +1,22 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "item": "minecraft:blaze_rod"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:blaze_powder",
+          "count": 3
+        }
+      },
+      {
+        "item": {
+          "item": "minecraft:blaze_powder",
+          "chance": 0.5
+        }
+      }
+    ]
+  }
+}

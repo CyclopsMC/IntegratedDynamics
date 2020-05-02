@@ -1,0 +1,28 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "minecraft:lapis_ore",
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:lapis_lazuli",
+          "count": 8
+        }
+      },
+      {
+        "item": {
+          "item": "minecraft:lapis_lazuli",
+          "count": 2
+        },
+        "chance": 0.5
+      },
+      {
+        "item": {
+          "item": "minecraft:lapis_lazuli",
+          "count": 2
+        },
+        "chance": 0.5
+      }
+    ]
+  }
+}

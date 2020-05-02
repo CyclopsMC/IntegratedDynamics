@@ -1,0 +1,33 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "tag": "forge:ore/ardite"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/ardite"
+      },
+      {
+        "tag": "forge:dusts/ardite",
+        "chance": 0.75
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/ardite"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ore/ardite"
+      }
+    }
+  ]
+}

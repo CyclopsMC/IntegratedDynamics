@@ -1,0 +1,11 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "minecraft:stone",
+  "result": {
+    "items": [
+      {
+        "item": "minecraft:cobblestone"
+      }
+    ]
+  }
+}

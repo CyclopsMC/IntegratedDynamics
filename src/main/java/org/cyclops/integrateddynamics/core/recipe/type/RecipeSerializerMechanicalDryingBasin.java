@@ -30,7 +30,7 @@ public class RecipeSerializerMechanicalDryingBasin extends ForgeRegistryEntry<IR
         FluidStack inputFluid = RecipeSerializerHelpers.getJsonFluidStack(json, "fluid", false);
 
         // Output
-        ItemStack outputItemStack = RecipeSerializerHelpers.getJsonItemStack(result, "item", false);
+        ItemStack outputItemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(result, false);
         FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
 
         // Other stuff

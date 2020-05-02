@@ -1,0 +1,16 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "item": "minecraft:lily_of_the_valley"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:white_dye",
+          "count": 4
+        }
+      }
+    ]
+  }
+}
