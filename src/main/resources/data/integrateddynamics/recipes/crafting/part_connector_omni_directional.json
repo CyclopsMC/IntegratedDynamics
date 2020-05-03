@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "integrateddynamics:part_connector_omni_directional",
+  "pattern": [
+    " L ",
+    "MCM",
+    " L "
+  ],
+  "key": {
+    "L": {
+      "item": "integrateddynamics:logic_director"
+    },
+    "M": {
+      "item": "integrateddynamics:part_connector_mono_directional"
+    },
+    "C": {
+      "item": "integrateddynamics:cable"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:part_connector_omni_directional",
+    "count": 2
+  }
+}

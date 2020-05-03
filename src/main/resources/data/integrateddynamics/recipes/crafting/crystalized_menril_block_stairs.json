@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "P  ",
+    "PP ",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "integrateddynamics:crystalized_menril_block"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:crystalized_menril_block_stairs",
+    "count": 4
+  }
+}

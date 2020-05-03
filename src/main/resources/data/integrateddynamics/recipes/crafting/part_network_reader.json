@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " X ",
+    "XVX",
+    " X "
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable_transformer_input"
+    },
+    "X": {
+      "item": "integrateddynamics:cable"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:part_network_reader"
+  }
+}

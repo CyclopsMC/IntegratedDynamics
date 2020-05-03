@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SBS",
+    "S S",
+    "PIP"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "B": {
+      "tag": "forge:storage_blocks/iron"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:squeezer"
+  }
+}

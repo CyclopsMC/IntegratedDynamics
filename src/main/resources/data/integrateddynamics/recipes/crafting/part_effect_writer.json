@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " X ",
+    "XVX",
+    " X "
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable_transformer_output"
+    },
+    "X": {
+      "item": "minecraft:fire_charge"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:part_effect_writer"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "integrateddynamics:part_connector_omni_directional",
+  "ingredients": [
+    {
+      "item": "integrateddynamics:part_connector_omni_directional"
+    },
+    {
+      "item": "integrateddynamics:part_connector_omni_directional"
+    }
+  ],
+  "result": {
+    "item": "integrateddynamics:part_connector_omni_directional",
+    "count": 2
+  }
+}

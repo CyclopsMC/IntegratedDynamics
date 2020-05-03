@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " F ",
+    "IVI",
+    " C "
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable_transformer_input"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "C": {
+      "item": "minecraft:crafting_table"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:part_machine_reader"
+  }
+}

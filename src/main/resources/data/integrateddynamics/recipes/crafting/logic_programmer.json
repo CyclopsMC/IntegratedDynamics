@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "integrateddynamics:logic_programmer",
+  "ingredients": [
+    {
+      "item": "integrateddynamics:crystalized_menril_block"
+    },
+    {
+      "item": "minecraft:crafting_table"
+    }
+  ],
+  "result": {
+    "item": "integrateddynamics:logic_programmer"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "VCV",
+    "CSC",
+    "VCV"
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable"
+    },
+    "C": {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    },
+    "S": {
+      "item": "integrateddynamics:variablestore"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:proxy"
+  }
+}

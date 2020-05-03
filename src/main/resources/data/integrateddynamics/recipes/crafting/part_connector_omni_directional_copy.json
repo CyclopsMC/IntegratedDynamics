@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "integrateddynamics:part_connector_omni_directional",
+  "pattern": [
+    " L ",
+    "MOM",
+    " L "
+  ],
+  "key": {
+    "L": {
+      "item": "integrateddynamics:logic_director"
+    },
+    "M": {
+      "item": "integrateddynamics:part_connector_mono_directional"
+    },
+    "O": {
+      "item": "integrateddynamics:part_connector_omni_directional"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:part_connector_omni_directional",
+    "count": 3
+  }
+}

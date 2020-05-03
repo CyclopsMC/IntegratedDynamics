@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " O ",
+    "BSB",
+    " O "
+  ],
+  "key": {
+    "O": {
+      "tag": "forge:obsidian"
+    },
+    "B": {
+      "item": "integrateddynamics:energy_battery"
+    },
+    "S": {
+      "item": "integrateddynamics:drying_basin"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:mechanical_drying_basin"
+  }
+}

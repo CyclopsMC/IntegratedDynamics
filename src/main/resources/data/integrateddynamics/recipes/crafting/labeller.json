@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " CB",
+    " CC",
+    "C  "
+  ],
+  "key": {
+    "C": {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    },
+    "B": {
+      "item": "minecraft:writable_book"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:labeller"
+  }
+}

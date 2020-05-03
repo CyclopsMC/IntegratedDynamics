@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " X ",
+    "XVX"
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable_transformer_output"
+    },
+    "X": {
+      "tag": "forge:chests/wooden"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:part_inventory_writer"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "integrateddynamics:crystalized_menril_block"
+    }
+  ],
+  "result": {
+    "item": "integrateddynamics:crystalized_menril_chunk",
+    "count": 9
+  }
+}

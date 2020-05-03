@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " V ",
+    "CPC",
+    " V "
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable"
+    },
+    "C": {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "integrateddynamics:variable_transformer_output",
+    "count": 4
+  }
+}

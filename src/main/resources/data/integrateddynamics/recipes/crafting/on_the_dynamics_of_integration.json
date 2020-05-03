@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:book"
+    },
+    {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    },
+    {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    }
+  ],
+  "result": {
+    "item": "integrateddynamics:on_the_dynamics_of_integration"
+  }
+}
