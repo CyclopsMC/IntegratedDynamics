@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "item": "minecraft:peony"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:pink_dye",
+          "count": 8
+        }
+      }
+    ]
+  },
+  "duration": 5
+}

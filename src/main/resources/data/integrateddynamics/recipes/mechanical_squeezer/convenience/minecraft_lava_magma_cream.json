@@ -1,0 +1,11 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:magma_cream",
+  "result": {
+    "fluid": {
+      "fluid": "minecraft:lava",
+      "amount": 250
+    }
+  },
+  "duration": 100
+}

@@ -1,0 +1,11 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:cactus",
+  "result": {
+    "fluid": {
+      "fluid": "minecraft:water",
+      "amount": 500
+    }
+  },
+  "duration": 20
+}

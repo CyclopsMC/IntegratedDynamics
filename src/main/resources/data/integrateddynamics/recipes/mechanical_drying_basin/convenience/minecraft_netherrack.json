@@ -1,0 +1,8 @@
+{
+  "type": "integrateddynamics:mechanical_drying_basin",
+  "item": "minecraft:magma_block",
+  "duration": 10,
+  "result": {
+    "item": "minecraft:netherrack"
+  }
+}

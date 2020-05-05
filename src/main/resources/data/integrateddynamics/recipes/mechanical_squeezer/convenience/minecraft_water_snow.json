@@ -1,0 +1,11 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:snow",
+  "result": {
+    "fluid": {
+      "fluid": "minecraft:water",
+      "amount": 1000
+    }
+  },
+  "duration": 20
+}

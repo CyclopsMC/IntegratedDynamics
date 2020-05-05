@@ -1,0 +1,27 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "integrateddynamics:menril_log",
+  "result": {
+    "fluid": {
+      "fluid": "integrateddynamics:menril_resin",
+      "amount": 1000
+    },
+    "items": [
+      {
+        "item": {
+          "item": "integrateddynamics:crystalized_menril_chunk",
+          "count": 2
+        }
+      },
+      {
+        "item": "integrateddynamics:crystalized_menril_chunk",
+        "chance": 0.5
+      },
+      {
+        "item": "integrateddynamics:crystalized_menril_chunk",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 15
+}

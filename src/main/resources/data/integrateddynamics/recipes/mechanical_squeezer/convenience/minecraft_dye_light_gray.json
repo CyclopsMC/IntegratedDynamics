@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "item": "minecraft:azure_bluet"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:light_gray_dye",
+          "count": 4
+        }
+      }
+    ]
+  },
+  "duration": 5
+}

@@ -1,0 +1,13 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:magma_block",
+  "result": {
+    "items": [
+      {
+        "item": "minecraft:magma_cream",
+        "count": 4
+      }
+    ]
+  },
+  "duration": 40
+}

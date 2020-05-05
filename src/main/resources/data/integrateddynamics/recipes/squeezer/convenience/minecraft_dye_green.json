@@ -1,0 +1,27 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "item": "minecraft:cactus"
+  },
+  "result": {
+    "fluid": {
+      "fluid": "minecraft:water",
+      "amount": 500
+    },
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:green_dye",
+          "count": 4
+        }
+      },
+      {
+        "item": {
+          "item": "minecraft:green_dye",
+          "count": 2
+        },
+        "chance": 0.5
+      }
+    ]
+  }
+}

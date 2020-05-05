@@ -1,0 +1,22 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:obsidian",
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/obsidian",
+        "count": 2
+      }
+    ]
+  },
+  "duration": 60,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/obsidian"
+      }
+    }
+  ]
+}

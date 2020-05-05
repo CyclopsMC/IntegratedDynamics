@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "tag": "minecraft:wool"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:string",
+          "count": 4
+        }
+      }
+    ]
+  },
+  "duration": 5
+}

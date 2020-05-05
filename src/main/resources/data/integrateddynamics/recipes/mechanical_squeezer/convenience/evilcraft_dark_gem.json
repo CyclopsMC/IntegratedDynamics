@@ -1,0 +1,25 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "evilcraft:dark_ore",
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "evilcraft:dark_gem",
+          "count": 2
+        }
+      },
+      {
+        "item": "evilcraft:dark_gem_crushed",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 20,
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "evilcraft"
+    }
+  ]
+}

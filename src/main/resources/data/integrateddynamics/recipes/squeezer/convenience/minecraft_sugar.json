@@ -1,0 +1,23 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "item": "minecraft:sugar_cane"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:sugar",
+          "count": 4
+        }
+      },
+      {
+        "item": {
+          "item": "minecraft:sugar",
+          "count": 2
+        },
+        "chance": 0.5
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "integrateddynamics:mechanical_drying_basin",
+  "item": {
+    "tag": "saplings"
+  },
+  "duration": 15,
+  "result": {
+    "item": "minecraft:dead_bush"
+  }
+}

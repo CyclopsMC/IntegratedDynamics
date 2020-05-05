@@ -1,0 +1,26 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:diamond_ore",
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/diamond",
+        "count": 2
+      },
+      {
+        "tag": "forge:dusts/diamond",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/diamond"
+      }
+    }
+  ]
+}

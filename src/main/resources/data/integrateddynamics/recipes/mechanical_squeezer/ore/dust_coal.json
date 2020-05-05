@@ -1,0 +1,21 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:coal",
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/coal"
+      }
+    ]
+  },
+  "duration": 10,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/coal"
+      }
+    }
+  ]
+}

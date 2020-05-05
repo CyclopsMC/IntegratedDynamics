@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "item": "minecraft:lilac"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:magenta_dye",
+          "count": 8
+        }
+      }
+    ]
+  },
+  "duration": 5
+}

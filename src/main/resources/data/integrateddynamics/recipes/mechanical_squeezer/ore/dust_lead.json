@@ -1,0 +1,35 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "tag": "forge:ore/lead"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/lead",
+        "count": 2
+      },
+      {
+        "tag": "forge:dusts/lead",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/lead"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ore/lead"
+      }
+    }
+  ]
+}

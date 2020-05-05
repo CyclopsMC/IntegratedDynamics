@@ -1,0 +1,19 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:coal_ore",
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:coal",
+          "count": 6
+        }
+      },
+      {
+        "item": "minecraft:coal",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40
+}

@@ -1,0 +1,22 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "evilcraft:undead_leaves",
+  "result": {
+    "items": [
+      {
+        "item": "evilcraft:hardened_blood_shard"
+      }
+    ],
+    "fluid": {
+      "fluid": "evilcraft:blood",
+      "amount": 50
+    }
+  },
+  "duration": 25,
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "evilcraft"
+    }
+  ]
+}

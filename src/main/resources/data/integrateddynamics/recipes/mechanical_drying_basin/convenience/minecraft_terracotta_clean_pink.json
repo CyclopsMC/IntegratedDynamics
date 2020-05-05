@@ -1,0 +1,12 @@
+{
+  "type": "integrateddynamics:mechanical_drying_basin",
+  "item": "minecraft:pink_terracotta",
+  "fluid": {
+    "fluid": "minecraft:water",
+    "amount": 250
+  },
+  "duration": 10,
+  "result": {
+    "item": "minecraft:terracotta"
+  }
+}

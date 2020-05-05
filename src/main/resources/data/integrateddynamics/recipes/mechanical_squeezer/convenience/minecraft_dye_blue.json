@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "item": "minecraft:cornflower"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:blue_dye",
+          "count": 4
+        }
+      }
+    ]
+  },
+  "duration": 5
+}

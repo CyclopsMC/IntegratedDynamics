@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "item": "minecraft:wither_rose"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:black_dye",
+          "count": 4
+        }
+      }
+    ]
+  },
+  "duration": 5
+}
