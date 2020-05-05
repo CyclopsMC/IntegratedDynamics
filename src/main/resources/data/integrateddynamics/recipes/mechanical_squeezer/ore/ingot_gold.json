@@ -1,0 +1,23 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:gold_ore",
+  "result": {
+    "items": [
+      {
+        "tag": "forge:ingots/gold",
+        "count": 2
+      },
+      {
+        "tag": "forge:ingots/gold",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40,
+  "conditions": [
+    {
+      "type": "forge:tag_empty",
+      "tag": "forge:dusts/gold"
+    }
+  ]
+}

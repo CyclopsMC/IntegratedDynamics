@@ -1,0 +1,21 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "minecraft:iron_ore",
+  "result": {
+    "items": [
+      {
+        "tag": "forge:ingots/iron"
+      },
+      {
+        "tag": "forge:ingots/iron",
+        "chance": 0.75
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "type": "forge:tag_empty",
+      "tag": "forge:dusts/iron"
+    }
+  ]
+}
