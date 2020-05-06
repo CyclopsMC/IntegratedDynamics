@@ -1,6 +1,6 @@
 {
   "_comment": "Dummy blockstate",
   "variants": {
-    "": { "model": "integrateddynamics:block/menril_resin" }
+    "": { "model": "integrateddynamics:block/menril_torch" }
   }
 }
