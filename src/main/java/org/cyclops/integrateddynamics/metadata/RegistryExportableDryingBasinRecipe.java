@@ -3,53 +3,50 @@ package org.cyclops.integrateddynamics.metadata;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.metadata.IRegistryExportable;
 import org.cyclops.cyclopscore.metadata.RegistryExportableRecipeAbstract;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.component.DummyPropertiesComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
+import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.block.BlockDryingBasin;
-import org.cyclops.integrateddynamics.block.BlockSqueezer;
-
-import java.util.List;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
 
 /**
  * Drying basin recipe exporter.
  */
-public class RegistryExportableDryingBasinRecipe implements IRegistryExportable {
+public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecipeAbstract<IRecipeType<RecipeDryingBasin>, RecipeDryingBasin, IInventoryFluid> {
 
-    public static JsonObject serializeRecipeIO(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
+    protected RegistryExportableDryingBasinRecipe() {
+        super(() -> RegistryEntries.RECIPETYPE_DRYING_BASIN);
+    }
+
+    public static JsonObject serializeRecipeStatic(RecipeDryingBasin recipe) {
         JsonObject object = new JsonObject();
 
         // Properties
-        int duration = recipe.getProperties().getDuration();
+        int duration = recipe.getDuration();
         object.addProperty("duration", duration);
 
         // Inputs
         JsonObject inputObject = new JsonObject();
-        ItemStack[] inputItems = recipe.getInput().getIngredient().getMatchingStacks();
+        ItemStack[] inputItems = recipe.getInputIngredient().getMatchingStacks();
         JsonArray arrayInputs = new JsonArray();
         for (ItemStack input : inputItems) {
             arrayInputs.add(IRegistryExportable.serializeItemStack(input));
         }
         inputObject.add("item", arrayInputs);
-        FluidStack inputFluid = recipe.getInput().getFluidStack();
+        FluidStack inputFluid = recipe.getInputFluid();
         if (inputFluid != null) {
             inputObject.add("fluid", IRegistryExportable.serializeFluidStack(inputFluid));
         }
 
         // Outputs
         JsonObject outputObject = new JsonObject();
-        FluidStack fluidOutput = recipe.getOutput().getFluidStack();
+        FluidStack fluidOutput = recipe.getOutputFluid();
         if (fluidOutput != null) {
             outputObject.add("fluid", IRegistryExportable.serializeFluidStack(fluidOutput));
         }
-        ItemStack itemOutput = recipe.getOutput().getFirstItemStack();
+        ItemStack itemOutput = recipe.getOutputItem();
         outputObject.add("item", IRegistryExportable.serializeItemStack(itemOutput));
 
         // Recipe object
@@ -59,17 +56,8 @@ public class RegistryExportableDryingBasinRecipe implements IRegistryExportable 
         return object;
     }
 
-    public JsonObject serializeRecipe(IRecipe<IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
-        return serializeRecipeIO(recipe);
-    }
-
     @Override
-    public JsonObject export() {
-        return null; // TODO
-    }
-
-    @Override
-    public String getName() {
-        return "drying_basin_recipe";
+    public JsonObject serializeRecipe(RecipeDryingBasin recipe) {
+        return serializeRecipeStatic(recipe);
     }
 }

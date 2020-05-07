@@ -1,34 +1,29 @@
 package org.cyclops.integrateddynamics.metadata;
 
 import com.google.gson.JsonObject;
-import org.cyclops.cyclopscore.metadata.IRegistryExportable;
-import org.cyclops.cyclopscore.recipe.custom.api.IRecipe;
-import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent;
-import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.crafting.IRecipeType;
+import org.cyclops.cyclopscore.metadata.RegistryExportableRecipeAbstract;
+import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
 
 /**
  * Mechanical squeezer recipe exporter.
  */
-public class RegistryExportableMechanicalSqueezerRecipe implements IRegistryExportable {
+public class RegistryExportableMechanicalSqueezerRecipe extends RegistryExportableRecipeAbstract<IRecipeType<RecipeMechanicalSqueezer>, RecipeMechanicalSqueezer, IInventory> {
 
-    public JsonObject serializeRecipe(IRecipe<IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> recipe) {
-        JsonObject object = RegistryExportableSqueezerRecipe.serializeRecipeIO(recipe);
+    protected RegistryExportableMechanicalSqueezerRecipe() {
+        super(() -> RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER);
+    }
+
+    @Override
+    public JsonObject serializeRecipe(RecipeMechanicalSqueezer recipe) {
+        JsonObject object = RegistryExportableSqueezerRecipe.serializeRecipeStatic(recipe);
 
         // Properties
-        int duration = recipe.getProperties().getDuration();
+        int duration = recipe.getDuration();
         object.addProperty("duration", duration);
 
         return object;
-    }
-
-    @Override
-    public JsonObject export() {
-        return null; // TODO
-    }
-
-    @Override
-    public String getName() {
-        return "mechanical_squeezer_recipe";
     }
 }

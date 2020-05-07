@@ -21,8 +21,6 @@ import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.IClientProxy;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
-import org.cyclops.cyclopscore.recipe.custom.SuperRecipeRegistry;
-import org.cyclops.cyclopscore.recipe.custom.api.ISuperRecipeRegistry;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRendererRegistry;
@@ -105,9 +103,6 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         registerWorldStorage(NetworkWorldStorage.getInstance(this));
         registerWorldStorage(globalCounters = new GlobalCounters(this));
         registerWorldStorage(LabelsWorldStorage.getInstance(this));
-
-        // Registries
-        getRegistryManager().addRegistry(ISuperRecipeRegistry.class, new SuperRecipeRegistry(this));
 
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());

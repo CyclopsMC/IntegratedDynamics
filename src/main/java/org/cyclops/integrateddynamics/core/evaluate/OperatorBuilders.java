@@ -19,7 +19,6 @@ import net.minecraftforge.fml.ModList;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -108,6 +107,10 @@ public class OperatorBuilders {
     // --------------- Double builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> DOUBLE = OperatorBuilder.forType(ValueTypes.DOUBLE).appendKind("double");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> DOUBLE_1_PREFIX = DOUBLE.inputTypes(1, ValueTypes.DOUBLE).renderPattern(IConfigRenderPattern.PREFIX_1);
+
+    // --------------- Number builders ---------------
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER = OperatorBuilder.forType(ValueTypes.CATEGORY_NUMBER).appendKind("number");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER_1_PREFIX = DOUBLE.inputTypes(1, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.PREFIX_1);
 
     // --------------- Nullable builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NULLABLE = OperatorBuilder.forType(ValueTypes.CATEGORY_NULLABLE).appendKind("general");
@@ -362,7 +365,7 @@ public class OperatorBuilders {
      */
     public static OperatorBuilder.ITypeValidator createOperatorTypeValidator(final IValueType... expectedSubTypes) {
         final int subOperatorLength = expectedSubTypes.length;
-        final L10NHelpers.UnlocalizedString expected = new L10NHelpers.UnlocalizedString(
+        final ITextComponent expected = new TranslationTextComponent(
                 org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(subOperatorLength), ValueHelpers.from(expectedSubTypes));
         return (operator, input) -> {
             if (input.length == 0 || !ValueHelpers.correspondsTo(input[0], ValueTypes.OPERATOR)) {
@@ -372,7 +375,7 @@ public class OperatorBuilders {
             }
             if (input.length != subOperatorLength + 1) {
                 IValueType[] operatorInputs = Arrays.copyOfRange(input, 1, input.length);
-                L10NHelpers.UnlocalizedString given = new L10NHelpers.UnlocalizedString(
+                ITextComponent given = new TranslationTextComponent(
                         org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(operatorInputs.length), ValueHelpers.from(operatorInputs));
                 return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE,
                         expected, given);
@@ -465,10 +468,10 @@ public class OperatorBuilders {
             throws EvaluationException {
         IIngredientComponentHandler<VT, V, T, M> componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
         if (list.getRawValue().getValueType() != componentHandler.getValueType()) {
-            L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+            ITextComponent error = new TranslationTextComponent(
                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                     list.getRawValue().getValueType(), componentHandler.getValueType());
-            throw new EvaluationException(error.localize());
+            throw new EvaluationException(error.getString());
         }
         List<T> listTransformed = Lists.newArrayListWithExpectedSize(list.getRawValue().getLength());
         for (V value : list.getRawValue()) {

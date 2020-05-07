@@ -131,7 +131,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
                 || !Objects.equals(lastFacadeBlock, facadeBlockTag)
                 || lastRealCable != cableFakeable.isRealCable() || wasLightTransparent != isLightTransparent)) {
             BlockHelpers.markForUpdate(getWorld(), getPos());
-            // TODO: pre-1.14: getWorld().checkLight(getPos());
         }
     }
 
@@ -139,7 +138,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     public void onUpdateReceived() {
         if(!lightLevels.equals(previousLightLevels)) {
             previousLightLevels = lightLevels;
-            // TODO: pre-1.14: getWorld().checkLight(getPos());
         }
         cachedState = null;
         BlockHelpers.markForUpdate(getWorld(), getPos());
@@ -228,12 +226,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     public boolean canRenderBreaking() {
         return true;
     }
-
-    // TODO: remove in 1.14? Used to be related to MinecraftForgeClient#getRenderPass()
-    /*@Override
-    public boolean shouldRenderInPass(int pass) {
-        return true;
-    }*/
 
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {

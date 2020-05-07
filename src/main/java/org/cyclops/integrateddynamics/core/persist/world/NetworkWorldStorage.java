@@ -1,16 +1,10 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Sets;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraftforge.common.util.Constants;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.core.network.Network;
 
 import java.util.Collections;
 import java.util.Set;
@@ -35,27 +29,6 @@ public class NetworkWorldStorage extends WorldStorage {
             INSTANCE = new NetworkWorldStorage(mod);
         }
         return INSTANCE;
-    }
-
-    @Override
-    public void readGeneratedFieldsFromNBT(CompoundNBT tag) {
-        // TODO: backwards compat, remove in next major MC update.
-        if (tag.contains("networks", Constants.NBT.TAG_COMPOUND)
-                && "org.cyclops.integrateddynamics.core.network.PartNetwork".equals(tag.getCompound("networks").getString("elementType"))) {
-            CompoundNBT collectionTag = tag.getCompound("networks");
-            networks = Sets.newHashSet();
-            ListNBT list = collectionTag.getList("collection", Constants.NBT.TAG_COMPOUND);
-            if(list.size() > 0) {
-                for (int i = 0; i < list.size(); i++) {
-                    CompoundNBT entryTag = list.getCompound(i);
-                    Network network = new Network();
-                    network.fromNBT(entryTag.getCompound("element"));
-                    networks.add(network);
-                }
-            }
-        } else {
-            super.readGeneratedFieldsFromNBT(tag);
-        }
     }
 
     @Override

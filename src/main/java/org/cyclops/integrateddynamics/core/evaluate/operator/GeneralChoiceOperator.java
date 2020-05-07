@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -47,8 +46,8 @@ public class GeneralChoiceOperator extends GeneralOperator {
             }
             if(i == 0 && !ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
                 return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
-                        Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getTranslationKey()));
+                        this.getOperatorName(), new TranslationTextComponent(inputType.getTranslationKey()),
+                        Integer.toString(i), new TranslationTextComponent(getInputTypes()[i].getTranslationKey()));
             } else if(i == 1) {
                 temporarySecondInputType = inputType;
             } else if(i == 2) {

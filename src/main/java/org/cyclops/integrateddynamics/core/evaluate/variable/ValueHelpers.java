@@ -9,7 +9,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -64,11 +63,11 @@ public class ValueHelpers {
      * @param valueTypes The value types.
      * @return The unlocalized names array corresponding element-wise to the value types array.
      */
-    public static L10NHelpers.UnlocalizedString[] from(IValueType... valueTypes) {
-        L10NHelpers.UnlocalizedString[] names = new L10NHelpers.UnlocalizedString[valueTypes.length];
+    public static ITextComponent[] from(IValueType... valueTypes) {
+        ITextComponent[] names = new ITextComponent[valueTypes.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IValueType valueType = valueTypes[i];
-            names[i] = new L10NHelpers.UnlocalizedString(valueType.getTranslationKey());
+            names[i] = new TranslationTextComponent(valueType.getTranslationKey());
         }
         return names;
     }

@@ -71,7 +71,6 @@ import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -305,8 +304,8 @@ public final class Operators {
                     } else if(i == 1) {
                         if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
                             return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    operator.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
-                                    Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getTranslationKey()));
+                                    operator.getOperatorName(), new TranslationTextComponent(inputType.getTranslationKey()),
+                                    Integer.toString(i), new TranslationTextComponent(temporarySecondInputType.getTranslationKey()));
                         }
                     }
                 }
@@ -727,10 +726,10 @@ public final class Operators {
                 ValueTypeString.ValueString delimiter = variables.getValue(0);
                 ValueTypeList.ValueList<?, ?> elements = variables.getValue(1);
                 if (!ValueHelpers.correspondsTo(elements.getRawValue().getValueType(), ValueTypes.STRING)) {
-                    L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                    ITextComponent error = new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                             elements.getRawValue().getValueType(), ValueTypes.STRING);
-                    throw new EvaluationException(error.localize());
+                    throw new EvaluationException(error.getString());
                 }
 
                 // Don't allow joining on an infinite list
@@ -742,10 +741,10 @@ public final class Operators {
                 StringBuilder sb = new StringBuilder();
                 for (IValue value : elements.getRawValue()) {
                     if (value.getType() != ValueTypes.STRING) {
-                        L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                        ITextComponent error = new TranslationTextComponent(
                                 L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                                 value.getType(), ValueTypes.STRING);
-                        throw new EvaluationException(error.localize());
+                        throw new EvaluationException(error.getString());
                     }
                     if (sb.length() > 0) {
                         sb.append(delimiter.getRawValue());
@@ -779,12 +778,10 @@ public final class Operators {
      * ----------------------------------- DOUBLE OPERATORS -----------------------------------
      */
 
-    // TODO: Move these double operators to number operators (and rename unique id) in the next breaking update (MC 1.13)
-
     /**
      * Double round operator with one input double and one output integers.
      */
-    public static final IOperator DOUBLE_ROUND = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
+    public static final IOperator NUMBER_ROUND = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("|| ||").operatorName("round")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.round(variables.getVariables()[0])
@@ -793,7 +790,7 @@ public final class Operators {
     /**
      * Double ceil operator with one input double and one output integers.
      */
-    public static final IOperator DOUBLE_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
+    public static final IOperator NUMBER_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.ceil(variables.getVariables()[0])
@@ -802,7 +799,7 @@ public final class Operators {
     /**
      * Double floor operator with one input double and one output integers.
      */
-    public static final IOperator DOUBLE_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
+    public static final IOperator NUMBER_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.floor(variables.getVariables()[0])
@@ -900,10 +897,10 @@ public final class Operators {
                     return a.get(b.getRawValue());
                 } else {
                     if (!ValueHelpers.correspondsTo(a.getValueType(), variables.getVariables()[2].getType())) {
-                        L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                        ITextComponent error = new TranslationTextComponent(
                                 L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                                 a.getValueType(), variables.getVariables()[2].getType());
-                        throw new EvaluationException(error.localize());
+                        throw new EvaluationException(error.getString());
                     }
                     return variables.getValue(2);
                 }
@@ -1011,10 +1008,10 @@ public final class Operators {
                 IValueTypeListProxy a = valueList.getRawValue();
                 IValue value = variables.getValue(1);
                 if (!ValueHelpers.correspondsTo(a.getValueType(), value.getType())) {
-                    L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                    ITextComponent error = new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                             a.getValueType(), value.getType());
-                    throw new EvaluationException(error.localize());
+                    throw new EvaluationException(error.getString());
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyAppend(a, value));
             }).build());
@@ -1032,10 +1029,10 @@ public final class Operators {
                 ValueTypeList.ValueList valueList1 = variables.getValue(1);
                 IValueTypeListProxy b = valueList1.getRawValue();
                 if (!ValueHelpers.correspondsTo(a.getValueType(), b.getValueType())) {
-                    L10NHelpers.UnlocalizedString error = new L10NHelpers.UnlocalizedString(
+                    ITextComponent error = new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                             a.getValueType(), b.getValueType());
-                    throw new EvaluationException(error.localize());
+                    throw new EvaluationException(error.getString());
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyConcat(a, b));
             }).build());
