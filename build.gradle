@@ -61,10 +61,16 @@ def loadProperties() {
 sourceSets {
     main
     test
+    integrationtest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
 }
 
 configurations {
     shadow
+    integrationtestCompile.extendsFrom(compile)
+    javadoc.classpath += sourceSets.integrationtest.output
 }
 
 test {
@@ -144,6 +150,7 @@ minecraft {
             mods {
                 integrateddynamics {
                     source sourceSets.main
+                    source sourceSets.integrationtest
                 }
             }
         }
@@ -154,6 +161,7 @@ minecraft {
             mods {
                 integrateddynamics {
                     source sourceSets.main
+                    source sourceSets.integrationtest
                 }
             }
         }

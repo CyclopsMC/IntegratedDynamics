@@ -1,11 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import lombok.ToString;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import net.minecraft.nbt.EndNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -37,18 +43,23 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
+    public ResourceLocation getUniqueName() {
+        return null;
+    }
+
+    @Override
     public String getTranslationKey() {
         return "boolean";
     }
 
     @Override
-    public void loadTooltip(List<String> lines, boolean appendOptionalInfo, DummyValue value) {
+    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, @Nullable DummyValue value) {
 
     }
 
     @Override
-    public String toCompactString(DummyValue value) {
-        return "dummy";
+    public ITextComponent toCompactString(DummyValue value) {
+        return new StringTextComponent("dummy");
     }
 
     @Override
@@ -57,8 +68,8 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public String getDisplayColorFormat() {
-        return "";
+    public TextFormatting getDisplayColorFormat() {
+        return TextFormatting.WHITE;
     }
 
     @Override
@@ -67,18 +78,18 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public String serialize(DummyValue value) {
+    public INBT serialize(DummyValue value) {
+        return EndNBT.INSTANCE;
+    }
+
+    @Override
+    public ITextComponent canDeserialize(INBT value) {
         return null;
     }
 
     @Override
-    public L10NHelpers.UnlocalizedString canDeserialize(String value) {
-        return null;
-    }
-
-    @Override
-    public DummyValue deserialize(String value) {
-        return null;
+    public DummyValue deserialize(INBT value) {
+        return DummyValue.of();
     }
 
     @Override
@@ -87,11 +98,20 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
+    public String toString(DummyValue value) {
+        return "DUMMY STRING";
+    }
+
+    @Override
+    public DummyValue parseString(String value) throws EvaluationException {
+        return DummyValue.of();
+    }
+
+    @Override
     public ValueTypeLPElementBase createLogicProgrammerElement() {
         return null;
     }
 
-    @ToString
     public static class DummyValue extends ValueBase {
 
         private DummyValue() {
@@ -102,6 +122,10 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
             return new DummyValue();
         }
 
+        @Override
+        public String toString() {
+            return "DummyValue";
+        }
     }
 
 }

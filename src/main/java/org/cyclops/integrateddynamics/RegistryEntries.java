@@ -63,6 +63,8 @@ public class RegistryEntries {
     public static final Item ITEM_PROXY = null;
     @ObjectHolder("integrateddynamics:variable")
     public static final ItemVariable ITEM_VARIABLE = null;
+    @ObjectHolder("integrateddynamics:wrench")
+    public static final Item ITEM_WRENCH = null;
 
     @ObjectHolder("integrateddynamics:cable")
     public static final BlockCable BLOCK_CABLE = null;

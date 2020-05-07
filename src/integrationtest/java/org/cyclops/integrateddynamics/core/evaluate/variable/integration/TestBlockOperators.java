@@ -1,18 +1,22 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockSponge;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CropsBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.SoundEvents;
 import org.apache.http.util.Asserts;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -41,25 +45,23 @@ public class TestBlockOperators {
     private DummyVariableItemStack iSeedWheat;
 
     private DummyVariable<ValueTypeString.ValueString> sSponge;
-    private DummyVariable<ValueTypeString.ValueString> sSpongeWet;
 
     @IntegrationBefore
     public void before() {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.getDefaultState()));
         bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.COAL_BLOCK.getDefaultState()));
-        bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(BlockLogicProgrammer.getInstance().getDefaultState()));
-        bLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.LEAVES.getDefaultState()));
-        bReed = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.REEDS.getDefaultState()));
+        bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(RegistryEntries.BLOCK_LOGIC_PROGRAMMER.getDefaultState()));
+        bLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OAK_LEAVES.getDefaultState()));
+        bReed = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.SUGAR_CANE.getDefaultState()));
         bSand = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.SAND.getDefaultState()));
         bFarmLand = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.FARMLAND.getDefaultState()));
         bCarrot = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.CARROTS.getDefaultState()));
-        bCarrotGrown = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.CARROTS.getDefaultState().withProperty(BlockCrops.AGE, 1)));
+        bCarrotGrown = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.CARROTS.getDefaultState().with(CropsBlock.AGE, 1)));
 
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
         iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
 
         sSponge = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:sponge"));
-        sSpongeWet = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:sponge 1"));
     }
 
     /**
@@ -131,7 +133,7 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Minecraft", "modname(air) = Minecraft");
 
         IValue res2 = Operators.OBJECT_BLOCK_MODNAME.evaluate(new IVariable[]{bLogicProgrammer});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Integrated Dynamics", "modname(logicprogrammer) = Integrated Dynamics");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "IntegratedDynamics", "modname(logicprogrammer) = IntegratedDynamics");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -157,15 +159,15 @@ public class TestBlockOperators {
     public void testBlockSound() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BLOCK_STONE_BREAK.getSoundName().toString(), "placesound(coal) = inecraft:block.stone.break");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BLOCK_STONE_BREAK.getName().toString(), "placesound(coal) = inecraft:block.stone.break");
 
         IValue res2 = Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res2 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BLOCK_STONE_PLACE.getSoundName().toString(), "placesound(coal) = inecraft:block.stone.place");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BLOCK_STONE_PLACE.getName().toString(), "placesound(coal) = inecraft:block.stone.place");
 
         IValue res3 = Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res3 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), SoundEvents.BLOCK_STONE_STEP.getSoundName().toString(), "placesound(coal) = inecraft:block.stone.step");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), SoundEvents.BLOCK_STONE_STEP.getName().toString(), "placesound(coal) = inecraft:block.stone.step");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -287,7 +289,7 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().isPresent(), false, "plant(air) = null");
 
         IValue res2 = Operators.OBJECT_BLOCK_PLANT.evaluate(new IVariable[]{bReed});
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get().getBlock() == Blocks.REEDS, true, "plant(reed) = reed");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get().getBlock() == Blocks.SUGAR_CANE, true, "plant(reed) = reed");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -346,10 +348,6 @@ public class TestBlockOperators {
         IValue res1 = Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{sSponge});
         Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
         TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.SPONGE.getDefaultState(), "blockbyname(minecraft:sponge) = sponge");
-
-        IValue res2 = Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{sSpongeWet});
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get(),
-                Blocks.SPONGE.getDefaultState().withProperty(BlockSponge.WET, true), "blockbyname(minecraft:sponge 1) = sponge_wet");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

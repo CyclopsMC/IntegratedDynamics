@@ -1,18 +1,22 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.item.EnumRarity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraft.block.Blocks;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.item.Rarity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.http.util.Asserts;
+import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -34,12 +38,12 @@ public class TestFluidStackOperators {
 
     @IntegrationBefore
     public void before() {
-        eBucketLava = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME)));
-        eBucketWater = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME)));
-        eWater100 = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 100)));
-        eWater100Tag = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 100)));
-        eWater100Tag.getValue().getRawValue().get().tag = new NBTTagCompound();
-        eWater100Tag.getValue().getRawValue().get().tag.setTag("a", new NBTTagString("abc"));
+        eBucketLava = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.LAVA, FluidHelpers.BUCKET_VOLUME)));
+        eBucketWater = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, FluidHelpers.BUCKET_VOLUME)));
+        eWater100 = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 100)));
+        eWater100Tag = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 100)));
+        eWater100Tag.getValue().getRawValue().setTag(new CompoundNBT());
+        eWater100Tag.getValue().getRawValue().getTag().putString("a", "abc");
     }
 
     /**
@@ -50,10 +54,10 @@ public class TestFluidStackOperators {
     public void testAmount() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), Fluid.BUCKET_VOLUME, "amount(lava:1000) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), FluidHelpers.BUCKET_VOLUME, "amount(lava:1000) = 1000");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), Fluid.BUCKET_VOLUME, "amount(water:1000) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), FluidHelpers.BUCKET_VOLUME, "amount(water:1000) = 1000");
 
         IValue res3 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eWater100});
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), 100, "amount(water:100) = 100");
@@ -227,10 +231,10 @@ public class TestFluidStackOperators {
     public void testRarity() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_RARITY.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is an integer");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), EnumRarity.COMMON.rarityName, "rarity(lava) = common");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), Rarity.COMMON.name(), "rarity(lava) = common");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_RARITY.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), EnumRarity.COMMON.rarityName, "rarity(water) = common");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), Rarity.COMMON.name(), "rarity(water) = common");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -314,10 +318,10 @@ public class TestFluidStackOperators {
     public void testFluidNbt() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
-        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new NBTTagCompound(), "nbt(lava) = null");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new CompoundNBT(), "nbt(lava) = null");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{eWater100Tag});
-        NBTTagCompound tag = new NBTTagCompound();
+        CompoundNBT tag = new CompoundNBT();
         tag.putString("a", "abc");
         TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue(), tag, "nbt(watertag) != null");
     }

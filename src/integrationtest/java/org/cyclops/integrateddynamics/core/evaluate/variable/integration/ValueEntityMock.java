@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import com.google.common.base.Optional;
 import net.minecraft.entity.Entity;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeEntity;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * @author rubensworks

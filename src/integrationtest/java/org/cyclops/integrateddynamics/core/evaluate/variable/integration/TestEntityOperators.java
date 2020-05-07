@@ -1,20 +1,24 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityCow;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.item.BoatEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.http.util.Asserts;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -45,7 +49,7 @@ public class TestEntityOperators {
     private DummyVariableEntity eZombie;
     private DummyVariableEntity eZombieBurning;
     private DummyVariableEntity eZombieWet;
-    private DummyVariableEntity eZombieSneaking;
+    private DummyVariableEntity eZombieCrouching;
     private DummyVariableEntity eZombieEating;
     private DummyVariableEntity eChicken;
     private DummyVariableEntity eItem;
@@ -73,76 +77,80 @@ public class TestEntityOperators {
 
     @IntegrationBefore
     public void before() {
-        World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
-        eZombie = new DummyVariableEntity(makeEntity(new EntityZombie(world)));
-        EntityZombie zombieBurning = new EntityZombie(world);
+        World world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD);
+        eZombie = new DummyVariableEntity(makeEntity(new ZombieEntity(world)));
+        ZombieEntity zombieBurning = new ZombieEntity(world);
         zombieBurning.setFire(10);
         eZombieBurning = new DummyVariableEntity(makeEntity(zombieBurning));
-        EntityZombie zombieWet = new EntityZombie(world) {
+        ZombieEntity zombieWet = new ZombieEntity(world) {
             @Override
-            protected void entityInit() {
-                super.entityInit();
+            protected void registerAttributes() {
+                super.registerAttributes();
                 this.inWater = true;
             }
         };
         eZombieWet = new DummyVariableEntity(makeEntity(zombieWet));
-        EntityZombie zombieSneaking = new EntityZombie(world);
-        zombieSneaking.setSneaking(true);
-        eZombieSneaking = new DummyVariableEntity(makeEntity(zombieSneaking));
-        EntityZombie zombieEating = new EntityZombie(world) {
+        ZombieEntity zombieCrouching = new ZombieEntity(world) {
+            @Override
+            public boolean isCrouching() {
+                return true;
+            }
+        };
+        eZombieCrouching = new DummyVariableEntity(makeEntity(zombieCrouching));
+        ZombieEntity zombieEating = new ZombieEntity(world) {
             @Override
             public int getItemInUseCount() {
                 return 1;
             }
         };
         eZombieEating = new DummyVariableEntity(makeEntity(zombieEating));
-        eChicken = new DummyVariableEntity(makeEntity(new EntityChicken(world)));
-        eItem = new DummyVariableEntity(makeEntity(new EntityItem(world)));
-        eItemFrame = new DummyVariableEntity(makeEntity(new EntityItemFrame(world)));
-        ePlayer = new DummyVariableEntity(makeEntity(world.playerEntities.get(0)));
-        EntityZombie zombieHeldItems = new EntityZombie(world);
-        zombieHeldItems.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.APPLE));
-        zombieHeldItems.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, new ItemStack(Items.POTATO));
+        eChicken = new DummyVariableEntity(makeEntity(new ChickenEntity(EntityType.CHICKEN, world)));
+        eItem = new DummyVariableEntity(makeEntity(new ItemEntity(world, 0, 0, 0)));
+        eItemFrame = new DummyVariableEntity(makeEntity(new ItemFrameEntity(world, new BlockPos(0, 0, 0), Direction.NORTH)));
+        ePlayer = new DummyVariableEntity(makeEntity(world.getPlayers().get(0)));
+        ZombieEntity zombieHeldItems = new ZombieEntity(world);
+        zombieHeldItems.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.APPLE));
+        zombieHeldItems.setItemStackToSlot(EquipmentSlotType.OFFHAND, new ItemStack(Items.POTATO));
         eZombieHeldItems = new DummyVariableEntity(makeEntity(zombieHeldItems));
-        EntityBoat boat = new EntityBoat(world);
+        BoatEntity boat = new BoatEntity(world, 0, 0, 0);
         eZombie.getValue().getRawValue().get().startRiding(boat, true);
         eBoat = new DummyVariableEntity(makeEntity(boat));
-        EntityItemFrame itemframe = new EntityItemFrame(world);
+        ItemFrameEntity itemframe = new ItemFrameEntity(world, new BlockPos(0, 0, 0), Direction.NORTH);
         itemframe.setDisplayedItem(new ItemStack(Items.POTATO));
         itemframe.setItemRotation(3);
         eItemframe = new DummyVariableEntity(makeEntity(itemframe));
-        EntityZombie zombieAged = new EntityZombie(world) {
+        ZombieEntity zombieAged = new ZombieEntity(world) {
             @Override
             public int getIdleTime() {
                 return 3;
             }
         };
         eZombieAged = new DummyVariableEntity(makeEntity(zombieAged));
-        EntityZombie zombieBaby = new EntityZombie(world);
+        ZombieEntity zombieBaby = new ZombieEntity(world);
         zombieBaby.setChild(true);
         eZombieBaby = new DummyVariableEntity(makeEntity(zombieBaby));
-        eCow = new DummyVariableEntity(makeEntity(new EntityCow(world)));
-        eCowAlreadyBred = new DummyVariableEntity(makeEntity(new EntityCow(world) {
+        eCow = new DummyVariableEntity(makeEntity(new CowEntity(EntityType.COW, world)));
+        eCowAlreadyBred = new DummyVariableEntity(makeEntity(new CowEntity(EntityType.COW, world) {
             @Override
             public int getGrowingAge() {
                 return 10;
             }
         }));
-        eCowBaby = new DummyVariableEntity(makeEntity(new EntityCow(world) {
+        eCowBaby = new DummyVariableEntity(makeEntity(new CowEntity(EntityType.COW, world) {
             @Override
             public int getGrowingAge() {
                 return -10;
             }
         }));
-        eCowInLove = new DummyVariableEntity(makeEntity(new EntityCow(world) {
+        eCowInLove = new DummyVariableEntity(makeEntity(new CowEntity(EntityType.COW, world) {
             @Override
             public boolean isInLove() {
                 return true;
             }
         }));
-        ePig = new DummyVariableEntity(makeEntity(new EntityPig(world)));
-        eSheep = new DummyVariableEntity(makeEntity(new EntitySheep(world)));
-        EntitySheep sheepSheared = new EntitySheep(world);
+        ePig = new DummyVariableEntity(makeEntity(new PigEntity(EntityType.PIG, world)));
+        eSheep = new DummyVariableEntity(makeEntity(new SheepEntity(EntityType.SHEEP, world)));
+        SheepEntity sheepSheared = new SheepEntity(EntityType.SHEEP, world);
         sheepSheared.setSheared(true);
         eSheepSheared = new DummyVariableEntity(makeEntity(sheepSheared));
 
@@ -477,32 +485,32 @@ public class TestEntityOperators {
     }
 
     /**
-     * ----------------------------------- ISSNEAKING -----------------------------------
+     * ----------------------------------- ISCROUCHING -----------------------------------
      */
 
     @IntegrationTest
-    public void testBlockIsSneaking() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{eZombie});
+    public void testBlockIsCrouching() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ENTITY_ISCROUCHING.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "issneaking(zombie) = false");
 
-        IValue res2 = Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{eZombieSneaking});
+        IValue res2 = Operators.OBJECT_ENTITY_ISCROUCHING.evaluate(new IVariable[]{eZombieCrouching});
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "issneaking(zombie:sneaking) = true");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeIsSneakingLarge() throws EvaluationException {
-        Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{eZombie, eZombie});
+    public void testInvalidInputSizeIsCrouchingLarge() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISCROUCHING.evaluate(new IVariable[]{eZombie, eZombie});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeIsSneakingSmall() throws EvaluationException {
-        Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{});
+    public void testInvalidInputSizeIsCrouchingSmall() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISCROUCHING.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypeIsSneaking() throws EvaluationException {
-        Operators.OBJECT_ENTITY_ISSNEAKING.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    public void testInvalidInputTypeIsCrouching() throws EvaluationException {
+        Operators.OBJECT_ENTITY_ISCROUCHING.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**
@@ -935,7 +943,7 @@ public class TestEntityOperators {
     public void testBlockNbt() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_NBT.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
-        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new NBTTagCompound(), "isnbt(zombie) is not null");
+        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new CompoundNBT(), "isnbt(zombie) is not null");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -961,7 +969,7 @@ public class TestEntityOperators {
     public void testEntityType() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ENTITY_TYPE.evaluate(new IVariable[]{eZombie});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Zombie", "entitytype(zombie) = Zombie");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "minecraft:zombie", "entitytype(zombie) = minecraft:zombie");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

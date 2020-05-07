@@ -1434,7 +1434,7 @@ public final class Operators {
             .output(ValueTypes.BOOLEAN)
             .symbol("is_fluidstack").operatorName("isfluidstack")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
-                itemStack -> !itemStack.isEmpty() && Helpers.getFluidStack(itemStack) != null
+                itemStack -> !itemStack.isEmpty() && !Helpers.getFluidStack(itemStack).isEmpty()
             )).build());
 
     /**
@@ -1659,7 +1659,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                 return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty()
-                        && a.getRawValue().getItem() instanceof IPlantable);
+                        && a.getRawValue().getItem() instanceof BlockItem
+                        && ((BlockItem) a.getRawValue().getItem()).getBlock() instanceof IPlantable);
             }).build());
 
 
@@ -1687,8 +1688,9 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                 String type = "None";
-                if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof IPlantable) {
-                    type = ((IPlantable) a.getRawValue().getItem()).getPlantType(null, null).name();
+                if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem
+                        && ((BlockItem) a.getRawValue().getItem()).getBlock() instanceof IPlantable) {
+                    type = ((IPlantable) ((BlockItem) a.getRawValue().getItem()).getBlock()).getPlantType(null, null).name();
                 }
                 return ValueTypeString.ValueString.of(type);
             }).build());
@@ -1719,8 +1721,9 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0);
                 BlockState plant = null;
-                if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof IPlantable) {
-                    plant = ((IPlantable) a.getRawValue().getItem()).getPlant(null, null);
+                if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem
+                        && ((BlockItem) a.getRawValue().getItem()).getBlock() instanceof IPlantable) {
+                    plant = ((BlockItem) a.getRawValue().getItem()).getBlock().getDefaultState();
                 }
                 return ValueObjectTypeBlock.ValueBlock.of(plant);
             }).build());
@@ -1903,10 +1906,10 @@ public final class Operators {
             )).build());
 
     /**
-     * If the entity is sneaking
+     * If the entity is crouching
      */
-    public static final IOperator OBJECT_ENTITY_ISSNEAKING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_sneaking").operatorName("issneaking")
+    public static final IOperator OBJECT_ENTITY_ISCROUCHING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbol("is_crouching").operatorName("iscrouching")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity != null && entity.isCrouching()
             )).build());

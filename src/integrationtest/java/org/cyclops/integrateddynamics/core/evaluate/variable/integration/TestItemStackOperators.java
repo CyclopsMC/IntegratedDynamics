@@ -1,24 +1,24 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.Items;
+import net.minecraft.item.Rarity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.http.util.Asserts;
 import org.cyclops.cyclopscore.helper.EnchantmentHelpers;
+import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -27,7 +27,6 @@ import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
-import org.cyclops.integrateddynamics.item.ItemWrench;
 
 /**
  * Test the different logical operators.
@@ -60,14 +59,12 @@ public class TestItemStackOperators {
     private DummyVariableBlock bStone;
     private DummyVariableBlock bObsidian;
 
-    private DummyVariable<ValueTypeString.ValueString> sStickWood;
     private DummyVariable<ValueTypeString.ValueString> sPlankWood;
 
     private DummyVariable<ValueTypeInteger.ValueInteger> int100;
     private DummyVariable<ValueTypeInteger.ValueInteger> int200;
 
     private DummyVariable<ValueTypeString.ValueString> sApple;
-    private DummyVariable<ValueTypeString.ValueString> sApple1;
 
     private DummyVariable<ValueTypeList.ValueList> lApples;
 
@@ -76,12 +73,14 @@ public class TestItemStackOperators {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
         iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 2)));
         ItemStack appleStack = new ItemStack(Items.APPLE);
-        appleStack.setTagCompound(new NBTTagCompound());
+        appleStack.setTag(new CompoundNBT());
+        appleStack.getTag().putString("a", "b");
         iAppleTag = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(appleStack));
-        iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.BED)));
+        iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.RED_BED)));
         iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ENDER_PEARL)));
         iHoe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
-        iHoe100 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE, 1, 100)));
+        iHoe100 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
+        iHoe100.getValue().getRawValue().setDamage(100);
         ItemStack hoeEnchanted = new ItemStack(Items.DIAMOND_HOE);
         EnchantmentHelpers.setEnchantmentLevel(hoeEnchanted, Enchantments.AQUA_AFFINITY, 1);
         hoeEnchanted.setRepairCost(10);
@@ -89,15 +88,15 @@ public class TestItemStackOperators {
         iPickaxe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_PICKAXE)));
         iStone = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.STONE)));
         iBucketLava = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.LAVA_BUCKET)));
-        iWrench = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(ItemWrench.getInstance())));
-        iEnergyBatteryEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(BlockEnergyBattery.getInstance())));
-        ItemStack energyBatteryFull = new ItemStack(BlockEnergyBattery.getInstance());
-        IEnergyStorage energyStorage = energyBatteryFull.getCapability(CapabilityEnergy.ENERGY, null);
+        iWrench = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(RegistryEntries.ITEM_WRENCH)));
+        iEnergyBatteryEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(RegistryEntries.ITEM_ENERGY_BATTERY)));
+        ItemStack energyBatteryFull = new ItemStack(RegistryEntries.ITEM_ENERGY_BATTERY);
+        IEnergyStorage energyStorage = energyBatteryFull.getCapability(CapabilityEnergy.ENERGY).orElse(null);
         BlockEnergyBatteryBase.fill(energyStorage);
         iEnergyBatteryFull = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(energyBatteryFull));
         iIronOre = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.IRON_ORE)));
         ItemStack shulkerBox = new ItemStack(Blocks.BLACK_SHULKER_BOX);
-        IItemHandler itemHandler = shulkerBox.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler itemHandler = shulkerBox.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
         itemHandler.insertItem(0, new ItemStack(Items.APPLE), false);
         itemHandler.insertItem(10, new ItemStack(Items.APPLE, 10), false);
         iShulkerBox = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(shulkerBox));
@@ -106,14 +105,12 @@ public class TestItemStackOperators {
         bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState()));
         bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.getDefaultState()));
 
-        sStickWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("stickWood"));
-        sPlankWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("plankWood"));
+        sPlankWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:planks"));
 
         int100 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(100));
         int200 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(200));
 
         sApple = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:apple"));
-        sApple1 = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:apple 1"));
 
         lApples = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
                 iApple.getValue(),
@@ -396,10 +393,10 @@ public class TestItemStackOperators {
     public void testItemStackRarity() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_RARITY.evaluate(new IVariable[]{iApple});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is an integer");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), EnumRarity.COMMON.rarityName, "rarity(apple) = common");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), Rarity.COMMON.name(), "rarity(apple) = common");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_RARITY.evaluate(new IVariable[]{iHoeEnchanted});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), EnumRarity.RARE.rarityName, "rarity(hoeenchanted) = rare");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), Rarity.RARE.name(), "rarity(hoeenchanted) = rare");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -544,10 +541,10 @@ public class TestItemStackOperators {
     public void testItemStackFluidStack() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_FLUIDSTACK.evaluate(new IVariable[]{iHoe});
         Asserts.check(res1 instanceof ValueObjectTypeFluidStack.ValueFluidStack, "result is a fluidstack");
-        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().isPresent(), false, "fluidstack(hoe) = null");
+        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().isEmpty(), true, "fluidstack(hoe) = null");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACK.evaluate(new IVariable[]{iBucketLava});
-        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue().get().isFluidStackIdentical(new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME)), true, "fluidstack(bucketlava) = lava:1000");
+        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue().isFluidStackIdentical(new FluidStack(Fluids.LAVA, FluidHelpers.BUCKET_VOLUME)), true, "fluidstack(bucketlava) = lava:1000");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -576,7 +573,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "fluidstackcapacity(hoe) = 0");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY.evaluate(new IVariable[]{iBucketLava});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), Fluid.BUCKET_VOLUME, "fluidstackcapacity(bucketlava) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), FluidHelpers.BUCKET_VOLUME, "fluidstackcapacity(bucketlava) = 1000");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -704,7 +701,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "Minecraft", "modname(hoe) = Minecraft");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_MODNAME.evaluate(new IVariable[]{iWrench});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Integrated Dynamics", "modname(wrench) = Integrated Dynamics");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "IntegratedDynamics", "modname(wrench) = IntegratedDynamics");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -781,90 +778,58 @@ public class TestItemStackOperators {
     }
 
     /**
-     * ----------------------------------- CANSMELT -----------------------------------
-     */
-
-    @IntegrationTest
-    public void testItemStackCanSmelt() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{iIronOre});
-        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
-        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), true, "cansmelt(ironore) = true");
-
-        IValue res2 = Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{iApple});
-        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), false, "cansmelt(apple) = false");
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputCanSmeltCanSmeltLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{iApple, iApple});
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputCanSmeltCanSmeltSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{});
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypeCanSmelt() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_CANSMELT.evaluate(new IVariable[]{DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- OREDICT -----------------------------------
+     * ----------------------------------- TAG -----------------------------------
      */
 
     @IntegrationTest
     public void testItemStackOreDict() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{iStone});
+        IValue res1 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iStone});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 1, "size(oredict(stone)) = 1");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 1, "size(tag(stone)) = 1");
 
-        IValue res2 = Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{iWrench});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 0, "size(oredict(wrench)) = 0");
+        IValue res2 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iWrench});
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 0, "size(tag(wrench)) = 0");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeOreDictLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{iHoe, iHoe});
+        Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iHoe, iHoe});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeOreDictSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{});
+        Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeOreDict() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_OREDICT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**
-     * ----------------------------------- OREDICT_STACKS -----------------------------------
+     * ----------------------------------- TAG_STACKS -----------------------------------
      */
 
     @IntegrationTest
     public void testItemStackOreDictStacks() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sStickWood});
+        IValue res1 = Operators.OBJECT_ITEMSTACK_TAG_STACKS.evaluate(new IVariable[]{sPlankWood});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), (int)Helpers.getOresWildcard("stickWood").count(), "size(oredict_stacks(stickWood))");
-
-        IValue res2 = Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sPlankWood});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), (int)Helpers.getOresWildcard("plankWood").count(), "size(oredict_stacks(plankWood))");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), (int)Helpers.getTagValues("minecraft:planks").count(), "size(tag_stacks(plankWood))");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeOreDictStacksLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{sStickWood, sStickWood});
+        Operators.OBJECT_ITEMSTACK_TAG_STACKS.evaluate(new IVariable[]{sPlankWood, sPlankWood});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeOreDictStacksSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{});
+        Operators.OBJECT_ITEMSTACK_TAG_STACKS.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeOreDictStacks() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_OREDICT_STACKS.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_ITEMSTACK_TAG_STACKS.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**
@@ -1179,14 +1144,6 @@ public class TestItemStackOperators {
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is a block");
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getItem(),
                 new ItemStack(Items.APPLE).getItem(), "itembyname(minecraft:apple) = apple");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getMetadata(),
-                new ItemStack(Items.APPLE).getMetadata(), "itembyname(minecraft:apple) = apple");
-
-        IValue res2 = Operators.OBJECT_ITEMSTACK_BY_NAME.evaluate(new IVariable[]{sApple1});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().getItem(),
-                new ItemStack(Items.APPLE, 1, 1).getItem(), "itembyname(minecraft:apple 1) = apple@1");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().getMetadata(),
-                new ItemStack(Items.APPLE, 1, 1).getMetadata(), "itembyname(minecraft:apple 1) = apple@1");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -1241,10 +1198,10 @@ public class TestItemStackOperators {
     public void testItemStackNbt() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iApple});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
-        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new NBTTagCompound(), "nbt(apple:1) is null");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new CompoundNBT(), "nbt(apple:1) is null");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue(), new NBTTagCompound(), "nbt(battery) is non null");
+        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue(), new CompoundNBT(), "nbt(battery) is non null");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

@@ -2,11 +2,11 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.block.Blocks;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraft.item.Items;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.http.util.Asserts;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
@@ -81,22 +81,22 @@ public class TestIngredientsOperators {
 
         iItems = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
                 MixedIngredients.ofInstances(IngredientComponent.ITEMSTACK, Lists.newArrayList(
-                        ItemStack.EMPTY, new ItemStack(Items.BOAT), new ItemStack(Blocks.STONE), ItemStack.EMPTY)
+                        ItemStack.EMPTY, new ItemStack(Items.OAK_BOAT), new ItemStack(Blocks.STONE), ItemStack.EMPTY)
                 )));
         lItems = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
                 ValueObjectTypeItemStack.ValueItemStack.of(ItemStack.EMPTY),
-                ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.BOAT)),
+                ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.OAK_BOAT)),
                 ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.STONE)),
                 ValueObjectTypeItemStack.ValueItemStack.of(ItemStack.EMPTY)
         ));
 
         iFluids = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
                 MixedIngredients.ofInstances(IngredientComponent.FLUIDSTACK, Lists.newArrayList(
-                        new FluidStack(FluidRegistry.LAVA, 1000), new FluidStack(FluidRegistry.WATER, 125))
+                        new FluidStack(Fluids.LAVA, 1000), new FluidStack(Fluids.WATER, 125))
                 )));
         lFluids = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
-                ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.LAVA, 1000)),
-                ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 125))
+                ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.LAVA, 1000)),
+                ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 125))
         ));
 
         iEnergies = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
@@ -111,13 +111,13 @@ public class TestIngredientsOperators {
 
         Map<IngredientComponent<?, ?>, List<?>> ingredients = Maps.newIdentityHashMap();
         ingredients.put(IngredientComponent.ENERGY, Lists.newArrayList(777));
-        ingredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(FluidRegistry.WATER, 125)));
-        ingredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));
+        ingredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(Fluids.WATER, 125)));
+        ingredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.OAK_BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));
         inputIngredients = new MixedIngredients(ingredients);
         iMix = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(inputIngredients));
 
         iItem = new DummyVariable<>(ValueTypes.OBJECT_ITEMSTACK, ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
-        iFluid = new DummyVariable<>(ValueTypes.OBJECT_FLUIDSTACK, ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 123)));
+        iFluid = new DummyVariable<>(ValueTypes.OBJECT_FLUIDSTACK, ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 123)));
         iEnergy = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(123));
     }
 
@@ -131,7 +131,7 @@ public class TestIngredientsOperators {
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 2, "items(mix, 0).size = 2");
         TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack>) res1)
-                .getRawValue().get(0).getRawValue().getItem(), Items.BOAT, "items(mix, 0) = boat");
+                .getRawValue().get(0).getRawValue().getItem(), Items.OAK_BOAT, "items(mix, 0) = boat");
         TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack>) res1)
                 .getRawValue().get(1).getRawValue().getItem(), Item.getItemFromBlock(Blocks.STONE), "items(mix, 0) = boat");
     }
@@ -162,8 +162,8 @@ public class TestIngredientsOperators {
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 2, "fluids(fluids, 0).size = 2");
         TestHelpers.assertEqual(res1,
                 ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_FLUIDSTACK, Lists.newArrayList(
-                        ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.LAVA, 1000)),
-                        ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(FluidRegistry.WATER, 125))
+                        ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.LAVA, 1000)),
+                        ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 125))
                 )), "fluids(fluids) = lava, water");
     }
 
@@ -241,7 +241,7 @@ public class TestIngredientsOperators {
         IMixedIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
         List<ItemStack> outputList2 = outputIngredients2.getInstances(IngredientComponent.ITEMSTACK);
         TestHelpers.assertEqual(outputList2.size(), 3, "with_items(mix, 2, items)[0]size = 3");
-        TestHelpers.assertEqual(outputList2.get(0).getItem(), Items.BOAT,
+        TestHelpers.assertEqual(outputList2.get(0).getItem(), Items.OAK_BOAT,
                 "with_items(mix, 2, items)[0] = items[0]");
         TestHelpers.assertEqual(outputList2.get(1).getItem(), Item.getItemFromBlock(Blocks.STONE),
                 "with_items(mix, 2, items)[1] = items[1]");
@@ -282,7 +282,7 @@ public class TestIngredientsOperators {
         IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
         List<FluidStack> outputList1 = outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK);
         TestHelpers.assertEqual(outputList1.size(), 1, "with_fluids(mix, 0, fluids)[0]size = 1");
-        TestHelpers.assertEqual(outputList1.get(0), new FluidStack(FluidRegistry.WATER, 123),
+        TestHelpers.assertEqual(outputList1.get(0), new FluidStack(Fluids.WATER, 123),
                 "with_fluids(mix, 0, fluids)[0] = fluids[0]");
 
         TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK).size(), inputIngredients.getInstances(IngredientComponent.FLUIDSTACK).size(), "Fluids size remains the same");
@@ -295,11 +295,11 @@ public class TestIngredientsOperators {
         IMixedIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
         List<FluidStack> outputList2 = outputIngredients2.getInstances(IngredientComponent.FLUIDSTACK);
         TestHelpers.assertEqual(outputList2.size(), 3, "with_fluids(mix, 3, fluids)[0]size = 2");
-        TestHelpers.assertEqual(outputList2.get(0), new FluidStack(FluidRegistry.WATER, 125),
+        TestHelpers.assertEqual(outputList2.get(0), new FluidStack(Fluids.WATER, 125),
                 "with_fluids(mix, 2, fluids)[0] = fluids[0]");
-        TestHelpers.assertEqual(outputList2.get(1), null,
+        TestHelpers.assertEqual(outputList2.get(1), FluidStack.EMPTY,
                 "with_fluids(mix, 2, fluids)[1] = fluids[1]");
-        TestHelpers.assertEqual(outputList2.get(2), new FluidStack(FluidRegistry.WATER, 123),
+        TestHelpers.assertEqual(outputList2.get(2), new FluidStack(Fluids.WATER, 123),
                 "with_fluids(mix, 2, fluids)[2] = fluids[2]");
 
         TestHelpers.assertNonEqual(outputIngredients2.getInstances(IngredientComponent.FLUIDSTACK).size(), inputIngredients.getInstances(IngredientComponent.FLUIDSTACK).size(), "Fluids size changes");
@@ -384,7 +384,7 @@ public class TestIngredientsOperators {
         TestHelpers.assertEqual(outputList1.size(), 4, "with_items(mix, items)[0]size = 4");
         TestHelpers.assertEqual(outputList1.get(0).getItem(), Items.AIR,
                 "with_items(mix, items)[0] = items[0]");
-        TestHelpers.assertEqual(outputList1.get(1).getItem(), Items.BOAT,
+        TestHelpers.assertEqual(outputList1.get(1).getItem(), Items.OAK_BOAT,
                 "with_items(mix, items)[1] = items[1]");
         TestHelpers.assertEqual(outputList1.get(2).getItem(), Item.getItemFromBlock(Blocks.STONE),
                 "with_items(mix, items)[2] = items[2]");
@@ -421,9 +421,9 @@ public class TestIngredientsOperators {
         IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
         List<FluidStack> outputList1 = outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK);
         TestHelpers.assertEqual(outputList1.size(), 2, "with_fluids(mix, fluids)[0]size = 2");
-        TestHelpers.assertEqual(outputList1.get(0), new FluidStack(FluidRegistry.LAVA, 1000),
+        TestHelpers.assertEqual(outputList1.get(0), new FluidStack(Fluids.LAVA, 1000),
                 "with_fluids(mix, fluids)[0] = fluids[0]");
-        TestHelpers.assertEqual(outputList1.get(1), new FluidStack(FluidRegistry.WATER, 125),
+        TestHelpers.assertEqual(outputList1.get(1), new FluidStack(Fluids.WATER, 125),
                 "with_fluids(mix, fluids)[1] = fluids[1]");
 
         TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ITEMSTACK), inputIngredients.getInstances(IngredientComponent.ITEMSTACK), "Item remains the same");

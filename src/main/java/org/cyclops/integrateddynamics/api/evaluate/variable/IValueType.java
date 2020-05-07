@@ -94,6 +94,7 @@ public interface IValueType<V extends IValue> {
      * @param value The value to deserialize.
      * @return An error or null.
      */
+    @Nullable
     public ITextComponent canDeserialize(INBT value);
 
     /**
