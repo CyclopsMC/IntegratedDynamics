@@ -24,11 +24,9 @@ public class IntegratedDynamicsSoundEvents {
     }
 
     @SubscribeEvent
-    public static void registerSoundEvents(RegistryEvent.Register event) {
-        if (event.getRegistry() == ForgeRegistries.SOUND_EVENTS) {
-            effect_page_flipsingle = getRegisteredSoundEvent(event.getRegistry(), "effect.page.flipsingle");
-            effect_page_flipmultiple = getRegisteredSoundEvent(event.getRegistry(), "effect.page.flipmultiple");
-        }
+    public static void registerSoundEvents(RegistryEvent.Register<SoundEvent> event) {
+        effect_page_flipsingle = getRegisteredSoundEvent(event.getRegistry(), "effect.page.flipsingle");
+        effect_page_flipmultiple = getRegisteredSoundEvent(event.getRegistry(), "effect.page.flipmultiple");
     }
 
 }

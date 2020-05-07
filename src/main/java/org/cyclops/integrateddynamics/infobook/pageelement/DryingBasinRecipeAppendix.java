@@ -43,7 +43,7 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
 
     @Override
     protected String getUnlocalizedTitle() {
-        return "tile.blocks.integrateddynamics.drying_basin";
+        return "block.integrateddynamics.drying_basin";
     }
 
     @Override

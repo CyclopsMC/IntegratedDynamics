@@ -132,6 +132,10 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
 
         // Preload parts, so we force their blocks and items to be registered
         PartTypes.load();
+
+        if (MinecraftHelpers.isClientSide()) {
+            FMLJavaModLoadingContext.get().getModEventBus().register(IntegratedDynamicsSoundEvents.class);
+        }
     }
 
     @Override
@@ -173,14 +177,11 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         // Register info book
         putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
         getRegistryManager().getRegistry(IInfoBookRegistry.class).registerInfoBook(
-                OnTheDynamicsOfIntegrationBook.getInstance(), "/assets/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");
+                OnTheDynamicsOfIntegrationBook.getInstance(), "/data/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");
 
         MinecraftForge.EVENT_BUS.register(TickHandler.getInstance());
         MinecraftForge.EVENT_BUS.register(NoteBlockEventReceiver.getInstance());
         MinecraftForge.EVENT_BUS.register(new NetworkCapabilityConstructors());
-        if (MinecraftHelpers.isClientSide()) {
-            FMLJavaModLoadingContext.get().getModEventBus().register(IntegratedDynamicsSoundEvents.class);
-        }
     }
 
     @Override

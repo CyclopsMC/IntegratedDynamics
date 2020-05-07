@@ -51,7 +51,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<RecipeSqueezer> {
 
     @Override
     protected String getUnlocalizedTitle() {
-        return "tile.blocks.integrateddynamics.squeezer";
+        return "block.integrateddynamics.squeezer";
     }
 
     @Override

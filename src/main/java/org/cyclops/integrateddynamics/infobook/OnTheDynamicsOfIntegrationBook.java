@@ -36,10 +36,10 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
     private static OnTheDynamicsOfIntegrationBook _instance = null;
 
     static {
-        InfoBookParser.registerAppendixRecipeFactories(Reference.MOD_ID + ":squeezer_recipe", RegistryEntries.RECIPETYPE_SQUEEZER, SqueezerRecipeAppendix::new);
-        InfoBookParser.registerAppendixRecipeFactories(Reference.MOD_ID + ":mechanical_squeezer_recipe", RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER, MechanicalSqueezerRecipeAppendix::new);
-        InfoBookParser.registerAppendixRecipeFactories(Reference.MOD_ID + ":drying_basin_recipe", RegistryEntries.RECIPETYPE_DRYING_BASIN, DryingBasinRecipeAppendix::new);
-        InfoBookParser.registerAppendixRecipeFactories(Reference.MOD_ID + ":mechanical_drying_basin_recipe", RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN, MechanicalDryingBasinRecipeAppendix::new);
+        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_SQUEEZER, SqueezerRecipeAppendix::new);
+        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER, MechanicalSqueezerRecipeAppendix::new);
+        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_DRYING_BASIN, DryingBasinRecipeAppendix::new);
+        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN, MechanicalDryingBasinRecipeAppendix::new);
 
         InfoBookParser.registerAppendixFactory(Reference.MOD_ID + ":aspect", new InfoBookParser.IAppendixFactory() {
             @Override

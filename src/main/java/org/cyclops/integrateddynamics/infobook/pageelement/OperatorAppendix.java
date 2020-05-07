@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Operator appendix.
@@ -82,7 +83,7 @@ public class OperatorAppendix extends SectionAppendix {
         if(mx >= x && my >= y && mx <= x + getWidth() && my <= y + gui.getFontRenderer().FONT_HEIGHT ) {
             List<ITextComponent> lines = Lists.newArrayList();
             operator.loadTooltip(lines, true);
-            gui.drawTooltip(lines, mx, my);
+            gui.drawTooltip(mx, my, lines.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()));
         }
         GlStateManager.popMatrix();
 

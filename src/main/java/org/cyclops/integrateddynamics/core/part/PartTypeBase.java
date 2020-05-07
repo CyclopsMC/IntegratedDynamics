@@ -85,7 +85,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     protected void registerBlock() {
         BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + this.name,
                 (eConfig)        -> block = createBlock(eConfig),
-                (eConfig, block) -> item  = createItem(eConfig, block)) {};
+                (eConfig, block) -> item  = createItem(eConfig, block)) {
+            @Override
+            public String getFullTranslationKey() {
+                return PartTypeBase.this.getTranslationKey();
+            }
+        };
         getMod().getConfigHandler().addConfigurable(blockConfig);
     }
 

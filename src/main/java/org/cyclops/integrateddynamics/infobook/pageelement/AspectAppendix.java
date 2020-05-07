@@ -27,6 +27,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Aspect appendix.
@@ -98,7 +99,7 @@ public class AspectAppendix extends SectionAppendix {
         if(mx >= x && my >= y && mx <= x + SLOT_SIZE && my <= y + SLOT_SIZE ) {
             List<ITextComponent> lines = Lists.newArrayList();
             aspect.loadTooltip(lines, true);
-            gui.drawTooltip(lines, mx, my);
+            gui.drawTooltip(mx, my, lines.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()));
         }
         GlStateManager.popMatrix();
 

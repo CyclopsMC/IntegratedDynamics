@@ -2,13 +2,10 @@ package org.cyclops.integrateddynamics.client.gui.container;
 
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
 import org.cyclops.integrateddynamics.IntegratedDynamicsSoundEvents;
 import org.cyclops.integrateddynamics.Reference;
