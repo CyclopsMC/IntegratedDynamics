@@ -80,7 +80,6 @@ org.cyclops.integrateddynamics.core.part.write
 org.cyclops.integrateddynamics.core.path
 org.cyclops.integrateddynamics.core.persist.world
 org.cyclops.integrateddynamics.core.recipe
-org.cyclops.integrateddynamics.core.recipe.custom
 org.cyclops.integrateddynamics.core.recipe.type
 org.cyclops.integrateddynamics.core.test
 org.cyclops.integrateddynamics.core.tileentity
