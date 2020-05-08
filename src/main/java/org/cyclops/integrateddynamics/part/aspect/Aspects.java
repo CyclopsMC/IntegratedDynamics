@@ -8,6 +8,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.state.properties.NoteBlockInstrument;
@@ -69,6 +70,7 @@ import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -173,12 +175,12 @@ public class Aspects {
                         TileEntity tile = dimPos.getWorld(true).getTileEntity(dimPos.getBlockPos());
                         try {
                             if (tile != null) {
-                                return tile.write(new CompoundNBT());
+                                return Optional.<INBT>of(tile.write(new CompoundNBT()));
                             }
                         } catch (Exception e) {
                             // Catch possible errors
                         }
-                        return null;
+                        return Optional.<INBT>empty();
                     }).handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_BIOME =
                     AspectReadBuilders.Block.BUILDER_STRING

@@ -17,26 +17,30 @@ import java.util.Optional;
 public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyBase<T, V> {
 
     private final String key;
-    private final CompoundNBT tag;
+    private final Optional<CompoundNBT> tag;
 
-    public ValueTypeListProxyNbtValueListGeneric(ResourceLocation name, T valueType, String key, CompoundNBT tag) {
+    public ValueTypeListProxyNbtValueListGeneric(ResourceLocation name, T valueType, String key, Optional<INBT> tag) {
         super(name, valueType);
         this.key = key;
-        this.tag = tag;
+        this.tag = tag.filter(t -> t instanceof CompoundNBT).map(t -> (CompoundNBT) t);
     }
 
     public String getKey() {
         return key;
     }
 
-    public CompoundNBT getTag() {
+    public Optional<CompoundNBT> getTag() {
         return tag;
     }
 
     @Override
     public int getLength() throws EvaluationException {
         try {
-            return getLength(Optional.ofNullable((N) tag.get(key)).orElse(getDefault()));
+            return getTag()
+                    .map(t -> Optional.ofNullable((N) t.get(key)))
+                    .orElse(Optional.empty())
+                    .map(this::getLength)
+                    .orElse(0);
         } catch (ClassCastException e) {
             return 0;
         }
@@ -46,7 +50,11 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T ex
     public V get(int index) throws EvaluationException {
         try {
             if (index < getLength()) {
-                return get(Optional.ofNullable((N) tag.get(key)).orElse(getDefault()), index);
+                return getTag()
+                        .map(t -> Optional.ofNullable((N) t.get(key)))
+                        .orElse(Optional.empty())
+                        .map(t -> get(t, index))
+                        .orElse(null);
             }
         } catch (ClassCastException e) {}
         return null;
@@ -54,7 +62,6 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T ex
 
     protected abstract int getLength(N tag);
     protected abstract V get(N tag, int index);
-    protected abstract N getDefault();
 
     public static abstract class Factory<L extends ValueTypeListProxyNbtValueListGeneric<N, T, V>, N extends INBT, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyNBTFactorySimple<T, V, L> {
 
@@ -66,14 +73,16 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T ex
         @Override
         protected void serializeNbt(L value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             tag.putString("key", value.getKey());
-            tag.put("tag", value.getTag());
+            if (value.getTag().isPresent()) {
+                tag.put("tag", value.getTag().get());
+            }
         }
 
         @Override
         protected L deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            return create(tag.getString("key"), tag.getCompound("tag"));
+            return create(tag.getString("key"), Optional.ofNullable(tag.get("tag")));
         }
 
-        protected abstract L create(String key, CompoundNBT tag);
+        protected abstract L create(String key, Optional<INBT> tag);
     }
 }

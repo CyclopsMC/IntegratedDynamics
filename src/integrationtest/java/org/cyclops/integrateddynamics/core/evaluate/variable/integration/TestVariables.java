@@ -37,7 +37,7 @@ public class TestVariables {
     @IntegrationTest
     public void testIngredientsType() {
         DummyVariableIngredients inull = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(null));
-        TestHelpers.assertEqual(inull.getValue().getRawValue().orNull(), null, "null value is null");
+        TestHelpers.assertEqual(inull.getValue().getRawValue().orElse(null), null, "null value is null");
 
         IMixedIngredients ingredients1 =
                 MixedIngredients.ofInstances(IngredientComponent.ITEMSTACK, Lists.newArrayList(
@@ -61,7 +61,7 @@ public class TestVariables {
     @IntegrationTest
     public void testRecipeType() {
         DummyVariableRecipe rnull = new DummyVariableRecipe(ValueObjectTypeRecipe.ValueRecipe.of(null));
-        TestHelpers.assertEqual(rnull.getValue().getRawValue().orNull(), null, "null value is null");
+        TestHelpers.assertEqual(rnull.getValue().getRawValue().orElse(null), null, "null value is null");
 
         List<List<IPrototypedIngredient<ItemStack, Integer>>> ingredientsIn = Lists.newArrayList();
         ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));

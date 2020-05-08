@@ -184,4 +184,9 @@ public final class Helpers {
 
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T extends Exception, R> R sneakyThrow(Exception t) throws T {
+        throw (T) t;
+    }
+
 }

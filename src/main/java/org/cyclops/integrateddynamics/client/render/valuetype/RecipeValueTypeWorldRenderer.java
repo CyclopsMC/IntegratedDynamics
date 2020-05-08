@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -29,6 +28,7 @@ import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandler
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -20,6 +19,7 @@ import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandler
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A value type world renderer for blocks.

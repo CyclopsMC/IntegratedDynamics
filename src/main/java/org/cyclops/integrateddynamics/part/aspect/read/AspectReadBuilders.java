@@ -6,7 +6,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.state.properties.NoteBlockInstrument;
 import net.minecraft.util.Direction;
@@ -48,6 +48,7 @@ import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTy
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -110,7 +111,7 @@ public class AspectReadBuilders {
     public static final IAspectValuePropagator<FluidStack, ValueObjectTypeFluidStack.ValueFluidStack>
         PROP_GET_FLUIDSTACK = ValueObjectTypeFluidStack.ValueFluidStack::of;
 
-    public static final IAspectValuePropagator<CompoundNBT,ValueTypeNbt.ValueNbt>
+    public static final IAspectValuePropagator<Optional<INBT>,ValueTypeNbt.ValueNbt>
         PROP_GET_NBT = ValueTypeNbt.ValueNbt::of;
 
     // --------------- Value type validators ---------------

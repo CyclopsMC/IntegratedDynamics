@@ -1,16 +1,18 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.ByteArrayNBT;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
+
+import java.util.Optional;
 
 /**
  * An NBT byte array wrapper
  */
 public class ValueTypeListProxyNbtValueListByte extends ValueTypeListProxyNbtValueListGeneric<ByteArrayNBT, ValueTypeInteger, ValueTypeInteger.ValueInteger> {
 
-    public ValueTypeListProxyNbtValueListByte(String key, CompoundNBT tag) {
+    public ValueTypeListProxyNbtValueListByte(String key, Optional<INBT> tag) {
         super(ValueTypeListProxyFactories.NBT_VALUE_LIST_BYTE.getName(), ValueTypes.INTEGER, key, tag);
     }
 
@@ -24,11 +26,6 @@ public class ValueTypeListProxyNbtValueListByte extends ValueTypeListProxyNbtVal
         return ValueTypeInteger.ValueInteger.of(tag.getByteArray()[index]);
     }
 
-    @Override
-    protected ByteArrayNBT getDefault() {
-        return new ByteArrayNBT(new byte[0]);
-    }
-
     public static class Factory extends ValueTypeListProxyNbtValueListGeneric.Factory<ValueTypeListProxyNbtValueListByte, ByteArrayNBT, ValueTypeInteger, ValueTypeInteger.ValueInteger> {
 
         @Override
@@ -37,7 +34,7 @@ public class ValueTypeListProxyNbtValueListByte extends ValueTypeListProxyNbtVal
         }
 
         @Override
-        protected ValueTypeListProxyNbtValueListByte create(String key, CompoundNBT tag) {
+        protected ValueTypeListProxyNbtValueListByte create(String key, Optional<INBT> tag) {
             return new ValueTypeListProxyNbtValueListByte(key, tag);
         }
     }

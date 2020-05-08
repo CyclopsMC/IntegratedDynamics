@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.google.common.base.Optional;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -13,6 +12,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
+
+import java.util.Optional;
 
 /**
  * A value type world renderer for blocks.

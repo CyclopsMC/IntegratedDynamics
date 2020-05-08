@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.ListNBT;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -525,22 +526,22 @@ public class TestParseOperators {
     public void testNBTFurnace () throws EvaluationException {
         String NBT = "{CookTime:0,x:2005,BurnTime:0,y:56,ForgeCaps:{},z:-81,Items:[],id:\"minecraft:furnace\",CookTimeTotal:0,Lock:\"\"}";
         IValue res1 = PARSE_NBT.evaluate(s(NBT));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getString("id"), instanceOf(String.class));
+        assertThat("parse_NBT(\"" + NBT + "\")", ((CompoundNBT) ((ValueTypeNbt.ValueNbt) res1).getRawValue().get()).getString("id"), instanceOf(String.class));
     }
     @Test
     public void testNBTFurnaceSpaces () throws EvaluationException, CommandSyntaxException {
         String NBT = "{\rCookTime:\n0,\tx:2005, BurnTime:0,  y:56,ForgeCaps:{},z:-81,Items:[],id:\r\n\t \"minecraft:furnace\",CookTimeTotal  :0,Lock:\"\"}";
         IValue res1 = PARSE_NBT.evaluate(s(NBT));
-        CompoundNBT nbt = new ValueTypeNbt().deserialize(JsonToNBT.getTagFromJson(NBT)).getRawValue();
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getInt("CookTime"), is(0));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getInt("x"), is(2005));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getInt("BurnTime"), is(0));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getInt("y"), is(56));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getCompound("ForgeCaps").isEmpty(), is(true));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getInt("z"), is(-81));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get("Items"), instanceOf(ListNBT.class));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getString("id"), is("minecraft:furnace"));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getInt("CookTimeTotal"), is(0));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((ValueTypeNbt.ValueNbt) res1).getRawValue().getString("Lock"), is(""));
+        CompoundNBT nbt = (CompoundNBT) ValueTypeNbt.ValueNbt.of(JsonToNBT.getTagFromJson(NBT)).getRawValue().get();
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("CookTime"), is(0));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("x"), is(2005));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("BurnTime"), is(0));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("y"), is(56));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getCompound("ForgeCaps").isEmpty(), is(true));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("z"), is(-81));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.get("Items"), instanceOf(ListNBT.class));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getString("id"), is("minecraft:furnace"));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("CookTimeTotal"), is(0));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getString("Lock"), is(""));
     }
 }

@@ -26,15 +26,7 @@ import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.ByteNBT;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.IntNBT;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.LongNBT;
-import net.minecraft.nbt.NBTTypes;
-import net.minecraft.nbt.NumberNBT;
-import net.minecraft.nbt.StringNBT;
+import net.minecraft.nbt.*;
 import net.minecraft.state.IProperty;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
@@ -2695,17 +2687,17 @@ public final class Operators {
     /**
      * The number of entries in an NBT tag
      */
-    public static final IOperator NBT_SIZE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("size").symbol("NBT.size")
-            .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(
-                CompoundNBT::size
+    public static final IOperator NBT_COMPOUND_SIZE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).operatorName("compound_size").symbol("NBT{}.size")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_TO_INT.build(
+                opt -> opt.map(CompoundNBT::size).orElse(0)
             )).build());
 
     /**
      * The list of keys in an NBT tag
      */
-    public static final IOperator NBT_KEYS = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).operatorName("keys").symbol("NBT.keys")
+    public static final IOperator NBT_COMPOUND_KEYS = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).operatorName("compound_keys").symbol("NBT{}.keys")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtKeys(value.getRawValue()));
@@ -2714,18 +2706,18 @@ public final class Operators {
     /**
      * If an NBT tag has the given key
      */
-    public static final IOperator NBT_HASKEY = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.BOOLEAN).operatorName("haskey").symbol("NBT.has_key")
-            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(
+    public static final IOperator NBT_COMPOUND_HASKEY = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.BOOLEAN).operatorName("compound_haskey").symbol("NBT{}.has_key")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_BOOLEAN.build(
                     Optional::isPresent
             )).build());
 
     /**
      * The NBT value type of an entry
      */
-    public static final IOperator NBT_VALUE_TYPE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.STRING).operatorName("type").symbol("NBT.type")
-            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(tag -> {
+    public static final IOperator NBT_COMPOUND_VALUE_TYPE = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.STRING).operatorName("compound_type").symbol("NBT{}.type")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_STRING.build(tag -> {
                 if (tag.isPresent()) {
                     try {
                         return NBTTypes.func_229710_a_(tag.get().getId()).func_225648_a_();
@@ -2737,64 +2729,71 @@ public final class Operators {
             })).build());
 
     /**
+     * The NBT tag value
+     */
+    public static final IOperator NBT_COMPOUND_VALUE_TAG = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.NBT).operatorName("compound_value_tag").symbol("NBT{}.get_tag")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_NBT.build(o -> o)).build());
+
+    /**
      * The NBT boolean value
      */
-    public static final IOperator NBT_VALUE_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.BOOLEAN).operatorName("value_boolean").symbol("NBT.boolean")
-            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_BOOLEAN.build(
+    public static final IOperator NBT_COMPOUND_VALUE_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.BOOLEAN).operatorName("compound_value_boolean").symbol("NBT{}.get_boolean")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_BOOLEAN.build(
                     o -> o.map(tag -> tag instanceof NumberNBT && ((NumberNBT) tag).getByte() != 0).orElse(false)
             )).build());
 
     /**
      * The NBT integer value
      */
-    public static final IOperator NBT_VALUE_INTEGER = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.INTEGER).operatorName("value_integer").symbol("NBT.integer")
-            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_INT.build(
+    public static final IOperator NBT_COMPOUND_VALUE_INTEGER = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.INTEGER).operatorName("compound_value_integer").symbol("NBT{}.get_integer")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_INT.build(
                     o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getInt() : 0).orElse(0)
             )).build());
 
     /**
      * The NBT long value
      */
-    public static final IOperator NBT_VALUE_LONG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LONG).operatorName("value_long").symbol("NBT.long")
-            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_LONG.build(
+    public static final IOperator NBT_COMPOUND_VALUE_LONG = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LONG).operatorName("compound_value_long").symbol("NBT{}.get_long")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_LONG.build(
                     o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getLong() : 0).orElse(0L)
             )).build());
 
     /**
      * The NBT double value
      */
-    public static final IOperator NBT_VALUE_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.DOUBLE).operatorName("value_double").symbol("NBT.double")
-            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_DOUBLE.build(
+    public static final IOperator NBT_COMPOUND_VALUE_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.DOUBLE).operatorName("compound_value_double").symbol("NBT{}.get_double")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_DOUBLE.build(
                     o -> o.map(tag -> tag instanceof NumberNBT ? ((NumberNBT) tag).getDouble() : 0).orElse(0D)
             )).build());
 
     /**
      * The NBT string value
      */
-    public static final IOperator NBT_VALUE_STRING = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.STRING).operatorName("value_string").symbol("NBT.string")
-            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_STRING.build(
+    public static final IOperator NBT_COMPOUND_VALUE_STRING = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.STRING).operatorName("compound_value_string").symbol("NBT{}.get_string")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_STRING.build(
                     o -> o.map(tag -> tag instanceof StringNBT ? tag.getString() : "").orElse("")
             )).build());
 
     /**
-     * The NBT tag value
+     * The NBT compound value
      */
-    public static final IOperator NBT_VALUE_TAG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.NBT).operatorName("value_tag").symbol("NBT.tag")
-            .function(OperatorBuilders.FUNCTION_NBT_ENTRY_TO_NBT.build(
-                    o -> o.map(tag -> tag instanceof CompoundNBT ? (CompoundNBT) tag : new CompoundNBT()).orElseGet(CompoundNBT::new)
+    public static final IOperator NBT_COMPOUND_VALUE_COMPOUND = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.NBT).operatorName("compound_value_compound").symbol("NBT{}.get_compound")
+            .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_NBT.build(
+                    o -> o.map(tag -> tag instanceof CompoundNBT ? (CompoundNBT) tag : new CompoundNBT())
             )).build());
 
     /**
      * The NBT tag list value
      */
-    public static final IOperator NBT_VALUE_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("value_list_tag").symbol("NBT.list_tag")
+    public static final IOperator NBT_COMPOUND_VALUE_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LIST).operatorName("compound_value_list_tag").symbol("NBT{}.get_list_tag")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0);
                 ValueTypeString.ValueString key = variables.getValue(1);
@@ -2804,8 +2803,8 @@ public final class Operators {
     /**
      * The NBT boolean list value
      */
-    public static final IOperator NBT_VALUE_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("value_list_byte").symbol("NBT.list_byte")
+    public static final IOperator NBT_COMPOUND_VALUE_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LIST).operatorName("compound_value_list_byte").symbol("NBT{}.get_list_byte")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0);
                 ValueTypeString.ValueString key = variables.getValue(1);
@@ -2815,8 +2814,8 @@ public final class Operators {
     /**
      * The NBT int list value
      */
-    public static final IOperator NBT_VALUE_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("value_list_int").symbol("NBT.list_int")
+    public static final IOperator NBT_COMPOUND_VALUE_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LIST).operatorName("compound_value_list_int").symbol("NBT{}.get_list_int")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0);
                 ValueTypeString.ValueString key = variables.getValue(1);
@@ -2824,292 +2823,313 @@ public final class Operators {
             }).build());
 
     /**
-     * Remove an entry from an NBT tag
+     * Remove an entry from an NBT compound
      */
-    public static final IOperator NBT_WITHOUT = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.NBT).operatorName("without").symbol("NBT.without")
+    public static final IOperator NBT_COMPOUND_WITHOUT = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.NBT).operatorName("compound_without").symbol("NBT{}.without")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt = variables.getValue(0);
-                CompoundNBT tag = valueNbt.getRawValue();
-                ValueTypeString.ValueString valueString = variables.getValue(1);
-                String key = valueString.getRawValue();
-                if (tag.contains(key)) {
-                    // Copy the tag to ensure immutability
-                    tag = tag.copy();
-                    tag.remove(key);
+                Optional<INBT> tag = valueNbt.getRawValue();
+                if (tag.isPresent()) {
+                    if (!(tag.get() instanceof CompoundNBT)) {
+                        return ValueTypeNbt.ValueNbt.of();
+                    }
+                    ValueTypeString.ValueString valueString = variables.getValue(1);
+                    String key = valueString.getRawValue();
+                    CompoundNBT tagCompound = (CompoundNBT) tag.get();
+                    if (tagCompound.contains(key)) {
+                        // Copy the tag to ensure immutability
+                        tagCompound = tagCompound.copy();
+                        tagCompound.remove(key);
+                    }
+                    return ValueTypeNbt.ValueNbt.of(tagCompound);
                 }
-                return ValueTypeNbt.ValueNbt.of(tag);
+                return valueNbt;
             }).build());
 
 
 
     /**
-     * Set an NBT boolean value
+     * Set an NBT compound boolean value
      */
-    public static final IOperator NBT_WITH_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.BOOLEAN)
-            .operatorName("with_boolean").symbol("NBT.with_boolean")
+            .operatorName("compound_with_boolean").symbol("NBT{}.with_boolean")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeBoolean.ValueBoolean value = input.getRight().getValue(0);
-                CompoundNBT tag = input.getLeft();
-                tag.putBoolean(input.getMiddle(), value.getRawValue());
-                return tag;
+                input.getLeft().ifPresent(tag -> tag.putBoolean(input.getMiddle(), value.getRawValue()));
+                return input.getLeft();
             })).build());
 
     /**
-     * Set an NBT short value
+     * Set an NBT compound short value
      */
-    public static final IOperator NBT_WITH_SHORT = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_SHORT = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.INTEGER)
-            .operatorName("with_short").symbol("NBT.with_short")
+            .operatorName("compound_with_short").symbol("NBT{}.with_short")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeInteger.ValueInteger value = input.getRight().getValue(0);
-                CompoundNBT tag = input.getLeft();
-                tag.putShort(input.getMiddle(), (short) value.getRawValue());
-                return tag;
+                input.getLeft().ifPresent(tag -> tag.putShort(input.getMiddle(), (short) value.getRawValue()));
+                return input.getLeft();
             })).build());
 
     /**
-     * Set an NBT integer value
+     * Set an NBT compound integer value
      */
-    public static final IOperator NBT_WITH_INTEGER = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_INTEGER = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.INTEGER)
-            .operatorName("with_integer").symbol("NBT.with_integer")
+            .operatorName("compound_with_integer").symbol("NBT{}.with_integer")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeInteger.ValueInteger value = input.getRight().getValue(0);
-                CompoundNBT tag = input.getLeft();
-                tag.putInt(input.getMiddle(), value.getRawValue());
-                return tag;
+                input.getLeft().ifPresent(tag -> tag.putInt(input.getMiddle(), value.getRawValue()));
+                return input.getLeft();
             })).build());
 
     /**
-     * Set an NBT long value
+     * Set an NBT compound long value
      */
-    public static final IOperator NBT_WITH_LONG = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_LONG = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LONG)
-            .operatorName("with_long").symbol("NBT.with_long")
+            .operatorName("compound_with_long").symbol("NBT{}.with_long")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeLong.ValueLong value = input.getRight().getValue(0);
-                CompoundNBT tag = input.getLeft();
-                tag.putLong(input.getMiddle(), value.getRawValue());
-                return tag;
+                input.getLeft().ifPresent(tag -> tag.putLong(input.getMiddle(), value.getRawValue()));
+                return input.getLeft();
             })).build());
 
     /**
-     * Set an NBT double value
+     * Set an NBT compound double value
      */
-    public static final IOperator NBT_WITH_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.DOUBLE)
-            .operatorName("with_double").symbol("NBT.with_double")
+            .operatorName("compound_with_double").symbol("NBT{}.with_double")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeDouble.ValueDouble value = input.getRight().getValue(0);
-                CompoundNBT tag = input.getLeft();
-                tag.putDouble(input.getMiddle(), value.getRawValue());
-                return tag;
+                input.getLeft().ifPresent(tag -> tag.putDouble(input.getMiddle(), value.getRawValue()));
+                return input.getLeft();
             })).build());
 
     /**
-     * Set an NBT float value
+     * Set an NBT compound float value
      */
-    public static final IOperator NBT_WITH_FLOAT = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_FLOAT = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.DOUBLE)
-            .operatorName("with_float").symbol("NBT.with_float")
+            .operatorName("compound_with_float").symbol("NBT{}.with_float")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeDouble.ValueDouble value = input.getRight().getValue(0);
-                CompoundNBT tag = input.getLeft();
-                tag.putFloat(input.getMiddle(), (float) value.getRawValue());
-                return tag;
+                input.getLeft().ifPresent(tag -> tag.putFloat(input.getMiddle(), (float) value.getRawValue()));
+                return input.getLeft();
             })).build());
 
     /**
-     * Set an NBT string value
+     * Set an NBT compound string value
      */
-    public static final IOperator NBT_WITH_STRING = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_STRING = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING)
-            .operatorName("with_string").symbol("NBT.with_string")
+            .operatorName("compound_with_string").symbol("NBT{}.with_string")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeString.ValueString value = input.getRight().getValue(0);
-                CompoundNBT tag = input.getLeft();
-                tag.putString(input.getMiddle(), value.getRawValue());
-                return tag;
+                input.getLeft().ifPresent(tag -> tag.putString(input.getMiddle(), value.getRawValue()));
+                return input.getLeft();
             })).build());
 
     /**
-     * Set an NBT tag value
+     * Set an NBT compound compound value
      */
-    public static final IOperator NBT_WITH_TAG = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_COMPOUND = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.NBT)
-            .operatorName("with_tag").symbol("NBT.with_tag")
+            .operatorName("compound_with_tag").symbol("NBT{}.with_tag")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeNbt.ValueNbt value = input.getRight().getValue(0);
-                CompoundNBT tag = input.getLeft();
-                tag.put(input.getMiddle(), value.getRawValue());
-                return tag;
+                input.getLeft()
+                        .ifPresent(tag -> value.getRawValue()
+                                .ifPresent(v -> tag.put(input.getMiddle(), v)));
+                return input.getLeft();
             })).build());
 
     /**
-     * Set an NBT tag list value
+     * Set an NBT compound tag list value
      */
-    public static final IOperator NBT_WITH_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("with_list_tag").symbol("NBT.with_tag_list")
-            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
+            .operatorName("compound_with_list_tag").symbol("NBT{}.with_tag_list")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundNBT>>() {
                 @Override
-                public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                public Optional<CompoundNBT> getOutput(Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                     ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
-                    CompoundNBT tag = input.getLeft();
-                    ListNBT list = new ListNBT();
-                    for (IValue valueNbt : value.getRawValue()) {
-                        if (value.getRawValue().getValueType() != ValueTypes.NBT) {
-                            ITextComponent error = new TranslationTextComponent(
-                                    L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    NBT_WITH_LIST_TAG.getLocalizedNameFull(),
-                                    value.getType(), 1, ValueTypes.NBT);
-                            throw new EvaluationException(error);
+                    input.getLeft().ifPresent(tag -> {
+                        ListNBT list = new ListNBT();
+                        for (IValue valueNbt : value.getRawValue()) {
+                            if (value.getRawValue().getValueType() != ValueTypes.NBT) {
+                                ITextComponent error = new TranslationTextComponent(
+                                        L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                        NBT_COMPOUND_WITH_LIST_TAG.getLocalizedNameFull(),
+                                        value.getType(), 1, ValueTypes.NBT);
+                                Helpers.sneakyThrow(new EvaluationException(error));
+                            }
+                            ((ValueTypeNbt.ValueNbt) valueNbt).getRawValue().ifPresent(list::add);
                         }
-                        list.add(((ValueTypeNbt.ValueNbt) valueNbt).getRawValue());
-                    }
-                    tag.put(input.getMiddle(), list);
-                    return tag;
+                        tag.put(input.getMiddle(), list);
+                    });
+                    return input.getLeft();
                 }
             })).build());
 
     /**
-     * Set an NBT byte list value
+     * Set an NBT compound byte list value
      */
-    public static final IOperator NBT_WITH_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("with_list_byte").symbol("NBT.with_byte_list")
-            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
+            .operatorName("compound_with_list_byte").symbol("NBT{}.with_byte_list")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundNBT>>() {
                 @Override
-                public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                public Optional<CompoundNBT> getOutput(Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                     ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
-                    CompoundNBT tag = input.getLeft();
-                    ListNBT list = new ListNBT();
-                    for (IValue valueNbt : value.getRawValue()) {
-                        if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
-                            ITextComponent error = new TranslationTextComponent(
-                                    L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    NBT_WITH_LIST_BYTE.getLocalizedNameFull(),
-                                    value.getType(), 1, ValueTypes.INTEGER);
-                            throw new EvaluationException(error);
+                    input.getLeft().ifPresent(tag -> {
+                        ListNBT list = new ListNBT();
+                        for (IValue valueNbt : value.getRawValue()) {
+                            if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
+                                ITextComponent error = new TranslationTextComponent(
+                                        L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                        NBT_COMPOUND_WITH_LIST_BYTE.getLocalizedNameFull(),
+                                        value.getType(), 1, ValueTypes.INTEGER);
+                                Helpers.sneakyThrow(new EvaluationException(error));
+                            }
+                            list.add(ByteNBT.valueOf((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
                         }
-                        list.add(ByteNBT.valueOf((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
-                    }
-                    tag.put(input.getMiddle(), list);
-                    return tag;
+                        tag.put(input.getMiddle(), list);
+                    });
+                    return input.getLeft();
                 }
             })).build());
 
     /**
-     * Set an NBT int list value
+     * Set an NBT compound int list value
      */
-    public static final IOperator NBT_WITH_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("with_list_int").symbol("NBT.with_int_list")
-            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
+            .operatorName("compound_with_list_int").symbol("NBT{}.with_int_list")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundNBT>>() {
                 @Override
-                public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                public Optional<CompoundNBT> getOutput(Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                     ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
-                    CompoundNBT tag = input.getLeft();
-                    ListNBT list = new ListNBT();
-                    for (IValue valueNbt : value.getRawValue()) {
-                        if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
-                            ITextComponent error = new TranslationTextComponent(
-                                    L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    NBT_WITH_LIST_INT.getLocalizedNameFull(),
-                                    value.getType(), 1, ValueTypes.INTEGER);
-                            throw new EvaluationException(error);
+                    input.getLeft().ifPresent(tag -> {
+                        ListNBT list = new ListNBT();
+                        for (IValue valueNbt : value.getRawValue()) {
+                            if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
+                                ITextComponent error = new TranslationTextComponent(
+                                        L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                        NBT_COMPOUND_WITH_LIST_INT.getLocalizedNameFull(),
+                                        value.getType(), 1, ValueTypes.INTEGER);
+                                Helpers.sneakyThrow(new EvaluationException(error));
+                            }
+                            list.add(IntNBT.valueOf(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
                         }
-                        list.add(IntNBT.valueOf(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue()));
-                    }
-                    tag.put(input.getMiddle(), list);
-                    return tag;
+                        tag.put(input.getMiddle(), list);
+                    });
+                    return input.getLeft();
                 }
             })).build());
 
     /**
-     * Set an NBT long list value
+     * Set an NBT compound long list value
      */
-    public static final IOperator NBT_WITH_LIST_LONG = REGISTRY.register(OperatorBuilders.NBT_3
+    public static final IOperator NBT_COMPOUND_WITH_LIST_LONG = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("with_list_long").symbol("NBT.with_list_long")
-            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter>, CompoundNBT>() {
+            .operatorName("compound_with_list_long").symbol("NBT{}.with_list_long")
+            .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundNBT>>() {
                 @Override
-                public CompoundNBT getOutput(Triple<CompoundNBT, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
+                public Optional<CompoundNBT> getOutput(Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
                     ValueTypeList.ValueList<?, ?> value = input.getRight().getValue(0);
-                    CompoundNBT tag = input.getLeft();
-                    ListNBT list = new ListNBT();
-                    for (IValue valueNbt : value.getRawValue()) {
-                        if (value.getRawValue().getValueType() != ValueTypes.LONG) {
-                            ITextComponent error = new TranslationTextComponent(
-                                    L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    NBT_WITH_LIST_LONG.getLocalizedNameFull(),
-                                    value.getType(), 1, ValueTypes.LONG);
-                            throw new EvaluationException(error);
+                    input.getLeft().ifPresent(tag -> {
+                        ListNBT list = new ListNBT();
+                        for (IValue valueNbt : value.getRawValue()) {
+                            if (value.getRawValue().getValueType() != ValueTypes.LONG) {
+                                ITextComponent error = new TranslationTextComponent(
+                                        L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                        NBT_COMPOUND_WITH_LIST_LONG.getLocalizedNameFull(),
+                                        value.getType(), 1, ValueTypes.LONG);
+                                Helpers.sneakyThrow(new EvaluationException(error));
+                            }
+                            list.add(LongNBT.valueOf(((ValueTypeLong.ValueLong) valueNbt).getRawValue()));
                         }
-                        list.add(LongNBT.valueOf(((ValueTypeLong.ValueLong) valueNbt).getRawValue()));
-                    }
-                    tag.put(input.getMiddle(), list);
-                    return tag;
+                        tag.put(input.getMiddle(), list);
+                    });
+                    return input.getLeft();
                 }
             })).build());
 
     /**
-     * Check if the first NBT tag is a subset of the second NBT tag.
+     * Check if the first NBT compound tag is a subset of the second NBT compound tag.
      */
-    public static final IOperator NBT_SUBSET = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.BOOLEAN).operatorName("subset").symbol("NBT.⊆")
+    public static final IOperator NBT_COMPOUND_SUBSET = REGISTRY.register(OperatorBuilders.NBT_2_NBT
+            .output(ValueTypes.BOOLEAN).operatorName("compound_subset").symbol("NBT{}.⊆")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1);
-                CompoundNBT a = valueNbt0.getRawValue();
-                CompoundNBT b = valueNbt1.getRawValue();
-                return ValueTypeBoolean.ValueBoolean.of(NbtHelpers.nbtMatchesSubset(a, b, true));
+                if (valueNbt0.getRawValue().isPresent()
+                        && valueNbt1.getRawValue().isPresent()
+                        && valueNbt0.getRawValue().get() instanceof CompoundNBT
+                        && valueNbt1.getRawValue().get() instanceof CompoundNBT) {
+                    return ValueTypeBoolean.ValueBoolean.of(NbtHelpers.nbtMatchesSubset((CompoundNBT) valueNbt0.getRawValue().get(), (CompoundNBT) valueNbt1.getRawValue().get(), true));
+                }
+                return ValueTypeBoolean.ValueBoolean.of(false);
             }).build());
 
     /**
-     * The union of the given NBT tags. Nested tags will be joined recusively.
+     * The union of the given NBT compound tags. Nested tags will be joined recusively.
      */
-    public static final IOperator NBT_UNION = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.NBT).operatorName("union").symbol("NBT.∪")
+    public static final IOperator NBT_COMPOUND_UNION = REGISTRY.register(OperatorBuilders.NBT_2_NBT
+            .output(ValueTypes.NBT).operatorName("compound_union").symbol("NBT{}.∪")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1);
-                CompoundNBT a = valueNbt0.getRawValue();
-                CompoundNBT b = valueNbt1.getRawValue();
-                return ValueTypeNbt.ValueNbt.of(NbtHelpers.union(a, b));
+                if (valueNbt0.getRawValue().isPresent()
+                        && valueNbt1.getRawValue().isPresent()
+                        && valueNbt0.getRawValue().get() instanceof CompoundNBT
+                        && valueNbt1.getRawValue().get() instanceof CompoundNBT) {
+                    return ValueTypeNbt.ValueNbt.of(NbtHelpers.union((CompoundNBT) valueNbt0.getRawValue().get(), (CompoundNBT) valueNbt1.getRawValue().get()));
+                }
+                return ValueTypeNbt.ValueNbt.of();
             }).build());
 
     /**
-     * The intersection of the given NBT tags. Nested tags will be intersected recusively.
+     * The intersection of the given NBT compound tags. Nested tags will be intersected recusively.
      */
-    public static final IOperator NBT_INTERSECTION = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.NBT).operatorName("intersection").symbol("NBT.∩")
+    public static final IOperator NBT_COMPOUND_INTERSECTION = REGISTRY.register(OperatorBuilders.NBT_2_NBT
+            .output(ValueTypes.NBT).operatorName("compound_intersection").symbol("NBT{}.∩")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1);
-                CompoundNBT a = valueNbt0.getRawValue();
-                CompoundNBT b = valueNbt1.getRawValue();
-                return ValueTypeNbt.ValueNbt.of(NbtHelpers.intersection(a, b));
+                if (valueNbt0.getRawValue().isPresent()
+                        && valueNbt1.getRawValue().isPresent()
+                        && valueNbt0.getRawValue().get() instanceof CompoundNBT
+                        && valueNbt1.getRawValue().get() instanceof CompoundNBT) {
+                    return ValueTypeNbt.ValueNbt.of(NbtHelpers.intersection((CompoundNBT) valueNbt0.getRawValue().get(), (CompoundNBT) valueNbt1.getRawValue().get()));
+                }
+                return ValueTypeNbt.ValueNbt.of();
             }).build());
 
     /**
-     * The difference of the given NBT tags. Nested tags will be subtracted recusively.
+     * The difference of the given NBT compound tags. Nested tags will be subtracted recusively.
      */
-    public static final IOperator NBT_MINUS = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.NBT).operatorName("minus").symbol("NBT.∖")
+    public static final IOperator NBT_COMPOUND_MINUS = REGISTRY.register(OperatorBuilders.NBT_2_NBT
+            .output(ValueTypes.NBT).operatorName("compound_minus").symbol("NBT{}.∖")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1);
-                CompoundNBT a = valueNbt0.getRawValue();
-                CompoundNBT b = valueNbt1.getRawValue();
-                return ValueTypeNbt.ValueNbt.of(NbtHelpers.minus(a, b));
+                if (valueNbt0.getRawValue().isPresent()
+                        && valueNbt1.getRawValue().isPresent()
+                        && valueNbt0.getRawValue().get() instanceof CompoundNBT
+                        && valueNbt1.getRawValue().get() instanceof CompoundNBT) {
+                    return ValueTypeNbt.ValueNbt.of(NbtHelpers.minus((CompoundNBT) valueNbt0.getRawValue().get(), (CompoundNBT) valueNbt1.getRawValue().get()));
+                }
+                return ValueTypeNbt.ValueNbt.of();
             }).build());
     /**
      * ----------------------------------- INGREDIENTS OPERATORS -----------------------------------
@@ -3418,7 +3438,7 @@ public final class Operators {
     public static final IOperator PARSE_NBT = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.NBT, v -> {
       ValueTypeString.ValueString value = v.getValue(0);
       try {
-        return new ValueTypeNbt().deserialize(JsonToNBT.getTagFromJson(value.getRawValue()));
+        return ValueTypeNbt.ValueNbt.of(JsonToNBT.getTagFromJson(value.getRawValue()));
       } catch (CommandSyntaxException e) {
         throw new EvaluationException("'" + value.getRawValue() + "' is not parsable as a 'NBT'");
       }

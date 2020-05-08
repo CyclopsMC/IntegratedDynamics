@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.ToString;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,6 +16,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Value type with values that are NBT tags.
@@ -29,37 +31,43 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
 
     @Override
     public ValueNbt getDefault() {
-        return ValueNbt.of(new CompoundNBT());
+        return ValueNbt.of();
     }
 
     @Override
     public ITextComponent toCompactString(ValueNbt value) {
-        return new StringTextComponent(value.getRawValue().toString());
+        return new StringTextComponent(toString(value));
     }
 
     @Override
     public INBT serialize(ValueNbt value) {
-        return value.getRawValue();
+        CompoundNBT tag = new CompoundNBT();
+        if (value.getRawValue().isPresent()) {
+            tag.put("v", value.getRawValue().get());
+        }
+        return tag;
     }
 
     @Override
     public ValueNbt deserialize(INBT value) {
-        try {
-            return ValueNbt.of((CompoundNBT) value);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException(e.getMessage());
+        if (value instanceof CompoundNBT && ((CompoundNBT) value).contains("v")) {
+            return ValueNbt.of(((CompoundNBT) value).get("v"));
         }
+        return ValueNbt.of();
     }
 
     @Override
     public String toString(ValueNbt value) {
-        return isNull(value) ? "{}" : value.getRawValue().toString();
+        return value.getRawValue().map(Object::toString).orElse("");
     }
 
     @Override
     public ValueNbt parseString(String value) throws EvaluationException {
+        if (value.isEmpty()) {
+            return ValueNbt.of();
+        }
         try {
-            return ValueNbt.of(JsonToNBT.getTagFromJson(value));
+            return ValueNbt.of(new JsonToNBT(new StringReader(value)).readValue());
         } catch (CommandSyntaxException e) {
             throw new EvaluationException(e.getMessage());
         }
@@ -67,7 +75,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
 
     @Override
     public boolean isNull(ValueNbt a) {
-        return a.getRawValue().size() == 0;
+        return !a.getRawValue().isPresent();
     }
 
     /**
@@ -76,16 +84,20 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
      * @param tag The tag.
      * @return The tag where all blacklisted tags have been removed.
      */
-    public CompoundNBT filterBlacklistedTags(CompoundNBT tag) {
-        boolean copied = false;
-        for (String key : GeneralConfig.nbtTagBlacklist) {
-            if (tag.contains(key)) {
-                if (!copied) {
-                    copied = true;
-                    tag = tag.copy();
+    public INBT filterBlacklistedTags(INBT tag) {
+        if (tag instanceof CompoundNBT) {
+            boolean copied = false;
+            CompoundNBT compountTag = (CompoundNBT) tag;
+            for (String key : GeneralConfig.nbtTagBlacklist) {
+                if (compountTag.contains(key)) {
+                    if (!copied) {
+                        copied = true;
+                        compountTag = compountTag.copy();
+                    }
+                    compountTag.remove(key);
                 }
-                tag.remove(key);
             }
+            return compountTag;
         }
         return tag;
     }
@@ -96,31 +108,36 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
     }
 
     @ToString
-    public static class ValueNbt extends ValueBase {
+    public static class ValueNbt extends ValueOptionalBase<INBT> {
 
-        private final CompoundNBT value;
-
-        private ValueNbt(CompoundNBT value) {
-            super(ValueTypes.NBT);
-            this.value = ValueTypes.NBT.filterBlacklistedTags(value);
+        private ValueNbt(INBT value) {
+            super(ValueTypes.NBT, value);
         }
 
-        public static ValueNbt of(@Nullable CompoundNBT value) {
-            return value == null ? ValueTypes.NBT.getDefault() : new ValueNbt(value);
+        @Nullable
+        @Override
+        protected INBT preprocessValue(@Nullable INBT value) {
+            if (value != null) {
+                return ValueTypes.NBT.filterBlacklistedTags(value);
+            }
+            return null;
         }
 
-        public CompoundNBT getRawValue() {
-            return value;
+        public static ValueNbt of(@Nullable INBT value) {
+            return new ValueNbt(value);
+        }
+
+        public static ValueNbt of(Optional<INBT> value) {
+            return of(value.orElse(null));
+        }
+
+        public static ValueNbt of() {
+            return of((INBT) null);
         }
 
         @Override
-        public boolean equals(Object o) {
-            return o instanceof ValueNbt && ((ValueNbt) o).value.equals(this.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return getType().hashCode() + value.hashCode();
+        protected boolean isEqual(INBT a, INBT b) {
+            return a.equals(b);
         }
     }
 

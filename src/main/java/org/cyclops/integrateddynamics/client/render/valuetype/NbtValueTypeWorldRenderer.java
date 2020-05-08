@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import org.apache.commons.lang3.StringUtils;
+import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -35,37 +36,42 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                             MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
                             int combinedLight, int combinedOverlay, float alpha) {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
-        float maxWidth = 0;
+        Wrapper<Float> maxWidth = new Wrapper<>(0F);
 
         List<String> lines = Lists.newLinkedList();
-        CompoundNBT tag = ((ValueTypeNbt.ValueNbt) value).getRawValue();
-        lines.add("{");
-        for (String key : tag.keySet()) {
-            if(lines.size() >= MAX_LINES) {
-                lines.add("...");
-                break;
-            } else {
-                INBT subTag = tag.get(key);
-                if (subTag instanceof CompoundNBT) {
-                    subTag = ValueTypes.NBT.filterBlacklistedTags((CompoundNBT) subTag);
+        ((ValueTypeNbt.ValueNbt) value).getRawValue().ifPresent(tag -> {
+            if (tag instanceof CompoundNBT) {
+                CompoundNBT tagCompound = (CompoundNBT) tag;
+                lines.add("{");
+                for (String key : tagCompound.keySet()) {
+                    if (lines.size() >= MAX_LINES) {
+                        lines.add("...");
+                        break;
+                    } else {
+                        INBT subTag = ValueTypes.NBT.filterBlacklistedTags(tagCompound.get(key));
+                        String string = "  " + key + ": " + StringUtils.abbreviate(subTag.toString(), 40) + "";
+                        float width = fontRenderer.getStringWidth(string) - 1;
+                        lines.add(string);
+                        maxWidth.set(Math.max(maxWidth.get(), width));
+                    }
                 }
-                String string = "  " + key + ": " + StringUtils.abbreviate(subTag.toString(), 40) + "";
-                float width = fontRenderer.getStringWidth(string) - 1;
+                lines.add("}");
+            } else {
+                String string = tag.toString();
                 lines.add(string);
-                maxWidth = Math.max(maxWidth, width);
+                maxWidth.set((float) (fontRenderer.getStringWidth(string) - 1));
             }
-        }
-        lines.add("}");
+        });
 
         float singleHeight = fontRenderer.FONT_HEIGHT;
         float totalHeight = singleHeight * lines.size();
 
         matrixStack.push();
 
-        float scaleX = MAX / (maxWidth * MARGIN_FACTOR);
+        float scaleX = MAX / (maxWidth.get() * MARGIN_FACTOR);
         float scaleY = MAX / (totalHeight * MARGIN_FACTOR);
         float scale = Math.min(scaleX, scaleY); // Maintain aspect ratio
-        float newWidth = maxWidth * scale;
+        float newWidth = maxWidth.get() * scale;
         float newHeight = totalHeight * scale;
         matrixStack.translate((MAX - newWidth) / 2, (MAX - newHeight) / 2, 0F);
         matrixStack.scale(scale, scale, 1F);

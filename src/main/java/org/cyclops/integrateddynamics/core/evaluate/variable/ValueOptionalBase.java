@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.common.base.Optional;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Base value implementation for nullable values.
@@ -11,9 +13,14 @@ public abstract class ValueOptionalBase<T> extends ValueBase {
 
     private final Optional<T> value;
 
-    public ValueOptionalBase(IValueType type, T value) {
+    public ValueOptionalBase(IValueType type, @Nullable T value) {
         super(type);
-        this.value = Optional.fromNullable(value);
+        this.value = Optional.ofNullable(preprocessValue(value));
+    }
+
+    @Nullable
+    protected T preprocessValue(@Nullable T value) {
+        return value;
     }
 
     /**

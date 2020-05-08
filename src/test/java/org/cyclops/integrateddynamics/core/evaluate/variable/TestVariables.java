@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import net.minecraft.nbt.ByteNBT;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.DoubleNBT;
-import net.minecraft.nbt.EndNBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -11,6 +10,8 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -258,27 +259,49 @@ public class TestVariables {
 
     @Test
     public void testNbtType() throws EvaluationException {
-        DummyVariableNbt snull = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(null));
-        assertThat("null value is empty NBT tag", snull.getValue().getRawValue(), is(new CompoundNBT()));
+        DummyVariableNbt snull = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of());
+        assertThat("null value is empty NBT tag", snull.getValue().getRawValue(), is(Optional.empty()));
 
         CompoundNBT tag1 = new CompoundNBT();
         tag1.putBoolean("abc", true);
         CompoundNBT tag2 = new CompoundNBT();
         tag2.putBoolean("abc", true);
-        DummyVariableNbt stag = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tag1));
-        assertThat("tag value is tag", stag.getValue().getRawValue(), is(tag2));
+
+        StringNBT strTag1 = StringNBT.valueOf("abc");
+        StringNBT strTag2 = StringNBT.valueOf("abc");
+
+        CompoundNBT tagWrapped = new CompoundNBT();
+        tagWrapped.put("v", tag1);
+
+        CompoundNBT strTagWrapped = new CompoundNBT();
+        strTagWrapped.put("v", strTag2);
+
+        DummyVariableNbt tagVariable = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tag1));
+        DummyVariableNbt strTagVariable = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(strTag1));
+
+        assertThat("tag value is tag", tagVariable.getValue().getRawValue().get(), is(tag2));
+        assertThat("string tag value is tag", strTagVariable.getValue().getRawValue().get(), is(strTag2));
 
         assertThat("serializing null value returns empty NBT tag", snull.getType().serialize(snull.getValue()), is(new CompoundNBT()));
-        assertThat("serializing tag returns tag", stag.getType().serialize(stag.getValue()), is(stag.getValue().getRawValue()));
+        assertThat("serializing tag returns tag", tagVariable.getType().serialize(tagVariable.getValue()), is(tagWrapped));
+        assertThat("serializing string tag returns tag", tagVariable.getType().serialize(strTagVariable.getValue()), is(strTagWrapped));
 
         assertThat("deserializing null value returns empty NBT tag", snull.getType().deserialize(new CompoundNBT()), is(snull.getValue()));
-        assertThat("deserializing tag returns tag", stag.getType().deserialize(stag.getValue().getRawValue()), is(stag.getValue()));
+        assertThat("deserializing tag returns tag", tagVariable.getType().deserialize(tagWrapped), is(tagVariable.getValue()));
+        assertThat("deserializing string tag returns tag", strTagVariable.getType().deserialize(strTagWrapped), is(strTagVariable.getValue()));
 
-        assertThat("serializing null value returns empty NBT tag", snull.getType().toString(snull.getValue()), is("{}"));
-        assertThat("serializing tag returns tag", stag.getType().toString(stag.getValue()), is("{abc:1b}"));
+        assertThat("serializing null value returns empty NBT tag", snull.getType().toString(snull.getValue()), is(""));
+        assertThat("serializing tag returns tag", tagVariable.getType().toString(tagVariable.getValue()), is("{abc:1b}"));
+        assertThat("serializing string tag returns tag", strTagVariable.getType().toString(strTagVariable.getValue()), is("\"abc\""));
 
-        assertThat("deserializing null value returns empty NBT tag", snull.getType().parseString("{}"), is(snull.getValue()));
-        assertThat("deserializing tag returns tag", stag.getType().parseString("{abc:1b}"), is(stag.getValue()));
+        assertThat("deserializing null value returns empty NBT tag", snull.getType().parseString(""), is(snull.getValue()));
+        assertThat("deserializing tag returns tag", tagVariable.getType().parseString("{abc:1b}"), is(tagVariable.getValue()));
+        assertThat("deserializing string tag returns tag", strTagVariable.getType().parseString("\"abc\""), is(strTagVariable.getValue()));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testNbtTypeInvalidString() throws EvaluationException {
+        ValueTypes.NBT.parseString("\"");
     }
 
 }

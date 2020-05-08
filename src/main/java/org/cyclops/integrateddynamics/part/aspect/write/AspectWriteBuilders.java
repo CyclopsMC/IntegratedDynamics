@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.state.properties.NoteBlockInstrument;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -31,6 +32,8 @@ import org.cyclops.integrateddynamics.core.part.aspect.property.AspectPropertyTy
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.redstone.IWriteRedstoneComponent;
 import org.cyclops.integrateddynamics.part.aspect.write.redstone.WriteRedstoneComponent;
+
+import java.util.Optional;
 
 /**
  * Collection of aspect write builders and value propagators.
@@ -80,16 +83,16 @@ public class AspectWriteBuilders {
             PROP_GET_STRING = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeBlock.ValueBlock>, Triple<PartTarget, IAspectProperties, BlockState>>
-            PROP_GET_BLOCK = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orNull());
+            PROP_GET_BLOCK = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orElse(null));
 
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack>, Triple<PartTarget, IAspectProperties, FluidStack>>
             PROP_GET_FLUIDSTACK = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>, Triple<PartTarget, IAspectProperties, CompoundNBT>>
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>, Triple<PartTarget, IAspectProperties, Optional<INBT>>>
             PROP_GET_NBT = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeRecipe.ValueRecipe>, Triple<PartTarget, IAspectProperties, IRecipeDefinition>>
-            PROP_GET_RECIPE = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orNull());
+            PROP_GET_RECIPE = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue().orElse(null));
 
     public static final class Audio {
 
