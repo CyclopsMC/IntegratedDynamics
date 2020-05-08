@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.item.ItemBlock;
+
+import org.cyclops.cyclopscore.config.ConfigurableProperty;
+import org.cyclops.cyclopscore.config.ConfigurableTypeCategory;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockContainerConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.item.ItemBlockProxy;

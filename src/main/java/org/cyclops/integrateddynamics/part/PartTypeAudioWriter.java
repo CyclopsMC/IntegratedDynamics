@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.write.PartStateWriterBase;
 import org.cyclops.integrateddynamics.core.part.write.PartTypeWriteBase;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
@@ -29,6 +30,11 @@ public class PartTypeAudioWriter extends PartTypeWriteBase<PartTypeAudioWriter, 
     @Override
     public PartStateWriterBase<PartTypeAudioWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeAudioWriter>(Aspects.REGISTRY.getAspects(this).size());
+    }
+    
+    @Override
+    public int getConsumptionRate(PartStateWriterBase<PartTypeAudioWriter> state) {
+        return GeneralConfig.audioWriterBaseConsumption;
     }
 
 }

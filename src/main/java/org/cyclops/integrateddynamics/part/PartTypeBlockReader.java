@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
@@ -31,6 +32,11 @@ public class PartTypeBlockReader extends PartTypeReadBase<PartTypeBlockReader, P
     @Override
     public PartStateReaderBase<PartTypeBlockReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeBlockReader>();
+    }
+    
+    @Override
+    public int getConsumptionRate(PartStateReaderBase<PartTypeBlockReader> state) {
+        return GeneralConfig.blockReaderBaseConsumption;
     }
 
 }
