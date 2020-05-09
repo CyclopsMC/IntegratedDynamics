@@ -1,11 +1,25 @@
 package org.cyclops.integrateddynamics.core.helper;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.minecraft.nbt.ByteArrayNBT;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.IntArrayNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.LongArrayNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLong;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -133,6 +147,90 @@ public class NbtHelpers {
             }
         }
         return tag;
+    }
+
+    /**
+     * Create an NBT List from the given NBT value list.
+     * @param value An NBT value list.
+     * @param operatorName An operator name for error reporting.
+     * @return An NBT list.
+     */
+    public static ListNBT getListNbtTag(ValueTypeList.ValueList<?, ?> value, ITextComponent operatorName) {
+        ListNBT list = new ListNBT();
+        for (IValue valueNbt : value.getRawValue()) {
+            if (value.getRawValue().getValueType() != ValueTypes.NBT) {
+                ITextComponent error = new TranslationTextComponent(
+                        L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        operatorName,
+                        value.getType(), 1, ValueTypes.NBT);
+                Helpers.sneakyThrow(new EvaluationException(error));
+            }
+            ((ValueTypeNbt.ValueNbt) valueNbt).getRawValue().ifPresent(list::add);
+        }
+        return list;
+    }
+
+    /**
+     * Create an NBT byte array from the given integer value list.
+     * @param value An integer value list.
+     * @param operatorName An operator name for error reporting.
+     * @return An NBT byte array.
+     */
+    public static ByteArrayNBT getListNbtByte(ValueTypeList.ValueList<?, ?> value, ITextComponent operatorName) {
+        List<Byte> list = Lists.newLinkedList();
+        for (IValue valueNbt : value.getRawValue()) {
+            if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
+                ITextComponent error = new TranslationTextComponent(
+                        L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        operatorName,
+                        value.getType(), 1, ValueTypes.INTEGER);
+                Helpers.sneakyThrow(new EvaluationException(error));
+            }
+            list.add((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue());
+        }
+        return new ByteArrayNBT(list);
+    }
+
+    /**
+     * Create an NBT int array from the given integer value list.
+     * @param value An integer value list.
+     * @param operatorName An operator name for error reporting.
+     * @return An NBT int array.
+     */
+    public static IntArrayNBT getListNbtInt(ValueTypeList.ValueList<?, ?> value, ITextComponent operatorName) {
+        List<Integer> list = Lists.newLinkedList();
+        for (IValue valueNbt : value.getRawValue()) {
+            if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
+                ITextComponent error = new TranslationTextComponent(
+                        L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        operatorName,
+                        value.getType(), 1, ValueTypes.INTEGER);
+                Helpers.sneakyThrow(new EvaluationException(error));
+            }
+            list.add(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue());
+        }
+        return new IntArrayNBT(list);
+    }
+
+    /**
+     * Create an NBT long array from the given long value list.
+     * @param value A long value list.
+     * @param operatorName An operator name for error reporting.
+     * @return An NBT long list.
+     */
+    public static LongArrayNBT getListNbtLong(ValueTypeList.ValueList<?, ?> value, ITextComponent operatorName) {
+        List<Long> list = Lists.newLinkedList();
+        for (IValue valueNbt : value.getRawValue()) {
+            if (value.getRawValue().getValueType() != ValueTypes.LONG) {
+                ITextComponent error = new TranslationTextComponent(
+                        L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        operatorName,
+                        value.getType(), 1, ValueTypes.LONG);
+                Helpers.sneakyThrow(new EvaluationException(error));
+            }
+            list.add(((ValueTypeLong.ValueLong) valueNbt).getRawValue());
+        }
+        return new LongArrayNBT(list);
     }
 
 }

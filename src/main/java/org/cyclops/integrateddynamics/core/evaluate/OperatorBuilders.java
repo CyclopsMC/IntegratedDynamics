@@ -387,6 +387,7 @@ public class OperatorBuilders {
 
     // --------------- NBT builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT = OperatorBuilder.forType(ValueTypes.NBT).appendKind("nbt");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_1_PREFIX_LONG = NBT.inputTypes(ValueTypes.NBT).renderPattern(IConfigRenderPattern.PREFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_1_SUFFIX_LONG = NBT.inputTypes(ValueTypes.NBT).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING).renderPattern(IConfigRenderPattern.INFIX_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2_NBT = NBT.inputTypes(ValueTypes.NBT, ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX_LONG);

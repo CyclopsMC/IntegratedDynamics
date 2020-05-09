@@ -50,4 +50,8 @@ public abstract class ValueOptionalBase<T> extends ValueBase {
         return getType().hashCode() + (getRawValue().isPresent() ? getRawValue().get().hashCode() : 0);
     }
 
+    @Override
+    public String toString() {
+        return getRawValue().toString();
+    }
 }
