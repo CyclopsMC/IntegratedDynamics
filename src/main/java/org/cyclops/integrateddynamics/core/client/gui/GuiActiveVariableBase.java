@@ -44,17 +44,17 @@ public abstract class GuiActiveVariableBase<C extends ContainerActiveVariableBas
         if(getContainer().getTile().hasVariable() && readValue != null) {
             ok = true;
             RenderHelpers.drawScaledCenteredString(fontRenderer, readValue,
-                    getGuiLeft() + getValueX(), getGuiTop() + getValueY(), 70, readValueColor);
+                    getGuiLeftTotal() + getValueX(), getGuiTopTotal() + getValueY(), 70, readValueColor);
         }
 
         GlStateManager.color(1, 1, 1);
-        displayErrors.drawBackground(getContainer().getTile().getErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
+        displayErrors.drawBackground(getContainer().getTile().getEvaluator().getErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
                 this.guiLeft, this.guiTop, ok);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        displayErrors.drawForeground(getContainer().getTile().getErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.guiLeft, this.guiTop);
+        displayErrors.drawForeground(getContainer().getTile().getEvaluator().getErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.guiLeft, this.guiTop);
     }
 }

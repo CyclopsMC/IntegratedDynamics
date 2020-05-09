@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -188,7 +189,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
         @Override
         public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
-            if (containingValueType != ValueTypes.BOOLEAN) {
+            if (!ValueHelpers.correspondsTo(containingValueType, ValueTypes.BOOLEAN)) {
                 validator.addError(new L10NHelpers.UnlocalizedString(unlocalizedError));
             }
         }

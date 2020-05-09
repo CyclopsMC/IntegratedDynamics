@@ -115,7 +115,7 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
         }
 
         // Draw part name
-        RenderHelpers.drawScaledCenteredString(fontRenderer, L10NHelpers.localize(getPartType().getUnlocalizedName()),
+        RenderHelpers.drawScaledCenteredString(fontRenderer, L10NHelpers.localize(getPartType().getTranslationKey()),
                 this.guiLeft + offsetX + 6, this.guiTop + offsetY + 10, 70, Helpers.RGBToInt(0, 0, 0));
 
         // Draw aspects
@@ -136,7 +136,7 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
                         guiTop + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1);
 
                 // Aspect type info
-                String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
+                String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
                 RenderHelpers.drawScaledCenteredString(fontRenderer, aspectName,
                         this.guiLeft + offsetX + 26,
                         this.guiTop + offsetY + 25 + aspectBoxHeight * i,
@@ -186,7 +186,7 @@ public abstract class GuiMultipartAspects<P extends IPartType<P, S> & IGuiContai
                         List<String> lines = Lists.newLinkedList();
                         lines.add(TextFormatting.WHITE + L10NHelpers.localize("gui.integrateddynamics.part.properties"));
                         for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
-                            lines.add("-" + TextFormatting.YELLOW + L10NHelpers.localize(property.getUnlocalizedName()));
+                            lines.add("-" + TextFormatting.YELLOW + L10NHelpers.localize(property.getTranslationKey()));
                         }
                         drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
                     }

@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Getter;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -71,7 +73,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public String getLocalizedNameFull() {
-        return L10NHelpers.localize(valueType.getUnlocalizedName());
+        return L10NHelpers.localize(valueType.getTranslationKey());
     }
 
     @Override
@@ -129,12 +131,22 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public String getSymbol() {
-        return L10NHelpers.localize(valueType.getUnlocalizedName());
+        return L10NHelpers.localize(valueType.getTranslationKey());
     }
 
     @Override
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
         return itemStack.getItem() == ItemVariable.getInstance();
+    }
+
+    @Override
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
+        return false;
+    }
+
+    @Override
+    public int getItemStackSizeLimit() {
+        return 1;
     }
 
     @Override

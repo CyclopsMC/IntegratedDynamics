@@ -1,0 +1,27 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.1.1 or higher.
+
+Additions:
+
+Changes:
+* Improve first input determination in recipe handlers
+  Related to CyclopsMC/IntegratedCrafting#30
+* Clarify Reader dependency in Redstone Writer advancement
+  Closes #713
+* Add check for list proxies that have a missing default constructor, #721
+
+Fixes:
+* Make JEI recipe wrapper type checking in categories stricter
+  Closes CyclopsMC/IntegratedDynamics#717
+* Fix broken texture when silk touching logic programmer, Closes #728
+* Fix fluid-based recipes matching with all fluids
+  Closes CyclopsMC/IntegratedCrafting#28
+* Allow all items to be inserted into mechanical machines
+  This fixes problems with insertion order of ingredients
+  in Integrated Crafting causing crafting errors, Closes #29
+* Fix all list value proxies that have no default constructor
+  This could cause a lot of log spam when list were being used
+  with partially applied operators.
+  Closes #721
+* Fix crash on operator pipes with invalid second operators
+  Closes CyclopsMC/IntegratedTunnels#160

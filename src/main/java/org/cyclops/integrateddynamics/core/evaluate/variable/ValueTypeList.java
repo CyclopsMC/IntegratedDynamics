@@ -29,8 +29,10 @@ import java.util.List;
  */
 public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> {
 
+    public static final int MAX_RENDER_LINES = 20;
+
     public ValueTypeList() {
-        super("list", Helpers.RGBToInt(175, 3, 1), TextFormatting.DARK_RED.toString());
+        super("list", Helpers.RGBToInt(175, 3, 1), TextFormatting.DARK_RED.toString(), ValueTypeList.ValueList.class);
     }
 
     @Override
@@ -117,6 +119,10 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
             return values.length == 0 ? ValueTypes.LIST.getDefault() : ofList(values[0].getType(), ImmutableList.copyOf(values));
         }
 
+        public static <V extends IValue> ValueList ofAll(IValueType type, V... values) {
+            return ofList(type, ImmutableList.copyOf(values));
+        }
+
         public static <T extends IValueType<V>, V extends IValue> ValueList ofFactory(IValueTypeListProxy<T, V> proxy) {
             return new ValueList<>(proxy);
         }
@@ -141,18 +147,20 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
 
         private final IValueTypeListProxy<T, V> value;
         private int index = 0;
+        private int length;
 
         public ListFactoryIterator(IValueTypeListProxy<T, V> value) {
             this.value = value;
+            try {
+                this.length = this.value.getLength();
+            } catch (EvaluationException e) {
+                this.length = 0;
+            }
         }
 
         @Override
         public boolean hasNext() {
-            try {
-                return index < value.getLength();
-            } catch (EvaluationException e) {
-                return false;
-            }
+            return index < length;
         }
 
         @Override

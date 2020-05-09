@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -97,6 +98,21 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         }
     }
 
+    @Override
+    public ItemStack getItemStack(State state, boolean saveState) {
+        // Set offset to 0 to make sure it is not stored in the item
+        int offset = state.getOffset();
+        state.setOffset(0);
+
+        // Serialize to item
+        ItemStack itemStack = super.getItemStack(state, saveState);
+
+        // Set original offset back
+        state.setOffset(offset);
+
+        return itemStack;
+    }
+
     /**
      * Look in the part's direction for an unbound monodirectional connector.
      * @param origin The origin position to start looking from.
@@ -144,7 +160,7 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         }
 
         public void setTarget(int offset) {
-            this.offset = offset;
+            setOffset(offset);
             sendUpdate();
 
             DimPos dimPos = getPosition();
@@ -165,6 +181,15 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
 
         public int getOffset() {
             return this.offset;
+        }
+
+        /**
+         * Set the raw offset.
+         * Prefer {@link #setTarget(int)}.
+         * @param offset The new offset.
+         */
+        public void setOffset(int offset) {
+            this.offset = offset;
         }
 
         public void removeTarget() {

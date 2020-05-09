@@ -1,27 +1,24 @@
 package org.cyclops.integrateddynamics.core.tileentity;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import lombok.Getter;
-import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
+import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,12 +28,9 @@ import java.util.Set;
  * @param <E> The type of event listener
  * @author rubensworks
  */
-public abstract class TileActiveVariableBase<E> extends TileCableConnectableInventory implements IDirtyMarkListener, IVariableFacade.IValidator, INetworkEventListener<E> {
+public abstract class TileActiveVariableBase<E> extends TileCableConnectableInventory implements IDirtyMarkListener, INetworkEventListener<E> {
 
-    protected IVariableFacade variableStored = null;
-    @NBTPersist
-    @Getter
-    private List<L10NHelpers.UnlocalizedString> errors = Lists.newLinkedList();
+    private final InventoryVariableEvaluator<IValue> evaluator;
 
     public TileActiveVariableBase(int inventorySize, String inventoryName) {
         super(inventorySize, inventoryName, 1);
@@ -55,6 +49,29 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
             }
             return Optional.empty();
         });
+
+        this.evaluator = createEvaluator();
+    }
+
+    protected InventoryVariableEvaluator<IValue> createEvaluator() {
+        return new InventoryVariableEvaluator<>(this, getSlotRead(), ValueTypes.CATEGORY_ANY);
+    }
+
+    public InventoryVariableEvaluator getEvaluator() {
+        return evaluator;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        List<L10NHelpers.UnlocalizedString> errors = evaluator.getErrors();
+        NBTClassType.writeNbt(List.class, "errors", errors, tag);
+        return super.writeToNBT(tag);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tag) {
+        evaluator.setErrors(NBTClassType.readNbt(List.class, "errors", tag));
+        super.readFromNBT(tag);
     }
 
     public abstract int getSlotRead();
@@ -64,42 +81,8 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
     }
 
     protected void updateReadVariable(boolean sendVariablesUpdateEvent) {
-        INetwork network = getNetwork();
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
-
-        int lastVariabledId = this.variableStored == null ? -1 : this.variableStored.getId();
-        int variableId = -1;
-        if (!getStackInSlot(getSlotRead()).isEmpty() && NetworkHelpers.shouldWork()) {
-            // Update proxy input
-            ItemStack itemStack = getStackInSlot(getSlotRead());
-            IVariableFacadeHandlerRegistry handler = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-            this.variableStored = handler.handle(itemStack);
-            if(this.variableStored != null) {
-                variableId = this.variableStored.getId();
-            }
-        } else {
-            this.variableStored = null;
-        }
-
-        this.errors.clear();
-        if (partNetwork == null) {
-            addError(new L10NHelpers.UnlocalizedString(L10NValues.GENERAL_ERROR_NONETWORK));
-        } else if (this.variableStored != null) {
-            preValidate(variableStored);
-            try {
-                variableStored.validate(partNetwork, this, ValueTypes.CATEGORY_ANY);
-            } catch (IllegalArgumentException e) {
-                addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
-            }
-        }
-        if(sendVariablesUpdateEvent && partNetwork != null && lastVariabledId != variableId) {
-            network.getEventBus().post(new VariableContentsUpdatedEvent(network));
-        }
+        evaluator.refreshVariable(getNetwork(), sendVariablesUpdateEvent);
         sendUpdate();
-    }
-
-    protected void preValidate(IVariableFacade variableStored) {
-
     }
 
     @Override
@@ -109,19 +92,9 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
         }
     }
 
+    @Nullable
     public IVariable<?> getVariable(IPartNetwork network) {
-        if(variableStored == null || !getErrors().isEmpty()) return null;
-        try {
-            return variableStored.getVariable(network);
-        } catch (IllegalArgumentException e) {
-            addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
-            return null;
-        }
-    }
-
-    @Override
-    public void addError(L10NHelpers.UnlocalizedString error) {
-        errors.add(error);
+        return evaluator.getVariable(network);
     }
 
     @Override

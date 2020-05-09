@@ -109,7 +109,7 @@ public class CollidableComponent<P, B extends Block & ICollidableParent> impleme
         double eyeHeight = world.isRemote ? player.getEyeHeight(): player.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
         Vec3d lookVec = player.getLookVec();
         Vec3d origin = new Vec3d(player.posX, player.posY + eyeHeight, player.posZ);
-        Vec3d direction = origin.addVector(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
+        Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
         return doRayTrace(world, pos, origin, direction);
     }

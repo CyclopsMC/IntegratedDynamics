@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 public class ValueTypeCategoryNamed extends ValueTypeCategoryBase<IValue> {
 
     public ValueTypeCategoryNamed() {
-        super("named", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED.toString());
+        super("named", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED.toString(), IValue.class);
     }
 
     public String getName(IVariable a) throws EvaluationException {

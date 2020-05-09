@@ -8,6 +8,7 @@ general.integrateddynamics.true=True
 general.integrateddynamics.false=False
 
 # Gui
+gui.integrateddynamics.keybinding=Key Binding
 gui.integrateddynamics.button.save=Save
 gui.integrateddynamics.button.rename=Rename
 gui.integrateddynamics.button.copy=Copy
@@ -33,8 +34,12 @@ gui.integrateddynamics.input=Input: %s
 gui.integrateddynamics.output=Output: %s
 gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject=Auto-eject Fluid: %s
 gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject.info=Push to adjacent tanks.
+gui.integrateddynamics.input_short=Input
+gui.integrateddynamics.output_short=Output
 
 # Diagnostics
+gui.integrateddynamics.diagnostics.parts=Parts
+gui.integrateddynamics.diagnostics.observers=Storage Observers
 gui.integrateddynamics.diagnostics.title=Network Diagnostics
 gui.integrateddynamics.diagnostics.table.network=Network
 gui.integrateddynamics.diagnostics.table.cables=Cables
@@ -103,6 +108,7 @@ item.items.integrateddynamics.general.id=§e§lID: §r%s
 item.items.integrateddynamics.wrench.name=Wrench
 item.items.integrateddynamics.variable.name=Variable Card
 item.items.integrateddynamics.variable.info=Clear or copy in a crafting grid
+item.items.integrateddynamics.variable.warning=§4§lWARNING: Do NOT copy this item by middle-clicking!
 item.items.integrateddynamics.variable.id=§e§oVariable ID: §r§o%s
 item.items.integrateddynamics.labeller.name=Labeller
 item.items.integrateddynamics.labeller.info=Labels your variables. Also works in the Logic Programmer.
@@ -156,6 +162,8 @@ advancement.integrateddynamics.block_reading=Block Reading
 advancement.integrateddynamics.block_reading.desc=Craft a Block Reader
 advancement.integrateddynamics.inventory_reading=Inventory Reading
 advancement.integrateddynamics.inventory_reading.desc=Craft an Inventory Reader
+advancement.integrateddynamics.machine_reading=Machine Reading
+advancement.integrateddynamics.machine_reading.desc=Craft a Machine Reader
 advancement.integrateddynamics.value_displaying=Value Displaying
 advancement.integrateddynamics.value_displaying.desc=Craft a Display Panel
 advancement.integrateddynamics.redstone_capturing=Redstone Capturing
@@ -163,7 +171,13 @@ advancement.integrateddynamics.redstone_capturing.desc=Make a variable card for 
 advancement.integrateddynamics.redstone_observement=Redstone Observement
 advancement.integrateddynamics.redstone_observement.desc=Place an §6Integer§7 variable card in a Display Panel.
 advancement.integrateddynamics.redstone_transmission=Redstone Transmission
-advancement.integrateddynamics.redstone_transmission.desc=Let a Redstone Writer write a maximal integer redstone level.
+advancement.integrateddynamics.redstone_transmission.desc=Let a Redstone Writer write a maximal integer redstone level that was read by a Redstone Reader.
+advancement.integrateddynamics.recipe_reading=Recipe Reading
+advancement.integrateddynamics.recipe_reading.desc=Read the list of recipes from a machine (like the Crafting Table) using a Machine Reader.
+advancement.integrateddynamics.recipe_creation=Recipe Creation
+advancement.integrateddynamics.recipe_creation.desc=Visually create a §8Recipe§7 using the Logic Programmer.
+advancement.integrateddynamics.recipe_lookup=Recipe Lookup
+advancement.integrateddynamics.recipe_lookup.desc=Dynamically lookup the recipe of a Chest using a Machine Reader.
 advancement.integrateddynamics.logic_programming=Logic Programming
 advancement.integrateddynamics.logic_programming.desc=Open a Logic Programmer's GUI
 advancement.integrateddynamics.constant_definition=Constant Definition
@@ -193,7 +207,7 @@ advancement.integrateddynamics.recursive_recursion.desc=Create an infinite List,
 advancement.integrateddynamics.tool_for_obsidian=Tools for Obsidian?
 advancement.integrateddynamics.tool_for_obsidian.desc=Check if a Stone Pickaxe can break an Obsidian block, and show the result in a Display Panel.
 advancement.integrateddynamics.smart_pressure_plate=Smart Pressure Plate
-advancement.integrateddynamics.smart_pressure_plate.desc=Create a system that automatically opens a door when you pass by an Entity Reader based on entity name matching, using a Redstone Writer directly pointing to the door.
+advancement.integrateddynamics.smart_pressure_plate.desc=Create a system that automatically opens a door when you pass by an Entity Reader based on entity name matching, using a Redstone Writer directly pointing to the door. (Hint: pass an entity name as first argument into the equals operator)
 
 # Value types
 valuetype.integrateddynamics.error.value=Invalid value
@@ -214,10 +228,10 @@ valuetype.valuetypes.integrateddynamics.any.name=Any
 valuetype.valuetypes.integrateddynamics.any.info=Accepts any type of value.
 valuetype.valuetypes.integrateddynamics.number.name=Number
 valuetype.valuetypes.integrateddynamics.number.info=Accepts all number types.
-valuetype.valuetypes.integrateddynamics.named.name=To String
-valuetype.valuetypes.integrateddynamics.named.info=Converts a value to a String representation
-valuetype.valuetypes.integrateddynamics.uniquely_named.name=To Unique Name
-valuetype.valuetypes.integrateddynamics.uniquely_named.info=Converts a value to its unique name
+valuetype.valuetypes.integrateddynamics.named.name=Named
+valuetype.valuetypes.integrateddynamics.named.info=Something that has a name, such as display names of items and blocks.
+valuetype.valuetypes.integrateddynamics.uniquely_named.name=Uniquely Named
+valuetype.valuetypes.integrateddynamics.uniquely_named.info=Something that has a unique name, such as items and blocks.
 
 valuetype.valuetypes.integrateddynamics.boolean.name=Boolean
 valuetype.valuetypes.integrateddynamics.integer.name=Integer
@@ -232,6 +246,20 @@ valuetype.valuetypes.integrateddynamics.block.name=Block
 valuetype.valuetypes.integrateddynamics.itemstack.name=Item
 valuetype.valuetypes.integrateddynamics.entity.name=Entity
 valuetype.valuetypes.integrateddynamics.fluidstack.name=Fluid
+valuetype.valuetypes.integrateddynamics.ingredients.name=Ingredients
+valuetype.valuetypes.integrateddynamics.recipe.name=Recipe
+
+valuetype.valuetypes.integrateddynamics.ingredients.info=Shift click to change.
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemmeta=Item Meta
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemmeta.desc=§cMatch by §nitem type§r§c and §nmeta value§r.
+valuetype.valuetypes.integrateddynamics.ingredients.match.item=Item
+valuetype.valuetypes.integrateddynamics.ingredients.match.item.desc=§cMatch by §nitem type§r§c.
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemmetanbt=Item Meta NBT
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemmetanbt.desc=§cMatch by §nitem type§r§c, §nmeta value§r§c and §nNBT§r§c.
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemnbt=Item NBT
+valuetype.valuetypes.integrateddynamics.ingredients.match.itemnbt.desc=§cMatch by §nitem type§r§c and §nNBT§r§c.
+valuetype.valuetypes.integrateddynamics.ingredients.match.oredict=Oredictionary
+valuetype.valuetypes.integrateddynamics.ingredients.match.oredict.desc=§cMatch by equivalent §nOredictionary§r§c entries.
 
 # Part types
 parttype.parttypes.integrateddynamics.error.low_energy=Not enough energy
@@ -339,6 +367,8 @@ aspect.aspects.integrateddynamics.write.integer.audio.instrument.bassguitar.info
 
 aspect.aspects.integrateddynamics.write.string.audio.sound.name=Sound
 aspect.aspects.integrateddynamics.write.string.audio.sound.info=Play the given sound name
+aspect.aspects.integrateddynamics.write.string.audio.text.name=Text
+aspect.aspects.integrateddynamics.write.string.audio.text.info=Convert the given text to speech
 
 ## Effect aspects
 aspect.aspects.integrateddynamics.write.double.effect.particle.fireworksspark.name=Particle: Fireworks Spark
@@ -424,6 +454,10 @@ aspect.aspects.integrateddynamics.read.integer.block.posz.name=Z Coordinate
 aspect.aspects.integrateddynamics.read.integer.block.posz.info=The Z coordinate of the target
 aspect.aspects.integrateddynamics.read.nbt.block.tile.name=Tile Entity NBT
 aspect.aspects.integrateddynamics.read.nbt.block.tile.info=The target Tile Entity as NBT
+aspect.aspects.integrateddynamics.read.string.block.biome.name=Biome
+aspect.aspects.integrateddynamics.read.string.block.biome.info=The biome name at the target
+aspect.aspects.integrateddynamics.read.integer.block.light.name=Light Level
+aspect.aspects.integrateddynamics.read.integer.block.light.info=The light level at the target
 
 aspect.aspects.integrateddynamics.read.block.block.name=Block
 aspect.aspects.integrateddynamics.read.block.block.info=The target block
@@ -536,6 +570,22 @@ aspect.aspects.integrateddynamics.read.double.temperature.mintemperature.name=Mi
 aspect.aspects.integrateddynamics.read.double.temperature.mintemperature.info=The minimum temperature of the target in degrees Kelvin
 aspect.aspects.integrateddynamics.read.double.temperature.defaulttemperature.name=Default Temperature
 aspect.aspects.integrateddynamics.read.double.temperature.defaulttemperature.info=The default temperature of the target in degrees Kelvin
+aspect.aspects.integrateddynamics.read.boolean.recipehandler.applicable.name=Is Recipe Handler
+aspect.aspects.integrateddynamics.read.boolean.recipehandler.applicable.info=If the target can handle recipes
+aspect.aspects.integrateddynamics.read.list.recipehandler.recipes.name=Recipes
+aspect.aspects.integrateddynamics.read.list.recipehandler.recipes.info=Recipes that can be handled by the target
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipeoutputbyinput.name=Recipe Output By Input
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipeoutputbyinput.info=An operator that returns the resulting recipe output for a given input.
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipeinputsbyoutput.name=Recipe Inputs By Output
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipeinputsbyoutput.info=An operator that returns all possible recipe inputs for a given output.
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipesbyinput.name=Recipes By Input
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipesbyinput.info=An operator that returns all possible recipes for a given input.
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipesbyoutput.name=Recipes By Output
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipesbyoutput.info=An operator that returns all possible recipes for a given output.
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyinput.name=Recipe By Input
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyinput.info=An operator that returns a recipe for a given input.
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyoutput.name=Recipe By Output
+aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyoutput.info=An operator that returns a recipe for a given output.
 aspect.aspects.integrateddynamics.read.boolean.fe.applicable.name=Is FE Handler
 aspect.aspects.integrateddynamics.read.boolean.fe.applicable.info=If the target in some way handles FE
 aspect.aspects.integrateddynamics.read.boolean.fe.isreceiver.name=Is FE Receiver
@@ -662,6 +712,7 @@ aspect.aspecttypes.integrateddynamics.integer.offset.name=Pulse Time Offset
 
 aspect.aspecttypes.integrateddynamics.double.volume.name=Volume
 aspect.aspecttypes.integrateddynamics.double.frequency.name=Frequency
+aspect.aspecttypes.integrateddynamics.integer.range.name=Range
 
 aspect.aspecttypes.integrateddynamics.double.offset_x.name=X Offset
 aspect.aspecttypes.integrateddynamics.double.offset_y.name=Y Offset
@@ -690,10 +741,13 @@ operator.integrateddynamics.error.wrong_input_length=The operator %s received an
 operator.integrateddynamics.error.null_type=The operator %s received an input with a null variable at position %s.
 operator.integrateddynamics.error.wrong_type=The operator %s received an input with type %s at position %s while the type %s was expected.
 operator.integrateddynamics.error.wrong_currying_type=The operator %s received an input with type %s at position %s while the type %s was expected for currying.
+operator.integrateddynamics.error.currying_overflow=While currying the operator %s (%s inputs) with %s inputs, an operator was expected as output, but got %s.
 operator.integrateddynamics.error.wrong_predicate=The operator %s received an input operator that outputs the type %s while the type %s was expected.
 operator.integrateddynamics.error.illegal_property=The property is expected to output %s, while %s was found for operator %s.
 operator.integrateddynamics.error.variable_not_in_network=Variable with id %s could not be found within the current network.
 operator.integrateddynamics.error.cyclic_reference=Variable with id %s depends on itself, infinite recursion.
+operator.integrateddynamics.error.wrong_input_length_virtual=The operator %s received the operator %s with input length %s while length %s is required.
+operator.integrateddynamics.error.operator_recursion_limit=Reached the operator recursion limit of %s invocations for %s. Trying to crash the game, are you?
 
 operator.operators.integrateddynamics.logical.name=Logical
 operator.operators.integrateddynamics.logical.basename=Logical %s
@@ -779,6 +833,8 @@ operator.operators.integrateddynamics.string.replace.name=Replace
 operator.operators.integrateddynamics.string.replace.info=Find all instances of the search term and replace them with the given string, in the given string.
 operator.operators.integrateddynamics.string.replace_regex.name=Replace Regex
 operator.operators.integrateddynamics.string.replace_regex.info=Find all matches of the search pattern and replace them with the given string, in the given string.
+operator.operators.integrateddynamics.string.join.name=Join
+operator.operators.integrateddynamics.string.join.info=Create a joined string with the given string delimiter and the given list of strings.
 operator.operators.integrateddynamics.string.name.name=Name
 operator.operators.integrateddynamics.string.name.info=Get the name of a named object or converts it to a string
 operator.operators.integrateddynamics.string.unique_name.name=Unique Name
@@ -933,6 +989,8 @@ operator.operators.integrateddynamics.itemstack.itemlistcount.name=Item List Cou
 operator.operators.integrateddynamics.itemstack.itemlistcount.info=Get the total item count of exactly the given item in a list.
 operator.operators.integrateddynamics.itemstack.nbt.name=Item NBT
 operator.operators.integrateddynamics.itemstack.nbt.info=Get the NBT tag of the given item.
+operator.operators.integrateddynamics.itemstack.hasnbt.name=Has NBT
+operator.operators.integrateddynamics.itemstack.hasnbt.info=If the item stack has an NBT tag.
 
 operator.operators.integrateddynamics.entity.name=Entity
 operator.operators.integrateddynamics.entity.basename=Entity %s
@@ -1138,8 +1196,48 @@ operator.operators.integrateddynamics.operator.flip.info=Flip the two first inpu
 operator.operators.integrateddynamics.virtual.flipped.name=Flipped
 operator.operators.integrateddynamics.operator.reduce.name=Reduce
 operator.operators.integrateddynamics.operator.reduce.info=Apply the given operator on all elements of a list to reduce the list to one value.
+operator.operators.integrateddynamics.operator.reduce1.name=Reduce 1
+operator.operators.integrateddynamics.operator.reduce1.info=Apply the given operator on all elements of a list to reduce the list to one value. reduce1(op, list) is equivalent to reduce(op, tail(list), head(list)).
 operator.operators.integrateddynamics.operator.byName.name=Operator By Name
 operator.operators.integrateddynamics.operator.byName.info=Get the operator that has the given unique name.
+operator.operators.integrateddynamics.virtual.recipeoutputbyinput.name=Recipe Output By Input
+operator.operators.integrateddynamics.virtual.recipeinputsbyoutput.name=Recipe Inputs By Output
+operator.operators.integrateddynamics.virtual.recipesbyinput.name=Recipes By Input
+operator.operators.integrateddynamics.virtual.recipesbyoutput.name=Recipes By Output
+
+operator.operators.integrateddynamics.ingredients.name=Ingredients
+operator.operators.integrateddynamics.ingredients.basename=Ingredients %s
+operator.operators.integrateddynamics.ingredients.items.name=Ingredient items
+operator.operators.integrateddynamics.ingredients.items.info=The list of items
+operator.operators.integrateddynamics.ingredients.fluids.name=Ingredient fluids
+operator.operators.integrateddynamics.ingredients.fluids.info=The list of fluids
+operator.operators.integrateddynamics.ingredients.energies.name=Ingredient energy elements
+operator.operators.integrateddynamics.ingredients.energies.info=The list of energy elements
+operator.operators.integrateddynamics.ingredients.withItem.name=Ingredients With Item
+operator.operators.integrateddynamics.ingredients.withItem.info=Get a copy of the given ingredients with the given item at the given ingredient position
+operator.operators.integrateddynamics.ingredients.withFluid.name=Ingredients With Fluid
+operator.operators.integrateddynamics.ingredients.withFluid.info=Get a copy of the given ingredients with the given fluid at the given ingredient position
+operator.operators.integrateddynamics.ingredients.withEnergy.name=Ingredients With Energy
+operator.operators.integrateddynamics.ingredients.withEnergy.info=Get a copy of the given ingredients with the given energy at the given ingredient position
+operator.operators.integrateddynamics.ingredients.withItems.name=Ingredients With Items
+operator.operators.integrateddynamics.ingredients.withItems.info=Get a copy of the given ingredients with the given list of items at the given ingredient position
+operator.operators.integrateddynamics.ingredients.withFluids.name=Ingredients With Fluids
+operator.operators.integrateddynamics.ingredients.withFluids.info=Get a copy of the given ingredients with the given list of fluids at the given ingredient position
+operator.operators.integrateddynamics.ingredients.withEnergies.name=Ingredients With Energy Elements
+operator.operators.integrateddynamics.ingredients.withEnergies.info=Get a copy of the given ingredients with the given list of energy elements at the given ingredient position
+
+operator.operators.integrateddynamics.recipe.name=Recipe
+operator.operators.integrateddynamics.recipe.basename=Recipe %s
+operator.operators.integrateddynamics.recipe.input.name=Recipe Input Ingredients
+operator.operators.integrateddynamics.recipe.input.info=The input ingredients of the given recipe
+operator.operators.integrateddynamics.recipe.output.name=Recipe Output Ingredients
+operator.operators.integrateddynamics.recipe.output.info=The output ingredients of the given recipe
+operator.operators.integrateddynamics.recipe.withInput.name=Recipe With Input Ingredients
+operator.operators.integrateddynamics.recipe.withInput.info=Get a copy of the given recipe with the given ingredients as input
+operator.operators.integrateddynamics.recipe.withOutput.name=Recipe With Output Ingredients
+operator.operators.integrateddynamics.recipe.withOutput.info=Get a copy of the given recipe with the given ingredients as input
+operator.operators.integrateddynamics.recipe.withInputOutput.name=Recipe With Input and Output Ingredients
+operator.operators.integrateddynamics.recipe.withInputOutput.info=Create a recipe with the first ingredients as input, and the second ingredients as output
 
 operator.operators.integrateddynamics.general.name=General
 operator.operators.integrateddynamics.general.basename=General %s
@@ -1168,6 +1266,10 @@ operator.operators.integrateddynamics.virtual.piped.info=A chain of operators
 operator.operators.integrateddynamics.cast.name=Cast
 operator.operators.integrateddynamics.cast.basename=Cast
 operator.operators.integrateddynamics.cast.tooltip=Cast %s to %s
+
+operator.operators.integrateddynamics.parse.name=Parse
+operator.operators.integrateddynamics.parse.basename=Parse
+operator.operators.integrateddynamics.parse.tooltip=Parse %s
 
 ## Config categories
 config.integrateddynamics.item=Item settings
@@ -1293,7 +1395,7 @@ info_book.integrateddynamics.tutorials.aspects.text1=As a simple example, let’
 info_book.integrateddynamics.tutorials.aspects.text2=Do this by attaching a &lRedstone Reader&r to a &lLogic Cable&r in the world. Make sure that the reading is targeting something with a redstone value, like a &lRedstone Torch&r.
 info_book.integrateddynamics.tutorials.aspects.text3=After that, right-click on the &lRedstone Reader&r to open the gui, after which you have to insert a &lVariable Card&r into the &6Integer&0 &lRedstone Value&r aspect, to bind the target’s redstone value to that &lVariable Card&r.
 info_book.integrateddynamics.tutorials.aspects.text4=Next, place a &lDisplay Panel&r in the same network as the &lRedstone Reader&r, and insert your bound &lVariable Card&r to display it value.
-info_book.integrateddynamics.tutorials.aspects.text5=As a next step, craft a &lRedstone Writer&r and let it write a maximal integer redstone value.
+info_book.integrateddynamics.tutorials.aspects.text5=As a next step, craft a &lRedstone Writer&r and let it write a maximal integer redstone value that was read by a Redstone Reader.
 
 info_book.integrateddynamics.tutorials.logicOperations=Logic Operations
 info_book.integrateddynamics.tutorials.logicOperations.text1=While displaying values that originate from readers can be useful, things get really interesting when you start combining certain values with other values using &2Operators&0. All &2Operators&0 can be found in the &lLogic Programmer&r.
@@ -1303,6 +1405,14 @@ info_book.integrateddynamics.tutorials.logicOperations.text4=Finally, search for
 info_book.integrateddynamics.tutorials.logicOperations.text5=As &1Integrated Dynamics&0 evaluates variables in a &olazy&r manner, this &lAddition&r &lVariable Card&r does not contain the addition of these &6Integers&0 directly, but the addition will only be performed when the value is needed in the network, based on the variable references. For this, the network has to be able to find these referenced &lVariable Card&r. For this, you will need to craft and place a &lVariable Store&r. Insert the two &6Integer&0 &lVariable Cards&r into this store to make them available to the network.
 info_book.integrateddynamics.tutorials.logicOperations.text6=Finally, you can now connect a cable to the &lVariable Store&r, attach a &lDisplay Panel&r, and insert the &lAddition&r &lVariable Card&r to display the addition.
 info_book.integrateddynamics.tutorials.logicOperations.text7=The &lLogic Programmer&r and &lVariable Stores&r are going to be your best friends when you want to do more complex automation.
+
+info_book.integrateddynamics.tutorials.recipe_handling=Recipe Handling
+info_book.integrateddynamics.tutorials.recipe_handling.text1=&oRecipes&r are a big part of &lMinecraft&r. That is why this mod offers first-class support for them via &8Recipe&0 values, and &lIngredients&r values to represent their input and output collections. In this tutorial, we will have a look at how recipes can be obtained and used.
+info_book.integrateddynamics.tutorials.recipe_handling.text2=The easiest way to obtain &8Recipes&0 is simply by reading it from a machine that can handle recipes. So let's start by reading all crafting recipes by placing a &lMachine Reader&r against a &lCrafting Table&r and reading the list of recipes.
+info_book.integrateddynamics.tutorials.recipe_handling.text3=If you want some more find-grained control over recipes, or if you are working with a machine that does not expose its recipes via the &lMachine Reader&r, you can visually create a &8Recipe&0 yourself in the &lLogic Programmer&r. Let's try creating a simple recipe, for example for crafting a &lChest&r.
+info_book.integrateddynamics.tutorials.recipe_handling.text4=In this last part of the tutorial, we'll take recipe reading one step further. Using the &lRecipe By Output&r aspect, we can retrieve an operator that, when applied to an &8Ingredients&0 instance, will return the first &8Recipe&0 that returns the given &8Ingredients&0 as output. We will use this to look up the recipe of a &lChest&r.
+info_book.integrateddynamics.tutorials.recipe_handling.text5=Let's start by creating an &8Ingredients&0 instance with a single &8Chest&0 in your &lLogic Programmer&r. Next, read the &lRecipe By Output&r aspect from a &lMachine Reader&r that targets a &lCrafting Table&r. After that, use the &oApply&r operator to apply your &lChest&r &8Ingredient&0 to the operator you got from the &lMachine Reader&r. Finally, insert the resulting variable into a &lDisplay Panel&r to see the &lChest&r's recipe. (Don't forget to insert all your used variables into a &lVariable Store&r).
+info_book.integrateddynamics.tutorials.recipe_handling.text6=Obviously, there is much more you can do with &8Recipes&0 and &8Ingredients&0. Have a look in the &lMachine Reader&r and &lLogic Programmer&r to find out what other advanced functionality is available to you.
 
 info_book.integrateddynamics.tutorials.advancedNetworkComponents=Advanced Network Components
 info_book.integrateddynamics.tutorials.advancedNetworkComponents.text1=Now that you are familiar with basic logic, we can have a look at the more advanced network components: the &lMaterializer&r and the &lProxy&r.
@@ -1376,7 +1486,7 @@ info_book.integrateddynamics.manual.logic.value_types.operator.text1=A value con
 info_book.integrateddynamics.manual.logic.value_types.operator.text2=You can for example store the addition &2Operator&0 in a variable card. Do this by starting to type the operator name and selecting it from the autocomplete dropdown-list and clicking it. You can then partially apply it with one &6Integer&0 &lVariable Card&r, which will result in a new virtual operator with one input type and one output type, which internally contains a reference to that applied &6Integer&0. Applying another &6Integer&0 will result in an &6Integer&0.
 info_book.integrateddynamics.manual.logic.value_types.operator.text3=Other operations of &2Operators&0 are present in the &lLogic Programmer&r for more advanced evaluations, such as reducing a list to a single value, or filtering a list based on a &lPredicate&r.
 info_book.integrateddynamics.manual.logic.value_types.nbt=NBT
-info_book.integrateddynamics.manual.logic.value_types.nbt.text1=Certain things in &lMinecraft&r internally use the &3NBT&0 datastructure. An &3NBT&0 tag is a special kind of object that can hold multiple values of different types. For example the NBT representation of a &8Chest&0 containing all its items, the enchantment information of an &Pickaxe&0, ...
+info_book.integrateddynamics.manual.logic.value_types.nbt.text1=Certain things in &lMinecraft&r internally use the &3NBT&0 datastructure. An &3NBT&0 tag is a special kind of object that can hold multiple values of different types. For example the NBT representation of a &8Chest&0 containing all its items, the enchantment information of an &8Pickaxe&0, ...
 info_book.integrateddynamics.manual.logic.value_types.nbt.text2=Variables can hold references to such &3NBT&0 tags, and corresponding operators exist to read or extend these tags.
 info_book.integrateddynamics.manual.logic.value_types.nbt.text3=&3NBT&0 tags are typically used in this mod as a low-level fallback mechanism, in case you can not read certain information using dedicated operators.
 info_book.integrateddynamics.manual.logic.value_types.block=Block
@@ -1387,6 +1497,12 @@ info_book.integrateddynamics.manual.logic.value_types.entity=Entity
 info_book.integrateddynamics.manual.logic.value_types.entity.text1=A reference to a certain &lMinecraft&r entity. For example &8Zombie&0, &8Cow&0, &8Player_abc&0 ....
 info_book.integrateddynamics.manual.logic.value_types.fluid=Fluid
 info_book.integrateddynamics.manual.logic.value_types.fluid.text1=A reference to a &lMinecraft&r fluid. For example &8Lava@1000mB&0, &8Water@3mB&0, &8Menril Resin@3030mB&0, ....
+info_book.integrateddynamics.manual.logic.value_types.ingredients=Ingredients
+info_book.integrateddynamics.manual.logic.value_types.ingredients.text1=A collection of &lItems&r, &lFluids&r and &lEnergy amounts&r (&6Integer&0). Its main use is for representing the input and output of &8Recipes&0.
+info_book.integrateddynamics.manual.logic.value_types.recipe=Recipe
+info_book.integrateddynamics.manual.logic.value_types.recipe.text1=An abstract crafting recipe, that takes &8Ingredients&0 as input and outputs another &8Ingredients&0 value.
+info_book.integrateddynamics.manual.logic.value_types.recipe.text2=Recipes can be created visually using the &lLogic Programmer&r, or they can be read from (supported) machines using the &lMachine Reader&r.
+info_book.integrateddynamics.manual.logic.value_types.recipe.text3=These recipes can be used for autocrafting mods such as &lIntegrated Crafting&r.
 
 info_book.integrateddynamics.manual.logic.variables=Variables
 

@@ -5,6 +5,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.EnumFacing;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -21,7 +23,6 @@ import java.util.List;
  */
 public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
-    private static final int MAX_LINES = 20;
     private static final float MAX = 12.5F;
     private static final float MARGIN_FACTOR = 1.1F;
 
@@ -32,16 +33,17 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float maxWidth = 0;
 
-        List<String> lines = Lists.newLinkedList();
+        List<Pair<String, Integer>> lines = Lists.newLinkedList();
         IValueType listType = ((ValueTypeList.ValueList<?, ?>) value).getRawValue().getValueType();
         for(IValue element : ((ValueTypeList.ValueList<?, ?>) value).getRawValue()) {
-            if(lines.size() >= MAX_LINES) {
-                lines.add("...");
+            if(lines.size() >= ValueTypeList.MAX_RENDER_LINES) {
+                lines.add(Pair.of("...", listType.getDisplayColor()));
                 break;
             } else {
-                String string = " - " + listType.toCompactString(element);
+                IValueType elementType = element.getType();
+                String string = " - " + elementType.toCompactString(element);
                 float width = fontRenderer.getStringWidth(string) - 1;
-                lines.add(string);
+                lines.add(Pair.of(string, elementType.getDisplayColor()));
                 maxWidth = Math.max(maxWidth, width);
             }
         }
@@ -61,9 +63,9 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         GlStateManager.scale(scale, scale, 1F);
 
         int offset = 0;
-        for(String line : lines) {
-            int color = Helpers.addAlphaToColor(listType.getDisplayColor(), distanceAlpha);
-            rendererDispatcher.getFontRenderer().drawString(line, 0, offset, color);
+        for(Pair<String, Integer> line : lines) {
+            int color = Helpers.addAlphaToColor(line.getRight(), distanceAlpha);
+            rendererDispatcher.getFontRenderer().drawString(line.getLeft(), 0, offset, color);
             offset += singleHeight;
         }
 

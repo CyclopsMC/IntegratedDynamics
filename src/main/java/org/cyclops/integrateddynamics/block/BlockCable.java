@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -294,21 +295,21 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, neighborBlock, fromPos);
-        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null);
+        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null, fromPos);
     }
 
     @Override
     public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(world, pos, neighbor);
         if (world instanceof World) {
-            NetworkHelpers.onElementProviderBlockNeighborChange((World) world, pos, world.getBlockState(neighbor).getBlock(), null);
+            NetworkHelpers.onElementProviderBlockNeighborChange((World) world, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
         }
     }
 
     @Override
     public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
         super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
-        NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null);
+        NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null, changedBlockPos);
     }
 
     @Override
@@ -415,13 +416,26 @@ public class BlockCable extends ConfigurableBlockContainer implements ICollidabl
     }
 
     @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
+        if(CableHelpers.hasFacade(world, pos)) {
+            return BlockFaceShape.SOLID;
+        }
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, side);
+        if(partContainer != null && partContainer.hasPart(side)) {
+            IPartType partType = partContainer.getPart(side);
+            return partType.isSolid(partContainer.getPartState(side)) ? BlockFaceShape.SOLID : BlockFaceShape.MIDDLE_POLE_THIN;
+        }
+        return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
     public boolean canRenderInLayer(IBlockState blockState, BlockRenderLayer layer) {
         return true;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer() {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.TRANSLUCENT;
     }
 

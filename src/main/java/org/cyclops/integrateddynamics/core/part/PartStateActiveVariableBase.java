@@ -11,14 +11,19 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
-import org.cyclops.integrateddynamics.item.ItemVariable;
+import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
+import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +36,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
 
     private boolean checkedForWriteVariable = false;
     protected IVariableFacade currentVariableFacade = null;
+    private final IVariableContainer variableContainer;
     @Getter
     @Setter
     private boolean deactivated = false;
@@ -40,6 +46,8 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
         this.inventory.addDirtyMarkListener(this); // No need to remove myself eventually. If I am removed, inv is also removed.
+        variableContainer = new VariableContainerDefault();
+        addVolatileCapability(VariableContainerConfig.CAPABILITY, variableContainer);
     }
 
     /**
@@ -56,7 +64,8 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     protected void onCorruptedState() {
-        IntegratedDynamics.clog(Level.WARN, "A corrupted part state was found at, repairing...");
+        IntegratedDynamics.clog(Level.ERROR, "A corrupted part state was found at, repairing...");
+        Thread.dumpStack();
         this.checkedForWriteVariable = false;
         this.deactivated = true;
     }
@@ -72,15 +81,18 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      * Get the active variable in this state.
      * @param <V> The variable value type.
      * @param network The network.
+     * @param partNetwork The part network.
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
+    public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
         if(!checkedForWriteVariable) {
-            for(int slot = 0; slot < getInventory().getSizeInventory(); slot++) {
-                ItemStack itemStack = getInventory().getStackInSlot(slot);
-                if(!itemStack.isEmpty()) {
-                    this.currentVariableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-                    validate(network);
+            if (variableContainer.getVariableCache().isEmpty()) {
+                variableContainer.refreshVariables(network, inventory, false);
+            }
+            for (IVariableFacade facade : variableContainer.getVariableCache().values()) {
+                if (facade != null) {
+                    currentVariableFacade = facade;
+                    validate(partNetwork);
                 }
             }
             this.checkedForWriteVariable = true;
@@ -89,7 +101,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
             onCorruptedState();
             return null;
         }
-        return currentVariableFacade.getVariable(network);
+        return currentVariableFacade.getVariable(partNetwork);
     }
 
     /**
@@ -103,6 +115,12 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         addGlobalError(null);
         this.currentVariableFacade = null;
         //this.deactivated = false; // This *should* not be required anymore, re-activation is handled in AspectWriteBase#update.
+
+        // Refresh any contained variables
+        PartPos center = target.getCenter();
+        INetwork network = NetworkHelpers.getNetwork(center.getPos().getWorld(), center.getPos().getBlockPos(),
+                center.getSide());
+        variableContainer.refreshVariables(network, inventory, false);
     }
 
     /**
@@ -142,16 +160,16 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target) {
-        return capability == ValueInterfaceConfig.CAPABILITY || super.hasCapability(capability, network, target);
+    public boolean hasCapability(Capability<?> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        return capability == ValueInterfaceConfig.CAPABILITY || super.hasCapability(capability, network, partNetwork, target);
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target) {
+    public <T> T getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
         if (capability == ValueInterfaceConfig.CAPABILITY) {
             return ValueInterfaceConfig.CAPABILITY.cast(() -> {
                 if (hasVariable()) {
-                    IVariable<IValue> variable = getVariable(network);
+                    IVariable<IValue> variable = getVariable(network, partNetwork);
                     if (variable != null) {
                         return Optional.of(variable.getValue());
                     }
@@ -159,7 +177,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
                 return Optional.empty();
             });
         }
-        return super.getCapability(capability, network, target);
+        return super.getCapability(capability, network, partNetwork, target);
     }
 
     /**

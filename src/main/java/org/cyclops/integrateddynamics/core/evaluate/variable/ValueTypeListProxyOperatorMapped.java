@@ -15,7 +15,7 @@ public class ValueTypeListProxyOperatorMapped extends ValueTypeListProxyBase<IVa
     private final IValueTypeListProxy listProxy;
 
     public ValueTypeListProxyOperatorMapped(IOperator operator, IValueTypeListProxy listProxy) {
-        super(ValueTypeListProxyFactories.MATERIALIZED.getName(), operator.getOutputType());
+        super(ValueTypeListProxyFactories.MATERIALIZED.getName(), operator.getInputTypes().length == 1 ? operator.getOutputType() : (IValueType) ValueTypes.OPERATOR);
         this.operator = operator;
         this.listProxy = listProxy;
     }

@@ -112,7 +112,7 @@
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:crystalized_menril_chunk</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
@@ -139,7 +139,7 @@
 				</gridrow>
 				<gridrow>
 					<item type="oredict">stickWood</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 					<item type="oredict">stickWood</item>
 				</gridrow>
 				<gridrow>
@@ -162,7 +162,7 @@
 				<gridrow>
 					<item />
 					<item>integrateddynamics:crystalized_menril_chunk</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 				</gridrow>
 				<gridrow>
 					<item />
@@ -193,7 +193,7 @@
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:crystalized_menril_chunk</item>
-					<item>minecraft:paper</item>
+					<item type="oredict">paper</item>
 					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
@@ -303,7 +303,7 @@
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:crystalized_menril_chunk</item>
-					<item>minecraft:redstone_block</item>
+					<item type="oredict">blockRedstone</item>
 					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 				<gridrow>
@@ -395,7 +395,7 @@
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:crystalized_menril_chunk</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 					<item>integrateddynamics:crystalized_menril_chunk</item>
 				</gridrow>
 			</grid>
@@ -492,19 +492,19 @@
 		<input>
 			<grid>
 				<gridrow>
-					<item>minecraft:cobblestone</item>
-					<item>minecraft:dirt</item>
-					<item>minecraft:cobblestone</item>
+					<item type="oredict">cobblestone</item>
+					<item type="oredict">dirt</item>
+					<item type="oredict">cobblestone</item>
 				</gridrow>
 				<gridrow>
-					<item>minecraft:dirt</item>
+					<item type="oredict">dirt</item>
 					<item meta="1">integrateddynamics:variable_transformer</item>
-					<item>minecraft:dirt</item>
+					<item type="oredict">dirt</item>
 				</gridrow>
 				<gridrow>
-					<item>minecraft:cobblestone</item>
-					<item>minecraft:dirt</item>
-					<item>minecraft:cobblestone</item>
+					<item type="oredict">cobblestone</item>
+					<item type="oredict">dirt</item>
+					<item type="oredict">cobblestone</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -549,9 +549,9 @@
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:ender_pearl</item>
+					<item type="oredict">enderpearl</item>
 					<item meta="1">integrateddynamics:variable_transformer</item>
-					<item>minecraft:ender_pearl</item>
+					<item type="oredict">enderpearl</item>
 				</gridrow>
 				<gridrow>
 					<item />
@@ -592,13 +592,13 @@
 			<grid>
 				<gridrow>
 					<item />
-					<item>minecraft:chest</item>
+					<item type="oredict">chestWood</item>
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:chest</item>
+					<item type="oredict">chestWood</item>
 					<item meta="1">integrateddynamics:variable_transformer</item>
-					<item>minecraft:chest</item>
+					<item type="oredict">chestWood</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -617,13 +617,13 @@
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:iron_ingot</item>
+					<item type="oredict">ingotIron</item>
 					<item meta="1">integrateddynamics:variable_transformer</item>
-					<item>minecraft:iron_ingot</item>
+					<item type="oredict">ingotIron</item>
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>minecraft:crafting_table</item>
+					<item type="oredict">workbench</item>
 					<item />
 				</gridrow>
 			</grid>
@@ -666,13 +666,13 @@
 			<grid>
 				<gridrow>
 					<item />
-					<item>minecraft:redstone_block</item>
+					<item type="oredict">blockRedstone</item>
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 					<item meta="1">integrateddynamics:variable_transformer</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -686,19 +686,19 @@
 		<input>
 			<grid>
 				<gridrow>
-					<item>minecraft:dirt</item>
-					<item>minecraft:obsidian</item>
-					<item>minecraft:dirt</item>
+					<item type="oredict">dirt</item>
+					<item type="oredict">obsidian</item>
+					<item type="oredict">dirt</item>
 				</gridrow>
 				<gridrow>
-					<item>minecraft:obsidian</item>
+					<item type="oredict">obsidian</item>
 					<item meta="1">integrateddynamics:variable_transformer</item>
-					<item>minecraft:obsidian</item>
+					<item type="oredict">obsidian</item>
 				</gridrow>
 				<gridrow>
-					<item>minecraft:dirt</item>
-					<item>minecraft:obsidian</item>
-					<item>minecraft:dirt</item>
+					<item type="oredict">dirt</item>
+					<item type="oredict">obsidian</item>
+					<item type="oredict">dirt</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -795,13 +795,13 @@
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:iron_ingot</item>
+					<item type="oredict">ingotIron</item>
 					<item meta="0">integrateddynamics:variable_transformer</item>
-					<item>minecraft:iron_ingot</item>
+					<item type="oredict">ingotIron</item>
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>minecraft:crafting_table</item>
+					<item type="oredict">workbench</item>
 					<item />
 				</gridrow>
 			</grid>
@@ -817,13 +817,13 @@
 			<grid>
 				<gridrow>
 					<item />
-					<item>minecraft:chest</item>
+					<item type="oredict">chestWood</item>
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:chest</item>
+					<item type="oredict">chestWood</item>
 					<item meta="0">integrateddynamics:variable_transformer</item>
-					<item>minecraft:chest</item>
+					<item type="oredict">chestWood</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -838,13 +838,13 @@
 			<grid>
 				<gridrow>
 					<item />
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:redstone_block</item>
+					<item type="oredict">blockRedstone</item>
 					<item meta="0">integrateddynamics:variable_transformer</item>
-					<item>minecraft:redstone_block</item>
+					<item type="oredict">blockRedstone</item>
 				</gridrow>
 			</grid>
 		</input>
@@ -866,7 +866,7 @@
 				<gridrow>
 					<item>integrateddynamics:menril_berries</item>
 					<item meta="0">integrateddynamics:variable_transformer</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 				</gridrow>
 				<gridrow>
 					<item>integrateddynamics:menril_berries</item>
@@ -885,17 +885,17 @@
 			<grid>
 				<gridrow>
 					<item />
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 					<item />
 				</gridrow>
 				<gridrow>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 					<item>integrateddynamics:part_static_light_panel_item</item>
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>minecraft:redstone</item>
+					<item type="oredict">dustRedstone</item>
 					<item />
 				</gridrow>
 			</grid>
@@ -1258,7 +1258,7 @@
 			<grid>
 				<gridrow>
 					<item />
-					<item>minecraft:diamond</item>
+					<item type="oredict">gemDiamond</item>
 					<item />
 				</gridrow>
 				<gridrow>
@@ -1268,7 +1268,7 @@
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>minecraft:obsidian</item>
+					<item type="oredict">obsidian</item>
 					<item />
 				</gridrow>
 			</grid>
@@ -1286,7 +1286,7 @@
 			<grid>
 				<gridrow>
 					<item />
-					<item>minecraft:obsidian</item>
+					<item type="oredict">obsidian</item>
 					<item />
 				</gridrow>
 				<gridrow>
@@ -1296,7 +1296,7 @@
 				</gridrow>
 				<gridrow>
 					<item />
-					<item>minecraft:obsidian</item>
+					<item type="oredict">obsidian</item>
 					<item />
 				</gridrow>
 			</grid>

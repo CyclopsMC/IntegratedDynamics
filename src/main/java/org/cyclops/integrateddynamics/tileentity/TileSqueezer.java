@@ -23,7 +23,9 @@ import org.cyclops.cyclopscore.recipe.custom.component.IngredientRecipeComponent
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientsAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.TankInventoryTileEntity;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
+import org.cyclops.integrateddynamics.core.recipe.custom.RecipeHandlerSqueezer;
 
 /**
  * A part entity for squeezing stuff.
@@ -66,6 +68,24 @@ public class TileSqueezer extends TankInventoryTileEntity implements CyclopsTile
                         return ItemStack.areItemStacksEqual(cacheKey, newKey);
                     }
                 });
+
+        // Add recipe handler capability
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, new RecipeHandlerSqueezer<>(BlockSqueezer.getInstance()));
+    }
+
+    @Override
+    public boolean isSendUpdateOnInventoryChanged() {
+        return true;
+    }
+
+    @Override
+    protected boolean isUpdateInventoryHashOnTankContentsChanged() {
+        return true;
+    }
+
+    @Override
+    public boolean isSendUpdateOnTankChanged() {
+        return true;
     }
 
     protected IRecipeRegistry<BlockSqueezer, IngredientRecipeComponent,

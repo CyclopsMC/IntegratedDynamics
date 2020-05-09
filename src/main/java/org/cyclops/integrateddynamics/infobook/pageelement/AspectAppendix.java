@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.infobook.GuiInfoBook;
@@ -57,6 +59,7 @@ public class AspectAppendix extends SectionAppendix {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected void drawElement(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         int yOffset = 5;
         gui.drawOuterBorder(x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
@@ -67,8 +70,8 @@ public class AspectAppendix extends SectionAppendix {
         Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
 
         // Base information
-        String aspectName = L10NHelpers.localize(aspect.getUnlocalizedName());
-        String valueTypeName = L10NHelpers.localize(aspect.getValueType().getUnlocalizedName());
+        String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
+        String valueTypeName = L10NHelpers.localize(aspect.getValueType().getTranslationKey());
         gui.drawScaledCenteredString(L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
         String valueString = L10NHelpers.localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
         boolean wasUnicode = gui.getFontRenderer().getUnicodeFlag();
@@ -81,13 +84,14 @@ public class AspectAppendix extends SectionAppendix {
             gui.getFontRenderer().drawString(TextFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
             for (IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                 offsetY += 10;
-                gui.getFontRenderer().drawString(TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getUnlocalizedName()), x + 10, y + offsetY, 0);
+                gui.getFontRenderer().drawString(TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
             }
         }
         gui.getFontRenderer().setUnicodeFlag(wasUnicode);
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected void postDrawElement(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         GlStateManager.pushMatrix();
         if(mx >= x && my >= y && mx <= x + SLOT_SIZE && my <= y + SLOT_SIZE ) {

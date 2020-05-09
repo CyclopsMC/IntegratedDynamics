@@ -26,7 +26,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         IValueTypeNullable<ValueObjectTypeBlock.ValueBlock> {
 
     public ValueObjectTypeBlock() {
-        super("block");
+        super("block", ValueObjectTypeBlock.ValueBlock.class);
     }
 
     public static String getBlockDisplayNameUsSafe(IBlockState blockState) throws NoSuchMethodException {
@@ -39,7 +39,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         try {
             return getBlockDisplayNameUsSafe(blockState);
         } catch (NoSuchMethodException e) {
-            return L10NHelpers.localize(blockState.getBlock().getUnlocalizedName() + ".name");
+            return L10NHelpers.localize(blockState.getBlock().getTranslationKey() + ".name");
         }
     }
 

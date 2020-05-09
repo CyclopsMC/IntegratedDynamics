@@ -1,11 +1,15 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.JsonUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -172,7 +176,7 @@ public class OperatorRegistry implements IOperatorRegistry {
             }
         }
         JsonElement inputElement = element.get("input");
-        TIntObjectMap<VariablePredicate> inputPredicates = new TIntObjectHashMap<>();
+        Int2ObjectMap<VariablePredicate> inputPredicates = new Int2ObjectOpenHashMap<>();
         if (inputElement != null && !inputElement.isJsonNull()) {
             for (Map.Entry<String, JsonElement> inputEntry : inputElement.getAsJsonObject().entrySet()) {
                 try {
@@ -189,10 +193,10 @@ public class OperatorRegistry implements IOperatorRegistry {
     public static class OperatorVariablePredicate extends VariablePredicate<LazyExpression> {
 
         private final IOperator operator;
-        private final TIntObjectMap<VariablePredicate> inputPredicates;
+        private final Int2ObjectMap<VariablePredicate> inputPredicates;
 
         public OperatorVariablePredicate(@Nullable IValueType valueType, ValuePredicate valuePredicate,
-                                         @Nullable IOperator operator, TIntObjectMap<VariablePredicate> inputPredicates) {
+                                         @Nullable IOperator operator, Int2ObjectMap<VariablePredicate> inputPredicates) {
             super(LazyExpression.class, valueType, valuePredicate);
             this.operator = operator;
             this.inputPredicates = inputPredicates;

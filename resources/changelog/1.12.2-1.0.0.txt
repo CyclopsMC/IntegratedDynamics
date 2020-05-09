@@ -1,0 +1,32 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.0.0 or higher.
+
+Additions:
+* Add Ingredients value type: a collection of multiple items, fluids and energy.
+* Add Recipe value type: A mapping from Ingredients to Ingredients
+* Add operators to handle recipes
+* Add recipe-reading aspects to Machine Reader
+* Add LP keybindings to infobook
+* Add advancements on recipes and ingredients
+* Add recipe handler capabilities to all recipe-related machines
+* Add JEI transfer handler for recipe LP element
+* Create sv_se.lang
+* Add ingredient observers to network diagnostics
+* Add a reduce1 operator
+  reduce1(op, list) acts like reduce(op, tail(list), head(list)).
+
+Changes:
+* Allow variables in all parts to be referenced
+  All parts basically act as a Variable Store now.
+* Optimize images
+* Allow fluids to be empty in LP
+* Rewrite energy network to an abstract ingredients network (with multi-threaded ingredient observer)
+
+Fixes:
+* Fix CraftTweaker recipes ignoring NBT in inputs
+  Closes CyclopsMC/IntegratedDynamics#659
+* Remove PositionsIterator in favor of IPartPosIteratorHandler
+  This resolves many issues with round-robin mode, closes #617.
+* Fix PartPos not always taking into account null sides
+* Fix creative energy battery not being infinite in item form
+  This mirrors what TileEnergyBattery already does.

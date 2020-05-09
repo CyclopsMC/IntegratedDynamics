@@ -21,7 +21,8 @@ public class PartTypeAudioWriter extends PartTypeWriteBase<PartTypeAudioWriter, 
                 Aspects.Write.Audio.INTEGER_SNARE_NOTE,
                 Aspects.Write.Audio.INTEGER_CLICKS_NOTE,
                 Aspects.Write.Audio.INTEGER_BASSGUITAR_NOTE,
-                Aspects.Write.Audio.STRING_SOUND
+                Aspects.Write.Audio.STRING_SOUND,
+                Aspects.Write.Audio.STRING_TEXT
         ));
     }
 

@@ -40,7 +40,7 @@ public interface IValueType<V extends IValue> {
     /**
      * @return The unique name of this type that will also be used for display.
      */
-    public String getUnlocalizedName();
+    public String getTranslationKey();
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
@@ -119,6 +119,14 @@ public interface IValueType<V extends IValue> {
     }
 
     /**
+     * Attempt to cast the given value to a value of this value type.
+     * @param value A value of unknown type.
+     * @return The casted value.
+     * @throws RuntimeException If the incorrect value type was found.
+     */
+    public V cast(IValue value) throws EvaluationException;
+
+    /**
      * Use this comparator for any comparisons with value types.
      */
     public static class ValueTypeComparator implements Comparator<IValueType<?>> {
@@ -136,7 +144,7 @@ public interface IValueType<V extends IValue> {
 
         @Override
         public int compare(IValueType<?> o1, IValueType<?> o2) {
-            return o1.getUnlocalizedName().compareTo(o2.getUnlocalizedName());
+            return o1.getTranslationKey().compareTo(o2.getTranslationKey());
         }
     }
 

@@ -1,3 +1,4 @@
+dist: trusty
 language: java
 jdk: oraclejdk8
 notifications:
@@ -12,6 +13,7 @@ env:
 before_install: '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || openssl aes-256-cbc -K $encrypted_a4e14d5ba873_key -iv $encrypted_a4e14d5ba873_iv -in keystore.jks.enc -out keystore.jks -d'
 install: ./gradlew setupCIWorkspace -S
 script: ./gradlew build -S
+after_success: ./gradlew jacocoTestReport coveralls
 
 cache:
   directories:
@@ -46,4 +48,13 @@ deploy:
   on:
     all_branches: true
     repo: CyclopsMC/IntegratedDynamics
-    condition: $TRAVIS_BRANCH =~ ^(master|release).*$
+    condition: $TRAVIS_BRANCH =~ ^(master|release|feature-).*$
+- provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  local-dir: build/docs/javadoc
+  on:
+    all_branches: true
+    repo: CyclopsMC/IntegratedDynamics
+    condition: "$TRAVIS_BRANCH =~ ^(master).*$"

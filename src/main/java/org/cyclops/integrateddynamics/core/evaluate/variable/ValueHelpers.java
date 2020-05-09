@@ -1,8 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -11,6 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 import javax.annotation.Nullable;
 
@@ -59,7 +64,7 @@ public class ValueHelpers {
         L10NHelpers.UnlocalizedString[] names = new L10NHelpers.UnlocalizedString[valueTypes.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IValueType valueType = valueTypes[i];
-            names[i] = new L10NHelpers.UnlocalizedString(valueType.getUnlocalizedName());
+            names[i] = new L10NHelpers.UnlocalizedString(valueType.getTranslationKey());
         }
         return names;
     }
@@ -109,10 +114,30 @@ public class ValueHelpers {
      * @throws EvaluationException If something went wrong during operator evaluation.
      */
     public static IValue evaluateOperator(IOperator operator, IVariable... variables) throws EvaluationException {
-        if (operator.getRequiredInputLength() == variables.length) {
+        int requiredLength = operator.getRequiredInputLength();
+        if (requiredLength == variables.length) {
             return operator.evaluate(variables);
         } else {
-            return ValueTypeOperator.ValueOperator.of(new CurriedOperator(operator, variables));
+            if (variables.length > requiredLength) { // We have MORE variables as input than the operator accepts
+                IVariable[] acceptableVariables = ArrayUtils.subarray(variables, 0, requiredLength);
+                IVariable[] remainingVariables = ArrayUtils.subarray(variables, requiredLength, variables.length);
+
+                // Pass all required variables to the operator, and forward all remaining ones to the resulting operator
+                IValue result = evaluateOperator(operator, acceptableVariables);
+
+                // Error if the result is NOT an operatorø
+                if (result.getType() != ValueTypes.OPERATOR) {
+                    throw new EvaluationException(String.format(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
+                            operator.getTranslationKey(), requiredLength, variables.length, result.getType()));
+                }
+
+                // Pass all remaining variables to the resulting operator
+                IOperator nextOperator = ((ValueTypeOperator.ValueOperator) result).getRawValue();
+                return evaluateOperator(nextOperator, remainingVariables);
+
+            } else { // Else, the given variables only partially take up the required input
+                return ValueTypeOperator.ValueOperator.of(new CurriedOperator(operator, variables));
+            }
         }
     }
 
@@ -136,7 +161,7 @@ public class ValueHelpers {
      */
     public static NBTTagCompound serialize(IValue value) {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("valueType", value.getType().getUnlocalizedName());
+        tag.setString("valueType", value.getType().getTranslationKey());
         tag.setString("value", serializeRaw(value));
         return tag;
     }
@@ -151,7 +176,21 @@ public class ValueHelpers {
         if (valueType == null) {
             return null;
         }
-        return valueType.deserialize(tag.getString("value"));
+        return deserializeRaw(valueType, tag.getString("value"));
+    }
+
+    /**
+     * Deserialize the given value string to a value.
+     * @param valueType The value type to deserialize for.
+     * @param valueString The value string.
+     * @param <T> The type of value.
+     * @return The value.
+     */
+    public static <T extends IValue> T deserializeRaw(IValueType<T> valueType, String valueString) {
+        if ("TOO LONG".equals(valueString)) {
+            return valueType.getDefault();
+        }
+        return valueType.deserialize(valueString);
     }
 
     /**
@@ -168,6 +207,29 @@ public class ValueHelpers {
                     result.getType(), ValueTypes.BOOLEAN);
             throw new EvaluationException(error.localize());
         }
+    }
+
+    /**
+     * Get the human readable value of the given value in a safe way.
+     * @param variable A nullable variable.
+     * @return A pair of a string and color.
+     */
+    public static Pair<String, Integer> getSafeReadableValue(@Nullable IVariable variable) {
+        String readValue = "";
+        int readValueColor = 0;
+        if (!NetworkHelpers.shouldWork()) {
+            readValue = "SAFE-MODE";
+        } else if(variable != null) {
+            try {
+                IValue value = variable.getValue();
+                readValue = value.getType().toCompactString(value);
+                readValueColor = value.getType().getDisplayColor();
+            } catch (EvaluationException | NullPointerException | PartStateException e) {
+                readValue = "ERROR";
+                readValueColor = Helpers.RGBToInt(255, 0, 0);
+            }
+        }
+        return Pair.of(readValue, readValueColor);
     }
 
 }

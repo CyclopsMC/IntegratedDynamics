@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable",
+      "nbt": "{\"typeName\":\"valuetype.valuetypes.integrateddynamics.recipe.name\",\"partId\":1,\"_type\":\"valuetype\",\"value\":\"{output:{\\\"minecraft:itemstack\\\":[{id:\\\"minecraft:chest\\\",Count:1b,Damage:0s}]},input:{\\\"minecraft:itemstack\\\":[[{condition:3,prototype:{id:\\\"minecraft:chest\\\",Count:1b,Damage:0s}}]]}}\",\"_id\":1}"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.recipe_creation"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.recipe_creation.desc"
+    }
+  },
+  "parent": "integrateddynamics:recipe_handling/recipe_reading",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:variable_created",
+      "conditions": {
+        "block": "integrateddynamics:logic_programmer",
+        "variable_facade": {
+          "type": "valuetype",
+          "valuetype": "valuetype.valuetypes.integrateddynamics.recipe.name"
+        }
+      }
+    }
+  }
+}

@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.infobook.GuiInfoBook;
@@ -44,6 +46,7 @@ public class OperatorAppendix extends SectionAppendix {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected void drawElement(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         int yOffset = 5;
         gui.drawOuterBorder(x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
@@ -51,7 +54,7 @@ public class OperatorAppendix extends SectionAppendix {
         gui.drawScaledCenteredString(L10NHelpers.localize("operator.operators.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
         // Base information
-        String operatorName = L10NHelpers.localize(operator.getUnlocalizedName());
+        String operatorName = L10NHelpers.localize(operator.getTranslationKey());
         gui.drawScaledCenteredString(L10NHelpers.localize(operatorName) + " (" + operator.getSymbol() + ")", x, y + 8, width, 1f, gui.getBannerWidth(), 0);
         boolean wasUnicode = gui.getFontRenderer().getUnicodeFlag();
         gui.getFontRenderer().setUnicodeFlag(true);
@@ -61,10 +64,10 @@ public class OperatorAppendix extends SectionAppendix {
         int offsetY = 14;
         for(int i = 0; i < inputTypes.length; i++) {
             gui.getFontRenderer().drawString(L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
-                    + inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getUnlocalizedName())), x, y + offsetY, 0);
+                    + inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())), x, y + offsetY, 0);
             offsetY += 8;
         }
-        String outputTypeName = L10NHelpers.localize(operator.getOutputType().getUnlocalizedName());
+        String outputTypeName = L10NHelpers.localize(operator.getOutputType().getTranslationKey());
         gui.getFontRenderer().drawString(L10NHelpers.localize(L10NValues.GUI_OUTPUT,
                 operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, 0);
 
@@ -72,6 +75,7 @@ public class OperatorAppendix extends SectionAppendix {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected void postDrawElement(GuiInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
         GlStateManager.pushMatrix();
         if(mx >= x && my >= y && mx <= x + getWidth() && my <= y + gui.getFontRenderer().FONT_HEIGHT ) {

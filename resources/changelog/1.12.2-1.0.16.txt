@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.1.1 or higher.
+
+Fixes:
+* Fix performance issue when importing/exporting in IT
+  Closes CyclopsMC/IntegratedTunnels#170
+* Add type check when using combined operators with operators, Closes #749

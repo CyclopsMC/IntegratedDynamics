@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -12,7 +11,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
@@ -93,7 +91,10 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     }
 
     @SideOnly(Side.CLIENT)
-    protected static class SubGuiRenderPattern extends RenderPattern<ValueTypeItemStackLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+    protected static class SubGuiRenderPattern extends RenderPattern<ValueTypeItemStackLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase>
+            implements IRenderPatternValueTypeTooltip {
+
+        private boolean renderTooltip = true;
 
         public SubGuiRenderPattern(ValueTypeItemStackLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                    GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -103,15 +104,17 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
         @Override
         public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-            IValueType valueType = element.getValueType();
+            this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
+        }
 
-            // Output type tooltip
-            if(!container.hasWriteItemInSlot()) {
-                if(gui.isPointInRegion(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
-                        GuiLogicProgrammerBase.BOX_HEIGHT, GuiLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
-                    gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
-                }
-            }
+        @Override
+        public boolean isRenderTooltip() {
+            return this.renderTooltip;
+        }
+
+        @Override
+        public void setRenderTooltip(boolean renderTooltip) {
+            this.renderTooltip = renderTooltip;
         }
 
     }

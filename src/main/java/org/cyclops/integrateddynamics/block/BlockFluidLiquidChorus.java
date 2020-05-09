@@ -41,8 +41,8 @@ public class BlockFluidLiquidChorus extends ConfigurableBlockFluidClassic {
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-        super.onEntityCollidedWithBlock(worldIn, pos, state, entityIn);
+    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+        super.onEntityCollision(worldIn, pos, state, entityIn);
 
         // Simulate chorus-eating
         if (entityIn instanceof EntityLivingBase) {

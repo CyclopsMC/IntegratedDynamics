@@ -5,15 +5,16 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -72,7 +73,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public int getChannel() {
-        return hasPartState() ? part.getChannel(getPartState()) : IChanneledNetwork.DEFAULT_CHANNEL;
+        return hasPartState() ? part.getChannel(getPartState()) : IPositionedAddonsNetwork.DEFAULT_CHANNEL;
     }
 
     @Override
@@ -183,8 +184,10 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighborBlock) {
-        part.onBlockNeighborChange(network, NetworkHelpers.getPartNetwork(network), target, getPartState(), world, neighborBlock);
+    public void onNeighborBlockChange(@Nullable INetwork network, IBlockAccess world, Block neighbourBlock,
+                                      BlockPos neighbourBlockPos) {
+        part.onBlockNeighborChange(network, NetworkHelpers.getPartNetwork(network), target, getPartState(), world,
+                neighbourBlock, neighbourBlockPos);
     }
 
     @Override
@@ -206,15 +209,15 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public int compareTo(INetworkElement o) {
-        if(o instanceof IPartNetworkElement) {
+        if (o instanceof IPartNetworkElement) {
             IPartNetworkElement p = (IPartNetworkElement) o;
-            int compClass = this.getPart().getClass().getCanonicalName().compareTo(p.getPart().getClass().getCanonicalName());
+            int compClass = this.getPart().getName().compareTo(p.getPart().getName());
             if (compClass == 0) {
                 // If this or the other part is not loaded, we IGNORE the priority,
                 // because that depends on tile entity data, which requires loading the part/chunk.
                 int compPriority = !isLoaded() || !p.isLoaded() ? 0 : -Integer.compare(this.getPriority(), p.getPriority());
                 if (compPriority == 0) {
-                    int compPart = getPart().getUnlocalizedName().compareTo(p.getPart().getUnlocalizedName());
+                    int compPart = getPart().getTranslationKey().compareTo(p.getPart().getTranslationKey());
                     if (compPart == 0) {
                         int compPos = getCenterPos(getTarget()).compareTo(getCenterPos(p.getTarget()));
                         if (compPos == 0) {
@@ -230,7 +233,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
                 return compClass;
             }
         }
-        return this.getClass().getCanonicalName().compareTo(o.getClass().getCanonicalName());
+
+        return this.getClass().getName().compareTo(o.getClass().getName());
     }
 
     @Override

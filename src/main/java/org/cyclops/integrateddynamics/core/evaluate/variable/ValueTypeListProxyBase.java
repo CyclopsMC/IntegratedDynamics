@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
@@ -43,7 +44,7 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
                 sb.append(", ");
             }
             first = false;
-            sb.append(getValueType().toCompactString(value));
+            sb.append(value.getType().toCompactString(value));
             if(sb.toString().length() > 10) {
                 sb.append("...");
                 break;
@@ -67,11 +68,19 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
             return false;
         }
         ValueTypeListProxyBase<?, ?> other = (ValueTypeListProxyBase<?, ?>) obj;
-        if(!getName().equals(other.getName()) || !getValueType().equals(other.getValueType())) {
+        if(!ValueHelpers.correspondsTo(getValueType(), other.getValueType())) {
             return false;
         }
         // Avoid infinite iteration
         if (this.isInfinite() || other.isInfinite()) {
+            return false;
+        }
+        // Quickly return if the lengths differ.
+        try {
+            if (getLength() != other.getLength()) {
+                return false;
+            }
+        } catch (EvaluationException e) {
             return false;
         }
 

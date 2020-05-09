@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.1.1 or higher.
+
+Changes:
+* Reduce number of chunk-refreshing sendUpdate calls, CyclopsMC/CyclopsCore#40
+* Only send mechanical machine tile data to clients when gui is open
+  This significantly reduces lag when machines
+  are actively working in the background.
+  Closes #630

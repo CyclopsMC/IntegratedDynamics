@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.panel;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
@@ -23,6 +24,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -34,6 +36,7 @@ import org.cyclops.integrateddynamics.client.gui.GuiPartDisplay;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -119,7 +122,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         IValue newValue = null;
         if(state.hasVariable()) {
             try {
-                IVariable variable = state.getVariable(partNetwork);
+                IVariable variable = state.getVariable(network, partNetwork);
                 if(variable != null) {
                     newValue = variable.getValue();
 
@@ -154,8 +157,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getActiveVariable(IPartNetwork network, PartTarget target, S partState) {
-        return partState.getVariable(network);
+    public <V extends IValue> IVariable<V> getActiveVariable(INetwork network, IPartNetwork partNetwork, PartTarget target, S partState) {
+        return partState.getVariable(network, partNetwork);
     }
 
     protected void onValueChanged(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
@@ -165,6 +168,16 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         } else {
             IValue materializedValue = null;
             try {
+                if (newValue.getType() == ValueTypes.LIST) {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> original = ((ValueTypeList.ValueList) newValue).getRawValue();
+                    if (original.getLength() > ValueTypeList.MAX_RENDER_LINES) {
+                        List<IValue> list = Lists.newArrayList();
+                        for (int i = 0; i < ValueTypeList.MAX_RENDER_LINES; i++) {
+                            list.add(original.get(i));
+                        }
+                        newValue = ValueTypeList.ValueList.ofList(original.getValueType(), list);
+                    }
+                }
                 materializedValue = newValue.getType().materialize(newValue);
             } catch (EvaluationException e) {
                 state.addGlobalError(new L10NHelpers.UnlocalizedString(e.getLocalizedMessage()));
@@ -238,7 +251,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     lines.add(L10NHelpers.localize(
                             L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
                             valueType.getDisplayColorFormat() + valueType.toCompactString(value),
-                            L10NHelpers.localize(valueType.getUnlocalizedName())));
+                            L10NHelpers.localize(valueType.getTranslationKey())));
                 }
             } else {
                 lines.add(TextFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));
@@ -276,7 +289,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.writeToNBT(tag);
             IValue value = getDisplayValue();
             if(value != null) {
-                tag.setString("displayValueType", value.getType().getUnlocalizedName());;
+                tag.setString("displayValueType", value.getType().getTranslationKey());
                 tag.setString("displayValue", ValueHelpers.serializeRaw(value));
             }
             tag.setInteger("facingRotation", facingRotation.ordinal());
@@ -292,7 +305,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     String serializedValue = tag.getString("displayValue");
                     L10NHelpers.UnlocalizedString deserializationError = valueType.canDeserialize(serializedValue);
                     if(deserializationError == null) {
-                        setDisplayValue(valueType.deserialize(serializedValue));
+                        setDisplayValue(ValueHelpers.deserializeRaw(valueType, serializedValue));
                     } else {
                         IntegratedDynamics.clog(Level.ERROR, deserializationError.localize());
                     }

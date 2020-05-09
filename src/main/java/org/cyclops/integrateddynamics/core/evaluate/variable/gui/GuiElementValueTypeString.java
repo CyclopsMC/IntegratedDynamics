@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 
@@ -67,7 +68,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
 
     @Override
     public String getLocalizedNameFull() {
-        return L10NHelpers.localize(getValueType().getUnlocalizedName());
+        return L10NHelpers.localize(getValueType().getTranslationKey());
     }
 
     @Override
@@ -93,7 +94,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
     @Override
     public L10NHelpers.UnlocalizedString validate() {
         L10NHelpers.UnlocalizedString error = getValueType().canDeserialize(inputString);
-        if (error == null && !this.validator.test(getValueType().deserialize(inputString))) {
+        if (error == null && !this.validator.test(ValueHelpers.deserializeRaw(getValueType(), inputString))) {
             error = new L10NHelpers.UnlocalizedString(L10NValues.VALUE_ERROR);
         }
         return error;
@@ -106,7 +107,7 @@ public class GuiElementValueTypeString<G extends Gui, C extends Container> imple
 
     @Override
     public String getSymbol() {
-        return L10NHelpers.localize(getValueType().getUnlocalizedName());
+        return L10NHelpers.localize(getValueType().getTranslationKey());
     }
 
     @Override

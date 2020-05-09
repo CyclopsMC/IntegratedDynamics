@@ -4,7 +4,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableItem;
-import org.cyclops.cyclopscore.config.configurable.IConfigurable;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -38,8 +37,8 @@ public class ItemVariableTransformerConfig extends ItemConfig {
     protected ConfigurableItem initSubInstance() {
         return (ConfigurableItem) new ConfigurableItem(this) {
             @Override
-            public String getUnlocalizedName(ItemStack itemStack) {
-                return super.getUnlocalizedName(itemStack) + (itemStack.getMetadata() == 0 ? ".output" : ".input");
+            public String getTranslationKey(ItemStack itemStack) {
+                return super.getTranslationKey(itemStack) + (itemStack.getMetadata() == 0 ? ".output" : ".input");
             }
 
             @Override

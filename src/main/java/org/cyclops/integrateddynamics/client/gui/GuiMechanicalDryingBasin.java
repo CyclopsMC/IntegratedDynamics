@@ -25,23 +25,23 @@ public class GuiMechanicalDryingBasin extends GuiMechanicalMachine<ContainerMech
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
         // Render progress
-        GuiHelpers.renderProgressBar(this, getGuiLeft() + 84, getGuiTop() + 31, 11, 28,
+        GuiHelpers.renderProgressBar(this, getGuiLeftTotal() + 84, getGuiTopTotal() + 31, 11, 28,
                 176, 120, GuiHelpers.ProgressDirection.UP,
-                getContainer().getLastProgress(), getContainer().getLastMaxProgress());
+                getContainer().getProgress(), getContainer().getMaxProgress());
 
         // Render energy level
-        GuiHelpers.renderProgressBar(this, getGuiLeft() + 8, getGuiTop() + 16, 18, 60,
+        GuiHelpers.renderProgressBar(this, getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
                 176, 60, GuiHelpers.ProgressDirection.UP,
-                getContainer().getTile().getEnergyStored(), getContainer().getTile().getMaxEnergyStored());
+                getContainer().getEnergy(), getContainer().getMaxEnergy());
 
         // Render input fluid tank
-        GuiHelpers.renderOverlayedFluidTank(this, getContainer().getTile().getTankInput().getFluid(),
-                getContainer().getTile().getTankInput().getCapacity(), getGuiLeft() + 28, getGuiTop() + 16,
+        GuiHelpers.renderOverlayedFluidTank(this, getContainer().getInputFluidStack(),
+                getContainer().getInputFluidCapacity(), getGuiLeftTotal() + 28, getGuiTopTotal() + 16,
                 18, 60, texture, 176, 0);
 
         // Render output fluid tank
-        GuiHelpers.renderOverlayedFluidTank(this, getContainer().getTile().getTankOutput().getFluid(),
-                getContainer().getTile().getTankOutput().getCapacity(), getGuiLeft() + 150, getGuiTop() + 16,
+        GuiHelpers.renderOverlayedFluidTank(this, getContainer().getOutputFluidStack(),
+                getContainer().getOutputFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 16,
                 18, 60, texture, 176, 0);
     }
 
@@ -50,7 +50,7 @@ public class GuiMechanicalDryingBasin extends GuiMechanicalMachine<ContainerMech
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
         drawEnergyBarTooltip(8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getContainer().getTile().getTankInput(), 28, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getContainer().getTile().getTankOutput(), 150, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(getContainer().getInputFluidStack(), getContainer().getInputFluidCapacity(), 28, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(getContainer().getOutputFluidStack(), getContainer().getOutputFluidCapacity(), 150, 16, 18, 60, mouseX, mouseY);
     }
 }

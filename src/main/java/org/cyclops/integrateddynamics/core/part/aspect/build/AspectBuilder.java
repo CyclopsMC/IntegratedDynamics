@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -379,10 +380,10 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         }
 
         @Override
-        public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
-            this.beforeUpdateListeners.forEach(l -> l.onUpdate(network, partType, target, state));
-            super.update(network, partType, target, state);
-            this.afterUpdateListeners.forEach(l -> l.onUpdate(network, partType, target, state));
+        public <P extends IPartType<P, S>, S extends IPartState<P>> void update(INetwork network, IPartNetwork partNetwork, P partType, PartTarget target, S state) {
+            this.beforeUpdateListeners.forEach(l -> l.onUpdate(network, partNetwork, partType, target, state));
+            super.update(network, partNetwork, partType, target, state);
+            this.afterUpdateListeners.forEach(l -> l.onUpdate(network, partNetwork, partType, target, state));
         }
     }
 
@@ -446,10 +447,10 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
         }
 
         @Override
-        public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state) {
-            this.beforeUpdateListeners.forEach(l -> l.onUpdate(network, partType, target, state));
-            super.update(network, partType, target, state);
-            this.afterUpdateListeners.forEach(l -> l.onUpdate(network, partType, target, state));
+        public <P extends IPartType<P, S>, S extends IPartState<P>> void update(INetwork network, IPartNetwork partNetwork, P partType, PartTarget target, S state) {
+            this.beforeUpdateListeners.forEach(l -> l.onUpdate(network, partNetwork, partType, target, state));
+            super.update(network, partNetwork, partType, target, state);
+            this.afterUpdateListeners.forEach(l -> l.onUpdate(network, partNetwork, partType, target, state));
         }
     }
 

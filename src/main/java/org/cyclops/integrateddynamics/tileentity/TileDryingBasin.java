@@ -21,8 +21,10 @@ import org.cyclops.cyclopscore.recipe.custom.component.DurationRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.component.IngredientAndFluidStackRecipeComponent;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
 import org.cyclops.cyclopscore.tileentity.TankInventoryTileEntity;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
+import org.cyclops.integrateddynamics.core.recipe.custom.RecipeHandlerDryingBasin;
 
 /**
  * A part entity for drying stuff.
@@ -84,6 +86,24 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                                         FluidHelpers.getAmount(cacheKey.getRight()) == FluidHelpers.getAmount(newKey.getRight());
                     }
                 });
+
+        // Add recipe handler capability
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, new RecipeHandlerDryingBasin<>(BlockDryingBasin.getInstance()));
+    }
+
+    @Override
+    public boolean isSendUpdateOnInventoryChanged() {
+        return true;
+    }
+
+    @Override
+    protected boolean isUpdateInventoryHashOnTankContentsChanged() {
+        return true;
+    }
+
+    @Override
+    public boolean isSendUpdateOnTankChanged() {
+        return true;
     }
 
     protected IRecipeRegistry<BlockDryingBasin, IngredientAndFluidStackRecipeComponent,
@@ -124,14 +144,14 @@ public class TileDryingBasin extends TankInventoryTileEntity implements CyclopsT
                     progress = 0;
                 } else {
                     progress++;
-                    sendUpdate();
+                    markDirty();
                 }
                 fire = 0;
             } else {
                 if ((progress > 0) || (fire > 0)) {
                     progress = 0;
                     fire = 0;
-                    sendUpdate();
+                    markDirty();
                 }
             }
         } else if(progress > 0 && world.rand.nextInt(5) == 0) {

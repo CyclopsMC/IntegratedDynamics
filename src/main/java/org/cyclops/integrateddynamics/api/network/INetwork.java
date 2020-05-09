@@ -127,4 +127,9 @@ public interface INetwork extends IFullNetworkListener, INBTSerializable {
      */
     public boolean containsSidedPathElement(ISidedPathElement sidedPathElement);
 
+    /**
+     * @return All registered network listeners.
+     */
+    public IFullNetworkListener[] getFullNetworkListeners();
+
 }

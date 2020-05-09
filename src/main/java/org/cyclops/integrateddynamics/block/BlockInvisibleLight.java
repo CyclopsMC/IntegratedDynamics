@@ -57,7 +57,7 @@ public class BlockInvisibleLight extends ConfigurableBlock {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public BlockRenderLayer getBlockLayer() {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
@@ -85,7 +85,7 @@ public class BlockInvisibleLight extends ConfigurableBlock {
 
     @SuppressWarnings("deprecation")
     @Override
-    public EnumPushReaction getMobilityFlag(IBlockState blockState) {
+    public EnumPushReaction getPushReaction(IBlockState blockState) {
         return EnumPushReaction.NORMAL;
     }
 

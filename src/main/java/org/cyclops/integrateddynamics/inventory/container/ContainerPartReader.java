@@ -8,15 +8,12 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -26,6 +23,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
@@ -159,27 +157,15 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S> & IGuiContainer
         try {
             if (!MinecraftHelpers.isClientSide()) {
                 for (IAspectRead aspectRead : getUnfilteredItems()) {
-                    String readValue = "";
-                    int readValueColor = 0;
+                    Pair<String, Integer> readValue;
                     if(getPartState().isEnabled()) {
                         IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
-                        if (!NetworkHelpers.shouldWork()) {
-                            readValue = "SAFE-MODE";
-                        } else if (variable != null) {
-                            try {
-                                IValue value = variable.getValue();
-                                readValue = value.getType().toCompactString(value);
-                                readValueColor = variable.getType().getDisplayColor();
-                            } catch (EvaluationException | NullPointerException e) {
-                                readValue = "ERROR";
-                                readValueColor = Helpers.RGBToInt(255, 0, 0);
-                            }
-                        }
+                        readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        readValue = "NO POWER";
+                        readValue = Pair.of("NO POWER", 0);
                     }
 
-                    setReadValue(aspectRead, Pair.of(readValue, readValueColor));
+                    setReadValue(aspectRead, readValue);
                 }
             }
         } catch (PartStateException e) {

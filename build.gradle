@@ -18,13 +18,15 @@ buildscript {
 plugins {
     // For people who want stable
     //id "net.minecraftforge.gradle.forge" version "2.0.2"
-    id 'com.matthewprenger.cursegradle' version '1.0.9'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'com.github.kt3k.coveralls' version '2.8.2'
 }
 
 // For those who want the bleeding edge
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'com.jjtparadox.barometer' // Must be after the Forge plugin
+apply plugin: 'jacoco'
 
 loadProperties()
 
@@ -69,5 +71,12 @@ apply from: 'gradle/deploy.gradle'
 idea {
     module {
         sourceDirs += file('src/api/java')
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
     }
 }

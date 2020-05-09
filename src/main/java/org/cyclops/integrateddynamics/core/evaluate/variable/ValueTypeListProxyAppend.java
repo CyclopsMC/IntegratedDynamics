@@ -48,7 +48,7 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
 
         @Override
         protected void serializeNbt(ValueTypeListProxyAppend<IValueType<IValue>, IValue> value, NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.setString("valueType", value.value.getType().getUnlocalizedName());
+            tag.setString("valueType", value.value.getType().getTranslationKey());
             tag.setString("value", ValueHelpers.serializeRaw(value.value));
             tag.setString("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
         }
@@ -56,7 +56,7 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
         @Override
         protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(NBTTagCompound tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             IValueType valueType = ValueTypes.REGISTRY.getValueType(tag.getString("valueType"));
-            IValue value = valueType.deserialize(tag.getString("value"));
+            IValue value = ValueHelpers.deserializeRaw(valueType, tag.getString("value"));
             IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.getString("sublist"));
             return new ValueTypeListProxyAppend<>(list, value);
         }

@@ -1,0 +1,12 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.0.0 or higher.
+
+Additions:
+* Allow copying variables to multiple cards
+  This also fixes a duplication exploit when having multiple empty cards.
+
+Fixes:
+* Fix getChannelIndex illegally returning null in some cases
+* Fix "recipe by input" operator incorrectly having a list output type
+* Properly handle chunk (un)loading in variable caches, CyclopsMC/IntegratedTunnels#148, Closes #683
+* Fix crash when not all positions are loaded in getMaxQuantity, Closes CyclopsMC/IntegratedTunnels#148

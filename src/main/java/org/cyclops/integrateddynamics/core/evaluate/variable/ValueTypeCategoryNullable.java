@@ -15,11 +15,16 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 public class ValueTypeCategoryNullable extends ValueTypeCategoryBase<IValue> {
 
     public ValueTypeCategoryNullable() {
-        super("nullable", Helpers.RGBToInt(100, 100, 100), TextFormatting.DARK_GRAY.toString());
+        super("nullable", Helpers.RGBToInt(100, 100, 100), TextFormatting.DARK_GRAY.toString(), IValue.class);
     }
 
     public boolean isNull(IVariable a) throws EvaluationException {
-        return ((IValueTypeNullable) a.getType()).isNull(a.getValue());
+        try {
+            return ((IValueTypeNullable) a.getType()).isNull(a.getValue());
+        } catch (ClassCastException e) {
+            // This can happen with 'any' types.
+            return false;
+        }
     }
 
     @Override

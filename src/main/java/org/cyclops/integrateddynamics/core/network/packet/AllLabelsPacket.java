@@ -38,8 +38,10 @@ public class AllLabelsPacket extends PacketCodec {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void actionClient(World world, EntityPlayer player) {
-        for(Map.Entry<Integer, String> entry : labels.entrySet()) {
-            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).putUnsafe(entry.getKey(), entry.getValue());
+        if (labels != null) {
+            for (Map.Entry<Integer, String> entry : labels.entrySet()) {
+                LabelsWorldStorage.getInstance(IntegratedDynamics._instance).putUnsafe(entry.getKey(), entry.getValue());
+            }
         }
 	}
 

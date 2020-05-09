@@ -182,19 +182,20 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        INetwork network = getNetwork();
         IPartNetwork partNetwork = getPartNetwork();
         DimPos pos = getPosition();
         if(facing == null) {
             for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
                 IPartState partState = entry.getValue().getState();
-                if(partState != null && partState.hasCapability(capability, partNetwork, PartTarget.fromCenter(pos, entry.getKey()))) {
+                if(partState != null && partState.hasCapability(capability, network, partNetwork, PartTarget.fromCenter(pos, entry.getKey()))) {
                     return true;
                 }
             }
         } else {
             if(hasPart(facing)) {
                 IPartState partState = getPartState(facing);
-                if (partState != null && partState.hasCapability(capability, partNetwork, PartTarget.fromCenter(pos, facing))) {
+                if (partState != null && partState.hasCapability(capability, network, partNetwork, PartTarget.fromCenter(pos, facing))) {
                     return true;
                 }
             }
@@ -204,22 +205,23 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        INetwork network = getNetwork();
         IPartNetwork partNetwork = getPartNetwork();
         DimPos pos = getPosition();
         if(facing == null) {
             for (Map.Entry<EnumFacing, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
                 IPartState partState = entry.getValue().getState();
                 PartTarget target = PartTarget.fromCenter(pos, entry.getKey());
-                if(partState != null && partState.hasCapability(capability, partNetwork, target)) {
-                    return (T) partState.getCapability(capability, partNetwork, target);
+                if(partState != null && partState.hasCapability(capability, network, partNetwork, target)) {
+                    return (T) partState.getCapability(capability, network, partNetwork, target);
                 }
             }
         } else {
             if(hasPart(facing)) {
                 IPartState partState = getPartState(facing);
                 PartTarget partTarget = PartTarget.fromCenter(pos, facing);
-                if (partState != null && partState.hasCapability(capability, partNetwork, partTarget)) {
-                    return (T) partState.getCapability(capability, partNetwork, partTarget);
+                if (partState != null && partState.hasCapability(capability, network, partNetwork, partTarget)) {
+                    return (T) partState.getCapability(capability, network, partNetwork, partTarget);
                 }
             }
         }

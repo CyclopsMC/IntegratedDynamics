@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.api.part.aspect;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -10,6 +11,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +27,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
     /**
      * @return The unique unlocalized name for this aspect.
      */
-    public String getUnlocalizedName();
+    public String getTranslationKey();
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
@@ -44,11 +46,12 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * @param <P> The part type type.
      * @param <S> The part state.
      * @param network The network to update in.
+     * @param partNetwork The part network to update in.
      * @param partType The part type.
      * @param target The position that is targeted by the given part.
      * @param state The current state of the given part.
      */
-    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(IPartNetwork network, P partType, PartTarget target, S state);
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void update(INetwork network, IPartNetwork partNetwork, P partType, PartTarget target, S state);
 
     /**
      * @return If this aspect supports additional properties.
@@ -83,6 +86,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
     /**
      * @return The default properties for this aspect.
      */
+    @Nullable
     public IAspectProperties getDefaultProperties();
 
     /**
@@ -117,7 +121,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
         @Override
         public int compare(IAspect o1, IAspect o2) {
-            return o1.getUnlocalizedName().compareTo(o2.getUnlocalizedName());
+            return o1.getTranslationKey().compareTo(o2.getTranslationKey());
         }
     }
 

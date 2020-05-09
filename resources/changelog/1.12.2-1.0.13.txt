@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.1.1 or higher.
+
+Changes:
+* Make mod compat operator names more consistent
+  Related to CyclopsMC/IntegratedDynamics#591
+* Improve text alignment inside Logic Programmer, Closes #591

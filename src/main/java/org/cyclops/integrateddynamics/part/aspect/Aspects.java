@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.LocationHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -46,11 +47,20 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperator;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerInputs;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerOutput;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipeByInput;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipeByOutput;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipesByInput;
+import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipesByOutput;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
+import org.cyclops.integrateddynamics.network.packet.SpeakTextPacket;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
@@ -135,6 +145,15 @@ public class Aspects {
                         }
                         return null;
                     }).handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
+            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_BIOME =
+                    AspectReadBuilders.Block.BUILDER_STRING
+                            .handle(
+                                    dimPos -> dimPos.getWorld().getBiome(dimPos.getBlockPos()).getRegistryName().toString()
+                            ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
+                            .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHT =
+                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(dimPos -> dimPos.getWorld().getLight(dimPos.getBlockPos(), false))
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER, "light").buildRead();
         }
 
         public static final class Entity {
@@ -446,6 +465,69 @@ public class Aspects {
                         temperature -> temperature != null ? temperature.getDefaultTemperature() : 0
                     ).handle(AspectReadBuilders.PROP_GET_DOUBLE, "defaulttemperature").buildRead();
 
+            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISRECIPEHANDLER =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_BOOLEAN
+                            .handle(Objects::nonNull)
+                            .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").buildRead();
+            public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_GETRECIPES =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_LIST.handle(
+                            input -> ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedRecipes(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()))).appendKind("recipes").buildRead();
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEOUTPUT =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
+                            input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorRecipeHandlerOutput<>(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                            ))).appendKind("recipeoutputbyinput").buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorRecipeHandlerOutput.class, "positionedRecipeHandlerOutput"));
+            }
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEINPUTS =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(input ->
+                            ValueTypeOperator.ValueOperator.of(new PositionedOperatorRecipeHandlerInputs<>(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                            ))).appendKind("recipeinputsbyoutput").buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorRecipeHandlerInputs.class, "positionedRecipeHandlerInputs"));
+            }
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPESBYINPUT =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
+                            input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorRecipeHandlerRecipesByInput<>(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                            ))).appendKind("recipesbyinput").buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorRecipeHandlerRecipesByInput.class, "positionedRecipeHandlerRecipesByInput"));
+            }
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPESBYOUTPUT =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
+                            input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorRecipeHandlerRecipesByOutput<>(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                            ))).appendKind("recipesbyoutput").buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorRecipeHandlerRecipesByOutput.class, "positionedRecipeHandlerRecipesByOutput"));
+            }
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYINPUT =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
+                            input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorRecipeHandlerRecipeByInput<>(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                            ))).appendKind("recipebyinput").buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorRecipeHandlerRecipeByInput.class, "positionedRecipeHandlerRecipeByInput"));
+            }
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYOUTPUT =
+                    AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
+                            input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorRecipeHandlerRecipeByOutput<>(
+                                    input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
+                            ))).appendKind("recipebyoutput").buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorRecipeHandlerRecipeByOutput.class, "positionedRecipeHandlerRecipeByOutput"));
+            }
+
             public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IEnergyStorage>
                     PROP_GET = input -> EnergyHelpers.getEnergyStorage(input.getLeft().getTarget());
 
@@ -701,6 +783,21 @@ public class Aspects {
                                 }
                                 return null;
                             }, "sound").buildWrite();
+
+            public static final IAspectWrite<ValueTypeString.ValueString, ValueTypeString> STRING_TEXT =
+                    AspectWriteBuilders.Audio.BUILDER_STRING.withProperties(AspectWriteBuilders.Audio.PROPERTIES_TEXT)
+                            .handle(input -> {
+                                IAspectProperties properties = input.getMiddle();
+                                World world = input.getLeft().getTarget().getPos().getWorld();
+                                BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
+                                if(!StringUtils.isNullOrEmpty(input.getRight())) {
+                                    int range = properties.getValue(AspectWriteBuilders.Audio.PROP_RANGE).getRawValue();
+                                    IntegratedDynamics._instance.getPacketHandler().sendToAllAround(
+                                            new SpeakTextPacket(input.getRight()),
+                                            LocationHelpers.createTargetPointFromLocation(world, pos, range));
+                                }
+                                return null;
+                            }, "text").buildWrite();
 
         }
 

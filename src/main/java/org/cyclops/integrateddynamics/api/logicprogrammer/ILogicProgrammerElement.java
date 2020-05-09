@@ -2,10 +2,14 @@ package org.cyclops.integrateddynamics.api.logicprogrammer;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -43,6 +47,31 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      * @return If it matches
      */
     public boolean matchesOutput(IValueType<?> valueType);
+
+    /**
+     * Create a temporary input slot for this element.
+     * The number of slots depends on the provided render pattern
+     * return by {@link #getRenderPattern()}.
+     * @param temporaryInputSlots The inventory behind this slot.
+     * @param slotId The slot id.
+     * @param x The X position for this slot.
+     * @param y The Y position for this slot.
+     * @return The created slot.
+     */
+    default Slot createSlot(IInventory temporaryInputSlots, int slotId, int x, int y) {
+        return createSlotDefault(this, temporaryInputSlots, slotId, x, y);
+    }
+
+    public static Slot createSlotDefault(ILogicProgrammerElement logicProgrammerElement, IInventory temporaryInputSlots, int slotId, int x, int y) {
+        SlotExtended slot = new SlotExtended(temporaryInputSlots, slotId, x, y) {
+            @Override
+            public boolean isItemValid(ItemStack itemStack) {
+                return logicProgrammerElement.isItemValidForSlot(slotId, itemStack);
+            }
+        };
+        slot.setPhantom(true);
+        return slot;
+    }
 
     /**
      * Called when an input item slot has been updated.
@@ -86,6 +115,22 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack);
 
     /**
+     * Called when a player clicks on a slot.
+     * @param slotId The slot id.
+     * @param slot The slot.
+     * @param mouseButton The mouse buttong id.
+     * @param clickType The click type.
+     * @param player The clicking player.
+     * @return If further processing of the clicking should stop.
+     */
+    boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player);
+
+    /**
+     * @return The max stacksize.
+     */
+    public int getItemStackSizeLimit();
+
+    /**
      * @param subGui The corresponding sub gui of this element.
      * @return If this element has the active focus. For typing and things like that.
      */
@@ -99,5 +144,4 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Gui, C 
      */
     @SideOnly(Side.CLIENT)
     public void setFocused(S subGui, boolean focused);
-
 }

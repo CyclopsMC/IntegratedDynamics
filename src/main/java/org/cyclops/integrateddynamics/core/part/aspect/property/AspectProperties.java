@@ -69,8 +69,8 @@ public class AspectProperties implements IAspectProperties {
         NBTTagList map = new NBTTagList();
         for(Map.Entry<IAspectPropertyTypeInstance, IValue> entry : values.entrySet()) {
             NBTTagCompound nbtEntry = new NBTTagCompound();
-            nbtEntry.setString("key", entry.getKey().getType().getUnlocalizedName());
-            nbtEntry.setString("label", entry.getKey().getUnlocalizedName());
+            nbtEntry.setString("key", entry.getKey().getType().getTranslationKey());
+            nbtEntry.setString("label", entry.getKey().getTranslationKey());
             nbtEntry.setString("value", ValueHelpers.serializeRaw(entry.getValue()));
             map.appendTag(nbtEntry);
         }
@@ -89,7 +89,7 @@ public class AspectProperties implements IAspectProperties {
             if(type == null) {
                 IntegratedDynamics.clog(Level.ERROR, String.format("Could not find value type with name %s, skipping loading.", valueTypeName));
             } else {
-                IValue value = type.deserialize(nbtEntry.getString("value"));
+                IValue value = ValueHelpers.deserializeRaw(type, nbtEntry.getString("value"));
                 String label = nbtEntry.getString("label");
                 if(value == null) {
                     IntegratedDynamics.clog(Level.ERROR, String.format("The value type %s could not load its value, using default.", valueTypeName));

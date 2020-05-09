@@ -145,8 +145,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             }
 
             @Override
-            public String getFullUnlocalizedName() {
-                return PartTypeBase.this.getUnlocalizedName();
+            public String getFullTranslationKey() {
+                return PartTypeBase.this.getTranslationKey();
             }
 
             @Override
@@ -169,7 +169,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public String getUnlocalizedNameBase() {
+    public String getTranslationKeyBase() {
         return "parttype.parttypes." + getMod().getModId() + "." + getName();
     }
 

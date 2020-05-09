@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.tileentity;
 
 import lombok.Getter;
 import lombok.experimental.Delegate;
+import net.minecraft.nbt.NBTTagCompound;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
@@ -59,6 +60,12 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound tag) {
+        super.readFromNBT(tag);
+        connected.clear();
+    }
+
+    @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
         if (connected.isEmpty()) {
@@ -84,7 +91,7 @@ public class TileCableConnectableInventory extends InventoryTileEntity implement
     public void onChunkUnload() {
         super.onChunkUnload();
         if (getWorld() != null && !getWorld().isRemote) {
-            NetworkHelpers.invalidateNetworkElements(getWorld(), getPos());
+            NetworkHelpers.invalidateNetworkElements(getWorld(), getPos(), this);
         }
     }
 }

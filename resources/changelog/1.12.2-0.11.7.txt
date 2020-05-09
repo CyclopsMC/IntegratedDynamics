@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.5 or higher.
+
+Fixes:
+* Fix round robin iteration not working after working on some elements, Closes CyclopsMC/IntegratedTunnels#119
+* Fix JEI integration failing for LP item variables, Closes CyclopsMC/IntegratedDynamics#561
+* Fix nether quartz squeezer recipes not always being available

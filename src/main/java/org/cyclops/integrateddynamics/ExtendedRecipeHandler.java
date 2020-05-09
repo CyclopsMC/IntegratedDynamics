@@ -3,11 +3,15 @@ package org.cyclops.integrateddynamics;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.RecipeSorter;
-import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.helper.CraftingHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.init.RecipeHandler;
-import org.cyclops.integrateddynamics.block.*;
+import org.cyclops.integrateddynamics.block.BlockDelay;
+import org.cyclops.integrateddynamics.block.BlockDelayConfig;
+import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
+import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
+import org.cyclops.integrateddynamics.block.BlockProxy;
+import org.cyclops.integrateddynamics.block.BlockProxyConfig;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
@@ -47,12 +51,12 @@ public class ExtendedRecipeHandler extends RecipeHandler {
         super.registerCustomRecipes();
 
         // Facade recipes
-        if(ConfigHandler.isEnabled(ItemFacadeConfig.class)) {
+        if(Configs.isEnabled(ItemFacadeConfig.class)) {
             CraftingHelpers.registerRecipe(new ResourceLocation(getMod().getModId(), "facade_0"), new ItemFacadeRecipe());
         }
 
         // Variable copy and clear recipes
-        if(ConfigHandler.isEnabled(ItemVariableConfig.class)) {
+        if(Configs.isEnabled(ItemVariableConfig.class)) {
             CraftingHelpers.registerRecipe(new ResourceLocation(getMod().getModId(), "variable_copy"),
                     new ItemVariableCopyRecipe());
             CraftingHelpers.registerRecipe(new ResourceLocation(getMod().getModId(), "variable_clear"),
@@ -64,19 +68,19 @@ public class ExtendedRecipeHandler extends RecipeHandler {
                 new ItemNbtClearRecipe(ItemPart.class, PartTypes.REDSTONE_READER.getItem()));
 
         // Proxy clear
-        if(ConfigHandler.isEnabled(BlockProxyConfig.class)) {
+        if(Configs.isEnabled(BlockProxyConfig.class)) {
             CraftingHelpers.registerRecipe(new ResourceLocation(getMod().getModId(), "proxy_clear"),
                     new ItemNbtClearRecipe(Item.getItemFromBlock(BlockProxy.getInstance())));
         }
 
         // Delay clear
-        if(ConfigHandler.isEnabled(BlockDelayConfig.class)) {
+        if(Configs.isEnabled(BlockDelayConfig.class)) {
             CraftingHelpers.registerRecipe(new ResourceLocation(getMod().getModId(), "delay_clear"),
                     new ItemNbtClearRecipe(Item.getItemFromBlock(BlockDelay.getInstance())));
         }
 
         // Energy battery upgrades
-        if(ConfigHandler.isEnabled(BlockEnergyBatteryConfig.class)) {
+        if(Configs.isEnabled(BlockEnergyBatteryConfig.class)) {
             for(int i = 1; i < 9; i++) {
                 ItemBlockEnergyContainer tankItem = (ItemBlockEnergyContainer) Item.getItemFromBlock(BlockEnergyBattery.getInstance());
                 CraftingHelpers.registerRecipe(new ResourceLocation(getMod().getModId(), "combine_battery_" + i),

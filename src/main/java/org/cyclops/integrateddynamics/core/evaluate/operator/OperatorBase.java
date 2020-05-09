@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -11,6 +12,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,19 +27,21 @@ public abstract class OperatorBase implements IOperator {
     private final IValueType[] inputTypes;
     private final IValueType outputType;
     private final IFunction function;
+    @Nullable
     private final IConfigRenderPattern renderPattern;
 
-    private String unlocalizedName = null;
+    private String translationKey = null;
+    private int recursiveInvocations;
 
     protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
-                           IFunction function, IConfigRenderPattern renderPattern) {
+                           IFunction function, @Nullable IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
         this.operatorName = operatorName;
         this.inputTypes = inputTypes;
         this.outputType = outputType;
         this.function = function;
         this.renderPattern = renderPattern;
-        if(renderPattern.getSlotPositions().length != inputTypes.length) {
+        if(renderPattern != null && renderPattern.getSlotPositions().length != inputTypes.length) {
             throw new IllegalArgumentException(String.format("The given config render pattern with %s slots is not " +
                     "compatible with the number of input types %s for %s",
                     renderPattern.getSlotPositions().length, inputTypes.length, symbol));
@@ -58,12 +62,12 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public String getUniqueName() {
-        return getUnlocalizedName();
+        return getTranslationKey();
     }
 
     @Override
-    public String getUnlocalizedName() {
-        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedPrefix() + ".name");
+    public String getTranslationKey() {
+        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix() + ".name");
     }
 
     @Override
@@ -73,7 +77,7 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public String getLocalizedNameFull() {
-        return L10NHelpers.localize(getUnlocalizedCategoryPrefix() + ".basename", L10NHelpers.localize(getUnlocalizedName()));
+        return L10NHelpers.localize(getUnlocalizedCategoryPrefix() + ".basename", L10NHelpers.localize(getTranslationKey()));
     }
 
     protected String getUnlocalizedPrefix() {
@@ -95,16 +99,16 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
-        String operatorName = L10NHelpers.localize(getUnlocalizedName());
+        String operatorName = L10NHelpers.localize(getTranslationKey());
         String categoryName = L10NHelpers.localize(getUnlocalizedCategoryName());
         String symbol = getSymbol();
-        String outputTypeName = L10NHelpers.localize(getOutputType().getUnlocalizedName());
+        String outputTypeName = L10NHelpers.localize(getOutputType().getTranslationKey());
         lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
         lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
             lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME,
-                    i + 1, inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getUnlocalizedName())));
+                    i + 1, inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())));
         }
         lines.add(L10NHelpers.localize(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
@@ -129,11 +133,21 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public IValue evaluate(IVariable... input) throws EvaluationException {
+        if (this.recursiveInvocations++ > GeneralConfig.operatorRecursionLimit) {
+            this.recursiveInvocations = 0;
+            throw new EvaluationException(new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_RECURSIONLIMIT,
+                    GeneralConfig.operatorRecursionLimit,
+                    new L10NHelpers.UnlocalizedString(this.getTranslationKey())
+            ).localize());
+        }
         L10NHelpers.UnlocalizedString error = validateTypes(ValueHelpers.from(input));
         if(error != null) {
+            this.recursiveInvocations--;
             throw new EvaluationException(error.localize());
         }
-        return function.evaluate(new SafeVariablesGetter(input));
+        IValue res = function.evaluate(new SafeVariablesGetter(input));
+        this.recursiveInvocations--;
+        return res;
     }
 
     @Override
@@ -157,8 +171,8 @@ public abstract class OperatorBase implements IOperator {
             }
             if(!ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                        Integer.toString(i + 1), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
+                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
+                        Integer.toString(i + 1), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getTranslationKey()));
             }
         }
         return null;
@@ -174,6 +188,7 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
+    @Nullable
     public IConfigRenderPattern getRenderPattern() {
         return renderPattern;
     }
@@ -191,8 +206,17 @@ public abstract class OperatorBase implements IOperator {
             this.variables = variables;
         }
 
+        @Deprecated // TODO: remove generic type param in 1.15
         public <V extends IValue> V getValue(int i) throws EvaluationException {
-            return (V) variables[i].getValue();
+            try {
+                return (V) variables[i].getValue();
+            } catch (ClassCastException e) {
+                throw new EvaluationException(e.getMessage());
+            }
+        }
+
+        public <V extends IValue> V getValue(int i, IValueType<V> valueType) throws EvaluationException {
+            return valueType.cast(variables[i].getValue());
         }
 
         public IVariable[] getVariables() {

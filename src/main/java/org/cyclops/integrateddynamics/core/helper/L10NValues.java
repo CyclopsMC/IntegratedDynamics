@@ -79,14 +79,21 @@ public class L10NValues {
     public static final String OPERATOR_TOOLTIP_VARIABLEIDS = "operator." + NS + ".tooltip.variable_ids";
     public static final String OPERATOR_ERROR_VARIABLENOTINNETWORK = "operator." + NS + ".error.variable_not_in_network";
     public static final String OPERATOR_ERROR_CYCLICREFERENCE = "operator." + NS + ".error.cyclic_reference";
+    // 0: operator, 1: given-length, 2: actual-length
     public static final String OPERATOR_ERROR_WRONGINPUTLENGTH = "operator." + NS + ".error.wrong_input_length";
     public static final String OPERATOR_ERROR_NULLTYPE = "operator." + NS + ".error.null_type";
     // 0: operator, 1: given-input, 2: position, 3: expected-input
     public static final String OPERATOR_ERROR_WRONGTYPE = "operator." + NS + ".error.wrong_type";
     public static final String OPERATOR_ERROR_WRONGCURRYINGTYPE = "operator." + NS + ".error.wrong_currying_type";
+    // 0: operator, 1: operator-inputs, 2: actual-inputs, 3: operator-output
+    public static final String OPERATOR_ERROR_CURRYINGOVERFLOW = "operator." + NS + ".error.currying_overflow";
     // 0: operator, 1: given-output, 2: expected-output
     public static final String OPERATOR_ERROR_WRONGPREDICATE = "operator." + NS + ".error.wrong_predicate";
     // 0: expected-output, 1:given-output, 2:given-operator
     public static final String OPERATOR_ERROR_ILLEGALPROPERY = "operator." + NS + ".error.illegal_property";
+    // 0: operator, 1: inner-operator, 2: given-length, 3: actual-length
+    public static final String OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL = "operator." + NS + ".error.wrong_input_length_virtual";
+    // 0: limit, 1: operator
+    public static final String OPERATOR_ERROR_RECURSIONLIMIT = "operator." + NS + ".error.operator_recursion_limit";
 
 }

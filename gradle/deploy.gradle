@@ -1,7 +1,7 @@
 apply plugin: 'maven'
 
 curseforge {
-    if(project.hasProperty("curseforge_key") && project.hasProperty("changelog")) {
+    if(project.hasProperty("curseforge_key")) {
         apiKey = project.curseforge_key
     } else if(System.getenv().TRAVIS && System.getenv().CURSEFORGE_KEY_SECRET) {
         apiKey = System.getenv().CURSEFORGE_KEY_SECRET
@@ -14,8 +14,8 @@ curseforge {
         releaseType = project.config.release_type
         mainArtifact(jar) {
             relations {
-                requiredLibrary 'cyclops-core'
-                requiredLibrary 'common-capabilities'
+                requiredDependency 'cyclops-core'
+                requiredDependency 'common-capabilities'
             }
         }
 

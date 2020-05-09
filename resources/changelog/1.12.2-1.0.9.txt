@@ -1,0 +1,12 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.1.0 or higher.
+
+Changes:
+* Update to Forge 14.23.5.2768 and MCP snapshot_20180814
+* Use cheaper method for checking if a config is enabled, CyclopsMC/CyclopsCore#116
+
+Fixes:
+* Fix variable store causing chunks to be always loaded, Closes #705
+* Fix wilcard chan interaction breaking after interface channel is changed
+* Fix storage interactions not causing an immediate sync, Closes CyclopsMC/IntegratedTerminals#25
+

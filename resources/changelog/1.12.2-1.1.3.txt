@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.6.0 or higher.
+
+Fixes:
+* Fix stackoverflow when calculating slots in self-referencing networks, Closes CyclopsMC/IntegratedTunnels#177
+* Fix some type checks being too strict for ANY values, Related to CyclopsMC/IntegratedTunnels#181
+* Fix monodirectionals breaking after removing with wrench and replacing, Closes #820
+* Make value casting within operators more type-safe, Closes #830
+  The old casting method never actually worked properly,
+  which caused problems with complex invalid operator values.
+* Fix incorrect white tulip recipe for mechanical squeezer, Closes #827
+* Fix batteries losing energy between saves, Closes #823
+* Fix incorrect position for replaceable check during cable placement, Closes #818
+  This resulted in a crash when placing cables on snow.

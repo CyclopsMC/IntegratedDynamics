@@ -93,7 +93,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         super.update(network, partNetwork, target, state);
         IAspect aspect = getActiveAspect(target, state);
         if (aspect != null) {
-            aspect.update(partNetwork, this, target, state);
+            aspect.update(network, partNetwork, this, target, state);
         }
     }
 
@@ -136,8 +136,8 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getActiveVariable(IPartNetwork network, PartTarget target, S partState) {
-        return partState.getVariable(network);
+    public <V extends IValue> IVariable<V> getActiveVariable(INetwork network, IPartNetwork partNetwork, PartTarget target, S partState) {
+        return partState.getVariable(network, partNetwork);
     }
 
     @Override
@@ -158,11 +158,14 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         IAspectWrite aspect = activeIndex == -1 ? null : getWriteAspects().get(activeIndex);
         partState.triggerAspectInfoUpdate((P) this, target, aspect);
 
+        INetwork network = NetworkHelpers.getNetwork(target.getCenter());
         if (aspect != null) {
-            INetwork network = NetworkHelpers.getNetwork(target.getCenter().getPos().getWorld(), target.getCenter().getPos().getBlockPos(), target.getCenter().getSide());
             IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network);
             MinecraftForge.EVENT_BUS.post(new PartWriterAspectEvent<>(network, partNetwork, target, (P) this, partState, player,
                     aspect, partState.getInventory().getStackInSlot(activeIndex)));
+        }
+        if (network != null) {
+            network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }
     }
 
@@ -204,9 +207,9 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
             if (state.hasVariable() && state.isEnabled()) {
                 lines.add(L10NHelpers.localize(
                         L10NValues.PART_TOOLTIP_WRITER_ACTIVEASPECT,
-                        L10NHelpers.localize(aspectWrite.getUnlocalizedName()),
+                        L10NHelpers.localize(aspectWrite.getTranslationKey()),
                         aspectWrite.getValueType().getDisplayColorFormat()
-                                + L10NHelpers.localize(aspectWrite.getValueType().getUnlocalizedName())
+                                + L10NHelpers.localize(aspectWrite.getValueType().getTranslationKey())
                                 + TextFormatting.RESET));
             } else {
                 lines.add(TextFormatting.RED + L10NHelpers.localize(L10NValues.PART_TOOLTIP_ERRORS));

@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotFurnaceFuel;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.cyclops.cyclopscore.inventory.container.TileInventoryContainerConfigurable;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
+
+import java.util.function.Supplier;
 
 /**
  * Container for the coal generator.
@@ -16,7 +15,7 @@ import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
  */
 public class ContainerCoalGenerator extends TileInventoryContainerConfigurable<TileCoalGenerator> {
 
-    private int lastProgress;
+    private final Supplier<Integer> variableProgress;
 
     /**
      * Make a new instance.
@@ -25,6 +24,9 @@ public class ContainerCoalGenerator extends TileInventoryContainerConfigurable<T
      */
     public ContainerCoalGenerator(InventoryPlayer inventory, TileCoalGenerator tile) {
         super(inventory, tile);
+
+        this.variableProgress = registerSyncedVariable(Integer.class, () -> getTile().getProgress());
+
         addInventory(tile, 0, offsetX + 80, offsetY + 11, 1, 1);
         addPlayerInventory(inventory, offsetX + 8, offsetY + 46);
     }
@@ -37,27 +39,8 @@ public class ContainerCoalGenerator extends TileInventoryContainerConfigurable<T
         return new SlotFurnaceFuel(inventory, index, row, column);
     }
 
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        for (int i = 0; i < this.listeners.size(); ++i) {
-            IContainerListener crafting = this.listeners.get(i);
-            if(lastProgress != getTile().getProgress()) {
-                crafting.sendWindowProperty(this, 0, getTile().getProgress());
-            }
-        }
-        this.lastProgress = getTile().getProgress();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int id, int data) {
-        if(id == 0) {
-            this.lastProgress = data;
-        }
-    }
-
-    public int getLastProgress() {
-        return this.lastProgress;
+    public int getProgress() {
+        return this.variableProgress.get();
     }
 
 }

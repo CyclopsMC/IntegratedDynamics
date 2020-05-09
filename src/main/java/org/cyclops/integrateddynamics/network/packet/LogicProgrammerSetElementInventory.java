@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeIngredientsLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeListLPElement;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
@@ -34,7 +35,7 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
     }
 
     public LogicProgrammerSetElementInventory(IValueType listValueType, int baseX, int baseY) {
-    	this.listValueType = listValueType.getUnlocalizedName();
+    	this.listValueType = listValueType.getTranslationKey();
 		this.baseX = baseX;
 		this.baseY = baseY;
     }
@@ -55,7 +56,7 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
 		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
 			ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.openContainer;
 			ILogicProgrammerElement element = container.getActiveElement();
-			if (element instanceof ValueTypeListLPElement) {
+			if (element instanceof ValueTypeListLPElement || element instanceof ValueTypeIngredientsLPElement) {
 				IValueType valueType = ValueTypes.REGISTRY.getValueType(this.listValueType);
 				if (valueType != null) {
 					((ContainerLogicProgrammerBase) player.openContainer).setElementInventory(

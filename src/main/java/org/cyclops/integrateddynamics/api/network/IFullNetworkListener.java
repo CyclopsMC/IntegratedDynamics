@@ -83,4 +83,18 @@ public interface IFullNetworkListener {
      */
     public void onSkipUpdate(INetworkElement element);
 
+    /**
+     * Invalidate the given element.
+     * Called when the element's chunk is being unloaded.
+     * @param element The network element to invalidate.
+     */
+    public void invalidateElement(INetworkElement element);
+
+    /**
+     * Revalidate the given element.
+     * Called when the element's chunk is being reloaded.
+     * @param element The network element to invalidate.
+     */
+    public void revalidateElement(INetworkElement element);
+
 }

@@ -1,113 +1,158 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
+import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartPosIteratorHandler;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A network that can hold prioritized positions.
  * @author rubensworks
  */
-public class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
+public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
 
     @Getter
     @Setter
     private INetwork network;
-    private final TIntObjectMap<Set<PrioritizedPartPos>> positions = new TIntObjectHashMap<>();
+    private final Set<PrioritizedPartPos> allPositions = Sets.newTreeSet();
+    private final Int2ObjectMap<Set<PrioritizedPartPos>> positions = new Int2ObjectOpenHashMap<>();
+    private final Map<PartPos, Integer> positionChannels = Maps.newHashMap();
     private final Set<PartPos> disabledPositions = Sets.newHashSet();
 
-    private final TIntObjectMap<PositionsIterator> positionsIterators = new TIntObjectHashMap<>();
-    private final List<PositionsIterator> createdIterators = Lists.newLinkedList();
+    private IPartPosIteratorHandler partPosIteratorHandler = null;
 
     @Override
-    public Collection<PrioritizedPartPos> getPositions(int channel) {
-        if (channel == IChanneledNetwork.WILDCARD_CHANNEL) {
-            return getPositions();
+    public int[] getChannels() {
+        return positions.keySet().toIntArray();
+    }
+
+    @Override
+    public boolean hasPositions() {
+        return !positions.isEmpty();
+    }
+
+    @Override
+    public Collection<PrioritizedPartPos> getPrioritizedPositions(int channel) {
+        if (channel == WILDCARD_CHANNEL) {
+            return getPrioritizedPositions();
         }
         Set<PrioritizedPartPos> positions = this.positions.get(channel);
-        Set<PrioritizedPartPos> wildcardPositions = this.positions.get(IChanneledNetwork.WILDCARD_CHANNEL);
-        if (positions == null) positions = Collections.emptySet();
-        if (wildcardPositions == null) wildcardPositions = Collections.emptySet();
-        return ImmutableSet.copyOf(Iterables.concat(positions, wildcardPositions));
-    }
-
-    @Override
-    public Collection<PrioritizedPartPos> getPositions() {
-        List<PrioritizedPartPos> allPositions = Lists.newArrayList();
-        for (Set<PrioritizedPartPos> positions : this.positions.valueCollection()) {
-            allPositions.addAll(positions);
+        Set<PrioritizedPartPos> wildcardPositions = this.positions.get(WILDCARD_CHANNEL);
+        if (positions == null) {
+            if (wildcardPositions != null) {
+                return wildcardPositions;
+            }
+            positions = Collections.emptySet();
         }
-        return allPositions;
-    }
-
-    @Override
-    public PositionsIterator getPositionIterator(int channel) {
-        PositionsIterator it = positionsIterators.get(channel);
-        if (it == null) {
-            // If no custom iterator was given, iterate in first-come-first-serve order
-            it = new PositionsIterator(getPositions(channel));
-        } else {
-            it = it.cloneState();
+        if (wildcardPositions == null) {
+            return positions;
         }
-        return it;
+        TreeSet<PrioritizedPartPos> merged = Sets.newTreeSet();
+        merged.addAll(positions);
+        merged.addAll(wildcardPositions);
+        return merged;
     }
 
     @Override
-    public void setPositionIterator(@Nullable PositionsIterator iterator, int channel) {
-        if (iterator == null || !iterator.hasNext()) {
-            positionsIterators.remove(channel);
-        } else {
-            positionsIterators.put(channel, iterator);
-        }
+    public Collection<PrioritizedPartPos> getPrioritizedPositions() {
+        return this.allPositions;
     }
 
     @Override
-    public PositionsIterator createPositionIterator(int channel) {
-        PositionsIterator it = new PositionsIterator(getPositions(channel));
-        createdIterators.add(it);
-        return it;
+    public int getPositionChannel(PartPos pos) {
+        return this.positionChannels.getOrDefault(pos, -1);
     }
 
     protected void invalidateIterators() {
-        this.positionsIterators.clear();
-        this.createdIterators.forEach(PositionsIterator::invalidate);
-        this.createdIterators.clear();
+        setPartPosIteratorHandler(null);
+    }
+
+    @Override
+    public void setPartPosIteratorHandler(@Nullable IPartPosIteratorHandler iteratorHandler) {
+        this.partPosIteratorHandler = iteratorHandler;
+    }
+
+    @Nullable
+    @Override
+    public IPartPosIteratorHandler getPartPosIteratorHandler() {
+        if (partPosIteratorHandler != null) {
+            return partPosIteratorHandler;
+        }
+        return null;
     }
 
     @Override
     public boolean addPosition(PartPos pos, int priority, int channel) {
         invalidateIterators();
 
-        Set<PrioritizedPartPos> positions = this.positions.get(channel);
-        if (positions == null) {
-            positions = Sets.newTreeSet();
-            this.positions.put(channel, positions);
+        PrioritizedPartPos prioritizedPosition = PrioritizedPartPos.of(pos, priority);
+        if (allPositions.add(prioritizedPosition)) {
+            Set<PrioritizedPartPos> positions = this.positions.get(channel);
+            if (positions == null) {
+                positions = Sets.newTreeSet();
+                this.positions.put(channel, positions);
+            }
+            positions.add(prioritizedPosition);
+            this.positionChannels.put(pos, channel);
+            this.onPositionAdded(channel, prioritizedPosition);
+            return true;
         }
-        return positions.add(PrioritizedPartPos.of(pos, priority));
+        return false;
+    }
+
+    protected void onPositionAdded(int channel, PrioritizedPartPos pos) {
+
     }
 
     @Override
     public void removePosition(PartPos pos) {
         invalidateIterators();
 
-        for (Set<PrioritizedPartPos> positions : this.positions.valueCollection()) {
-            positions.removeIf(prioritizedPartPos -> prioritizedPartPos.getPartPos().equals(pos));
+        Wrapper<Integer> removedChannel = new Wrapper<>(-2);
+        Wrapper<PrioritizedPartPos> removedPos = new Wrapper<>(null);
+        for (Int2ObjectMap.Entry<Set<PrioritizedPartPos>> entry : this.positions.int2ObjectEntrySet()) {
+            int channel = entry.getIntKey();
+            Set<PrioritizedPartPos> positions = entry.getValue();
+            Iterator<PrioritizedPartPos> it = positions.iterator();
+            while (it.hasNext()) {
+                PrioritizedPartPos prioritizedPartPos = it.next();
+                if (prioritizedPartPos.getPartPos().equals(pos)) {
+                    it.remove();
+                    allPositions.remove(prioritizedPartPos);
+                    removedPos.set(prioritizedPartPos);
+                    removedChannel.set(channel);
+                    break;
+                }
+            }
         }
+        int channel = removedChannel.get();
+        if (channel != -2) {
+            this.onPositionRemoved(channel, removedPos.get());
+            if (positions.get(channel).isEmpty()) {
+                this.positions.remove(channel);
+            }
+        }
+        positionChannels.remove(pos);
+    }
+
+    protected void onPositionRemoved(int channel, PrioritizedPartPos pos) {
+
     }
 
     @Override

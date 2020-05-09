@@ -3,15 +3,17 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import lombok.ToString;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 
 /**
  * Value type with values that are strings.
  * @author rubensworks
  */
-public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString> {
+public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
+        implements IValueTypeNamed<ValueTypeString.ValueString> {
 
     public ValueTypeString() {
-        super("string", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED.toString());
+        super("string", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED.toString(), ValueTypeString.ValueString.class);
     }
 
     @Override
@@ -32,6 +34,11 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString> 
     @Override
     public ValueString deserialize(String value) {
         return ValueString.of(value);
+    }
+
+    @Override
+    public String getName(ValueString a) {
+        return a.getRawValue();
     }
 
     @ToString

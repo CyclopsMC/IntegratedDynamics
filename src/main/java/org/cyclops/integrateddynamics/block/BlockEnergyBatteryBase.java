@@ -33,7 +33,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     }
 
     @Override
-    public BlockRenderLayer getBlockLayer() {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 

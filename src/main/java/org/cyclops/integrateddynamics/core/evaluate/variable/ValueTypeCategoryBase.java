@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
@@ -24,8 +25,8 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
      * @param colorFormat The color format.
      * @param elements The elements inside this category.
      */
-    public ValueTypeCategoryBase(String typeName, int color, String colorFormat, Set<IValueType<?>> elements) {
-        super(typeName, color, colorFormat);
+    public ValueTypeCategoryBase(String typeName, int color, String colorFormat, Set<IValueType<?>> elements, @Nullable Class<V> valueClass) { // TODO: remove Nullable in 1.15
+        super(typeName, color, colorFormat, valueClass);
         this.elements = Collections.unmodifiableSet(elements);
     }
 
@@ -35,8 +36,8 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
      * @param color The color.
      * @param colorFormat The color format.
      */
-    public ValueTypeCategoryBase(String typeName, int color, String colorFormat) {
-        super(typeName, color, colorFormat);
+    public ValueTypeCategoryBase(String typeName, int color, String colorFormat, @Nullable Class<V> valueClass) { // TODO: remove Nullable in 1.15
+        super(typeName, color, colorFormat, valueClass);
         this.elements = null;
     }
 
@@ -52,7 +53,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public String getUnlocalizedName() {
+    public String getTranslationKey() {
         return getUnlocalizedPrefix() + ".name";
     }
 

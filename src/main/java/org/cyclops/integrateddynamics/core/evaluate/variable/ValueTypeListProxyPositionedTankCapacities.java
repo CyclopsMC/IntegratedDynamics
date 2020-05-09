@@ -17,6 +17,10 @@ public class ValueTypeListProxyPositionedTankCapacities extends ValueTypeListPro
         super(ValueTypeListProxyFactories.POSITIONED_TANK_CAPACITIES.getName(), ValueTypes.INTEGER, pos, side);
     }
 
+    public ValueTypeListProxyPositionedTankCapacities() {
+        this(null, null);
+    }
+
     protected IFluidHandler getTank() {
         return TileHelpers.getCapability(getPos(), getSide(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
     }

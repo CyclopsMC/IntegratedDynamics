@@ -7,6 +7,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -68,4 +70,10 @@ public class BlockLogicProgrammer extends ConfigurableBlockGui {
     public Class<? extends GuiScreen> getGui() {
         return GuiLogicProgrammer.class;
     }
+
+    @Override
+    protected ItemStack getSilkTouchDrop(IBlockState state) {
+        return new ItemStack(Item.getItemFromBlock(this));
+    }
+
 }

@@ -68,7 +68,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
 
     protected boolean canWrite() {
         IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(getNetwork());
-        return partNetwork != null && getVariable(partNetwork) != null && getErrors().isEmpty();
+        return partNetwork != null && getVariable(partNetwork) != null && getEvaluator().getErrors().isEmpty();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
                 }
             }, lastPlayer, getBlock());
         } catch (EvaluationException e) {
-            addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
+            getEvaluator().addError(new L10NHelpers.UnlocalizedString(e.getMessage()));
         }
         return ItemStack.EMPTY;
     }

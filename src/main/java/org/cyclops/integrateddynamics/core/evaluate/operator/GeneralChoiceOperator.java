@@ -8,7 +8,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
@@ -22,7 +21,7 @@ public class GeneralChoiceOperator extends GeneralOperator {
         super(symbol, operatorName, new IValueType[]{ValueTypes.BOOLEAN, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}, ValueTypes.CATEGORY_ANY, new IFunction() {
             @Override
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
-                boolean a = ((ValueTypeBoolean.ValueBoolean) variables.getValue(0)).getRawValue();
+                boolean a = variables.getValue(0, ValueTypes.BOOLEAN).getRawValue();
                 return a ? variables.getValue(1) : variables.getValue(2);
             }
         }, new IConfigRenderPattern.Base(100, 22, new Pair[]{Pair.of(6, 2), Pair.of(60, 2) , Pair.of(80, 2)}, Pair.of(40, 2)));
@@ -45,15 +44,15 @@ public class GeneralChoiceOperator extends GeneralOperator {
             }
             if(i == 0 && !ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
                 return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                        Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getUnlocalizedName()));
+                        this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
+                        Integer.toString(i), new L10NHelpers.UnlocalizedString(getInputTypes()[i].getTranslationKey()));
             } else if(i == 1) {
                 temporarySecondInputType = inputType;
             } else if(i == 2) {
                 if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
                     return new L10NHelpers.UnlocalizedString(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                            this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getUnlocalizedName()),
-                            Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getUnlocalizedName()));
+                            this.getOperatorName(), new L10NHelpers.UnlocalizedString(inputType.getTranslationKey()),
+                            Integer.toString(i), new L10NHelpers.UnlocalizedString(temporarySecondInputType.getTranslationKey()));
                 }
             }
         }

@@ -2,11 +2,15 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
+
+import java.util.Iterator;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -25,6 +29,7 @@ public class TestStringOperators {
     private DummyVariableString sempty;
     private DummyVariableString sabc;
     private DummyVariableString sl;
+    private DummyVariableString scomma;
     private DummyVariableString shello;
     private DummyVariableString sworld;
     private DummyVariableString shelloWorld;
@@ -35,12 +40,22 @@ public class TestStringOperators {
     private DummyVariableInteger i2;
     private DummyVariableInteger i10;
     private DummyVariableDouble d10_5;
+    private DummyVariableList labc;
+    private DummyVariableList lint;
+    private DummyVariableList lstringinvalidtypes;
+    private DummyVariableList lstring_inf;
+
+    @BeforeClass
+    public static void beforeClass() {
+        ValueTypeListProxyFactories.load();
+    }
 
     @Before
     public void before() {
         sempty = new DummyVariableString(ValueTypeString.ValueString.of(""));
         sabc = new DummyVariableString(ValueTypeString.ValueString.of("abc"));
         sl = new DummyVariableString(ValueTypeString.ValueString.of("l"));
+        scomma = new DummyVariableString(ValueTypeString.ValueString.of(","));
         shello = new DummyVariableString(ValueTypeString.ValueString.of("hello"));
         sworld = new DummyVariableString(ValueTypeString.ValueString.of("world"));
         shelloWorld = new DummyVariableString(ValueTypeString.ValueString.of("hello world"));
@@ -51,6 +66,52 @@ public class TestStringOperators {
         i2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2));
         i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
         d10_5 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(10.5D));
+        labc = new DummyVariableList(ValueTypeList.ValueList.ofAll(ValueTypes.STRING,
+                ValueTypeString.ValueString.of("a"),
+                ValueTypeString.ValueString.of("b"),
+                ValueTypeString.ValueString.of("c")
+        ));
+        lint = new DummyVariableList(ValueTypeList.ValueList.ofAll(ValueTypes.INTEGER,
+                ValueTypeInteger.ValueInteger.of(123)));
+        lstringinvalidtypes = new DummyVariableList(ValueTypeList.ValueList.ofAll(ValueTypes.STRING,
+                ValueTypeInteger.ValueInteger.of(123)
+        ));
+        lstring_inf = new DummyVariableList(ValueTypeList.ValueList.ofFactory(new IValueTypeListProxy() {
+            @Override
+            public int getLength() throws EvaluationException {
+                return 0;
+            }
+
+            @Override
+            public IValue get(int index) throws EvaluationException {
+                return null;
+            }
+
+            @Override
+            public IValueType<? extends IValue> getValueType() {
+                return ValueTypes.STRING;
+            }
+
+            @Override
+            public String getName() {
+                return null;
+            }
+
+            @Override
+            public String toCompactString() {
+                return null;
+            }
+
+            @Override
+            public boolean isInfinite() {
+                return true;
+            }
+
+            @Override
+            public Iterator<IValue> iterator() {
+                return null;
+            }
+        }));
     }
 
     /**
@@ -640,6 +701,47 @@ public class TestStringOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeReplaceRegex() throws EvaluationException {
         Operators.STRING_REPLACE_REGEX.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- JOIN -----------------------------------
+     */
+
+    @Test
+    public void testStringJoin() throws EvaluationException {
+        IValue res1 = Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, labc});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("join(',', ['a', 'b', 'c']) = 'a,b,c'", ((ValueTypeString.ValueString) res1).getRawValue(), is("a,b,c"));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputListType() throws EvaluationException {
+        Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, lint});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputListTypeInner() throws EvaluationException {
+        Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, lstringinvalidtypes});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputListInfinite() throws EvaluationException {
+        Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, lstring_inf});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeJoinLarge() throws EvaluationException {
+        Operators.STRING_JOIN.evaluate(new IVariable[]{scomma, labc, labc});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeJoinSmall() throws EvaluationException {
+        Operators.STRING_JOIN.evaluate(new IVariable[]{scomma});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeJoin() throws EvaluationException {
+        Operators.STRING_JOIN.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 

@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Data;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -75,6 +77,10 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     @Override
     public IConfigRenderPattern getRenderPattern() {
+        if (getOperator().getRenderPattern() == null) {
+            throw new IllegalStateException("Tried to render a (possibly virtual) operator with a null render pattern: "
+                    + getOperator().getUniqueName());
+        }
         return getOperator().getRenderPattern();
     }
 
@@ -153,6 +159,16 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     @Override
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
         return itemStack.getItem() == ItemVariable.getInstance();
+    }
+
+    @Override
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
+        return false;
+    }
+
+    @Override
+    public int getItemStackSizeLimit() {
+        return 1;
     }
 
     @Override

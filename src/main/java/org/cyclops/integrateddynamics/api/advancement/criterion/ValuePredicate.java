@@ -49,7 +49,7 @@ public class ValuePredicate<V extends IValue> {
                 if (valueType == null) {
                     throw new JsonSyntaxException("A value '" + valueString + "' requires a corresponding valueType to be defined");
                 }
-                value = valueType.deserialize(valueString);
+                value = ValueHelpers.deserializeRaw(valueType, valueString);
             } else if (valueType != null && valueElement.isJsonObject()) {
                 return valueType.deserializeValuePredicate(valueElement.getAsJsonObject(), value);
             }

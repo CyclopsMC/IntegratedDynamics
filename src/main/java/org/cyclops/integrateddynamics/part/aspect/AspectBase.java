@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     private final ModBase mod;
     private final ModBase modGui;
-    private String unlocalizedName = null;
+    private String translationKey = null;
 
     public AspectBase(ModBase mod, ModBase modGui, IAspectProperties defaultProperties) {
         this.mod = mod;
@@ -57,8 +58,8 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     }
 
     @Override
-    public String getUnlocalizedName() {
-        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedPrefix() + ".name");
+    public String getTranslationKey() {
+        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix() + ".name");
     }
 
     protected String getUnlocalizedPrefix() {
@@ -69,8 +70,8 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo) {
-        String aspectName = L10NHelpers.localize(getUnlocalizedName());
-        String valueTypeName = L10NHelpers.localize(getValueType().getUnlocalizedName());
+        String aspectName = L10NHelpers.localize(getTranslationKey());
+        String valueTypeName = L10NHelpers.localize(getValueType().getTranslationKey());
         lines.add(L10NHelpers.localize(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
         lines.add(L10NHelpers.localize(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, getValueType().getDisplayColorFormat() + valueTypeName));
         if(appendOptionalInfo) {
@@ -106,7 +107,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     @SuppressWarnings("deprecation")
     @Override
     public Collection<IAspectPropertyTypeInstance> getPropertyTypes() {
-        return getDefaultProperties().getTypes();
+        return hasProperties() ? getDefaultProperties().getTypes() : Collections.emptyList();
     }
 
     /**

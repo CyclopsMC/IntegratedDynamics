@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,14 +22,16 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.commoncapabilities.api.capability.block.BlockCapabilities;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.commoncapabilities.api.capability.temperature.ITemperature;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
@@ -71,6 +74,8 @@ public class AspectReadBuilders {
             BUILDER_NBT = AspectBuilder.forReadType(ValueTypes.NBT);
     public static final AspectBuilder<IValue, ValueTypeCategoryAny, Pair<PartTarget, IAspectProperties>>
             BUILDER_ANY = AspectBuilder.forReadType(ValueTypes.CATEGORY_ANY);
+    public static final AspectBuilder<ValueTypeOperator.ValueOperator, ValueTypeOperator, Pair<PartTarget, IAspectProperties>>
+            BUILDER_OPERATOR = AspectBuilder.forReadType(ValueTypes.OPERATOR);
 
     public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, Pair<PartTarget, IAspectProperties>>
             BUILDER_OBJECT_ITEMSTACK = AspectBuilder.forReadType(ValueTypes.OBJECT_ITEMSTACK);
@@ -164,6 +169,8 @@ public class AspectReadBuilders {
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "block");
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, DimPos>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "block");
+        public static final AspectBuilder<ValueTypeString.ValueString, ValueTypeString, DimPos>
+                BUILDER_STRING = AspectReadBuilders.BUILDER_STRING.handle(PROP_GET, "block");
         public static final AspectBuilder<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock, DimPos>
                 BUILDER_BLOCK = AspectReadBuilders.BUILDER_OBJECT_BLOCK.handle(PROP_GET, "block");
         public static final AspectBuilder<ValueTypeNbt.ValueNbt, ValueTypeNbt, DimPos>
@@ -305,14 +312,35 @@ public class AspectReadBuilders {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             return TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.TEMPERATURE);
         };
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IRecipeHandler> PROP_GET_RECIPE_HANDLER = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IRecipeHandler>() {
+            @Override
+            public IRecipeHandler getOutput(Pair<PartTarget, IAspectProperties> input) {
+                DimPos dimPos = input.getLeft().getTarget().getPos();
+                IRecipeHandler recipeHandler = TileHelpers.getCapability(dimPos.getWorld(), dimPos.getBlockPos(),
+                        input.getLeft().getTarget().getSide(), Capabilities.RECIPE_HANDLER);
+                if (recipeHandler == null) {
+                    IBlockState blockState = dimPos.getWorld().getBlockState(dimPos.getBlockPos());
+                    return BlockCapabilities.getInstance().getCapability(blockState, Capabilities.RECIPE_HANDLER,
+                            dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
+                }
+                return recipeHandler;
+            }
+        };
 
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IWorker>
                 BUILDER_WORKER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_WORKER, "machine");
         public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, ITemperature>
                 BUILDER_TEMPERATURE_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_TEMPERATURE, "temperature");
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IRecipeHandler>
+                BUILDER_RECIPE_HANDLER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET_RECIPE_HANDLER, "recipehandler");
 
         public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, ITemperature>
                 BUILDER_TEMPERATURE_DOUBLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET_TEMPERATURE, "temperature");
+
+        public static final AspectBuilder<ValueTypeList.ValueList, ValueTypeList, Pair<PartTarget, IAspectProperties>>
+                BUILDER_RECIPE_HANDLER_LIST = AspectReadBuilders.BUILDER_LIST.appendKind("recipehandler");
+        public static final AspectBuilder<ValueTypeOperator.ValueOperator, ValueTypeOperator, Pair<PartTarget, IAspectProperties>>
+                BUILDER_RECIPE_HANDLER_OPERATOR = AspectReadBuilders.BUILDER_OPERATOR.appendKind("recipehandler");
     }
 
     public static final class Network {
@@ -323,7 +351,7 @@ public class AspectReadBuilders {
                 PROPERTY_CHANNEL
         ));
         static {
-            PROPERTIES.setValue(PROPERTY_CHANNEL, ValueTypeInteger.ValueInteger.of(IChanneledNetwork.WILDCARD_CHANNEL));
+            PROPERTIES.setValue(PROPERTY_CHANNEL, ValueTypeInteger.ValueInteger.of(IPositionedAddonsNetwork.WILDCARD_CHANNEL));
         }
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, INetwork> PROP_GET_NETWORK = input -> {
@@ -340,7 +368,7 @@ public class AspectReadBuilders {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             INetwork network = NetworkHelpers.getNetwork(dimPos.getWorld(), dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
             int channel = input.getRight().getValue(PROPERTY_CHANNEL).getRawValue();
-            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getChannel(channel) : null;
+            return network != null && network.hasCapability(EnergyNetworkConfig.CAPABILITY) ? network.getCapability(EnergyNetworkConfig.CAPABILITY).getChannelExternal(CapabilityEnergy.ENERGY, channel) : null;
         };
 
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IEnergyStorage>

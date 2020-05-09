@@ -69,6 +69,10 @@ public class RenderTileEntityEnergyBattery extends TileEntitySpecialRenderer<Til
 	public void render(TileEnergyBattery tile, double x, double y, double z, float partialTickTime, int partialDamage, float alpha) {
         if(tile != null && tile.getEnergyStored() > 0) {
             double height = (double) tile.getEnergyStored() / tile.getMaxEnergyStored();
+
+            // Re-scale height to [0.125, 0.875] range as the energy bar does not take up 100% of the height.
+            height = (height * 12 / 16) + 0.125D;
+
             int brightness = tile.getWorld().getCombinedLight(tile.getPos(), 15);
             int l2 = brightness >> 0x10 & 0xFFFF;
             int i3 = brightness & 0xFFFF;
@@ -95,7 +99,6 @@ public class RenderTileEntityEnergyBattery extends TileEntitySpecialRenderer<Til
                 worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
 
                 double[][] c = coordinates[side.ordinal()];
-                //double replacedMaxV = ((icon.getMaxV() - icon.getMinV()) * height + icon.getMinV());
                 double replacedMaxV = icon.getMaxV();
                 double replacedMinV = ((icon.getMinV() - icon.getMaxV()) * height + icon.getMaxV());
 

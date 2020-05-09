@@ -11,6 +11,7 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.AttachCapabilitiesEventPart;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -84,7 +85,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         NBTTagList list = new NBTTagList();
         for(Map.Entry<IAspect, IAspectProperties> entry : aspectProperties.entrySet()) {
             NBTTagCompound entryTag = new NBTTagCompound();
-            entryTag.setString("key", entry.getKey().getUnlocalizedName());
+            entryTag.setString("key", entry.getKey().getTranslationKey());
             if(entry.getValue() != null) {
                 entryTag.setTag("value", entry.getValue().toNBT());
             }
@@ -239,22 +240,41 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target) {
+    public boolean hasCapability(Capability<?> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
         return hasCapability(capability) || volatileCapabilities.containsKey(capability)
+                 || hasCapability(capability, partNetwork, target)
                 || (capabilities != null && capabilities.hasCapability(capability, null));
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target) {
-        T cap = getCapability(capability);
+    public <T> T getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        T cap = getCapability(capability); // TODO: remove in 1.13
         if (cap != null) {
             return cap;
         }
+
+        cap = getCapability(capability, partNetwork, target);
+        if (cap != null) { // TODO: remove in 1.13
+            return cap;
+        }
+
         Object o = volatileCapabilities.get(capability);
         if(o != null) {
             return (T) o;
         }
         return capabilities == null ? null : capabilities.getCapability(capability, null);
+    }
+
+    @Override
+    @Deprecated // TODO: remove in 1.13
+    public boolean hasCapability(Capability<?> capability, IPartNetwork network, PartTarget target) {
+        return false;
+    }
+
+    @Override
+    @Deprecated // TODO: remove in 1.13
+    public <T> T getCapability(Capability<T> capability, IPartNetwork network, PartTarget target) {
+        return null;
     }
 
     @Deprecated // TODO: remove in 1.13

@@ -19,7 +19,7 @@ import org.cyclops.cyclopscore.helper.EnchantmentHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.block.BlockCreativeEnergyBattery;
+import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -43,6 +43,7 @@ public class TestItemStackOperators {
 
     private DummyVariableItemStack iApple;
     private DummyVariableItemStack iApple2;
+    private DummyVariableItemStack iAppleTag;
     private DummyVariableItemStack iBeef;
     private DummyVariableItemStack iEnderPearl;
     private DummyVariableItemStack iHoe;
@@ -76,6 +77,9 @@ public class TestItemStackOperators {
     public void before() {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
         iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 2)));
+        ItemStack appleStack = new ItemStack(Items.APPLE);
+        appleStack.setTagCompound(new NBTTagCompound());
+        iAppleTag = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(appleStack));
         iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.BED)));
         iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ENDER_PEARL)));
         iHoe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
@@ -88,8 +92,8 @@ public class TestItemStackOperators {
         iStone = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.STONE)));
         iBucketLava = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.LAVA_BUCKET)));
         iWrench = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(ItemWrench.getInstance())));
-        iEnergyBatteryEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(BlockCreativeEnergyBattery.getInstance())));
-        ItemStack energyBatteryFull = new ItemStack(BlockCreativeEnergyBattery.getInstance());
+        iEnergyBatteryEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(BlockEnergyBattery.getInstance())));
+        ItemStack energyBatteryFull = new ItemStack(BlockEnergyBattery.getInstance());
         IEnergyStorage energyStorage = energyBatteryFull.getCapability(CapabilityEnergy.ENERGY, null);
         BlockEnergyBatteryBase.fill(energyStorage);
         iEnergyBatteryFull = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(energyBatteryFull));
@@ -1258,6 +1262,35 @@ public class TestItemStackOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeNbt() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- HASNBT -----------------------------------
+     */
+
+    @Test
+    public void testItemStackHasNbt() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "hasnbt(apple) = false");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iAppleTag});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "hasnbt(appleTag) = true");
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputHasNbtHasNbtLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputHasNbtHasNbtSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeHasNbt() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

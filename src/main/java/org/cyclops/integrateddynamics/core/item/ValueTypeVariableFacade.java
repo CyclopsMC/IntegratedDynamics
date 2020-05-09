@@ -48,13 +48,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     public ValueTypeVariableFacade(boolean generateId, IValueType<V> valueType, String value) {
         super(generateId);
         this.valueType = valueType;
-        this.value = valueType.deserialize(value);
+        this.value = ValueHelpers.deserializeRaw(valueType, value);
     }
 
     public ValueTypeVariableFacade(int id, IValueType<V> valueType, String value) {
         super(id);
         this.valueType = valueType;
-        this.value = valueType.deserialize(value);
+        this.value = ValueHelpers.deserializeRaw(valueType, value);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
             // Check expected aspect type and operator output type
             if (!ValueHelpers.correspondsTo(getValueType(), containingValueType)) {
                 validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
-                        new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                        new L10NHelpers.UnlocalizedString(getValueType().getUnlocalizedName())));
+                        new L10NHelpers.UnlocalizedString(containingValueType.getTranslationKey()),
+                        new L10NHelpers.UnlocalizedString(getValueType().getTranslationKey())));
             }
         }
     }

@@ -70,6 +70,7 @@
             <appendix type="crafting_recipe">integrateddynamics:part_redstone_reader_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_block_reader_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_inventory_reader_item</appendix>
+            <appendix type="crafting_recipe">integrateddynamics:part_machine_reader_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_static_light_panel_item</appendix>
             <appendix type="crafting_recipe">integrateddynamics:part_display_panel_item</appendix>
             <appendix type="advancement_rewards" id="integrateddynamics:basic_network_components">
@@ -77,6 +78,7 @@
                     <advancement id="integrateddynamics:basic_network_components/redstone_reading" />
                     <advancement id="integrateddynamics:basic_network_components/block_reading" />
                     <advancement id="integrateddynamics:basic_network_components/inventory_reading" />
+                    <advancement id="integrateddynamics:basic_network_components/machine_reading" />
                     <advancement id="integrateddynamics:basic_network_components/value_displaying" />
                 </advancements>
                 <rewards>
@@ -180,6 +182,7 @@
             <paragraph>info_book.integrateddynamics.tutorials.theValueOfOperators.text4</paragraph>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.relational.equals.name</appendix>
             <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.operator.filter.name</appendix>
+            <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.operator.apply.name</appendix>
             <appendix type="advancement_rewards" id="integrateddynamics:the_value_of_operators">
                 <advancements>
                     <advancement id="integrateddynamics:the_value_of_operators/dynamic_additions" />
@@ -190,6 +193,29 @@
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
                     <reward type="item" amount="64">integrateddynamics:variable</reward>
+                </rewards>
+            </appendix>
+        </section>
+        <section name="info_book.integrateddynamics.tutorials.recipe_handling">
+            <paragraph>info_book.integrateddynamics.tutorials.recipe_handling.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.recipe_handling.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.recipe_handling.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.recipe_handling.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.recipe_handling.text5</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.recipe_handling.text6</paragraph>
+            <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.read.list.recipehandler.recipes.name</appendix>
+            <appendix type="integrateddynamics:aspect">aspect.aspects.integrateddynamics.read.operator.recipehandler.recipebyoutput.name</appendix>
+            <appendix type="integrateddynamics:operator">operator.operators.integrateddynamics.operator.apply.name</appendix>
+            <appendix type="advancement_rewards" id="integrateddynamics:recipe_handling">
+                <advancements>
+                    <advancement id="integrateddynamics:recipe_handling/recipe_reading" />
+                    <advancement id="integrateddynamics:recipe_handling/recipe_creation" />
+                    <advancement id="integrateddynamics:recipe_handling/recipe_lookup" />
+                </advancements>
+                <rewards>
+                    <reward type="item" amount="15">integrateddynamics:variable</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_machine_reader_item</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_display_panel_item</reward>
                 </rewards>
             </appendix>
         </section>
@@ -320,6 +346,14 @@
                 </section>
                 <section name="info_book.integrateddynamics.manual.logic.value_types.fluid">
                     <paragraph>info_book.integrateddynamics.manual.logic.value_types.fluid.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.ingredients">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.ingredients.text1</paragraph>
+                </section>
+                <section name="info_book.integrateddynamics.manual.logic.value_types.recipe">
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text2</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text3</paragraph>
                 </section>
             </section>
             <section name="info_book.integrateddynamics.manual.logic.variables">
@@ -551,6 +585,8 @@
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text6</paragraph>
             <appendix type="crafting_recipe">integrateddynamics:logic_programmer</appendix>
             <appendix type="crafting_recipe">integrateddynamics:portable_logic_programmer</appendix>
+            <appendix type="keybinding">key.integrateddynamics.logic_programmer_focus_search</appendix>
+            <appendix type="keybinding">key.integrateddynamics.logic_programmer_open_rename</appendix>
             <appendix_list factory="integrateddynamics:operators_output">*</appendix_list>
         </section>
     </section>

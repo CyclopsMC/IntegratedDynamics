@@ -17,6 +17,10 @@ public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListPr
         super(ValueTypeListProxyFactories.POSITIONED_TANK_FLUIDSTACKS.getName(), ValueTypes.OBJECT_FLUIDSTACK, pos, side);
     }
 
+    public ValueTypeListProxyPositionedTankFluidStacks() {
+        this(null, null);
+    }
+
     protected IFluidHandler getTank() {
         return TileHelpers.getCapability(getPos(), getSide(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
     }

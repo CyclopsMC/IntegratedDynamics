@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.part;
 
 import com.google.common.collect.Sets;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -163,11 +163,10 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 ItemStack slotStack = event.craftMatrix.getStackInSlot(i);
                 if (!slotStack.isEmpty()) {
                     ++stackCount;
-                    if(slotStack.getItem() == this.getItem() && slotStack.hasTagCompound()) {
+                    if(groupId == -1 && slotStack.getItem() == this.getItem() && slotStack.hasTagCompound()) {
                         NBTTagCompound tag = slotStack.getTagCompound();
                         if (tag.hasKey(NBT_KEY_ID, MinecraftHelpers.NBTTag_Types.NBTTagInt.ordinal())) {
                             groupId = tag.getInteger(NBT_KEY_ID);
-                            break;
                         }
                     }
                 }
@@ -259,7 +258,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
 
     public static class LoadedGroups {
 
-        private TIntObjectMap<Set<PartPos>> groupPositions = new TIntObjectHashMap<>();
+        private Int2ObjectMap<Set<PartPos>> groupPositions = new Int2ObjectOpenHashMap<>();
         private boolean modifyingPositions = false;
 
         public void onStartedEvent(FMLServerStartedEvent event) {

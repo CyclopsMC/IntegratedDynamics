@@ -70,7 +70,7 @@ public class ItemBlockCable extends ItemBlockMetadata {
         if(checkCableAt(world, target, side.getOpposite())) return true;
         // Skips client-side entity collision detection for placing cables.
         IBlockState blockState = world.getBlockState(target);
-        return blockState.getBlock().isReplaceable(world, pos) || blockState.getMaterial().isLiquid();
+        return blockState.getBlock().isReplaceable(world, target) || blockState.getMaterial().isLiquid();
     }
 
     protected boolean attempItemUseTarget(ItemStack stack, World world, BlockPos pos, EnumFacing side, BlockCable blockCable,

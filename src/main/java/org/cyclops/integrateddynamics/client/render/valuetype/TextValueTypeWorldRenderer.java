@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorl
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.client.render.part.DisplayPartOverlayRenderer;
 
 /**
  * A simple text-based value type world renderer.
@@ -16,7 +17,6 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
  */
 public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
-    private static final float MAX = 12.5F;
     private static final float MARGIN_FACTOR = 1.1F;
 
     @Override
@@ -38,12 +38,12 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
 
-        float scaleX = MAX / (maxWidth * MARGIN_FACTOR);
-        float scaleY = MAX / (totalHeight * MARGIN_FACTOR);
+        float scaleX = DisplayPartOverlayRenderer.MAX / (maxWidth * MARGIN_FACTOR);
+        float scaleY = DisplayPartOverlayRenderer.MAX / (totalHeight * MARGIN_FACTOR);
         float scale = Math.min(scaleX, scaleY); // Maintain aspect ratio
         float newWidth = maxWidth * scale;
         float newHeight = totalHeight * scale;
-        GlStateManager.translate((MAX - newWidth) / 2, (MAX - newHeight) / 2, 0F);
+        GlStateManager.translate((DisplayPartOverlayRenderer.MAX - newWidth) / 2, (DisplayPartOverlayRenderer.MAX - newHeight) / 2, 0F);
         GlStateManager.scale(scale, scale, 1F);
 
         int offset = 0;

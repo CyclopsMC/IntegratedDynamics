@@ -4,7 +4,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
@@ -49,6 +51,14 @@ public final class TickHandler {
                 if (isBeingDiagnozed && (shouldSendTickDurationInfo || network.hasChanged())) {
                     NetworkDiagnostics.getInstance().sendNetworkUpdate(network);
                     network.resetLastSecondDurations();
+
+                    // Also reset durations of indexes
+                    for (IFullNetworkListener fullNetworkListener : network.getFullNetworkListeners()) {
+                        if (fullNetworkListener instanceof IPositionedAddonsNetworkIngredients) {
+                            IPositionedAddonsNetworkIngredients<?, ?> networkIngredients = (IPositionedAddonsNetworkIngredients<?, ?>) fullNetworkListener;
+                            networkIngredients.resetLastSecondDurationsIndex();
+                        }
+                    }
                 }
                 try {
                     if (!network.isCrashed()) {

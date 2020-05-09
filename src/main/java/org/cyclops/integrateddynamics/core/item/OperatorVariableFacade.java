@@ -80,7 +80,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                     this.variables[i] = true;
                     variables[i] = variableFacade.getVariable(network);
                     this.variables[i] = false;
-                    if(variables[i] == this /* Cyclic reference */ || variables[i] == null) {
+                    if(variables[i] == null) {
                         return null;
                     }
                 }
@@ -162,8 +162,8 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                 IValueType outputType = op.getConditionalOutputType(variables);
                 if (!ValueHelpers.correspondsTo(outputType, containingValueType)) {
                     validator.addError(new L10NHelpers.UnlocalizedString(L10NValues.ASPECT_ERROR_INVALIDTYPE,
-                            new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                            new L10NHelpers.UnlocalizedString(outputType.getUnlocalizedName())));
+                            new L10NHelpers.UnlocalizedString(containingValueType.getTranslationKey()),
+                            new L10NHelpers.UnlocalizedString(outputType.getTranslationKey())));
                 }
             }
         }

@@ -69,6 +69,7 @@ public class GuiTextFieldDropdown<T> extends GuiTextFieldExtended {
                     }
                     return true;
                 case Keyboard.KEY_NUMPADENTER:
+                case Keyboard.KEY_RETURN:
                 case Keyboard.KEY_RIGHT:
                     if (visiblePossibilitiesIndex >= 0
                             && visiblePossibilitiesIndex < visiblePossibilities.size()) {
@@ -130,6 +131,18 @@ public class GuiTextFieldDropdown<T> extends GuiTextFieldExtended {
             int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
             int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
             int cy = y;
+
+            // Draw ... if we are not at the first element
+            if (startIndex > 0) {
+                // Draw background
+                drawRect(x, cy - 1, x + width, cy + 11, -6250336);
+                drawRect(x - 1, cy, x + width - 1, cy + 10, -16777216);
+
+                fontRenderer.drawStringWithShadow("...", (float)x + 1, (float)cy + 2, disabledColor);
+
+                cy += 10;
+            }
+
             for (int i = startIndex; i < endIndex; i++) {
                 // Initialize entry
                 IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);
@@ -163,6 +176,15 @@ public class GuiTextFieldDropdown<T> extends GuiTextFieldExtended {
 
                 cy += entryHeight;
             }
+
+            // Draw ... if we haven't reached the end of the list
+            if (endIndex < visiblePossibilities.size()) {
+                // Draw background
+                drawRect(x, cy - 1, x + width, cy + 11, -6250336);
+                drawRect(x - 1, cy, x + width - 1, cy + 10, -16777216);
+
+                fontRenderer.drawStringWithShadow("...", (float)x + 1, (float)cy + 2, disabledColor);
+            }
         }
     }
 
@@ -177,6 +199,12 @@ public class GuiTextFieldDropdown<T> extends GuiTextFieldExtended {
             int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
             int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
             int cy = y;
+
+            // Draw ... if we are not at the first element
+            if (startIndex > 0) {
+                cy += 10;
+            }
+
             for (int i = startIndex; i < endIndex; i++) {
                 // Initialize entry
                 IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);

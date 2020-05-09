@@ -16,7 +16,6 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.IGuiContainerProvider;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
-import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -174,22 +173,14 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         inventorySlots = Lists.newArrayList();
         initializeSlotsPre();
         this.temporaryInputSlots.removeDirtyMarkListener(this);
-        this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, "temporaryInput", 1);
+        this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, "temporaryInput", element == null ? 0 : element.getItemStackSizeLimit());
         temporaryInputSlots.addDirtyMarkListener(this);
         this.temporarySlotsElement = element;
         if(element != null) {
             Pair<Integer, Integer>[] slotPositions = element.getRenderPattern().getSlotPositions();
             for (int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
-                final int slotId = i;
-                SlotExtended slot = new SlotExtended(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
-                        1 + baseY + slotPositions[i].getRight()) {
-                    @Override
-                    public boolean isItemValid(ItemStack itemStack) {
-                        return element.isItemValidForSlot(slotId, itemStack);
-                    }
-                };
-                slot.setPhantom(true);
-                addSlotToContainer(slot);
+                addSlotToContainer(element.createSlot(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
+                        1 + baseY + slotPositions[i].getRight()));
             }
         }
         initializeSlotsPost();
@@ -235,7 +226,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         ItemStack itemStack = writeSlot.getStackInSlot(0);
         if(!itemStack.isEmpty()) {
             IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-            if(variableFacade.isValid()) {
+            if(this.lastLabel != null && variableFacade.isValid()) {
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableFacade.getId(), this.lastLabel);
             }
         }
@@ -302,12 +293,14 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int arg, ClickType clickType, EntityPlayer player) {
+    public ItemStack slotClick(int slotId, int mouseButton, ClickType clickType, EntityPlayer player) {
         // Handle cases where the client may have more (phantom) slots than the server.
-        if (slotId >= this.inventorySlots.size()) {
+        if (slotId >= this.inventorySlots.size() || (this.activeElement != null
+                && this.inventorySlots.size() > slotId && slotId >= 0
+                && this.activeElement.slotClick(slotId, this.getSlot(slotId), mouseButton, clickType, player))) {
             return ItemStack.EMPTY;
         }
-        return super.slotClick(slotId, arg, clickType, player);
+        return super.slotClick(slotId, mouseButton, clickType, player);
     }
 
     /**

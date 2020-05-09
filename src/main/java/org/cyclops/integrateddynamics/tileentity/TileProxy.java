@@ -19,7 +19,9 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
+import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ProxyVariableFacade;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
@@ -63,6 +65,22 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
                 return new ProxyNetworkElement(DimPos.of(world, blockPos));
             }
         });
+    }
+
+    @Override
+    protected InventoryVariableEvaluator createEvaluator() {
+        return new InventoryVariableEvaluator(this, getSlotRead(), ValueTypes.CATEGORY_ANY) {
+            @Override
+            protected void preValidate() {
+                super.preValidate();
+                // Hard check to make sure the variable is not directly referring to this proxy.
+                if(getVariableFacade() instanceof IProxyVariableFacade) {
+                    if(((IProxyVariableFacade) getVariableFacade()).getProxyId() == getProxyId()) {
+                        addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_RECURSION, getVariableFacade().getId()));
+                    }
+                }
+            }
+        };
     }
 
     @Override
@@ -125,16 +143,5 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> {
                 return new ProxyVariableFacade(id, proxyId);
             }
         }, lastPlayer, getBlock());
-    }
-
-    @Override
-    protected void preValidate(IVariableFacade variableStored) {
-        super.preValidate(variableStored);
-        // Hard check to make sure the variable is not directly referring to this proxy.
-        if(variableStored instanceof IProxyVariableFacade) {
-            if(((IProxyVariableFacade) variableStored).getProxyId() == getProxyId()) {
-                addError(new L10NHelpers.UnlocalizedString(L10NValues.VARIABLE_ERROR_RECURSION, variableStored.getId()));
-            }
-        }
     }
 }

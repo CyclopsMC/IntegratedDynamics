@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.tileentity;
 import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -19,9 +18,9 @@ import org.cyclops.cyclopscore.recipe.custom.api.IRecipeInput;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeOutput;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeProperties;
 import org.cyclops.cyclopscore.recipe.custom.api.IRecipeRegistry;
-import org.cyclops.integrateddynamics.api.network.IChanneledNetwork;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -143,7 +142,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
 
     @Override
     public void onTankChanged() {
-        sendUpdate();
+        markDirty();
         updateInventoryHash();
     }
 
@@ -155,19 +154,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (ArrayUtils.contains(getInputSlots(), index)) {
-            NonNullList<ItemStack> inputStacks = NonNullList.create();
-            for (int slot : getInputSlots()) {
-                if (slot == index) {
-                    inputStacks.add(stack);
-                } else {
-                    inputStacks.add(getStackInSlot(slot));
-                }
-            }
-            // Only allow items to be inserted that are used in at least once recipe.
-            return getRecipeRegistry().findRecipeByInput(getRecipeInput(inputStacks)) != null;
-        }
-        return super.isItemValidForSlot(index, stack);
+        return ArrayUtils.contains(getInputSlots(), index) && super.isItemValidForSlot(index, stack);
     }
 
     /**
@@ -200,15 +187,6 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
     public int getMaxProgress() {
         return this.getCurrentRecipe() != null ? getRecipeDuration(getCurrentRecipe()) : 0;
     }
-
-    /**
-     * Create a new recipe input holder for the given input stacks.
-     * This is used to check which items can be inserted into which slots.
-     * @param inputStacks The given input stacks.
-     *                    These are not guaranteed to be the stacks that are currently in the inventory.
-     * @return A recipe input holder.
-     */
-    public abstract I getRecipeInput(NonNullList<ItemStack> inputStacks);
 
     /**
      * @param recipe A recipe.
@@ -245,7 +223,6 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
                             drainEnergy(toDrain, false);
                             progress++;
                             sleep = -1;
-                            sendUpdate();
                         } else {
                             sleep = 1;
                         }
@@ -304,7 +281,7 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
             // If we still need energy, ask it from the network.
             IEnergyNetwork energyNetwork = getEnergyNetwork();
             if (energyNetwork != null) {
-                return energyNetwork.getChannel(IChanneledNetwork.DEFAULT_CHANNEL).extractEnergy(toDrain, simulate);
+                toDrain -= energyNetwork.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).extract(toDrain, simulate);
             }
         }
         return amount - toDrain;
@@ -324,18 +301,18 @@ public abstract class TileMechanicalMachine<RCK, M extends IMachine<M, I, O, P>,
         int lastEnergy = this.energy;
         if (lastEnergy != energy) {
             this.energy = energy;
-            sendUpdate();
+            markDirty();
         }
     }
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         int stored = getEnergyStored();
-        int newEnergy = Math.min(stored + maxReceive, getMaxEnergyStored());
+        int energyReceived = Math.min(getMaxEnergyStored() - stored, maxReceive);
         if(!simulate) {
-            setEnergy(newEnergy);
+            setEnergy(stored + energyReceived);
         }
-        return newEnergy - stored;
+        return energyReceived;
     }
 
     @Override

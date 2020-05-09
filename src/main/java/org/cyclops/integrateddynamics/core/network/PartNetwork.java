@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Lists;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.EnumFacing;
@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.FullNetworkListenerAdapter;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -43,11 +44,11 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     @Getter
     @Setter
     private INetwork network;
-    private TIntObjectMap<PartPos> partPositions = new TIntObjectHashMap<>();
+    private Int2ObjectMap<PartPos> partPositions = new Int2ObjectOpenHashMap<>();
     private List<DimPos> variableContainerPositions = Lists.newArrayList();
     private Map<Integer, IVariableFacade> compositeVariableCache = null;
-    private TIntObjectMap<IValue> lazyExpressionValueCache = new TIntObjectHashMap<>();
-    private TIntObjectMap<DimPos> proxyPositions = new TIntObjectHashMap<>();
+    private Int2ObjectMap<IValue> lazyExpressionValueCache = new Int2ObjectOpenHashMap<>();
+    private Int2ObjectMap<DimPos> proxyPositions = new Int2ObjectOpenHashMap<>();
 
     private volatile boolean partsChanged = false;
 
@@ -56,6 +57,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
         if(partPositions.containsKey(partId)) {
             return false;
         }
+        compositeVariableCache = null;
         partPositions.put(partId, partPos);
         return true;
     }
@@ -74,6 +76,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
 
     @Override
     public void removePart(int partId) {
+        compositeVariableCache = null;
         partPositions.remove(partId);
     }
 
@@ -119,12 +122,24 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             CompositeMap<Integer, IVariableFacade> compositeMap = new CompositeMap<>();
             for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
                 DimPos dimPos = it.next();
-                IVariableContainer variableContainer = TileHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY);
-                if(variableContainer != null) {
-                    compositeMap.addElement(variableContainer.getVariableCache());
-                } else {
-                    IntegratedDynamics.clog(Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
-                    it.remove();
+                if (dimPos.isLoaded()) {
+                    IVariableContainer variableContainer = TileHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY);
+                    if (variableContainer != null) {
+                        compositeMap.addElement(variableContainer.getVariableCache());
+                    } else {
+                        IntegratedDynamics.clog(Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
+                        it.remove();
+                    }
+                }
+            }
+            // Also check parts
+            for(PartPos partPos : partPositions.values()) {
+                if (partPos.getPos().isLoaded()) {
+                    IPartContainer partContainer = PartHelpers.getPartContainer(partPos.getPos(), partPos.getSide());
+                    IVariableContainer variableContainer = partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide());
+                    if (variableContainer != null) {
+                        compositeMap.addElement(variableContainer.getVariableCache());
+                    }
                 }
             }
             compositeVariableCache = compositeMap;
@@ -215,5 +230,17 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
     public boolean removePathElement(IPathElement pathElement, EnumFacing side) {
         notifyPartsChanged();
         return true;
+    }
+
+    @Override
+    public void invalidateElement(INetworkElement element) {
+        compositeVariableCache = null;
+        super.invalidateElement(element);
+    }
+
+    @Override
+    public void revalidateElement(INetworkElement element) {
+        compositeVariableCache = null;
+        super.revalidateElement(element);
     }
 }

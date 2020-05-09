@@ -12,10 +12,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.config.extendedconfig.ExtendedConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.cyclopscore.item.ItemGui;
+import org.cyclops.integrateddynamics.Configs;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.client.gui.GuiOnTheDynamicsOfIntegration;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargetted;
@@ -70,7 +70,7 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (ItemOnTheDynamicsOfIntegrationConfig.obtainOnSpawn
-                && ConfigHandler.isEnabled(ItemOnTheDynamicsOfIntegrationConfig.class)) {
+                && Configs.isEnabled(ItemOnTheDynamicsOfIntegrationConfig.class)) {
             NBTTagCompound tag = event.player.getEntityData();
             if (!tag.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
                 tag.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());

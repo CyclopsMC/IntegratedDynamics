@@ -243,8 +243,9 @@ public class CableHelpers {
      * @param placer The entity who placed the cable.
      */
     public static void onCableAddedByPlayer(World world, BlockPos pos, @Nullable EntityLivingBase placer) {
+        CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
         if(!world.isRemote) {
-            INetwork network = NetworkHelpers.getNetwork(world, pos, null);
+            INetwork network = NetworkHelpers.initNetwork(world, pos, null);
             MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer));
         }
     }

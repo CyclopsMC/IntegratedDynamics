@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.tileentity;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -12,22 +11,16 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
-import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
-import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
 
 import java.util.Collection;
@@ -80,48 +73,17 @@ public class TileVariablestore extends TileCableConnectableInventory
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        refreshVariables(inventory, true);
+        shouldSendUpdateEvent = true;
     }
 
-    protected void refreshVariables(IInventory inventory, boolean sendVariablesUpdateEvent) {
-        // Invalidate variables
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(getNetwork());
-        if (partNetwork != null) {
-            for (IVariableFacade variableFacade : variableContainer.getVariableCache().values()) {
-                IVariable<?> variable = variableFacade.getVariable(partNetwork);
-                if (variable != null) {
-                    if (variable.canInvalidate()) {
-                        variable.invalidate();
-                    }
-                }
-            }
-        }
-
-        // Reset variable facades
-        variableContainer.getVariableCache().clear();
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            ItemStack itemStack = inventory.getStackInSlot(i);
-            if (!itemStack.isEmpty()) {
-                IVariableFacade variableFacade = ItemVariable.getInstance().getVariableFacade(itemStack);
-                if (variableFacade != null && variableFacade.isValid()) {
-                    variableContainer.getVariableCache().put(variableFacade.getId(), variableFacade);
-                }
-            }
-        }
-
-        // Trigger event in network
-        if (sendVariablesUpdateEvent) {
-            INetwork network = getNetwork();
-            if (network != null) {
-                network.getEventBus().post(new VariableContentsUpdatedEvent(network));
-            }
-        }
+    protected void refreshVariables(boolean sendVariablesUpdateEvent) {
+        variableContainer.refreshVariables(getNetwork(), inventory, sendVariablesUpdateEvent);
     }
 
     @Override
     public void onDirty() {
         if(!world.isRemote) {
-            refreshVariables(inventory, true);
+            refreshVariables(true);
         }
     }
 
@@ -141,7 +103,7 @@ public class TileVariablestore extends TileCableConnectableInventory
         super.updateTileEntity();
         if (shouldSendUpdateEvent && getNetwork() != null) {
             shouldSendUpdateEvent = false;
-            refreshVariables(inventory, true);
+            refreshVariables(true);
         }
     }
 
@@ -158,7 +120,7 @@ public class TileVariablestore extends TileCableConnectableInventory
     @Override
     public void onEvent(INetworkEvent event, VariablestoreNetworkElement networkElement) {
         if(event instanceof VariableContentsUpdatedEvent) {
-            refreshVariables(inventory, false);
+            refreshVariables(false);
         }
     }
 }

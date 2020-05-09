@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.GuiLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
@@ -46,7 +47,7 @@ public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IValue getValue() {
-        return getInnerGuiElement().getValueType().deserialize(getInnerGuiElement().getInputString());
+        return ValueHelpers.deserializeRaw(getInnerGuiElement().getValueType(), getInnerGuiElement().getInputString());
     }
 
     @Override

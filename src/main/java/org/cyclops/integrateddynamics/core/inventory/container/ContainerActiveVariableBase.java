@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.container.TileInventoryContainerConfigurable;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileActiveVariableBase;
 
@@ -36,23 +35,10 @@ public class ContainerActiveVariableBase<T extends TileActiveVariableBase<?>> ex
         super.detectAndSendChanges();
 
         if(!MinecraftHelpers.isClientSide()) {
-            String readValue = "";
-            int readValueColor = 0;
             IVariable variable = getTile().getVariable(NetworkHelpers.getPartNetwork(getTile().getNetwork()));
-            if (!NetworkHelpers.shouldWork()) {
-                readValue = "SAFE-MODE";
-            } else if(variable != null) {
-                try {
-                    IValue value = variable.getValue();
-                    readValue = value.getType().toCompactString(value);
-                    readValueColor = value.getType().getDisplayColor();
-                } catch (EvaluationException | NullPointerException e) {
-                    readValue = "ERROR";
-                    readValueColor = Helpers.RGBToInt(255, 0, 0);
-                }
-            }
-            ValueNotifierHelpers.setValue(this, readValueId, readValue);
-            ValueNotifierHelpers.setValue(this, readColorId, readValueColor);
+            Pair<String, Integer> readValue = ValueHelpers.getSafeReadableValue(variable);
+            ValueNotifierHelpers.setValue(this, readValueId, readValue.getLeft());
+            ValueNotifierHelpers.setValue(this, readColorId, readValue.getRight());
         }
     }
 

@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics.tileentity;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
@@ -70,9 +72,22 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
             int lastEnergy = this.energy;
             if (lastEnergy != energy) {
                 this.energy = energy;
+                markDirty();
                 sendUpdate();
             }
         }
+    }
+
+    @Override
+    protected int getUpdateBackoffTicks() {
+        return 20;
+    }
+
+    @Override
+    protected void onSendUpdate() {
+        IBlockState blockState = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, blockState, blockState,
+                MinecraftHelpers.BLOCK_NOTIFY | MinecraftHelpers.BLOCK_NOTIFY_CLIENT | MinecraftHelpers.BLOCK_NOTIFY_NO_RERENDER);
     }
 
     @Override
@@ -91,13 +106,12 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         if(!isCreative()) {
-            energy = Math.max(0, Math.min(energy, getEnergyPerTick()));
             int stored = getEnergyStored();
-            int newEnergy = Math.min(stored + energy, getMaxEnergyStored());
+            int energyReceived = Math.min(getMaxEnergyStored() - stored, energy);
             if(!simulate) {
-                setEnergy(newEnergy);
+                setEnergy(stored + energyReceived);
             }
-            return newEnergy - stored;
+            return energyReceived;
         }
         return 0;
     }
@@ -107,7 +121,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
         if(isCreative()) return energy;
         energy = Math.max(0, Math.min(energy, getEnergyPerTick()));
         int stored = getEnergyStored();
-        int newEnergy = Math.max(stored - energy, 0);
+        int newEnergy = Math.max(stored - energy, 0);;
         if(!simulate) {
             setEnergy(newEnergy);
         }

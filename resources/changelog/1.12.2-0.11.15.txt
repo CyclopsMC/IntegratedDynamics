@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 0.11.7 or higher.
+
+Changes:
+* Optimizes images
+
+Fixes:
+* Fix incomplete flipped operators throwing errors, Closes #609
+* Fix simple omnidirectional copy recipe resetting IDs, Closes #612
+* Fix drying basin and squeezer not updating visual contents client-side
+  This could happen when the contents were changed externally,
+  using a hopper for instance.
+  Closes #610
+* Fix variables with operations not updating after chunk reload, Closes #611

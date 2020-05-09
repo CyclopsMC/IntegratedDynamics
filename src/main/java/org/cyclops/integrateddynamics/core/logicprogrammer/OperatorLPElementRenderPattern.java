@@ -16,7 +16,10 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * @author rubensworks
  */
 @SideOnly(Side.CLIENT)
-class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase> {
+class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, GuiLogicProgrammerBase, ContainerLogicProgrammerBase>
+        implements IRenderPatternValueTypeTooltip {
+
+    private boolean renderTooltip = true;
 
     public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                           GuiLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -44,13 +47,17 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Gu
         }
 
         // Output type tooltip
-        IValueType outputType = operator.getOutputType();
-        if (!container.hasWriteItemInSlot()) {
-            if (gui.isPointInRegion(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
-                    GuiLogicProgrammerBase.BOX_HEIGHT, GuiLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
-                gui.drawTooltip(getValueTypeTooltip(outputType), mouseX - guiLeft, mouseY - guiTop);
-            }
-        }
+        this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, operator.getOutputType());
+    }
+
+    @Override
+    public boolean isRenderTooltip() {
+        return this.renderTooltip;
+    }
+
+    @Override
+    public void setRenderTooltip(boolean renderTooltip) {
+        this.renderTooltip = renderTooltip;
     }
 
 }

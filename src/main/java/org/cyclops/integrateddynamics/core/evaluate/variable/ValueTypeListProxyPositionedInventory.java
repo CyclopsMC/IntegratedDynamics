@@ -18,6 +18,10 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
         super(ValueTypeListProxyFactories.POSITIONED_INVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK, pos, side);
     }
 
+    public ValueTypeListProxyPositionedInventory() {
+        this(null, null);
+    }
+
     protected IItemHandler getInventory() {
         return TileHelpers.getCapability(getPos(), getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
     }

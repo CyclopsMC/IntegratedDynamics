@@ -35,15 +35,12 @@ public abstract class LazyAspectVariable<V extends IValue> extends VariableAdapt
     }
 
     @Override
-    public boolean canInvalidate() {
-        return value != null;
-    }
-
-    @Override
     public void invalidate() {
-        super.invalidate();
-        value = null;
-        cachedProperties = null;
+        if (value != null) {
+            value = null;
+            cachedProperties = null;
+            super.invalidate();
+        }
     }
 
     @Override

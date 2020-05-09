@@ -56,6 +56,16 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         this.part = part;
     }
 
+    @Override
+    public String getTranslationKey() {
+        return part.getTranslationKey();
+    }
+
+    @Override
+    public String getTranslationKey(ItemStack stack) {
+        return part.getTranslationKey();
+    }
+
     /**
      * Register a use action for the cable item.
      * @param useAction The use action.
@@ -66,7 +76,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        return L10NHelpers.localize(part.getUnlocalizedName());
+        return L10NHelpers.localize(getTranslationKey());
     }
 
     @Override
@@ -148,7 +158,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             list.add(L10NHelpers.localize(L10NValues.GENERAL_ITEM_ID, id));
         }
         getPart().loadTooltip(itemStack, list);
-        L10NHelpers.addOptionalInfo(list, getPart().getUnlocalizedNameBase());
+        L10NHelpers.addOptionalInfo(list, getPart().getTranslationKeyBase());
         super.addInformation(itemStack, world, list, flag);
     }
 

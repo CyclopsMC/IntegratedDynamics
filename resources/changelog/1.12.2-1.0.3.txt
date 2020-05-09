@@ -1,0 +1,17 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.0.0 or higher.
+
+Changes:
+* Make strings part of the 'to string' value type, #650
+* Add more safety checks for invalid value casting
+
+Fixes:
+* Fix list in logic programmer showing overlapping tooltips on output slot
+* Don't crash but fix if extraction finalization detected inconsistency, Closes #679
+* Ensure currying is done in operator-related operators, #650
+* Fix map operator not supporting currying, Closes #650
+* Fix crash when ingredient network positions are not loaded, #680
+* Fix pipe operator handling multi-parameters incorrectly, Closes #585
+* Fix list equality not considering value type categories
+* Fix stack overflow error when a class cast error occurs during list.get, Closes #649
+* Fix crash when creating lists of recipes, Closes CyclopsMC/IntegratedCrafting#4

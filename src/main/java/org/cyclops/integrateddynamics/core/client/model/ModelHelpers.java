@@ -2,7 +2,15 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.base.Charsets;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockPart;
+import net.minecraft.client.renderer.block.model.BlockPartFace;
+import net.minecraft.client.renderer.block.model.FaceBakery;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.renderer.block.model.ModelBlock;
+import net.minecraft.client.renderer.block.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.SimpleBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.EnumFacing;
@@ -32,7 +40,7 @@ public final class ModelHelpers {
      */
     public static ModelBlock loadModelBlock(ResourceLocation modelLocation) throws IOException {
         IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(
-                new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath() + ".json"));
+                new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + ".json"));
         Reader reader = new InputStreamReader(resource.getInputStream(), Charsets.UTF_8);
         return ModelBlock.deserialize(reader);
     }

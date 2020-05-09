@@ -16,6 +16,7 @@ public final class Reference {
     public static final String MOD_FINGERPRINT = "@FINGERPRINT@";
     public static final String GA_TRACKING_ID = "UA-65307010-4";
     public static final String VERSION_URL = "https://raw.githubusercontent.com/CyclopsMC/Versions/master/1.12/IntegratedDynamics.txt";
+    public static final String BOOK_URL = "https://integrateddynamics.rubensworks.net/book/";
 
     // Paths
     public static final String TEXTURE_PATH_GUI = "textures/gui/";
@@ -34,12 +35,12 @@ public final class Reference {
     // MOD ID's
     public static final String MOD_FORGE = "forge";
     public static final String MOD_FORGE_VERSION = "@FORGE_VERSION@";
-    public static final String MOD_FORGE_VERSION_MIN = "14.23.1.2555";
+    public static final String MOD_FORGE_VERSION_MIN = "14.23.5.2768";
     public static final String MOD_CYCLOPSCORE = "cyclopscore";
     public static final String MOD_CYCLOPSCORE_VERSION = "@CYCLOPSCORE_VERSION@";
-    public static final String MOD_CYCLOPSCORE_VERSION_MIN = "0.11.4";
+    public static final String MOD_CYCLOPSCORE_VERSION_MIN = "1.6.0";
     public static final String MOD_COMMONCAPABILITIES = "commoncapabilities";
-    public static final String MOD_COMMONCAPABILITIES_VERSION_MIN = "1.4.0";
+    public static final String MOD_COMMONCAPABILITIES_VERSION_MIN = "2.4.4";
     public static final String MOD_CHARSETPIPES = "charsetpipes";
     public static final String MOD_MCMULTIPART = "mcmultipart";
     public static final String MOD_WAILA = "Waila";

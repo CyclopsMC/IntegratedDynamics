@@ -25,13 +25,21 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     private final String typeName;
     private final int color;
     private final String colorFormat;
+    @Nullable // TODO: remove Nullable option in 1.15
+    private final Class<V> valueClass;
 
-    private String unlocalizedName = null;
+    private String translationKey = null;
 
+    @Deprecated // TODO: remove, and also remove Nullable option in 1.15
     public ValueTypeBase(String typeName, int color, String colorFormat) {
+        this(typeName, color, colorFormat, null);
+    }
+
+    public ValueTypeBase(String typeName, int color, String colorFormat, @Nullable Class<V> valueClass) {
         this.typeName = typeName;
         this.color = color;
         this.colorFormat = colorFormat;
+        this.valueClass = valueClass;
         if(MinecraftHelpers.isModdedEnvironment() && MinecraftHelpers.isClientSide()) {
             registerModelResourceLocation();
         }
@@ -56,8 +64,8 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public String getUnlocalizedName() {
-        return unlocalizedName != null ? unlocalizedName : (unlocalizedName = getUnlocalizedPrefix() + ".name");
+    public String getTranslationKey() {
+        return translationKey != null ? translationKey : (translationKey = getUnlocalizedPrefix() + ".name");
     }
 
     @Override
@@ -88,7 +96,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public void loadTooltip(List<String> lines, boolean appendOptionalInfo, @Nullable V value) {
-        String typeName = L10NHelpers.localize(getUnlocalizedName());
+        String typeName = L10NHelpers.localize(getTranslationKey());
         lines.add(L10NHelpers.localize(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
@@ -112,7 +120,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public String toString() {
-        return L10NHelpers.localize(getUnlocalizedName());
+        return L10NHelpers.localize(getTranslationKey());
     }
 
     @Override
@@ -124,4 +132,20 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         return Reference.MOD_ID;
     }
 
+    @Override
+    public V cast(IValue value) throws EvaluationException {
+        // TODO remove null check in 1.15
+        if (this.valueClass == null) {
+            return (V) value;
+        }
+        try {
+            return this.valueClass.cast(value);
+        } catch (ClassCastException e) {
+            throw new EvaluationException(String.format("Attempted to cast %s to %s, for value \"%s\"",
+                    L10NHelpers.localize(value.getType().getTranslationKey()),
+                    L10NHelpers.localize(this.getTranslationKey()),
+                    value.getType().toCompactString(value)
+            ));
+        }
+    }
 }

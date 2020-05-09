@@ -56,7 +56,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     @Override
     public <V extends IValue, T extends IValueType<V>> T register(T valueType) {
-        valueTypes.put(valueType.getUnlocalizedName(), valueType);
+        valueTypes.put(valueType.getTranslationKey(), valueType);
         return valueType;
     }
 
@@ -108,13 +108,13 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
         if(type == null) {
             return INVALID_FACADE;
         }
-        IValue value = type.deserialize(tag.getString("value"));
+        IValue value = ValueHelpers.deserializeRaw(type, tag.getString("value"));
         return new ValueTypeVariableFacade(id, type, value);
     }
 
     @Override
     public void setVariableFacade(NBTTagCompound tag, IValueTypeVariableFacade variableFacade) {
-        tag.setString("typeName", variableFacade.getValueType().getUnlocalizedName());
+        tag.setString("typeName", variableFacade.getValueType().getTranslationKey());
         tag.setString("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
     }
 

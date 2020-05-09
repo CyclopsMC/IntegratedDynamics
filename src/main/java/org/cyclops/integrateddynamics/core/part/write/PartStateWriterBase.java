@@ -36,7 +36,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
-        if (this.activeAspect != null) tag.setString("activeAspectName", this.activeAspect.getUnlocalizedName());
+        if (this.activeAspect != null) tag.setString("activeAspectName", this.activeAspect.getTranslationKey());
         NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, tag);
         super.writeToNBT(tag);
     }
@@ -101,7 +101,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
 
     @Override
     public List<L10NHelpers.UnlocalizedString> getErrors(IAspectWrite aspect) {
-        List<L10NHelpers.UnlocalizedString> errors = errorMessages.get(aspect.getUnlocalizedName());
+        List<L10NHelpers.UnlocalizedString> errors = errorMessages.get(aspect.getTranslationKey());
         if(errors == null) {
             return Collections.emptyList();
         }
@@ -111,9 +111,9 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     @Override
     public void addError(IAspectWrite aspect, L10NHelpers.UnlocalizedString error) {
         if(error == null) {
-            errorMessages.remove(aspect.getUnlocalizedName());
+            errorMessages.remove(aspect.getTranslationKey());
         } else {
-            CollectionHelpers.addToMapList(errorMessages, aspect.getUnlocalizedName(), error);
+            CollectionHelpers.addToMapList(errorMessages, aspect.getTranslationKey(), error);
         }
         onDirty();
         sendUpdate(); // We want this error messages to be sent to the client(s).

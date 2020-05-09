@@ -43,8 +43,8 @@ public class DelayVariableFacade extends ProxyVariableFacade implements IDelayVa
                                                                      IValueType containingValueType,
                                                                      IValueType actualType) {
         return new L10NHelpers.UnlocalizedString(L10NValues.DELAY_ERROR_DELAYINVALIDTYPE,
-                new L10NHelpers.UnlocalizedString(containingValueType.getUnlocalizedName()),
-                new L10NHelpers.UnlocalizedString(actualType.getUnlocalizedName()));
+                new L10NHelpers.UnlocalizedString(containingValueType.getTranslationKey()),
+                new L10NHelpers.UnlocalizedString(actualType.getTranslationKey()));
     }
 
     protected String getProxyTooltip() {

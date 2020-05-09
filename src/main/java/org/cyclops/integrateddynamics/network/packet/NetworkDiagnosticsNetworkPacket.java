@@ -38,6 +38,10 @@ public class NetworkDiagnosticsNetworkPacket extends PacketCodec {
 	@SideOnly(Side.CLIENT)
 	public void actionClient(World world, EntityPlayer player) {
 		RawNetworkData networkData = RawNetworkData.fromNbt(this.networkData);
+		if (networkData.getParts().isEmpty()) {
+			// Force observers to be cleared when no parts are present.
+			networkData.getObservers().clear();
+		}
 		GuiNetworkDiagnostics.setNetworkData(networkData.getId(), networkData.isKilled() ? null : networkData);
 	}
 

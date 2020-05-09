@@ -47,7 +47,10 @@ public class TestOperatorOperators {
     private DummyVariableOperator oChoice;
     private DummyVariableOperator oPipe;
     private DummyVariableOperator oListLength;
+    private DummyVariableOperator oListContains;
+    private DummyVariableOperator oOperatorMap;
 
+    private DummyVariableList lempty;
     private DummyVariableList lintegers;
     private DummyVariableList lbooleans;
 
@@ -79,7 +82,10 @@ public class TestOperatorOperators {
         oArithmeticMultiplication = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_MULTIPLICATION));
         oChoice                   = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE));
         oListLength               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_LENGTH));
+        oListContains             = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_CONTAINS));
+        oOperatorMap              = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_MAP));
 
+        lempty = new DummyVariableList(ValueTypeList.ValueList.ofAll());
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
 
@@ -224,6 +230,20 @@ public class TestOperatorOperators {
         assertThat("2 > 1 == true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
     }
 
+    @Test
+    public void testApply2OnOpWith3Inputs() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oChoice, bTrue, i1});
+        assertThat("result is an operator", res1, instanceOf(ValueTypeOperator.ValueOperator.class));
+        assertThat("apply_2(?, true, 1)", ((ValueTypeOperator.ValueOperator) res1).getRawValue().getInputTypes().length, is(1));
+        assertThat("apply_2(?, true, 1)", ((ValueTypeOperator.ValueOperator) res1).getRawValue().getRequiredInputLength(), is(1));
+        assertThat("apply_2(?, true, 1)", ((ValueTypeOperator.ValueOperator) res1).getRawValue().getInputTypes()[0], is(ValueTypes.CATEGORY_ANY));
+        assertThat("apply_2(?, true, 1)", ((ValueTypeOperator.ValueOperator) res1).getRawValue().getOutputType(), is(ValueTypes.CATEGORY_ANY));
+
+        IValue res2 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{new Variable<>(res1), i2});
+        assertThat("result is an integer", res2, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("apply_2(?, true, 1)(2)", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(1));
+    }
+
     @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeApply2Large() throws EvaluationException {
         Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bFalse, bFalse, bFalse});
@@ -308,6 +328,22 @@ public class TestOperatorOperators {
         assertThat("map([false, true, false, true], true&&)[2] == false", ((ValueTypeBoolean.ValueBoolean) list3.get(2)).getRawValue(), is(false));
         assertThat("map([false, true, false, true], true&&)[3] == true", ((ValueTypeBoolean.ValueBoolean) list3.get(3)).getRawValue(), is(true));
         assertThat(list3.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.BOOLEAN));
+
+        IValue res4 = Operators.OPERATOR_MAP.evaluate(new IVariable[]{oLogicalAnd, lbooleans});
+        IValueTypeListProxy list4 = ((ValueTypeList.ValueList) res4).getRawValue();
+        assertThat("map([false, true, false, true], &&)[0] is an operator", list4.get(0).getType(), is(ValueTypes.OPERATOR));
+        assertThat("map([false, true, false, true], &&)[1] is an operator", list4.get(1).getType(), is(ValueTypes.OPERATOR));
+        assertThat("map([false, true, false, true], &&)[2] is an operator", list4.get(2).getType(), is(ValueTypes.OPERATOR));
+        assertThat("map([false, true, false, true], &&)[3] is an operator", list4.get(3).getType(), is(ValueTypes.OPERATOR));
+        assertThat("map([false, true, false, true], &&)[0](true) == false",
+                ((ValueTypeBoolean.ValueBoolean) (((ValueTypeOperator.ValueOperator) list4.get(0)).getRawValue().evaluate(bTrue))).getRawValue(), is(false));
+        assertThat("map([false, true, false, true], &&)[1](true) == true",
+                ((ValueTypeBoolean.ValueBoolean) (((ValueTypeOperator.ValueOperator) list4.get(1)).getRawValue().evaluate(bTrue))).getRawValue(), is(true));
+        assertThat("map([false, true, false, true], &&)[2](true) == false",
+                ((ValueTypeBoolean.ValueBoolean) (((ValueTypeOperator.ValueOperator) list4.get(2)).getRawValue().evaluate(bTrue))).getRawValue(), is(false));
+        assertThat("map([false, true, false, true], &&)[3](true) == true",
+                ((ValueTypeBoolean.ValueBoolean) (((ValueTypeOperator.ValueOperator) list4.get(3)).getRawValue().evaluate(bTrue))).getRawValue(), is(true));
+        assertThat(list4.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
     }
 
     @Test(expected = EvaluationException.class)
@@ -590,33 +626,74 @@ public class TestOperatorOperators {
     }
 
     @Test
-    public void testPredicatePipeMixedLarge() throws EvaluationException {
-        DummyVariableOperator listLengthIncr0 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+    public void testPredicatePipeLenAddMap() throws EvaluationException {
+        DummyVariableOperator op = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oListLength, new DummyVariableOperator((ValueTypeOperator.ValueOperator)
-                        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticAddition, oArithmeticAddition}))}));
-        DummyVariableOperator listLengthIncr1 = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
-                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oListLength, new DummyVariableOperator((ValueTypeOperator.ValueOperator)
-                        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticAddition, oArithmeticAddition}))}));
+                        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticAddition, oOperatorMap}))}));
 
-        assertThat(listLengthIncr0.getValue().getRawValue().getInputTypes().length, is(3));
-        assertThat(listLengthIncr0.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.LIST));
-        assertThat(listLengthIncr0.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
-        assertThat(listLengthIncr0.getValue().getRawValue().getInputTypes()[2], is(ValueTypes.CATEGORY_NUMBER));
-        assertThat(listLengthIncr0.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(op.getValue().getRawValue().getInputTypes().length, is(2));
+        assertThat(op.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.LIST));
+        assertThat(op.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.LIST));
+        assertThat(op.getValue().getRawValue().getOutputType(), is(ValueTypes.LIST));
 
-        IValue res1 = Operators.OPERATOR_APPLY_3.evaluate(listLengthIncr0, lintegers, i2, i3);
+        IValue res1 = Operators.OPERATOR_APPLY_2.evaluate(op, lintegers, lintegers);
+        assertThat("result is an integer", res1, instanceOf(ValueTypeList.ValueList.class));
+        assertThat("len|+|map([0, 1, 2, 3],[0, 1, 2, 3]) == [4, 5, 6, 7]",
+                res1, equalTo(ValueTypeList.ValueList.ofAll(
+                        ValueTypeInteger.ValueInteger.of(4),
+                        ValueTypeInteger.ValueInteger.of(5),
+                        ValueTypeInteger.ValueInteger.of(6),
+                        ValueTypeInteger.ValueInteger.of(7)
+                )));
+    }
+
+    @Test
+    public void testPredicatePipe3Incr() throws EvaluationException {
+        DummyVariableOperator op = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oIntegerIncrement, new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oIntegerIncrement, oIntegerIncrement}))}));
+
+        assertThat(op.getValue().getRawValue().getInputTypes().length, is(1));
+        assertThat(op.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.INTEGER));
+        assertThat(op.getValue().getRawValue().getOutputType(), is(ValueTypes.INTEGER));
+
+        IValue res1 = Operators.OPERATOR_APPLY.evaluate(op, i2);
         assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("len|+|+([0, 1, 2, 3],2,3) == 9", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(9));
+        assertThat("++|++|++(2) == 5", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(5));
+    }
 
-        assertThat(listLengthIncr1.getValue().getRawValue().getInputTypes().length, is(3));
-        assertThat(listLengthIncr1.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.LIST));
-        assertThat(listLengthIncr1.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
-        assertThat(listLengthIncr1.getValue().getRawValue().getInputTypes()[2], is(ValueTypes.CATEGORY_NUMBER));
-        assertThat(listLengthIncr1.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
+    @Test(expected = EvaluationException.class)
+    public void testPredicatePipeAddAddError() throws EvaluationException {
+        DummyVariableOperator op = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticAddition, oArithmeticAddition}));
 
-        IValue res2 = Operators.OPERATOR_APPLY_3.evaluate(listLengthIncr1, lintegers, i2, i3);
-        assertThat("result is an integer", res2, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("len|+|+([0, 1, 2, 3],2,3) == 9", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(9));
+        assertThat(op.getValue().getRawValue().getInputTypes().length, is(2));
+        assertThat(op.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(op.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
+        assertThat(op.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
+
+        Operators.OPERATOR_APPLY.evaluate(op, i2, i2);
+    }
+
+    @Test
+    public void testPredicatePipeMapContains() throws EvaluationException {
+        DummyVariableOperator mapContains = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oListContains, oOperatorMap}));
+
+        assertThat(mapContains.getValue().getRawValue().getInputTypes().length, is(2));
+        assertThat(mapContains.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.LIST));
+        assertThat(mapContains.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.LIST));
+        assertThat(mapContains.getValue().getRawValue().getOutputType(), is(ValueTypes.LIST));
+
+        IValue res1 = Operators.OPERATOR_APPLY_2.evaluate(mapContains, lintegers, lintegers);
+        assertThat("result is an integer", res1, instanceOf(ValueTypeList.ValueList.class));
+        assertThat("cont|map([0, 1, 2, 3],[0, 1, 2, 3]) == [true, true, true, true]",
+                res1, equalTo(ValueTypeList.ValueList.ofAll(
+                        ValueTypeBoolean.ValueBoolean.of(true),
+                        ValueTypeBoolean.ValueBoolean.of(true),
+                        ValueTypeBoolean.ValueBoolean.of(true),
+                        ValueTypeBoolean.ValueBoolean.of(true)
+                )));
     }
 
     @Test(expected = EvaluationException.class)
@@ -661,6 +738,10 @@ public class TestOperatorOperators {
     public void testPredicatePipe2() throws EvaluationException {
         DummyVariableOperator addOneAndSelfMultiply = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_PIPE2.evaluate(new IVariable[]{oGeneralIdentity, oIntegerIncrement, oArithmeticMultiplication}));
+
+        assertThat(addOneAndSelfMultiply.getValue().getRawValue().getInputTypes().length, is(1));
+        assertThat(addOneAndSelfMultiply.getValue().getRawValue().getInputTypes()[0], is(ValueTypes.INTEGER));
+        assertThat(addOneAndSelfMultiply.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
 
         IValue res1 = Operators.OPERATOR_APPLY.evaluate(new IVariable[]{addOneAndSelfMultiply, i0});
         assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
@@ -887,6 +968,57 @@ public class TestOperatorOperators {
     @Test
     public void testConditionalOutputTypesReduce() throws EvaluationException {
         assertThat(Operators.OPERATOR_REDUCE.getConditionalOutputType(new IVariable[]{oArithmeticAddition, lintegers, i0}),
+                CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
+    }
+
+    /**
+     * ----------------------------------- REDUCE1 -----------------------------------
+     */
+
+    @Test
+    public void testReduce1() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, lintegers});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("reduce1([0, 1, 2, 3], +) == 6", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(6));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeReduce1Large() throws EvaluationException {
+        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, lintegers, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeReduce1Small() throws EvaluationException {
+        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorTypeReduce1() throws EvaluationException {
+        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{bFalse, lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidOperatorInputTypeReduce1() throws EvaluationException {
+        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, i0});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidEmptyListReduce1() throws EvaluationException {
+        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, lempty});
+    }
+
+    @Test
+    public void testValidateTypesReduce1() {
+        assertThat(Operators.OPERATOR_REDUCE1.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_REDUCE1.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_REDUCE1.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN}), notNullValue());
+        assertThat(Operators.OPERATOR_REDUCE1.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.BOOLEAN, ValueTypes.INTEGER}), notNullValue());
+        assertThat(Operators.OPERATOR_REDUCE1.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.LIST}), nullValue());
+    }
+
+    @Test
+    public void testConditionalOutputTypesReduce1() throws EvaluationException {
+        assertThat(Operators.OPERATOR_REDUCE1.getConditionalOutputType(new IVariable[]{oArithmeticAddition, lintegers}),
                 CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
     }
 
