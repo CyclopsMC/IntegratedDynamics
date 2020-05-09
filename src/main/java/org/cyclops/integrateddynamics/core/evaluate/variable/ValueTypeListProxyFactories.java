@@ -41,6 +41,7 @@ public class ValueTypeListProxyFactories {
     public static ValueTypeListProxyNbtValueListTag.Factory NBT_VALUE_LIST_TAG;
     public static ValueTypeListProxyNbtValueListByte.Factory NBT_VALUE_LIST_BYTE;
     public static ValueTypeListProxyNbtValueListInt.Factory NBT_VALUE_LIST_INT;
+    public static ValueTypeListProxyNbtValueListLong.Factory NBT_VALUE_LIST_LONG;
     public static ValueTypeListProxyNbtAsListTag.Factory NBT_AS_LIST_TAG;
     public static ValueTypeListProxyNbtAsListByte.Factory NBT_AS_LIST_BYTE;
     public static ValueTypeListProxyNbtAsListInt.Factory NBT_AS_LIST_INT;
@@ -66,6 +67,7 @@ public class ValueTypeListProxyFactories {
             NBT_VALUE_LIST_TAG = REGISTRY.register(new ValueTypeListProxyNbtValueListTag.Factory());
             NBT_VALUE_LIST_BYTE = REGISTRY.register(new ValueTypeListProxyNbtValueListByte.Factory());
             NBT_VALUE_LIST_INT = REGISTRY.register(new ValueTypeListProxyNbtValueListInt.Factory());
+            NBT_VALUE_LIST_LONG = REGISTRY.register(new ValueTypeListProxyNbtValueListLong.Factory());
             NBT_AS_LIST_TAG = REGISTRY.register(new ValueTypeListProxyNbtAsListTag.Factory());
             NBT_AS_LIST_BYTE = REGISTRY.register(new ValueTypeListProxyNbtAsListByte.Factory());
             NBT_AS_LIST_INT = REGISTRY.register(new ValueTypeListProxyNbtAsListInt.Factory());

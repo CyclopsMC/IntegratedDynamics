@@ -37,6 +37,7 @@ public class TestNbtOperators {
     private DummyVariableString sstring;
     private DummyVariableString sbytearray;
     private DummyVariableString sintarray;
+    private DummyVariableString slongarray;
     private DummyVariableString sboolean;
     private DummyVariableString scompound;
     private DummyVariableString slist;
@@ -87,6 +88,7 @@ public class TestNbtOperators {
         sstring = new DummyVariableString(ValueTypeString.ValueString.of("string"));
         sbytearray = new DummyVariableString(ValueTypeString.ValueString.of("bytearray"));
         sintarray = new DummyVariableString(ValueTypeString.ValueString.of("intarray"));
+        slongarray = new DummyVariableString(ValueTypeString.ValueString.of("longarray"));
         sboolean = new DummyVariableString(ValueTypeString.ValueString.of("boolean"));
         scompound = new DummyVariableString(ValueTypeString.ValueString.of("compound"));
         slist = new DummyVariableString(ValueTypeString.ValueString.of("list"));
@@ -121,6 +123,7 @@ public class TestNbtOperators {
         tall.putString("string", "seven");
         tall.putByteArray("bytearray", new byte[]{8,9,10});
         tall.putIntArray("intarray", new int[]{11, 12, 13});
+        tall.putLongArray("longarray", new long[]{14, 15, 16});
         tall.putBoolean("boolean", true);
         CompoundNBT subCompound = new CompoundNBT();
         subCompound.putString("hello", "world");
@@ -603,6 +606,38 @@ public class TestNbtOperators {
     @Test(expected = EvaluationException.class)
     public void testInvalidInputTypeNbtValueListInt() throws EvaluationException {
         Operators.NBT_COMPOUND_VALUE_LIST_INT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- VALUE_LIST_LONG -----------------------------------
+     */
+
+    @Test
+    public void testNbtValueListLong() throws EvaluationException {
+        IValue res1 = Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{nempty, slist});
+        assertThat("result is a listlong", res1, instanceOf(ValueTypeList.ValueList.class));
+        assertThat("valuelistlong({}, listlong).size = 0", ((ValueTypeList.ValueList) res1).getRawValue().getLength(), is(0));
+
+        IValue res2 = Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{nall, slongarray});
+        assertThat("valuelistlong({...}, listlong).size = 3", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(3));
+        assertThat("valuelistlong({...}, listlong)[0] = 14", ((ValueTypeList.ValueList) res2).getRawValue().get(0), is(ValueTypeLong.ValueLong.of(14)));
+        assertThat("valuelistlong({...}, listlong)[1] = 15", ((ValueTypeList.ValueList) res2).getRawValue().get(1), is(ValueTypeLong.ValueLong.of(15)));
+        assertThat("valuelistlong({...}, listlong)[2] = 16", ((ValueTypeList.ValueList) res2).getRawValue().get(2), is(ValueTypeLong.ValueLong.of(16)));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtValueListLongSizeLarge() throws EvaluationException {
+        Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{nempty, sa, sa});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtValueListLongSizeSmall() throws EvaluationException {
+        Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtValueListLong() throws EvaluationException {
+        Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
     /**

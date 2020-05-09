@@ -1233,6 +1233,8 @@
     "operator.integrateddynamics.nbt.compound_value_list_byte.info": "The Byte Array in the given NBT compound tag with the given key as Integer List",
     "operator.integrateddynamics.nbt.compound_value_list_int": "NBT Compound Value Integer Array",
     "operator.integrateddynamics.nbt.compound_value_list_int.info": "The Integer Array in the given NBT compound tag with the given key as Integer List",
+    "operator.integrateddynamics.nbt.compound_value_list_long": "NBT Compound Value Long Array",
+    "operator.integrateddynamics.nbt.compound_value_list_long.info": "The Long Array in the given NBT compound tag with the given key as Long List",
     "operator.integrateddynamics.nbt.compound_without": "NBT Compound Without",
     "operator.integrateddynamics.nbt.compound_without.info": "Get a copy of the given NBT compound tag without the given key",
     "operator.integrateddynamics.nbt.compound_with_boolean": "NBT Compound With Boolean",

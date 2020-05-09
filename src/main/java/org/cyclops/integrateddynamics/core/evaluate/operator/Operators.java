@@ -2823,6 +2823,17 @@ public final class Operators {
             }).build());
 
     /**
+     * The NBT long list value
+     */
+    public static final IOperator NBT_COMPOUND_VALUE_LIST_LONG = REGISTRY.register(OperatorBuilders.NBT_2
+            .output(ValueTypes.LIST).operatorName("compound_value_list_long").symbol("NBT{}.get_list_long")
+            .function(variables -> {
+                ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                ValueTypeString.ValueString key = variables.getValue(1);
+                return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtValueListLong(key.getRawValue(), value.getRawValue()));
+            }).build());
+
+    /**
      * Remove an entry from an NBT compound
      */
     public static final IOperator NBT_COMPOUND_WITHOUT = REGISTRY.register(OperatorBuilders.NBT_2
