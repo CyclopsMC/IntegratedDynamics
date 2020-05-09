@@ -187,6 +187,13 @@
     "advancement.integrateddynamics.recipe_creation.desc": "Visually create a §8Recipe§7 using the Logic Programmer.",
     "advancement.integrateddynamics.recipe_lookup": "Recipe Lookup",
     "advancement.integrateddynamics.recipe_lookup.desc": "Dynamically lookup the recipe of a Chest using a Machine Reader.",
+    "advancement.integrateddynamics.lectern_data": "Lectern NBT",
+    "advancement.integrateddynamics.lectern_data.desc": "Read the NBT tag from a machine using a Block Reader, such as the Lectern.",
+    "advancement.integrateddynamics.lectern_book": "Lectern NBT Book",
+    "advancement.integrateddynamics.lectern_book.desc": "Read the Book NBT field inside a Lectern block on the NBT tag read from a Block Reader.",
+    "advancement.integrateddynamics.lectern_book_name": "Lectern NBT Book Name",
+    "advancement.integrateddynamics.lectern_book_name.desc": "Read the name (id) of a book inside a Lectern block by applying an NBT Path expression on the NBT tag read from a Block Reader.",
+
     "advancement.integrateddynamics.logic_programming": "Logic Programming",
     "advancement.integrateddynamics.logic_programming.desc": "Open a Logic Programmer's GUI",
     "advancement.integrateddynamics.constant_definition": "Constant Definition",
@@ -1481,6 +1488,13 @@
     "info_book.integrateddynamics.tutorials.recipe_handling.text4": "In this last part of the tutorial, we'll take recipe reading one step further. Using the &lRecipe By Output&r aspect, we can retrieve an operator that, when applied to an &8Ingredients&0 instance, will return the first &8Recipe&0 that returns the given &8Ingredients&0 as output. We will use this to look up the recipe of a &lChest&r.",
     "info_book.integrateddynamics.tutorials.recipe_handling.text5": "Let's start by creating an &8Ingredients&0 instance with a single &8Chest&0 in your &lLogic Programmer&r. Next, read the &lRecipe By Output&r aspect from a &lMachine Reader&r that targets a &lCrafting Table&r. After that, use the &oApply&r operator to apply your &lChest&r &8Ingredient&0 to the operator you got from the &lMachine Reader&r. Finally, insert the resulting variable into a &lDisplay Panel&r to see the &lChest&r's recipe. (Don't forget to insert all your used variables into a &lVariable Store&r).",
     "info_book.integrateddynamics.tutorials.recipe_handling.text6": "Obviously, there is much more you can do with &8Recipes&0 and &8Ingredients&0. Have a look in the &lMachine Reader&r and &lLogic Programmer&r to find out what other advanced functionality is available to you.",
+
+    "info_book.integrateddynamics.tutorials.nbt": "NBT",
+    "info_book.integrateddynamics.tutorials.nbt.text1": "&4NBT&0 tags are used to represent complex datastructures. These are typically used internally in Minecraft to store machine and entity information. In this tutorial, we will go over simple NBT tag reading and manipulation",
+    "info_book.integrateddynamics.tutorials.nbt.text2": "As a first step, use a &lBlock Reader&r on a lectern, read its &4NBT&0 data, and visualize it in a &lDisplay Panel&r.",
+    "info_book.integrateddynamics.tutorials.nbt.text3": "Next, from the read &lLectern&r &4NBT&0 tag, read the &3Book&0 sub-tag as a compound tag, and visualize it.",
+    "info_book.integrateddynamics.tutorials.nbt.text4": "As a final step, we will read the &3id&0 field from this &3Book&0 sub-tag. However, instead of starting from our last read sub-tag, we will start from the root, and apply an &lNBT Path&r expression. Such expressions are useful to get deeply nested &4NBT&0 values. For example, applying the expression &4”.root.child1.child2”&0 on the &3NBT&0 tag &3{ root: { child1: { child2: ”some value” } }}&0 will output &3”some value”&0. More advanced features of &lNBT Path&r are described later in the advanced part of the manual.",
+    "info_book.integrateddynamics.tutorials.nbt.text5": "To accomplish the final advancement, create an &lNBT Path&r expression that selects the &3Book&0/&3id&0 field, apply it on our &lLectern&r tag, and visualize it in a &lDisplay Panel&r.",
 
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents": "Advanced Network Components",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text1": "Now that you are familiar with basic logic, we can have a look at the more advanced network components: the &lMaterializer&r and the &lProxy&r.",

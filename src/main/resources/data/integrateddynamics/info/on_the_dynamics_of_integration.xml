@@ -214,6 +214,28 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.nbt">
+            <paragraph>info_book.integrateddynamics.tutorials.nbt.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.nbt.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.nbt.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.nbt.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.nbt.text5</paragraph>
+            <appendix type="integrateddynamics:aspect">integrateddynamics:read_nbt_block_tile</appendix>
+            <appendix type="integrateddynamics:operator">integrateddynamics:nbt_compound_value_compound</appendix>
+            <appendix type="integrateddynamics:operator">integrateddynamics:nbt_path_match_first</appendix>
+            <appendix type="advancement_rewards" id="integrateddynamics:nbt">
+                <advancements>
+                    <advancement id="integrateddynamics:nbt/lectern_data" />
+                    <advancement id="integrateddynamics:nbt/lectern_book" />
+                    <advancement id="integrateddynamics:nbt/lectern_book_name" />
+                </advancements>
+                <rewards>
+                    <reward type="item" amount="30">integrateddynamics:variable</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_machine_reader</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_display_panel</reward>
+                </rewards>
+            </appendix>
+        </section>
         <section name="info_book.integrateddynamics.tutorials.challenges">
             <paragraph>info_book.integrateddynamics.tutorials.challenges.text1</paragraph>
             <appendix type="advancement_rewards" id="integrateddynamics:challenges">

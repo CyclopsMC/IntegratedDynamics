@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable",
+      "nbt": "{aspectName:\"integrateddynamics:read_nbt_block_tile\",partId:1,_type:\"integrateddynamics:aspect\",_id:1}"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.lectern_data"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.lectern_data.desc"
+    }
+  },
+  "parent": "integrateddynamics:basic_network_components/block_reading",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "parttype": "integrateddynamics:display_panel",
+        "variable": {
+          "type": "integrateddynamics:aspect",
+          "aspect": "integrateddynamics:read_nbt_block_tile"
+        }
+      }
+    }
+  }
+}

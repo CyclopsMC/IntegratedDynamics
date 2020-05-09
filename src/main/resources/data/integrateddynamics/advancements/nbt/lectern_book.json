@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "integrateddynamics:variable",
+      "nbt": "{_type:\"integrateddynamics:valuetype\",typeName:\"integrateddynamics:nbt\",_id:1,value:{}}"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.lectern_book"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.lectern_book.desc"
+    }
+  },
+  "parent": "integrateddynamics:nbt/lectern_data",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "parttype": "integrateddynamics:display_panel",
+        "variable": {
+          "type": "integrateddynamics:operator",
+          "operator": "integrateddynamics:nbt_compound_value_compound",
+          "input": {
+            "0": {
+              "type": "integrateddynamics:aspect",
+              "aspect": "integrateddynamics:read_nbt_block_tile"
+            },
+            "1": {
+              "valuetype": "integrateddynamics:string",
+              "value": "{Primitive:\"Book\"}"
+            }
+          }
+        }
+      }
+    }
+  }
+}
