@@ -64,6 +64,9 @@ import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
+import org.cyclops.cyclopscore.nbt.path.NbtParseException;
+import org.cyclops.cyclopscore.nbt.path.NbtPath;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -3349,6 +3352,69 @@ public final class Operators {
                     ValueTypeList.ValueList value = variables.getValue(0);
                     return ValueTypeNbt.ValueNbt.of(NbtHelpers.getListNbtLong(value, NBT_FROM_LONG_LIST.getLocalizedNameFull()));
                 }
+            }).build());
+
+    /**
+     * Apply the given NBT path expression on the given NBT value and get the first result.
+     */
+    public static final IOperator NBT_PATH_MATCH_FIRST = REGISTRY.register(OperatorBuilders.NBT_2
+            .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.NBT)
+            .operatorName("path_match_first").symbol("NBT.path_match_first")
+            .function(variables -> {
+                ValueTypeString.ValueString string = variables.getValue(0);
+                ValueTypeNbt.ValueNbt nbt = variables.getValue(1);
+                INbtPathExpression expression = null;
+                try {
+                    expression = NbtPath.parse(string.getRawValue());
+                } catch (NbtParseException e) {
+                    throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
+                            string.getRawValue(),
+                            e.getMessage()));
+                }
+                return ValueTypeNbt.ValueNbt.of(expression.match(nbt.getRawValue().get()).getMatches().findAny());
+            }).build());
+
+    /**
+     * Apply the given NBT path expression on the given NBT value and get all results.
+     */
+    public static final IOperator NBT_PATH_MATCH_ALL = REGISTRY.register(OperatorBuilders.NBT_2
+            .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.LIST)
+            .operatorName("path_match_all").symbol("NBT.path_match_all")
+            .function(variables -> {
+                ValueTypeString.ValueString string = variables.getValue(0);
+                ValueTypeNbt.ValueNbt nbt = variables.getValue(1);
+                INbtPathExpression expression = null;
+                try {
+                    expression = NbtPath.parse(string.getRawValue());
+                } catch (NbtParseException e) {
+                    throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
+                            string.getRawValue(),
+                            e.getMessage()));
+                }
+                List<ValueTypeNbt.ValueNbt> matches = expression.match(nbt.getRawValue().get()).getMatches()
+                        .map(ValueTypeNbt.ValueNbt::of)
+                        .collect(Collectors.toList());
+                return ValueTypeList.ValueList.ofList(ValueTypes.NBT, matches);
+            }).build());
+
+    /**
+     * Test the given NBT path expression on the given NBT value.
+     */
+    public static final IOperator NBT_PATH_TEST = REGISTRY.register(OperatorBuilders.NBT_2
+            .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.BOOLEAN)
+            .operatorName("path_test").symbol("NBT.path_test")
+            .function(variables -> {
+                ValueTypeString.ValueString string = variables.getValue(0);
+                ValueTypeNbt.ValueNbt nbt = variables.getValue(1);
+                INbtPathExpression expression = null;
+                try {
+                    expression = NbtPath.parse(string.getRawValue());
+                } catch (NbtParseException e) {
+                    throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
+                            string.getRawValue(),
+                            e.getMessage()));
+                }
+                return ValueTypeBoolean.ValueBoolean.of(expression.test(nbt.getRawValue().get()));
             }).build());
 
     /**

@@ -849,6 +849,7 @@
     "operator.integrateddynamics.error.cyclic_reference": "Variable with id %s depends on itself, infinite recursion.",
     "operator.integrateddynamics.error.wrong_input_length_virtual": "The operator %s received the operator %s with input length %s while length %s is required.",
     "operator.integrateddynamics.error.operator_recursion_limit": "Reached the operator recursion limit of %s invocations for %s. Trying to crash the game, are you?",
+    "operator.integrateddynamics.error.operator_nbt_path_expression": "Found an invalid NBT path expression '%s': %s",
 
     "operator.integrateddynamics.logical": "Logical",
     "operator.integrateddynamics.logical.basename": "Logical %s",
@@ -1317,6 +1318,12 @@
     "operator.integrateddynamics.nbt.from_int_list.info": "Create an NBT Integer Array tag from the given Integer List value",
     "operator.integrateddynamics.nbt.from_long_list": "NBT Long Array From Long List",
     "operator.integrateddynamics.nbt.from_long_list.info": "Create an NBT Long Array tag from the given Long List value",
+    "operator.integrateddynamics.nbt.path_match_first": "NBT Path Match First",
+    "operator.integrateddynamics.nbt.path_match_first.info": "Apply the given NBT Path expression on the given NBT value, and return the first match",
+    "operator.integrateddynamics.nbt.path_match_all": "NBT Path Match All",
+    "operator.integrateddynamics.nbt.path_match_all.info": "Apply the given NBT Path expression on the given NBT value, and return all matches as a list",
+    "operator.integrateddynamics.nbt.path_test": "NBT Path Test",
+    "operator.integrateddynamics.nbt.path_test.info": "Test if the given NBT Path expression matches with the given NBT value",
 
     "operator.integrateddynamics.operator": "Operator",
     "operator.integrateddynamics.operator.basename": "Operator %s",

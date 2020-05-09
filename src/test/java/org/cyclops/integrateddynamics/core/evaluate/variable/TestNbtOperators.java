@@ -1994,4 +1994,147 @@ public class TestNbtOperators {
         Operators.NBT_FROM_LONG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- PATH_MATCH_FIRST -----------------------------------
+     */
+
+    @Test
+    public void testNbtPathMatchFirst() throws EvaluationException {
+        CompoundNBT tag2 = new CompoundNBT();
+        CompoundNBT tag3 = new CompoundNBT();
+        StringNBT tag4 = StringNBT.valueOf("x");
+        tag2.put("a", tag3);
+        tag3.put("b", tag4);
+
+        IValue res1 = Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{
+                new DummyVariable(ValueTypes.STRING, ValueTypeString.ValueString.of("$.a.b")),
+                new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tag2))
+        });
+        assertThat("result is nbt", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        assertThat("path_match_first(...) = x", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(tag4));
+
+        IValue res2 = Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{
+                new DummyVariable(ValueTypes.STRING, ValueTypeString.ValueString.of("$.a.b")),
+                nempty
+        });
+        assertThat("path_match_first(empty) = empty", ((ValueTypeNbt.ValueNbt) res2).getRawValue().isPresent(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathMatchFirstInvalidPathExpression() throws EvaluationException {
+        Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathMatchFirstSizeLarge() throws EvaluationException {
+        Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring, nempty, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathMatchFirstSizeSmall() throws EvaluationException {
+        Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtPathMatchFirst() throws EvaluationException {
+        Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- PATH_MATCH_ALL -----------------------------------
+     */
+
+    @Test
+    public void testNbtPathMatchAll() throws EvaluationException {
+        CompoundNBT tag2 = new CompoundNBT();
+        CompoundNBT tag3 = new CompoundNBT();
+        StringNBT tag4 = StringNBT.valueOf("x");
+        StringNBT tag5 = StringNBT.valueOf("y");
+        tag2.put("a", tag3);
+        tag3.put("b", tag4);
+        tag3.put("c", tag5);
+
+        IValue res1 = Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{
+                new DummyVariable(ValueTypes.STRING, ValueTypeString.ValueString.of("$.a*")),
+                new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tag2))
+        });
+        assertThat("result is list", res1, instanceOf(ValueTypeList.ValueList.class));
+        assertThat("path_match_all(...).type = NBT", ((ValueTypeList.ValueList) res1).getRawValue().getValueType(), is(ValueTypes.NBT));
+        assertThat("path_match_all(...).length = 2", ((ValueTypeList.ValueList) res1).getRawValue().getLength(), is(2));
+        assertThat("path_match_all(...)[0] = x", ((ValueTypeList.ValueList) res1).getRawValue().get(0), is(ValueTypeNbt.ValueNbt.of(tag4)));
+        assertThat("path_match_all(...)[1] = y", ((ValueTypeList.ValueList) res1).getRawValue().get(1), is(ValueTypeNbt.ValueNbt.of(tag5)));
+
+        IValue res2 = Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{
+                new DummyVariable(ValueTypes.STRING, ValueTypeString.ValueString.of("$.a*")),
+                nempty
+        });
+        assertThat("path_match_all(empty).length = 0", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(0));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathMatchAllInvalidPathExpression() throws EvaluationException {
+        Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathMatchAllSizeLarge() throws EvaluationException {
+        Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring, nempty, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathMatchAllSizeSmall() throws EvaluationException {
+        Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtPathMatchAll() throws EvaluationException {
+        Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- PATH_TEST -----------------------------------
+     */
+
+    @Test
+    public void testNbtPathTest() throws EvaluationException {
+        CompoundNBT tag2 = new CompoundNBT();
+        CompoundNBT tag3 = new CompoundNBT();
+        StringNBT tag4 = StringNBT.valueOf("x");
+        tag2.put("a", tag3);
+        tag3.put("b", tag4);
+
+        IValue res1 = Operators.NBT_PATH_TEST.evaluate(new IVariable[]{
+                new DummyVariable(ValueTypes.STRING, ValueTypeString.ValueString.of("$.a.b")),
+                new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tag2))
+        });
+        assertThat("result is boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("path_test(...) = true", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+
+        IValue res2 = Operators.NBT_PATH_TEST.evaluate(new IVariable[]{
+                new DummyVariable(ValueTypes.STRING, ValueTypeString.ValueString.of("$.a.b")),
+                nempty
+        });
+        assertThat("path_test(empty) = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathTestInvalidPathExpression() throws EvaluationException {
+        Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathTestSizeLarge() throws EvaluationException {
+        Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring, nempty, nempty});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputNbtPathTestSizeSmall() throws EvaluationException {
+        Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeNbtPathTest() throws EvaluationException {
+        Operators.NBT_PATH_TEST.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
 }

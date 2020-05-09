@@ -95,5 +95,7 @@ public class L10NValues {
     public static final String OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL = "operator." + NS + ".error.wrong_input_length_virtual";
     // 0: limit, 1: operator
     public static final String OPERATOR_ERROR_RECURSIONLIMIT = "operator." + NS + ".error.operator_recursion_limit";
+    // 0: expression, 1: message
+    public static final String OPERATOR_ERROR_NBT_PATH_EXPRESSION = "operator." + NS + ".error.operator_nbt_path_expression";
 
 }
