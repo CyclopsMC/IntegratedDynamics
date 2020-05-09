@@ -1583,6 +1583,21 @@
     "info_book.integrateddynamics.manual.logic.variables.variable_store": "Variable Store",
     "info_book.integrateddynamics.manual.logic.variables.variable_store.text1": "Some dynamic variables are evaluated based on other variables, where access to those referenced variables must be possible. A dynamic variable representing the addition of two other variables must be able to access those two other variables when it is evaluated. Access to those other variables must be possible within the same network as where the dynamic variable is being evaluated, which can be done by placing the other variable cards in a &lVariable Store&r. Multiple &lVariable Stores&r can be present in a network. Those other variables may also reference certain variables, which should also be present in that same network.",
 
+    "info_book.integrateddynamics.manual.logic.advanced": "Advanced",
+
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path": "NBT Path",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text1": "When working with complex &3NBT&0 tags, you can quickly require complex operator chains for reading deeply nested NBT values. In order to to simplify this task, &4String&0-based &lNBT Path expressions&r can be used to determine the path within an &3NBT&0 tag.",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text2": "The simplest NBT Path expression is made up of a chain of &lfield selectors&r, such as &4.fieldName&0 or &4.[”fieldName”]&0.",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text3": "For example, applying the expression &4”.root.child1.child2”&0 on the &3NBT&0 tag &3{ root: { child1: { child2: ”some value” } }}&0 will output &3”some value”&0.",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text4": "Multiple fields can be selected by providing an array of field names or a wildcard, for example &4[fieldA,fieldB]&0 or &4*&0",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text5": "For example, applying the expression &4”.a[b1,b2]*”&0 on the &3NBT&0 tag &3{ a: { b1: { c: ”some value” } }}&0 will output &3”some value”&0.",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text6": "When working with NBT lists, specific entries can be selected by specifying an index, such as &4[1]&0.",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text7": "For example, applying the expression &4”.a[1]”&0 on the &3NBT&0 tag &3{ a: [10,20] }&0 will output &3”20”&0.",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text8": "Multiple list indexes can be selected using the slice operator: &4[start:end:step]&0. (Only start is required, the other elements may be omitted)",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text9": "For example, applying the expression &4”.a[1:4:2]”&0 on the &3NBT&0 tag &3{ a: [0,1,2,3,4,5] }&0 will output &3[1,3]&0.",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text10": "More advanced filter expressions are also possible using the filter syntax, for example &4[?(@.childName < 10)]&0 (@ refers to the current tag, .. refers to the parent tag, $ refers to the root tag)",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text11": "For example, applying the expression &4”$.a[?(@ == 3)]”&0 on the &3NBT&0 tag &3{ a: [0,1,2,3,4,5] }&0 will output &3[3]&0.",
+
     "info_book.integrateddynamics.manual.parts": "Parts",
 
     "info_book.integrateddynamics.manual.parts.introduction": "Introduction",

@@ -374,6 +374,24 @@
                     <paragraph>info_book.integrateddynamics.manual.logic.variables.variable_store.text1</paragraph>
                 </section>
             </section>
+            <section name="info_book.integrateddynamics.manual.logic.advanced">
+                <section name="info_book.integrateddynamics.manual.logic.advanced.nbt_path">
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text1</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text2</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text3</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text4</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text5</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text6</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text7</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text8</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text9</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text10</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.advanced.nbt_path.text11</paragraph>
+                    <appendix type="integrateddynamics:operator">integrateddynamics:nbt_path_match_first</appendix>
+                    <appendix type="integrateddynamics:operator">integrateddynamics:nbt_path_match_all</appendix>
+                    <appendix type="integrateddynamics:operator">integrateddynamics:nbt_path_test</appendix>
+                </section>
+            </section>
         </section>
 
         <section name="info_book.integrateddynamics.manual.parts">
