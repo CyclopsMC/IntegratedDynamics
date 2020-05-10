@@ -318,12 +318,12 @@ public class TestFluidStackOperators {
     public void testFluidNbt() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
-        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new CompoundNBT(), "nbt(lava) = null");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().isPresent(), false, "nbt(lava) = null");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{eWater100Tag});
         CompoundNBT tag = new CompoundNBT();
         tag.putString("a", "abc");
-        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue(), tag, "nbt(watertag) != null");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), tag, "nbt(watertag) != null");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

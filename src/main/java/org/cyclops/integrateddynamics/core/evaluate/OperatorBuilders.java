@@ -125,7 +125,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder BLOCK = OperatorBuilder.forType(ValueTypes.OBJECT_BLOCK).appendKind("block");
     public static final OperatorBuilder BLOCK_1_SUFFIX_LONG = BLOCK.inputTypes(1, ValueTypes.OBJECT_BLOCK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Optional<SoundType>> BLOCK_SOUND = input -> {
-        ValueObjectTypeBlock.ValueBlock block = input.getValue(0);
+        ValueObjectTypeBlock.ValueBlock block = input.getValue(0, ValueTypes.OBJECT_BLOCK);
         if(block.getRawValue().isPresent()) {
             return Optional.of(block.getRawValue().get().getBlock().getSoundType(block.getRawValue().get()));
         }
@@ -141,7 +141,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_1_INTEGER_1 = ITEMSTACK.inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.INTEGER}).renderPattern(IConfigRenderPattern.INFIX);
     public static final IterativeFunction.PrePostBuilder<ItemStack, IValue> FUNCTION_ITEMSTACK = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                ValueObjectTypeItemStack.ValueItemStack value = input.getValue(0);
+                ValueObjectTypeItemStack.ValueItemStack value = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return value.getRawValue();
             });
     public static final IterativeFunction.PrePostBuilder<ItemStack, Integer> FUNCTION_ITEMSTACK_TO_INT =
@@ -151,9 +151,9 @@ public class OperatorBuilders {
 
     public static final IterativeFunction.PrePostBuilder<IEnergyStorage, IValue> FUNCTION_ENERGYSTORAGEITEM = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0);
+                ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 if(!a.getRawValue().isEmpty()) {
-                    return a.getRawValue().getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+                    return a.getRawValue().getCapability(CapabilityEnergy.ENERGY).orElse(null);
                 }
                 return null;
             });
@@ -168,7 +168,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_SUFFIX_LONG = ENTITY.inputTypes(1, ValueTypes.OBJECT_ENTITY).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final IterativeFunction.PrePostBuilder<Entity, IValue> FUNCTION_ENTITY = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                ValueObjectTypeEntity.ValueEntity a = input.getValue(0);
+                ValueObjectTypeEntity.ValueEntity a = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 return a.getRawValue().isPresent() ? a.getRawValue().get() : null;
             });
     public static final IterativeFunction.PrePostBuilder<Entity, Double> FUNCTION_ENTITY_TO_DOUBLE =
@@ -182,7 +182,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_2 = FLUIDSTACK.inputTypes(2, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.INFIX);
     public static final IterativeFunction.PrePostBuilder<FluidStack, IValue> FUNCTION_FLUIDSTACK = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                ValueObjectTypeFluidStack.ValueFluidStack a = input.getValue(0);
+                ValueObjectTypeFluidStack.ValueFluidStack a = input.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 return a.getRawValue();
             });
     public static final IterativeFunction.PrePostBuilder<FluidStack, Integer> FUNCTION_FLUIDSTACK_TO_INT =
@@ -193,15 +193,7 @@ public class OperatorBuilders {
     // --------------- Operator builders ---------------
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR_TAKE_OPERATOR = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IValue value = input.getValue(0);
-                // In some cases, validation can succeed because of parameters being ANY.
-                // In this case, throw an eval exception
-                if (!(value instanceof ValueTypeOperator.ValueOperator)) {
-                    throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE, "",
-                            new TranslationTextComponent(value.getType().getTranslationKey()), 0,
-                            new TranslationTextComponent(ValueTypes.OPERATOR.getTranslationKey())));
-                }
-                IOperator innerOperator = ((ValueTypeOperator.ValueOperator) value).getRawValue();
+                IOperator innerOperator = input.getValue(0, ValueTypes.OPERATOR).getRawValue();
                 if (innerOperator.getRequiredInputLength() == 1) {
                     IValue applyingValue = input.getValue(1);
                     ITextComponent error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
@@ -223,12 +215,12 @@ public class OperatorBuilders {
                         new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
             });
     public static final IterativeFunction.PrePostBuilder<IOperator, IValue> FUNCTION_ONE_OPERATOR = IterativeFunction.PrePostBuilder.begin()
-            .appendPre(input -> getSafeOperator(input.getValue(0), ValueTypes.CATEGORY_ANY));
+            .appendPre(input -> getSafeOperator(input.getValue(0, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY));
     public static final IterativeFunction.PrePostBuilder<IOperator, IValue> FUNCTION_ONE_PREDICATE = IterativeFunction.PrePostBuilder.begin()
-            .appendPre(input -> getSafePredictate(input.getValue(0)));
+            .appendPre(input -> getSafePredictate(input.getValue(0, ValueTypes.OPERATOR)));
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, IOperator>, IValue> FUNCTION_TWO_OPERATORS = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IOperator second = getSafeOperator(input.getValue(1), ValueTypes.CATEGORY_ANY);
+                IOperator second = getSafeOperator(input.getValue(1, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY);
                 IValueType[] secondInputs = second.getInputTypes();
                 if(secondInputs.length < 1) {
                     throw new EvaluationException("The second operator did not accept any inputs");
@@ -237,18 +229,18 @@ public class OperatorBuilders {
                 if (ValueHelpers.correspondsTo(secondInputType, ValueTypes.OPERATOR)) {
                     secondInputType = ValueTypes.CATEGORY_ANY;
                 }
-                IOperator first = getSafeOperator(input.getValue(0), secondInputType);
+                IOperator first = getSafeOperator(input.getValue(0, ValueTypes.OPERATOR), secondInputType);
                 return Pair.of(first, second);
             });
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, IOperator>, IValue> FUNCTION_TWO_PREDICATES = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IOperator first = getSafePredictate(input.getValue(0));
-                IOperator second = getSafePredictate(input.getValue(1));
+                IOperator first = getSafePredictate(input.getValue(0, ValueTypes.OPERATOR));
+                IOperator second = getSafePredictate(input.getValue(1, ValueTypes.OPERATOR));
                 return Pair.of(first, second);
             });
     public static final IterativeFunction.PrePostBuilder<Triple<IOperator, IOperator, IOperator>, IValue> FUNCTION_THREE_OPERATORS = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                IOperator third = getSafeOperator(input.getValue(2), ValueTypes.CATEGORY_ANY);
+                IOperator third = getSafeOperator(input.getValue(2, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY);
                 IValueType<?>[] types = third.getInputTypes();
                 if(types.length < 2) {
                     throw new EvaluationException("The operator did not accept enough inputs");
@@ -261,24 +253,15 @@ public class OperatorBuilders {
                 if (ValueHelpers.correspondsTo(secondOutputType, ValueTypes.OPERATOR)) {
                     secondOutputType = ValueTypes.CATEGORY_ANY;
                 }
-                IOperator first = getSafeOperator(input.getValue(0), firstOutputType);
-                IOperator second = getSafeOperator(input.getValue(1), secondOutputType);
+                IOperator first = getSafeOperator(input.getValue(0, ValueTypes.OPERATOR), firstOutputType);
+                IOperator second = getSafeOperator(input.getValue(1, ValueTypes.OPERATOR), secondOutputType);
                 return Triple.of(first, second, third);
             });
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR_TAKE_OPERATOR_LIST = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                ValueTypeOperator.ValueOperator valueOperator = input.getValue(0);
+                ValueTypeOperator.ValueOperator valueOperator = input.getValue(0, ValueTypes.OPERATOR);
                 IOperator innerOperator = valueOperator.getRawValue();
-                IValue applyingValue = input.getValue(1);
-                if (!(applyingValue instanceof ValueTypeList.ValueList)) {
-                    ITextComponent error = new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                            "?",
-                            new TranslationTextComponent(applyingValue.getType().getTranslationKey()),
-                            0,
-                            new TranslationTextComponent(ValueTypes.LIST.getTranslationKey())
-                    );
-                    throw new EvaluationException(error);
-                }
+                input.getValue(1, ValueTypes.LIST); // To trigger exception on invalid type
                 return Pair.<IOperator, OperatorBase.SafeVariablesGetter>of(innerOperator,
                         new OperatorBase.SafeVariablesGetter.Shifted(1, input.getVariables()));
             });
@@ -321,7 +304,7 @@ public class OperatorBuilders {
     public static final IterativeFunction.PrePostBuilder<ResourceLocation, IValue> FUNCTION_STRING_TO_RESOURCE_LOCATION = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 try {
-                    ValueTypeString.ValueString a = input.getValue(0);
+                    ValueTypeString.ValueString a = input.getValue(0, ValueTypes.STRING);
                     return new ResourceLocation(a.getRawValue());
                 } catch (ResourceLocationException e) {
                     throw new EvaluationException(e.getMessage());
@@ -395,21 +378,21 @@ public class OperatorBuilders {
 
     public static final IterativeFunction.PrePostBuilder<Optional<INBT>, IValue> FUNCTION_NBT = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                ValueTypeNbt.ValueNbt value = input.getValue(0);
+                ValueTypeNbt.ValueNbt value = input.getValue(0, ValueTypes.NBT);
                 return value.getRawValue();
             });
     public static final IterativeFunction.PrePostBuilder<Optional<INBT>, IValue> FUNCTION_NBT_COMPOUND_ENTRY = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                ValueTypeNbt.ValueNbt valueNbt = input.getValue(0);
-                ValueTypeString.ValueString valueString = input.getValue(1);
+                ValueTypeNbt.ValueNbt valueNbt = input.getValue(0, ValueTypes.NBT);
+                ValueTypeString.ValueString valueString = input.getValue(1, ValueTypes.STRING);
                 return valueNbt.getRawValue()
                         .filter(tag -> tag instanceof CompoundNBT)
                         .map(tag -> ((CompoundNBT) tag).get(valueString.getRawValue()));
             });
     public static final IterativeFunction.PrePostBuilder<Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_NBT_COPY_FOR_VALUE = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                ValueTypeNbt.ValueNbt valueNbt = input.getValue(0);
-                ValueTypeString.ValueString valueString = input.getValue(1);
+                ValueTypeNbt.ValueNbt valueNbt = input.getValue(0, ValueTypes.NBT);
+                ValueTypeString.ValueString valueString = input.getValue(1, ValueTypes.STRING);
                 return Triple.of(valueNbt.getRawValue()
                                 .filter(t -> t instanceof CompoundNBT)
                                 .map(t -> (CompoundNBT) t)
@@ -483,7 +466,7 @@ public class OperatorBuilders {
                 e.printStackTrace();
             }
             IIngredientComponentHandler componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
-            ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0);
+            ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
             List<?> list = Lists.newArrayList();
             if (value.getRawValue().isPresent()) {
                 list = value.getRawValue().get().getInstances(component);

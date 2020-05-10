@@ -83,7 +83,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                     this.variables[i] = true;
                     variables[i] = variableFacade.getVariable(network);
                     this.variables[i] = false;
-                    if(variables[i] == this /* Cyclic reference */ || variables[i] == null) {
+                    if(variables[i] == null) {
                         return null;
                     }
                 }

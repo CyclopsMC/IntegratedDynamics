@@ -150,6 +150,14 @@ public interface IValueType<V extends IValue> {
     }
 
     /**
+     * Attempt to cast the given value to a value of this value type.
+     * @param value A value of unknown type.
+     * @return The casted value.
+     * @throws RuntimeException If the incorrect value type was found.
+     */
+    public V cast(IValue value) throws EvaluationException;
+
+    /**
      * Use this comparator for any comparisons with value types.
      */
     public static class ValueTypeComparator implements Comparator<IValueType<?>> {

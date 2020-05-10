@@ -1198,10 +1198,10 @@ public class TestItemStackOperators {
     public void testItemStackNbt() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iApple});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
-        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue(), new CompoundNBT(), "nbt(apple:1) is null");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().isPresent(), false, "nbt(apple:1) is null");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue(), new CompoundNBT(), "nbt(battery) is non null");
+        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), new CompoundNBT(), "nbt(battery) is non null");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

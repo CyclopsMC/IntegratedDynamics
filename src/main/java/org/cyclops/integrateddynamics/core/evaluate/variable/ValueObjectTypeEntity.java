@@ -41,7 +41,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         IValueTypeNullable<ValueObjectTypeEntity.ValueEntity> {
 
     public ValueObjectTypeEntity() {
-        super("entity");
+        super("entity", ValueObjectTypeEntity.ValueEntity.class);
     }
 
     @Override

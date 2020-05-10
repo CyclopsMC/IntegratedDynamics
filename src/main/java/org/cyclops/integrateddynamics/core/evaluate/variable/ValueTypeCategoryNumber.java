@@ -26,7 +26,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
 
     public ValueTypeCategoryNumber() {
         super("number", Helpers.RGBToInt(243, 245, 4), TextFormatting.GOLD,
-                Sets.<IValueType<?>>newHashSet(ELEMENTS));
+                Sets.<IValueType<?>>newHashSet(ELEMENTS), IValue.class);
     }
 
     private static Map<IValueTypeNumber, Integer> constructInvertedArray(IValueTypeNumber[] elements) {

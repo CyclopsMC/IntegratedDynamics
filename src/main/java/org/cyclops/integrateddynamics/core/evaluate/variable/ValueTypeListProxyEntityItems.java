@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Direction;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -31,6 +31,6 @@ public class ValueTypeListProxyEntityItems extends ValueTypeListProxyEntityCapab
 
     @Override
     public ValueObjectTypeItemStack.ValueItemStack get(int index) {
-        return ValueObjectTypeItemStack.ValueItemStack.of(getCapability().map(handler -> handler.getStackInSlot(index)).orElse(null));
+        return ValueObjectTypeItemStack.ValueItemStack.of(getCapability().map(handler -> handler.getStackInSlot(index)).orElse(ItemStack.EMPTY));
     }
 }

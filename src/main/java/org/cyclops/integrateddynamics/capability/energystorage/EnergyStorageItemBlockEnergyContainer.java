@@ -21,6 +21,10 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         this.itemBlockEnergyContainer = itemBlockEnergyContainer;
         this.itemStack = itemStack;
         this.rate = rate;
+
+        if (!this.itemStack.hasTag()) {
+            setItemStackEnergy(itemStack, 0);
+        }
     }
 
     public EnergyStorageItemBlockEnergyContainer(ItemBlockEnergyContainer itemBlockEnergyContainer, ItemStack itemStack) {

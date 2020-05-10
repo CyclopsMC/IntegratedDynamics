@@ -28,7 +28,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
         IValueTypeNamed<ValueObjectTypeRecipe.ValueRecipe>, IValueTypeNullable<ValueObjectTypeRecipe.ValueRecipe> {
 
     public ValueObjectTypeRecipe() {
-        super("recipe");
+        super("recipe", ValueObjectTypeRecipe.ValueRecipe.class);
     }
 
     @Override

@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 public class ValueTypeCategoryAny extends ValueTypeCategoryBase<IValue> {
 
     public ValueTypeCategoryAny() {
-        super("any", Helpers.RGBToInt(240, 240, 240), TextFormatting.RESET);
+        super("any", Helpers.RGBToInt(240, 240, 240), TextFormatting.RESET, IValue.class);
     }
 
 }

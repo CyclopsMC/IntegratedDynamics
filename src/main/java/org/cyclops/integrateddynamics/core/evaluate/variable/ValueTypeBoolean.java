@@ -17,7 +17,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolean> {
 
     public ValueTypeBoolean() {
-        super("boolean", Helpers.RGBToInt(43, 47, 231), TextFormatting.BLUE);
+        super("boolean", Helpers.RGBToInt(43, 47, 231), TextFormatting.BLUE, ValueTypeBoolean.ValueBoolean.class);
     }
 
     @Override

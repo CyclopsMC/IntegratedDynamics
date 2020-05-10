@@ -18,7 +18,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
         implements IValueTypeNamed<ValueTypeString.ValueString> {
 
     public ValueTypeString() {
-        super("string", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED);
+        super("string", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED, ValueTypeString.ValueString.class);
     }
 
     @Override

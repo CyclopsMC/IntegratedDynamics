@@ -1,0 +1,27 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.6.0 or higher.
+
+Changes:
+* Improve performance of hasNext in list iterators
+  This used to cause performance issues with nested list concats.
+  Closes #800
+* Don't allow string joining on infinite lists
+
+Fixes:
+* Use item equality method from CommonCapabilities
+  This fixes issues where NBT tags are configured to be ignored
+  in CommonCaps, but this is not propagated to item comparisons in ID.
+  Closes #795
+* Make NBT representation of battery energy contents unique
+  Integrated Crafting would distinguish between identical batteries
+  obtained through different methods due to unequal NBT,
+  which is fixed by this commit.
+  Closes CyclopsMC/CommonCapabilitiesAPI#8
+* Fix the network diagnostic tool's box rendering
+  - Expand box evenly, not just towards positive x/y/z
+  - Render full block bounding boxes correctly
+* Fix some problems with the network diagnostic tool's click handler
+  - Fix teleporting to full blocks
+  - Prevent additional NullPointerExceptions in click handler. Those occur if you click a row that belongs to another dimension.
+  - Refresh table model every time something is (un)marked. This gives the user more immediate visual feedback for their actions.
+* Fix sorting and selection in the network diagnostic tool

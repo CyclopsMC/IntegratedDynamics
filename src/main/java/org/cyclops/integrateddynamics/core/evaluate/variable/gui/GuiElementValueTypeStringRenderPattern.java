@@ -42,7 +42,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         int searchY = getY() + 6;
         this.textField = new WidgetTextFieldExtended(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
                 fontRenderer.FONT_HEIGHT + 3, L10NHelpers.localize(this.getElement().getValueType().getTranslationKey()), true);
-        this.textField.setMaxStringLength(64);
+        this.textField.setMaxStringLength(512);
         this.textField.setEnableBackgroundDrawing(false);
         this.textField.setVisible(true);
         this.textField.setTextColor(16777215);

@@ -26,7 +26,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
         implements IValueTypeNullable<ValueTypeNbt.ValueNbt>, IValueTypeNamed<ValueTypeNbt.ValueNbt> {
 
     public ValueTypeNbt() {
-        super("nbt", Helpers.RGBToInt(0, 170, 170), TextFormatting.DARK_AQUA);
+        super("nbt", Helpers.RGBToInt(0, 170, 170), TextFormatting.DARK_AQUA, ValueTypeNbt.ValueNbt.class);
     }
 
     @Override

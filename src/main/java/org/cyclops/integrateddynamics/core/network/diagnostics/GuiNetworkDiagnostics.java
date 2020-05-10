@@ -21,6 +21,8 @@ import org.cyclops.integrateddynamics.network.packet.PlayerTeleportPacket;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,6 +30,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -38,19 +41,34 @@ import java.util.Vector;
  */
 public class GuiNetworkDiagnostics extends JFrame {
 
+    private static final int IDX_PARTS_NETWORK = 0;
+    private static final int IDX_PARTS_CABLES = 1;
+    private static final int IDX_PARTS_PART = 2;
+    private static final int IDX_PARTS_TICKTIME = 3;
+    private static final int IDX_PARTS_DIMENSION = 4;
+    private static final int IDX_PARTS_POSITION = 5;
+    private static final int IDX_PARTS_SIDE = 6;
+    private static final int IDX_PARTS_ID = 7;
+
+    private static final int IDX_OBSERVERS_NETWORK = 0;
+    private static final int IDX_OBSERVERS_PART = 1;
+    private static final int IDX_OBSERVERS_TICKTIME = 2;
+    private static final int IDX_OBSERVERS_DIMENSION = 3;
+    private static final int IDX_OBSERVERS_POSITION = 4;
+    private static final int IDX_OBSERVERS_SIDE = 5;
+    private static final int IDX_OBSERVERS_ID = 6;
+
     private static GuiNetworkDiagnostics gui = null;
 
     private static JTable tableParts = null;
-    private static Vector<String> columnNamesParts = new Vector<>();
-    private static Vector<Vector<Object>> dataParts = new Vector<>();
-    private static DefaultTableModel modelParts;
-    private static Multimap<Integer, ObservablePartData> networkDataParts = ArrayListMultimap.create();
+    private static final Vector<String> columnNamesParts = new Vector<>();
+    private static final Vector<Vector<Object>> dataParts = new Vector<>();
+    private static final Multimap<Integer, ObservablePartData> networkDataParts = ArrayListMultimap.create();
 
     private static JTable tableObservers = null;
-    private static Vector<String> columnNamesObservers = new Vector<>();
-    private static Vector<Vector<Object>> dataObservers = new Vector<>();
-    private static DefaultTableModel modelObservers;
-    private static Multimap<Integer, ObservableObserverData> networkDataObservers = ArrayListMultimap.create();
+    private static final Vector<String> columnNamesObservers = new Vector<>();
+    private static final Vector<Vector<Object>> dataObservers = new Vector<>();
+    private static final Multimap<Integer, ObservableObserverData> networkDataObservers = ArrayListMultimap.create();
 
     public static void setNetworkData(int id, RawNetworkData rawNetworkData) {
         synchronized (networkDataParts) {
@@ -153,28 +171,17 @@ public class GuiNetworkDiagnostics extends JFrame {
                     super.windowClosing(e);
                 }
             });
-            gui.setLocationRelativeTo((Component) null);
+            gui.setLocationRelativeTo(null);
         }
         gui.setVisible(true);
     }
 
-    protected void updateTables() {
+    private void updateTables() {
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
                 @Override
                 public void run() {
                     synchronized (networkDataParts) {
-                        /* ----- ----- ----- Init parts table ----- ----- ----- */
-                        columnNamesParts.clear();
-                        columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.network"));
-                        columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.cables"));
-                        columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.part"));
-                        columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.ticktime"));
-                        columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.dimension"));
-                        columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.position"));
-                        columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.side"));
-                        columnNamesParts.addElement("_id");
-
                         dataParts.clear();
                         int i = 0;
                         for (ObservablePartData observablePartData : networkDataParts.values()) {
@@ -182,10 +189,9 @@ public class GuiNetworkDiagnostics extends JFrame {
                             row.add(observablePartData.getNetworkId());
                             row.add(observablePartData.getNetworkCables());
                             row.add(observablePartData.getName());
-                            row.add(String.format("%.6f", ((double) observablePartData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
+                            row.add(((double) observablePartData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000);
                             row.add(observablePartData.getDimension());
-                            BlockPos pos = observablePartData.getPos();
-                            row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
+                            row.add(observablePartData.getPos());
                             row.add(observablePartData.getSide().name());
                             row.add(i++);
                             dataParts.addElement(row);
@@ -197,47 +203,63 @@ public class GuiNetworkDiagnostics extends JFrame {
                             Vector<Object> row = new Vector<>();
                             row.add(observableObserverData.getNetworkId());
                             row.add(observableObserverData.getName());
-                            row.add(String.format("%.6f", ((double) observableObserverData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
+                            row.add(((double) observableObserverData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000);
                             row.add(observableObserverData.getDimension());
-                            BlockPos pos = observableObserverData.getPos();
-                            row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
+                            row.add(observableObserverData.getPos());
                             row.add(observableObserverData.getSide() == null ? "null" : observableObserverData.getSide().name());
                             row.add(i++);
                             dataObservers.addElement(row);
                         }
 
                         if (tableParts == null) {
-                            tableParts = new JTable();
-                            modelParts = new DefaultTableModel(dataParts, columnNamesParts) {
+                            /* ----- ----- ----- Init parts table ----- ----- ----- */
+                            columnNamesParts.clear();
+                            columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.network"));
+                            columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.cables"));
+                            columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.part"));
+                            columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.ticktime"));
+                            columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.dimension"));
+                            columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.position"));
+                            columnNamesParts.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.side"));
+                            columnNamesParts.addElement("_id");
+
+                            tableParts = new JTable(new DefaultTableModel(dataParts, columnNamesParts) {
                                 @Override
                                 public Class<?> getColumnClass(int column) {
                                     // My eyes are bleeding as I write this...
                                     // I'm terribly sorry, I must be going to hell now.
-                                    if (column == 0 || column == 1 || column == 4) {
-                                        return Integer.class;
+                                    switch (column) {
+                                        case IDX_PARTS_NETWORK:
+                                        case IDX_PARTS_CABLES:
+                                        case IDX_PARTS_DIMENSION:
+                                            return Integer.class;
+
+                                        case IDX_PARTS_TICKTIME:
+                                            return Double.class;
+
+                                        case IDX_PARTS_POSITION:
+                                            return BlockPos.class;
+
+                                        case IDX_PARTS_PART:
+                                        case IDX_PARTS_SIDE:
+                                        default:
+                                            return String.class;
                                     }
-                                    if (column == 3) {
-                                        return Long.class;
-                                    }
-                                    return String.class;
                                 }
-                            };
-                            tableParts.setModel(modelParts);
-                            tableParts.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
+                            }) {
                                 @Override
-                                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                                public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                                    Component c = super.prepareRenderer(renderer, row, column);
                                     ObservablePartData partData = getPartDataFromRow(row);
                                     if (partData != null && NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(partData.toPartPos())) {
                                         c.setBackground(Color.CYAN);
                                     } else {
-                                        c.setBackground(isSelected ? Color.BLUE : Color.WHITE);
+                                        c.setBackground(isCellSelected(row, column) ? getSelectionBackground() : null);
                                     }
                                     return c;
                                 }
-                            });
-                            tableParts.getColumnModel().removeColumn(tableParts.getColumn("_id"));
-                            tableParts.setAutoCreateRowSorter(true);
+                            };
+
                             tableParts.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mouseClicked(MouseEvent e) {
@@ -247,14 +269,14 @@ public class GuiNetworkDiagnostics extends JFrame {
                                         int row = target.rowAtPoint(e.getPoint());
                                         ObservablePartData partData = getPartDataFromRow(row);
                                         if (partData != null) {
-                                            PartPos pos = partData.toPartPos();
                                             teleportPlayer(e, partData.toPartPos());
+                                            ((DefaultTableModel) target.getModel()).fireTableRowsUpdated(row, row);
                                         }
                                     }
                                 }
                             });
 
-                            /* ----- ----- ----- Init parts table ----- ----- ----- */
+                            /* ----- ----- ----- Init observers table ----- ----- ----- */
                             columnNamesObservers.clear();
                             columnNamesObservers.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.network"));
                             columnNamesObservers.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.part"));
@@ -264,52 +286,42 @@ public class GuiNetworkDiagnostics extends JFrame {
                             columnNamesObservers.addElement(L10NHelpers.localize("gui.integrateddynamics.diagnostics.table.side"));
                             columnNamesObservers.addElement("_id");
 
-                            dataObservers.clear();
-                            i = 0;
-                            for (ObservableObserverData observablePartData : networkDataObservers.values()) {
-                                Vector<Object> row = new Vector<>();
-                                row.add(observablePartData.getNetworkId());
-                                row.add(observablePartData.getName());
-                                row.add(String.format("%.6f", ((double) observablePartData.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
-                                row.add(observablePartData.getDimension());
-                                BlockPos pos = observablePartData.getPos();
-                                row.add(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
-                                row.add(observablePartData.getSide().name());
-                                row.add(i++);
-                                dataObservers.addElement(row);
-                            }
-
-                            tableObservers = new JTable();
-                            modelObservers = new DefaultTableModel(dataObservers, columnNamesObservers) {
+                            tableObservers = new JTable(new DefaultTableModel(dataObservers, columnNamesObservers) {
                                 @Override
                                 public Class<?> getColumnClass(int column) {
                                     // My eyes are bleeding as I write this...
                                     // I'm terribly sorry, I must be going to hell now.
-                                    if (column == 0 || column == 3) {
-                                        return Integer.class;
+                                    switch (column) {
+                                        case IDX_OBSERVERS_NETWORK:
+                                        case IDX_OBSERVERS_DIMENSION:
+                                            return Integer.class;
+
+                                        case IDX_OBSERVERS_TICKTIME:
+                                            return Double.class;
+
+                                        case IDX_OBSERVERS_POSITION:
+                                            return BlockPos.class;
+
+                                        case IDX_OBSERVERS_PART:
+                                        case IDX_OBSERVERS_SIDE:
+                                        default:
+                                            return String.class;
                                     }
-                                    if (column == 2) {
-                                        return Long.class;
-                                    }
-                                    return String.class;
                                 }
-                            };
-                            tableObservers.setModel(modelObservers);
-                            tableObservers.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
+                            }) {
                                 @Override
-                                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                                    ObservableObserverData partData = getObserverDataFromRow(row);
-                                    if (partData != null && NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(partData.toPartPos())) {
+                                public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                                    Component c = super.prepareRenderer(renderer, row, column);
+                                    ObservableObserverData observerData = getObserverDataFromRow(row);
+                                    if (observerData != null && NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(observerData.toPartPos())) {
                                         c.setBackground(Color.CYAN);
                                     } else {
-                                        c.setBackground(isSelected ? Color.BLUE : Color.WHITE);
+                                        c.setBackground(isCellSelected(row, column) ? getSelectionBackground() : null);
                                     }
                                     return c;
                                 }
-                            });
-                            tableObservers.getColumnModel().removeColumn(tableObservers.getColumn("_id"));
-                            tableObservers.setAutoCreateRowSorter(true);
+                            };
+
                             tableObservers.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mouseClicked(MouseEvent e) {
@@ -317,13 +329,43 @@ public class GuiNetworkDiagnostics extends JFrame {
                                     if (e.getClickCount() == 1) {
                                         JTable target = (JTable)e.getSource();
                                         int row = target.rowAtPoint(e.getPoint());
-                                        ObservableObserverData partData = getObserverDataFromRow(row);
-                                        if (partData != null) {
-                                            teleportPlayer(e, partData.toPartPos());
+                                        ObservableObserverData observerData = getObserverDataFromRow(row);
+                                        if (observerData != null) {
+                                            teleportPlayer(e, observerData.toPartPos());
+                                            ((DefaultTableModel) target.getModel()).fireTableRowsUpdated(row, row);
                                         }
                                     }
                                 }
                             });
+
+                            for (JTable table : new JTable[] { tableParts, tableObservers }) {
+                                table.getColumnModel().removeColumn(table.getColumn("_id"));
+                                table.setAutoCreateRowSorter(true);
+
+                                table.setDefaultRenderer(Double.class, new DefaultTableCellRenderer() {
+                                    {
+                                        setHorizontalAlignment(JLabel.RIGHT);
+                                    }
+
+                                    @Override
+                                    protected void setValue(Object value) {
+                                        Double doubleValue = (Double) value;
+                                        setText(String.format("%.6f", doubleValue));
+                                    }
+                                });
+
+                                table.setDefaultRenderer(BlockPos.class, new DefaultTableCellRenderer() {
+                                    @Override
+                                    protected void setValue(Object value) {
+                                        BlockPos pos = (BlockPos) value;
+                                        setText(String.format("%s / %s / %s", pos.getX(), pos.getY(), pos.getZ()));
+                                    }
+                                });
+                            }
+
+                            // Set custom comparators for the Position columns
+                            ((TableRowSorter<?>) tableParts.getRowSorter()).setComparator(IDX_PARTS_POSITION, new BlockPosComparator());
+                            ((TableRowSorter<?>) tableObservers.getRowSorter()).setComparator(IDX_OBSERVERS_POSITION, new BlockPosComparator());
 
                             // Pack GUI
                             JPanel panelMain = new JPanel(new GridLayout(2, 1));
@@ -339,9 +381,9 @@ public class GuiNetworkDiagnostics extends JFrame {
                             pack();
                         } else {
                             tableParts.getRowSorter().allRowsChanged();
-                            modelParts.fireTableDataChanged();
+                            ((DefaultTableModel) tableParts.getModel()).fireTableDataChanged();
                             tableObservers.getRowSorter().allRowsChanged();
-                            modelObservers.fireTableDataChanged();
+                            ((DefaultTableModel) tableObservers.getModel()).fireTableDataChanged();
                         }
                         repaint();
                     }
@@ -352,7 +394,7 @@ public class GuiNetworkDiagnostics extends JFrame {
         }
     }
 
-    protected static ObservablePartData getPartDataFromRow(int row) {
+    private static ObservablePartData getPartDataFromRow(int row) {
         if (row < 0) {
             return null;
         }
@@ -360,14 +402,14 @@ public class GuiNetworkDiagnostics extends JFrame {
         synchronized (networkDataParts) {
             data = networkDataParts.values().toArray();
         }
-        int internalId = (int) tableParts.getModel().getValueAt(tableParts.convertRowIndexToModel(row), 7);
+        int internalId = (int) tableParts.getModel().getValueAt(tableParts.convertRowIndexToModel(row), IDX_PARTS_ID);
         if (internalId < data.length) {
             return (ObservablePartData) data[internalId];
         }
         return null;
     }
 
-    protected static ObservableObserverData getObserverDataFromRow(int row) {
+    private static ObservableObserverData getObserverDataFromRow(int row) {
         if (row < 0) {
             return null;
         }
@@ -375,19 +417,22 @@ public class GuiNetworkDiagnostics extends JFrame {
         synchronized (networkDataParts) {
             data = networkDataObservers.values().toArray();
         }
-        int internalId = (int) tableObservers.getModel().getValueAt(tableObservers.convertRowIndexToModel(row), 6);
+        int internalId = (int) tableObservers.getModel().getValueAt(tableObservers.convertRowIndexToModel(row), IDX_OBSERVERS_ID);
         if (internalId < data.length) {
             return (ObservableObserverData) data[internalId];
         }
         return null;
     }
 
-    protected static void onCloseGui() {
+    private static void onCloseGui() {
         IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe());
         NetworkDiagnosticsPartOverlayRenderer.getInstance().clearPositions();
     }
 
-    protected static void teleportPlayer(MouseEvent e, PartPos pos) {
+    private static void teleportPlayer(MouseEvent e, PartPos pos) {
+        if (pos == null) {
+            return;
+        }
         if (e.getButton() == MouseEvent.BUTTON1) {
             if (NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(pos)) {
                 NetworkDiagnosticsPartOverlayRenderer.getInstance().removePos(pos);
@@ -395,8 +440,12 @@ public class GuiNetworkDiagnostics extends JFrame {
                 NetworkDiagnosticsPartOverlayRenderer.getInstance().addPos(pos);
             }
         } else if (e.getButton() == MouseEvent.BUTTON3) {
-            BlockPos blockPos = pos.getPos().getBlockPos().offset(pos.getSide());
-            float yaw = pos.getSide().getOpposite().getHorizontalAngle();
+            BlockPos blockPos = pos.getPos().getBlockPos();
+            float yaw = 0;
+            if (pos.getSide() != null) {
+                blockPos = blockPos.offset(pos.getSide());
+                yaw = pos.getSide().getOpposite().getHorizontalAngle();
+            }
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
                     pos.getPos().getDimension(),
                     blockPos.getX(),
@@ -409,7 +458,7 @@ public class GuiNetworkDiagnostics extends JFrame {
     }
 
     @Data
-    public static class ObservablePartData {
+    private static class ObservablePartData {
         private final int networkId;
         private final int networkCables;
         private final DimensionType dimension;
@@ -428,7 +477,7 @@ public class GuiNetworkDiagnostics extends JFrame {
     }
 
     @Data
-    public static class ObservableObserverData {
+    private static class ObservableObserverData {
         private final int networkId;
         private final DimensionType dimension;
         private final BlockPos pos;
@@ -442,6 +491,19 @@ public class GuiNetworkDiagnostics extends JFrame {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;
+        }
+    }
+
+    private static class BlockPosComparator implements Comparator<BlockPos> {
+        @Override
+        public int compare(BlockPos o1, BlockPos o2) {
+            if (o1.getX() != o2.getX()) {
+                return o1.getX() - o2.getX();
+            }
+            if (o1.getY() != o2.getY()) {
+                return o1.getY() - o2.getY();
+            }
+            return o1.getZ() - o2.getZ();
         }
     }
 }

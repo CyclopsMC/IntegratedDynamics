@@ -5,17 +5,17 @@ import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -68,21 +68,24 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             RenderSystem.depthMask(false);
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
-            for (Iterator<PartPos> it = partList.iterator(); it.hasNext(); ) {
-                PartPos partPos = it.next();
+            for (PartPos partPos : partList) {
                 if (partPos.getPos().getDimension() == player.world.getDimension().getType() && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
+                    final VoxelShape shape;
                     if (partStateHolder != null) {
-                        AxisAlignedBB bb = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide())
-                                .getBoundingBox()
-                                .offset(partPos.getPos().getBlockPos())
-                                .offset(-offsetX, -offsetY, -offsetZ)
-                                .expand(0.05, 0.05, 0.05);
-                        WorldRenderer.drawBoundingBox(event.getMatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource().getBuffer(RenderType.getLines()),
-                                bb, 1.0F, 0.2F, 0.1F, 0.8F);
+                        shape = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide());
                     } else {
-                        it.remove();
+                        shape = VoxelShapes.FULL_CUBE;
                     }
+
+                    AxisAlignedBB bb = shape
+                            .getBoundingBox()
+                            .offset(partPos.getPos().getBlockPos())
+                            .offset(-offsetX, -offsetY, -offsetZ)
+                            .expand(0.05, 0.05, 0.05)
+                            .expand(-0.05, -0.05, -0.05);
+                    WorldRenderer.drawBoundingBox(event.getMatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource().getBuffer(RenderType.getLines()),
+                            bb, 1.0F, 0.2F, 0.1F, 0.8F);
                 }
             }
 

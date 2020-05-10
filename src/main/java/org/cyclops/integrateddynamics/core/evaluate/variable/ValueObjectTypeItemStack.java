@@ -10,6 +10,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -34,7 +35,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         IValueTypeNullable<ValueObjectTypeItemStack.ValueItemStack> {
 
     public ValueObjectTypeItemStack() {
-        super("itemstack");
+        super("itemstack", ValueObjectTypeItemStack.ValueItemStack.class);
     }
 
     public static ITextComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
@@ -163,7 +164,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof ValueItemStack && ItemStack.areItemStacksEqual(((ValueItemStack) o).itemStack, this.itemStack);
+            return o instanceof ValueItemStack && ItemMatch.areItemStacksEqual(((ValueItemStack) o).itemStack, this.itemStack, ItemMatch.EXACT);
         }
 
         @Override
