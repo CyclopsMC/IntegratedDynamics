@@ -29,17 +29,11 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     private final String typeName;
     private final int color;
     private final TextFormatting colorFormat;
-    @Nullable // TODO: remove Nullable option in 1.15
     private final Class<V> valueClass;
 
     private String translationKey = null;
 
-    @Deprecated // TODO: remove, and also remove Nullable option in 1.15
-    public ValueTypeBase(String typeName, int color, TextFormatting colorFormat) {
-        this(typeName, color, colorFormat, null);
-    }
-
-    public ValueTypeBase(String typeName, int color, TextFormatting colorFormat, @Nullable Class<V> valueClass) {
+    public ValueTypeBase(String typeName, int color, TextFormatting colorFormat, Class<V> valueClass) {
         this.typeName = typeName;
         this.color = color;
         this.colorFormat = colorFormat;
@@ -153,10 +147,6 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public V cast(IValue value) throws EvaluationException {
-        // TODO remove null check in 1.15
-        if (this.valueClass == null) {
-            return (V) value;
-        }
         try {
             return this.valueClass.cast(value);
         } catch (ClassCastException e) {

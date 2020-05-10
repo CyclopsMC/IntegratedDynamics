@@ -210,17 +210,12 @@ public abstract class OperatorBase implements IOperator {
             this.variables = variables;
         }
 
-        @Deprecated // TODO: remove generic type param in 1.15
-        public <V extends IValue> V getValue(int i) throws EvaluationException {
-            try {
-                return (V) variables[i].getValue();
-            } catch (ClassCastException e) {
-                throw new EvaluationException(e.getMessage());
-            }
+        public IValue getValue(int i) throws EvaluationException {
+            return variables[i].getValue();
         }
 
         public <V extends IValue> V getValue(int i, IValueType<V> valueType) throws EvaluationException {
-            return valueType.cast(variables[i].getValue());
+            return valueType.cast(getValue(i));
         }
 
         public IVariable[] getVariables() {

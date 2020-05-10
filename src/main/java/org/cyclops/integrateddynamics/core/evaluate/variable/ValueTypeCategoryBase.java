@@ -9,7 +9,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
@@ -29,7 +28,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
      * @param elements The elements inside this category.
      * @param valueClass The value type class.
      */
-    public ValueTypeCategoryBase(String typeName, int color, TextFormatting colorFormat, Set<IValueType<?>> elements, @Nullable Class<V> valueClass) { // TODO: remove Nullable in 1.15
+    public ValueTypeCategoryBase(String typeName, int color, TextFormatting colorFormat, Set<IValueType<?>> elements, Class<V> valueClass) {
         super(typeName, color, colorFormat, valueClass);
         this.elements = Collections.unmodifiableSet(elements);
     }
@@ -41,7 +40,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
      * @param colorFormat The color format.
      * @param valueClass The value type class.
      */
-    public ValueTypeCategoryBase(String typeName, int color, TextFormatting colorFormat, @Nullable Class<V> valueClass) { // TODO: remove Nullable in 1.15
+    public ValueTypeCategoryBase(String typeName, int color, TextFormatting colorFormat, Class<V> valueClass) {
         super(typeName, color, colorFormat, valueClass);
         this.elements = null;
     }

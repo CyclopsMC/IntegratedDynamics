@@ -36,7 +36,7 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
     public PredicateOperator(Predicate<V> predicate, T inputType, List<V> rawValues) {
         super("pred", "pred",
                 new IValueType[]{inputType}, ValueTypes.BOOLEAN, variables -> ValueTypeBoolean.ValueBoolean.of(
-                        predicate.test(variables.getValue(0))), IConfigRenderPattern.PREFIX_1);
+                        predicate.test(variables.getValue(0, inputType))), IConfigRenderPattern.PREFIX_1);
         this.inputType = inputType;
         this.rawValues = rawValues;
         this.unlocalizedType = "predicate";

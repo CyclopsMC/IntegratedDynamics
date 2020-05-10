@@ -42,6 +42,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -1532,7 +1533,7 @@ public final class Operators {
                 if (!itemStack.isEmpty()) {
                     int burnTime = itemStack.getBurnTime();
                     return ForgeEventFactory.getItemBurnTime(itemStack, burnTime == -1
-                            ? AbstractFurnaceTileEntity.getBurnTimes().getOrDefault(itemStack.getItem(), 0)
+                            ? ForgeHooks.getBurnTime(itemStack)
                             : burnTime);
                 }
                 return 0;
@@ -2832,8 +2833,8 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_VALUE_LIST_LONG = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.LIST).operatorName("compound_value_list_long").symbol("NBT{}.get_list_long")
             .function(variables -> {
-                ValueTypeNbt.ValueNbt value = variables.getValue(0);
-                ValueTypeString.ValueString key = variables.getValue(1);
+                ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
+                ValueTypeString.ValueString key = variables.getValue(1, ValueTypes.STRING);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtValueListLong(key.getRawValue(), value.getRawValue()));
             }).build());
 
@@ -3177,7 +3178,7 @@ public final class Operators {
     public static final IOperator NBT_AS_TAG_LIST = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.LIST).operatorName("as_tag_list").symbol("NBT.as_tag_list")
             .function(variables -> {
-                ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtAsListTag(value.getRawValue()));
             }).build());
 
@@ -3187,7 +3188,7 @@ public final class Operators {
     public static final IOperator NBT_AS_BYTE_LIST = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.LIST).operatorName("as_byte_list").symbol("NBT.as_byte_list")
             .function(variables -> {
-                ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtAsListByte(value.getRawValue()));
             }).build());
 
@@ -3197,7 +3198,7 @@ public final class Operators {
     public static final IOperator NBT_AS_INT_LIST = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.LIST).operatorName("as_int_list").symbol("NBT.as_int_list")
             .function(variables -> {
-                ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtAsListInt(value.getRawValue()));
             }).build());
 
@@ -3207,7 +3208,7 @@ public final class Operators {
     public static final IOperator NBT_AS_LONG_LIST = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.LIST).operatorName("as_long_list").symbol("NBT.as_long_list")
             .function(variables -> {
-                ValueTypeNbt.ValueNbt value = variables.getValue(0);
+                ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtAsListLong(value.getRawValue()));
             }).build());
 
@@ -3218,7 +3219,7 @@ public final class Operators {
             .inputType(ValueTypes.BOOLEAN).output(ValueTypes.NBT)
             .operatorName("from_boolean").symbol("NBT.from_boolean")
             .function(variables -> {
-                ValueTypeBoolean.ValueBoolean value = variables.getValue(0);
+                ValueTypeBoolean.ValueBoolean value = variables.getValue(0, ValueTypes.BOOLEAN);
                 return ValueTypeNbt.ValueNbt.of(ByteNBT.valueOf(value.getRawValue()));
             }).build());
 
@@ -3229,7 +3230,7 @@ public final class Operators {
             .inputType(ValueTypes.INTEGER).output(ValueTypes.NBT)
             .operatorName("from_short").symbol("NBT.from_short")
             .function(variables -> {
-                ValueTypeInteger.ValueInteger value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger value = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeNbt.ValueNbt.of(ShortNBT.valueOf((short) value.getRawValue()));
             }).build());
 
@@ -3240,7 +3241,7 @@ public final class Operators {
             .inputType(ValueTypes.INTEGER).output(ValueTypes.NBT)
             .operatorName("from_byte").symbol("NBT.from_byte")
             .function(variables -> {
-                ValueTypeInteger.ValueInteger value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger value = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeNbt.ValueNbt.of(ByteNBT.valueOf((byte) value.getRawValue()));
             }).build());
 
@@ -3251,7 +3252,7 @@ public final class Operators {
             .inputType(ValueTypes.INTEGER).output(ValueTypes.NBT)
             .operatorName("from_int").symbol("NBT.from_int")
             .function(variables -> {
-                ValueTypeInteger.ValueInteger value = variables.getValue(0);
+                ValueTypeInteger.ValueInteger value = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeNbt.ValueNbt.of(IntNBT.valueOf(value.getRawValue()));
             }).build());
 
@@ -3262,7 +3263,7 @@ public final class Operators {
             .inputType(ValueTypes.LONG).output(ValueTypes.NBT)
             .operatorName("from_long").symbol("NBT.from_long")
             .function(variables -> {
-                ValueTypeLong.ValueLong value = variables.getValue(0);
+                ValueTypeLong.ValueLong value = variables.getValue(0, ValueTypes.LONG);
                 return ValueTypeNbt.ValueNbt.of(LongNBT.valueOf(value.getRawValue()));
             }).build());
 
@@ -3273,7 +3274,7 @@ public final class Operators {
             .inputType(ValueTypes.DOUBLE).output(ValueTypes.NBT)
             .operatorName("from_double").symbol("NBT.from_double")
             .function(variables -> {
-                ValueTypeDouble.ValueDouble value = variables.getValue(0);
+                ValueTypeDouble.ValueDouble value = variables.getValue(0, ValueTypes.DOUBLE);
                 return ValueTypeNbt.ValueNbt.of(DoubleNBT.valueOf(value.getRawValue()));
             }).build());
 
@@ -3284,7 +3285,7 @@ public final class Operators {
             .inputType(ValueTypes.DOUBLE).output(ValueTypes.NBT)
             .operatorName("from_float").symbol("NBT.from_float")
             .function(variables -> {
-                ValueTypeDouble.ValueDouble value = variables.getValue(0);
+                ValueTypeDouble.ValueDouble value = variables.getValue(0, ValueTypes.DOUBLE);
                 return ValueTypeNbt.ValueNbt.of(FloatNBT.valueOf((float) value.getRawValue()));
             }).build());
 
@@ -3295,7 +3296,7 @@ public final class Operators {
             .inputType(ValueTypes.STRING).output(ValueTypes.NBT)
             .operatorName("from_string").symbol("NBT.from_string")
             .function(variables -> {
-                ValueTypeString.ValueString value = variables.getValue(0);
+                ValueTypeString.ValueString value = variables.getValue(0, ValueTypes.STRING);
                 return ValueTypeNbt.ValueNbt.of(StringNBT.valueOf(value.getRawValue()));
             }).build());
 
@@ -3308,7 +3309,7 @@ public final class Operators {
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeList.ValueList value = variables.getValue(0);
+                    ValueTypeList.ValueList value = variables.getValue(0, ValueTypes.LIST);
                     return ValueTypeNbt.ValueNbt.of(NbtHelpers.getListNbtTag(value, NBT_FROM_TAG_LIST.getLocalizedNameFull()));
                 }
             }).build());
@@ -3322,7 +3323,7 @@ public final class Operators {
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeList.ValueList value = variables.getValue(0);
+                    ValueTypeList.ValueList value = variables.getValue(0, ValueTypes.LIST);
                     return ValueTypeNbt.ValueNbt.of(NbtHelpers.getListNbtByte(value, NBT_FROM_BYTE_LIST.getLocalizedNameFull()));
                 }
             }).build());
@@ -3336,7 +3337,7 @@ public final class Operators {
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeList.ValueList value = variables.getValue(0);
+                    ValueTypeList.ValueList value = variables.getValue(0, ValueTypes.LIST);
                     return ValueTypeNbt.ValueNbt.of(NbtHelpers.getListNbtInt(value, NBT_FROM_INT_LIST.getLocalizedNameFull()));
                 }
             }).build());
@@ -3350,7 +3351,7 @@ public final class Operators {
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
-                    ValueTypeList.ValueList value = variables.getValue(0);
+                    ValueTypeList.ValueList value = variables.getValue(0, ValueTypes.LIST);
                     return ValueTypeNbt.ValueNbt.of(NbtHelpers.getListNbtLong(value, NBT_FROM_LONG_LIST.getLocalizedNameFull()));
                 }
             }).build());
@@ -3362,8 +3363,8 @@ public final class Operators {
             .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.NBT)
             .operatorName("path_match_first").symbol("NBT.path_match_first")
             .function(variables -> {
-                ValueTypeString.ValueString string = variables.getValue(0);
-                ValueTypeNbt.ValueNbt nbt = variables.getValue(1);
+                ValueTypeString.ValueString string = variables.getValue(0, ValueTypes.STRING);
+                ValueTypeNbt.ValueNbt nbt = variables.getValue(1, ValueTypes.NBT);
                 INbtPathExpression expression = null;
                 try {
                     expression = NbtPath.parse(string.getRawValue());
@@ -3382,8 +3383,8 @@ public final class Operators {
             .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.LIST)
             .operatorName("path_match_all").symbol("NBT.path_match_all")
             .function(variables -> {
-                ValueTypeString.ValueString string = variables.getValue(0);
-                ValueTypeNbt.ValueNbt nbt = variables.getValue(1);
+                ValueTypeString.ValueString string = variables.getValue(0, ValueTypes.STRING);
+                ValueTypeNbt.ValueNbt nbt = variables.getValue(1, ValueTypes.NBT);
                 INbtPathExpression expression = null;
                 try {
                     expression = NbtPath.parse(string.getRawValue());
@@ -3405,8 +3406,8 @@ public final class Operators {
             .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.BOOLEAN)
             .operatorName("path_test").symbol("NBT.path_test")
             .function(variables -> {
-                ValueTypeString.ValueString string = variables.getValue(0);
-                ValueTypeNbt.ValueNbt nbt = variables.getValue(1);
+                ValueTypeString.ValueString string = variables.getValue(0, ValueTypes.STRING);
+                ValueTypeNbt.ValueNbt nbt = variables.getValue(1, ValueTypes.NBT);
                 INbtPathExpression expression = null;
                 try {
                     expression = NbtPath.parse(string.getRawValue());

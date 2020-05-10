@@ -515,7 +515,7 @@ public class OperatorBuilders {
     public static <T> IterativeFunction.PrePostBuilder<T, IValue> getItemCapability(@Nullable final ICapabilityReference<T> capabilityReference) {
         return IterativeFunction.PrePostBuilder.begin()
                 .appendPre(input -> {
-                    ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0);
+                    ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                     if(!a.getRawValue().isEmpty()) {
                         return a.getRawValue().getCapability(capabilityReference.getReference(), null).orElse(null);
                     }

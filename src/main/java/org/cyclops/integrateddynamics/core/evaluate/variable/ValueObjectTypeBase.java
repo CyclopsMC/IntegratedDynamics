@@ -16,11 +16,6 @@ public abstract class ValueObjectTypeBase<V extends IValue> extends ValueTypeBas
         this(typeName, Helpers.RGBToInt(243, 243, 243), TextFormatting.GRAY, valueClass);
     }
 
-    @Deprecated // TODO: remove, and also remove Nullable option in 1.15
-    public ValueObjectTypeBase(String typeName, int color, TextFormatting colorFormat) {
-        super(typeName, color, colorFormat);
-    }
-
     public ValueObjectTypeBase(String typeName, int color, TextFormatting colorFormat, @Nullable Class<V> valueClass) {
         super(typeName, color, colorFormat, valueClass);
     }

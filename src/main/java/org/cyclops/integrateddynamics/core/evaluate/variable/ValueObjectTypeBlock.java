@@ -131,7 +131,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
         @Override
         protected boolean isEqual(BlockState a, BlockState b) {
-            return a.equals(b); // TODO: check if this works, otherwise use getValues().equals
+            return a.equals(b);
         }
     }
 
