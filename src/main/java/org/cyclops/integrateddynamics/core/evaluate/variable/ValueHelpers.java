@@ -130,7 +130,7 @@ public class ValueHelpers {
 
                 // Error if the result is NOT an operatorø
                 if (result.getType() != ValueTypes.OPERATOR) {
-                    throw new EvaluationException(String.format(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
+                    throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
                             operator.getTranslationKey(), requiredLength, variables.length, result.getType()));
                 }
 

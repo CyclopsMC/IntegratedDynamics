@@ -150,9 +150,9 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         try {
             return this.valueClass.cast(value);
         } catch (ClassCastException e) {
-            throw new EvaluationException(String.format("Attempted to cast %s to %s, for value \"%s\"",
-                    L10NHelpers.localize(value.getType().getTranslationKey()),
-                    L10NHelpers.localize(this.getTranslationKey()),
+            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CAST_ILLEGAL,
+                    new TranslationTextComponent(value.getType().getTranslationKey()),
+                    new TranslationTextComponent(this.getTranslationKey()),
                     value.getType().toCompactString(value)
             ));
         }

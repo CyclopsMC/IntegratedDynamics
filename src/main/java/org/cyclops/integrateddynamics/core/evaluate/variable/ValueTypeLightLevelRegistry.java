@@ -1,11 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeLightLevelRegistry;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -35,6 +38,7 @@ public class ValueTypeLightLevelRegistry implements IValueTypeLightLevelRegistry
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     @Override
     public <V extends IValue> ILightLevelCalculator<V> getLightLevelCalculator(IValueType<V> valueType) {
         return lightLevelCalculatorMap.get(valueType);
@@ -43,7 +47,7 @@ public class ValueTypeLightLevelRegistry implements IValueTypeLightLevelRegistry
     @Override
     public <V extends IValue> int getLightLevel(V value) throws InvalidValueTypeException {
         IValueType<V> valueType = value.getType();
-        ILightLevelCalculator lightLevelCalculator = getLightLevelCalculator(valueType);
+        ILightLevelCalculator<V> lightLevelCalculator = getLightLevelCalculator(valueType);
         if(lightLevelCalculator != null) {
             return lightLevelCalculator.getLightLevel(value);
         }
@@ -52,7 +56,7 @@ public class ValueTypeLightLevelRegistry implements IValueTypeLightLevelRegistry
                 return entry.getValue().getLightLevel(value.cast(entry.getKey()));
             }
         }
-        throw new InvalidValueTypeException(String.format("The value %s can not be used to derive a light level.", value));
+        throw new InvalidValueTypeException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_NOLIGHTCALCULATOR, value));
     }
 
 }

@@ -9,6 +9,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -223,7 +224,9 @@ public class OperatorBuilders {
                 IOperator second = getSafeOperator(input.getValue(1, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY);
                 IValueType[] secondInputs = second.getInputTypes();
                 if(secondInputs.length < 1) {
-                    throw new EvaluationException("The second operator did not accept any inputs");
+                    throw new EvaluationException(new TranslationTextComponent(
+                            L10NValues.OPERATOR_ERROR_OPERATORPARAMWRONGINPUTLENGTH,
+                            1, second.getLocalizedNameFull(), secondInputs.length));
                 }
                 IValueType secondInputType = secondInputs[0];
                 if (ValueHelpers.correspondsTo(secondInputType, ValueTypes.OPERATOR)) {
@@ -243,7 +246,9 @@ public class OperatorBuilders {
                 IOperator third = getSafeOperator(input.getValue(2, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY);
                 IValueType<?>[] types = third.getInputTypes();
                 if(types.length < 2) {
-                    throw new EvaluationException("The operator did not accept enough inputs");
+                    throw new EvaluationException(new TranslationTextComponent(
+                            L10NValues.OPERATOR_ERROR_OPERATORPARAMWRONGINPUTLENGTH,
+                            2, third.getLocalizedNameFull(), types.length));
                 }
                 IValueType<?> firstOutputType = types[0];
                 IValueType<?> secondOutputType = types[1];
@@ -307,7 +312,7 @@ public class OperatorBuilders {
                     ValueTypeString.ValueString a = input.getValue(0, ValueTypes.STRING);
                     return new ResourceLocation(a.getRawValue());
                 } catch (ResourceLocationException e) {
-                    throw new EvaluationException(e.getMessage());
+                    throw new EvaluationException(new StringTextComponent(e.getMessage()));
                 }
             });
 
@@ -481,10 +486,9 @@ public class OperatorBuilders {
             throws EvaluationException {
         IIngredientComponentHandler<VT, V, T, M> componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
         if (list.getRawValue().getValueType() != componentHandler.getValueType()) {
-            ITextComponent error = new TranslationTextComponent(
+            throw new EvaluationException(new TranslationTextComponent(
                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                    list.getRawValue().getValueType(), componentHandler.getValueType());
-            throw new EvaluationException(error.getString());
+                    list.getRawValue().getValueType(), componentHandler.getValueType()));
         }
         List<T> listTransformed = Lists.newArrayListWithExpectedSize(list.getRawValue().getLength());
         for (V value : list.getRawValue()) {

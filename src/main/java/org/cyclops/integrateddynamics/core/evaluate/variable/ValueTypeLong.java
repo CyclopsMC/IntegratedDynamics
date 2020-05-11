@@ -6,10 +6,12 @@ import net.minecraft.nbt.LongNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
  * Value type with values that are doubles.
@@ -55,7 +57,8 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
         try {
             return ValueLong.of(Long.parseLong(value));
         } catch (NumberFormatException e) {
-            throw new EvaluationException(e.getMessage());
+            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
+                    new TranslationTextComponent(getTranslationKey())));
         }
     }
 

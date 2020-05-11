@@ -194,7 +194,8 @@ public class CurriedOperator implements IOperator {
                 tag = (CompoundNBT) valueOperator;
             } catch (ClassCastException e) {
                 e.printStackTrace();
-                throw new EvaluationException(e.getMessage());
+                throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                        valueOperator, e.getMessage()));
             }
             ListNBT list = tag.getList("values", Constants.NBT.TAG_COMPOUND);
             IVariable[] variables = new IVariable[list.size()];

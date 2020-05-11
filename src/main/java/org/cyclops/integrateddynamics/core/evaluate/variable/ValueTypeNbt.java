@@ -69,7 +69,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
         try {
             return ValueNbt.of(new JsonToNBT(new StringReader(value)).readValue());
         } catch (CommandSyntaxException e) {
-            throw new EvaluationException(e.getMessage());
+            throw new EvaluationException(new StringTextComponent(e.getMessage()));
         }
     }
 

@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -15,6 +16,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -87,7 +89,9 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
                 }
                 return new PredicateOperator<>(valueType, values);
             } catch (ClassCastException e) {
-                throw new EvaluationException(String.format("Something went wrong while deserializing '%s'.", value));
+                e.printStackTrace();
+                throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                        value, e.getMessage()));
             }
         }
     }

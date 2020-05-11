@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -29,6 +30,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
 import javax.annotation.Nullable;
@@ -130,7 +132,8 @@ public class OperatorRegistry implements IOperatorRegistry {
             String serializerName = tag.getString("serializer");
             IOperatorSerializer serializer = namedSerializers.get(serializerName);
             if (serializer == null) {
-                throw new EvaluationException(String.format("No serializer was found to deserialize the operator value '%s'", value));
+                throw new EvaluationException(
+                        new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value));
             }
             return serializer.deserialize(tag.get("value"));
         }

@@ -41,19 +41,24 @@ public class L10NValues {
     public static final String VALUETYPE_ERROR_INVALIDINPUT = "valuetype." + NS + ".error.invalid_input";
     public static final String VALUETYPE_ERROR_INVALIDINPUTITEM = "valuetype." + NS + ".error.invalid_input_item";
     public static final String VALUETYPE_ERROR_INVALIDLISTELEMENT = "valuetype." + NS + ".error.invalid_list_element";
+    // 0: value, 1: error
+    public static final String VALUETYPE_ERROR_DESERIALIZE = "valuetype." + NS + ".error.deserialize";
     // 0: list value type, 1: given type
     public static final String VALUETYPE_ERROR_INVALIDLISTVALUETYPE = "valuetype." + NS + ".error.invalid_list_value_type";
     public static final String VALUETYPE_ERROR_INVALIDOPERATOROPERATOR = "valuetype." + NS + ".error.invalid_operator_operator";
     public static final String VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE = "valuetype." + NS + ".error.invalid_operator_signature";
     public static final String VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK = "valuetype." + NS + ".error.block.no_block";
     public static final String VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID = "valuetype." + NS + ".error.fluid.no_fluid";
-    public static final String VALUETYPE_OBJECT_THAUMCRAFTASPECT_ERROR_NOASPECT = "valuetype." + NS + ".error.thaumcraftaspect.no_aspect";
+    // 0: value type
+    public static final String VALUETYPE_ERROR_NOLIGHTCALCULATOR = "valuetype." + NS + ".error.no_light_calculator";
 
     public static final String ASPECT_TOOLTIP_PARTID = "aspect." + NS + ".tooltip.part_id";
     public static final String ASPECT_TOOLTIP_ASPECTNAME = "aspect." + NS + ".tooltip.aspect_name";
     public static final String ASPECT_TOOLTIP_VALUETYPENAME = "aspect." + NS + ".tooltip.value_type_name";
     public static final String ASPECT_ERROR_PARTNOTINNETWORK = "variable." + NS + ".error.part_not_in_network";
     public static final String ASPECT_ERROR_INVALIDTYPE = "aspect." + NS + ".error.invalid_type";
+    public static final String ASPECT_ERROR_NOVALUEINTERFACE = "aspect." + NS + ".error.no_value_interface";
+    public static final String ASPECT_ERROR_NOVALUEINTERFACEVALUE = "aspect." + NS + ".error.no_value_interface_value";
 
     public static final String PROXY_TOOLTIP_PROXYID = "proxy." + NS + ".tooltip.proxy_id";
     public static final String PROXY_ERROR_PROXYNOTINNETWORK = "proxy." + NS + ".error.proxy_not_in_network";
@@ -81,9 +86,13 @@ public class L10NValues {
     public static final String OPERATOR_ERROR_CYCLICREFERENCE = "operator." + NS + ".error.cyclic_reference";
     // 0: operator, 1: given-length, 2: actual-length
     public static final String OPERATOR_ERROR_WRONGINPUTLENGTH = "operator." + NS + ".error.wrong_input_length";
+    // 0: required-input-lengt,; 1: operator, 2: actual-input-length
+    public static final String OPERATOR_ERROR_OPERATORPARAMWRONGINPUTLENGTH = "operator." + NS + ".error.operator_param_wrong_input_length";
     public static final String OPERATOR_ERROR_NULLTYPE = "operator." + NS + ".error.null_type";
     // 0: operator, 1: given-input, 2: position, 3: expected-input
     public static final String OPERATOR_ERROR_WRONGTYPE = "operator." + NS + ".error.wrong_type";
+    // 0: operator, 1: returned-input, 3: expected-output
+    public static final String OPERATOR_ERROR_WRONGTYPEOUTPUT = "operator." + NS + ".error.wrong_type_output";
     public static final String OPERATOR_ERROR_WRONGCURRYINGTYPE = "operator." + NS + ".error.wrong_currying_type";
     // 0: operator, 1: operator-inputs, 2: actual-inputs, 3: operator-output
     public static final String OPERATOR_ERROR_CURRYINGOVERFLOW = "operator." + NS + ".error.currying_overflow";
@@ -97,5 +106,38 @@ public class L10NValues {
     public static final String OPERATOR_ERROR_RECURSIONLIMIT = "operator." + NS + ".error.operator_recursion_limit";
     // 0: expression, 1: message
     public static final String OPERATOR_ERROR_NBT_PATH_EXPRESSION = "operator." + NS + ".error.operator_nbt_path_expression";
+    // 0: value-type-from, 1: value-type-to
+    public static final String OPERATOR_ERROR_CAST_NOMAPPING = "operator." + NS + ".error.cast.no_mapping";
+    // 0: value-type-from, 1: value-type-to, 2: value
+    public static final String OPERATOR_ERROR_CAST_ILLEGAL = "operator." + NS + ".error.cast.illegal";
+    // 0: value-type-from-actual, 1: value-type-from-expected, 2: value-type-to
+    public static final String OPERATOR_ERROR_CAST_UNEXPECTED = "operator." + NS + ".error.cast.unexpected";
+    public static final String OPERATOR_ERROR_DIVIDEBYZERO = "operator." + NS + ".error.divide_by_zero";
+    // 0: string-value, 1: value-type
+    public static final String OPERATOR_ERROR_PARSE = "operator." + NS + ".error.parse";
+    // 0: value
+    public static final String OPERATOR_ERROR_NO_DESERIALIZER = "operator." + NS + ".error.no_derserializer";
+    // 0: regex-value
+    public static final String OPERATOR_ERROR_REGEX_INVALID = "operator." + NS + ".error.regex.invalid";
+    public static final String OPERATOR_ERROR_SUBSTRING_TOGREATERTHANFROM = "operator." + NS + ".error.substring.to_greater_than_from";
+    public static final String OPERATOR_ERROR_SUBSTRING_INDEXNEGATIVE = "operator." + NS + ".error.substring.index_negative";
+    public static final String OPERATOR_ERROR_SUBSTRING_LONGERTHANSTRING = "operator." + NS + ".error.substring.longer_than_string";
+    public static final String OPERATOR_ERROR_GROUP_INDEXNEGATIVE = "operator." + NS + ".error.group.index_negative";
+    // 0: regex-value, 1: value
+    public static final String OPERATOR_ERROR_GROUP_NOMATCH = "operator." + NS + ".error.group.no_match";
+    // 0: regex-value, 1: value, 2: group
+    public static final String OPERATOR_ERROR_GROUP_NOMATCHGROUP = "operator." + NS + ".error.group.no_match_group";
+    public static final String OPERATOR_ERROR_REGEXSCAN_INDEXNEGATIVE = "operator." + NS + ".error.regex_scan.index_negative";
+    // 0: regex-value, 1: value, 2: group
+    public static final String OPERATOR_ERROR_REGEXSCAN_NOMATCHGROUP = "operator." + NS + ".error.regex_scan.no_match_group";
+    // 0: operation
+    public static final String OPERATOR_ERROR_INFINITELIST_ILLEGAL = "operator." + NS + ".error.infinite_list.illegal";
+    // 0: index, 1: length
+    public static final String OPERATOR_ERROR_INDEXOUTOFBOUNDS = "operator." + NS + ".error.index_out_of_bounds";
+    public static final String OPERATOR_ERROR_SLICE_TOGREATERTHANFROM = "operator." + NS + ".error.slice.to_greater_than_from";
+    public static final String OPERATOR_ERROR_SLICE_INDEXNEGATIVE = "operator." + NS + ".error.slice.index_negative";
+    // 0: operator
+    public static final String OPERATOR_ERROR_OPERATORNOTFOUND = "operator." + NS + ".error.operator_not_found";
+    public static final String OPERATOR_ERROR_REDUCE_EMPTY = "operator." + NS + ".error.reduce.empty";
 
 }

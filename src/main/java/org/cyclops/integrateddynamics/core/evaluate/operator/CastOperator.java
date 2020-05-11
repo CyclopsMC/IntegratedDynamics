@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 IValue value = variables.getValue(0);
                 if(value.getType() != from) {
-                    throw new EvaluationException(String.format("The value of type %s does not correspond to the " +
-                            "expected type %s to cast to %s", value.getType(), from, to));
+                    throw new EvaluationException(new TranslationTextComponent(
+                            L10NValues.OPERATOR_ERROR_CAST_UNEXPECTED, value.getType(), from, to));
                 }
                 return mapping.cast((V1) value);
             }

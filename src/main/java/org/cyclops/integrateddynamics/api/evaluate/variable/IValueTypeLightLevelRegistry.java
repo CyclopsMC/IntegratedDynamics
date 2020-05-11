@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.api.evaluate.variable;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 
+import javax.annotation.Nullable;
+
 /**
  * Registry for mapping value types to their light level calculator.
  * @author rubensworks
@@ -25,6 +27,7 @@ public interface IValueTypeLightLevelRegistry extends IRegistry {
      * @param <V> The value type.
      * @return The registered light level calculator.
      */
+    @Nullable
     public <V extends IValue> ILightLevelCalculator<V> getLightLevelCalculator(IValueType<V> valueType);
 
     /**

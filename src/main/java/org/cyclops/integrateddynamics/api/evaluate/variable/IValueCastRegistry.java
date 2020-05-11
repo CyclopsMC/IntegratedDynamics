@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
  * Registry for casting {@link IValue}.
@@ -57,7 +59,7 @@ public interface IValueCastRegistry extends IRegistry {
     public static class ValueCastException extends InvalidValueTypeException {
 
         public ValueCastException(IValueType from, IValueType to) {
-            super(String.format("No cast mapping exists from %s to %s", from, to));
+            super(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CAST_NOMAPPING, from, to));
         }
     }
 

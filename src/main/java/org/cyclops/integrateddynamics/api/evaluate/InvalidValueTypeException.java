@@ -8,10 +8,6 @@ import net.minecraft.util.text.ITextComponent;
  */
 public class InvalidValueTypeException extends EvaluationException {
 
-    public InvalidValueTypeException(String errorMessage) {
-        super(errorMessage);
-    }
-
     public InvalidValueTypeException(ITextComponent errorMessage) {
         super(errorMessage);
     }

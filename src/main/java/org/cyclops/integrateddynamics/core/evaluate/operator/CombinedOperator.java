@@ -346,7 +346,7 @@ public class CombinedOperator extends OperatorBase {
                 combinedOperator = new CombinedOperator(":flip:", "flipped", flip, flippedInputTypes,
                         operator.getOutputType(), null);
             } catch (IllegalArgumentException e) {
-                throw new EvaluationException(e.getMessage());
+                throw new EvaluationException(new TranslationTextComponent(e.getMessage()));
             }
             return combinedOperator;
         }
@@ -406,7 +406,8 @@ public class CombinedOperator extends OperatorBase {
                 list = tag.getList("operators", Constants.NBT.TAG_STRING);
             } catch (ClassCastException e) {
                 e.printStackTrace();
-                throw new EvaluationException(e.getMessage());
+                throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                        valueOperator, e.getMessage()));
             }
             IOperator[] operators = new IOperator[list.size()];
             for (int i = 0; i < list.size(); i++) {

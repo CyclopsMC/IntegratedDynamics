@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -12,6 +13,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -101,7 +103,8 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
                 return proxy;
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | ClassCastException | IllegalAccessException e) {
                 e.printStackTrace();
-                throw new EvaluationException(e.getMessage());
+                throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                        value, e.getMessage()));
             }
         }
     }

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.expression;
 
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.IExpression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.ILazyExpressionValueCache;
@@ -8,6 +9,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
  * A generic expression with arbitrarily nested binary operations.
@@ -69,8 +71,8 @@ public class LazyExpression<V extends IValue> extends VariableAdapter<V> impleme
             return (V) value;
         } catch (ClassCastException e) {
             errored = true;
-            throw new EvaluationException(String.format("The evaluation for operator %s returned %s instead of " +
-                    "the expected %s.", op, value.getType(), op.getOutputType()));
+            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPEOUTPUT,
+                    op, value.getType(), op.getOutputType()));
         }
     }
 

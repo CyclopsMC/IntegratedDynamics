@@ -20,6 +20,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -61,6 +62,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorR
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.part.aspect.build.AspectBuilder;
 import org.cyclops.integrateddynamics.core.part.aspect.build.IAspectValuePropagator;
 import org.cyclops.integrateddynamics.network.packet.SpeakTextPacket;
@@ -665,13 +667,13 @@ public class Aspects {
                     AspectReadBuilders.BUILDER_ANY.appendKind("network").handle(
                             data -> {
                                 PartPos target = data.getLeft().getTarget();
-                                IValueInterface valueInterface = TileHelpers.getCapability(
-                                        target.getPos(), target.getSide(), ValueInterfaceConfig.CAPABILITY).orElse(null);
-                                if (valueInterface != null) {
-                                    return valueInterface.getValue().orElseThrow(() ->
-                                            new EvaluationException("No valid value interface value was found."));
-                                }
-                                throw new EvaluationException("No valid value interface was found.");
+                                IValueInterface valueInterface = TileHelpers
+                                        .getCapability(target.getPos(), target.getSide(), ValueInterfaceConfig.CAPABILITY)
+                                        .orElseThrow(() -> new EvaluationException(new TranslationTextComponent(
+                                                L10NValues.ASPECT_ERROR_NOVALUEINTERFACE)));
+                                return valueInterface.getValue()
+                                        .orElseThrow(() -> new EvaluationException(new TranslationTextComponent(
+                                                L10NValues.ASPECT_ERROR_NOVALUEINTERFACEVALUE)));
                             }
                     ).appendKind("value").buildRead();
 
