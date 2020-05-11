@@ -352,10 +352,10 @@ public class OperatorBuilders {
      *                         operator type itself.
      * @return The type validator instance.
      */
-    public static OperatorBuilder.ITypeValidator createOperatorTypeValidator(final IValueType... expectedSubTypes) {
+    public static OperatorBuilder.ITypeValidator createOperatorTypeValidator(final IValueType<?>... expectedSubTypes) {
         final int subOperatorLength = expectedSubTypes.length;
         final ITextComponent expected = new TranslationTextComponent(
-                org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(subOperatorLength), ValueHelpers.from(expectedSubTypes));
+                org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(subOperatorLength), (Object[]) ValueHelpers.from(expectedSubTypes));
         return (operator, input) -> {
             if (input.length == 0 || !ValueHelpers.correspondsTo(input[0], ValueTypes.OPERATOR)) {
                 String givenName = input.length == 0 ? "null" : input[0].getTranslationKey();
@@ -363,9 +363,9 @@ public class OperatorBuilders {
                         0, givenName);
             }
             if (input.length != subOperatorLength + 1) {
-                IValueType[] operatorInputs = Arrays.copyOfRange(input, 1, input.length);
+                IValueType<?>[] operatorInputs = Arrays.copyOfRange(input, 1, input.length);
                 ITextComponent given = new TranslationTextComponent(
-                        org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(operatorInputs.length), ValueHelpers.from(operatorInputs));
+                        org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(operatorInputs.length), (Object[]) ValueHelpers.from(operatorInputs));
                 return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE,
                         expected, given);
             }

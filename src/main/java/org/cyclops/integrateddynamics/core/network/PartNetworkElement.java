@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -31,7 +30,6 @@ import java.util.Optional;
  * A network element for parts.
  * @author rubensworks
  */
-@Data
 public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<P>> extends NetworkElementBase
         implements IPartNetworkElement<P, S>, IEnergyConsumingNetworkElement {
 
@@ -39,6 +37,11 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     private final PartTarget target;
 
     private S tempState = null;
+
+    public PartNetworkElement(P part, PartTarget target) {
+        this.part = part;
+        this.target = target;
+    }
 
     protected static DimPos getCenterPos(PartTarget target) {
         return target.getCenter().getPos();
@@ -54,6 +57,24 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     protected static Direction getTargetSide(PartTarget target) {
         return target.getTarget().getSide();
+    }
+
+    @Override
+    public P getPart() {
+        return part;
+    }
+
+    @Override
+    public PartTarget getTarget() {
+        return target;
+    }
+
+    public S getTempState() {
+        return tempState;
+    }
+
+    public void setTempState(S tempState) {
+        this.tempState = tempState;
     }
 
     @Override

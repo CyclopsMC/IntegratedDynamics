@@ -49,8 +49,8 @@ public class ValueHelpers {
      * @param variableFacades The variables facades.
      * @return The value types array corresponding element-wise to the variables array.
      */
-    public static IValueType[] from(IVariableFacade... variableFacades) {
-        IValueType[] valueTypes = new IValueType[variableFacades.length];
+    public static IValueType<?>[] from(IVariableFacade... variableFacades) {
+        IValueType<?>[] valueTypes = new IValueType[variableFacades.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IVariableFacade variableFacade = variableFacades[i];
             valueTypes[i] = variableFacade == null ? null : variableFacade.getOutputType();
@@ -63,10 +63,10 @@ public class ValueHelpers {
      * @param valueTypes The value types.
      * @return The unlocalized names array corresponding element-wise to the value types array.
      */
-    public static ITextComponent[] from(IValueType... valueTypes) {
+    public static ITextComponent[] from(IValueType<?>... valueTypes) {
         ITextComponent[] names = new ITextComponent[valueTypes.length];
         for(int i = 0; i < valueTypes.length; i++) {
-            IValueType valueType = valueTypes[i];
+            IValueType<?> valueType = valueTypes[i];
             names[i] = new TranslationTextComponent(valueType.getTranslationKey());
         }
         return names;
