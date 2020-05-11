@@ -148,10 +148,16 @@ public class GeneralConfig extends DummyConfig {
     public static int networkReaderBaseConsumption = 1;
     
     /**
-     * The base energy usage for the display panel.
+     * The base energy usage for the display panel when it has a variable.
      */
-    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the display panel.", minimalValue = 0)
-    public static int panelDisplayBaseConsumption = 2;
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the display panel when it has a variable.", minimalValue = 0)
+    public static int panelDisplayBaseConsumptionEnabled = 2;
+    
+    /**
+     * The base energy usage for the display panel when it does not have a variable.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the display panel when does not have a variable.", minimalValue = 0)
+    public static int panelDisplayBaseConsumptionDisabled = 1;
     
     /**
      * The base energy usage for the dynamic light panel.

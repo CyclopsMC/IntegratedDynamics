@@ -33,7 +33,7 @@ public class PartTypePanelDisplay extends PartTypePanelVariableDriven<PartTypePa
 
     @Override
     public int getConsumptionRate(State state) {
-        return GeneralConfig.panelDisplayBaseConsumption;
+        return state.hasVariable() ? GeneralConfig.panelDisplayBaseConsumptionEnabled : GeneralConfig.panelDisplayBaseConsumptionDisabled;
     }
 
     @Override
