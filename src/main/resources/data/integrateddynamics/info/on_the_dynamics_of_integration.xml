@@ -280,11 +280,13 @@
                 <tag>squeezer</tag>
                 <tag>menril_resin</tag>
                 <tag>liquid_chorus</tag>
+                <tag>proto_chorus</tag>
                 <paragraph>info_book.integrateddynamics.manual.prerequisites.squeezer.text1</paragraph>
                 <appendix type="minecraft:crafting">integrateddynamics:crafting/squeezer</appendix>
                 <appendix_list type="integrateddynamics:squeezer">integrateddynamics:squeezer/base/.*</appendix_list>
                 <appendix_list type="integrateddynamics:squeezer">integrateddynamics:squeezer/convenience/.*</appendix_list>
                 <appendix_list type="integrateddynamics:squeezer">integrateddynamics:squeezer/ores/.*</appendix_list>
+                <appendix type="minecraft:crafting">integrateddynamics:crafting/proto_chorus</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.prerequisites.drying_basin">
                 <tag>drying_basin</tag>

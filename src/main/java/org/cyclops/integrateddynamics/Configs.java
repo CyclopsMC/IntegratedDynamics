@@ -138,6 +138,7 @@ public class Configs {
         configHandler.addConfigurable(new ItemOnTheDynamicsOfIntegrationConfig());
         configHandler.addConfigurable(new ItemCrystalizedChorusChunkConfig());
         configHandler.addConfigurable(new ItemLogicDirectorConfig());
+        configHandler.addConfigurable(new ItemProtoChorusConfig());
 
         // World features
         configHandler.addConfigurable(new WorldFeatureFlowersMenrilConfig());

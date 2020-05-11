@@ -1,0 +1,21 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "integrateddynamics:proto_chorus",
+  "result": {
+    "fluid": {
+      "fluid": "integrateddynamics:liquid_chorus",
+      "amount": 125
+    },
+    "items": [
+      {
+        "item": "integrateddynamics:crystalized_chorus_chunk",
+        "chance": 0.5
+      },
+      {
+        "item": "integrateddynamics:crystalized_chorus_chunk",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 15
+}

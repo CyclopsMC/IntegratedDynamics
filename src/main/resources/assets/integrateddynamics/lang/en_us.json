@@ -136,6 +136,7 @@
     "item.integrateddynamics.on_the_dynamics_of_integration.info": "A complete mod reference guide with tutorials",
     "item.integrateddynamics.crystalized_chorus_chunk": "Crystalized Chorus Chunk",
     "item.integrateddynamics.logic_director": "Logic Director",
+    "item.integrateddynamics.proto_chorus": "Proto Chorus",
 
     "_comment": "Fluids",
     "fluid.fluids.integrateddynamics.menrilresin": "Menril Resin",
