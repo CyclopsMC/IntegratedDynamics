@@ -28,6 +28,57 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "general", comment = "The energy usage multiplier for networks.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
     public static int energyConsumptionMultiplier = 0;
 
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the audio reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int audioReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the audio writer.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int audioWriterBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the block reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int blockReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the mono-directional connector.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int connectorMonoDirectionalBaseConsumption = 32;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the omni-directional connector.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int connectorOmniDirectionalBaseConsumption = 128;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the effect writer.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int effectWriterBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the entity reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int entityReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the entity writer.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int entityWriterBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the extra-dimensional reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int extraDimensionalReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the fluid reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int fluidReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the inventory reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int inventoryReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the inventory writer.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int inventoryWriterBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the machine reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int machineReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the machine writer.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int machineWriterBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the materializer.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int materializerBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the network reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int networkReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the display panel when it has a variable.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int panelDisplayBaseConsumptionEnabled = 2;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the display panel when does not have a variable.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int panelDisplayBaseConsumptionDisabled = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the dynamic light panel.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int panelLightDynamicBaseConsumption = 0;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the static light panel.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int panelLightStaticBaseConsumption = 0;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the proxy.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int proxyBaseConsumption = 2;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the redstone reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int redstoneReaderBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the redstone writer.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int redstoneWriterBaseConsumption = 1;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the variable store.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int variablestoreBaseConsumption = 4;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the world reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int worldReaderBaseConsumption = 1;
+
     @ConfigurableProperty(category = "general", comment = "The maximum render distance for part overlays to render. The higher, the more resource intensive.", isCommandable = true, minimalValue = 1, configLocation = ModConfig.Type.CLIENT)
     public static int partOverlayRenderdistance = 15;
 

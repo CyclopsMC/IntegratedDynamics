@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.write.PartStateWriterBase;
 import org.cyclops.integrateddynamics.core.part.write.PartTypeWriteBase;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
@@ -23,6 +24,11 @@ public class PartTypeEntityWriter extends PartTypeWriteBase<PartTypeEntityWriter
     @Override
     public PartStateWriterBase<PartTypeEntityWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeEntityWriter>(Aspects.REGISTRY.getAspects(this).size());
+    }
+    
+    @Override
+    public int getConsumptionRate(PartStateWriterBase<PartTypeEntityWriter> state) {
+        return GeneralConfig.entityWriterBaseConsumption;
     }
 
 }

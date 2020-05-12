@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.part.PartStateEmpty;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanel;
+import org.cyclops.integrateddynamics.GeneralConfig;
 
 /**
  * A panel part that simply emits light.
@@ -31,6 +32,11 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     @Override
     public PartStateEmpty<PartTypePanelLightStatic> constructDefaultState() {
         return new PartStateEmpty<PartTypePanelLightStatic>();
+    }
+    
+    @Override
+    public int getConsumptionRate(PartStateEmpty<PartTypePanelLightStatic> state) {
+        return GeneralConfig.panelLightStaticBaseConsumption;
     }
 
     @Override

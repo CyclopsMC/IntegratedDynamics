@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.part.aspect.read.redstone.IReadRedstoneComponent;
 import org.cyclops.integrateddynamics.part.aspect.read.redstone.ReadRedstoneComponent;
@@ -35,6 +36,11 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     @Override
     public PartStateReaderBase<PartTypeRedstoneReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeRedstoneReader>();
+    }
+    
+    @Override
+    public int getConsumptionRate(PartStateReaderBase<PartTypeRedstoneReader> state) {
+        return GeneralConfig.redstoneReaderBaseConsumption;
     }
 
     @Override

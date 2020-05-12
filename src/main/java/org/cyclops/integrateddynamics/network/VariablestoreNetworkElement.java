@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 import javax.annotation.Nullable;
@@ -52,7 +53,7 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
 
     @Override
     public int getConsumptionRate() {
-        return 4;
+        return GeneralConfig.variablestoreBaseConsumption;
     }
 
     @Override

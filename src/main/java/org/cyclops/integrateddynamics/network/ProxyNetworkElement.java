@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
 
 import javax.annotation.Nullable;
@@ -82,7 +83,7 @@ public class ProxyNetworkElement extends TileNetworkElement<TileProxy> implement
 
     @Override
     public int getConsumptionRate() {
-        return 2;
+        return GeneralConfig.proxyBaseConsumption;
     }
 
     @Nullable

@@ -5,6 +5,7 @@ import net.minecraft.particles.ParticleTypes;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.write.PartStateWriterBase;
 import org.cyclops.integrateddynamics.core.part.write.PartTypeWriteBase;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
@@ -80,6 +81,11 @@ public class PartTypeEffectWriter extends PartTypeWriteBase<PartTypeEffectWriter
     @Override
     public PartStateWriterBase<PartTypeEffectWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeEffectWriter>(Aspects.REGISTRY.getAspects(this).size());
+    }
+    
+    @Override
+    public int getConsumptionRate(PartStateWriterBase<PartTypeEffectWriter> state) {
+        return GeneralConfig.effectWriterBaseConsumption;
     }
 
 }
