@@ -49,7 +49,10 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
     	return block;
     }
 
-    protected LazyOptional<IEnergyStorage> getEnergyBattery(ItemStack itemStack) {
+    public LazyOptional<IEnergyStorage> getEnergyBattery(ItemStack itemStack) {
+        if (CapabilityEnergy.ENERGY == null) {
+            return LazyOptional.of(() -> this.createCapability(itemStack));
+        }
         return itemStack.getCapability(CapabilityEnergy.ENERGY);
     }
 	
@@ -87,14 +90,19 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         return MathHelper.hsvToRGB(Math.max(0.0F, 1 - (float) getDurabilityForDisplay(stack)) / 3.0F, 1.0F, 1.0F);
     }
 
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
-        return new DefaultCapabilityProvider<>(() -> CapabilityEnergy.ENERGY, new EnergyStorageItemBlockEnergyContainer(this, stack) {
+    protected EnergyStorageItemBlockEnergyContainer createCapability(ItemStack itemStack) {
+        return new EnergyStorageItemBlockEnergyContainer(this, itemStack) {
             @Override
             public int getRate() {
                 return TileEnergyBattery.getEnergyPerTick(getMaxEnergyStored());
             }
-        });
+        };
+    }
+
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
+        return new DefaultCapabilityProvider<>(() -> CapabilityEnergy.ENERGY,
+                LazyOptional.of(() -> this.createCapability(stack)));
     }
 
 }

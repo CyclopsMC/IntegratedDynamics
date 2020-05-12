@@ -7,11 +7,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
+import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 
 /**
  * A block that can hold defined variables so that they can be referred to elsewhere in the network.
@@ -33,23 +33,21 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
     @Override
     public void fillItemGroup(ItemGroup tab, NonNullList<ItemStack> list) {
-        if (MinecraftHelpers.isMinecraftInitialized()) {
-            ItemStack itemStack = new ItemStack(this);
+        ItemStack itemStack = new ItemStack(this);
 
-            int capacityOriginal = BlockEnergyBatteryConfig.capacity;
-            int capacity = capacityOriginal;
-            int lastCapacity;
-            do {
-                ItemStack currentStack = itemStack.copy();
-                IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) currentStack.getCapability(CapabilityEnergy.ENERGY).orElse(null);
-                energyStorage.setCapacity(capacity);
-                list.add(currentStack.copy());
-                fill(energyStorage);
-                list.add(currentStack.copy());
-                lastCapacity = capacity;
-                capacity = capacity << 2;
-            } while (capacity < Math.min(BlockEnergyBatteryConfig.maxCreativeCapacity, BlockEnergyBatteryConfig.maxCapacity) && capacity > lastCapacity);
-        }
+        int capacityOriginal = BlockEnergyBatteryConfig.capacity;
+        int capacity = capacityOriginal;
+        int lastCapacity;
+        do {
+            ItemStack currentStack = itemStack.copy();
+            IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) ((ItemBlockEnergyContainer) currentStack.getItem()).getEnergyBattery(currentStack).orElse(null);
+            energyStorage.setCapacity(capacity);
+            list.add(currentStack.copy());
+            fill(energyStorage);
+            list.add(currentStack.copy());
+            lastCapacity = capacity;
+            capacity = capacity << 2;
+        } while (capacity < Math.min(BlockEnergyBatteryConfig.maxCreativeCapacity, BlockEnergyBatteryConfig.maxCapacity) && capacity > lastCapacity);
     }
 
     public boolean isCreative() {
