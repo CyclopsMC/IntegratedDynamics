@@ -5,6 +5,7 @@ import lombok.experimental.Delegate;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -63,6 +64,7 @@ public class TileCableConnectableInventory extends CyclopsTileEntity implements 
         networkCarrier = new NetworkCarrierDefault();
         addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, LazyOptional.of(() -> networkCarrier));
         addCapabilityInternal(PathElementConfig.CAPABILITY, LazyOptional.of(() -> new PathElementTile<>(this, cable)));
+        addCapabilityInternal(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, LazyOptional.of(inventory::getItemHandler));
     }
 
     protected SimpleInventory createInventory(int inventorySize, int stackSize) {

@@ -54,16 +54,18 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     public TileMaterializer() {
         super(RegistryEntries.TILE_ENTITY_MATERIALIZER, TileMaterializer.INVENTORY_SIZE);
 
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.UP,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN,
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
         addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.SOUTH,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.WEST,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_OUT)));
         addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.EAST,
+                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.WEST,
+                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.UP,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_IN)));
+        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN,
+                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_OUT)));
 
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
             @Override
