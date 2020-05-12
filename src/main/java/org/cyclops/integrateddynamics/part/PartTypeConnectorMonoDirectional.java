@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 
 import java.util.Collections;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
 
     @Override
     public int getConsumptionRate(State state) {
-        return 32;
+        return GeneralConfig.connectorMonoDirectionalBaseConsumption;
     }
 
     @Override

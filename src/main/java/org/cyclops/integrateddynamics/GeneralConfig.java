@@ -50,6 +50,156 @@ public class GeneralConfig extends DummyConfig {
      */
     @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The energy usage multiplier for networks.", minimalValue = 0)
     public static int energyConsumptionMultiplier = 0;
+    
+    /**
+     * The base energy usage for the audio reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the audio reader.", minimalValue = 0)
+    public static int audioReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the audio writer.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the audio writer.", minimalValue = 0)
+    public static int audioWriterBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the block reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the block reader.", minimalValue = 0)
+    public static int blockReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the mono-directional connector.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the mono-directional connector.", minimalValue = 0)
+    public static int connectorMonoDirectionalBaseConsumption = 32;
+    
+    /**
+     * The base energy usage for the omni-directional connector.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the omni-directional connector.", minimalValue = 0)
+    public static int connectorOmniDirectionalBaseConsumption = 128;
+    
+    /**
+     * The base energy usage for the effect writer.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the effect writer.", minimalValue = 0)
+    public static int effectWriterBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the entity reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the entity reader.", minimalValue = 0)
+    public static int entityReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the entity writer.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the entity writer.", minimalValue = 0)
+    public static int entityWriterBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the extra-dimensional reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the extra-dimensional reader.", minimalValue = 0)
+    public static int extraDimensionalReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the fluid reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the fluid reader.", minimalValue = 0)
+    public static int fluidReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the inventory reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the inventory reader.", minimalValue = 0)
+    public static int inventoryReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the inventory writer.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the inventory writer.", minimalValue = 0)
+    public static int inventoryWriterBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the machine reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the machine reader.", minimalValue = 0)
+    public static int machineReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the machine writer.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the machine writer.", minimalValue = 0)
+    public static int machineWriterBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the materializer.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the materializer.", minimalValue = 0)
+    public static int materializerBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the network reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the network reader.", minimalValue = 0)
+    public static int networkReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the display panel when it has a variable.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the display panel when it has a variable.", minimalValue = 0)
+    public static int panelDisplayBaseConsumptionEnabled = 2;
+    
+    /**
+     * The base energy usage for the display panel when it does not have a variable.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the display panel when does not have a variable.", minimalValue = 0)
+    public static int panelDisplayBaseConsumptionDisabled = 1;
+    
+    /**
+     * The base energy usage for the dynamic light panel.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the dynamic light panel.", minimalValue = 0)
+    public static int panelLightDynamicBaseConsumption = 0;
+    
+    /**
+     * The base energy usage for the static light panel.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the static light panel.", minimalValue = 0)
+    public static int panelLightStaticBaseConsumption = 0;
+    
+    /**
+     * The base energy usage for the proxy.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the proxy.", minimalValue = 0)
+    public static int proxyBaseConsumption = 2;
+    
+    /**
+     * The base energy usage for the redstone reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the redstone reader.", minimalValue = 0)
+    public static int redstoneReaderBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the redstone writer.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the redstone writer.", minimalValue = 0)
+    public static int redstoneWriterBaseConsumption = 1;
+    
+    /**
+     * The base energy usage for the variable store.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the variable store.", minimalValue = 0)
+    public static int variablestoreBaseConsumption = 4;
+    
+    /**
+     * The base energy usage for the world reader.
+     */
+    @ConfigurableProperty(category = ConfigurableTypeCategory.GENERAL, comment = "The base energy usage for the world reader.", minimalValue = 0)
+    public static int worldReaderBaseConsumption = 1;
 
     /**
      * The maximum render distance for part overlays to render. The higher, the more resource intensive.

@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.part.read.PartStateReaderBase;
 import org.cyclops.integrateddynamics.core.part.read.PartTypeReadBase;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 /**
@@ -27,6 +28,11 @@ public class PartTypeAudioReader extends PartTypeReadBase<PartTypeAudioReader, P
     @Override
     public PartStateReaderBase<PartTypeAudioReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeAudioReader>();
+    }
+    
+    @Override
+    public int getConsumptionRate(PartStateReaderBase<PartTypeAudioReader> state) {
+        return GeneralConfig.audioReaderBaseConsumption;
     }
 
 }

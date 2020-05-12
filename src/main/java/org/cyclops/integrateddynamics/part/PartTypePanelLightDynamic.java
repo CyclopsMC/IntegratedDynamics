@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
+import org.cyclops.integrateddynamics.GeneralConfig;
 
 /**
  * A part that can display variables.
@@ -47,6 +48,11 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     @Override
     public PartTypePanelLightDynamic.State constructDefaultState() {
         return new PartTypePanelLightDynamic.State();
+    }
+    
+    @Override
+    public int getConsumptionRate(State state) {
+        return GeneralConfig.panelLightDynamicBaseConsumption;
     }
 
     @Override

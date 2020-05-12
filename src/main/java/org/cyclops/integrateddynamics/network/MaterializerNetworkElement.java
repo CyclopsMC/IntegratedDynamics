@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.tileentity.TileMaterializer;
 
 import javax.annotation.Nullable;
@@ -43,5 +44,10 @@ public class MaterializerNetworkElement extends TileNetworkElement<TileMateriali
     @Override
     public int getChannel() {
         return IPositionedAddonsNetwork.DEFAULT_CHANNEL;
+    }
+    
+    @Override
+    public int getConsumptionRate() {
+        return GeneralConfig.materializerBaseConsumption;
     }
 }

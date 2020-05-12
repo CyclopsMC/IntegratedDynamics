@@ -1333,6 +1333,31 @@ config.integrateddynamics.general.versionChecker=Version check
 ## General settings
 config.integrateddynamics.general.energyConsumptionMultiplier=Energy consumption multiplier
 config.integrateddynamics.general.partOverlayRenderdistance=Part overlay render distance
+config.integrateddynamics.general.audioReaderBaseConsumption=Audio reader base consumption
+config.integrateddynamics.general.audioWriterBaseConsumption=Audio writer base consumption
+config.integrateddynamics.general.blockReaderBaseConsumption=Block reader base consumption
+config.integrateddynamics.general.connectorMonoDirectionalBaseConsumption=Mono-directional connector base consumption
+config.integrateddynamics.general.connectorOmniDirectionalBaseConsumption=Omni-directional connector base consumption
+config.integrateddynamics.general.effectWriterBaseConsumption=Effect writer base consumption
+config.integrateddynamics.general.entityReaderBaseConsumption=Entity reader base consumption
+config.integrateddynamics.general.entityWriterBaseConsumption=Entity writer base consumption
+config.integrateddynamics.general.extraDimensionalReaderBaseConsumption=Extra-dimensional reader base consumption
+config.integrateddynamics.general.fluidReaderBaseConsumption=Fluid reader base consumption
+config.integrateddynamics.general.inventoryReaderBaseConsumption=Inventory reader base consumption
+config.integrateddynamics.general.inventoryWriterBaseConsumption=Inventory writer base consumption
+config.integrateddynamics.general.machineReaderBaseConsumption=Machine reader base consumption
+config.integrateddynamics.general.machineWriterBaseConsumption=Machine writer base consumption
+config.integrateddynamics.general.materializerBaseConsumption=Materializer base consumption
+config.integrateddynamics.general.networkReaderBaseConsumption=Network reader base consumption
+config.integrateddynamics.general.panelDisplayBaseConsumptionEnabled=Display panel base consumption (enabled)
+config.integrateddynamics.general.panelDisplayBaseConsumptionDisabled=Display panel base consumption (disabled)
+config.integrateddynamics.general.panelLightDynamicBaseConsumption=Dynamic light panel base consumption
+config.integrateddynamics.general.panelLightStaticBaseConsumption=Static light panel base consumption
+config.integrateddynamics.general.proxyBaseConsumption=Proxy base consumption
+config.integrateddynamics.general.redstoneReaderBaseConsumption=Redstone reader base consumption
+config.integrateddynamics.general.redstoneWriterBaseConsumption=Redstone writer base consumption
+config.integrateddynamics.general.variablestoreBaseConsumption=Variable store base consumption
+config.integrateddynamics.general.worldReaderBaseConsumption=World reader base consumption
 
 ## Item settings
 config.integrateddynamics.variable=Variable Card
