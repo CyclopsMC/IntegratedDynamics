@@ -24,8 +24,10 @@ import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
+import org.cyclops.integrateddynamics.core.recipe.handler.RecipeHandlerSqueezer;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 
 import java.util.Arrays;
@@ -91,8 +93,7 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
                 });
 
         // Add recipe handler capability
-        // TODO: recipe handler, make generic one in CC
-        //addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(RegistryEntries.BLOCK_SQUEEZER)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getWorld)));
     }
 
     public SimpleInventory getInventory() {

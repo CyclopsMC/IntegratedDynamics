@@ -23,9 +23,11 @@ import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.cyclopscore.recipe.type.InventoryFluid;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.handler.RecipeHandlerDryingBasin;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
 import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalDryingBasin;
@@ -60,8 +62,7 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
         addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.EAST, LazyOptional.of(() -> tankIn));
 
         // Add recipe handler capability
-        // TODO: recipe handler, make generic one in CC
-        //addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin<>(RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getWorld)));
 
         // Add tank update listeners
         tankIn.addDirtyMarkListener(this::onTankChanged);

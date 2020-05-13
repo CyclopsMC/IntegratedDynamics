@@ -27,8 +27,10 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.cyclopscore.recipe.type.InventoryFluid;
 import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.core.recipe.handler.RecipeHandlerDryingBasin;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
 
 import java.util.Optional;
@@ -101,8 +103,7 @@ public class TileDryingBasin extends CyclopsTileEntity implements CyclopsTileEnt
         });
 
         // Add recipe handler capability
-        // TODO: recipe handler, make generic one in CC
-        //addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin<>(RegistryEntries.BLOCK_DRYING_BASIN)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getWorld)));
     }
 
     public SimpleInventory getInventory() {

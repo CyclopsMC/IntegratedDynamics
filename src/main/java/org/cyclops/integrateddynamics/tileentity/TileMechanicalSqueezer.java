@@ -24,9 +24,11 @@ import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezerConfig;
+import org.cyclops.integrateddynamics.core.recipe.handler.RecipeHandlerSqueezer;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
@@ -60,8 +62,7 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
         addCapabilityInternal(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, LazyOptional.of(() -> this.tank));
 
         // Add recipe handler capability
-        // TODO: recipe handler, make generic one in CC
-        //addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(RegistryEntries.BLOCK_MECHANICAL_SQUEEZER)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getWorld)));
 
         // Add tank update listeners
         tank.addDirtyMarkListener(this::onTankChanged);
