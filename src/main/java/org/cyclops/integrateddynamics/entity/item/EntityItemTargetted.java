@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.entity.item;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -8,12 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.client.particle.ParticleBlur;
+import net.minecraft.world.server.ServerWorld;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
 
 import java.util.Random;
@@ -25,7 +21,9 @@ import java.util.Random;
  */
 public class EntityItemTargetted extends ItemEntity {
 
-	private static final DataParameter<BlockPos> TARGET = EntityDataManager.createKey(EntityItemTargetted.class, DataSerializers.BLOCK_POS);
+	private static final DataParameter<Float> TARGET_X = EntityDataManager.createKey(EntityItemTargetted.class, DataSerializers.FLOAT);
+	private static final DataParameter<Float> TARGET_Y = EntityDataManager.createKey(EntityItemTargetted.class, DataSerializers.FLOAT);
+	private static final DataParameter<Float> TARGET_Z = EntityDataManager.createKey(EntityItemTargetted.class, DataSerializers.FLOAT);
 
 	private LivingEntity targetEntity = null;
 
@@ -47,85 +45,89 @@ public class EntityItemTargetted extends ItemEntity {
 	@Override
 	protected void registerData() {
 		super.registerData();
-		this.getDataManager().register(TARGET, getPosition());
+		this.getDataManager().register(TARGET_X, (float) getPosY());
+		this.getDataManager().register(TARGET_Y, (float) getPosY());
+		this.getDataManager().register(TARGET_Z, (float) getPosY());
+		setNoGravity(true);
 	}
 
-	public void setTarget(BlockPos pos) {
-		this.getDataManager().set(TARGET, pos);
+	public void setTarget(float x, float y, float z) {
+		this.getDataManager().set(TARGET_X, x);
+		this.getDataManager().set(TARGET_Y, y);
+		this.getDataManager().set(TARGET_Z, z);
 	}
 
 	public void setTarget(LivingEntity targetEntity) {
 		this.targetEntity = targetEntity;
-		this.setTarget(targetEntity.getPosition());
+		this.setTarget((float) targetEntity.getPosX(), (float) targetEntity.getPosY(), (float) targetEntity.getPosZ());
 	}
 
-	public BlockPos getTarget() {
-		return this.getDataManager().get(TARGET);
+	public float getTargetX() {
+		return this.getDataManager().get(TARGET_X);
 	}
 
-	@Override
-	public boolean hasNoGravity() {
-		return true;
+	public float getTargetY() {
+		return this.getDataManager().get(TARGET_Y);
+	}
+
+	public float getTargetZ() {
+		return this.getDataManager().get(TARGET_Z);
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		if (targetEntity != null) {
-			setTarget(targetEntity.getPosition());
-		}
-		BlockPos target = getTarget();
 
-		double dx = this.getPosX() - target.getX();
-		double dy = this.getPosY() - (target.getY() + 1F);
-		double dz = this.getPosZ() - target.getZ();
+		if (targetEntity != null) {
+			this.setTarget((float) targetEntity.getPosX(), (float) targetEntity.getPosY(), (float) targetEntity.getPosZ());
+		}
+
+		double dx = this.getPosX() - getTargetX();
+		double dy = this.getPosY() - (getTargetY() + 1F);
+		double dz = this.getPosZ() - getTargetZ();
 		double strength = -0.1;
 
 		double d = MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
 		if(d > 1D) {
-			double m = 1 / (2 * (Math.max(1, d)));
+			double m = (1 / (2 * (Math.max(1, d)))) * strength;
 			dx *= m;
 			dy *= m;
 			dz *= m;
-			this.getMotion().mul(strength, strength, strength);
+			this.setMotion(dx, dy, dz);
 			if(this.collidedHorizontally) {
 				this.setMotion(this.getMotion().x, 0.3, this.getMotion().z);
 			}
 		}
-
-		if(world.isRemote()) {
+		if (rand.nextInt(5) == 0) {
 			showEntityMoved();
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	protected void showEntityMoved() {
 		Random rand = world.rand;
-		float scale = 0.05F;
-		float red = rand.nextFloat() * 0.10F + 0.5F;
-		float green = rand.nextFloat() * 0.10F + 0.5F;
-		float blue = rand.nextFloat() * 0.20F + 0.80F;
-		float ageMultiplier = (float) (rand.nextDouble() * 2.5D + 10D);
+		float scale = 0.10F;
+		float red = rand.nextFloat() * 0.20F + 0.8F;
+		float green = rand.nextFloat() * 0.20F + 0.8F;
+		float blue = rand.nextFloat() * 0.10F + 0.10F;
+		float ageMultiplier = (float) (rand.nextDouble() * 25D + 50D);
 
-		ParticleBlur blur = new ParticleBlur(new ParticleBlurData(red, green, blue, scale, ageMultiplier),
-				world, this.getPosX(), this.getPosY() + 0.5D, this.getPosZ(),
-				0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2);
-		Minecraft.getInstance().particles.addEffect(blur);
+		((ServerWorld) getEntityWorld()).spawnParticle(
+				new ParticleBlurData(red, green, blue, scale, ageMultiplier),
+				this.getPosX(), this.getPosY() + 0.5D, this.getPosZ(), 1,
+				0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0D);
 
 		if (rand.nextInt(5) == 0) {
-			BlockPos target = getTarget();
-
-			double dx = this.getPosX() - (target.getX() + 0.5F);
-			double dy = this.getPosY() - (target.getY() + 1F);
-			double dz = this.getPosZ() - (target.getZ() + 0.5F);
+			double dx = this.getPosX() - (getTargetX() + 0.5F);
+			double dy = this.getPosY() - (getTargetY() + 1F);
+			double dz = this.getPosZ() - (getTargetZ() + 0.5F);
 			double factor = rand.nextDouble();
 			double x = this.getPosX() - dx * factor;
 			double y = this.getPosY() - dy * factor;
 			double z = this.getPosZ() - dz * factor;
-			ParticleBlur blur2 = new ParticleBlur(new ParticleBlurData(red, green, blue, scale, ageMultiplier),
-					world, x, y, z,
-					-0.02 * dx, -0.02 * dy, -0.02 * dz);
-			Minecraft.getInstance().particles.addEffect(blur2);
+			((ServerWorld) getEntityWorld()).spawnParticle(
+					new ParticleBlurData(red, green, blue, scale, ageMultiplier),
+					x, y, z, 1,
+					-0.02 * dx, -0.02 * dy, -0.02 * dz, 0D);
 		}
 	}
 
