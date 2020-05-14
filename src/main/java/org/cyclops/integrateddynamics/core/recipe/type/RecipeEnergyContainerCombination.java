@@ -1,45 +1,40 @@
-package org.cyclops.integrateddynamics.core.recipe;
+package org.cyclops.integrateddynamics.core.recipe.type;
 
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
-import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
-
-import java.util.function.Supplier;
+import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageMutable;
 
 /**
  * Recipe for combining energy batteries in a shapeless manner.
  * @author rubensworks
  */
-public class ItemBlockEnergyContainerCombinationRecipe extends SpecialRecipe {
+public class RecipeEnergyContainerCombination extends SpecialRecipe {
 
-	private final IRecipeSerializer<?> serializer;
-	private final int size;
-	private final Supplier<ItemBlockEnergyContainer> batteryItem;
+	private final Ingredient batteryItem;
 	private final int maxCapacity;
 
-	/**
-	 * Make a new instance.
-	 * @param serializer The serializer;
-	 * @param id The recipe id.
-	 * @param size The recipe size (should be called multiple times (1 to 9) to allow for all shapeless crafting types.
-	 * @param batteryItem The battery item that is combinable.
-	 * @param maxCapacity The maximum allowed capacity.
-	 */
-	public ItemBlockEnergyContainerCombinationRecipe(IRecipeSerializer<?> serializer, ResourceLocation id, int size, Supplier<ItemBlockEnergyContainer> batteryItem, int maxCapacity) {
+	public RecipeEnergyContainerCombination(ResourceLocation id, Ingredient batteryItem, int maxCapacity) {
 		super(id);
-		this.serializer = serializer;
-		this.size = size;
 		this.batteryItem = batteryItem;
 		this.maxCapacity = maxCapacity;
+	}
+
+	public Ingredient getBatteryItem() {
+		return batteryItem;
+	}
+
+	public int getMaxCapacity() {
+		return maxCapacity;
 	}
 
 	@Override
@@ -49,7 +44,7 @@ public class ItemBlockEnergyContainerCombinationRecipe extends SpecialRecipe {
 	
 	@Override
 	public ItemStack getRecipeOutput() {
-		return new ItemStack(this.batteryItem.get());
+		return this.batteryItem.getMatchingStacks()[0];
 	}
 
     @Override
@@ -66,13 +61,13 @@ public class ItemBlockEnergyContainerCombinationRecipe extends SpecialRecipe {
 
 	@Override
 	public IRecipeSerializer<?> getSerializer() {
-		return this.serializer;
+		return RegistryEntries.RECIPESERIALIZER_ENERGY_CONTAINER_COMBINATION;
 	}
 
 	@Override
 	public ItemStack getCraftingResult(CraftingInventory grid) {
 		ItemStack output = getRecipeOutput().copy();
-		IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(CapabilityEnergy.ENERGY, null);
+		IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(CapabilityEnergy.ENERGY).orElse(null);
 
 		int totalCapacity = 0;
 		int totalEnergy = 0;
@@ -82,8 +77,8 @@ public class ItemBlockEnergyContainerCombinationRecipe extends SpecialRecipe {
 		for(int j = 0; j < grid.getSizeInventory(); j++) {
 			ItemStack element = grid.getStackInSlot(j);
 			if(!element.isEmpty()) {
-				if(element.getItem() == batteryItem.get()) {
-					IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(CapabilityEnergy.ENERGY, null);
+				if(this.batteryItem.test(element)) {
+					IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(CapabilityEnergy.ENERGY).orElse(null);
 					inputItems++;
 					totalEnergy = Helpers.addSafe(totalEnergy, currentEnergyStorage.getEnergyStored());
 					totalCapacity = Helpers.addSafe(totalCapacity, currentEnergyStorage.getMaxEnergyStored());
@@ -100,14 +95,14 @@ public class ItemBlockEnergyContainerCombinationRecipe extends SpecialRecipe {
 		
 		// Set capacity and fill fluid into output.
 		energyStorage.setCapacity(totalCapacity);
-		energyStorage.receiveEnergy(totalEnergy, false);
+		((IEnergyStorageMutable) energyStorage).setEnergy(totalEnergy);
 		
 		return output;
 	}
 
 	@Override
 	public boolean canFit(int width, int height) {
-		return width * height >= size;
+		return width * height >= 9;
 	}
 
 }

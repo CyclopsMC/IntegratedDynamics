@@ -20,18 +20,7 @@ import org.cyclops.integrateddynamics.capability.variablecontainer.VariableConta
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettingsConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettingsConfig;
-import org.cyclops.integrateddynamics.core.item.ItemPart;
-import org.cyclops.integrateddynamics.core.part.PartTypes;
-import org.cyclops.integrateddynamics.core.recipe.ItemBlockEnergyContainerCombinationRecipeConfig;
-import org.cyclops.integrateddynamics.core.recipe.ItemNbtClearRecipeConfig;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeSerializerDryingBasinConfig;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeSerializerMechanicalDryingBasinConfig;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeSerializerMechanicalSqueezerConfig;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeSerializerSqueezerConfig;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeTypeDryingBasinConfig;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeTypeMechanicalDryingBasinConfig;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeTypeMechanicalSqueezerConfig;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeTypeSqueezerConfig;
+import org.cyclops.integrateddynamics.core.recipe.type.*;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTickingConfig;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
 import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
@@ -179,16 +168,10 @@ public class Configs {
         configHandler.addConfigurable(new RecipeSerializerMechanicalDryingBasinConfig());
         configHandler.addConfigurable(new RecipeSerializerSqueezerConfig());
         configHandler.addConfigurable(new RecipeSerializerMechanicalSqueezerConfig());
+        configHandler.addConfigurable(new RecipeSerializerNbtClearConfig());
+        configHandler.addConfigurable(new RecipeEnergyContainerCombinationConfig());
         configHandler.addConfigurable(new ItemVariableCopyRecipeConfig());
         configHandler.addConfigurable(new ItemFacadeRecipeConfig());
-        for(int i = 1; i < 9; i++) {
-            configHandler.addConfigurable(new ItemBlockEnergyContainerCombinationRecipeConfig(i,
-                    () -> RegistryEntries.ITEM_ENERGY_BATTERY, "energy_battery", BlockEnergyBatteryConfig.maxCapacity));
-        }
-        configHandler.addConfigurable(new ItemNbtClearRecipeConfig(ItemVariable.class, () -> RegistryEntries.ITEM_VARIABLE, "variable_clear"));
-        configHandler.addConfigurable(new ItemNbtClearRecipeConfig(ItemPart.class, () -> PartTypes.REDSTONE_READER.getItem(), "part_clear"));
-        configHandler.addConfigurable(new ItemNbtClearRecipeConfig(ItemBlockProxy.class, () -> RegistryEntries.ITEM_PROXY, "proxy_clear"));
-        configHandler.addConfigurable(new ItemNbtClearRecipeConfig(ItemBlockDelay.class, () -> RegistryEntries.ITEM_DELAY, "delay_clear"));
     }
 
 }

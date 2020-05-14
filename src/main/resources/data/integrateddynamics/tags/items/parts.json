@@ -1,0 +1,26 @@
+{
+  "replace": false,
+  "values": [
+    "integrateddynamics:part_audio_reader",
+    "integrateddynamics:part_audio_writer",
+    "integrateddynamics:part_block_reader",
+    "integrateddynamics:part_connector_mono_directional",
+    "integrateddynamics:part_connector_omni_directional",
+    "integrateddynamics:part_display_panel",
+    "integrateddynamics:part_dynamic_light_panel",
+    "integrateddynamics:part_effect_writer",
+    "integrateddynamics:part_entity_reader",
+    "integrateddynamics:part_entity_writer",
+    "integrateddynamics:part_extradimensional_reader",
+    "integrateddynamics:part_fluid_reader",
+    "integrateddynamics:part_inventory_reader",
+    "integrateddynamics:part_inventory_writer",
+    "integrateddynamics:part_machine_reader",
+    "integrateddynamics:part_machine_writer",
+    "integrateddynamics:part_network_reader",
+    "integrateddynamics:part_redstone_reader",
+    "integrateddynamics:part_redstone_writer",
+    "integrateddynamics:part_static_light_panel",
+    "integrateddynamics:part_world_reader"
+  ]
+}

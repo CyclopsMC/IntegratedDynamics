@@ -1,0 +1,5 @@
+{
+  "type": "integrateddynamics:crafting_special_energycontainer_combination",
+  "item": "integrateddynamics:energy_battery",
+  "maxCapacity": 655360000
+}

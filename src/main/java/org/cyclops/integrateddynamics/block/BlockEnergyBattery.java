@@ -47,7 +47,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
             list.add(currentStack.copy());
             lastCapacity = capacity;
             capacity = capacity << 2;
-        } while (capacity < Math.min(BlockEnergyBatteryConfig.maxCreativeCapacity, BlockEnergyBatteryConfig.maxCapacity) && capacity > lastCapacity);
+        } while (capacity < Math.min(BlockEnergyBatteryConfig.maxCreativeCapacity, BlockEnergyBatteryConfig.maxCreativeTabCapacity) && capacity > lastCapacity);
     }
 
     public boolean isCreative() {

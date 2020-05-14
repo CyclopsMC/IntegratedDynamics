@@ -75,7 +75,7 @@ public class ItemVariableCopyRecipe extends SpecialRecipe {
                 if(facade.isValid()) {
                     // Create a copy with a new id.
                     ret.set(j, IntegratedDynamics._instance.getRegistryManager()
-                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSide(), element));
+                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSideThread(), element));
                 }
             }
         }

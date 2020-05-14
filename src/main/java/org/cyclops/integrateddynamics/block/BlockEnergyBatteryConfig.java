@@ -25,10 +25,10 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
     @ConfigurableProperty(category = "machine", comment = "The minimum energy transfer rate per tick.", isCommandable = true, minimalValue = 0)
     public static int minEnergyRate = 2000;
 
-    @ConfigurableProperty(category = "machine", comment = "The maximum capacity possible by combining batteries. (Make sure that you do not cross the max int size.)")
-    public static int maxCapacity = 655360000;
+    @ConfigurableProperty(category = "machine", comment = "The maximum capacity shown in creative tabs. (Make sure that you do not cross the max int size)")
+    public static int maxCreativeTabCapacity = 655360000;
 
-    @ConfigurableProperty(category = "machine", comment = "The maximum capacity visible in the creative tabs. (Make sure that you do not cross the max int size.)")
+    @ConfigurableProperty(category = "machine", comment = "The maximum capacity visible in the creative tabs. (Make sure that you do not cross the max int size)")
     public static int maxCreativeCapacity = 40960000;
 
     public BlockEnergyBatteryConfig() {

@@ -1,7 +1,6 @@
-package org.cyclops.integrateddynamics.core.recipe;
+package org.cyclops.integrateddynamics.core.recipe.type;
 
 import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
@@ -9,24 +8,23 @@ import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
-import java.util.function.Supplier;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Crafting recipe to clear item NBT data.
  * @author rubensworks
  */
-public class ItemNbtClearRecipe extends SpecialRecipe {
+public class RecipeNbtClear extends SpecialRecipe {
 
-    private final IRecipeSerializer<?> serializer;
-    private final Class<? extends Item> clazz;
-    private final Supplier<Item> dummyInstance;
+    private final Ingredient inputIngredient;
 
-    public ItemNbtClearRecipe(IRecipeSerializer<?> serializer, ResourceLocation id, Class<? extends Item> clazz, Supplier<Item> dummyInstance) {
+    public RecipeNbtClear(ResourceLocation id, Ingredient inputIngredient) {
         super(id);
-        this.serializer = serializer;
-        this.clazz = clazz;
-        this.dummyInstance = dummyInstance;
+        this.inputIngredient = inputIngredient;
+    }
+
+    public Ingredient getInputIngredient() {
+        return inputIngredient;
     }
 
     @Override
@@ -40,7 +38,7 @@ public class ItemNbtClearRecipe extends SpecialRecipe {
         for(int j = 0; j < inv.getSizeInventory(); j++) {
             ItemStack element = inv.getStackInSlot(j);
             if(!element.isEmpty()) {
-                if (this.clazz.isInstance(element.getItem())) {
+                if (this.inputIngredient.test(element)) {
                     if (!ret.isEmpty()) {
                         return ItemStack.EMPTY;
                     }
@@ -61,7 +59,7 @@ public class ItemNbtClearRecipe extends SpecialRecipe {
 
     @Override
     public ItemStack getRecipeOutput() {
-        return new ItemStack(dummyInstance.get(), 1); // This is just a dummy item!
+        return inputIngredient.getMatchingStacks()[0]; // This is just a dummy item!
     }
 
     @Override
@@ -81,6 +79,6 @@ public class ItemNbtClearRecipe extends SpecialRecipe {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return this.serializer;
+        return RegistryEntries.RECIPESERIALIZER_NBT_CLEAR;
     }
 }

@@ -1,0 +1,6 @@
+{
+  "type": "integrateddynamics:crafting_special_nbt_clear",
+  "item": {
+    "tag": "integrateddynamics:parts"
+  }
+}
