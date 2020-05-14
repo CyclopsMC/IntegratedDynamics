@@ -40,7 +40,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.block.BlockTile;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
@@ -134,7 +133,6 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         if (MinecraftHelpers.isClientSide()) {
             IntegratedDynamics._instance.getIconProvider().registerIconHolderObject(this);
         }
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModelBakeEvent);
     }
 
     @Override
@@ -392,13 +390,11 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public IBakedModel createDynamicModel() {
-        return new CableModel();
+    public IBakedModel createDynamicModel(ModelBakeEvent event) {
+        CableModel model = new CableModel();
+        event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=false"), model);
+        event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=true"), model);
+        return model;
     }
 
-    public void onModelBakeEvent(ModelBakeEvent event){
-        IBakedModel dynamicModel = this.createDynamicModel();
-        event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=false"), dynamicModel);
-        event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=true"), dynamicModel);
-    }
 }

@@ -13,7 +13,7 @@ import net.minecraftforge.resource.VanillaResourceType;
  * Custom model loader for the variable item.
  * @author rubensworks
  */
-public class VariableLoader implements IModelLoader<VariableModel> {
+public class ModelLoaderVariable implements IModelLoader<VariableModel> {
 
     @Override
     public IResourceType getResourceType() {
