@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.helper.GuiHelpers;
@@ -27,7 +28,9 @@ public abstract class ContainerScreenMechanicalMachine<C extends ContainerMechan
             int energyStored = getContainer().getEnergy();
             int energyMax = getContainer().getMaxEnergy();
             if (energyMax > 0) {
-                return Optional.of(Lists.newArrayList(Helpers.getLocalizedEnergyLevel(energyStored, energyMax)));
+                return Optional.of(Lists.newArrayList(
+                        new TranslationTextComponent("general.integrateddynamics.energy"),
+                        Helpers.getLocalizedEnergyLevel(energyStored, energyMax)));
             }
             return Optional.empty();
         });
