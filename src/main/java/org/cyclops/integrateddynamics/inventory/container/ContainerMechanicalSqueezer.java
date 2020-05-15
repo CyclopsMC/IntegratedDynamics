@@ -4,12 +4,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.inventory.container.Slot;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMechanicalMachine;
-import org.cyclops.integrateddynamics.tileentity.TileMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.tileentity.TileMechanicalSqueezer;
 
 import javax.annotation.Nullable;
@@ -50,7 +48,7 @@ public class ContainerMechanicalSqueezer extends ContainerMechanicalMachine<Tile
         addPlayerInventory(playerInventory, offsetX + 8, offsetY + 86);
 
         putButtonAction(BUTTON_TOGGLE_FLUID_EJECT,
-                (buttonId, container) -> getTileSupplier().get().setAutoEjectFluids(!getTileSupplier().get().isAutoEjectFluids()));
+                (buttonId, container) -> getTileSupplier().ifPresent(tile -> tile.setAutoEjectFluids(!getTileSupplier().get().isAutoEjectFluids())));
     }
 
     @Nullable
