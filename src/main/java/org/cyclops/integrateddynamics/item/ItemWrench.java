@@ -5,15 +5,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import org.cyclops.commoncapabilities.api.capability.wrench.DefaultWrench;
-import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
-import org.cyclops.integrateddynamics.Capabilities;
 
 /**
  * The default wrench for this mod.
@@ -33,17 +30,24 @@ public class ItemWrench extends Item {
     @Override
     public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
         BlockState blockState = context.getWorld().getBlockState(context.getPos());
-        if(!context.getWorld().isRemote() || context.getPlayer().isCrouching()) {
+        if (context.getPlayer() != null && context.getPlayer().isCrouching()) {
             return ActionResultType.PASS;
-        } else if(blockState.rotate(context.getWorld(), context.getPos(), Rotation.CLOCKWISE_90) != blockState) {
-            context.getPlayer().swingArm(context.getHand());
-            return ActionResultType.SUCCESS;
         }
-        return ActionResultType.PASS;
+        if (context.getFace().getAxis() == Direction.Axis.Y
+                && blockState.has(BlockStateProperties.FACING)) {
+            // If pointing top or bottom, and we can rotate to UP and DOWN, rotate to that direction or opposite
+            blockState = blockState.with(BlockStateProperties.FACING, blockState.get(BlockStateProperties.FACING) == Direction.UP ? Direction.DOWN : Direction.UP);
+        } else if (context.getFace().getAxis() != Direction.Axis.Y
+                && blockState.has(BlockStateProperties.FACING)
+                && blockState.get(BlockStateProperties.FACING).getAxis() == Direction.Axis.Y) {
+            // If not pointing top or bottom, and rotation is UP or DOWN, rotate to facing
+            blockState = blockState.with(BlockStateProperties.FACING, context.getFace());
+        } else {
+            // Otherwise, just call rotate method
+            blockState = blockState.rotate(context.getWorld(), context.getPos(), Rotation.CLOCKWISE_90);
+        }
+        context.getWorld().setBlockState(context.getPos(), blockState);
+        return ActionResultType.SUCCESS;
     }
 
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
-        return new DefaultCapabilityProvider<>(() -> Capabilities.WRENCH, new DefaultWrench());
-    }
 }

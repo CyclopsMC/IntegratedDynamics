@@ -247,12 +247,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     public ActionResultType onPartActivated(final S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
                                             ItemStack heldItem, BlockRayTraceResult hit) {
         if(WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getFace())) {
-            WrenchHelpers.wrench(player, heldItem, world, pos, hit.getFace(), new WrenchHelpers.IWrenchAction<Void>() {
-                @Override
-                public void onWrench(PlayerEntity player, BlockPos pos, Void parameter) {
-                    partState.setFacingRotation(partState.getFacingRotation().rotateY());
-                }
-            });
+            WrenchHelpers.wrench(player, heldItem, world, pos, hit.getFace(),
+                    (player1, pos1, parameter) -> partState.setFacingRotation(partState.getFacingRotation().rotateY()));
             return ActionResultType.SUCCESS;
         }
         return super.onPartActivated(partState, pos, world, player, hand, heldItem, hit);

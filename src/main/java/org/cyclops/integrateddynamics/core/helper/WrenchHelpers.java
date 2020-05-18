@@ -3,10 +3,9 @@ package org.cyclops.integrateddynamics.core.helper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.cyclops.commoncapabilities.api.capability.wrench.WrenchTarget;
-import org.cyclops.integrateddynamics.Capabilities;
 
 import javax.annotation.Nullable;
 
@@ -15,6 +14,8 @@ import javax.annotation.Nullable;
  * @author rubensworks
  */
 public final class WrenchHelpers {
+
+    public static final ResourceLocation TAG_WRENCH = new ResourceLocation("forge", "wrench");
 
     /**
      * Checks if the given player can wrench something.
@@ -26,12 +27,7 @@ public final class WrenchHelpers {
      * @return If the wrenching can continue with the held item.
      */
     public static boolean isWrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, @Nullable Direction side) {
-        if(heldItem == null) {
-            return false;
-        }
-        return heldItem.getCapability(Capabilities.WRENCH, null)
-                .map(wrench -> wrench.canUse(player, WrenchTarget.forBlock(world, pos, side)))
-                .orElse(false);
+        return heldItem.getItem().getTags().contains(WrenchHelpers.TAG_WRENCH);
     }
 
     /**
@@ -49,13 +45,9 @@ public final class WrenchHelpers {
      * @param <P> The type of parameter to pass.
      */
     public static <P> void wrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, Direction side, IWrenchAction<P> action, P parameter) {
-        heldItem.getCapability(Capabilities.WRENCH, null)
-                .ifPresent(wrench -> {
-                    WrenchTarget wrenchTarget = WrenchTarget.forBlock(world, pos, side);
-                    wrench.beforeUse(player, wrenchTarget);
-                    action.onWrench(player, pos, parameter);
-                    wrench.afterUse(player, wrenchTarget);
-                });
+        if (isWrench(player, heldItem, world, pos, side)) {
+            action.onWrench(player, pos, parameter);
+        }
     }
 
     /**
