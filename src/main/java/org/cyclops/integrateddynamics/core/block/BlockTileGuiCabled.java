@@ -107,7 +107,14 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
         if (oldState.getBlock() != newState.getBlock()) {
             TileHelpers.getSafeTile(world, blockPos, TileCableConnectableInventory.class)
                     .ifPresent(tile -> InventoryHelpers.dropItems(world, tile.getInventory(), blockPos));
-            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+            if (newState.isAir()) {
+                CableHelpers.onCableRemoving(world, blockPos, true, false);
+                Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
+                super.onReplaced(oldState, world, blockPos, newState, isMoving);
+                CableHelpers.onCableRemoved(world, blockPos, connectedCables);
+            } else {
+                super.onReplaced(oldState, world, blockPos, newState, isMoving);
+            }
         }
     }
 }
