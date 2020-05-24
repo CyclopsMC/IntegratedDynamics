@@ -1,0 +1,8 @@
+{
+  "type": "integrateddynamics:mechanical_drying_basin",
+  "item": "minecraft:kelp",
+  "duration": 10,
+  "result": {
+    "item": "minecraft:dried_kelp"
+  }
+}
