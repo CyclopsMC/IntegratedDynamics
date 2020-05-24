@@ -96,4 +96,16 @@ public abstract class BlockContainerCabled extends BlockTile {
         super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null, changedBlockPos);
     }
+
+    @Override
+    public void onReplaced(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+        if (oldState.getBlock() != newState.getBlock() && newState.isAir()) {
+            CableHelpers.onCableRemoving(world, blockPos, true, false);
+            Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
+            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+            CableHelpers.onCableRemoved(world, blockPos, connectedCables);
+        } else {
+            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+        }
+    }
 }
