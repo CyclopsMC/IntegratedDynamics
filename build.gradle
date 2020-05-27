@@ -10,7 +10,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
@@ -68,7 +68,7 @@ sourceSets {
 }
 
 configurations {
-    shadow
+    shadow.setTransitive(true);
     integrationtestCompile.extendsFrom(compile)
     javadoc.classpath += sourceSets.integrationtest.output
 }
@@ -99,24 +99,21 @@ dependencies {
     }
 	
     // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local Integrated Dynamics Compat version.
-// TODO: enable ID compat
-//    if(project.hasProperty("integrateddynamicscompat_version_local")) {
-//        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${project.integrateddynamicscompat_version_local}") {
-//            exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
-//            exclude group: 'org.cyclops.integrateddynamics', module: 'IntegratedDynamics'
-//        }
-//    } else {
-//        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.integrateddynamicscompat_version}") {
-//            exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
-//            exclude group: 'org.cyclops.integrateddynamics', module: 'IntegratedDynamics'
-//        }
-//    }
+    if(project.hasProperty("integrateddynamicscompat_version_local")) {
+        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${project.integrateddynamicscompat_version_local}") {
+            transitive = false
+        }
+    } else {
+        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.integrateddynamicscompat_version}") {
+            transitive = false
+        }
+    }
 
     if(project.hasProperty("commoncapabilities_version_local")) {
         compile "org.cyclops.commoncapabilities:CommonCapabilities:${project.commoncapabilities_version_local}:deobf"
     } else {
         compile fg.deobf("org.cyclops.commoncapabilities:CommonCapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
-            exclude group: 'org.cyclops.cyclopscore', module: 'CyclopsCore'
+            transitive = false
         }
     }
 	
@@ -127,14 +124,6 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.16.4"
 	
 	testCompile "junit:junit:4.12"
-}
-
-shadowJar {
-    dependencies {
-        exclude(dependency {
-            it.moduleGroup == 'org.projectlombok'
-        })
-    }
 }
 
 minecraft {
@@ -250,15 +239,15 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 shadowJar {
-	archiveName = tasks.jar.archiveName
-	configurations = [project.configurations.shadow]
+    configurations = [project.configurations.shadow]
+    classifier '' // Replace the default JAR
+    append 'META-INF/mods.toml'
+    relocate 'com.google.re2j', 'vendors.com.google.re2j' // Because Forge blocks all com.google.* class loading...
 }
 
-// TODO
-//reobfJar {
-//	setJar(tasks.shadowJar.archivePath)
-//}
-//reobfJar.dependsOn shadowJar
+reobf {
+    shadowJar {} // Reobfuscate the shadowed JAR
+}
 
 artifacts {
     archives deobfJar
