@@ -131,6 +131,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         if (MinecraftHelpers.isClientSide()) {
             FMLJavaModLoadingContext.get().getModEventBus().register(IntegratedDynamicsSoundEvents.class);
         }
+        FMLJavaModLoadingContext.get().getModEventBus().register(IngredientComponentHandlers.class);
     }
 
     @Override
