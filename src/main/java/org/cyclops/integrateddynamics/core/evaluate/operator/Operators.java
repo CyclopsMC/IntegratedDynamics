@@ -3389,6 +3389,9 @@ public final class Operators {
                             string.getRawValue(),
                             e.getMessage()));
                 }
+                if (!nbt.getRawValue().isPresent()) {
+                    return ValueTypeNbt.ValueNbt.of();
+                }
                 return ValueTypeNbt.ValueNbt.of(expression.match(nbt.getRawValue().get()).getMatches().findAny());
             }).build());
 
@@ -3408,6 +3411,9 @@ public final class Operators {
                     throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
                             string.getRawValue(),
                             e.getMessage()));
+                }
+                if (!nbt.getRawValue().isPresent()) {
+                    return ValueTypeList.ValueList.ofAll(ValueTypes.NBT);
                 }
                 List<ValueTypeNbt.ValueNbt> matches = expression.match(nbt.getRawValue().get()).getMatches()
                         .map(ValueTypeNbt.ValueNbt::of)
@@ -3431,6 +3437,9 @@ public final class Operators {
                     throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
                             string.getRawValue(),
                             e.getMessage()));
+                }
+                if (!nbt.getRawValue().isPresent()) {
+                    return ValueTypeBoolean.ValueBoolean.of(false);
                 }
                 return ValueTypeBoolean.ValueBoolean.of(expression.test(nbt.getRawValue().get()));
             }).build());
