@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -90,9 +92,10 @@ public class RenderTileEntitySqueezer extends TileEntityRenderer<TileSqueezer> {
 
             if(!tile.getTank().isEmpty()) {
                 FluidStack fluid = tile.getTank().getFluid();
+                int combinedLightCorrected = WorldRenderer.getCombinedLight(tile.getWorld(), tile.getPos().add(Direction.UP.getDirectionVec()));
                 RenderHelpers.renderFluidContext(fluid, matrixStack, () -> {
                     float height = Math.max(0.0625F - OFFSET, fluid.getAmount() * 0.0625F / FluidHelpers.BUCKET_VOLUME + 0.0625F - OFFSET);
-                    int brightness = Math.max(combinedLight, fluid.getFluid().getAttributes().getLuminosity(fluid));
+                    int brightness = Math.max(combinedLightCorrected, fluid.getFluid().getAttributes().getLuminosity(fluid));
                     int l2 = brightness >> 0x10 & 0xFFFF;
                     int i3 = brightness & 0xFFFF;
 
@@ -120,7 +123,10 @@ public class RenderTileEntitySqueezer extends TileEntityRenderer<TileSqueezer> {
         matrixStack.push();
         float yTop = (9 - tile.getItemHeight()) * 0.125F;
         matrixStack.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
-        matrixStack.scale(0.7F, 0.7F, 0.7F);
+        IBakedModel model = Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
+        if (model.isGui3d()) {
+            matrixStack.scale(1.7F, 1.7F, 1.7F);
+        }
         matrixStack.scale(1F, yTop - 0.125F, 1F);
 
         Minecraft.getInstance().getItemRenderer().renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer);

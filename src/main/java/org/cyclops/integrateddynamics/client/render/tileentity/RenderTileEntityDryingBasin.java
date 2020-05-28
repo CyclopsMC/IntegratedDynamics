@@ -7,12 +7,12 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraftforge.fluids.FluidStack;
@@ -66,9 +66,10 @@ public class RenderTileEntityDryingBasin extends TileEntityRenderer<TileDryingBa
 	}
 	
 	private void renderItem(MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, ItemStack itemStack, float rotation) {
-        if (itemStack.getItem() instanceof BlockItem) {
+        IBakedModel model = Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
+        if (model.isGui3d()) {
             matrixStack.translate(1F, 1.2F, 1F);
-            matrixStack.scale(0.6F, 0.6F, 0.6F);
+            matrixStack.scale(1.2F, 1.2F, 1.2F);
         } else {
             matrixStack.translate(1F, 1.2F, 1F);
             matrixStack.rotate(Vector3f.XP.rotationDegrees(25F));
