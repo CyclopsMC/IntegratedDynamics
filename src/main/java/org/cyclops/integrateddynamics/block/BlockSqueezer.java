@@ -43,7 +43,7 @@ public class BlockSqueezer extends BlockTile {
             makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 16F, 16.0F),
             makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 14F, 16.0F),
             makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 12F, 16.0F),
-            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 105, 16.0F),
+            makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 10F, 16.0F),
             makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 8F, 16.0F),
             makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 6F, 16.0F),
             makeCuboidShape(0.0F, 0.0F, 0.0F, 16.0F, 4F, 16.0F),
