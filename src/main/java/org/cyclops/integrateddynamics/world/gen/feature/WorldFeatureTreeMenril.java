@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.world.gen.feature;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.Dynamic;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LogBlock;
 import net.minecraft.util.Direction;
@@ -12,7 +11,6 @@ import net.minecraft.world.gen.IWorldGenerationReader;
 import net.minecraft.world.gen.feature.AbstractSmallTreeFeature;
 import net.minecraft.world.gen.feature.TreeFeatureConfig;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogFilled;
 
 import java.util.List;
@@ -38,24 +36,18 @@ public class WorldFeatureTreeMenril extends AbstractSmallTreeFeature<TreeFeature
         return 4;
     }
 
-    public BlockState getLogsFilled() {
-        return RegistryEntries.BLOCK_MENRIL_LOG_FILLED.getDefaultState();
-    }
-
     @Override
     protected boolean func_225557_a_(IWorldGenerationReader world, Random rand, BlockPos blockPos,
                                      Set<BlockPos> changedBlocksTrunk, Set<BlockPos> changedBlocksFoliage,
                                      MutableBoundingBox boundingBox, TreeFeatureConfig config) {
         int treeHeight = rand.nextInt(baseHeightRandomRange()) + baseHeight();
         int worldHeight = world.getMaxHeight();
-        Block block;
 
         if (blockPos.getY() >= 1 && blockPos.getY() + treeHeight + 1 <= worldHeight) {
             int xOffset;
             int yOffset;
             int zOffset;
 
-            BlockPos basePos = blockPos.add(0, -1, 0);
             int x = blockPos.getX();
             int y = blockPos.getY();
             int z = blockPos.getZ();
@@ -109,7 +101,8 @@ public class WorldFeatureTreeMenril extends AbstractSmallTreeFeature<TreeFeature
                     logs = logs.getBlock() instanceof BlockMenrilLogFilled
                             ? logs.with(BlockMenrilLogFilled.SIDE, Direction.Plane.HORIZONTAL.random(rand))
                             : logs;
-                    this.func_227217_a_(world, loopPos, logs.with(LogBlock.AXIS, pair.getLeft() ? Direction.Axis.X : Direction.Axis.Y), boundingBox);
+                    // TODO: if pair.getLeft() is true, we should show a log without inner sides visible (used to be side NONE)
+                    this.func_227217_a_(world, loopPos, logs.with(LogBlock.AXIS, Direction.Axis.Y), boundingBox);
                 }
 
                 return true;
