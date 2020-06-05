@@ -30,7 +30,7 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
 
     public ItemOnTheDynamicsOfIntegration(Properties properties) {
         super(properties);
-        MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.addListener(this::onPlayerLoggedIn);
     }
 
     @Nullable

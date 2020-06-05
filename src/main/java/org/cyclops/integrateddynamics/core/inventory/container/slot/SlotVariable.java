@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.core.inventory.container.slot;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -25,6 +27,6 @@ public class SlotVariable extends SlotSingleItem {
      */
     public SlotVariable(IInventory inventory, int index, int x, int y) {
         super(inventory, index, x, y, RegistryEntries.ITEM_VARIABLE);
-        setBackground(AtlasTexture.LOCATION_BLOCKS_TEXTURE, SlotVariable.VARIABLE_EMPTY);
+        DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> setBackground(AtlasTexture.LOCATION_BLOCKS_TEXTURE, SlotVariable.VARIABLE_EMPTY));
     }
 }

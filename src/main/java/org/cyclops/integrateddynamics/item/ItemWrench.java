@@ -28,10 +28,10 @@ public class ItemWrench extends Item {
     }
 
     @Override
-    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+    public ActionResultType onItemUse(ItemUseContext context) {
         BlockState blockState = context.getWorld().getBlockState(context.getPos());
         if (context.getPlayer() != null && context.getPlayer().isCrouching()) {
-            return ActionResultType.PASS;
+            return super.onItemUse(context);
         }
         if (context.getFace().getAxis() == Direction.Axis.Y
                 && blockState.has(BlockStateProperties.FACING)) {
