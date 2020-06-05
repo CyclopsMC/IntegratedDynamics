@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.world.gen.feature;
 
-import com.google.common.collect.Lists;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
@@ -14,8 +13,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.world.gen.TreeMenril;
 
-import java.util.List;
-
 /**
  * Config for {@link WorldFeatureTreeMenril}.
  * @author rubensworks
@@ -25,12 +22,6 @@ public class WorldFeatureTreeMenrilConfig extends WorldFeatureConfig {
 
     @ConfigurableProperty(category = "worldgeneration", comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0, requiresMcRestart = true, configLocation = ModConfig.Type.SERVER)
     public static int wildMenrilTreeChance = 350;
-
-    @ConfigurableProperty(category = "worldgeneration", comment = "List of dimension IDs in which wild menril trees should not generate.", configLocation = ModConfig.Type.SERVER)
-    public static List<String> wildMenrilTreeDimensionBlacklist = Lists.newArrayList(
-            "the_nether",
-            "the_end"
-    );
 
     public WorldFeatureTreeMenrilConfig() {
         super(
@@ -54,7 +45,7 @@ public class WorldFeatureTreeMenrilConfig extends WorldFeatureConfig {
         GenerationStage.Decoration decoration = GenerationStage.Decoration.VEGETAL_DECORATION;
         ConfiguredFeature<?, ?> feature = ((WorldFeatureTreeMenril) getInstance())
                 .withConfiguration(TreeMenril.getMenrilTreeConfig())
-                .withPlacement(Placement.COUNT_EXTRA_HEIGHTMAP.configure(new AtSurfaceWithExtraConfig(1, 0.1F, 1)));
+                .withPlacement(Placement.COUNT_EXTRA_HEIGHTMAP.configure(new AtSurfaceWithExtraConfig(0, 1F / wildMenrilTreeChance, 1)));
 
         Biomes.PLAINS.addFeature(decoration, feature);
         Biomes.MOUNTAINS.addFeature(decoration, feature);

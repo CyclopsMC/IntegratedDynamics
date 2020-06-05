@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.world.biome;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.SharedSeedRandom;
@@ -11,12 +12,16 @@ import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.blockplacer.SimpleBlockPlacer;
+import net.minecraft.world.gen.blockstateprovider.WeightedBlockStateProvider;
+import net.minecraft.world.gen.feature.BlockClusterFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.MultipleRandomFeatureConfig;
 import net.minecraft.world.gen.feature.structure.MineshaftConfig;
 import net.minecraft.world.gen.feature.structure.MineshaftStructure;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
+import net.minecraft.world.gen.placement.FrequencyConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,8 +44,8 @@ public class BiomeMeneglin extends Biome {
                 .scale(0.4F)
                 .temperature(0.75F)
                 .downfall(0.25F)
-                .waterColor(Helpers.RGBToInt(85, 221, 168))
-                .waterFogColor(Helpers.RGBToInt(85, 221, 168))
+                .waterColor(4445678)
+                .waterFogColor(Helpers.RGBToInt(85, 168, 221))
                 .parent(null));
 
         // Structures
@@ -52,7 +57,7 @@ public class BiomeMeneglin extends Biome {
         DefaultBiomeFeatures.addStructures(this);
         DefaultBiomeFeatures.addLakes(this);
         DefaultBiomeFeatures.addMonsterRooms(this);
-        DefaultBiomeFeatures.addDoubleFlowers(this);
+        //DefaultBiomeFeatures.addDoubleFlowers(this);
         DefaultBiomeFeatures.addStoneVariants(this);
         DefaultBiomeFeatures.addOres(this);
         DefaultBiomeFeatures.addSedimentDisks(this);
@@ -61,12 +66,22 @@ public class BiomeMeneglin extends Biome {
                         Feature.FANCY_TREE.withConfiguration(DefaultBiomeFeatures.FANCY_TREE_CONFIG).func_227227_a_(0.1F)
                 ), Feature.NORMAL_TREE.withConfiguration(DefaultBiomeFeatures.OAK_TREE_CONFIG)))
                 .withPlacement(Placement.COUNT_EXTRA_HEIGHTMAP.configure(new AtSurfaceWithExtraConfig(3, 0.1F, 1))));
-        DefaultBiomeFeatures.addDefaultFlowers(this);
+        //DefaultBiomeFeatures.addDefaultFlowers(this);
         DefaultBiomeFeatures.addGrass(this);
-        DefaultBiomeFeatures.addMushrooms(this);
+        //DefaultBiomeFeatures.addMushrooms(this);
         DefaultBiomeFeatures.addReedsAndPumpkins(this);
         DefaultBiomeFeatures.addSprings(this);
         DefaultBiomeFeatures.addFreezeTopLayer(this);
+
+        // Custom flowers
+        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Feature.FLOWER
+                .withConfiguration((new BlockClusterFeatureConfig.Builder(new WeightedBlockStateProvider()
+                        .func_227407_a_(Blocks.BLUE_ORCHID.getDefaultState(), 70)
+                        .func_227407_a_(Blocks.OXEYE_DAISY.getDefaultState(), 70)
+                        .func_227407_a_(Blocks.WHITE_TULIP.getDefaultState(), 70)
+                        .func_227407_a_(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), 30),
+                        new SimpleBlockPlacer())).tries(64).build())
+                .withPlacement(Placement.COUNT_HEIGHTMAP_32.configure(new FrequencyConfig(2))));
 
         // Spawns
         this.addSpawn(EntityClassification.CREATURE, new Biome.SpawnListEntry(EntityType.SHEEP, 12, 4, 4));

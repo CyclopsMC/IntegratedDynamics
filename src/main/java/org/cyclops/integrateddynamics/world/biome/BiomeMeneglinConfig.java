@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.world.biome;
 
 import com.google.common.collect.Lists;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
@@ -23,14 +22,14 @@ public class BiomeMeneglinConfig extends BiomeConfig {
 
     @ConfigurableProperty(category = "worldgeneration", comment = "List of dimension IDs in which the meneglin biome should not generate.")
     public static List<String> meneglinBiomeDimensionBlacklist = Lists.newArrayList(
-            "the_nether",
-            "the_end"
+            "minecraft:nether",
+            "minecraft:the_end"
     );
 
     public BiomeMeneglinConfig() {
         super(
                 IntegratedDynamics._instance,
-                "biome_meneglin",
+                "meneglin",
                 eConfig -> new BiomeMeneglin()
         );
     }
@@ -43,7 +42,6 @@ public class BiomeMeneglinConfig extends BiomeConfig {
             BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(biome, spawnWeight));
         }
         BiomeManager.addSpawnBiome(biome);
-        BiomeProvider.BIOMES_TO_SPAWN_IN.add(biome);
         BiomeDictionary.addTypes(biome,
                 BiomeDictionary.Type.COLD,
                 BiomeDictionary.Type.MAGICAL

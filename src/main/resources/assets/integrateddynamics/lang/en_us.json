@@ -139,7 +139,7 @@
     "fluid.fluids.integrateddynamics.liquidchorus": "Liquid Chorus",
 
     "_comment": "Biomes",
-    "biomes.integrateddynamics.biome_meneglin": "Meneglin",
+    "biome.integrateddynamics.meneglin": "Meneglin",
 
     "_comment": "Advancements",
     "advancement.integrateddynamics.meneglin_discovery": "Meneglin Discovery",
