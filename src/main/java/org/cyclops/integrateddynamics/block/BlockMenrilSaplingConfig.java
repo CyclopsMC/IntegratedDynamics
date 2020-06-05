@@ -4,6 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SaplingBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.world.gen.TreeMenril;
@@ -26,6 +30,11 @@ public class BlockMenrilSaplingConfig extends BlockConfig {
                         .sound(SoundType.PLANT)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+    }
+
+    public void onClientSetup(FMLClientSetupEvent event) {
+        RenderTypeLookup.setRenderLayer(getInstance(), RenderType.getCutout());
     }
     
 }
