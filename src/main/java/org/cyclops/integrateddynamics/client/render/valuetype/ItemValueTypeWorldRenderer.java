@@ -65,7 +65,7 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         renderItem.renderItem(itemStack, ItemCameraTransforms.TransformType.GUI, false, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemModel);
 
-        RenderHelper.setupGuiFlatDiffuseLighting();
+        RenderHelper.disableStandardItemLighting();
 
         matrixStack.pop();
     }
