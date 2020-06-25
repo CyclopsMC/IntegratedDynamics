@@ -18,6 +18,12 @@ Take full and automated control of your appliances.
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
+    modId="commoncapabilities"
+    mandatory=true
+    versionRange="[2.5.0,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.integrateddynamics]]
     modId="forge"
     mandatory=true
     versionRange="[31.1,)"
