@@ -6,6 +6,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
@@ -131,7 +132,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         if (MinecraftHelpers.isClientSide()) {
             FMLJavaModLoadingContext.get().getModEventBus().register(IntegratedDynamicsSoundEvents.class);
         }
-        FMLJavaModLoadingContext.get().getModEventBus().register(IngredientComponentHandlers.class);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, IngredientComponentHandlers::onIngredientComponentsPopulated);
     }
 
     @Override

@@ -5,8 +5,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -42,7 +40,6 @@ public class IngredientComponentHandlers {
 
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onIngredientComponentsPopulated(RegistryEvent.Register event) {
         if (event.getRegistry() == IngredientComponent.REGISTRY) {
             // Components are still loading here, so grab them by name
