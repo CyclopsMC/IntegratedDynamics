@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.7.0 or higher.
+
+Fixes:
+* Tweak registration of IngredientComponentHandlers
+  A potential fix for #875
+* Fix meneglin biome features failing to register
+  This could cause crashes during startup.
+  Closes #878
+  May be related to #875
