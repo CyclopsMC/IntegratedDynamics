@@ -3,10 +3,14 @@ package org.cyclops.integrateddynamics.world.gen.feature;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.Dynamic;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.BushBlock;
 import net.minecraft.block.LogBlock;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.IWorldGenerationReader;
 import net.minecraft.world.gen.feature.AbstractSmallTreeFeature;
 import net.minecraft.world.gen.feature.TreeFeatureConfig;
@@ -23,6 +27,8 @@ import java.util.function.Function;
  * @author rubensworks
  */
 public class WorldFeatureTreeMenril extends AbstractSmallTreeFeature<TreeFeatureConfig> {
+    
+    private static final int RADIUS = 2;
 
     public WorldFeatureTreeMenril(Function<Dynamic<?>, TreeFeatureConfig> configIn) {
         super(configIn);
@@ -43,6 +49,10 @@ public class WorldFeatureTreeMenril extends AbstractSmallTreeFeature<TreeFeature
         int treeHeight = rand.nextInt(baseHeightRandomRange()) + baseHeight();
         int worldHeight = world.getMaxHeight();
 
+        if (!isSoil(world, blockPos.down(), config.getSapling()) || !this.hasSpace((IWorld) world, blockPos, treeHeight)) {
+            return false;
+        }
+
         if (blockPos.getY() >= 1 && blockPos.getY() + treeHeight + 1 <= worldHeight) {
             int xOffset;
             int yOffset;
@@ -55,20 +65,18 @@ public class WorldFeatureTreeMenril extends AbstractSmallTreeFeature<TreeFeature
             if (y < worldHeight - treeHeight - 1) {
                 // Add leaves
                 for (yOffset = y - 5 + treeHeight; yOffset <= y + treeHeight; ++yOffset) {
-                    int center = 2;
-
-                    for (xOffset = x - center; xOffset <= x + center; ++xOffset) {
+                    for (xOffset = x - RADIUS; xOffset <= x + RADIUS; ++xOffset) {
                         int xPos = xOffset - x;
                         int t = xPos >> 31;
                         xPos = (xPos + t) ^ t;
 
-                        for (zOffset = z - center; zOffset <= z + center; ++zOffset) {
+                        for (zOffset = z - RADIUS; zOffset <= z + RADIUS; ++zOffset) {
                             int zPos = zOffset - z;
                             zPos = (zPos + (t = zPos >> 31)) ^ t;
                             BlockPos loopPos = new BlockPos(xOffset, yOffset, zOffset);
 
-                            if ((xPos != center | zPos != center) &&
-                                    !((yOffset == y + treeHeight || yOffset == y - 5 + treeHeight) && (xPos == center || zPos == center))) {
+                            if ((xPos != RADIUS | zPos != RADIUS) &&
+                                    !((yOffset == y + treeHeight || yOffset == y - 5 + treeHeight) && (xPos == RADIUS || zPos == RADIUS))) {
                                 this.func_227219_b_(world, rand, loopPos, changedBlocksFoliage, boundingBox, config);
                             }
                         }
@@ -109,6 +117,23 @@ public class WorldFeatureTreeMenril extends AbstractSmallTreeFeature<TreeFeature
             }
         }
         return false;
+    }
+
+    public boolean hasSpace(IWorld world, BlockPos pos, int height) {
+        for (int y = 0; y <= height; y++) {
+            for (int x = -RADIUS; x <= RADIUS; x++) {
+                for (int z = -RADIUS; z <= RADIUS; z++) {
+                    BlockPos pos1 = pos.add(x, y, z);
+                    if (pos1.getY() >= 255 || !(world.getBlockState(pos).canBeReplacedByLeaves(world, pos1)
+                            || world.getBlockState(pos1).getBlock().isIn(BlockTags.SAPLINGS)
+                            || world.getBlockState(pos1).getBlock() == Blocks.VINE
+                            || world.getBlockState(pos1).getBlock() instanceof BushBlock)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 }
