@@ -49,7 +49,12 @@ public class WorldFeatureTreeMenril extends AbstractSmallTreeFeature<TreeFeature
         int treeHeight = rand.nextInt(baseHeightRandomRange()) + baseHeight();
         int worldHeight = world.getMaxHeight();
 
-        if (!isSoil(world, blockPos.down(), config.getSapling()) || !this.hasSpace((IWorld) world, blockPos, treeHeight)) {
+        if (!isSoil(world, blockPos.down(), config.getSapling())
+                || !isSoil(world, blockPos.down().offset(Direction.NORTH), config.getSapling())
+                || !isSoil(world, blockPos.down().offset(Direction.SOUTH), config.getSapling())
+                || !isSoil(world, blockPos.down().offset(Direction.EAST), config.getSapling())
+                || !isSoil(world, blockPos.down().offset(Direction.WEST), config.getSapling())
+                || !this.hasSpace((IWorld) world, blockPos, treeHeight)) {
             return false;
         }
 
