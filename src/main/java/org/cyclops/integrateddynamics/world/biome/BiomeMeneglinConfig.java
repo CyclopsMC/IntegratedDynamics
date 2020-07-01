@@ -43,6 +43,7 @@ public class BiomeMeneglinConfig extends BiomeConfig {
         }
         BiomeManager.addSpawnBiome(biome);
         BiomeDictionary.addTypes(biome,
+                BiomeDictionary.Type.OVERWORLD,
                 BiomeDictionary.Type.COLD,
                 BiomeDictionary.Type.MAGICAL
         );
