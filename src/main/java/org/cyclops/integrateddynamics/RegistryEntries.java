@@ -66,6 +66,10 @@ public class RegistryEntries {
     public static final ItemVariable ITEM_VARIABLE = null;
     @ObjectHolder("integrateddynamics:wrench")
     public static final Item ITEM_WRENCH = null;
+    @ObjectHolder("integrateddynamics:menril_torch")
+    public static final Item ITEM_MENRIL_TORCH = null;
+    @ObjectHolder("integrateddynamics:menril_torch_stone")
+    public static final Item ITEM_MENRIL_TORCH_STONE = null;
 
     @ObjectHolder("integrateddynamics:cable")
     public static final BlockCable BLOCK_CABLE = null;
@@ -117,6 +121,14 @@ public class RegistryEntries {
     public static final BlockSqueezer BLOCK_SQUEEZER = null;
     @ObjectHolder("integrateddynamics:variablestore")
     public static final Block BLOCK_VARIABLE_STORE = null;
+    @ObjectHolder("integrateddynamics:menril_torch")
+    public static final Block BLOCK_MENRIL_TORCH = null;
+    @ObjectHolder("integrateddynamics:menril_torch_wall")
+    public static final Block BLOCK_MENRIL_TORCH_WALL = null;
+    @ObjectHolder("integrateddynamics:menril_torch_stone")
+    public static final Block BLOCK_MENRIL_TORCH_STONE = null;
+    @ObjectHolder("integrateddynamics:menril_torch_stone_wall")
+    public static final Block BLOCK_MENRIL_TORCH_STONE_WALL = null;
 
     @ObjectHolder("integrateddynamics:coal_generator")
     public static final TileEntityType<TileCoalGenerator> TILE_ENTITY_COAL_GENERATOR = null;

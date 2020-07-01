@@ -1,0 +1,6 @@
+{
+  "parent": "block/torch_wall",
+  "textures": {
+    "torch": "integrateddynamics:block/menril_torch_stone"
+  }
+}

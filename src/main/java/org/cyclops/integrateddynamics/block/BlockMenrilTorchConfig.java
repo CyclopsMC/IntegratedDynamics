@@ -7,6 +7,8 @@ import net.minecraft.block.TorchBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.item.Item;
+import net.minecraft.item.WallOrFloorItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,6 +17,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 import java.util.Random;
 
@@ -40,7 +43,9 @@ public class BlockMenrilTorchConfig extends BlockConfig {
                         // No particles
                     }
                 },
-                getDefaultItemConstructor(IntegratedDynamics._instance)
+                (eConfig, block) -> new WallOrFloorItem(block,
+                        RegistryEntries.BLOCK_MENRIL_TORCH_WALL,
+                        new Item.Properties().group(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
     }

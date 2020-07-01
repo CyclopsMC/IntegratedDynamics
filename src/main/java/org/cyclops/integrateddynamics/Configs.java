@@ -99,7 +99,9 @@ public class Configs {
         configHandler.addConfigurable(new BlockSqueezerConfig());
         configHandler.addConfigurable(new BlockMenrilDoorConfig());
         configHandler.addConfigurable(new BlockMenrilTorchConfig());
+        configHandler.addConfigurable(new BlockMenrilTorchWallConfig());
         configHandler.addConfigurable(new BlockMenrilTorchStoneConfig());
+        configHandler.addConfigurable(new BlockMenrilTorchStoneWallConfig());
         configHandler.addConfigurable(new BlockMenrilPlanksStairsConfig());
         configHandler.addConfigurable(new BlockCrystalizedMenrilBlockStairsConfig());
         configHandler.addConfigurable(new BlockCrystalizedMenrilBrickStairsConfig());
