@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.7.1 or higher.
+
+Changes:
+* Rebalance drops and spawn rate of Menril Trees, Closes #888
+
+Fixes:
+* Fix incorrect Input Variable Transformer recipe, Closes #887
