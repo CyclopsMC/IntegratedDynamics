@@ -21,7 +21,7 @@ import org.cyclops.integrateddynamics.world.gen.TreeMenril;
 public class WorldFeatureTreeMenrilConfig extends WorldFeatureConfig {
 
     @ConfigurableProperty(category = "worldgeneration", comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0, requiresMcRestart = true, configLocation = ModConfig.Type.SERVER)
-    public static int wildMenrilTreeChance = 350;
+    public static int wildMenrilTreeChance = 100;
 
     public WorldFeatureTreeMenrilConfig() {
         super(
@@ -39,7 +39,7 @@ public class WorldFeatureTreeMenrilConfig extends WorldFeatureConfig {
         // We must do this here because the biomes are constructed before the features.
         RegistryEntries.BIOME_MENEGLIN.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, ((WorldFeatureTreeMenril) getInstance())
                 .withConfiguration(TreeMenril.getMenrilTreeConfig())
-                .withPlacement(Placement.COUNT_EXTRA_HEIGHTMAP.configure(new AtSurfaceWithExtraConfig(1, 0.1F, 1))));
+                .withPlacement(Placement.COUNT_EXTRA_HEIGHTMAP.configure(new AtSurfaceWithExtraConfig(1, 0.05F, 1))));
 
         // Register feature in other biomes
         GenerationStage.Decoration decoration = GenerationStage.Decoration.VEGETAL_DECORATION;
