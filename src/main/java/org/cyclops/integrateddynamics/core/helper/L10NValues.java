@@ -54,6 +54,7 @@ public class L10NValues {
     public static final String ASPECT_TOOLTIP_VALUETYPENAME = "aspect." + NS + ".tooltip.value_type_name";
     public static final String ASPECT_ERROR_PARTNOTINNETWORK = "variable." + NS + ".error.part_not_in_network";
     public static final String ASPECT_ERROR_INVALIDTYPE = "aspect." + NS + ".error.invalid_type";
+    public static final String ASPECT_ERROR_RECURSION = "aspect." + NS + ".error.recursion";
 
     public static final String PROXY_TOOLTIP_PROXYID = "proxy." + NS + ".tooltip.proxy_id";
     public static final String PROXY_ERROR_PROXYNOTINNETWORK = "proxy." + NS + ".error.proxy_not_in_network";

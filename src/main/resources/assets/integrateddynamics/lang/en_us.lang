@@ -340,6 +340,7 @@ aspect.integrateddynamics.tooltip.aspect_name=§eAspect: §r%s
 aspect.integrateddynamics.tooltip.value_type_name=§eType: §r%s
 aspect.integrateddynamics.tooltip.part_id=§e§oPart ID: §r§o%s
 aspect.integrateddynamics.error.invalid_type=This aspect expects %s, but %s was given.
+aspect.integrateddynamics.error.recursion=The aspect variable for %s is referring to itself.
 aspect.aspects.integrateddynamics.name=Aspect
 
 ## Audio aspects
