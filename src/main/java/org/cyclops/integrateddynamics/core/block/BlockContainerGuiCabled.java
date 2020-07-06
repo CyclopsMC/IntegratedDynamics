@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainerGui;
@@ -97,5 +98,18 @@ public abstract class BlockContainerGuiCabled extends ConfigurableBlockContainer
     public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
         super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null, changedBlockPos);
+    }
+
+    protected boolean isPickBlockPersistData() {
+        return false;
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        if (isPickBlockPersistData()) {
+            return super.getPickBlock(state, target, world, pos, player);
+        } else {
+            return getItem(world, pos, state);
+        }
     }
 }

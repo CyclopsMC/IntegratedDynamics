@@ -80,4 +80,9 @@ public class BlockMechanicalDryingBasin extends BlockContainerGuiCabled implemen
     public IRecipeRegistry<BlockMechanicalDryingBasin, IngredientAndFluidStackRecipeComponent, IngredientAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
         return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
+
+    @Override
+    protected boolean isPickBlockPersistData() {
+        return true;
+    }
 }

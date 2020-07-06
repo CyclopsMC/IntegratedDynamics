@@ -74,4 +74,9 @@ public class BlockMechanicalSqueezer extends BlockContainerGuiCabled implements 
     public IRecipeRegistry<BlockMechanicalSqueezer, IngredientRecipeComponent, IngredientsAndFluidStackRecipeComponent, DurationRecipeProperties> getRecipeRegistry() {
         return IntegratedDynamics._instance.getRegistryManager().getRegistry(ISuperRecipeRegistry.class).getRecipeRegistry(this);
     }
+
+    @Override
+    protected boolean isPickBlockPersistData() {
+        return true;
+    }
 }

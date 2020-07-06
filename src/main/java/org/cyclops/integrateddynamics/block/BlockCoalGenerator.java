@@ -65,4 +65,9 @@ public class BlockCoalGenerator extends BlockContainerGuiCabled {
     public Class<? extends GuiScreen> getGui() {
         return GuiCoalGenerator.class;
     }
+
+    @Override
+    protected boolean isPickBlockPersistData() {
+        return true;
+    }
 }
