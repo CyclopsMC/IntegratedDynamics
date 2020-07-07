@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockNewLeaf;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockSponge;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -12,7 +14,12 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.block.BlockLogicProgrammer;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -29,6 +36,7 @@ public class TestBlockOperators {
 
     private DummyVariableBlock bAir;
     private DummyVariableBlock bCoal;
+    private DummyVariableBlock bDarkOakLeaves;
     private DummyVariableBlock bLogicProgrammer;
     private DummyVariableBlock bLeaves;
     private DummyVariableBlock bReed;
@@ -47,6 +55,7 @@ public class TestBlockOperators {
     public void before() {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.getDefaultState()));
         bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.COAL_BLOCK.getDefaultState()));
+        bDarkOakLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.LEAVES2.getDefaultState().withProperty(BlockNewLeaf.VARIANT, BlockPlanks.EnumType.DARK_OAK)));
         bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(BlockLogicProgrammer.getInstance().getDefaultState()));
         bLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.LEAVES.getDefaultState()));
         bReed = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.REEDS.getDefaultState()));
@@ -103,6 +112,9 @@ public class TestBlockOperators {
 
         IValue res2 = Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bCoal});
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().isItemEqual(new ItemStack(Blocks.COAL_BLOCK)), true, "itemstack(coalblock) = coalblock");
+
+        IValue res3 = Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bDarkOakLeaves});
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res3).getRawValue().isItemEqual(new ItemStack(Blocks.LEAVES2, 1, 1)), true, "itemstack(dark_oak_leaves) = dark_oak_leaves");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

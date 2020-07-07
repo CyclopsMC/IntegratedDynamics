@@ -1,5 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
+import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockNewLeaf;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -49,6 +52,7 @@ public class TestItemStackOperators {
     private DummyVariableItemStack iHoeEnchanted;
     private DummyVariableItemStack iPickaxe;
     private DummyVariableItemStack iStone;
+    private DummyVariableItemStack iDarkOakLeaves;
     private DummyVariableItemStack iBucketLava;
     private DummyVariableItemStack iWrench;
     private DummyVariableItemStack iEnergyBatteryEmpty;
@@ -88,6 +92,7 @@ public class TestItemStackOperators {
         iHoeEnchanted = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(hoeEnchanted));
         iPickaxe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_PICKAXE)));
         iStone = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.STONE)));
+        iDarkOakLeaves = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.LEAVES2, 1, 1)));
         iBucketLava = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.LAVA_BUCKET)));
         iWrench = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(ItemWrench.getInstance())));
         iEnergyBatteryEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(BlockEnergyBattery.getInstance())));
@@ -490,6 +495,12 @@ public class TestItemStackOperators {
         IValue res1 = Operators.OBJECT_ITEMSTACK_BLOCK.evaluate(new IVariable[]{iStone});
         Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
         TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.STONE.getDefaultState(), "block(stone) = stone");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_BLOCK.evaluate(new IVariable[]{iDarkOakLeaves});
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get(), Blocks.LEAVES2.getDefaultState()
+                .withProperty(BlockNewLeaf.VARIANT, BlockPlanks.EnumType.DARK_OAK)
+                .withProperty(BlockLeaves.DECAYABLE, false)
+                .withProperty(BlockLeaves.CHECK_DECAY, false), "block(dark_oak_leaves) = dark_oak_leaves");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
