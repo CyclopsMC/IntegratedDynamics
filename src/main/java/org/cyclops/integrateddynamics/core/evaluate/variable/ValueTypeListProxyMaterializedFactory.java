@@ -68,6 +68,9 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
                     throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", split[i]));
                 }
                 ++i;
+                if (i >= split.length) {
+                    throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Detected invalid heterogeneous serialized materialized list proxy value for the value '%s'.", value));
+                }
             }
             String serializedValue = split[i];
             IValue deserializedValue = ValueHelpers.deserializeRaw(elementValueType, serializedValue.replaceAll(ELEMENT_DELIMITER_ESCAPED, ELEMENT_DELIMITER));
