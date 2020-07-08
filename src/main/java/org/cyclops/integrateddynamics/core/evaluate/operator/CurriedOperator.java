@@ -149,6 +149,22 @@ public class CurriedOperator implements IOperator {
         return baseOperator;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CurriedOperator)) return false;
+        CurriedOperator that = (CurriedOperator) o;
+        return Objects.equals(baseOperator, that.baseOperator) &&
+                Arrays.equals(appliedVariables, that.appliedVariables);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(baseOperator);
+        result = 31 * result + Arrays.hashCode(appliedVariables);
+        return result;
+    }
+
     public static class Serializer implements IOperatorSerializer<CurriedOperator> {
 
         @Override
