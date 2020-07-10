@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 
 import javax.annotation.Nullable;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,7 +156,13 @@ public class IngredientObserver<T, M> {
                     } catch (TimeoutException e) {
                         return false; // Don't start new jobs when the previous one is still running.
                     } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
+                        // Silently fail on interruptions and concurrent modifications inside the thread.
+                        // Those kinds of errors can happen rarely, but can be safely ignored
+                        // as the whole process will start over again cleanly in the next observation tick.
+                        if (e instanceof ExecutionException
+                                && !(e.getCause() instanceof ConcurrentModificationException)) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
