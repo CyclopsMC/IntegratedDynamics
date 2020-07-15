@@ -10,6 +10,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.block.BlockEnergyBattery;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
+import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageMutable;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 
 /**
@@ -88,7 +89,7 @@ public class ItemBlockEnergyContainerCombinationRecipe extends IForgeRegistryEnt
 		
 		// Set capacity and fill fluid into output.
 		energyStorage.setCapacity(totalCapacity);
-		energyStorage.receiveEnergy(totalEnergy, false);
+		((IEnergyStorageMutable) energyStorage).setEnergy(totalEnergy);
 		
 		return output;
 	}

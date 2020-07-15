@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
  * Energy Battery implementation for ItemBlock's.
  * @author rubensworks
  */
-public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapacity {
+public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapacity, IEnergyStorageMutable {
 
     private final ItemBlockEnergyContainer itemBlockEnergyContainer;
     private final ItemStack itemStack;
@@ -106,5 +106,10 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         } else {
             tag.setInteger(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName(), capacity);
         }
+    }
+
+    @Override
+    public void setEnergy(int energy) {
+        setEnergy(itemStack, energy);
     }
 }
