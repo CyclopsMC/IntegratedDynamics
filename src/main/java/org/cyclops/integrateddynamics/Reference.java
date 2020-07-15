@@ -38,7 +38,7 @@ public final class Reference {
     public static final String MOD_FORGE_VERSION_MIN = "14.23.5.2768";
     public static final String MOD_CYCLOPSCORE = "cyclopscore";
     public static final String MOD_CYCLOPSCORE_VERSION = "@CYCLOPSCORE_VERSION@";
-    public static final String MOD_CYCLOPSCORE_VERSION_MIN = "1.6.0";
+    public static final String MOD_CYCLOPSCORE_VERSION_MIN = "1.6.5";
     public static final String MOD_COMMONCAPABILITIES = "commoncapabilities";
     public static final String MOD_COMMONCAPABILITIES_VERSION_MIN = "2.4.4";
     public static final String MOD_CHARSETPIPES = "charsetpipes";
