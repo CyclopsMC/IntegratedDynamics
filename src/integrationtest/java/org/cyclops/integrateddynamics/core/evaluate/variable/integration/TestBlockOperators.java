@@ -33,6 +33,7 @@ public class TestBlockOperators {
 
     private DummyVariableBlock bAir;
     private DummyVariableBlock bCoal;
+    private DummyVariableBlock bDarkOakLeaves;
     private DummyVariableBlock bLogicProgrammer;
     private DummyVariableBlock bLeaves;
     private DummyVariableBlock bReed;
@@ -50,6 +51,7 @@ public class TestBlockOperators {
     public void before() {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.getDefaultState()));
         bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.COAL_BLOCK.getDefaultState()));
+        bDarkOakLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.DARK_OAK_LEAVES.getDefaultState()));
         bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(RegistryEntries.BLOCK_LOGIC_PROGRAMMER.getDefaultState()));
         bLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OAK_LEAVES.getDefaultState()));
         bReed = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.SUGAR_CANE.getDefaultState()));
@@ -105,6 +107,9 @@ public class TestBlockOperators {
 
         IValue res2 = Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bCoal});
         TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().isItemEqual(new ItemStack(Blocks.COAL_BLOCK)), true, "itemstack(coalblock) = coalblock");
+
+        IValue res3 = Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bDarkOakLeaves});
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res3).getRawValue().isItemEqual(new ItemStack(Blocks.DARK_OAK_LEAVES, 1)), true, "itemstack(dark_oak_leaves) = dark_oak_leaves");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

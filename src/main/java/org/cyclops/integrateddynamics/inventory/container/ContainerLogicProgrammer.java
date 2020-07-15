@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**

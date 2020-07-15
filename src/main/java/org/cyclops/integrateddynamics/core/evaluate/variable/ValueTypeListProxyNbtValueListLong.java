@@ -31,7 +31,7 @@ public class ValueTypeListProxyNbtValueListLong extends ValueTypeListProxyNbtVal
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "nbt.list_value_int");
+            return new ResourceLocation(Reference.MOD_ID, "nbt.list_value_long");
         }
 
         @Override

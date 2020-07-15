@@ -195,8 +195,8 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         if (cachedQuads == null) {
             List<BakedQuad> ret = Lists.newLinkedList();
             TextureAtlasSprite texture = getParticleTexture();
-            boolean renderCable = isItemStack() || (isRealCable(modelData) && MinecraftForgeClient.getRenderLayer() == RenderType.getSolid());
             Optional<BlockState> blockStateHolder = getFacade(modelData);
+            boolean renderCable = isItemStack() || (isRealCable(modelData) && MinecraftForgeClient.getRenderLayer() == RenderType.getSolid() && !blockStateHolder.isPresent());
             for (Direction side : Direction.values()) {
                 boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
                 boolean hasPart = !isItemStack() && hasPart(modelData, side);

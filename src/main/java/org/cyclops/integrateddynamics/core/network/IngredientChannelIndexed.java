@@ -24,31 +24,37 @@ public class IngredientChannelIndexed<T, M> extends IngredientChannelAdapter<T, 
 
     @Override
     protected Iterator<PartPos> getNonFullPositions() {
+        this.scheduleObservation();
         return this.getNetwork().getPositions(getChannel()).iterator();
     }
 
     @Override
     protected Iterator<PartPos> getAllPositions() {
+        this.scheduleObservation();
         return this.getNetwork().getPositions(getChannel()).iterator();
     }
 
     @Override
     protected Iterator<PartPos> getNonEmptyPositions() {
+        this.scheduleObservation();
         return this.index.getNonEmptyPositions();
     }
 
     @Override
     protected Iterator<PartPos> getMatchingPositions(@Nonnull T prototype, M matchFlags) {
+        this.scheduleObservation();
         return this.index.getPositions(prototype, matchFlags);
     }
 
     @Override
     public Iterator<T> iterator() {
+        this.scheduleObservation();
         return this.index.iterator();
     }
 
     @Override
     public Iterator<T> iterator(@Nonnull T prototype, M matchFlags) {
+        this.scheduleObservation();
         return this.index.iterator(prototype, matchFlags);
     }
 

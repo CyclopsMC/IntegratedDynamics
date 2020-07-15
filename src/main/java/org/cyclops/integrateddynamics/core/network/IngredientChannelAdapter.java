@@ -78,6 +78,10 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             sum = Math.addExact(sum, this.network.getPositionedStorage(pos).getMaxQuantity());
             this.network.enablePosition(pos);
         }
+
+        // Schedule an observation, as since this method is called, there may be a need for changes later on.
+        scheduleObservation();
+
         return sum;
     }
 
@@ -291,6 +295,9 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
                 maxValue = entry.getValue();
             }
         }
+
+        // Schedule an observation, as since this method is called, there may be a need for changes later on.
+        scheduleObservation();
 
         return finalizeExtraction(maxInstance, matchFlags, maxValue, simulate);
     }

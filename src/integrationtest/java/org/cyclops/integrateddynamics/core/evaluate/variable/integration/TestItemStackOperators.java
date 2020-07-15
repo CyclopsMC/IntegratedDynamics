@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
@@ -48,6 +49,7 @@ public class TestItemStackOperators {
     private DummyVariableItemStack iHoeEnchanted;
     private DummyVariableItemStack iPickaxe;
     private DummyVariableItemStack iStone;
+    private DummyVariableItemStack iDarkOakLeaves;
     private DummyVariableItemStack iBucketLava;
     private DummyVariableItemStack iWrench;
     private DummyVariableItemStack iEnergyBatteryEmpty;
@@ -87,6 +89,7 @@ public class TestItemStackOperators {
         iHoeEnchanted = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(hoeEnchanted));
         iPickaxe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_PICKAXE)));
         iStone = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.STONE)));
+        iDarkOakLeaves = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.DARK_OAK_LEAVES, 1)));
         iBucketLava = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.LAVA_BUCKET)));
         iWrench = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(RegistryEntries.ITEM_WRENCH)));
         iEnergyBatteryEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(RegistryEntries.ITEM_ENERGY_BATTERY)));
@@ -487,6 +490,11 @@ public class TestItemStackOperators {
         IValue res1 = Operators.OBJECT_ITEMSTACK_BLOCK.evaluate(new IVariable[]{iStone});
         Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
         TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.STONE.getDefaultState(), "block(stone) = stone");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_BLOCK.evaluate(new IVariable[]{iDarkOakLeaves});
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get(), Blocks.DARK_OAK_LEAVES.getDefaultState()
+                .with(LeavesBlock.DISTANCE, 7)
+                .with(LeavesBlock.PERSISTENT, false), "block(dark_oak_leaves) = dark_oak_leaves");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -788,7 +796,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 1, "size(tag(stone)) = 1");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iWrench});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 0, "size(tag(wrench)) = 0");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 1, "size(tag(wrench)) = 1");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

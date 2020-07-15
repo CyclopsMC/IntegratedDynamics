@@ -46,6 +46,7 @@ public class ValueTypeListProxyFactories {
     public static ValueTypeListProxyNbtAsListByte.Factory NBT_AS_LIST_BYTE;
     public static ValueTypeListProxyNbtAsListInt.Factory NBT_AS_LIST_INT;
     public static ValueTypeListProxyNbtAsListLong.Factory NBT_AS_LIST_LONG;
+    public static ValueTypeListProxyOperatorMapped.Factory MAPPED;
 
     public static void load() {
         if(MATERIALIZED == null) {
@@ -72,6 +73,7 @@ public class ValueTypeListProxyFactories {
             NBT_AS_LIST_BYTE = REGISTRY.register(new ValueTypeListProxyNbtAsListByte.Factory());
             NBT_AS_LIST_INT = REGISTRY.register(new ValueTypeListProxyNbtAsListInt.Factory());
             NBT_AS_LIST_LONG = REGISTRY.register(new ValueTypeListProxyNbtAsListLong.Factory());
+            MAPPED = REGISTRY.register(new ValueTypeListProxyOperatorMapped.Factory());
         }
     }
 

@@ -59,6 +59,7 @@ public class L10NValues {
     public static final String ASPECT_ERROR_INVALIDTYPE = "aspect." + NS + ".error.invalid_type";
     public static final String ASPECT_ERROR_NOVALUEINTERFACE = "aspect." + NS + ".error.no_value_interface";
     public static final String ASPECT_ERROR_NOVALUEINTERFACEVALUE = "aspect." + NS + ".error.no_value_interface_value";
+    public static final String ASPECT_ERROR_RECURSION = "aspect." + NS + ".error.recursion";
 
     public static final String PROXY_TOOLTIP_PROXYID = "proxy." + NS + ".tooltip.proxy_id";
     public static final String PROXY_ERROR_PROXYNOTINNETWORK = "proxy." + NS + ".error.proxy_not_in_network";

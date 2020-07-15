@@ -49,4 +49,8 @@ public class BlockCoalGenerator extends BlockTileGuiCabled {
                 .ifPresent(TileCoalGenerator::updateBlockState);
     }
 
+    @Override
+    protected boolean isPickBlockPersistData() {
+        return true;
+    }
 }

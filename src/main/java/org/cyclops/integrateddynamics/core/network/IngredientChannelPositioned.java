@@ -25,6 +25,7 @@ public class IngredientChannelPositioned<T, M> extends IngredientChannelAdapter<
 
     @Override
     protected Iterator<PartPos> getAllPositions() {
+        this.scheduleObservation();
         return getNetwork().getPositions(getChannel()).iterator();
     }
 
@@ -40,12 +41,14 @@ public class IngredientChannelPositioned<T, M> extends IngredientChannelAdapter<
 
     @Override
     public Iterator<T> iterator() {
+        this.scheduleObservation();
         return new PositionedIngredientIterator<>(getNetwork(), getNetwork().getPositions(getChannel()).iterator(),
                 getComponent().getMatcher().getEmptyInstance(), getComponent().getMatcher().getAnyMatchCondition());
     }
 
     @Override
     public Iterator<T> iterator(@Nonnull T prototype, M matchFlags) {
+        this.scheduleObservation();
         return new PositionedIngredientIterator<>(getNetwork(), getNetwork().getPositions(getChannel()).iterator(),
                 prototype, matchFlags);
     }

@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.part.aspect;
 
 import lombok.Getter;
 import lombok.NonNull;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
@@ -14,6 +15,7 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
  * Variable for a specific aspect from a part that calculates its target value only maximum once per ticking interval.
@@ -27,6 +29,8 @@ public abstract class LazyAspectVariable<V extends IValue> extends VariableAdapt
     @Getter private final IAspectRead<V, ?> aspect;
     @NonNull private V value;
     private IAspectProperties cachedProperties = null;
+
+    private boolean isGettingValue = false;
 
     public LazyAspectVariable(IValueType<V> type, PartTarget target, IAspectRead<V, ?> aspect) {
         this.type = type;
@@ -46,7 +50,13 @@ public abstract class LazyAspectVariable<V extends IValue> extends VariableAdapt
     @Override
     public V getValue() throws EvaluationException {
         if(value == null) {
+            if(this.isGettingValue) {
+                throw new EvaluationException(new TranslationTextComponent(L10NValues.VARIABLE_ERROR_RECURSION,
+                        new TranslationTextComponent(getAspect().getTranslationKey())));
+            }
+            this.isGettingValue = true;
             this.value = getValueLazy();
+            this.isGettingValue = false;
         }
         return this.value;
     }

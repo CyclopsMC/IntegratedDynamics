@@ -355,6 +355,7 @@
     "aspect.integrateddynamics.tooltip.value_type_name": "§eType: §r%s",
     "aspect.integrateddynamics.tooltip.part_id": "§e§oPart ID: §r§o%s",
     "aspect.integrateddynamics.error.invalid_type": "This aspect expects %s, but %s was given.",
+    "aspect.integrateddynamics.error.recursion": "The aspect variable for %s is referring to itself.",
     "aspect.integrateddynamics.error.no_value_interface": "No valid value interface was found.",
     "aspect.integrateddynamics.error.no_value_interface_value": "No valid value interface value was found.",
     "aspect.integrateddynamics.name": "Aspect",

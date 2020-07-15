@@ -10,7 +10,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -117,4 +119,18 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
             }
         }
     }
+
+    protected boolean isPickBlockPersistData() {
+        return false;
+    }
+
+    @Override
+    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos blockPos, PlayerEntity player) {
+        if (isPickBlockPersistData()) {
+            return super.getPickBlock(state, target, world, blockPos, player);
+        } else {
+            return getBlock().getItem(world, blockPos, state);
+        }
+    }
+
 }

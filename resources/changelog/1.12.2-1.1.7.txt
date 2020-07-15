@@ -1,0 +1,30 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.6.5 or higher.
+
+Additions:
+* Add config options for power usage of individual parts, Closes #856
+
+Changes:
+* Add more debug information for invalid heterogeneous list proxy serialization, Related to #874
+* Don't persist NBT on pick block for variable-holding blocks
+  This could too easily duplicate variables,
+  and lead to problematic duplicate ids.
+  Closes #879
+
+Fixes:
+* Fix battery combination energy only saving 2000 FE, Closes #892
+* Don't render cables when facaded
+  Improves FPS performance slightly.
+  Closes #853
+* Mutex ingredient positions based on thread id and positions
+  This fixes rare network recursion conflicts during ingredient movement.
+  Closes CyclopsMC/IntegratedTunnels#194
+* Don't print unneeded ingredient observation errors, Closes #858
+* Fix ingredient observer not working on plain reading
+  This fixes the problem of network-level energy readings never changing.
+* Fix crash when using mapped operator, Closes #866
+* Fix containers not opening from 8+ blocks, Closes CyclopsMC/IntegratedDynamics#842
+* Add null check in JEI transfer handler
+  This fixes a crash when showing all JEI recipes.
+  Closes #861
+* Fix recursion fail on proxy network value on self, Closes #845

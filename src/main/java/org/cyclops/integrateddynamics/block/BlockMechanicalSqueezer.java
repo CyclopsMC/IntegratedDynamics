@@ -62,4 +62,8 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
         super.onBlockPlacedBy(world, blockPos, state, placer, itemStack);
     }
 
+    @Override
+    protected boolean isPickBlockPersistData() {
+        return true;
+    }
 }

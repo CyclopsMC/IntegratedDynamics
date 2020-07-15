@@ -76,4 +76,8 @@ public class BlockMechanicalDryingBasin extends BlockMechanicalMachine {
         super.onBlockPlacedBy(world, blockPos, state, placer, itemStack);
     }
 
+    @Override
+    protected boolean isPickBlockPersistData() {
+        return true;
+    }
 }
