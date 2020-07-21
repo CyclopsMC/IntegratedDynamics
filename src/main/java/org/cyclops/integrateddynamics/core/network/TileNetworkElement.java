@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -11,7 +9,6 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
 import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,11 +26,6 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
 
     protected Optional<T> getTile() {
         return TileHelpers.getSafeTile(getPos(), getTileClass());
-    }
-
-    @Override
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
-        getTile().ifPresent(tile -> InventoryHelper.dropInventoryItems(getPos().getWorld(true), getPos().getBlockPos(), tile.getInventory()));
     }
 
     @Override
