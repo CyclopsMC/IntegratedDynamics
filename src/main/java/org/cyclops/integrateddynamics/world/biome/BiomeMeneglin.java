@@ -99,14 +99,6 @@ public class BiomeMeneglin extends Biome {
         this.addSpawn(EntityClassification.MONSTER, new Biome.SpawnListEntry(EntityType.WITCH, 5, 1, 1));
     }
 
-    @Override
-    public void decorate(GenerationStage.Decoration decoration, ChunkGenerator<? extends GenerationSettings> generator, IWorld world,
-                         long seed, SharedSeedRandom random, BlockPos blockPos) {
-        if (!BiomeMeneglinConfig.meneglinBiomeDimensionBlacklist.contains(world.getDimension().getType().getRegistryName().toString())) {
-            super.decorate(decoration, generator, world, seed, random, blockPos);
-        }
-    }
-
     @OnlyIn(Dist.CLIENT)
     @Override
     public int getGrassColor(double p_225528_1_, double p_225528_3_) {
@@ -123,5 +115,10 @@ public class BiomeMeneglin extends Biome {
     @Override
     public int getSkyColor() {
         return Helpers.RGBToInt(178, 238, 233);
+    }
+
+    @Override
+    public void decorate(GenerationStage.Decoration stage, ChunkGenerator<? extends GenerationSettings> chunkGenerator, IWorld worldIn, long seed, SharedSeedRandom random, BlockPos pos) {
+        super.decorate(stage, chunkGenerator, worldIn, seed, random, pos);
     }
 }
