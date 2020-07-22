@@ -9,7 +9,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ItemInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
@@ -42,7 +41,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         addSlot(new SlotExtended(temporaryInputSlots, 0, 8, 8));
         this.addPlayerInventory(player.inventory, 8, 31);
 
-        if(MinecraftHelpers.isClientSide()) {
+        if(inventory.player.world.isRemote()) {
             temporaryInputSlots.addDirtyMarkListener(() -> {
                 ItemStack itemStack = temporaryInputSlots.getStackInSlot(0);
                 IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
