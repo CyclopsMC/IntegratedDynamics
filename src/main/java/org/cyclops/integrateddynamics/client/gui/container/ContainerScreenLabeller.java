@@ -87,9 +87,8 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
         if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
-            if (this.searchField.keyPressed(typedChar, keyCode, modifiers)) {
-                return true;
-            }
+            this.searchField.keyPressed(typedChar, keyCode, modifiers);
+            return true;
         }
         return super.keyPressed(typedChar, keyCode, modifiers);
     }

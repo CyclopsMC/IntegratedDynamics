@@ -432,6 +432,16 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
 
         @Override
+        public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+            if (this.searchField.getVisible() && typedChar != GLFW.GLFW_KEY_ESCAPE) {
+                this.searchField.keyPressed(typedChar, keyCode, modifiers);
+                label(this.searchField.getText());
+                return true;
+            }
+            return super.keyPressed(typedChar, keyCode, modifiers);
+        }
+
+        @Override
         public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
             if(this.searchField.getVisible()) {
                 return this.searchField.mouseClicked(mouseX, mouseY, mouseButton);
