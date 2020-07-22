@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.EndNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -58,13 +57,15 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
 
     @Override
     public INBT serialize(ValueIngredients value) {
-        if(!value.getRawValue().isPresent()) return EndNBT.INSTANCE;
+        if(!value.getRawValue().isPresent()) return new CompoundNBT();
         return IMixedIngredients.serialize(value.getRawValue().get());
     }
 
     @Override
     public ValueIngredients deserialize(INBT value) {
-        if(value.getId() == Constants.NBT.TAG_END) return ValueIngredients.of(null);
+        if (value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty())) {
+            return ValueIngredients.of(null);
+        }
         try {
             return ValueIngredients.of(IMixedIngredients.deserialize((CompoundNBT) value));
         } catch (IllegalArgumentException e) {

@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.ToString;
-import net.minecraft.nbt.EndNBT;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.text.ITextComponent;
@@ -56,7 +56,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
             e.printStackTrace();
         }
-        return EndNBT.INSTANCE;
+        return new CompoundNBT();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
 
     @Override
     public ValueList deserialize(INBT value) {
-        if (value.getId() != Constants.NBT.TAG_END) {
+        if (!(value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty()))) {
             try {
                 IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
                 return ValueList.ofFactory(proxy);

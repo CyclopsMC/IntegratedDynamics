@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Iterables;
 import lombok.ToString;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.EndNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -71,13 +70,15 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
 
     @Override
     public INBT serialize(ValueRecipe value) {
-        if(!value.getRawValue().isPresent()) return EndNBT.INSTANCE;
+        if(!value.getRawValue().isPresent()) return new CompoundNBT();
         return IRecipeDefinition.serialize(value.getRawValue().get());
     }
 
     @Override
     public ValueRecipe deserialize(INBT value) {
-        if(value.getId() == Constants.NBT.TAG_END) return ValueRecipe.of(null);
+        if (value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty())) {
+            return ValueRecipe.of(null);
+        }
         try {
             return ValueRecipe.of(IRecipeDefinition.deserialize((CompoundNBT) value));
         } catch (IllegalArgumentException e) {

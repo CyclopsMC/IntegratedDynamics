@@ -5,7 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.EndNBT;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -65,13 +65,15 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
 
     @Override
     public INBT serialize(ValueBlock value) {
-        if(!value.getRawValue().isPresent()) return EndNBT.INSTANCE;
+        if(!value.getRawValue().isPresent()) return new CompoundNBT();
         return BlockHelpers.serializeBlockState(value.getRawValue().get());
     }
 
     @Override
     public ValueBlock deserialize(INBT value) {
-        if (value.getId() == Constants.NBT.TAG_END) return ValueBlock.of(Blocks.AIR.getDefaultState());
+        if (value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty())) {
+            return ValueBlock.of(Blocks.AIR.getDefaultState());
+        }
         return ValueBlock.of(BlockHelpers.deserializeBlockState(value));
     }
 
