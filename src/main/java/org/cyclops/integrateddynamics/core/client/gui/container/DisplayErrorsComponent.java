@@ -9,6 +9,7 @@ import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
  */
 public class DisplayErrorsComponent {
 
-    public void drawForeground(List<ITextComponent> errors, int errorX, int errorY, int mouseX, int mouseY, ContainerScreenExtended<?> gui, int guiLeft, int guiTop) {
-        if(!errors.isEmpty()) {
+    public void drawForeground(@Nullable List<ITextComponent> errors, int errorX, int errorY, int mouseX, int mouseY, ContainerScreenExtended<?> gui, int guiLeft, int guiTop) {
+        if(errors != null && !errors.isEmpty()) {
             if(gui.isPointInRegion(errorX, errorY, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
                 List<ITextComponent> lines = Lists.newLinkedList();
                 for(ITextComponent error : errors) {
@@ -34,9 +35,9 @@ public class DisplayErrorsComponent {
         }
     }
 
-    public void drawBackground(List<ITextComponent> errors, int errorX, int errorY, int okX, int okY, ContainerScreenExtended<?> gui, int guiLeft, int guiTop, boolean okCondition) {
+    public void drawBackground(@Nullable List<ITextComponent> errors, int errorX, int errorY, int okX, int okY, ContainerScreenExtended<?> gui, int guiLeft, int guiTop, boolean okCondition) {
         // Render error symbol
-        if(!errors.isEmpty()) {
+        if(errors != null && !errors.isEmpty()) {
             Images.ERROR.draw(gui, guiLeft + errorX, guiTop + errorY);
         } else if(okCondition) {
             Images.OK.draw(gui, guiLeft + okX, guiTop + okY);
