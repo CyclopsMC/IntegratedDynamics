@@ -6,7 +6,10 @@
   "result": {
     "items": [
       {
-        "item": "minecraft:red_dye"
+        "item": {
+          "item": "minecraft:rose_bush",
+          "count": 8
+        }
       }
     ]
   }

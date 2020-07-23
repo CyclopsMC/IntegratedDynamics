@@ -1,0 +1,16 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "item": "minecraft:white_tulip"
+  },
+  "result": {
+    "items": [
+      {
+        "item": {
+          "item": "minecraft:white_dye",
+          "count": 4
+        }
+      }
+    ]
+  }
+}

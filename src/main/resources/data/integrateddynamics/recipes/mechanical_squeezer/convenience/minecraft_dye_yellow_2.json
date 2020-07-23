@@ -1,26 +1,26 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
   "item": {
-    "item": "minecraft:peony"
+    "item": "minecraft:sunflower"
   },
   "result": {
     "items": [
       {
         "item": {
-          "item": "minecraft:pink_dye",
+          "item": "minecraft:yellow_dye",
           "count": 8
         }
       },
       {
         "item": {
-          "item": "minecraft:pink_dye",
+          "item": "minecraft:yellow_dye",
           "count": 2
         },
         "chance": 0.5
       },
       {
         "item": {
-          "item": "minecraft:pink_dye",
+          "item": "minecraft:yellow_dye",
           "count": 2
         },
         "chance": 0.5

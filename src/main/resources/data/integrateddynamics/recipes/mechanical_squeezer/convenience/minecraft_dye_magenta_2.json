@@ -10,6 +10,20 @@
           "item": "minecraft:magenta_dye",
           "count": 8
         }
+      },
+      {
+        "item": {
+          "item": "minecraft:magenta_dye",
+          "count": 2
+        },
+        "chance": 0.5
+      },
+      {
+        "item": {
+          "item": "minecraft:magenta_dye",
+          "count": 2
+        },
+        "chance": 0.5
       }
     ]
   },

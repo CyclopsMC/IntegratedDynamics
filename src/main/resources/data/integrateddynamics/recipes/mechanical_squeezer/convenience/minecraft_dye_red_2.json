@@ -1,19 +1,26 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
   "item": {
-    "item": "minecraft:orange_tulip"
+    "item": "minecraft:red_tulip"
   },
   "result": {
     "items": [
       {
         "item": {
-          "item": "minecraft:orange_dye",
-          "count": 4
+          "item": "minecraft:red_dye",
+          "count": 8
         }
       },
       {
         "item": {
-          "item": "minecraft:orange_dye",
+          "item": "minecraft:red_dye",
+          "count": 2
+        },
+        "chance": 0.5
+      },
+      {
+        "item": {
+          "item": "minecraft:red_dye",
           "count": 2
         },
         "chance": 0.5
