@@ -1,0 +1,17 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.8.0 or higher.
+
+Fixes:
+* Remove conflicting cactus recipe, Closes #893
+* Fix energy network always being empty
+  This caused problems with energy-consuming networks.
+  Closes #895
+* Fix incorrect and missing flower squeezing recipes, Closes #893
+* Fix display panel crash when errors field is null, Closes #899
+* Fix crash when creating object-based list, Closes #896
+* Fix console error when shift-clicking into labeler
+* Fix labeler not catching all keypresses, Closes #891
+* Add config option to disable meneglin biome in overworld
+  This replaces the broken meneglinBiomeDimensionBlacklist option.
+  Closes #890
+* Fix variable store dropping variables twice
