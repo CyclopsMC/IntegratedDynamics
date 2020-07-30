@@ -7,7 +7,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -100,8 +99,11 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      * @param outputType The output types.
      * @return The signature.
      */
-    public static String getSignature(IValueType[] inputTypes, IValueType outputType) {
-        return StringUtils.join(getSignatureLines(inputTypes, outputType, false), " ");
+    public static ITextComponent getSignature(IValueType[] inputTypes, IValueType outputType) {
+        return getSignatureLines(inputTypes, outputType, false)
+                .stream()
+                .reduce((prev, next) -> prev.appendText(" ").appendSibling(next))
+                .orElseGet(() -> new StringTextComponent(""));
     }
 
     protected static ITextComponent switchSignatureLineContext(List<ITextComponent> lines, ITextComponent sb) {
