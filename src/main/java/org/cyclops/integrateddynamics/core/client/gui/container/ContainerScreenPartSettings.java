@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * Gui for part settings.
  * @author rubensworks
  */
-public class ContainerScreenPartSettings extends ContainerScreenExtended<ContainerPartSettings> {
+public class ContainerScreenPartSettings<T extends ContainerPartSettings> extends ContainerScreenExtended<T> {
 
     private WidgetNumberField numberFieldUpdateInterval = null;
     private WidgetNumberField numberFieldPriority = null;
@@ -41,7 +41,7 @@ public class ContainerScreenPartSettings extends ContainerScreenExtended<Contain
     private WidgetTextFieldDropdown<Direction> dropdownFieldSide = null;
     private List<SideDropdownEntry> dropdownEntries;
 
-    public ContainerScreenPartSettings(ContainerPartSettings container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenPartSettings(T container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, title);
     }
 

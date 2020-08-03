@@ -1,12 +1,11 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
@@ -14,21 +13,18 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
-import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
-import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 
-import java.util.Objects;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -59,7 +55,12 @@ public class ContainerPartSettings extends InventoryContainer {
 
     public ContainerPartSettings(int id, PlayerInventory playerInventory, IInventory inventory,
                                  PartTarget target, Optional<IPartContainer> partContainer, IPartType partType) {
-        super(RegistryEntries.CONTAINER_PART_SETTINGS, id, playerInventory, inventory);
+      this(RegistryEntries.CONTAINER_PART_SETTINGS, id, playerInventory, inventory, target, partContainer, partType);
+    }
+
+    public ContainerPartSettings(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory, IInventory inventory,
+                                 PartTarget target, Optional<IPartContainer> partContainer, IPartType partType) {
+        super(type, id, playerInventory, inventory);
         this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
