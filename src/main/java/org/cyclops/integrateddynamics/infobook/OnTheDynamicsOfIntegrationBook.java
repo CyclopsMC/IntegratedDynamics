@@ -78,7 +78,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                 String operatorName = node.getTextContent();
                 IOperator operator = Operators.REGISTRY.getOperator(new ResourceLocation(operatorName));
                 if (operator == null) {
-                    throw new InfoBookParser.InvalidAppendixException(String.format("Could not find an operator by name %s.", operator));
+                    throw new InfoBookParser.InvalidAppendixException(String.format("Could not find an operator by name %s.", operatorName));
                 }
                 return new OperatorAppendix(infoBook, operator);
             }
