@@ -1,15 +1,22 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import lombok.ToString;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -75,6 +82,24 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     @Override
     public ValueTypeLPElementBase createLogicProgrammerElement() {
         return new ValueTypeOperatorLPElement();
+    }
+
+    @Override
+    public ValuePredicate<ValueOperator> deserializeValuePredicate(JsonObject element, @Nullable IValue value) {
+        JsonElement jsonElement = element.get("operator");
+        String operatorName = jsonElement != null && !jsonElement.isJsonNull() ? jsonElement.getAsString() : null;
+        IOperator operator = null;
+        if (operatorName != null) {
+            try {
+                operator = Operators.REGISTRY.getOperator(new ResourceLocation(operatorName));
+            } catch (ResourceLocationException e) {
+                throw new JsonSyntaxException("Invalid operator name '" + operator + "'");
+            }
+            if (operator == null) {
+                throw new JsonSyntaxException("Could not find the operator '" + operator + "'");
+            }
+        }
+        return new ValueOperatorPredicate(this, value, operator);
     }
 
     @Override
@@ -189,6 +214,23 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
         @Override
         public int hashCode() {
             return 37 + value.hashCode();
+        }
+    }
+
+    public static class ValueOperatorPredicate extends ValuePredicate<ValueOperator> {
+
+        private final IOperator operator;
+
+        public ValueOperatorPredicate(@Nullable IValueType valueType, @Nullable IValue value, @Nullable IOperator operator) {
+            super(valueType, value);
+            this.operator = operator;
+        }
+
+        @Override
+        protected boolean testTyped(ValueOperator value) {
+            return super.testTyped(value)
+                    && (operator == null
+                    || (value.getRawValue() == operator));
         }
     }
 
