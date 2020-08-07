@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.8.1 or higher.
+
+Fixes:
+* Fix part models not updating upon variable change
+* Fix incorrect unknown operator error in infobook loader
+* Fix invalid getSignature method in ValueTypeOperator
