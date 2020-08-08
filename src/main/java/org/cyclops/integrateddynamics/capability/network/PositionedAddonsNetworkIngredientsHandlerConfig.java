@@ -20,7 +20,7 @@ public class PositionedAddonsNetworkIngredientsHandlerConfig extends CapabilityC
     public PositionedAddonsNetworkIngredientsHandlerConfig() {
         super(
                 CommonCapabilities._instance,
-                "energy_network",
+                "positioned_addons_network_ingredients_handler",
                 IPositionedAddonsNetworkIngredientsHandler.class,
                 new DefaultCapabilityStorage<IPositionedAddonsNetworkIngredientsHandler>(),
                 () -> new DefaultPositionedAddonsNetworkIngredientsHandler(null)

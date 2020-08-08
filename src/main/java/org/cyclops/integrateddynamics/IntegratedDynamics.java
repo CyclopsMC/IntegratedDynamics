@@ -133,6 +133,8 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
             FMLJavaModLoadingContext.get().getModEventBus().register(IntegratedDynamicsSoundEvents.class);
         }
         FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, IngredientComponentHandlers::onIngredientComponentsPopulated);
+
+        IngredientComponentCapabilities.load();
     }
 
     @Override
@@ -149,7 +151,6 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
     @Override
     protected void setup(FMLCommonSetupEvent event) {
         ValueTypes.load();
-        IngredientComponentCapabilities.load();
         IngredientComponentHandlers.load();
         ValueCastMappings.load();
         ValueTypeLightLevels.load();
