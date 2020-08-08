@@ -48,6 +48,10 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
         });
     }
 
+    public World getWorld() {
+        return world;
+    }
+
     public P getPartType() {
         return partType;
     }
