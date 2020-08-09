@@ -68,4 +68,9 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
     public boolean canInteractWith(PlayerEntity playerIn) {
         return PartHelpers.canInteractWith(getTarget().get(), player, this.partContainer.get());
     }
+
+    @Override
+    public void onDirty() {
+
+    }
 }
