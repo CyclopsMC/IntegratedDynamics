@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -263,18 +264,19 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         return false;
     }
 
-    protected boolean handleKeyCode(int keyCode) {
+    protected boolean handleKeyCode(int keyCode, int scanCode) {
+        InputMappings.Input inputCode = InputMappings.getInputByCode(keyCode, scanCode);
         if(keyCode != GLFW.GLFW_KEY_LEFT_SHIFT && keyCode != GLFW.GLFW_KEY_RIGHT_SHIFT) {
             ContainerLogicProgrammerBase container = getContainer();
             int pageSize = container.getPageSize();
             int stepModifier = MinecraftHelpers.isShifted() ? pageSize - 1 : 1;
             boolean isElementFocused = container.getActiveElement() != null && container.getActiveElement().isFocused(operatorConfigPattern);
 
-            if (ClientProxy.FOCUS_LP_SEARCH.getKey().getKeyCode() == keyCode) {
+            if (ClientProxy.FOCUS_LP_SEARCH.isActiveAndMatches(inputCode)) {
                 // Focus search field
                 setSearchFieldFocussed(true);
                 return true;
-            } else if (isElementFocused && ClientProxy.FOCUS_LP_RENAME.getKey().getKeyCode() == keyCode && hasLabeller()) {
+            } else if (isElementFocused && ClientProxy.FOCUS_LP_RENAME.isActiveAndMatches(inputCode) && hasLabeller()) {
                 // Open labeller gui
                 operatorInfoPattern.onButtonEditClick();
                 return true;
@@ -313,18 +315,18 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        return subGuiHolder.charTyped(typedChar, keyCode) || handleKeyCode(keyCode) || super.charTyped(typedChar, keyCode);
+    public boolean charTyped(char keyCode, int scanCode) {
+        return subGuiHolder.charTyped(keyCode, scanCode) || handleKeyCode(keyCode, scanCode) || super.charTyped(keyCode, scanCode);
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
-            if (this.subGuiHolder.keyPressed(typedChar, keyCode, modifiers) || handleKeyCode(typedChar)) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode != GLFW.GLFW_KEY_ESCAPE) {
+            if (this.subGuiHolder.keyPressed(keyCode, scanCode, modifiers) || handleKeyCode(keyCode, scanCode)) {
                 return true;
             }
         }
-        return super.keyPressed(typedChar, keyCode, modifiers);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
