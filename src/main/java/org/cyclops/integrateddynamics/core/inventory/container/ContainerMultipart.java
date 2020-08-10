@@ -64,6 +64,10 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
         return partContainer.map(p -> (S) p.getPartState(getTarget().get().getCenter().getSide()));
     }
 
+    public Optional<IPartContainer> getPartContainer() {
+        return partContainer;
+    }
+
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
         return PartHelpers.canInteractWith(getTarget().get(), player, this.partContainer.get());

@@ -104,7 +104,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
         super(IntegratedDynamics._instance, 2, Reference.BOOK_URL);
     }
 
-    public static OnTheDynamicsOfIntegrationBook getInstance() {
+    public static synchronized OnTheDynamicsOfIntegrationBook getInstance() {
         if(_instance == null) {
             _instance = new OnTheDynamicsOfIntegrationBook();
         }

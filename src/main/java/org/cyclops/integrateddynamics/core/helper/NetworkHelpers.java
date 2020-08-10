@@ -199,7 +199,7 @@ public class NetworkHelpers {
     public static <T, M> LazyOptional<IPositionedAddonsNetworkIngredients<T, M>> getIngredientNetwork(LazyOptional<INetwork> optionalNetwork,
                                                                                                       IngredientComponent<T, M> ingredientComponent) {
         return optionalNetwork
-                .map(network -> network.getCapability(PositionedAddonsNetworkIngredientsHandlerConfig.CAPABILITY)
+                .map(network -> ingredientComponent.getCapability(PositionedAddonsNetworkIngredientsHandlerConfig.CAPABILITY)
                         .map(handler -> handler.getStorage(network))
                         .orElse(LazyOptional.empty()))
                 .orElse(LazyOptional.empty());
