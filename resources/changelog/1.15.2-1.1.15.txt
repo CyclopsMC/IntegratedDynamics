@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.8.2 or higher.
+
+Fixes:
+* Fix logic programmer hotkeys not working with modifiers
+* Fix issues related to Integrated Terminals
+* Fix ingredient capabilities not being registered
+
