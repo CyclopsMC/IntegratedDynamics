@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
+import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceDefault;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -167,9 +168,9 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
                 if (variable != null) {
                     return LazyOptional.of(() -> {
                         try {
-                            return variable.getValue();
+                            return new ValueInterfaceDefault(variable.getValue());
                         } catch (EvaluationException e) {
-                            return variable.getType().getDefault();
+                            return new ValueInterfaceDefault(variable.getType().getDefault());
                         }
                     }).cast();
                 }

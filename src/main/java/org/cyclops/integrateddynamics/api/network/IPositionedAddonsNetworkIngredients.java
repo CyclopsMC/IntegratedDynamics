@@ -70,6 +70,7 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
 
     /* WARNING: Hack to allow tile entities to be retrieved from other threads. Needed for our IngredientObserver. */
     /* This is just a copy of {@link World#getTileEntity} without the thread checks. */
+    // TODO: use TileHelpers.UNSAFE_TILE_ENTITY_GETTER
     @Nullable
     static TileEntity getWorldTileEntityUnchecked(World world, BlockPos pos) {
         if (World.isOutsideBuildHeight(pos)) {
