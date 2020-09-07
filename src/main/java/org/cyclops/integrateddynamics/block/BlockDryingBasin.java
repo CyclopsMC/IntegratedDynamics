@@ -11,6 +11,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.config.configurable.ConfigurableBlockContainer;
@@ -76,14 +77,20 @@ public class BlockDryingBasin extends ConfigurableBlockContainer implements IMac
                 return true;
             } else if (itemFluidHandler != null && !tank.isFull()
                     && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
-                ItemStack newItemStack = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
-                InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
-                tile.sendUpdate();
+                FluidActionResult fluidAction = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
+                if (fluidAction.isSuccess()) {
+                    ItemStack newItemStack = fluidAction.getResult();
+                    InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                    tile.sendUpdate();
+                }
                 return true;
             } else if (itemFluidHandler != null && !tank.isEmpty() &&
                     FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
-                ItemStack newItemStack = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true).getResult();
-                InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                FluidActionResult fluidAction = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
+                if (fluidAction.isSuccess()) {
+                    ItemStack newItemStack = fluidAction.getResult();
+                    InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                }
                 return true;
             } else if (!itemStack.isEmpty() && tileStack.isEmpty()) {
                 tile.setInventorySlotContents(0, itemStack.splitStack(1));
