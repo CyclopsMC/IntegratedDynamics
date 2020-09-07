@@ -585,7 +585,7 @@ public final class Operators {
                 throw new EvaluationException("The 'from' and 'to' values in the substring operator must not be negative.");
             }
             int stringLength = str.getRawValue().length();
-            if (from.getRawValue() >= stringLength || to.getRawValue() >= stringLength) {
+            if (from.getRawValue() > stringLength || to.getRawValue() > stringLength) {
                 throw new EvaluationException("The 'from' and 'to' values in the substring operator must not exceed the length of the string.");
             }
             return ValueTypeString.ValueString.of(str.getRawValue().substring(from.getRawValue(), to.getRawValue()));

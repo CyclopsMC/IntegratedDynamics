@@ -39,6 +39,7 @@ public class TestStringOperators {
     private DummyVariableInteger i1;
     private DummyVariableInteger i2;
     private DummyVariableInteger i10;
+    private DummyVariableInteger i11;
     private DummyVariableDouble d10_5;
     private DummyVariableList labc;
     private DummyVariableList lint;
@@ -65,6 +66,7 @@ public class TestStringOperators {
         i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
         i2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2));
         i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
+        i11 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(11));
         d10_5 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(10.5D));
         labc = new DummyVariableList(ValueTypeList.ValueList.ofAll(ValueTypes.STRING,
                 ValueTypeString.ValueString.of("a"),
@@ -479,10 +481,12 @@ public class TestStringOperators {
         IValue res1 = Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i1, i2, sabc});
         IValue res2 = Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i1, i10, shelloWorld});
         IValue res3 = Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i1, i1, sabc});
+        IValue res4 = Operators.STRING_SUBSTRING.evaluate(new IVariable[]{i1, i11, shelloWorld});
         assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
         assertThat("abc substring (1, 2) = b", ((ValueTypeString.ValueString) res1).getRawValue(), is("b"));
         assertThat("hello world substring (1, 10) = 'ello worl'", ((ValueTypeString.ValueString) res2).getRawValue(), is("ello worl"));
         assertThat("abc substring (1, 1) = ''", ((ValueTypeString.ValueString) res3).getRawValue(), is(""));
+        assertThat("hello world substring (1, 11) = 'ello world'", ((ValueTypeString.ValueString) res4).getRawValue(), is("ello world"));
     }
 
     @Test(expected = EvaluationException.class)
