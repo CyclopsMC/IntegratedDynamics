@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -7,6 +8,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 
 /**
@@ -22,6 +24,7 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
         this(null, null);
     }
 
+    @Nullable
     protected IItemHandler getInventory() {
         return TileHelpers.getCapability(getPos(), getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
     }
@@ -37,7 +40,8 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
 
     @Override
     public ValueObjectTypeItemStack.ValueItemStack get(int index) {
-        return ValueObjectTypeItemStack.ValueItemStack.of(getInventory().getStackInSlot(index));
+        IItemHandler inventory = getInventory();
+        return ValueObjectTypeItemStack.ValueItemStack.of(inventory == null ? ItemStack.EMPTY : inventory.getStackInSlot(index));
     }
 
     @Override
@@ -50,10 +54,11 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
 
     public static class ListFactoryIterator implements Iterator<ValueObjectTypeItemStack.ValueItemStack> {
 
+        @Nullable
         private final IItemHandler itemHandler;
         private int index = 0;
 
-        public ListFactoryIterator(IItemHandler itemHandler) {
+        public ListFactoryIterator(@Nullable IItemHandler itemHandler) {
             this.itemHandler = itemHandler;
         }
 
@@ -64,7 +69,7 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
 
         @Override
         public ValueObjectTypeItemStack.ValueItemStack next() {
-            return ValueObjectTypeItemStack.ValueItemStack.of(this.itemHandler.getStackInSlot(index++));
+            return ValueObjectTypeItemStack.ValueItemStack.of(this.itemHandler == null ? ItemStack.EMPTY : this.itemHandler.getStackInSlot(index++));
         }
 
         @Override
