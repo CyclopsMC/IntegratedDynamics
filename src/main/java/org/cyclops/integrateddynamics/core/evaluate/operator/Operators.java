@@ -2492,7 +2492,7 @@ public final class Operators {
      * Apply for a given operator a given value.
      */
     public static final IOperator OPERATOR_APPLY = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
-            .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(1))
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply")
             .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
@@ -2511,7 +2511,7 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_APPLY_2 = REGISTRY.register(OperatorBuilders.OPERATOR
             .renderPattern(IConfigRenderPattern.INFIX_2)
-            .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(2))
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
             .inputTypes(ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY)
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply2")
             .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY))
@@ -2529,7 +2529,7 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_APPLY_3 = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .renderPattern(IConfigRenderPattern.INFIX_3)
-            .conditionalOutputTypeDeriver(OperatorBuilders.newOperatorConditionalOutputDeriver(3))
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
             .inputTypes(ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY)
             .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply3")
             .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY))

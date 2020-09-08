@@ -49,6 +49,7 @@ public class TestOperatorOperators {
     private DummyVariableOperator oListLength;
     private DummyVariableOperator oListContains;
     private DummyVariableOperator oOperatorMap;
+    private DummyVariableOperator oSubStr;
 
     private DummyVariableList lempty;
     private DummyVariableList lintegers;
@@ -81,9 +82,11 @@ public class TestOperatorOperators {
         oArithmeticAddition       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
         oArithmeticMultiplication = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_MULTIPLICATION));
         oChoice                   = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE));
+        oPipe                     = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_PIPE));
         oListLength               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_LENGTH));
         oListContains             = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_CONTAINS));
         oOperatorMap              = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_MAP));
+        oSubStr                   = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.STRING_SUBSTRING));
 
         lempty = new DummyVariableList(ValueTypeList.ValueList.ofAll());
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
@@ -288,12 +291,39 @@ public class TestOperatorOperators {
      */
 
     @Test
+    public void testApply3() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_APPLY_3.evaluate(new IVariable[]{oSubStr, i0, i1, sAnd});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("apply_3(substr, 0, 1, 'operator...') == 'o''", ((ValueTypeString.ValueString) res1).getRawValue(), is("o"));
+    }
+
+    @Test
+    public void testConditionalOutputTypesApply3() {
+        assertThat(Operators.OPERATOR_APPLY_3.getConditionalOutputType(new IVariable[]{oSubStr, i0, i1, sAnd}),
+                CoreMatchers.<IValueType>is(ValueTypes.STRING));
+    }
+
+    @Test
     public void testValidateTypesApply3() {
         assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY_3.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}), nullValue());
+    }
+
+    @Test
+    public void testApply3ThreeAnd() throws EvaluationException {
+        DummyVariableOperator oPipeFlip = new DummyVariableOperator((ValueTypeOperator.ValueOperator) Operators.OPERATOR_FLIP.evaluate(new IVariable[]{oPipe}));
+        DummyVariableOperator oThreeAnd_1 = new DummyVariableOperator((ValueTypeOperator.ValueOperator) Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oPipeFlip, oLogicalAnd}));
+        DummyVariableOperator oThreeAnd = new DummyVariableOperator((ValueTypeOperator.ValueOperator) Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oPipeFlip, oThreeAnd_1, oLogicalAnd}));
+
+        IValue res1 = Operators.OPERATOR_APPLY_3.evaluate(new IVariable[]{oThreeAnd, bTrue, bTrue, bTrue});
+        assertThat("result is a boolean", res1.getType(), is(ValueTypes.BOOLEAN));
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("apply_3(&& &&, true, true, true)", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+
+        assertThat(Operators.OPERATOR_APPLY_3.getConditionalOutputType(new IVariable[]{oThreeAnd, bTrue, bTrue, bTrue}), is(ValueTypes.BOOLEAN));
     }
 
     /**

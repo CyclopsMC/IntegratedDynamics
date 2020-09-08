@@ -125,7 +125,7 @@ public class ValueHelpers {
                 // Pass all required variables to the operator, and forward all remaining ones to the resulting operator
                 IValue result = evaluateOperator(operator, acceptableVariables);
 
-                // Error if the result is NOT an operatorø
+                // Error if the result is NOT an operator
                 if (result.getType() != ValueTypes.OPERATOR) {
                     throw new EvaluationException(String.format(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
                             operator.getTranslationKey(), requiredLength, variables.length, result.getType()));
