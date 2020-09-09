@@ -131,7 +131,10 @@ public class ValueHelpers {
                 // Error if the result is NOT an operator
                 if (result.getType() != ValueTypes.OPERATOR) {
                     throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
-                            operator.getTranslationKey(), requiredLength, variables.length, result.getType()));
+                            new TranslationTextComponent(operator.getTranslationKey()),
+                            requiredLength,
+                            variables.length,
+                            new TranslationTextComponent(result.getType().getTranslationKey())));
                 }
 
                 // Pass all remaining variables to the resulting operator
@@ -229,7 +232,8 @@ public class ValueHelpers {
             ITextComponent error = new TranslationTextComponent(
                     L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
                     predicate.getLocalizedNameFull(),
-                    result.getType(), ValueTypes.BOOLEAN);
+                    new TranslationTextComponent(result.getType().getTranslationKey()),
+                    ValueTypes.BOOLEAN);
             throw new EvaluationException(error);
         }
     }

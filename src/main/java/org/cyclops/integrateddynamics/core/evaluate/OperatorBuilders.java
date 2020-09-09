@@ -302,7 +302,10 @@ public class OperatorBuilders {
                     // Error if the result is NOT an operator
                     if (result.getType() != ValueTypes.OPERATOR) {
                         throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
-                                innerOperator.getTranslationKey(), requiredLength, variables.length, result.getType()));
+                                new TranslationTextComponent(innerOperator.getTranslationKey()),
+                                requiredLength,
+                                variables.length,
+                                new TranslationTextComponent(result.getType().getTranslationKey())));
                     }
 
                     // Pass all remaining variables to the resulting operator

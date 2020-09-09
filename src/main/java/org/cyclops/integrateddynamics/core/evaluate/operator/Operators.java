@@ -738,7 +738,8 @@ public final class Operators {
                     if (!ValueHelpers.correspondsTo(elements.getRawValue().getValueType(), ValueTypes.STRING)) {
                         throw new EvaluationException(new TranslationTextComponent(
                                 L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                                elements.getRawValue().getValueType(), ValueTypes.STRING));
+                                new TranslationTextComponent(elements.getRawValue().getValueType().getTranslationKey()),
+                                ValueTypes.STRING));
                     }
 
                     // Don't allow joining on an infinite list
@@ -753,7 +754,8 @@ public final class Operators {
                         if (value.getType() != ValueTypes.STRING) {
                             throw new EvaluationException(new TranslationTextComponent(
                                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                                    value.getType(), ValueTypes.STRING));
+                                    new TranslationTextComponent(value.getType().getTranslationKey()),
+                                    ValueTypes.STRING));
                         }
                         if (sb.length() > 0) {
                             sb.append(delimiter.getRawValue());
@@ -908,7 +910,8 @@ public final class Operators {
                     if (!ValueHelpers.correspondsTo(a.getValueType(), variables.getVariables()[2].getType())) {
                         throw new EvaluationException(new TranslationTextComponent(
                                 L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                                a.getValueType(), variables.getVariables()[2].getType()));
+                                a.getValueType(),
+                                new TranslationTextComponent(variables.getVariables()[2].getType().getTranslationKey())));
                     }
                     return variables.getValue(2);
                 }
@@ -1026,7 +1029,8 @@ public final class Operators {
                 if (!ValueHelpers.correspondsTo(a.getValueType(), value.getType())) {
                     throw new EvaluationException(new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                            a.getValueType(), value.getType()));
+                            new TranslationTextComponent(a.getValueType().getTranslationKey()),
+                            new TranslationTextComponent(value.getType().getTranslationKey())));
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyAppend(a, value));
             }).build());
@@ -1046,7 +1050,8 @@ public final class Operators {
                 if (!ValueHelpers.correspondsTo(a.getValueType(), b.getValueType())) {
                     throw new EvaluationException(new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                            a.getValueType(), b.getValueType()));
+                            new TranslationTextComponent(a.getValueType().getTranslationKey()),
+                            new TranslationTextComponent(b.getValueType().getTranslationKey())));
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyConcat(a, b));
             }).build());
@@ -1770,7 +1775,8 @@ public final class Operators {
                 if (!ValueHelpers.correspondsTo(a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK)) {
                     ITextComponent error = new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                            a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK);
+                            new TranslationTextComponent(a.getRawValue().getValueType().getTranslationKey()),
+                            ValueTypes.OBJECT_ITEMSTACK);
                     throw new EvaluationException(error);
                 }
 

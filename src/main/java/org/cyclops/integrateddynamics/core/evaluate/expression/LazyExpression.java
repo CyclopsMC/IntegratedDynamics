@@ -72,7 +72,9 @@ public class LazyExpression<V extends IValue> extends VariableAdapter<V> impleme
         } catch (ClassCastException e) {
             errored = true;
             throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPEOUTPUT,
-                    op, value.getType(), op.getOutputType()));
+                    op,
+                    new TranslationTextComponent(value.getType().getTranslationKey()),
+                    new TranslationTextComponent(op.getOutputType().getTranslationKey())));
         }
     }
 
