@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.6.5 or higher.
+
+Fixes:
+* Fix crash when reading from non-existing inventory, Closes #908
+* Fix apply producing wrong conditional output type for curried operators, Closes #897
+* Fix bucket being voided when filling a non-empty Drying Basin, Closes #903
+* Fix substring operator not checking length correctly, Closes #905
