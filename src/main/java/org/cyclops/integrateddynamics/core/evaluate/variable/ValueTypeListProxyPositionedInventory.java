@@ -10,6 +10,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 
 /**
@@ -55,10 +56,11 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
 
     public static class ListFactoryIterator implements Iterator<ValueObjectTypeItemStack.ValueItemStack> {
 
+        @Nullable
         private final IItemHandler itemHandler;
         private int index = 0;
 
-        public ListFactoryIterator(IItemHandler itemHandler) {
+        public ListFactoryIterator(@Nullable IItemHandler itemHandler) {
             this.itemHandler = itemHandler;
         }
 
@@ -69,7 +71,7 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
 
         @Override
         public ValueObjectTypeItemStack.ValueItemStack next() {
-            return ValueObjectTypeItemStack.ValueItemStack.of(this.itemHandler.getStackInSlot(index++));
+            return ValueObjectTypeItemStack.ValueItemStack.of(this.itemHandler == null ? ItemStack.EMPTY : this.itemHandler.getStackInSlot(index++));
         }
 
         @Override
