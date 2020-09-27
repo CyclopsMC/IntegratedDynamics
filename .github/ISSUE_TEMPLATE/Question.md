@@ -8,7 +8,7 @@ about: A general question
 
 #### Issue type:
 
-- :question: Question
+- :question: Question <!--Don't change this issue type!-->
 
 ____
 

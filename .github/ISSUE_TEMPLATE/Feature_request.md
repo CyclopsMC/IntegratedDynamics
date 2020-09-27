@@ -8,7 +8,7 @@ about: Suggest an idea for this project
 
 #### Issue type:
 
-- :heavy_plus_sign: Feature request
+- :heavy_plus_sign: Feature request <!--Don't change this issue type!-->
 
 ____
 
