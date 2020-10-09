@@ -2,19 +2,12 @@ package org.cyclops.integrateddynamics.network;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
-import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Network element for coal generators.
@@ -25,15 +18,6 @@ import java.util.Optional;
 public class CoalGeneratorNetworkElement extends NetworkElementBase implements IPositionedNetworkElement {
 
     private final DimPos pos;
-
-    protected Optional<TileCoalGenerator> getTile() {
-        return TileHelpers.getSafeTile(getPos(), TileCoalGenerator.class);
-    }
-
-    @Override
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
-        getTile().ifPresent(tile -> InventoryHelper.dropInventoryItems(getPos().getWorld(true), getPos().getBlockPos(), tile.getInventory()));
-    }
 
     @Override
     public void setPriorityAndChannel(INetwork network, int priority, int channel) {
