@@ -1,21 +1,21 @@
 package org.cyclops.integrateddynamics.api.network;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageWrapperHandler;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IngredientComponentStorageEmpty;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -64,30 +64,13 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
     public default IIngredientComponentStorage<T, M> getPositionedStorageUnsafe(PartPos pos) {
         DimPos dimPos = pos.getPos();
         World world = dimPos.getWorld(true);
-        TileEntity tile = getWorldTileEntityUnchecked(world, dimPos.getBlockPos());
-        return tile != null ? getComponent().getStorage(tile, pos.getSide()) : null;
-    }
-
-    /* WARNING: Hack to allow tile entities to be retrieved from other threads. Needed for our IngredientObserver. */
-    /* This is just a copy of {@link World#getTileEntity} without the thread checks. */
-    // TODO: use TileHelpers.UNSAFE_TILE_ENTITY_GETTER
-    @Nullable
-    static TileEntity getWorldTileEntityUnchecked(World world, BlockPos pos) {
-        if (World.isOutsideBuildHeight(pos)) {
-            return null;
-        } else {
-            TileEntity tileentity = null;
-            if (world.processingLoadedTiles) {
-                tileentity = world.getPendingTileEntityAt(pos);
-            }
-            if (tileentity == null) {
-                tileentity = world.getChunkAt(pos).getTileEntity(pos, Chunk.CreateEntityType.IMMEDIATE);
-            }
-            if (tileentity == null) {
-                tileentity = world.getPendingTileEntityAt(pos);
-            }
-            return tileentity;
-        }
+        // UNSAFE_TILE_ENTITY_GETTER is needed for our IngredientObserver that does operations in a different thread.
+        TileHelpers.UNSAFE_TILE_ENTITY_GETTER = true;
+        Optional<TileEntity> tile = TileHelpers.getSafeTile(world, dimPos.getBlockPos(), TileEntity.class);
+        TileHelpers.UNSAFE_TILE_ENTITY_GETTER = false;
+        return tile
+                .map(tileEntity -> getComponent().getStorage(tileEntity, pos.getSide()))
+                .orElse(null);
     }
 
     /**
