@@ -31,18 +31,8 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         super("block", ValueObjectTypeBlock.ValueBlock.class);
     }
 
-    public static ITextComponent getBlockDisplayNameUsSafe(BlockState blockState) throws NoSuchMethodException {
-        return blockState.getBlock().getNameTextComponent();
-    }
-
     public static ITextComponent getBlockkDisplayNameSafe(BlockState blockState) {
-        // Certain mods may call client-side only methods,
-        // so call a server-side-safe fallback method if that fails.
-        try {
-            return getBlockDisplayNameUsSafe(blockState);
-        } catch (NoSuchMethodException e) {
-            return new TranslationTextComponent(blockState.getBlock().getTranslationKey());
-        }
+        return new TranslationTextComponent(blockState.getBlock().getTranslationKey());
     }
 
     @Override
