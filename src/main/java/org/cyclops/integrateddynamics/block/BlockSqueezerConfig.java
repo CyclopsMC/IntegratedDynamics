@@ -18,7 +18,8 @@ public class BlockSqueezerConfig extends BlockConfig {
                 "squeezer",
                 eConfig -> new BlockSqueezer(Block.Properties.create(Material.IRON)
                         .hardnessAndResistance(5.0F)
-                        .sound(SoundType.METAL)),
+                        .sound(SoundType.METAL)
+                        .notSolid()),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
