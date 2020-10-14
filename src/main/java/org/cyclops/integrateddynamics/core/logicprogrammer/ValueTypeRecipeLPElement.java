@@ -6,12 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -297,7 +297,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     public Slot createSlot(IInventory temporaryInputSlots, int slotId, int x, int y) {
         Slot slot = ILogicProgrammerElement.createSlotDefault(this, temporaryInputSlots, slotId, x, y);
         if (slotId < 9) {
-            slot.setBackground(AtlasTexture.LOCATION_BLOCKS_TEXTURE, getDefaultItemMatch().getSlotSpriteName());
+            slot.setBackground(PlayerContainer.LOCATION_BLOCKS_TEXTURE, getDefaultItemMatch().getSlotSpriteName());
         }
         return slot;
     }
@@ -307,7 +307,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         if (slotId >= 4 && slotId < 13 && mouseButton == 0 && clickType == ClickType.QUICK_MOVE) {
             int id = slotId - 4;
             this.inputStacks.set(id, Pair.of(this.inputStacks.get(id).getLeft(), this.inputStacks.get(id).getRight().next()));
-            slot.setBackground(AtlasTexture.LOCATION_BLOCKS_TEXTURE, this.inputStacks.get(id).getRight().getSlotSpriteName());
+            slot.setBackground(PlayerContainer.LOCATION_BLOCKS_TEXTURE, this.inputStacks.get(id).getRight().getSlotSpriteName());
             return true;
         }
 
