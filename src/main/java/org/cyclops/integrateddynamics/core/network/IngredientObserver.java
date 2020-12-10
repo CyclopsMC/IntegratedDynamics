@@ -23,16 +23,12 @@ import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 
 import javax.annotation.Nullable;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Instances of this class are able to watch ingredient positions and emit diffs.
@@ -149,21 +145,9 @@ public class IngredientObserver<T, M> {
     protected boolean observe() {
         if (!this.changeObservers.isEmpty()) {
             if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
-                // If we still have an uncompleted job from the previous tick, wait for it to finish first!
-                if (this.lastObserverBarrier != null) {
-                    try {
-                        this.lastObserverBarrier.get(1, TimeUnit.SECONDS);
-                    } catch (TimeoutException e) {
-                        return false; // Don't start new jobs when the previous one is still running.
-                    } catch (InterruptedException | ExecutionException e) {
-                        // Silently fail on interruptions and concurrent modifications inside the thread.
-                        // Those kinds of errors can happen rarely, but can be safely ignored
-                        // as the whole process will start over again cleanly in the next observation tick.
-                        if (e instanceof ExecutionException
-                                && !(e.getCause() instanceof ConcurrentModificationException)) {
-                            e.printStackTrace();
-                        }
-                    }
+                // If we still have an uncompleted job from the previous tick, don't start a new one yet!
+                if (this.lastObserverBarrier != null && !this.lastObserverBarrier.isDone()) {
+                    return false;
                 }
 
                 // Schedule the observation job
