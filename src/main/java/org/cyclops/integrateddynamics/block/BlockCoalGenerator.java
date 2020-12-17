@@ -38,6 +38,7 @@ public class BlockCoalGenerator extends BlockTileGuiCabled {
         builder.add(FACING, LIT);
     }
 
+    @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
     }

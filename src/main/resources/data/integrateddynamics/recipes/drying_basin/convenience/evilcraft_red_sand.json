@@ -2,7 +2,7 @@
   "type": "integrateddynamics:drying_basin",
   "item": "minecraft:sand",
   "fluid": {
-    "fluid": "integrateddynamics:evilcraft:blood",
+    "fluid": "evilcraft:blood",
     "amount": 10
   },
   "duration": 40,

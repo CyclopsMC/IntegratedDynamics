@@ -1,7 +1,7 @@
 {
   "type": "integrateddynamics:squeezer",
   "item": {
-    "tag": "material_poisonous"
+    "tag": "evilcraft:poisonous"
   },
   "result": {
     "fluid": {

@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSe
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeEnergyContainerCombination;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeNbtClear;
@@ -215,7 +216,7 @@ public class RegistryEntries {
     @ObjectHolder("integrateddynamics:crafting_special_nbt_clear")
     public static final IRecipeSerializer<RecipeNbtClear> RECIPESERIALIZER_NBT_CLEAR = null;
     @ObjectHolder("integrateddynamics:crafting_special_energycontainer_combination")
-    public static final IRecipeSerializer<RecipeNbtClear> RECIPESERIALIZER_ENERGY_CONTAINER_COMBINATION = null;
+    public static final IRecipeSerializer<RecipeEnergyContainerCombination> RECIPESERIALIZER_ENERGY_CONTAINER_COMBINATION = null;
     @ObjectHolder("integrateddynamics:crafting_special_facade")
     public static final SpecialRecipeSerializer<ItemFacadeRecipe> RECIPESERIALIZER_FACADE = null;
     @ObjectHolder("integrateddynamics:crafting_special_variable_copy")
