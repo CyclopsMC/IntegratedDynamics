@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,7 +18,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Operator appendix.
@@ -49,41 +49,41 @@ public class OperatorAppendix extends SectionAppendix {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void drawElement(ScreenInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void drawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
         int yOffset = 5;
-        gui.drawOuterBorder(x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
-        gui.drawTextBanner(x + width / 2, y - 2 - yOffset);
-        gui.drawScaledCenteredString(L10NHelpers.localize("operator.integrateddynamics"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
+        gui.drawOuterBorder(matrixStack, x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
+        gui.drawTextBanner(matrixStack, x + width / 2, y - 2 - yOffset);
+        gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize("operator.integrateddynamics"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
         // Base information
         String operatorName = L10NHelpers.localize(operator.getTranslationKey());
-        gui.drawScaledCenteredString(L10NHelpers.localize(operatorName) + " (" + operator.getSymbol() + ")", x, y + 8, width, 1f, gui.getBannerWidth(), 0);
-        boolean wasUnicode = gui.getFontRenderer().getBidiFlag();
-        gui.getFontRenderer().setBidiFlag(true);
+        gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(operatorName) + " (" + operator.getSymbol() + ")", x, y + 8, width, 1f, gui.getBannerWidth(), 0);
+        //gui.getFontRenderer().setBidiFlag(true);
 
         // Input/output types
         IValueType[] inputTypes = operator.getInputTypes();
         int offsetY = 14;
         for(int i = 0; i < inputTypes.length; i++) {
-            gui.getFontRenderer().drawString(L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
+            gui.getFontRenderer().drawString(matrixStack, L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
                     + inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())), x, y + offsetY, 0);
             offsetY += 8;
         }
         String outputTypeName = L10NHelpers.localize(operator.getOutputType().getTranslationKey());
-        gui.getFontRenderer().drawString(L10NHelpers.localize(L10NValues.GUI_OUTPUT,
+        gui.getFontRenderer().drawString(matrixStack, L10NHelpers.localize(L10NValues.GUI_OUTPUT,
                 operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, 0);
 
-        gui.getFontRenderer().setBidiFlag(wasUnicode);
+        //gui.getFontRenderer().setBidiFlag(wasUnicode);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void postDrawElement(ScreenInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void postDrawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
         GlStateManager.pushMatrix();
         if(mx >= x && my >= y && mx <= x + getWidth() && my <= y + gui.getFontRenderer().FONT_HEIGHT ) {
             List<ITextComponent> lines = Lists.newArrayList();
             operator.loadTooltip(lines, true);
-            gui.drawTooltip(mx, my, lines.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()));
+            // MCP: renderTooltip
+            gui.func_243308_b(matrixStack, lines, mx, my);
         }
         GlStateManager.popMatrix();
 

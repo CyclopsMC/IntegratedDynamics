@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
@@ -27,7 +28,6 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Aspect appendix.
@@ -62,11 +62,11 @@ public class AspectAppendix extends SectionAppendix {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void drawElement(ScreenInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void drawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
         int yOffset = 5;
-        gui.drawOuterBorder(x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
-        gui.drawTextBanner(x + width / 2, y - 2 - yOffset);
-        gui.drawScaledCenteredString(L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
+        gui.drawOuterBorder(matrixStack, x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
+        gui.drawTextBanner(matrixStack, x + width / 2, y - 2 - yOffset);
+        gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
         RenderHelper.enableStandardItemLighting();
         Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(itemStack, x, y);
@@ -74,32 +74,32 @@ public class AspectAppendix extends SectionAppendix {
         // Base information
         String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
         String valueTypeName = L10NHelpers.localize(aspect.getValueType().getTranslationKey());
-        gui.drawScaledCenteredString(L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
+        gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
         String valueString = L10NHelpers.localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
-        boolean wasUnicode = gui.getFontRenderer().getBidiFlag();
-        gui.getFontRenderer().setBidiFlag(true);
-        gui.getFontRenderer().drawString(L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0);
+        //gui.getFontRenderer().setBidiFlag(true);
+        gui.getFontRenderer().drawString(matrixStack, L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0);
 
         // Settings
         if (aspect.hasProperties()) {
             int offsetY = 26;
-            gui.getFontRenderer().drawString(TextFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
+            gui.getFontRenderer().drawString(matrixStack, TextFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
             for (IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                 offsetY += 10;
-                gui.getFontRenderer().drawString(TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
+                gui.getFontRenderer().drawString(matrixStack, TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
             }
         }
-        gui.getFontRenderer().setBidiFlag(wasUnicode);
+        //gui.getFontRenderer().setBidiFlag(wasUnicode);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void postDrawElement(ScreenInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void postDrawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
         GlStateManager.pushMatrix();
         if(mx >= x && my >= y && mx <= x + SLOT_SIZE && my <= y + SLOT_SIZE ) {
             List<ITextComponent> lines = Lists.newArrayList();
             aspect.loadTooltip(lines, true);
-            gui.drawTooltip(mx, my, lines.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()));
+            // MCP: renderTooltip
+            gui.func_243308_b(matrixStack, lines, mx, my);
         }
         GlStateManager.popMatrix();
 

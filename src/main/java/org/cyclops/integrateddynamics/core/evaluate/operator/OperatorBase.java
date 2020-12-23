@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -79,7 +80,7 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public ITextComponent getLocalizedNameFull() {
+    public IFormattableTextComponent getLocalizedNameFull() {
         return new TranslationTextComponent(getUnlocalizedCategoryPrefix() + ".basename", new TranslationTextComponent(getTranslationKey()));
     }
 
@@ -111,8 +112,8 @@ public abstract class OperatorBase implements IOperator {
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
             lines.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME, i + 1)
-            .applyTextStyle(inputTypes[i].getDisplayColorFormat())
-            .appendSibling(new TranslationTextComponent(inputTypes[i].getTranslationKey())));
+            .mergeStyle(inputTypes[i].getDisplayColorFormat())
+            .append(new TranslationTextComponent(inputTypes[i].getTranslationKey())));
         }
         lines.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
@@ -160,7 +161,7 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public ITextComponent validateTypes(IValueType[] input) {
+    public IFormattableTextComponent validateTypes(IValueType[] input) {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {

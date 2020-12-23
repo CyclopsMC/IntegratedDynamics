@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -67,8 +68,8 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
             return new FacadeModel(emptyModel, itemStack, world, entity);
         }
         IBakedModel bakedModel = RenderHelpers.getBakedModel(blockState);
-        bakedModel = bakedModel.getOverrides().getModelWithOverrides(bakedModel,
-                RegistryEntries.ITEM_FACADE.getFacadeBlockItem(itemStack), world, entity);
+        bakedModel = bakedModel.getOverrides().getOverrideModel(bakedModel,
+                RegistryEntries.ITEM_FACADE.getFacadeBlockItem(itemStack), (ClientWorld) world, entity);
         return new FacadeModel(bakedModel, itemStack, world, entity);
     }
 
@@ -78,7 +79,7 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
     }
 
     @Override
-    public boolean func_230044_c_() {
+    public boolean isSideLit() {
         return false; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
     }
 

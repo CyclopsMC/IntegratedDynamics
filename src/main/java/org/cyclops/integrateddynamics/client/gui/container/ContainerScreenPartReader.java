@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -32,16 +33,16 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    protected void drawAdditionalElementInfoForeground(ContainerPartReader<P, S> container, int index, IAspectRead aspect, int mouseX, int mouseY) {
+    protected void drawAdditionalElementInfoForeground(MatrixStack matrixStack, ContainerPartReader<P, S> container, int index, IAspectRead aspect, int mouseX, int mouseY) {
 
     }
 
     @Override
-    protected void drawAdditionalElementInfo(ContainerPartReader<P, S> container, int index, IAspectRead aspect) {
+    protected void drawAdditionalElementInfo(MatrixStack matrixStack, ContainerPartReader<P, S> container, int index, IAspectRead aspect) {
         // Get current aspect value
         Pair<ITextComponent, Integer> readValues = container.getReadValue(aspect);
         if(readValues != null && readValues.getLeft() != null) {
-            RenderHelpers.drawScaledCenteredString(font, readValues.getLeft().getFormattedText(), this.guiLeft + offsetX + 16,
+            RenderHelpers.drawScaledCenteredString(matrixStack, font, readValues.getLeft().getString(), this.guiLeft + offsetX + 16,
                     this.guiTop + offsetY + 39 + container.getAspectBoxHeight() * index,
                     70, readValues.getRight());
         }

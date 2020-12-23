@@ -81,7 +81,7 @@ public class IgnoredBlockStatus extends IgnoredBlock {
         ERROR;
 
         @Override
-        public String getName() {
+        public String getString() {
             return this.name().toLowerCase(Locale.ENGLISH);
         }
     }

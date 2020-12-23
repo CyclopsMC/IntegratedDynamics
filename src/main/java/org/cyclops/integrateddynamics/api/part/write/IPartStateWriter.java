@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.part.write;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -69,14 +69,14 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      * @param aspect The aspect to get the error from.
      * @return The current error, can be empty.
      */
-    public List<ITextComponent> getErrors(IAspectWrite aspect);
+    public List<IFormattableTextComponent> getErrors(IAspectWrite aspect);
 
     /**
      * Set the current error for the given aspect.
      * @param aspect The aspect to set the error for.
      * @param error The error to set, or null to clear.
      */
-    public void addError(IAspectWrite aspect, ITextComponent error);
+    public void addError(IAspectWrite aspect, IFormattableTextComponent error);
 
     /**
      * @return If this part has been deactivated.

@@ -1,13 +1,14 @@
 modLoader="javafml"
-loaderVersion="[31.2,)"
+loaderVersion="[34,)"
 issueTrackerURL="https://github.com/CyclopsMC/IntegratedDynamics/issues"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/integrated-dynamics"
+license="MIT"
+logoFile="logo.png"
+authors="rubensworks (aka kroeser)"
 [[mods]]
 modId="integrateddynamics"
 version="${file.jarVersion}"
 displayName="IntegratedDynamics"
-displayURL="https://www.curseforge.com/minecraft/mc-mods/integrated-dynamics"
-logoFile="logo.png"
-authors="rubensworks (aka kroeser)"
 description='''
 Take full and automated control of your appliances.
 '''
@@ -20,18 +21,18 @@ Take full and automated control of your appliances.
 [[dependencies.integrateddynamics]]
     modId="commoncapabilities"
     mandatory=true
-    versionRange="[2.5.3,)"
+    versionRange="[2.5.4,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
     modId="forge"
     mandatory=true
-    versionRange="[31.2,)"
+    versionRange="[34,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.2,]"
     ordering="NONE"
     side="BOTH"

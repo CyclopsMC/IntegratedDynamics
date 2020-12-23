@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -54,7 +56,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         super.init();
 
         numberFieldUpdateInterval = new WidgetNumberField(font, guiLeft + 98, guiTop + 102, 73, 14, true,
-                L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), true);
+                new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), true);
         numberFieldUpdateInterval.setPositiveOnly(true);
         numberFieldUpdateInterval.setMaxStringLength(64);
         numberFieldUpdateInterval.setMaxStringLength(15);
@@ -63,7 +65,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.setCanLoseFocus(true);
 
         numberFieldCapacity = new WidgetNumberField(font, guiLeft + 98, guiTop + 126, 73, 14, true,
-                L10NHelpers.localize("gui.integrateddynamics.delay.capacity"), true);
+                new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), true);
         numberFieldCapacity.setMinValue(1);
         numberFieldCapacity.setMaxValue(BlockDelayConfig.maxHistoryCapacity);
         numberFieldCapacity.setMaxStringLength(64);
@@ -112,12 +114,13 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        numberFieldUpdateInterval.renderButton(mouseX - guiLeft, mouseY - guiTop, partialTicks);
-        numberFieldCapacity.renderButton(mouseX - guiLeft, mouseY - guiTop, partialTicks);
-        font.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 104, Helpers.RGBToInt(0, 0, 0));
-        font.drawString(L10NHelpers.localize("gui.integrateddynamics.delay.capacity"), guiLeft + 8, guiTop + 128, Helpers.RGBToInt(0, 0, 0));
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+        numberFieldUpdateInterval.renderButton(matrixStack, mouseX - guiLeft, mouseY - guiTop, partialTicks);
+        numberFieldCapacity.renderButton(matrixStack, mouseX - guiLeft, mouseY - guiTop, partialTicks);
+        // MCP: drawString
+        font.func_243246_a(matrixStack, new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 104, Helpers.RGBToInt(0, 0, 0));
+        font.func_243246_a(matrixStack, new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), guiLeft + 8, guiTop + 128, Helpers.RGBToInt(0, 0, 0));
     }
 
     @Override

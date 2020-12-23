@@ -7,6 +7,7 @@ import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -38,13 +39,13 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         super("itemstack", ValueObjectTypeItemStack.ValueItemStack.class);
     }
 
-    public static ITextComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
+    public static IFormattableTextComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
         return !itemStack.isEmpty()
-                ? (itemStack.getDisplayName().appendText((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
+                ? (((IFormattableTextComponent) itemStack.getDisplayName()).appendString((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
                 : new StringTextComponent("");
     }
 
-    public static ITextComponent getItemStackDisplayNameSafe(ItemStack itemStack) {
+    public static IFormattableTextComponent getItemStackDisplayNameSafe(ItemStack itemStack) {
         // Certain mods may call client-side only methods,
         // so call a server-side-safe fallback method if that fails.
         try {
@@ -60,7 +61,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     @Override
-    public ITextComponent toCompactString(ValueItemStack value) {
+    public IFormattableTextComponent toCompactString(ValueItemStack value) {
         return ValueObjectTypeItemStack.getItemStackDisplayNameSafe(value.getRawValue());
     }
 

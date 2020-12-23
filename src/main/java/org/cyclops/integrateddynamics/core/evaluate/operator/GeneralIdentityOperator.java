@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -26,7 +26,7 @@ public class GeneralIdentityOperator extends GeneralOperator {
     }
 
     @Override
-    public ITextComponent validateTypes(IValueType[] input) {
+    public IFormattableTextComponent validateTypes(IValueType[] input) {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {

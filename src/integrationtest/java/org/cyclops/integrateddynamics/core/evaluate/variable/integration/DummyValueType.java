@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 import net.minecraft.nbt.EndNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -59,7 +60,7 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public ITextComponent toCompactString(DummyValue value) {
+    public IFormattableTextComponent toCompactString(DummyValue value) {
         return new StringTextComponent("dummy");
     }
 

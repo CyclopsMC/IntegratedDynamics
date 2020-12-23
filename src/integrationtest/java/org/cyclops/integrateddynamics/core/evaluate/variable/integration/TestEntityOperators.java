@@ -17,9 +17,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.apache.http.util.Asserts;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -77,15 +75,15 @@ public class TestEntityOperators {
 
     @IntegrationBefore
     public void before() {
-        World world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD);
+        World world = ServerLifecycleHooks.getCurrentServer().getWorld(World.OVERWORLD);
         eZombie = new DummyVariableEntity(makeEntity(new ZombieEntity(world)));
         ZombieEntity zombieBurning = new ZombieEntity(world);
         zombieBurning.setFire(10);
         eZombieBurning = new DummyVariableEntity(makeEntity(zombieBurning));
         ZombieEntity zombieWet = new ZombieEntity(world) {
             @Override
-            protected void registerAttributes() {
-                super.registerAttributes();
+            protected void registerData() {
+                super.registerData();
                 this.inWater = true;
             }
         };

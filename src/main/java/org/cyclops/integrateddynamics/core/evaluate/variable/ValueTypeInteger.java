@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import lombok.ToString;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.IntNBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -30,7 +30,7 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
-    public ITextComponent toCompactString(ValueInteger value) {
+    public IFormattableTextComponent toCompactString(ValueInteger value) {
         return new StringTextComponent(Integer.toString(value.getRawValue()));
     }
 

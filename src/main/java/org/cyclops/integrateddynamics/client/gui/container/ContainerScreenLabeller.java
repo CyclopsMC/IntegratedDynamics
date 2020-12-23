@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
@@ -40,8 +42,8 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     public void init() {
         super.init();
         addButton(new ButtonText(this.guiLeft + 133,  this.guiTop + 8,
-                L10NHelpers.localize("item.integrateddynamics.labeller.button.write"),
-                L10NHelpers.localize("item.integrateddynamics.labeller.button.write"), button -> {
+                new TranslationTextComponent("item.integrateddynamics.labeller.button.write"),
+                new TranslationTextComponent("item.integrateddynamics.labeller.button.write"), button -> {
             ItemStack itemStack = getContainer().getItemStack();
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             IVariableFacade variableFacade = registry.handle(itemStack);
@@ -60,11 +62,11 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
         int searchWidth = 87;
         int searchX = 36;
         int searchY = 11;
-        this.searchField = new WidgetTextFieldExtended(font, this.guiLeft + searchX, this.guiTop + searchY, searchWidth, font.FONT_HEIGHT, L10NHelpers.localize("gui.cyclopscore.search"));
+        this.searchField = new WidgetTextFieldExtended(font, this.guiLeft + searchX, this.guiTop + searchY, searchWidth, font.FONT_HEIGHT, new TranslationTextComponent("gui.cyclopscore.search"));
         this.searchField.setMaxStringLength(64);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
-        this.searchField.focused = true;
+        this.searchField.changeFocus(true);
         this.searchField.setTextColor(16777215);
         this.searchField.setCanLoseFocus(false);
         this.searchField.setText("");
@@ -100,14 +102,14 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
 
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        this.searchField.renderButton(mouseX, mouseY, partialTicks);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+        this.searchField.renderButton(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     public void setText(String text) {

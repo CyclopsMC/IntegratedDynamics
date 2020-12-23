@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.advancement.criterion;
 
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+import net.minecraft.advancements.criterion.AbstractCriterionTrigger;
 import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.loot.ConditionArrayParser;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.cyclops.cyclopscore.advancement.criterion.BaseCriterionTrigger;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.JsonDeserializers;
@@ -21,21 +22,31 @@ import javax.annotation.Nullable;
  * Triggers when a part reader aspect is set.
  * @author rubensworks
  */
-public class PartReaderAspectTrigger extends BaseCriterionTrigger<PartReaderAspectEvent, PartReaderAspectTrigger.Instance> {
+public class PartReaderAspectTrigger extends AbstractCriterionTrigger<PartReaderAspectTrigger.Instance> {
+    private final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "part_reader_aspect");
+
     public PartReaderAspectTrigger() {
-        super(new ResourceLocation(Reference.MOD_ID, "part_reader_aspect"));
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
-    public Instance deserializeInstance(JsonObject jsonObject, JsonDeserializationContext context) {
-        return new Instance(getId(), JsonDeserializers.deserializePartType(jsonObject), JsonDeserializers.deserializeAspect(jsonObject));
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
+    public Instance deserializeTrigger(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
+        return new Instance(getId(), entityPredicate, JsonDeserializers.deserializePartType(json), JsonDeserializers.deserializeAspect(json));
+    }
+
+    public void test(ServerPlayerEntity player, PartReaderAspectEvent event) {
+        this.triggerListeners(player, (instance) -> instance.test(player, event));
     }
 
     @SubscribeEvent
     public void onEvent(PartReaderAspectEvent event) {
         if (event.getEntityPlayer() != null && event.getEntityPlayer() instanceof ServerPlayerEntity) {
-            this.trigger((ServerPlayerEntity) event.getEntityPlayer(), event);
+            this.test((ServerPlayerEntity) event.getEntityPlayer(), event);
         }
     }
 
@@ -43,8 +54,8 @@ public class PartReaderAspectTrigger extends BaseCriterionTrigger<PartReaderAspe
         private final IPartType partType;
         private final IAspect aspect;
 
-        public Instance(ResourceLocation criterionIn, @Nullable IPartType partType, @Nullable IAspect aspect) {
-            super(criterionIn);
+        public Instance(ResourceLocation criterionIn, EntityPredicate.AndPredicate player, @Nullable IPartType partType, @Nullable IAspect aspect) {
+            super(criterionIn, player);
             this.partType = partType;
             this.aspect = aspect;
         }

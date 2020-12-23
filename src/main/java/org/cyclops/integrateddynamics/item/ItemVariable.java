@@ -49,7 +49,7 @@ public class ItemVariable extends Item {
         String label;
         if(variableFacade.isValid() && (label = variableFacade.getLabel()) != null) {
             return new StringTextComponent(label)
-                    .applyTextStyle(TextFormatting.ITALIC);
+                    .mergeStyle(TextFormatting.ITALIC);
         }
         return super.getDisplayName(itemStack);
     }

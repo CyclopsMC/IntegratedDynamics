@@ -1,15 +1,41 @@
 package org.cyclops.integrateddynamics.world.biome;
 
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeAmbience;
+import net.minecraft.world.biome.BiomeGenerationSettings;
+import net.minecraft.world.biome.BiomeMaker;
+import net.minecraft.world.biome.DefaultBiomeFeatures;
+import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraft.world.biome.MoodSoundAmbience;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.blockplacer.SimpleBlockPlacer;
+import net.minecraft.world.gen.blockstateprovider.WeightedBlockStateProvider;
+import net.minecraft.world.gen.feature.BlockClusterFeatureConfig;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.Features;
+import net.minecraft.world.gen.feature.structure.StructureFeatures;
+import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
+import net.minecraft.world.gen.placement.Placement;
+import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.fml.config.ModConfig;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.ConfigurablePropertyData;
 import org.cyclops.cyclopscore.config.extendedconfig.BiomeConfig;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.world.gen.TreeMenril;
 
 /**
- * Config for {@link BiomeMeneglin}.
+ * Config for the meneglin biome.
  * @author rubensworks
  *
  */
@@ -21,20 +47,74 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     @ConfigurableProperty(category = "biome", comment = "If this biome should automatically generate in the overworld dimension.")
     public static boolean generateInOverworld = true;
 
+    @ConfigurableProperty(category = "worldgeneration", comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0, requiresMcRestart = true, configLocation = ModConfig.Type.SERVER)
+    public static int wildMenrilTreeChance = 100;
+
     public BiomeMeneglinConfig() {
         super(
                 IntegratedDynamics._instance,
                 "meneglin",
-                eConfig -> new BiomeMeneglin()
+                eConfig -> {
+                    // A lot of stuff is copied from forest biome: makeGenericForestBiome
+                    BiomeGenerationSettings.Builder generationBuilder = (new BiomeGenerationSettings.Builder()).withSurfaceBuilder(ConfiguredSurfaceBuilders.field_244178_j);
+                    DefaultBiomeFeatures.withStrongholdAndMineshaft(generationBuilder);
+                    generationBuilder.withStructure(StructureFeatures.RUINED_PORTAL);
+                    DefaultBiomeFeatures.withCavesAndCanyons(generationBuilder);
+                    DefaultBiomeFeatures.withLavaAndWaterLakes(generationBuilder);
+                    DefaultBiomeFeatures.withMonsterRoom(generationBuilder);
+                    // DefaultBiomeFeatures.withAllForestFlowerGeneration(biomegenerationsettings$builder);
+
+                    DefaultBiomeFeatures.withCommonOverworldBlocks(generationBuilder);
+                    DefaultBiomeFeatures.withOverworldOres(generationBuilder);
+                    DefaultBiomeFeatures.withDisks(generationBuilder);
+                    DefaultBiomeFeatures.withForestBirchTrees(generationBuilder);
+                    // DefaultBiomeFeatures.withDefaultFlowers(generationBuilder);
+                    generationBuilder.withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Feature.FLOWER
+                            .withConfiguration((new BlockClusterFeatureConfig.Builder((new WeightedBlockStateProvider())
+                                    .addWeightedBlockstate(Blocks.BLUE_ORCHID.getDefaultState(), 70)
+                                    .addWeightedBlockstate(Blocks.OXEYE_DAISY.getDefaultState(), 70)
+                                    .addWeightedBlockstate(Blocks.WHITE_TULIP.getDefaultState(), 70)
+                                    .addWeightedBlockstate(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), 70), SimpleBlockPlacer.PLACER))
+                                    .tries(64).build())
+                            .withPlacement(Features.Placements.VEGETATION_PLACEMENT)
+                            .withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT)
+                            .func_242731_b(2));
+                    DefaultBiomeFeatures.withForestGrass(generationBuilder);
+
+                    // DefaultBiomeFeatures.withNormalMushroomGeneration(generationBuilder);
+                    DefaultBiomeFeatures.withSugarCaneAndPumpkins(generationBuilder);
+                    DefaultBiomeFeatures.withLavaAndWaterSprings(generationBuilder);
+                    DefaultBiomeFeatures.withFrozenTopLayer(generationBuilder);
+                    return (new Biome.Builder())
+                            .precipitation(Biome.RainType.RAIN)
+                            .category(Biome.Category.FOREST)
+                            .depth(0.4F)
+                            .scale(0.4F)
+                            .temperature(0.7F)
+                            .downfall(0.25F)
+                            .setEffects((new BiomeAmbience.Builder())
+                                    .setWaterColor(4445678)
+                                    .setWaterFogColor(Helpers.RGBToInt(85, 168, 221))
+                                    .setFogColor(12638463)
+                                    .withGrassColor(Helpers.RGBToInt(85, 221, 168))
+                                    .withFoliageColor(Helpers.RGBToInt(128, 208, 185))
+                                    .withSkyColor(Helpers.RGBToInt(178, 238, 233))
+                                    .setMoodSound(MoodSoundAmbience.DEFAULT_CAVE)
+                                    .build())
+                            .withMobSpawnSettings(BiomeMaker.getStandardMobSpawnBuilder()
+                                    .withSpawner(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(EntityType.RABBIT, 4, 2, 3))
+                                    .copy())
+                            .withGenerationSettings(generationBuilder.build())
+                            .build();
+                }
         );
+        MinecraftForge.EVENT_BUS.addListener(this::onBiomeLoadingEvent);
     }
     
     @Override
     public void onForgeRegistered() {
         super.onForgeRegistered();
-        Biome biome = this.getInstance();
-        BiomeManager.addSpawnBiome(biome);
-        BiomeDictionary.addTypes(biome,
+        BiomeDictionary.addTypes(getRegistryKey(),
                 BiomeDictionary.Type.COLD,
                 BiomeDictionary.Type.MAGICAL
         );
@@ -43,13 +123,27 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     @Override
     public void onConfigPropertyReload(ConfigurablePropertyData<?> configProperty, boolean reload) {
         if (!reload) {
-            Biome biome = this.getInstance();
             if (configProperty.getName().equals("meneglin.spawnWeight") && spawnWeight > 0) {
-                BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(biome, spawnWeight));
+                BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(getRegistryKey(), spawnWeight));
             }
             if (configProperty.getName().equals("meneglin.generateInOverworld") && generateInOverworld) {
-                BiomeDictionary.addTypes(biome, BiomeDictionary.Type.OVERWORLD);
+                BiomeDictionary.addTypes(getRegistryKey(), BiomeDictionary.Type.OVERWORLD);
             }
+        }
+    }
+
+    public void onBiomeLoadingEvent(BiomeLoadingEvent event) {
+        if (event.getName().equals(new ResourceLocation("integrateddynamics:meneglin"))) {
+            event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)
+                    .add(() -> Feature.TREE
+                            .withConfiguration(TreeMenril.getMenrilTreeConfig())
+                            .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(1, 0.05F, 1))));
+        } else if (BiomeDictionary.getTypes(RegistryKey.getOrCreateKey(RegistryKey.getOrCreateRootKey(getRegistry().getRegistryName()), event.getName()))
+                .contains(BiomeDictionary.Type.OVERWORLD)) {
+            event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)
+                    .add(() -> Feature.TREE
+                            .withConfiguration(TreeMenril.getMenrilTreeConfig())
+                            .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(0, 1F / wildMenrilTreeChance, 1))));
         }
     }
     

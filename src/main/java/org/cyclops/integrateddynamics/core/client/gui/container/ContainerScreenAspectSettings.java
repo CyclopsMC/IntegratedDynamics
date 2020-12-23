@@ -1,11 +1,13 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
@@ -91,17 +93,17 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     public void init() {
         super.init();
         subGuiHolder.init(this.guiLeft, this.guiTop);
-        addButton(buttonExit = new ButtonText(guiLeft + 7, guiTop + 5, 12, 10, L10NHelpers.localize("gui.cyclopscore.up"), "<<", createServerPressable(ContainerAspectSettings.BUTTON_EXIT, (button) -> {
+        addButton(buttonExit = new ButtonText(guiLeft + 7, guiTop + 5, 12, 10, new TranslationTextComponent("gui.cyclopscore.up"), new StringTextComponent("<<"), createServerPressable(ContainerAspectSettings.BUTTON_EXIT, (button) -> {
             saveSetting();
         }), true));
-        addButton(buttonLeft = new ButtonText(guiLeft + 21, guiTop + 5, 10, 10, L10NHelpers.localize("gui.cyclopscore.left"), "<", (button) -> {
+        addButton(buttonLeft = new ButtonText(guiLeft + 21, guiTop + 5, 10, 10, new TranslationTextComponent("gui.cyclopscore.left"), new StringTextComponent("<"), (button) -> {
             saveSetting();
             if(getActivePropertyIndex() > 0) {
                 setActiveProperty(getActivePropertyIndex() - 1);
                 refreshButtonEnabled();
             }
         }, true));
-        addButton(buttonRight = new ButtonText(guiLeft + 159, guiTop + 5, 10, 10, L10NHelpers.localize("gui.cyclopscore.right"), ">", (button) -> {
+        addButton(buttonRight = new ButtonText(guiLeft + 159, guiTop + 5, 10, 10, new TranslationTextComponent("gui.cyclopscore.right"), new StringTextComponent(">"), (button) -> {
             saveSetting();
             if(getActivePropertyIndex() < propertyTypes.size()) {
                 setActiveProperty(getActivePropertyIndex() + 1);
@@ -114,26 +116,26 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerBackgroundLayer(this.guiLeft, this.guiTop, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, getMinecraft().getTextureManager(), font, mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().getTextureManager(), font, mouseX, mouseY);
 
         IAspectPropertyTypeInstance activeProperty = getActiveProperty();
         if(activeProperty != null) {
             String label = L10NHelpers.localize(activeProperty.getTranslationKey());
-            RenderHelpers.drawScaledCenteredString(font, label, 88, 10, 0,
+            RenderHelpers.drawScaledCenteredString(matrixStack, font, label, 88, 10, 0,
                     1.0F, 140, Helpers.RGBToInt(10, 10, 10));
             if (RenderHelpers.isPointInRegion(this.guiLeft + 40, this.guiTop, 110, 20, mouseX, mouseY)) {
                 String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
                 if (I18n.hasKey(unlocalizedInfo)) {
                     drawTooltip(Lists.newArrayList(new TranslationTextComponent(unlocalizedInfo)
-                            .applyTextStyle(TextFormatting.GRAY)), mouseX - this.guiLeft, mouseY - this.guiTop + 20);
+                            .mergeStyle(TextFormatting.GRAY)), mouseX - this.guiLeft, mouseY - this.guiTop + 20);
                 }
             }
         }

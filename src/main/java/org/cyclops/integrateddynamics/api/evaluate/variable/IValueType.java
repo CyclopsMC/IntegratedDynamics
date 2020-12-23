@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.api.evaluate.variable;
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -62,7 +63,7 @@ public interface IValueType<V extends IValue> {
      * @param value The value
      * @return A short string representation used in guis to show the value.
      */
-    public ITextComponent toCompactString(V value);
+    public IFormattableTextComponent toCompactString(V value);
 
     /**
      * @return The color that is used to identify this value type.

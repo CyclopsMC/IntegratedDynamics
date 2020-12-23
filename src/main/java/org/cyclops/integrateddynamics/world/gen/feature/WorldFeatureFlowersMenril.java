@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.world.gen.feature;
 
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Codec;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -9,23 +9,24 @@ import net.minecraft.world.gen.feature.FlowersFeature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 
 import java.util.Random;
-import java.util.function.Function;
 
 /**
  * @author rubensworks
  */
 public class WorldFeatureFlowersMenril extends FlowersFeature<NoFeatureConfig> {
 
-    public WorldFeatureFlowersMenril(Function<Dynamic<?>, ? extends NoFeatureConfig> config) {
+    public WorldFeatureFlowersMenril(Codec<NoFeatureConfig> config) {
         super(config);
     }
 
-    public boolean func_225559_a_(IWorld world, BlockPos blockPos, NoFeatureConfig config) {
-        return true; // Set block
+    @Override
+    public boolean isValidPosition(IWorld world, BlockPos pos, NoFeatureConfig config) {
+        return true;
     }
 
-    public int func_225560_a_(NoFeatureConfig config) {
-        return 1; // Attempts
+    @Override
+    public int getFlowerCount(NoFeatureConfig config) {
+        return 1;
     }
 
     public BlockPos getNearbyPos(Random random, BlockPos blockPos, NoFeatureConfig config) {

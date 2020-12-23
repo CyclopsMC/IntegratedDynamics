@@ -28,7 +28,7 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
         float maxWidth = 0;
 
-        String[] lines = value.getType().toCompactString(value).getFormattedText().split("(?<=[^\\\\])\\\\n");
+        String[] lines = value.getType().toCompactString(value).getString().split("(?<=[^\\\\])\\\\n");
         for (String line : lines) {
             float width = fontRenderer.getStringWidth(polishLine(line)) - 1;
             maxWidth = Math.max(maxWidth, width);

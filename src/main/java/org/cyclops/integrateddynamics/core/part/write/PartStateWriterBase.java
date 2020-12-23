@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.part.write;
 import com.google.common.collect.Maps;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -28,7 +28,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         extends PartStateActiveVariableBase<P> implements IPartStateWriter<P> {
 
     private IAspectWrite activeAspect = null;
-    private Map<String, List<ITextComponent>> errorMessages = Maps.newHashMap();
+    private Map<String, List<IFormattableTextComponent>> errorMessages = Maps.newHashMap();
     private boolean firstTick = true;
 
     public PartStateWriterBase(int inventorySize) {
@@ -48,7 +48,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         if (aspect instanceof IAspectWrite) {
             this.activeAspect = (IAspectWrite) aspect;
         }
-        this.errorMessages = (Map<String, List<ITextComponent>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag);
+        this.errorMessages = (Map<String, List<IFormattableTextComponent>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag);
         super.readFromNBT(tag);
     }
 
@@ -101,8 +101,8 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public List<ITextComponent> getErrors(IAspectWrite aspect) {
-        List<ITextComponent> errors = errorMessages.get(aspect.getUniqueName().toString());
+    public List<IFormattableTextComponent> getErrors(IAspectWrite aspect) {
+        List<IFormattableTextComponent> errors = errorMessages.get(aspect.getUniqueName().toString());
         if(errors == null) {
             return Collections.emptyList();
         }
@@ -110,7 +110,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public void addError(IAspectWrite aspect, ITextComponent error) {
+    public void addError(IAspectWrite aspect, IFormattableTextComponent error) {
         if(error == null) {
             errorMessages.remove(aspect.getUniqueName().toString());
         } else {
@@ -145,7 +145,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         }
 
         @Override
-        public void addError(ITextComponent error) {
+        public void addError(IFormattableTextComponent error) {
             this.state.addError(aspect, error);
         }
 

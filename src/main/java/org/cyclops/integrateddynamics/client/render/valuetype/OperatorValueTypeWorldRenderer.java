@@ -44,7 +44,7 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         lines.add(new StringTextComponent(ValueTypes.OPERATOR.getName(valueOperator) + " ::"));
         lines.addAll(ValueTypeOperator.getSignatureLines(operator, true));
         for (ITextComponent line : lines) {
-            float width = fontRenderer.getStringWidth(line.getFormattedText()) - 1;
+            float width = fontRenderer.getStringWidth(line.getString()) - 1;
             maxWidth = Math.max(maxWidth, width);
         }
 
@@ -64,7 +64,7 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         int offset = 0;
         for(ITextComponent line : lines) {
             int color = Helpers.addAlphaToColor(ValueTypes.OPERATOR.getDisplayColor(), alpha);
-            rendererDispatcher.getFontRenderer().renderString(line.getFormattedText(), 0, offset, color,
+            rendererDispatcher.getFontRenderer().renderString(line.getString(), 0, offset, color,
                     false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
             offset += singleHeight;
         }

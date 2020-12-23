@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -42,36 +43,36 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
         super.init();
 
         addButton(buttonToggleFluidEject = new ButtonImage(getGuiLeftTotal() + 149, getGuiTopTotal() + 71,
-                L10NHelpers.localize("gui.integrateddynamics.mechanical_squeezer.fluidautoeject"),
+                new TranslationTextComponent("gui.integrateddynamics.mechanical_squeezer.fluidautoeject"),
                 createServerPressable(ContainerMechanicalSqueezer.BUTTON_TOGGLE_FLUID_EJECT, (button) -> {}),imageArrowDownDisabled));
     }
 
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
 
         // Update the image in the fluid eject toggle button
         buttonToggleFluidEject.setImage(getContainer().isAutoEjectFluids()
                 ? imageArrowDownEnabled : imageArrowDownDisabled);
 
         // Render progress
-        GuiHelpers.renderProgressBar(this, getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
+        GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
                 176, 120, GuiHelpers.ProgressDirection.DOWN,
                 getContainer().getProgress(), getContainer().getMaxProgress());
 
         // Render energy level
-        GuiHelpers.renderProgressBar(this, getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
+        GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
                 176, 60, GuiHelpers.ProgressDirection.UP,
                 getContainer().getEnergy(), getContainer().getMaxEnergy());
 
         // Render fluid tank
-        GuiHelpers.renderOverlayedFluidTank(this, getContainer().getFluidStack(),
+        GuiHelpers.renderOverlayedFluidTank(this, matrixStack, getContainer().getFluidStack(),
                 getContainer().getFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 10,
                 18, 60, texture, 176, 0);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 
         drawEnergyBarTooltip(8, 16, 18, 60, mouseX, mouseY);
         drawFluidTankTooltip(getContainer().getFluidStack(), getContainer().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);

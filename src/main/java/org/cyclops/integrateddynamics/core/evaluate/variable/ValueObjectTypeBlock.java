@@ -7,6 +7,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -31,7 +32,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         super("block", ValueObjectTypeBlock.ValueBlock.class);
     }
 
-    public static ITextComponent getBlockkDisplayNameSafe(BlockState blockState) {
+    public static IFormattableTextComponent getBlockkDisplayNameSafe(BlockState blockState) {
         return new TranslationTextComponent(blockState.getBlock().getTranslationKey());
     }
 
@@ -41,7 +42,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     }
 
     @Override
-    public ITextComponent toCompactString(ValueBlock value) {
+    public IFormattableTextComponent toCompactString(ValueBlock value) {
         if (value.getRawValue().isPresent()) {
             BlockState blockState = value.getRawValue().get();
             ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockState);
@@ -64,7 +65,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         if (value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty())) {
             return ValueBlock.of(Blocks.AIR.getDefaultState());
         }
-        return ValueBlock.of(BlockHelpers.deserializeBlockState(value));
+        return ValueBlock.of(BlockHelpers.deserializeBlockState((CompoundNBT) value));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,7 +25,8 @@ public class BlockCableConfig extends BlockConfig {
                 "cable",
                 eConfig -> new BlockCable(Block.Properties.create(BlockCable.BLOCK_MATERIAL)
                         .hardnessAndResistance(BlockCable.BLOCK_HARDNESS)
-                        .sound(SoundType.METAL)),
+                        .sound(SoundType.METAL)
+                        .setOpaque((blockState, world, pos) -> false)),
                 (eConfig, block) -> new ItemBlockCable(block, new Item.Properties()
                         .group(IntegratedDynamics._instance.getDefaultItemGroup()))
                 );

@@ -13,6 +13,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
+import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
@@ -133,7 +134,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         if (MinecraftHelpers.isClientSide()) {
             FMLJavaModLoadingContext.get().getModEventBus().register(IntegratedDynamicsSoundEvents.class);
         }
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, IngredientComponentHandlers::onIngredientComponentsPopulated);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(IngredientComponent.class, EventPriority.LOWEST, IngredientComponentHandlers::onIngredientComponentsPopulated);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegistriesCreate);
     }
 

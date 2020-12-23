@@ -8,8 +8,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
@@ -75,7 +75,7 @@ public final class Helpers {
      * @return A Stream containing ItemStacks registered for this ore
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
-        Tag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(name));
+        ITag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(name));
         if (tag == null) {
             return Stream.empty();
         }
@@ -160,10 +160,10 @@ public final class Helpers {
      */
     public static ITextComponent getLocalizedEnergyLevel(int stored, int capacity) {
         return new StringTextComponent(String.format("%,d", stored))
-                .appendText(" / ")
-                .appendText(String.format("%,d", capacity))
-                .appendText(" ")
-                .appendSibling(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
+                .appendString(" / ")
+                .appendString(String.format("%,d", capacity))
+                .appendString(" ")
+                .append(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
     }
 
     public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {

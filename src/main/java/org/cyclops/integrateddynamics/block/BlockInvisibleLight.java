@@ -67,10 +67,4 @@ public class BlockInvisibleLight extends Block {
     public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
         return world.getBlockState(pos).get(LIGHT);
     }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public int getLightValue(BlockState blockState) {
-        return 15; // Required for light update when this block is removed
-    }
 }

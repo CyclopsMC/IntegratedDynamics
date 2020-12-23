@@ -54,11 +54,6 @@ public class BlockMechanicalDryingBasin extends BlockMechanicalMachine {
     }
 
     @Override
-    public boolean isNormalCube(BlockState blockState, IBlockReader world, BlockPos blockPos) {
-        return false;
-    }
-
-    @Override
     public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (!world.isRemote()) {
             TileHelpers.getSafeTile(world, blockPos, TileMechanicalDryingBasin.class)

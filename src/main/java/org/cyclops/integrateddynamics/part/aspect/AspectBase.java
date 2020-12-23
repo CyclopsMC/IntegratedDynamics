@@ -70,7 +70,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         ITextComponent valueTypeName = new TranslationTextComponent(getValueType().getTranslationKey());
         lines.add(new TranslationTextComponent(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
         lines.add(new TranslationTextComponent(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
-                .applyTextStyle(getValueType().getDisplayColorFormat()));
+                .mergeStyle(getValueType().getDisplayColorFormat()));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }

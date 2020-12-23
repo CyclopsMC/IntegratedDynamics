@@ -18,7 +18,7 @@ public interface IRenderPatternValueTypeTooltip {
     public default List<ITextComponent> getValueTypeTooltip(IValueType<?> valueType) {
         List<ITextComponent> lines = Lists.newLinkedList();
         lines.add(new TranslationTextComponent(valueType.getTranslationKey())
-                .applyTextStyles(valueType.getDisplayColorFormat()));
+                .mergeStyle(valueType.getDisplayColorFormat()));
         return lines;
     }
 

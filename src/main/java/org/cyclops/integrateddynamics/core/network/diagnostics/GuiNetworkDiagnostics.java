@@ -7,9 +7,10 @@ import com.google.common.collect.Sets;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -447,7 +448,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                 yaw = pos.getSide().getOpposite().getHorizontalAngle();
             }
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
-                    pos.getPos().getDimension(),
+                    pos.getPos().getWorldKey(),
                     blockPos.getX(),
                     blockPos.getY() - 1,
                     blockPos.getZ(),
@@ -461,7 +462,7 @@ public class GuiNetworkDiagnostics extends JFrame {
     private static class ObservablePartData {
         private final int networkId;
         private final int networkCables;
-        private final DimensionType dimension;
+        private final RegistryKey<World> dimension;
         private final BlockPos pos;
         private final Direction side;
         private final String name;
@@ -469,7 +470,7 @@ public class GuiNetworkDiagnostics extends JFrame {
 
         public PartPos toPartPos() {
             World world = Minecraft.getInstance().world;
-            if (getDimension() == world.getDimension().getType()) {
+            if (getDimension().getLocation().equals(world.getDimensionKey().getLocation())) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;
@@ -479,7 +480,7 @@ public class GuiNetworkDiagnostics extends JFrame {
     @Data
     private static class ObservableObserverData {
         private final int networkId;
-        private final DimensionType dimension;
+        private final RegistryKey<World> dimension;
         private final BlockPos pos;
         private final Direction side;
         private final String name;
@@ -487,7 +488,7 @@ public class GuiNetworkDiagnostics extends JFrame {
 
         public PartPos toPartPos() {
             World world = Minecraft.getInstance().world;
-            if (getDimension() == world.getDimension().getType()) {
+            if (getDimension().getLocation().equals(world.getDimensionKey().getLocation())) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;

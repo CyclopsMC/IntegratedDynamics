@@ -55,10 +55,10 @@ public class VariableModel implements IUnbakedModel, IModelGeometry<VariableMode
     }
 
     @Override
-    public Collection<Material> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+    public Collection<RenderMaterial> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         base.parent = ModelHelpers.MODEL_GENERATED; // To enable texture resolving
 
-        Set<Material> textures = Sets.newHashSet(base.resolveTextureName("particle"));
+        Set<RenderMaterial> textures = Sets.newHashSet(base.resolveTextureName("particle"));
 
         // Loop over all textures for the default layers and add them to the collection if available.
         if(base.getRootModel() == ModelBakery.MODEL_GENERATED) {
@@ -68,7 +68,7 @@ public class VariableModel implements IUnbakedModel, IModelGeometry<VariableMode
         }
 
         // Loop over all textures in this model and add them to the collection.
-        for(Either<Material, String> texture : base.textures.values()) {
+        for(Either<RenderMaterial, String> texture : base.textures.values()) {
             texture.ifLeft(textures::add);
         }
 
@@ -77,9 +77,9 @@ public class VariableModel implements IUnbakedModel, IModelGeometry<VariableMode
 
     @Nullable
     @Override
-    public IBakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter,
+    public IBakedModel bakeModel(ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter,
                                  IModelTransform transform, ResourceLocation location) {
-        Material textureName = base.resolveTextureName("layer0");
+        RenderMaterial textureName = base.resolveTextureName("layer0");
         BlockModel itemModel = ModelHelpers.MODEL_GENERATOR.makeItemModel(spriteGetter, base);
         SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(itemModel.customData, itemModel.getOverrides(bakery, itemModel, spriteGetter)));
         itemModel.textures.put("layer0", Either.left(textureName));
@@ -99,12 +99,12 @@ public class VariableModel implements IUnbakedModel, IModelGeometry<VariableMode
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
        return bakeModel(bakery, spriteGetter, modelTransform, modelLocation);
     }
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         return getTextures(modelGetter, missingTextureErrors);
     }
 }

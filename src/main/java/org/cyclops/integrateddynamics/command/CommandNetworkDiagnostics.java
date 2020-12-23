@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
@@ -21,11 +22,11 @@ public class CommandNetworkDiagnostics implements Command<CommandSource> {
 
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        Style downloadStyle = new Style();
+        Style downloadStyle = Style.EMPTY;
         downloadStyle.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to visit the relevant GitHub issue")));
         downloadStyle.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/CyclopsMC/IntegratedDynamics/issues/863"));
         ITextComponent message = new StringTextComponent("Network diagnostics are not working (yet) in 1.15. Click here to help (re)making it!").setStyle(downloadStyle);
-        context.getSource().asPlayer().sendMessage(message);
+        context.getSource().asPlayer().sendMessage(message, Util.DUMMY_UUID);
         // TODO: rewrite gui in LWJGL
         //IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new NetworkDiagnosticsOpenClient(), context.getSource().asPlayer());
         return 0;

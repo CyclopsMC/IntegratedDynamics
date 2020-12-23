@@ -2,8 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.LogBlock;
-import net.minecraft.block.material.MaterialColor;
+import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
@@ -14,15 +13,15 @@ import net.minecraft.util.Direction;
  * Menril wood block that is filled.
  * @author rubensworks
  */
-public class BlockMenrilLogFilled extends LogBlock {
+public class BlockMenrilLogFilled extends RotatedPillarBlock {
 
     public static final EnumProperty<Direction> SIDE = BlockStateProperties.HORIZONTAL_FACING;
 
-    public BlockMenrilLogFilled(MaterialColor materialColor, Properties properties) {
-        super(materialColor, properties);
+    public BlockMenrilLogFilled(Properties properties) {
+        super(properties);
 
         this.setDefaultState(this.stateContainer.getBaseState()
-                .with(AXIS, Direction.Axis.X)
+                .with(AXIS, Direction.Axis.Y)
                 .with(SIDE, Direction.NORTH));
     }
 

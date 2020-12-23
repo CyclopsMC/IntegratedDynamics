@@ -41,10 +41,10 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     private Map<IValueType, ResourceLocation> valueTypeModels;
 
     private ValueTypeRegistry() {
-        if(MinecraftHelpers.isClientSide()) {
-            valueTypeModels = new IdentityHashMap<>();
-        }
         if(MinecraftHelpers.isModdedEnvironment()) {
+            if(MinecraftHelpers.isClientSide()) {
+                valueTypeModels = new IdentityHashMap<>();
+            }
             IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
         }
     }

@@ -8,6 +8,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -168,7 +169,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         try {
             if (!player.world.isRemote()) {
                 for (IAspectRead aspectRead : getUnfilteredItems()) {
-                    Pair<ITextComponent, Integer> readValue;
+                    Pair<IFormattableTextComponent, Integer> readValue;
                     if(getPartState().isEnabled()) {
                         IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
@@ -184,7 +185,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         }
     }
 
-    public void setReadValue(IAspectRead aspectRead, Pair<ITextComponent, Integer> readValue) {
+    public void setReadValue(IAspectRead aspectRead, Pair<IFormattableTextComponent, Integer> readValue) {
         int valueId = readValueIds.inverse().get(aspectRead);
         int colorId = readColorIds.inverse().get(aspectRead);
         ValueNotifierHelpers.setValue(this, valueId, readValue.getLeft());

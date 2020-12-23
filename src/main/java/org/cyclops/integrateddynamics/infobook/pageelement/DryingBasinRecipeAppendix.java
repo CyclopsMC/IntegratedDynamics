@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -57,9 +58,9 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawElementInner(ScreenInfoBook gui, int x, int y, int width, int height, int page, int mx, int my) {
+    public void drawElementInner(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
         int middle = (width - SLOT_SIZE) / 2;
-        gui.drawArrowRight(x + middle - 3, y + 2);
+        gui.drawArrowRight(matrixStack, x + middle - 3, y + 2);
 
         // Prepare items
         int tick = getTick(gui);
@@ -69,12 +70,12 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
         FluidStack resultFluid = recipe.getOutputFluid();
 
         // Items
-        renderItem(gui, x + SLOT_INPUT_OFFSET_X, y, inputItem, mx, my, INPUT_ITEM);
-        renderFluid(gui, x + SLOT_INPUT_OFFSET_X, y + SLOT_OFFSET_Y, inputFluid, mx, my, INPUT_FLUID);
-        renderItem(gui, x + SLOT_OUTPUT_OFFSET_X, y, resultItem, mx, my, RESULT_ITEM);
-        renderFluid(gui, x + SLOT_OUTPUT_OFFSET_X, y + SLOT_OFFSET_Y, resultFluid, mx, my, RESULT_FLUID);
+        renderItem(gui, matrixStack, x + SLOT_INPUT_OFFSET_X, y, inputItem, mx, my, INPUT_ITEM);
+        renderFluid(gui, matrixStack, x + SLOT_INPUT_OFFSET_X, y + SLOT_OFFSET_Y, inputFluid, mx, my, INPUT_FLUID);
+        renderItem(gui, matrixStack, x + SLOT_OUTPUT_OFFSET_X, y, resultItem, mx, my, RESULT_ITEM);
+        renderFluid(gui, matrixStack, x + SLOT_OUTPUT_OFFSET_X, y + SLOT_OFFSET_Y, resultFluid, mx, my, RESULT_FLUID);
 
-        renderItem(gui, x + middle, y, getCrafter(), mx, my, false, null);
+        renderItem(gui, matrixStack, x + middle, y, getCrafter(), mx, my, false, null);
     }
 
     protected ItemStack getCrafter() {

@@ -1,11 +1,13 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Setter;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -122,13 +124,14 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         }
 
         @Override
-        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             IOperator operator = element.selectedOperator;
             if (operator != null) {
                 int offsetY = 0;
                 for (ITextComponent line : ValueTypeOperator.getSignatureLines(operator, true)) {
-                    fontRenderer.drawString(line.getFormattedText(), getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
+                    // MCP: drawString
+                    fontRenderer.func_243246_a(matrixStack, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
                     offsetY += fontRenderer.FONT_HEIGHT;
                 }
             }
@@ -154,7 +157,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<IFormattableTextComponent> getTooltip() {
             return ValueTypeOperator.getSignatureLines(operator, true);
         }
 

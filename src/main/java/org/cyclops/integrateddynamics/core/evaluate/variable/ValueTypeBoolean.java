@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import lombok.ToString;
 import net.minecraft.nbt.ByteNBT;
 import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -28,7 +28,7 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
     }
 
     @Override
-    public ITextComponent toCompactString(ValueBoolean value) {
+    public IFormattableTextComponent toCompactString(ValueBoolean value) {
         return new StringTextComponent(Boolean.toString(value.getRawValue()));
     }
 

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -37,15 +38,15 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     }
 
     @Override
-    protected void drawAdditionalElementInfoForeground(ContainerPartWriter<P, S> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
+    protected void drawAdditionalElementInfoForeground(MatrixStack matrixStack, ContainerPartWriter<P, S> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
         // Render error tooltip
         if(getContainer().isPartStateEnabled()) {
-            displayErrors.drawForeground(getContainer().getAspectErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.guiLeft, this.guiTop);
+            displayErrors.drawForeground(matrixStack, getContainer().getAspectErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.guiLeft, this.guiTop);
         }
     }
 
     @Override
-    protected void drawAdditionalElementInfo(ContainerPartWriter<P, S> container, int index, IAspectWrite aspect) {
+    protected void drawAdditionalElementInfo(MatrixStack matrixStack, ContainerPartWriter<P, S> container, int index, IAspectWrite aspect) {
         int aspectBoxHeight = container.getAspectBoxHeight();
 
         // Render dummy target item
@@ -57,16 +58,16 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
 
         // Render error symbol
         if(getContainer().isPartStateEnabled()) {
-            displayErrors.drawBackground(getContainer().getAspectErrors(aspect), ERROR_X, ERROR_Y + aspectBoxHeight * index, OK_X, OK_Y + aspectBoxHeight * index, this,
+            displayErrors.drawBackground(matrixStack, getContainer().getAspectErrors(aspect), ERROR_X, ERROR_Y + aspectBoxHeight * index, OK_X, OK_Y + aspectBoxHeight * index, this,
                     this.guiLeft, this.guiTop, getContainer().getPartStateActiveAspect() == aspect);
         }
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
         ContainerPartWriter<?, ?> container = (ContainerPartWriter<?, ?>) getContainer();
-        RenderHelpers.drawScaledCenteredString(font, container.getWriteValue().getFormattedText(), this.guiLeft + offsetX + 53,
+        RenderHelpers.drawScaledCenteredString(matrixStack, font, container.getWriteValue().getString(), this.guiLeft + offsetX + 53,
                 this.guiTop + offsetY + 132, 70, container.getWriteValueColor());
     }
 

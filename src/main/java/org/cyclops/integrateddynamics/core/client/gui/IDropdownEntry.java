@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ import java.util.List;
 public interface IDropdownEntry<V> {
     public String getMatchString();
     public String getDisplayString();
-    public List<ITextComponent> getTooltip();
+    public List<IFormattableTextComponent> getTooltip();
     public V getValue();
 }

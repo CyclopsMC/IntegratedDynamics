@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -38,22 +38,22 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
     }
 
     @Override
-    public ITextComponent toCompactString() {
+    public IFormattableTextComponent toCompactString() {
         StringTextComponent sb = new StringTextComponent("");
         boolean first = true;
-        sb.appendText("[");
+        sb.appendString("[");
         for(V value : this) {
             if(!first) {
-                sb.appendText(", ");
+                sb.appendString(", ");
             }
             first = false;
-            sb.appendSibling(value.getType().toCompactString(value));
+            sb.append(value.getType().toCompactString(value));
             if(sb.getUnformattedComponentText().length() > 10) {
-                sb.appendText("...");
+                sb.appendString("...");
                 break;
             }
         }
-        sb.appendText("]");
+        sb.appendString("]");
         return sb;
     }
 

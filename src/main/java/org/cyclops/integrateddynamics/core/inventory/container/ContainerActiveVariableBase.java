@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
@@ -44,7 +45,7 @@ public class ContainerActiveVariableBase<T extends TileActiveVariableBase> exten
             NetworkHelpers.getPartNetwork(tile.getNetwork())
                     .ifPresent(partNetwork -> {
                         IVariable variable = tile.getVariable(partNetwork);
-                        Pair<ITextComponent, Integer> readValue = ValueHelpers.getSafeReadableValue(variable);
+                        Pair<IFormattableTextComponent, Integer> readValue = ValueHelpers.getSafeReadableValue(variable);
                         ValueNotifierHelpers.setValue(this, readValueId, readValue.getLeft());
                         ValueNotifierHelpers.setValue(this, readColorId, readValue.getRight());
                         ValueNotifierHelpers.setValue(this, readErrorsId, tile.getEvaluator().getErrors());
@@ -64,7 +65,7 @@ public class ContainerActiveVariableBase<T extends TileActiveVariableBase> exten
         return ValueNotifierHelpers.getValueInt(this, readColorId);
     }
 
-    public List<ITextComponent> getReadErrors() {
+    public List<IFormattableTextComponent> getReadErrors() {
         return ValueNotifierHelpers.getValueTextComponentList(this, readErrorsId);
     }
 

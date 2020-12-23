@@ -15,7 +15,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
@@ -27,7 +27,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.DamageSource;
@@ -39,12 +39,13 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.IShearable;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -1242,8 +1243,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
-                        && a.getRawValue().get().getBlock() instanceof IShearable
-                        && ((IShearable) a.getRawValue().get().getBlock()).isShearable(ItemStack.EMPTY, null, null));
+                        && a.getRawValue().get().getBlock() instanceof IForgeShearable
+                        && ((IForgeShearable) a.getRawValue().get().getBlock()).isShearable(ItemStack.EMPTY, null, null));
             }).build());
 
     /**
@@ -1266,7 +1267,7 @@ public final class Operators {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 String type = "None";
                 if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
-                    type = ((IPlantable) a.getRawValue().get().getBlock()).getPlantType(null, null).name();
+                    type = ((IPlantable) a.getRawValue().get().getBlock()).getPlantType(null, null).getName();
                 }
                 return ValueTypeString.ValueString.of(type);
             }).build());
@@ -1294,7 +1295,7 @@ public final class Operators {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 int age = 0;
                 if (a.getRawValue().isPresent()) {
-                    for (IProperty<?> prop : a.getRawValue().get().getProperties()) {
+                    for (Property<?> prop : a.getRawValue().get().getProperties()) {
                         if (prop.getName().equals("age") && prop.getValueClass() == Integer.class) {
                             age = (Integer) a.getRawValue().get().get(prop);
                         }
@@ -1708,7 +1709,7 @@ public final class Operators {
                 String type = "None";
                 if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem
                         && ((BlockItem) a.getRawValue().getItem()).getBlock() instanceof IPlantable) {
-                    type = ((IPlantable) ((BlockItem) a.getRawValue().getItem()).getBlock()).getPlantType(null, null).name();
+                    type = ((IPlantable) ((BlockItem) a.getRawValue().getItem()).getBlock()).getPlantType(null, null).getName();
                 }
                 return ValueTypeString.ValueString.of(type);
             }).build());
@@ -2001,12 +2002,12 @@ public final class Operators {
                 BlockState blockState = null;
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
                     LivingEntity entity = (LivingEntity) a.getRawValue().get();
-                    IAttributeInstance reachDistanceAttribute = entity.getAttribute(PlayerEntity.REACH_DISTANCE);
+                    ModifiableAttributeInstance reachDistanceAttribute = entity.getAttribute(ForgeMod.REACH_DISTANCE.get());
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
                     double eyeHeight = entity.getEyeHeight();
-                    Vec3d lookVec = entity.getLookVec();
-                    Vec3d origin = new Vec3d(entity.getPosX(), entity.getPosY() + eyeHeight, entity.getPosZ());
-                    Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
+                    Vector3d lookVec = entity.getLookVec();
+                    Vector3d origin = new Vector3d(entity.getPosX(), entity.getPosY() + eyeHeight, entity.getPosZ());
+                    Vector3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
                     RayTraceContext rayTraceContext = new RayTraceContext(origin, direction, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, entity);
                     BlockRayTraceResult mop = entity.world.rayTraceBlocks(rayTraceContext);
@@ -2027,15 +2028,15 @@ public final class Operators {
                 Entity entityOut = null;
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
                     LivingEntity entity = (LivingEntity) a.getRawValue().get();
-                    IAttributeInstance reachDistanceAttribute = entity.getAttribute(PlayerEntity.REACH_DISTANCE);
+                    ModifiableAttributeInstance reachDistanceAttribute = entity.getAttribute(ForgeMod.REACH_DISTANCE.get());
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
                     // Copied and modified from GameRenderer#getMouseOver
-                    Vec3d origin = entity.getEyePosition(1.0F);
+                    Vector3d origin = entity.getEyePosition(1.0F);
                     double reachDistanceSquared = reachDistance * reachDistance;
 
-                    Vec3d lookVec = entity.getLook(1.0F);
-                    Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
+                    Vector3d lookVec = entity.getLook(1.0F);
+                    Vector3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
                     AxisAlignedBB boundingBox = entity.getBoundingBox()
                             .expand(lookVec.scale(reachDistance))
                             .grow(1.0D, 1.0D, 1.0D);
@@ -2043,7 +2044,7 @@ public final class Operators {
                             boundingBox, e -> !e.isSpectator() && e.canBeCollidedWith(), reachDistanceSquared);
                     if (entityraytraceresult != null) {
                         Entity entity1 = entityraytraceresult.getEntity();
-                        Vec3d vec3d3 = entityraytraceresult.getHitVec();
+                        Vector3d vec3d3 = entityraytraceresult.getHitVec();
                         double distanceSquared = origin.squareDistanceTo(vec3d3);
                         if (distanceSquared < reachDistanceSquared
                                 && (entity1 instanceof LivingEntity || entity1 instanceof ItemFrameEntity)) {
@@ -2252,8 +2253,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
-                        && a.getRawValue().get() instanceof IShearable
-                        && ((IShearable) a.getRawValue().get()).isShearable(null, null, null));
+                        && a.getRawValue().get() instanceof IForgeShearable
+                        && ((IForgeShearable) a.getRawValue().get()).isShearable(ItemStack.EMPTY, null, null));
             }).build());
 
     /**
@@ -2747,7 +2748,7 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_STRING.build(tag -> {
                 if (tag.isPresent()) {
                     try {
-                        return NBTTypes.func_229710_a_(tag.get().getId()).func_225648_a_();
+                        return NBTTypes.getGetTypeByID(tag.get().getId()).getName();
                     } catch (IndexOutOfBoundsException e) {
 
                     }

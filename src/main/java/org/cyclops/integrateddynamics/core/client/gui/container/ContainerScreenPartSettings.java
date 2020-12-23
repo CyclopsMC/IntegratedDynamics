@@ -2,10 +2,12 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -81,7 +83,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     protected String getSideText(Direction side) {
-        return side.getName().toLowerCase(Locale.ENGLISH);
+        return side.getString().toLowerCase(Locale.ENGLISH);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         if (isFieldSideEnabled()) {
             dropdownEntries = Arrays.stream(Direction.values()).map(SideDropdownEntry::new).collect(Collectors.toList());
             dropdownFieldSide = new WidgetTextFieldDropdown(font, guiLeft + 106, guiTop + getFieldSideY(),
-                    70, 14, L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), true,
+                    70, 14, new TranslationTextComponent("gui.integrateddynamics.partsettings.side"), true,
                     Sets.newHashSet(dropdownEntries));
             setSideInDropdownField(getCurrentSide());
             dropdownFieldSide.setMaxStringLength(15);
@@ -103,7 +105,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldUpdateIntervalEnabled()) {
             numberFieldUpdateInterval = new WidgetNumberField(font, guiLeft + 106, guiTop + getFieldUpdateIntervalY(), 70, 14, true,
-                    L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), true);
+                    new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), true);
             numberFieldUpdateInterval.setMaxStringLength(15);
             numberFieldUpdateInterval.setVisible(true);
             numberFieldUpdateInterval.setTextColor(16777215);
@@ -113,7 +115,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldPriorityEnabled()) {
             numberFieldPriority = new WidgetNumberField(font, guiLeft + 106, guiTop + getFieldPriorityY(), 70, 14, true,
-                    L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), true);
+                    new TranslationTextComponent("gui.integrateddynamics.partsettings.priority"), true);
             numberFieldPriority.setPositiveOnly(false);
             numberFieldPriority.setMaxStringLength(15);
             numberFieldPriority.setVisible(true);
@@ -123,7 +125,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldChannelEnabled()) {
             numberFieldChannel = new WidgetNumberField(font, guiLeft + 106, guiTop + getFieldChannelY(), 70, 14, true,
-                    L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), true);
+                    new TranslationTextComponent("gui.integrateddynamics.partsettings.channel"), true);
             numberFieldChannel.setPositiveOnly(false);
             numberFieldChannel.setMaxStringLength(15);
             numberFieldChannel.setVisible(true);
@@ -132,8 +134,9 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
             numberFieldChannel.setEnabled(isChannelEnabled());
         }
 
-        String save = L10NHelpers.localize("gui.integrateddynamics.button.save");
-        addButton(new ButtonText(this.guiLeft + 178, this.guiTop + 8, font.getStringWidth(save) + 6, 16, save, save,
+        TranslationTextComponent save = new TranslationTextComponent("gui.integrateddynamics.button.save");
+        // MCP: getStringWidth
+        addButton(new ButtonText(this.guiLeft + 178, this.guiTop + 8, font.func_243245_a(save.func_241878_f()) + 6, 16, save, save,
                 createServerPressable(ContainerPartSettings.BUTTON_SAVE, b -> onSave()), true));
 
         this.refreshValues();
@@ -237,29 +240,29 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
         if (isFieldUpdateIntervalEnabled()) {
-            font.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0));
-            numberFieldUpdateInterval.render(mouseX, mouseY, partialTicks);
+            font.drawString(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0));
+            numberFieldUpdateInterval.render(matrixStack, mouseX, mouseY, partialTicks);
         }
         if (isFieldPriorityEnabled()) {
-            font.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + getFieldPriorityY() + 3, Helpers.RGBToInt(0, 0, 0));
-            numberFieldPriority.render(mouseX, mouseY, partialTicks);
+            font.drawString(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + getFieldPriorityY() + 3, Helpers.RGBToInt(0, 0, 0));
+            numberFieldPriority.render(matrixStack, mouseX, mouseY, partialTicks);
         }
         if (isFieldChannelEnabled()) {
-            font.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
-            numberFieldChannel.render(mouseX, mouseY, partialTicks);
+            font.drawString(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
+            numberFieldChannel.render(matrixStack, mouseX, mouseY, partialTicks);
         }
         if (isFieldSideEnabled()) {
-            font.drawString(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0));
-            dropdownFieldSide.render(mouseX, mouseY, partialTicks);
+            font.drawString(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0));
+            dropdownFieldSide.render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
             GuiHelpers.renderTooltip(this, 8, 87, 100, 20, mouseX, mouseY,
                     () -> Lists.<ITextComponent>newArrayList(new TranslationTextComponent("gui.integrateddynamics.partsettings.channel.disabledinfo")));
@@ -323,7 +326,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<IFormattableTextComponent> getTooltip() {
             return Collections.emptyList();
         }
 

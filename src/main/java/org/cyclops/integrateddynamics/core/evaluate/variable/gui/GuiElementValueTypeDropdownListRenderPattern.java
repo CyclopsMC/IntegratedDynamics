@@ -1,18 +1,19 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
-import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
@@ -48,7 +49,7 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
         int searchX = getX() + 14;
         int searchY = getY() + 6;
         this.searchField = new WidgetTextFieldDropdown<>(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.FONT_HEIGHT + 3, L10NHelpers.localize("gui.cyclopscore.search"), true, getDropdownPossibilities());
+                fontRenderer.FONT_HEIGHT + 3, new TranslationTextComponent("gui.cyclopscore.search"), true, getDropdownPossibilities());
         this.searchField.setDropdownEntryListener(this);
         this.searchField.setMaxStringLength(64);
         this.searchField.setEnableBackgroundDrawing(false);
@@ -70,10 +71,10 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         // Textbox
-        searchField.render(mouseX, mouseY, partialTicks);
+        searchField.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override

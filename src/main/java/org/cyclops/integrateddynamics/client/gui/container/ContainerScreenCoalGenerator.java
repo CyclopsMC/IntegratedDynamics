@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -24,11 +25,11 @@ public class ContainerScreenCoalGenerator extends ContainerScreenExtended<Contai
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
         int lastProgress = getContainer().getProgress();
         if (lastProgress >= 0) {
-            this.blit(getGuiLeftTotal() + 81, getGuiTopTotal() + 30 + lastProgress, 176,
+            this.blit(matrixStack, getGuiLeftTotal() + 81, getGuiTopTotal() + 30 + lastProgress, 176,
                     lastProgress, 14, TileCoalGenerator.MAX_PROGRESS - lastProgress + 1);
         }
     }

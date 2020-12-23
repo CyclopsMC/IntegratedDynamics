@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.item;
 
 import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -82,7 +83,7 @@ public interface IVariableFacade {
          * Set the current error for the given aspect.
          * @param error The error to set, or null to clear.
          */
-        public void addError(ITextComponent error);
+        public void addError(IFormattableTextComponent error);
 
     }
 

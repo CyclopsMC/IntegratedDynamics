@@ -46,8 +46,8 @@ public class IngredientComponentValueHandlerEnergy implements IIngredientCompone
     @Override
     public ITextComponent toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
         return getValueType().toCompactString(ingredientValue)
-                .appendText(" ")
-                .appendSibling(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
+                .appendString(" ")
+                .append(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
     }
 
 }

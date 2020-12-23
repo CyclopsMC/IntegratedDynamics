@@ -88,11 +88,6 @@ public class BlockDryingBasin extends BlockTileGui {
                 .orElse(ActionResultType.PASS);
     }
 
-    @Override
-    public boolean isNormalCube(BlockState blockState, IBlockReader world, BlockPos blockPos) {
-        return false;
-    }
-
     @SuppressWarnings("deprecation")
     @Override
     public boolean hasComparatorInputOverride(BlockState blockState) {

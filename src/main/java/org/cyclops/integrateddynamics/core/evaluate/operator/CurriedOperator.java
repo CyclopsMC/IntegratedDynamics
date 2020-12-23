@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -72,7 +73,7 @@ public class CurriedOperator implements IOperator {
     }
 
     @Override
-    public ITextComponent getLocalizedNameFull() {
+    public IFormattableTextComponent getLocalizedNameFull() {
         return new TranslationTextComponent(L10NValues.OPERATOR_APPLIED_OPERATORNAME,
                 baseOperator.getLocalizedNameFull(), getAppliedSymbol());
     }
@@ -128,7 +129,7 @@ public class CurriedOperator implements IOperator {
     }
 
     @Override
-    public ITextComponent validateTypes(IValueType[] input) {
+    public IFormattableTextComponent validateTypes(IValueType[] input) {
         return baseOperator.validateTypes(deriveFullInputTypes(input));
     }
 

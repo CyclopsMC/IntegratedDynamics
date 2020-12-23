@@ -231,7 +231,7 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         }
 
         protected static DimPos getTargetPos(PartPos origin, int offset) {
-            return DimPos.of(origin.getPos().getDimension(),
+            return DimPos.of(origin.getPos().getWorldKey(),
                     origin.getPos().getBlockPos().offset(origin.getSide(), offset));
         }
     }

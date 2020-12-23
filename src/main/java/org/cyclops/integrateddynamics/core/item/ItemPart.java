@@ -14,7 +14,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -22,7 +22,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -101,7 +100,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             // Place part at a new position with an unreal cable
             BlockPos target = pos.offset(side);
             Direction targetSide = side.getOpposite();
-            BlockRayTraceResult targetRayTrace = new BlockRayTraceResult(new Vec3d(
+            BlockRayTraceResult targetRayTrace = new BlockRayTraceResult(new Vector3d(
                     (double) target.getX() + 0.5D + (double) targetSide.getXOffset() * 0.5D,
                     (double) target.getY() + 0.5D + (double) targetSide.getYOffset() * 0.5D,
                     (double) target.getZ() + 0.5D + (double) targetSide.getZOffset() * 0.5D),

@@ -3,13 +3,15 @@ package org.cyclops.integrateddynamics.world.gen;
 import net.minecraft.block.trees.Tree;
 import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
 import net.minecraft.world.gen.blockstateprovider.WeightedBlockStateProvider;
+import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
-import net.minecraft.world.gen.feature.TreeFeatureConfig;
-import net.minecraft.world.gen.foliageplacer.AcaciaFoliagePlacer;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.FeatureSpread;
+import net.minecraft.world.gen.feature.TwoLayerFeature;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogFilledConfig;
-import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureTreeMenril;
+import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenril;
+import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -20,26 +22,24 @@ import java.util.Random;
  */
 public class TreeMenril extends Tree {
 
-    public static TreeFeatureConfig getMenrilTreeConfig() {
-        return new TreeFeatureConfig.Builder(
+    public static BaseTreeFeatureConfig getMenrilTreeConfig() {
+        // TODO: make custom foliage and log placers
+        return new BaseTreeFeatureConfig.Builder(
                 new WeightedBlockStateProvider()
-                    .func_227407_a_(RegistryEntries.BLOCK_MENRIL_LOG.getDefaultState(), BlockMenrilLogFilledConfig.filledMenrilLogChance)
-                    .func_227407_a_(RegistryEntries.BLOCK_MENRIL_LOG_FILLED.getDefaultState(), 1),
+                        .addWeightedBlockstate(RegistryEntries.BLOCK_MENRIL_LOG.getDefaultState(), BlockMenrilLogFilledConfig.filledMenrilLogChance)
+                        .addWeightedBlockstate(RegistryEntries.BLOCK_MENRIL_LOG_FILLED.getDefaultState(), 1),
                 new SimpleBlockStateProvider(RegistryEntries.BLOCK_MENRIL_LEAVES.getDefaultState()),
-                new AcaciaFoliagePlacer(2, 0))
-                .baseHeight(5)
-                .heightRandA(2)
-                .heightRandB(2)
-                .trunkHeight(0)
-                .ignoreVines()
-                .setSapling((net.minecraftforge.common.IPlantable) RegistryEntries.BLOCK_MENRIL_SAPLING)
+                new FoliagePlacerMenril(FeatureSpread.func_242252_a(2), FeatureSpread.func_242252_a(0)),
+                new TrunkPlacerMenril(5, 2, 2, 3),
+                new TwoLayerFeature(1, 0, 2))
+                .setIgnoreVines()
                 .build();
     }
 
     @Nullable
     @Override
-    protected ConfiguredFeature<TreeFeatureConfig, ?> getTreeFeature(Random random, boolean b) {
-        return new WorldFeatureTreeMenril(TreeFeatureConfig::func_227338_a_).withConfiguration(getMenrilTreeConfig());
+    protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getTreeFeature(Random random, boolean b) {
+        return Feature.TREE.withConfiguration(getMenrilTreeConfig());
     }
 
 }

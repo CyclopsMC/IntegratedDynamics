@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -122,7 +123,7 @@ public class CompositionalOperator extends OperatorBase {
             }
         }
 
-        protected ITextComponent validateTypes(String unlocalizedOperatorName, IValueType[] input) {
+        protected IFormattableTextComponent validateTypes(String unlocalizedOperatorName, IValueType[] input) {
             if(this.builders == null) {
                 return this.base.validateTypes(input);
             } else {
@@ -134,7 +135,7 @@ public class CompositionalOperator extends OperatorBase {
                 IValueType[] subValueTypesOut = new IValueType[builders.length];
                 for(int i = 0; i < builders.length; i++) {
                     AppliedOperatorBuilder builder = builders[i];
-                    ITextComponent subError;
+                    IFormattableTextComponent subError;
                     if((subError = builder.validateTypes(unlocalizedOperatorName, input)) != null) {
                         return subError;
                     }
@@ -160,7 +161,7 @@ public class CompositionalOperator extends OperatorBase {
                 }
             }, renderPattern, unlocalizedType) {
                 @Override
-                public ITextComponent validateTypes(IValueType[] input) {
+                public IFormattableTextComponent validateTypes(IValueType[] input) {
                     return AppliedOperatorBuilder.this.validateTypes(getTranslationKey(), input);
                 }
             };

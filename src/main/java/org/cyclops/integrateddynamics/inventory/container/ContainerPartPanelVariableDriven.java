@@ -6,6 +6,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,7 +79,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         super.detectAndSendChanges();
 
         if (!player.world.isRemote()) {
-            ITextComponent readValue = new StringTextComponent("");
+            IFormattableTextComponent readValue = new StringTextComponent("");
             int readValueColor = 0;
             if (!NetworkHelpers.shouldWork()) {
                 readValue = new StringTextComponent("SAFE-MODE");
@@ -134,7 +135,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         return ValueNotifierHelpers.getValueInt(this, readColorId);
     }
 
-    public List<ITextComponent> getReadErrors() {
+    public List<IFormattableTextComponent> getReadErrors() {
         return ValueNotifierHelpers.getValueTextComponentList(this, readErrorsId);
     }
 }

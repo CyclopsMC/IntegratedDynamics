@@ -365,7 +365,7 @@ public class CableHelpers {
      */
     public static LazyOptional<BlockState> getFacade(IBlockReader world, BlockPos pos) {
         return TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY)
-                .map(IFacadeable::getFacade);
+                .lazyMap(IFacadeable::getFacade);
     }
 
     public static boolean isLightTransparent(IBlockReader world, BlockPos pos, @Nullable Direction side) {

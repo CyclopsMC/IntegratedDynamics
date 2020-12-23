@@ -1,11 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
@@ -41,7 +43,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         int searchX = getX() + 14;
         int searchY = getY() + 6;
         this.textField = new WidgetTextFieldExtended(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.FONT_HEIGHT + 3, L10NHelpers.localize(this.getElement().getValueType().getTranslationKey()), true);
+                fontRenderer.FONT_HEIGHT + 3, new TranslationTextComponent(this.getElement().getValueType().getTranslationKey()), true);
         this.textField.setMaxStringLength(512);
         this.textField.setEnableBackgroundDrawing(false);
         this.textField.setVisible(true);
@@ -64,10 +66,10 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         // Textbox
-        textField.render(mouseX, mouseY, partialTicks);
+        textField.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override

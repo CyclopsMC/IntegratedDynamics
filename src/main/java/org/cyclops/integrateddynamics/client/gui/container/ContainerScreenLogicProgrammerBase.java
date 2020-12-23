@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -10,6 +11,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
@@ -123,12 +126,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerBackgroundLayer(this.guiLeft, this.guiTop, getMinecraft().textureManager, font, partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().textureManager, font, partialTicks, mouseX, mouseY);
 
         // Draw container name
-        font.drawString(L10NHelpers.localize(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
+        // MCP: drawString
+        font.func_243246_a(matrixStack, new TranslationTextComponent(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
                 this.guiLeft + offsetX + 5, this.guiTop + offsetY + 208, Helpers.RGBToInt(80, 80, 80));
 
         // Draw operators
@@ -147,13 +151,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
                 // Background
                 RenderHelpers.bindTexture(texture);
-                blit(guiLeft + offsetX + ITEM_POSITION.x,
+                blit(matrixStack, guiLeft + offsetX + ITEM_POSITION.x,
                         guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
 
                 RenderSystem.enableAlphaTest();
                 // Arrow
                 if(hover) {
-                    blit(guiLeft + offsetX + ITEM_POSITION.x,
+                    blit(matrixStack, guiLeft + offsetX + ITEM_POSITION.x,
                             guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16);
                 }
                 RenderSystem.disableAlphaTest();
@@ -161,7 +165,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
                 // Operator info
                 String aspectName = element.getSymbol();
-                RenderHelpers.drawScaledCenteredString(font, aspectName,
+                RenderHelpers.drawScaledCenteredString(matrixStack, font, aspectName,
                         this.guiLeft + offsetX + (hover ? 22 : 21),
                         this.guiTop + offsetY + 26 + boxHeight * i,
                         53, Helpers.RGBToInt(40, 40, 40));
@@ -176,11 +180,10 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         );
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(this.guiLeft, this.guiTop, getMinecraft().textureManager, font, mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().textureManager, font, mouseX, mouseY);
         // Draw operator tooltips
         ContainerLogicProgrammerBase container = getContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
@@ -233,7 +236,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     protected void setSearchFieldFocussed(boolean focused) {
-        getSearchField().focused = focused;
+        getSearchField().changeFocus(focused);
     }
 
     protected boolean isSearchFieldFocussed() {
@@ -378,13 +381,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             super(ContainerScreenLogicProgrammerBase.this, getContainer(), element, 88, 106, 139, 20);
 
             if(hasLabeller()) {
-                buttonList.add(button = new ButtonText(0, 0, 6, 10, L10NHelpers.localize("gui.integrateddynamics.button.edit"), "E",
+                buttonList.add(button = new ButtonText(0, 0, 6, 10, new TranslationTextComponent("gui.integrateddynamics.button.edit"), new StringTextComponent("E"),
                         (button) -> onButtonEditClick(), true));
             }
 
             int searchWidth = 113;
             this.searchField = new WidgetTextFieldExtended(ContainerScreenLogicProgrammerBase.this.font, 0, 0, searchWidth, 11,
-                    L10NHelpers.localize("gui.cyclopscore.search"));
+                    new TranslationTextComponent("gui.cyclopscore.search"));
             this.searchField.setMaxStringLength(64);
             this.searchField.setEnableBackgroundDrawing(true);
             this.searchField.setVisible(false);
@@ -452,16 +455,16 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
 
         @Override
-        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer font, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, font, partialTicks, mouseX, mouseY);
+        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer font, float partialTicks, int mouseX, int mouseY) {
+            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, font, partialTicks, mouseX, mouseY);
             Minecraft.getInstance().keyboardListener.enableRepeatEvents(true);
-            this.searchField.render(mouseX, mouseY, partialTicks);
+            this.searchField.render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
         public void onButtonEditClick() {
             this.searchField.setVisible(!this.searchField.getVisible());
             if(this.searchField.getVisible()) {
-                this.searchField.focused = true;
+                this.searchField.changeFocus(true);
                 label(this.searchField.getText());
             } else {
                 label("");

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.item.Item;
 import net.minecraft.item.WallOrFloorItem;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -35,8 +36,8 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
                 eConfig -> new TorchBlock(Block.Properties.create(Material.MISCELLANEOUS)
                         .doesNotBlockMovement()
                         .hardnessAndResistance(0)
-                        .lightValue(14)
-                        .sound(SoundType.STONE)) {
+                        .setLightLevel((blockState) -> 14)
+                        .sound(SoundType.STONE), ParticleTypes.FLAME) {
                     @Override
                     @OnlyIn(Dist.CLIENT)
                     public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {

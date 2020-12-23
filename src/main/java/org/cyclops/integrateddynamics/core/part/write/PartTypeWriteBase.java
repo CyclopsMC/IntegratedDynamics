@@ -10,6 +10,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -198,12 +199,12 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
                         L10NValues.PART_TOOLTIP_WRITER_ACTIVEASPECT,
                         new TranslationTextComponent(aspectWrite.getTranslationKey()),
                         new TranslationTextComponent(aspectWrite.getValueType().getTranslationKey())
-                                .applyTextStyles(aspectWrite.getValueType().getDisplayColorFormat())));
+                                .mergeStyle(aspectWrite.getValueType().getDisplayColorFormat())));
             } else {
                 lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS)
-                        .applyTextStyle(TextFormatting.RED));
-                for (ITextComponent error : state.getErrors(aspectWrite)) {
-                    lines.add(error.applyTextStyle(TextFormatting.RED));
+                        .mergeStyle(TextFormatting.RED));
+                for (IFormattableTextComponent error : state.getErrors(aspectWrite)) {
+                    lines.add(error.mergeStyle(TextFormatting.RED));
                 }
             }
         } else {

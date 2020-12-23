@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -462,7 +463,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             int searchWidth = 35;
 
             WidgetTextFieldExtended box = new WidgetTextFieldExtended(fontRenderer, x, y,
-                    searchWidth, fontRenderer.FONT_HEIGHT + 3, L10NHelpers.localize("gui.cyclopscore.search"), true);
+                    searchWidth, fontRenderer.FONT_HEIGHT + 3, new TranslationTextComponent("gui.cyclopscore.search"), true);
             box.setMaxStringLength(10);
             box.setEnableBackgroundDrawing(false);
             box.setVisible(true);
@@ -484,8 +485,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+        public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+            super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             // Output type tooltip
             this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
@@ -498,12 +499,12 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     int slotY = slot.yPos;
                     // Only render if the slot has a stack, otherwise vanilla will already render the overlay.
                     if (slot.getHasStack() && slot.isEnabled()) {
-                        com.mojang.datafixers.util.Pair<ResourceLocation, ResourceLocation> slotTexturePair = slot.func_225517_c_();
+                        com.mojang.datafixers.util.Pair<ResourceLocation, ResourceLocation> slotTexturePair = slot.getBackground();
                         if (slotTexturePair != null) {
                             // Adapted from ContainerScreen#drawSlot
                             TextureAtlasSprite textureatlassprite = Minecraft.getInstance().getAtlasSpriteGetter(slotTexturePair.getFirst()).apply(slotTexturePair.getSecond());
                             Minecraft.getInstance().getTextureManager().bindTexture(textureatlassprite.getAtlasTexture().getTextureLocation());
-                            blit(slotX, slotY, this.getBlitOffset(), 16, 16, textureatlassprite);
+                            blit(matrixStack, slotX, slotY, this.getBlitOffset(), 16, 16, textureatlassprite);
                         }
                     }
 
@@ -513,9 +514,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                                 + this.element.inputStacks.get(slot.getSlotIndex()).getRight().name().toLowerCase(Locale.ENGLISH);
                         gui.drawTooltip(Lists.newArrayList(
                                 new TranslationTextComponent(name + ".desc")
-                                        .appendText(" ")
-                                        .applyTextStyles(TextFormatting.ITALIC)
-                                        .appendSibling(new TranslationTextComponent("valuetype.integrateddynamics.ingredients.slot.info"))
+                                        .appendString(" ")
+                                        .mergeStyle(TextFormatting.ITALIC)
+                                        .append(new TranslationTextComponent("valuetype.integrateddynamics.ingredients.slot.info"))
                         ), mouseX - guiLeft, mouseY - guiTop - 15);
                     }
                 }
@@ -523,18 +524,18 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
             // Draw crafting arrow
-            this.blit(guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
+            this.blit(matrixStack, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
 
-            inputFluidAmountBox.render(mouseX, mouseY, partialTicks);
-            fontRenderer.drawString(L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0);
-            inputEnergyBox.render(mouseX, mouseY, partialTicks);
-            outputFluidAmountBox.render(mouseX, mouseY, partialTicks);
-            fontRenderer.drawString(L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0);
-            outputEnergyBox.render(mouseX, mouseY, partialTicks);
+            inputFluidAmountBox.render(matrixStack, mouseX, mouseY, partialTicks);
+            fontRenderer.drawString(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0);
+            inputEnergyBox.render(matrixStack, mouseX, mouseY, partialTicks);
+            outputFluidAmountBox.render(matrixStack, mouseX, mouseY, partialTicks);
+            fontRenderer.drawString(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0);
+            outputEnergyBox.render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
         @Override

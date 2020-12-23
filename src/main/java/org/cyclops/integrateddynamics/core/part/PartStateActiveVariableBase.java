@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -43,7 +44,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     @Setter
     private boolean deactivated = false;
     private SimpleInventory inventory;
-    private List<ITextComponent> globalErrorMessages = Lists.newLinkedList();
+    private List<IFormattableTextComponent> globalErrorMessages = Lists.newLinkedList();
 
     public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
@@ -127,7 +128,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     /**
      * @return All global error messages.
      */
-    public List<ITextComponent> getGlobalErrors() {
+    public List<IFormattableTextComponent> getGlobalErrors() {
         return globalErrorMessages;
     }
 
@@ -135,7 +136,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      * Add a global error message.
      * @param error The message to add.
      */
-    public void addGlobalError(ITextComponent error) {
+    public void addGlobalError(IFormattableTextComponent error) {
         if(error == null) {
             globalErrorMessages.clear();
         } else {
@@ -224,7 +225,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         }
 
         @Override
-        public void addError(ITextComponent error) {
+        public void addError(IFormattableTextComponent error) {
             this.state.addGlobalError(error);
         }
 

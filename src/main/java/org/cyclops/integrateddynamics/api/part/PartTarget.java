@@ -26,7 +26,7 @@ public class PartTarget {
     public static PartTarget fromCenter(DimPos pos, @Nullable Direction side) {
         return PartTarget.of(
                 PartPos.of(pos, side),
-                PartPos.of(DimPos.of(pos.getDimension(), side == null ? pos.getBlockPos() : pos.getBlockPos().offset(side)), side == null ? null : side.getOpposite())
+                PartPos.of(DimPos.of(pos.getWorldKey(), side == null ? pos.getBlockPos() : pos.getBlockPos().offset(side)), side == null ? null : side.getOpposite())
         );
     }
 

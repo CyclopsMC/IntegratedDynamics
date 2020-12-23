@@ -79,7 +79,7 @@ public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
-        ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().focused = focused;
+        ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().changeFocus(focused);
     }
 
     @Override

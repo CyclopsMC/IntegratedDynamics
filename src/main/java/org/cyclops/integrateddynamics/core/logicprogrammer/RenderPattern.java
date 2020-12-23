@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
 import net.minecraft.client.gui.AbstractGui;
@@ -39,8 +40,8 @@ public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C 
         this.container = container;
     }
 
-    protected void drawSlot(int x, int y) {
-        this.blit(x, y, 19, 0, 18, 18);
+    protected void drawSlot(MatrixStack matrixStack, int x, int y) {
+        this.blit(matrixStack, x, y, 19, 0, 18, 18);
     }
 
     @Override
@@ -54,19 +55,19 @@ public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C 
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();
 
         int baseX = getX() + guiLeft;
         int baseY = getY() + guiTop;
 
         for(Pair<Integer, Integer> slot : configRenderPattern.getSlotPositions()) {
-            drawSlot(baseX + slot.getLeft(), baseY + slot.getRight());
+            drawSlot(matrixStack, baseX + slot.getLeft(), baseY + slot.getRight());
         }
 
         if(configRenderPattern.getSymbolPosition() != null) {
-            RenderHelpers.drawScaledCenteredString(fontRenderer, element.getSymbol(),
+            RenderHelpers.drawScaledCenteredString(matrixStack, fontRenderer, element.getSymbol(),
                     baseX + configRenderPattern.getSymbolPosition().getLeft(),
                     baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
                     0, 1, 0);

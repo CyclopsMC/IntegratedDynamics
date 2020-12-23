@@ -6,10 +6,12 @@ import lombok.experimental.Delegate;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.Level;
@@ -53,7 +55,7 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
 
         for(ISidedPathElement e : elements) {
             CompoundNBT elementTag = new CompoundNBT();
-            elementTag.putString("dimension", e.getPathElement().getPosition().getDimension().getRegistryName().toString());
+            elementTag.putString("dimension", e.getPathElement().getPosition().getWorld());
             elementTag.putLong("pos", e.getPathElement().getPosition().getBlockPos().toLong());
             if (e.getSide() != null) {
                 elementTag.putInt("side", e.getSide().ordinal());
@@ -72,7 +74,7 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
         for(int i = 0; i < list.size(); i++) {
             CompoundNBT elementTag = list.getCompound(i);
             ResourceLocation dimensionId = new ResourceLocation(elementTag.getString("dimension"));
-            DimensionType dimension = DimensionType.byName(dimensionId);
+            RegistryKey<World> dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimensionId);
             BlockPos pos = BlockPos.fromLong(elementTag.getLong("pos"));
             Direction side = null;
             if (elementTag.contains("side", Constants.NBT.TAG_INT)) {

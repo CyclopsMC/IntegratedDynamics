@@ -152,7 +152,7 @@ public class AspectReadBuilders {
                     if (world != null) {
                         BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
                         int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
-                        if (world.getDimension() == event.getWorld().getDimension()
+                        if (world.getDimensionType() == event.getWorld().getDimensionType()
                                 && pos.distanceSq(event.getPos()) <= range * range) {
                             return event.getVanillaNoteId();
                         }

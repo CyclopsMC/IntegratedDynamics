@@ -10,11 +10,12 @@ import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
@@ -151,12 +152,12 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+        FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
         return this.getDefaultState().with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
     }
 
     @Override
-    public IFluidState getFluidState(BlockState state) {
+    public FluidState getFluidState(BlockState state) {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 
@@ -175,7 +176,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.forEntity(player))
                 .rayTrace(pos, player);
         if (rayTraceResult != null && rayTraceResult.getComponent().destroy(world, pos, player, false)) {
@@ -313,17 +314,12 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public boolean isNormalCube(BlockState blockState, IBlockReader world, BlockPos pos) {
-        return false;
-    }
-
-    @Override
     @OnlyIn(Dist.CLIENT)
     public boolean addHitEffects(BlockState blockState, World world, RayTraceResult target, ParticleManager particleManager) {
         BlockPos blockPos = ((BlockRayTraceResult) target).getPos();
         if(CableHelpers.hasFacade(world, blockPos)) {
             CableHelpers.getFacade(world, blockPos)
-                    .ifPresent(facadeState -> RenderHelpers.addBlockHitEffects(particleManager, world, facadeState, blockPos, ((BlockRayTraceResult) target).getFace()));
+                    .ifPresent(facadeState -> RenderHelpers.addBlockHitEffects(particleManager, (ClientWorld) world, facadeState, blockPos, ((BlockRayTraceResult) target).getFace()));
             return true;
         } else {
             return super.addHitEffects(blockState, world, target, particleManager);
@@ -394,6 +390,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         CableModel model = new CableModel();
         event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=false"), model);
         event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=true"), model);
+        event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "inventory"), model);
         return model;
     }
 

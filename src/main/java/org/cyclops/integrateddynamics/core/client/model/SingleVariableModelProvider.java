@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.client.model;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
@@ -26,7 +26,7 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter,
+    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBakery modelBakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter,
                                                               IModelTransform transform, ResourceLocation location) {
         IBakedModel bakedModel = null;
         try {

@@ -23,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -148,7 +149,7 @@ public class Aspects {
                             .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> INTEGER_DIMENSION =
                     AspectReadBuilders.Block.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            world -> world.getDimension().getType().getRegistryName().toString()
+                            world -> world.getDimensionKey().getLocation().toString()
                     ).withUpdateType(AspectUpdateType.NEVER)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "dimension").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSX =
@@ -733,11 +734,11 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RAINCOUNTDOWN =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> world.getWorldInfo().getRainTime()
+                        world -> ((IServerWorldInfo) world.getWorldInfo()).getRainTime()
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "raincountdown").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> (int) DoubleMath.mean(ServerLifecycleHooks.getCurrentServer().getTickTime(world.getDimension().getType()))
+                        world -> (int) DoubleMath.mean(ServerLifecycleHooks.getCurrentServer().getTickTime(world.getDimensionKey()))
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
@@ -750,7 +751,7 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TPS =
                     AspectReadBuilders.World.BUILDER_DOUBLE.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            world -> Math.min(20, Stats.meanOf(ServerLifecycleHooks.getCurrentServer().getTickTime(world.getDimension().getType())) / 1000)
+                            world -> Math.min(20, Stats.meanOf(ServerLifecycleHooks.getCurrentServer().getTickTime(world.getDimensionKey())) / 1000)
                     ).handle(AspectReadBuilders.PROP_GET_DOUBLE, "tps").buildRead();
 
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
@@ -764,7 +765,7 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_NAME =
                     AspectReadBuilders.World.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> world.getWorldInfo().getWorldName()
+                        world -> ((IServerWorldInfo) world.getWorldInfo()).getWorldName()
                     ).handle(AspectReadBuilders.PROP_GET_STRING, "worldname").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =

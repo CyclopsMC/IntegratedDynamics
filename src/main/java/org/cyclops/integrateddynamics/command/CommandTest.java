@@ -9,6 +9,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
@@ -38,12 +39,12 @@ public class CommandTest implements Command<CommandSource> {
 
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        context.getSource().asPlayer().sendMessage(new StringTextComponent("Running tests..."));
+        context.getSource().asPlayer().sendMessage(new StringTextComponent("Running tests..."), Util.DUMMY_UUID);
         try {
             if(!test()) {
-                context.getSource().asPlayer().sendMessage(new StringTextComponent("There were failing tests, see results in console."));
+                context.getSource().asPlayer().sendMessage(new StringTextComponent("There were failing tests, see results in console."), Util.DUMMY_UUID);
             } else {
-                context.getSource().asPlayer().sendMessage(new StringTextComponent("All tests succeeded!"));
+                context.getSource().asPlayer().sendMessage(new StringTextComponent("All tests succeeded!"), Util.DUMMY_UUID);
             }
             return 0;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {

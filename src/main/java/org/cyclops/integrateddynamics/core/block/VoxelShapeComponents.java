@@ -7,7 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
@@ -17,15 +17,16 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapePart;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -144,20 +145,6 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
     }
 
     @Override
-    public double min(Direction.Axis axis, double a, double b) {
-        boolean first = true;
-        double valueMin = 1D;
-        for (VoxelShape shape : this) {
-            double value = shape.min(axis, a, b);
-            if (first || value < valueMin) {
-                valueMin = value;
-                first = false;
-            }
-        }
-        return valueMin;
-    }
-
-    @Override
     public double max(Direction.Axis axis, double a, double b) {
         boolean first = true;
         double valueMax = 0D;
@@ -183,7 +170,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
 
     @Nullable
     @Override
-    public BlockRayTraceResultComponent rayTrace(Vec3d startVec, Vec3d endVec, BlockPos pos) {
+    public BlockRayTraceResultComponent rayTrace(Vector3d startVec, Vector3d endVec, BlockPos pos) {
         // Find component with shape that is closest to the startVec
         double distanceMin = Double.POSITIVE_INFINITY;
         VoxelShapeComponents.IComponent componentMin = null;
@@ -221,13 +208,13 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         if(entity == null) {
             return null;
         }
-        IAttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(PlayerEntity.REACH_DISTANCE) : null;
+        ModifiableAttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(ForgeMod.REACH_DISTANCE.get()) : null;
         double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
         double eyeHeight = entity.getEntityWorld().isRemote() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
-        Vec3d lookVec = entity.getLookVec();
-        Vec3d origin = new Vec3d(entity.getPosX(), entity.getPosY() + eyeHeight, entity.getPosZ());
-        Vec3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
+        Vector3d lookVec = entity.getLookVec();
+        Vector3d origin = new Vector3d(entity.getPosX(), entity.getPosY() + eyeHeight, entity.getPosZ());
+        Vector3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
         return rayTrace(origin, direction, pos);
     }

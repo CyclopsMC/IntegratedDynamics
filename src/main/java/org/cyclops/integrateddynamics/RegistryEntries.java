@@ -8,6 +8,9 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
+import net.minecraft.world.gen.trunkplacer.TrunkPlacerType;
 import net.minecraftforge.registries.ObjectHolder;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
@@ -33,9 +36,9 @@ import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipe;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipe;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
-import org.cyclops.integrateddynamics.world.biome.BiomeMeneglin;
 import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureFlowersMenril;
-import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureTreeMenril;
+import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenril;
+import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
 
 /**
  * Referenced registry entries.
@@ -194,10 +197,11 @@ public class RegistryEntries {
 
     @ObjectHolder("integrateddynamics:flowers_menril")
     public static final WorldFeatureFlowersMenril WORLD_FEATURE_FLOWERS_MENRIL = null;
-    @ObjectHolder("integrateddynamics:tree_menril")
-    public static final WorldFeatureTreeMenril WORLD_FEATURE_TREE_MENRIL = null;
+    @ObjectHolder("integrateddynamics:menril")
+    public static final FoliagePlacerType<FoliagePlacerMenril> FOLIAGE_PLACER_MENRIL = null;
+    public static TrunkPlacerType<TrunkPlacerMenril> TRUNK_PLACER_MENRIL = null; // Trunk placer types are not Forge registries unfortunately...
     @ObjectHolder("integrateddynamics:meneglin")
-    public static final BiomeMeneglin BIOME_MENEGLIN = null;
+    public static final Biome BIOME_MENEGLIN = null;
 
     // Recipe types are not Forge registries unfortunately...
     public static IRecipeType<RecipeDryingBasin> RECIPETYPE_DRYING_BASIN = null;

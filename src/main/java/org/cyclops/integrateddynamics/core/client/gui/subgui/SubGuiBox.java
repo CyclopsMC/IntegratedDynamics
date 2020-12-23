@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui.subgui;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,16 +45,15 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
         subGuiHolder.init(guiLeft, guiTop);
     }
 
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         for (int i = 0; i < this.buttonList.size(); ++i) {
-            this.buttonList.get(i).render(mouseX, mouseY, partialTicks);
+            this.buttonList.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         textureManager.bindTexture(TEXTURE);
-        RenderSystem.color3f(1, 1, 1);
 
         int textureWidth = 19;
         int textureHeight = textureWidth;
@@ -66,10 +66,10 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
         int ty = type.getY();
 
         // Corners
-        this.blit(x, y, tx, tx, 1, 1); // top left
-        this.blit(x + width - 1, y, tx + textureWidth - 1, ty, 1, 1); // top right
-        this.blit(x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1); // bottom left
-        this.blit(x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1); // bottom right
+        this.blit(matrixStack, x, y, tx, tx, 1, 1); // top left
+        this.blit(matrixStack, x + width - 1, y, tx + textureWidth - 1, ty, 1, 1); // top right
+        this.blit(matrixStack, x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1); // bottom left
+        this.blit(matrixStack, x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1); // bottom right
 
         int i, j;
 
@@ -77,16 +77,16 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
         i = 1;
         while(i < width - 1) {
             int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
-            this.blit(x + i, y, tx + 1, ty, currentWidth, 1);
-            this.blit(x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1);
+            this.blit(matrixStack, x + i, y, tx + 1, ty, currentWidth, 1);
+            this.blit(matrixStack, x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1);
             i += currentWidth;
         }
 
         i = 1;
         while(i < height - 1) {
             int currentHeight = Math.max(1, Math.min(height - i, textureHeight - 2) - 1);
-            this.blit(x, y + i, tx, ty + 1, 1, currentHeight);
-            this.blit(x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight);
+            this.blit(matrixStack, x, y + i, tx, ty + 1, 1, currentHeight);
+            this.blit(matrixStack, x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight);
             i += currentHeight;
         }
 
@@ -97,21 +97,21 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
             j = 1;
             while (j < height - 1) {
                 int currentHeight = Math.max(1, Math.min(height - j, textureHeight - 2) - 1);
-                this.blit(x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight);
+                this.blit(matrixStack, x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight);
                 j += currentHeight;
             }
             i += currentWidth;
         }
 
         // Draw buttons
-        drawScreen(mouseX, mouseY, partialTicks);
+        drawScreen(matrixStack, mouseX, mouseY, partialTicks);
 
-        subGuiHolder.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
-        subGuiHolder.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
     }
 
     @Override

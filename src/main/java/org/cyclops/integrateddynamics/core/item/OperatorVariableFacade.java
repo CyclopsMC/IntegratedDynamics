@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -136,7 +137,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                         validatingVariables[i] = true;
                         variableFacade.validate(network, new IValidator() {
                             @Override
-                            public void addError(ITextComponent error) {
+                            public void addError(IFormattableTextComponent error) {
                                 validator.addError(error);
                                 isValid.set(false);
                             }
@@ -157,7 +158,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
             if(checkFurther) {
                 // Check operator validity
                 IOperator op = getOperator();
-                ITextComponent error = op.validateTypes(valueTypes);
+                IFormattableTextComponent error = op.validateTypes(valueTypes);
                 if (error != null) {
                     validator.addError(error);
                 }

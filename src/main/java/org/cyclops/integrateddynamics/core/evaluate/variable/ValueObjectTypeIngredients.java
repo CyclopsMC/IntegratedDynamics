@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import lombok.ToString;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -31,16 +32,16 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         return ValueIngredients.of(null);
     }
 
-    public static ITextComponent ingredientsToTextComponent(IMixedIngredients ingredients) {
-        ITextComponent sb = new StringTextComponent("");
+    public static IFormattableTextComponent ingredientsToTextComponent(IMixedIngredients ingredients) {
+        IFormattableTextComponent sb = new StringTextComponent("");
 
         for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
             IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
             for (Object instance : ingredients.getInstances(component)) {
                 if (sb.getSiblings().size() > 0) {
-                    sb.appendSibling(new StringTextComponent(", "));
+                    sb.append(new StringTextComponent(", "));
                 }
-                sb.appendSibling(handler.toCompactString(handler.toValue(instance)));
+                sb.append(handler.toCompactString(handler.toValue(instance)));
             }
         }
 
@@ -48,7 +49,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     }
 
     @Override
-    public ITextComponent toCompactString(ValueIngredients value) {
+    public IFormattableTextComponent toCompactString(ValueIngredients value) {
         if (value.getRawValue().isPresent()) {
             return ingredientsToTextComponent(value.getRawValue().get());
         }

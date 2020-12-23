@@ -76,7 +76,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     private EnumFacingMap<Integer> previousLightLevels;
     @Getter
     @Setter
-    @NBTPersist private INBT facadeBlockTag = null;
+    @NBTPersist private CompoundNBT facadeBlockTag = null;
 
     @Getter
     private final PartContainerTileMultipartTicking partContainer;
@@ -220,11 +220,6 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     public void setForceDisconnected(EnumFacingMap<Boolean> forceDisconnected) {
         this.forceDisconnected.clear();
         this.forceDisconnected.putAll(forceDisconnected);
-    }
-
-    @Override
-    public boolean canRenderBreaking() {
-        return true;
     }
 
     @Override

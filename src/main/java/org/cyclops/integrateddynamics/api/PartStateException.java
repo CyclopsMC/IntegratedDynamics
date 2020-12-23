@@ -17,7 +17,7 @@ public class PartStateException extends IllegalArgumentException {
                         "\nWorld loaded: %s\nChunk loaded: %s\nPart container: %s\nParts: %s",
                 dimPos,
                 side,
-                ServerLifecycleHooks.getCurrentServer().getWorld(dimPos.getDimension()) != null,
+                dimPos.getWorld(false) != null,
                 dimPos.isLoaded(),
                 dimPos.isLoaded() ? PartHelpers.getPartContainer(dimPos, side) : null,
                 dimPos.isLoaded() ? PartHelpers.getPartContainer(dimPos, side).map(IPartContainer::getParts).orElse(null) : null));

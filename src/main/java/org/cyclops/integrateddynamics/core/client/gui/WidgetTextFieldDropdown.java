@@ -1,11 +1,15 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -39,13 +43,13 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     private int disabledColor = 7368816;
 
     public WidgetTextFieldDropdown(FontRenderer fontrenderer, int x, int y, int width, int height,
-                                   String narrationMessage, boolean background, Set<IDropdownEntry<T>> possibilities) {
+                                   ITextComponent narrationMessage, boolean background, Set<IDropdownEntry<T>> possibilities) {
         super(fontrenderer, x, y, width, height, narrationMessage, background);
         this.possibilities = Objects.requireNonNull(possibilities);
     }
 
     public WidgetTextFieldDropdown(FontRenderer fontrenderer, int x, int y, int width, int height,
-                                   String narrationMessage, boolean background) {
+                                   ITextComponent narrationMessage, boolean background) {
         this(fontrenderer, x, y, width, height, narrationMessage, background, Collections.emptySet());
     }
 
@@ -133,8 +137,8 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public void renderButton(int mouseX, int mouseY, float partialTicks) {
-        super.renderButton(mouseX, mouseY, partialTicks);
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.renderButton(matrixStack, mouseX, mouseY, partialTicks);
         if (this.getVisible() && isFocused()) {
             FontRenderer fontRenderer = Minecraft.getInstance().getRenderManager().getFontRenderer();
             int yOffset = fontRenderer.FONT_HEIGHT + 3;
@@ -149,10 +153,10 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             // Draw ... if we are not at the first element
             if (startIndex > 0) {
                 // Draw background
-                fill(x, cy - 1, x + width, cy + 11, -6250336);
-                fill(x - 1, cy, x + width - 1, cy + 10, -16777216);
+                fill(matrixStack, x, cy - 1, x + width, cy + 11, -6250336);
+                fill(matrixStack, x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                fontRenderer.drawStringWithShadow("...", (float)x + 1, (float)cy + 2, disabledColor);
+                fontRenderer.drawStringWithShadow(matrixStack, "...", (float)x + 1, (float)cy + 2, disabledColor);
 
                 cy += 10;
             }
@@ -161,30 +165,31 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 // Initialize entry
                 IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);
                 String possibility = dropdownEntry.getDisplayString();
-                String displayPossibility = fontRenderer.trimStringToWidth(possibility, width);
+                List<IReorderingProcessor> displayPossibility = fontRenderer.trimStringToWidth(ITextProperties.func_240652_a_(possibility), width);
                 boolean active = visiblePossibilitiesIndex == i;
                 int entryHeight = yOffset;
 
                 // Optionally initialize tooltip
                 boolean addTooltip = (active && MinecraftHelpers.isShifted())
                         || RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
-                List<ITextComponent> tooltipLines = null;
+                List<IFormattableTextComponent> tooltipLines = null;
                 if (addTooltip) {
                     tooltipLines = dropdownEntry.getTooltip();
                     entryHeight += tooltipLines.size() * yOffset;
                 }
 
                 // Draw background
-                fill(x, cy - 1, x + width, cy + entryHeight + 1, -6250336);
-                fill(x - 1, cy, x + width - 1, cy + entryHeight, -16777216);
+                fill(matrixStack, x, cy - 1, x + width, cy + entryHeight + 1, -6250336);
+                fill(matrixStack, x - 1, cy, x + width - 1, cy + entryHeight, -16777216);
 
                 // Draw text
-                fontRenderer.drawStringWithShadow(displayPossibility, (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor);
+                // MCP: drawStringWithShadow
+                fontRenderer.func_238407_a_(matrixStack, displayPossibility.get(0), (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor);
                 if(addTooltip) {
                     int tooltipLineOffsetY = 2;
                     for (ITextComponent tooltipLine : tooltipLines) {
                         tooltipLineOffsetY += yOffset;
-                        fontRenderer.drawStringWithShadow(tooltipLine.getFormattedText(), (float)x + 1, (float)cy + tooltipLineOffsetY, enabledColor);
+                        fontRenderer.drawStringWithShadow(matrixStack, tooltipLine.getString(), (float)x + 1, (float)cy + tooltipLineOffsetY, enabledColor);
                     }
                 }
 
@@ -194,10 +199,10 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             // Draw ... if we haven't reached the end of the list
             if (endIndex < visiblePossibilities.size()) {
                 // Draw background
-                fill(x, cy - 1, x + width, cy + 11, -6250336);
-                fill(x - 1, cy, x + width - 1, cy + 10, -16777216);
+                fill(matrixStack, x, cy - 1, x + width, cy + 11, -6250336);
+                fill(matrixStack, x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                fontRenderer.drawStringWithShadow("...", (float)x + 1, (float)cy + 2, disabledColor);
+                fontRenderer.drawStringWithShadow(matrixStack, "...", (float)x + 1, (float)cy + 2, disabledColor);
             }
         }
     }
@@ -232,7 +237,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                     selectVisiblePossibility(i);
                     return true;
                 }
-                List<ITextComponent> tooltipLines = null;
+                List<IFormattableTextComponent> tooltipLines = null;
                 if (addTooltip) {
                     tooltipLines = dropdownEntry.getTooltip();
                     entryHeight += tooltipLines.size() * yOffset;

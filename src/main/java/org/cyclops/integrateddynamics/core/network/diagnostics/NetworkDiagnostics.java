@@ -61,7 +61,7 @@ public class NetworkDiagnostics {
                 IPartNetworkElement partNetworkElement = (IPartNetworkElement) networkElement;
                 PartPos pos = partNetworkElement.getTarget().getCenter();
                 long lastSecondDurationNs = network.getLastSecondDuration(networkElement);
-                rawParts.add(new RawPartData(pos.getPos().getDimension(),
+                rawParts.add(new RawPartData(pos.getPos().getWorldKey(),
                         pos.getPos().getBlockPos(), pos.getSide(),
                         L10NHelpers.localize(partNetworkElement.getPart().getTranslationKey()),
                         lastSecondDurationNs));
@@ -77,7 +77,7 @@ public class NetworkDiagnostics {
                 Map<PartPos, Long> durations = networkIngredients.getLastSecondDurationIndex();
                 for (Map.Entry<PartPos, Long> durationEntry : durations.entrySet()) {
                     PartPos pos = durationEntry.getKey();
-                    rawObservers.add(new RawObserverData(pos.getPos().getDimension(),
+                    rawObservers.add(new RawObserverData(pos.getPos().getWorldKey(),
                             pos.getPos().getBlockPos(), pos.getSide(),
                             networkIngredients.getComponent().getName().toString(), durationEntry.getValue()));
                 }

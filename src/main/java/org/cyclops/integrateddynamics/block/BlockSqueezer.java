@@ -160,8 +160,8 @@ public class BlockSqueezer extends BlockTile {
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockState state, Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand) {
-        return super.getStateForPlacement(state, facing, state2, world, pos1, pos2, hand)
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos)
                 .with(AXIS, facing.getAxis());
     }
 
@@ -182,11 +182,6 @@ public class BlockSqueezer extends BlockTile {
     @Override
     public VoxelShape getCollisionShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
         return SHAPES_BLOCK[blockState.get(HEIGHT)];
-    }
-
-    @Override
-    public boolean isNormalCube(BlockState blockState, IBlockReader world, BlockPos pos) {
-        return false;
     }
 
     @SuppressWarnings("deprecation")

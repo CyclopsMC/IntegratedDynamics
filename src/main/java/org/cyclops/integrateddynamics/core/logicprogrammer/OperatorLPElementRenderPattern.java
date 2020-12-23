@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.IInventory;
@@ -27,8 +28,8 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Co
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();
         IOperator operator = element.getOperator();
 

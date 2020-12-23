@@ -23,7 +23,8 @@ public class BlockInvisibleLightConfig extends BlockConfig {
                 "invisible_light",
                 eConfig -> new BlockInvisibleLight(Block.Properties.create(Material.AIR)
                         .hardnessAndResistance(3.0F)
-                        .sound(SoundType.METAL)),
+                        .sound(SoundType.METAL)
+                        .setLightLevel((blockState) -> 15)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

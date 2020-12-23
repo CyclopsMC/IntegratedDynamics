@@ -19,7 +19,8 @@ public class BlockSqueezerConfig extends BlockConfig {
                 eConfig -> new BlockSqueezer(Block.Properties.create(Material.IRON)
                         .hardnessAndResistance(5.0F)
                         .sound(SoundType.METAL)
-                        .notSolid()),
+                        .notSolid()
+                        .setOpaque((blockState, world, pos) -> false)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

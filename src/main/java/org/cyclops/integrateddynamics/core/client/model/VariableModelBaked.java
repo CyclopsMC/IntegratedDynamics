@@ -61,12 +61,12 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
         variableFacade.addModelOverlay(this, quads, this.rand, this.modelData);
 
-        return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.func_230044_c_(), this.isGui3d(),
+        return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.isSideLit(), this.isGui3d(),
                 this.getParticleTexture(), this.getItemCameraTransforms(), this.getOverrides());
     }
 
     @Override
-    public boolean func_230044_c_() {
+    public boolean isSideLit() {
         return false;
     }
 

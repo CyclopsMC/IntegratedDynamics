@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -39,7 +40,7 @@ public interface IOperator {
     /**
      * @return The localized full name for this operator, includes category name
      */
-    public ITextComponent getLocalizedNameFull();
+    public IFormattableTextComponent getLocalizedNameFull();
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
@@ -83,7 +84,7 @@ public interface IOperator {
      * @param input The ordered input value types.
      * @return An error or null if valid.
      */
-    public ITextComponent validateTypes(IValueType[] input);
+    public IFormattableTextComponent validateTypes(IValueType[] input);
 
     /**
      * @return The render pattern for this operator inside the logic programmer.

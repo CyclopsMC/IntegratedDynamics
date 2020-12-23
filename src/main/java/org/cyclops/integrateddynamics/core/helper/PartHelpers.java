@@ -141,7 +141,7 @@ public class PartHelpers {
      */
     public static void writePartTypeToNBT(CompoundNBT partTag, Direction side, IPartType partType) {
         partTag.putString("__partType", partType.getUniqueName().toString());
-        partTag.putString("__side", side.getName());
+        partTag.putString("__side", side.getString());
     }
 
     /**

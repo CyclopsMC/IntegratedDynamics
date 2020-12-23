@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate;
 import com.google.common.collect.Lists;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -128,7 +129,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
     }
 
     @Override
-    public void addError(ITextComponent error) {
+    public void addError(IFormattableTextComponent error) {
         errors.add(error);
     }
 

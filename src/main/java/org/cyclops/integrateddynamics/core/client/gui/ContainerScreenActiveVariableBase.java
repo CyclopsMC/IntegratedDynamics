@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
@@ -32,26 +33,26 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        super.drawGuiContainerBackgroundLayer(f, x, y);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float f, int x, int y) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, f, x, y);
 
         ITextComponent readValue = getContainer().getReadValue();
         int readValueColor = getContainer().getReadValueColor();
         boolean ok = false;
         if (readValue != null) {
             ok = true;
-            RenderHelpers.drawScaledCenteredString(font, readValue.getFormattedText(),
+            RenderHelpers.drawScaledCenteredString(matrixStack, font, readValue.getString(),
                     getGuiLeftTotal() + getValueX(), getGuiTopTotal() + getValueY(), 70, readValueColor);
         }
 
         RenderSystem.color3f(1, 1, 1);
-        displayErrors.drawBackground(getContainer().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
+        displayErrors.drawBackground(matrixStack, getContainer().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
                 this.guiLeft, this.guiTop, ok);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        displayErrors.drawForeground(getContainer().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.guiLeft, this.guiTop);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        displayErrors.drawForeground(matrixStack, getContainer().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.guiLeft, this.guiTop);
     }
 }

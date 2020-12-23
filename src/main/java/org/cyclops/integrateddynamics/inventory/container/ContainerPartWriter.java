@@ -6,6 +6,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
@@ -119,7 +120,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         try {
             if (!player.world.isRemote()) {
                 // Update write value
-                Pair<ITextComponent, Integer> readValue;
+                Pair<IFormattableTextComponent, Integer> readValue;
                 S partState = getPartState();
                 if (!partState.isEnabled()) {
                     readValue = Pair.of(new StringTextComponent("NO POWER"), 0);
@@ -153,7 +154,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         }
     }
 
-    public void setWriteValue(ITextComponent writeValue, int writeColor) {
+    public void setWriteValue(IFormattableTextComponent writeValue, int writeColor) {
         ValueNotifierHelpers.setValue(this, valueId, writeValue);
         ValueNotifierHelpers.setValue(this, colorId, writeColor);
     }
@@ -170,7 +171,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         return ValueNotifierHelpers.getValueInt(this, colorId);
     }
 
-    public List<ITextComponent> getAspectErrors(IAspectWrite aspectWrite) {
+    public List<IFormattableTextComponent> getAspectErrors(IAspectWrite aspectWrite) {
         return ValueNotifierHelpers.getValueTextComponentList(this, aspectErrorIds.get(aspectWrite));
     }
 

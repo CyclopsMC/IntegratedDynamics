@@ -11,6 +11,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -40,7 +41,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     public BlockState getFacadeBlock(ItemStack itemStack) {
         if(!itemStack.isEmpty() && itemStack.hasTag()) {
             CompoundNBT tag = itemStack.getTag();
-            return BlockHelpers.deserializeBlockState(tag.get("block"));
+            return BlockHelpers.deserializeBlockState(tag.getCompound("block"));
         }
         return null;
     }
@@ -55,21 +56,21 @@ public class ItemFacade extends Item implements IDynamicModelElement {
 
     public void writeFacadeBlock(ItemStack itemStack, BlockState blockState) {
         CompoundNBT tag = itemStack.getOrCreateTag();
-        INBT serializedBlockState = BlockHelpers.serializeBlockState(blockState);
+        CompoundNBT serializedBlockState = BlockHelpers.serializeBlockState(blockState);
         tag.put("block", serializedBlockState);
     }
 
     @Override
     public ITextComponent getDisplayName(ItemStack itemStack) {
         ITextComponent suffix = new TranslationTextComponent("general.integrateddynamics.info.none")
-                .applyTextStyle(TextFormatting.ITALIC);
+                .mergeStyle(TextFormatting.ITALIC);
         ItemStack itemStackInner = getFacadeBlockItem(itemStack);
         if(itemStackInner != null) {
             suffix = getFacadeBlockItem(itemStack).getDisplayName();
         }
-        return super.getDisplayName(itemStack)
-                .appendText(" - ")
-                .appendSibling(suffix);
+        return ((IFormattableTextComponent) super.getDisplayName(itemStack))
+                .appendString(" - ")
+                .append(suffix);
     }
 
     @Override

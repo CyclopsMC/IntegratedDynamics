@@ -34,11 +34,11 @@ public class ItemWrench extends Item {
             return super.onItemUse(context);
         }
         if (context.getFace().getAxis() == Direction.Axis.Y
-                && blockState.has(BlockStateProperties.FACING)) {
+                && blockState.hasProperty(BlockStateProperties.FACING)) {
             // If pointing top or bottom, and we can rotate to UP and DOWN, rotate to that direction or opposite
             blockState = blockState.with(BlockStateProperties.FACING, blockState.get(BlockStateProperties.FACING) == Direction.UP ? Direction.DOWN : Direction.UP);
         } else if (context.getFace().getAxis() != Direction.Axis.Y
-                && blockState.has(BlockStateProperties.FACING)
+                && blockState.hasProperty(BlockStateProperties.FACING)
                 && blockState.get(BlockStateProperties.FACING).getAxis() == Direction.Axis.Y) {
             // If not pointing top or bottom, and rotation is UP or DOWN, rotate to facing
             blockState = blockState.with(BlockStateProperties.FACING, context.getFace());

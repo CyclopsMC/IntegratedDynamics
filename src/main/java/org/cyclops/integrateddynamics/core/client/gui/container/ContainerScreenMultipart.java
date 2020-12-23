@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -38,7 +39,7 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
         P partType = getContainer().getPartType();
         if(partType instanceof PartTypeConfigurable && partType.getContainerProviderSettings(null).isPresent()) {
             addButton(new ButtonImage(this.guiLeft + 174, this.guiTop + 4, 15, 15,
-                    L10NHelpers.localize("gui.integrateddynamics.part_settings"),
+                    new TranslationTextComponent("gui.integrateddynamics.part_settings"),
                     createServerPressable(ContainerMultipart.BUTTON_SETTINGS, (button) -> {}), true,
                     Images.CONFIG_BOARD, -2, -3));
         }
@@ -56,11 +57,12 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
 
         // Draw part name
-        font.drawString(getTitle().getFormattedText(), guiLeft + 8, guiTop + 6, Helpers.RGBToInt(0, 0, 0));
+        // MCP: drawString
+        font.func_243246_a(matrixStack, getTitle(), guiLeft + 8, guiTop + 6, Helpers.RGBToInt(0, 0, 0));
     }
 
 }

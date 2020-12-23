@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
 import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +25,7 @@ public interface IVariableModelProvider<B extends IVariableModelProvider.IBakedM
      * @param location The model location.
      * @return The baked moderl provider.
      */
-    public B bakeOverlayModels(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter,
+    public B bakeOverlayModels(ModelBakery modelBakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter,
                                IModelTransform transform, ResourceLocation location);
 
     /**

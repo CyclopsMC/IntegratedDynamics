@@ -16,7 +16,8 @@ public class BlockDryingBasinConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "drying_basin",
                 eConfig -> new BlockDryingBasin(Block.Properties.create(Material.WOOD)
-                        .notSolid()),
+                        .notSolid()
+                        .setOpaque((blockState, world, pos) -> false)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

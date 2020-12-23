@@ -54,7 +54,6 @@ public class ClientProxy extends ClientProxyComponent {
     @Override
     public void registerEventHooks() {
         super.registerEventHooks();
-        ModelLoaderRegistry.registerLoader(new ResourceLocation(Reference.MOD_ID, "variable"), new ModelLoaderVariable());
         MinecraftForge.EVENT_BUS.register(NetworkDiagnosticsPartOverlayRenderer.getInstance());
     }
 

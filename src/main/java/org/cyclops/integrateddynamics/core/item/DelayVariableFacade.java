@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -34,15 +35,18 @@ public class DelayVariableFacade extends ProxyVariableFacade implements IDelayVa
         super(id, proxyId);
     }
 
-    protected ITextComponent getProxyNotInNetworkError() {
+    @Override
+    protected IFormattableTextComponent getProxyNotInNetworkError() {
         return new TranslationTextComponent(L10NValues.DELAY_ERROR_DELAYNOTINNETWORK, Integer.toString(getProxyId()));
     }
 
-    protected ITextComponent getProxyInvalidError() {
+    @Override
+    protected IFormattableTextComponent getProxyInvalidError() {
         return new TranslationTextComponent(L10NValues.DELAY_ERROR_DELAYINVALID, Integer.toString(getProxyId()));
     }
 
-    protected ITextComponent getProxyInvalidTypeError(IPartNetwork network,
+    @Override
+    protected IFormattableTextComponent getProxyInvalidTypeError(IPartNetwork network,
                                                                      IValueType containingValueType,
                                                                      IValueType actualType) {
         return new TranslationTextComponent(L10NValues.DELAY_ERROR_DELAYINVALIDTYPE,

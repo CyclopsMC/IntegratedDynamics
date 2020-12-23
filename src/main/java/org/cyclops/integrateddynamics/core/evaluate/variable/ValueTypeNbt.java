@@ -6,7 +6,7 @@ import lombok.ToString;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -35,7 +35,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
     }
 
     @Override
-    public ITextComponent toCompactString(ValueNbt value) {
+    public IFormattableTextComponent toCompactString(ValueNbt value) {
         return new StringTextComponent(toString(value));
     }
 

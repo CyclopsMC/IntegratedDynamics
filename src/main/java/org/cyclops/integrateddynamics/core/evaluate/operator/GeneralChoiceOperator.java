@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -29,7 +29,7 @@ public class GeneralChoiceOperator extends GeneralOperator {
     }
 
     @Override
-    public ITextComponent validateTypes(IValueType[] input) {
+    public IFormattableTextComponent validateTypes(IValueType[] input) {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {

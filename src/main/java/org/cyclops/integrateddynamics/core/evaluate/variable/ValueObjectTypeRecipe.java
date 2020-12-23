@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import lombok.ToString;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -36,13 +37,13 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     }
 
     @Override
-    public ITextComponent toCompactString(ValueRecipe value) {
+    public IFormattableTextComponent toCompactString(ValueRecipe value) {
         if (value.getRawValue().isPresent()) {
             IRecipeDefinition recipe = value.getRawValue().get();
-            ITextComponent sb = new StringTextComponent("");
+            IFormattableTextComponent sb = new StringTextComponent("");
 
-            sb.appendSibling(ValueObjectTypeIngredients.ingredientsToTextComponent(recipe.getOutput()));
-            sb.appendSibling(new StringTextComponent(" <- "));
+            sb.append(ValueObjectTypeIngredients.ingredientsToTextComponent(recipe.getOutput()));
+            sb.append(new StringTextComponent(" <- "));
             boolean first = true;
 
             for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
@@ -56,11 +57,11 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
                         v = handler.toValue(prototypedIngredient.getPrototype());
                     }
                     if (!first) {
-                        sb.appendSibling(new StringTextComponent(", "));
+                        sb.append(new StringTextComponent(", "));
                     } else {
                         first = false;
                     }
-                    sb.appendSibling(handler.toCompactString(v));
+                    sb.append(handler.toCompactString(v));
                 }
             }
             return sb;

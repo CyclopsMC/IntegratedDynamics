@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -82,15 +83,15 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
         return proxyId >= 0;
     }
 
-    protected ITextComponent getProxyNotInNetworkError() {
+    protected IFormattableTextComponent getProxyNotInNetworkError() {
         return new TranslationTextComponent(L10NValues.PROXY_ERROR_PROXYNOTINNETWORK, Integer.toString(proxyId));
     }
 
-    protected ITextComponent getProxyInvalidError() {
+    protected IFormattableTextComponent getProxyInvalidError() {
         return new TranslationTextComponent(L10NValues.PROXY_ERROR_PROXYINVALID, Integer.toString(proxyId));
     }
 
-    protected ITextComponent getProxyInvalidTypeError(IPartNetwork network,
+    protected IFormattableTextComponent getProxyInvalidTypeError(IPartNetwork network,
                                                                      IValueType containingValueType,
                                                                      IValueType actualType) {
         return new TranslationTextComponent(L10NValues.PROXY_ERROR_PROXYINVALIDTYPE,

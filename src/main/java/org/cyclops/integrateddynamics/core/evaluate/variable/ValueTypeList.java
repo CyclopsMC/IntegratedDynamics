@@ -8,6 +8,7 @@ import lombok.ToString;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.JSONUtils;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -45,7 +46,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public ITextComponent toCompactString(ValueList value) {
+    public IFormattableTextComponent toCompactString(ValueList value) {
         return value.getRawValue().toCompactString();
     }
 

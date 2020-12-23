@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.advancement.criterion;
 
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+import net.minecraft.advancements.criterion.AbstractCriterionTrigger;
 import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.loot.ConditionArrayParser;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.cyclops.cyclopscore.advancement.criterion.BaseCriterionTrigger;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.JsonDeserializers;
@@ -19,23 +20,32 @@ import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariable
  * Triggers when a variable-driven part aspect is changed.
  * @author rubensworks
  */
-public class PartVariableDrivenAspectTrigger extends BaseCriterionTrigger<PartVariableDrivenVariableContentsUpdatedEvent, PartVariableDrivenAspectTrigger.Instance> {
+public class PartVariableDrivenAspectTrigger extends AbstractCriterionTrigger<PartVariableDrivenAspectTrigger.Instance> {
+    private final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "part_variable_driven");
 
     public PartVariableDrivenAspectTrigger() {
-        super(new ResourceLocation(Reference.MOD_ID, "part_variable_driven"));
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
-    public Instance deserializeInstance(JsonObject json, JsonDeserializationContext context) {
-        return new Instance(getId(),
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
+    public Instance deserializeTrigger(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
+        return new Instance(getId(), entityPredicate,
                 JsonDeserializers.deserializePartType(json), VariablePredicate.deserialize(json.get("variable")));
+    }
+
+    public void test(ServerPlayerEntity player, PartVariableDrivenVariableContentsUpdatedEvent event) {
+        this.triggerListeners(player, (instance) -> instance.test(player, event));
     }
 
     @SubscribeEvent
     public void onEvent(PartVariableDrivenVariableContentsUpdatedEvent event) {
         if (event.getEntityPlayer() != null && event.getEntityPlayer() instanceof ServerPlayerEntity) {
-            this.trigger((ServerPlayerEntity) event.getEntityPlayer(), event);
+            this.test((ServerPlayerEntity) event.getEntityPlayer(), event);
         }
     }
 
@@ -43,8 +53,9 @@ public class PartVariableDrivenAspectTrigger extends BaseCriterionTrigger<PartVa
         private final IPartType partType;
         private final VariablePredicate variablePredicate;
 
-        public Instance(ResourceLocation criterionIn, IPartType partType, VariablePredicate variablePredicate) {
-            super(criterionIn);
+        public Instance(ResourceLocation criterionIn, EntityPredicate.AndPredicate player,
+                        IPartType partType, VariablePredicate variablePredicate) {
+            super(criterionIn, player);
             this.partType = partType;
             this.variablePredicate = variablePredicate;
         }

@@ -12,7 +12,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -50,16 +50,16 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     }
 
     @Override
-    public ITextComponent toCompactString(ValueEntity value) {
+    public IFormattableTextComponent toCompactString(ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if (uuid.isPresent()) {
             Optional<Entity> entity = value.getRawValue();
             if(entity.isPresent()) {
                 Entity e = entity.get();
                 if(e instanceof ItemEntity) {
-                    return ((ItemEntity) e).getItem().getDisplayName();
+                    return (IFormattableTextComponent) ((ItemEntity) e).getItem().getDisplayName();
                 } else {
-                    return e.getName();
+                    return (IFormattableTextComponent) e.getName();
                 }
             }
             return new StringTextComponent("unknown");

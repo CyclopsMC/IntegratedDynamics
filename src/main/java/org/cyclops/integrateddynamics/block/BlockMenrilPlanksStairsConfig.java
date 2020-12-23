@@ -8,6 +8,7 @@ import net.minecraft.block.StairsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -31,7 +32,7 @@ public class BlockMenrilPlanksStairsConfig extends BlockConfig {
     
     @Override
     public void onRegistered() {
-        ((FireBlock) Blocks.FIRE).setFireInfo(RegistryEntries.BLOCK_MENRIL_PLANKS_STAIRS, 5, 20);
+        BlockHelpers.setFireInfo(RegistryEntries.BLOCK_MENRIL_PLANKS_STAIRS, 5, 20);
     }
 
 }

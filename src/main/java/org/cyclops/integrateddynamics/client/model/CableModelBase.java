@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -17,8 +16,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.ILightReader;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -114,7 +114,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         };
     }
 
-    private Direction getSideFromVecs(Vec3d a, Vec3d b, Vec3d c) {
+    private Direction getSideFromVecs(Vector3d a, Vector3d b, Vector3d c) {
         int dir = a.y == b.y && b.y == c.y ? 0 : (a.x == b.x && b.x == c.x ? 2 : 4);
         if (dir == 0) {
             dir += (c.y >= 0.5) ? 1 : 0;
@@ -217,10 +217,10 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                             quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
                         }
                         for (float[][] v : quadVertexes) {
-                            Vec3d v1 = rotate(new Vec3d(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).add(.5, .5, .5);
-                            Vec3d v2 = rotate(new Vec3d(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).add(.5, .5, .5);
-                            Vec3d v3 = rotate(new Vec3d(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).add(.5, .5, .5);
-                            Vec3d v4 = rotate(new Vec3d(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).add(.5, .5, .5);
+                            Vector3d v1 = rotate(new Vector3d(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).add(.5, .5, .5);
+                            Vector3d v2 = rotate(new Vector3d(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).add(.5, .5, .5);
+                            Vector3d v3 = rotate(new Vector3d(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).add(.5, .5, .5);
+                            Vector3d v4 = rotate(new Vector3d(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).add(.5, .5, .5);
                             Direction realSide = getSideFromVecs(v1, v2, v3);
 
                             boolean invert = i == 2 || i == 1;
@@ -277,7 +277,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos,
+    public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos,
                                    @Nonnull BlockState state, @Nonnull IModelData tileData) {
         return TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class)
                 .map(TileMultipartTicking::getConnectionState)
@@ -285,7 +285,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     @Override
-    public boolean func_230044_c_() {
+    public boolean isSideLit() {
         return false; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
     }
 

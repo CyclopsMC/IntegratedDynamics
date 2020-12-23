@@ -7,12 +7,16 @@ import com.google.gson.JsonSerializationContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.ILootSerializer;
+import net.minecraft.loot.LootConditionType;
+import net.minecraft.loot.LootFunctionType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameter;
-import net.minecraft.world.storage.loot.LootParameters;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameter;
+import net.minecraft.loot.LootParameters;
+import net.minecraft.loot.conditions.ILootCondition;
+import org.cyclops.cyclopscore.helper.LootHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 
@@ -23,11 +27,13 @@ import java.util.Set;
  * @author rubensworks
  */
 public class LootConditionMatchWrench implements ILootCondition {
+    public static final LootConditionType TYPE = LootHelpers.registerCondition(new ResourceLocation(Reference.MOD_ID, "match_wrench"), new LootConditionMatchWrench.Serializer());
+
     @Override
     public boolean test(LootContext lootContext) {
         ItemStack itemStack = lootContext.get(LootParameters.TOOL);
         Entity entity = lootContext.get(LootParameters.THIS_ENTITY);
-        BlockPos blockPos = lootContext.get(LootParameters.POSITION);
+        BlockPos blockPos = new BlockPos(lootContext.get(LootParameters.field_237457_g_));
         return itemStack != null
                 && entity instanceof PlayerEntity
                 && WrenchHelpers.isWrench((PlayerEntity) entity, itemStack, entity.getEntityWorld(), blockPos, null);
@@ -35,14 +41,19 @@ public class LootConditionMatchWrench implements ILootCondition {
 
     @Override
     public Set<LootParameter<?>> getRequiredParameters() {
-        return ImmutableSet.of(LootParameters.TOOL, LootParameters.THIS_ENTITY, LootParameters.POSITION);
+        return ImmutableSet.of(LootParameters.TOOL, LootParameters.THIS_ENTITY, LootParameters.field_237457_g_);
     }
 
-    public static class Serializer extends ILootCondition.AbstractSerializer<LootConditionMatchWrench> {
+    @Override
+    public LootConditionType func_230419_b_() {
+        return TYPE;
+    }
 
-        protected Serializer() {
-            super(new ResourceLocation(Reference.MOD_ID, "match_wrench"), LootConditionMatchWrench.class);
-        }
+    public static void load() {
+        // Dummy call, to enforce class loading
+    }
+
+    public static class Serializer implements ILootSerializer<LootConditionMatchWrench> {
 
         @Override
         public void serialize(JsonObject jsonObject, LootConditionMatchWrench lootConditionMatchWrench, JsonSerializationContext jsonSerializationContext) {

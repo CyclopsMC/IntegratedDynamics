@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Data;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -146,27 +147,28 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
         }
 
         @Override
-        public void drawGuiContainerBackgroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
             int x = guiLeft + getX();
             int y = guiTop + getY();
 
-            fontRenderer.drawString(element.getName().getFormattedText(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
+            // MCP: drawString
+            fontRenderer.func_243246_a(matrixStack, element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
 
             if(showError()) {
                 ITextComponent lastError = getLastError();
                 if (lastError != null) {
-                    Images.ERROR.draw(this, x + getSignalX(), y + getSignalY() - 1);
+                    Images.ERROR.draw(this, matrixStack, x + getSignalX(), y + getSignalY() - 1);
                 } else {
-                    Images.OK.draw(this, x + getSignalX(), y + getSignalY() + 1);
+                    Images.OK.draw(this, matrixStack, x + getSignalX(), y + getSignalY() + 1);
                 }
             }
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+        public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+            super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             int x = getX();
             int y = getY();
@@ -174,7 +176,7 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
             if(showError()) {
                 ITextComponent lastError = getLastError();
                 if (lastError != null && gui.isPointInRegion(x + getSignalX(), y + getSignalY() - 1, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
-                    List<ITextComponent> lines = StringHelpers.splitLines(lastError.getFormattedText(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
+                    List<ITextComponent> lines = StringHelpers.splitLines(lastError.getString(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
                             TextFormatting.RED.toString())
                             .stream()
                             .map(StringTextComponent::new)

@@ -4,6 +4,7 @@ import lombok.ToString;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -37,9 +38,9 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     }
 
     @Override
-    public ITextComponent toCompactString(ValueFluidStack value) {
+    public IFormattableTextComponent toCompactString(ValueFluidStack value) {
         FluidStack fluidStack = value.getRawValue();
-        return !fluidStack.isEmpty() ? fluidStack.getDisplayName().appendText(String.format(" (%s mB)", fluidStack.getAmount())) : new StringTextComponent("");
+        return !fluidStack.isEmpty() ? ((IFormattableTextComponent) fluidStack.getDisplayName()).appendString(String.format(" (%s mB)", fluidStack.getAmount())) : new StringTextComponent("");
     }
 
     @Override

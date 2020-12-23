@@ -42,7 +42,7 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                 break;
             } else {
                 IValueType elementType = element.getType();
-                String string = " - " + elementType.toCompactString(element).getFormattedText();
+                String string = " - " + elementType.toCompactString(element).getString();
                 float width = fontRenderer.getStringWidth(string) - 1;
                 lines.add(Pair.of(string, elementType.getDisplayColor()));
                 maxWidth = Math.max(maxWidth, width);

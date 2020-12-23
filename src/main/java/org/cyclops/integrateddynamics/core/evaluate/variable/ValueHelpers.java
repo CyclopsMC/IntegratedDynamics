@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -243,8 +244,8 @@ public class ValueHelpers {
      * @param variable A nullable variable.
      * @return A pair of a string and color.
      */
-    public static Pair<ITextComponent, Integer> getSafeReadableValue(@Nullable IVariable variable) {
-        ITextComponent readValue = new StringTextComponent("");
+    public static Pair<IFormattableTextComponent, Integer> getSafeReadableValue(@Nullable IVariable variable) {
+        IFormattableTextComponent readValue = new StringTextComponent("");
         int readValueColor = 0;
         if (!NetworkHelpers.shouldWork()) {
             readValue = new StringTextComponent("SAFE-MODE");

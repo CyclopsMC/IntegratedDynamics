@@ -20,6 +20,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -263,13 +264,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     IValueType valueType = value.getType();
                     lines.add(new TranslationTextComponent(
                             L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
-                            valueType.toCompactString(value).applyTextStyle(valueType.getDisplayColorFormat()),
+                            valueType.toCompactString(value).mergeStyle(valueType.getDisplayColorFormat()),
                             new TranslationTextComponent(valueType.getTranslationKey())));
                 }
             } else {
-                lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS).applyTextStyle(TextFormatting.RED));
-                for (ITextComponent error : state.getGlobalErrors()) {
-                    lines.add(error.applyTextStyle(TextFormatting.RED));
+                lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS).mergeStyle(TextFormatting.RED));
+                for (IFormattableTextComponent error : state.getGlobalErrors()) {
+                    lines.add(error.mergeStyle(TextFormatting.RED));
                 }
             }
         } else {

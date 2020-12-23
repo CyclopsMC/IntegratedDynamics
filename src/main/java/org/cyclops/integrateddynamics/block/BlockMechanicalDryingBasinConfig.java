@@ -26,7 +26,8 @@ public class BlockMechanicalDryingBasinConfig extends BlockConfig {
                 eConfig -> new BlockMechanicalDryingBasin(Block.Properties.create(Material.ANVIL)
                         .hardnessAndResistance(5.0F)
                         .sound(SoundType.METAL)
-                        .notSolid()),
+                        .notSolid()
+                        .setOpaque((blockState, world, pos) -> false)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
