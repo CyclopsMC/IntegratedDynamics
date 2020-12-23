@@ -107,3 +107,5 @@ org.cyclops.integrateddynamics.tileentity
 org.cyclops.integrateddynamics.world.biome
 org.cyclops.integrateddynamics.world.gen
 org.cyclops.integrateddynamics.world.gen.feature
+org.cyclops.integrateddynamics.world.gen.foliageplacer
+org.cyclops.integrateddynamics.world.gen.trunkplacer
