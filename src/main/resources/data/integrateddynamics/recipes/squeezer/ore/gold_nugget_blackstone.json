@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "minecraft:gilded_blackstone",
+  "result": {
+    "items": [
+      {
+        "tag": "forge:nuggets/gold",
+        "count": 4
+      },
+      {
+        "tag": "forge:nuggets/gold",
+        "count": 5,
+        "chance": 0.5
+      }
+    ]
+  }
+}

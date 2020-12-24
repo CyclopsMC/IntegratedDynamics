@@ -1,0 +1,12 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "minecraft:blackstone",
+  "result": {
+    "items": [
+      {
+        "item": "minecraft:gravel",
+        "count": 2
+      }
+    ]
+  }
+}

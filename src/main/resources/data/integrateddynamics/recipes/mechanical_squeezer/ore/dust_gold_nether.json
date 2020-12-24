@@ -1,0 +1,25 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "minecraft:nether_gold_ore",
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/gold"
+      },
+      {
+        "tag": "forge:dusts/gold",
+        "chance": 0.75
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/gold"
+      }
+    }
+  ],
+  "duration": 40
+}

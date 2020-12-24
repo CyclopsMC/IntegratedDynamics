@@ -285,7 +285,7 @@
                 <appendix type="minecraft:crafting">integrateddynamics:crafting/squeezer</appendix>
                 <appendix_list type="integrateddynamics:squeezer">integrateddynamics:squeezer/base/.*</appendix_list>
                 <appendix_list type="integrateddynamics:squeezer">integrateddynamics:squeezer/convenience/.*</appendix_list>
-                <appendix_list type="integrateddynamics:squeezer">integrateddynamics:squeezer/ores/.*</appendix_list>
+                <appendix_list type="integrateddynamics:squeezer">integrateddynamics:squeezer/ore/.*</appendix_list>
                 <appendix type="minecraft:crafting">integrateddynamics:crafting/proto_chorus</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.prerequisites.drying_basin">
@@ -602,7 +602,7 @@
                 <appendix type="minecraft:crafting">integrateddynamics:crafting/mechanical_squeezer</appendix>
                 <appendix_list type="integrateddynamics:mechanical_squeezer">integrateddynamics:mechanical_squeezer/base/.*</appendix_list>
                 <appendix_list type="integrateddynamics:mechanical_squeezer">integrateddynamics:mechanical_squeezer/convenience/.*</appendix_list>
-                <appendix_list type="integrateddynamics:mechanical_squeezer">integrateddynamics:mechanical_squeezer/ores/.*</appendix_list>
+                <appendix_list type="integrateddynamics:mechanical_squeezer">integrateddynamics:mechanical_squeezer/ore/.*</appendix_list>
             </section>
             <section name="info_book.integrateddynamics.manual.machines.mechanical_drying_basin">
                 <tag>mechanical_drying_basin</tag>
