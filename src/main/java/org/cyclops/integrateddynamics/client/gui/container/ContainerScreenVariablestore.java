@@ -35,4 +35,9 @@ public class ContainerScreenVariablestore extends ContainerScreenExtended<Contai
         this.blit(matrixStack, guiLeft + offsetX, guiTop + offsetY + TileVariablestore.ROWS * 18 + 17, 0, 126, this.xSize, 96);
     }
 
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
+        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+    }
 }

@@ -52,7 +52,8 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
         displayErrors.drawForeground(matrixStack, getContainer().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.guiLeft, this.guiTop);
     }
 }

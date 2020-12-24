@@ -139,6 +139,6 @@ public class TileVariablestore extends TileCableConnectableInventory
 
     @Override
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("block.integrateddynamics.variable_store");
+        return new TranslationTextComponent("block.integrateddynamics.variablestore");
     }
 }

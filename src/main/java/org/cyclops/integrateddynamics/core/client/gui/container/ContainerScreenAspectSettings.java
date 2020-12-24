@@ -123,7 +123,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().getTextureManager(), font, mouseX, mouseY);
 
         IAspectPropertyTypeInstance activeProperty = getActiveProperty();

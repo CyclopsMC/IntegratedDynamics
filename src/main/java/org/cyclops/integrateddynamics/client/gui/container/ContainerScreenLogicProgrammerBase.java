@@ -182,7 +182,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().textureManager, font, mouseX, mouseY);
         // Draw operator tooltips
         ContainerLogicProgrammerBase container = getContainer();

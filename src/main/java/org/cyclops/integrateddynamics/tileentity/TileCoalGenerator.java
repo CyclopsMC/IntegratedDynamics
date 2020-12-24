@@ -175,7 +175,7 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
 
     @Override
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("block.blocks.integrateddynamics.coal_generator");
+        return new TranslationTextComponent("block.integrateddynamics.coal_generator");
     }
 
     @Nullable

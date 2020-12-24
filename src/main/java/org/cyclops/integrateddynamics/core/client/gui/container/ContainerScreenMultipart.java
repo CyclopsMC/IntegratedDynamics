@@ -62,7 +62,11 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
 
         // Draw part name
         // MCP: drawString
-        font.func_243246_a(matrixStack, getTitle(), guiLeft + 8, guiTop + 6, Helpers.RGBToInt(0, 0, 0));
+        font.func_243248_b(matrixStack, getTitle(), guiLeft + 8, guiTop + 6, 4210752);
     }
 
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
+    }
 }

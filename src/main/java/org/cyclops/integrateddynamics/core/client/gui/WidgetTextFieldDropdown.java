@@ -128,7 +128,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
 
     public void selectPossibility(IDropdownEntry<T> entry) {
         selectedDropdownPossibility = entry;
-        setText(selectedDropdownPossibility.getDisplayString());
+        setText(selectedDropdownPossibility.getDisplayString().getString());
         visiblePossibilities = Lists.newArrayList();
         visiblePossibilitiesIndex = -1;
         if (dropdownEntryListener != null) {
@@ -164,8 +164,8 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             for (int i = startIndex; i < endIndex; i++) {
                 // Initialize entry
                 IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);
-                String possibility = dropdownEntry.getDisplayString();
-                List<IReorderingProcessor> displayPossibility = fontRenderer.trimStringToWidth(ITextProperties.func_240652_a_(possibility), width);
+                IFormattableTextComponent possibility = dropdownEntry.getDisplayString();
+                List<IReorderingProcessor> displayPossibility = fontRenderer.trimStringToWidth(possibility, width);
                 boolean active = visiblePossibilitiesIndex == i;
                 int entryHeight = yOffset;
 

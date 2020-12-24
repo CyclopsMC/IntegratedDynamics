@@ -98,7 +98,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
         // Draw part name
         RenderHelpers.drawScaledCenteredString(matrixStack, font, title.getString(),
-                this.guiLeft + offsetX + 6, this.guiTop + offsetY + 10, 70, Helpers.RGBToInt(0, 0, 0));
+                this.guiLeft + offsetX + 6, this.guiTop + offsetY + 10, 70, 4210752);
 
         // Draw aspects
         C container = getContainer();
@@ -146,7 +146,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         C container = getContainer();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {

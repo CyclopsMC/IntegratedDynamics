@@ -9,6 +9,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
@@ -262,7 +263,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
             GuiHelpers.renderTooltip(this, 8, 87, 100, 20, mouseX, mouseY,
                     () -> Lists.<ITextComponent>newArrayList(new TranslationTextComponent("gui.integrateddynamics.partsettings.channel.disabledinfo")));
@@ -321,8 +322,11 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         }
 
         @Override
-        public String getDisplayString() {
-            return (getDefaultSide() == this.side ? TextFormatting.YELLOW : "") + getMatchString();
+        public IFormattableTextComponent getDisplayString() {
+            if (getDefaultSide() == this.side) {
+                return new StringTextComponent(getMatchString()).mergeStyle(TextFormatting.YELLOW);
+            }
+            return new StringTextComponent(getMatchString());
         }
 
         @Override

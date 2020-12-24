@@ -124,6 +124,12 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+    }
+
+    @Override
     public void onUpdate(int valueId, CompoundNBT value) {
         if (valueId == getContainer().getLastUpdateValueId()) {
             numberFieldUpdateInterval.setText(Integer.toString(getContainer().getLastUpdateValue()));

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -152,8 +153,8 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         }
 
         @Override
-        public String getDisplayString() {
-            return getMatchString();
+        public IFormattableTextComponent getDisplayString() {
+            return new StringTextComponent(getMatchString());
         }
 
         @Override

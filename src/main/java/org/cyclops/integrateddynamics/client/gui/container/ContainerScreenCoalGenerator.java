@@ -34,4 +34,9 @@ public class ContainerScreenCoalGenerator extends ContainerScreenExtended<Contai
         }
     }
 
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
+        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+    }
 }

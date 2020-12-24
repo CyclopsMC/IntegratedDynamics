@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -45,5 +46,11 @@ public abstract class ContainerScreenMechanicalMachine<C extends ContainerMechan
             }
             return Optional.empty();
         });
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
+        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
     }
 }

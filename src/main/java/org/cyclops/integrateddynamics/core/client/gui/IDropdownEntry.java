@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IDropdownEntry<V> {
     public String getMatchString();
-    public String getDisplayString();
+    public IFormattableTextComponent getDisplayString();
     public List<IFormattableTextComponent> getTooltip();
     public V getValue();
 }
