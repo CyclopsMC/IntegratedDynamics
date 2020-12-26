@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.world.biome;
 
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
@@ -13,11 +12,7 @@ import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.biome.MoodSoundAmbience;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.blockplacer.SimpleBlockPlacer;
-import net.minecraft.world.gen.blockstateprovider.WeightedBlockStateProvider;
-import net.minecraft.world.gen.feature.BlockClusterFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.Features;
 import net.minecraft.world.gen.feature.structure.StructureFeatures;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
 import net.minecraft.world.gen.placement.Placement;
@@ -33,6 +28,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.BiomeConfig;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.world.gen.TreeMenril;
+import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatures;
 
 /**
  * Config for the meneglin biome.
@@ -55,7 +51,7 @@ public class BiomeMeneglinConfig extends BiomeConfig {
                 IntegratedDynamics._instance,
                 "meneglin",
                 eConfig -> {
-                    // A lot of stuff is copied from forest biome: makeGenericForestBiome
+                    // A lot of stuff is copied from forest biome: BiomeMaker.makeGenericForestBiome
                     BiomeGenerationSettings.Builder generationBuilder = (new BiomeGenerationSettings.Builder()).withSurfaceBuilder(ConfiguredSurfaceBuilders.field_244178_j);
                     DefaultBiomeFeatures.withStrongholdAndMineshaft(generationBuilder);
                     generationBuilder.withStructure(StructureFeatures.RUINED_PORTAL);
@@ -67,18 +63,10 @@ public class BiomeMeneglinConfig extends BiomeConfig {
                     DefaultBiomeFeatures.withCommonOverworldBlocks(generationBuilder);
                     DefaultBiomeFeatures.withOverworldOres(generationBuilder);
                     DefaultBiomeFeatures.withDisks(generationBuilder);
-                    DefaultBiomeFeatures.withForestBirchTrees(generationBuilder);
+                    //DefaultBiomeFeatures.withForestBirchTrees(generationBuilder);
+                    generationBuilder.withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, WorldFeatures.TREES_MENEGLIN);
                     // DefaultBiomeFeatures.withDefaultFlowers(generationBuilder);
-                    generationBuilder.withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Feature.FLOWER
-                            .withConfiguration((new BlockClusterFeatureConfig.Builder((new WeightedBlockStateProvider())
-                                    .addWeightedBlockstate(Blocks.BLUE_ORCHID.getDefaultState(), 70)
-                                    .addWeightedBlockstate(Blocks.OXEYE_DAISY.getDefaultState(), 70)
-                                    .addWeightedBlockstate(Blocks.WHITE_TULIP.getDefaultState(), 70)
-                                    .addWeightedBlockstate(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), 70), SimpleBlockPlacer.PLACER))
-                                    .tries(64).build())
-                            .withPlacement(Features.Placements.VEGETATION_PLACEMENT)
-                            .withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT)
-                            .func_242731_b(2));
+                    generationBuilder.withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, WorldFeatures.FLOWERS_MENEGLIN);
                     DefaultBiomeFeatures.withForestGrass(generationBuilder);
 
                     // DefaultBiomeFeatures.withNormalMushroomGeneration(generationBuilder);
@@ -114,6 +102,7 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     @Override
     public void onForgeRegistered() {
         super.onForgeRegistered();
+        BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(getRegistryKey(), 10));
         BiomeDictionary.addTypes(getRegistryKey(),
                 BiomeDictionary.Type.COLD,
                 BiomeDictionary.Type.MAGICAL

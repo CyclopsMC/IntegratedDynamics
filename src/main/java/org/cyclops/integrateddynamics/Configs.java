@@ -31,7 +31,6 @@ import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipeConfig;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipeConfig;
 import org.cyclops.integrateddynamics.tileentity.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
-import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureFlowersMenrilConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenrilConfig;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenrilConfig;
 
@@ -133,7 +132,6 @@ public class Configs {
         configHandler.addConfigurable(new ItemProtoChorusConfig());
 
         // World features
-        configHandler.addConfigurable(new WorldFeatureFlowersMenrilConfig());
         configHandler.addConfigurable(new FoliagePlacerMenrilConfig());
         configHandler.addConfigurable(new TrunkPlacerMenrilConfig());
 

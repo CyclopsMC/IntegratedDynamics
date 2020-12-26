@@ -36,7 +36,6 @@ import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipe;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipe;
 import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
 import org.cyclops.integrateddynamics.tileentity.TileProxy;
-import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatureFlowersMenril;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenril;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
 
@@ -195,8 +194,6 @@ public class RegistryEntries {
     @ObjectHolder("integrateddynamics:menril_resin")
     public static final FlowingFluid FLUID_MENRIL_RESIN = null;
 
-    @ObjectHolder("integrateddynamics:flowers_menril")
-    public static final WorldFeatureFlowersMenril WORLD_FEATURE_FLOWERS_MENRIL = null;
     @ObjectHolder("integrateddynamics:menril")
     public static final FoliagePlacerType<FoliagePlacerMenril> FOLIAGE_PLACER_MENRIL = null;
     public static TrunkPlacerType<TrunkPlacerMenril> TRUNK_PLACER_MENRIL = null; // Trunk placer types are not Forge registries unfortunately...

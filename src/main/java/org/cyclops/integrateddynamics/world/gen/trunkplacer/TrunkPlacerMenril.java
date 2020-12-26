@@ -16,9 +16,12 @@ import net.minecraft.world.gen.trunkplacer.TrunkPlacerType;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogFilled;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import static net.minecraft.world.gen.feature.TreeFeature.isDirtOrFarmlandAt;
 
 /**
  * @author rubensworks
@@ -44,6 +47,15 @@ public class TrunkPlacerMenril extends AbstractTrunkPlacer {
     public List<FoliagePlacer.Foliage> func_230382_a_(IWorldGenerationReader world, Random rand, int height,
                                                       BlockPos pos, Set<BlockPos> changedBlocks,
                                                       MutableBoundingBox bounds, BaseTreeFeatureConfig config) {
+        // Only generate if stump is fully on ground (other checks are done in TreeFeature.place)
+        BlockPos basePos = pos.down();
+        if (!isDirtOrFarmlandAt(world, basePos.north())
+                || !isDirtOrFarmlandAt(world, basePos.east())
+                || !isDirtOrFarmlandAt(world, basePos.south())
+                || !isDirtOrFarmlandAt(world, basePos.west())) {
+            return Collections.emptyList();
+        }
+
         // Ensure dirt is below tree
         BlockPos posStump = pos.down();
         func_236909_a_(world, posStump);

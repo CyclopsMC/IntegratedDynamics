@@ -83,6 +83,7 @@ import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.proxy.ClientProxy;
 import org.cyclops.integrateddynamics.proxy.CommonProxy;
+import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatures;
 
 /**
  * The main mod class of IntegratedDynamics.
@@ -165,6 +166,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         PartTypes.register();
         LogicProgrammerElementTypes.load();
         RegistryExportables.load();
+        WorldFeatures.load();
         if(MinecraftHelpers.isClientSide()) {
             PartOverlayRenderers.load();
             ValueTypeWorldRenderers.load();

@@ -23,7 +23,6 @@ import java.util.Random;
 public class TreeMenril extends Tree {
 
     public static BaseTreeFeatureConfig getMenrilTreeConfig() {
-        // TODO: make custom foliage and log placers
         return new BaseTreeFeatureConfig.Builder(
                 new WeightedBlockStateProvider()
                         .addWeightedBlockstate(RegistryEntries.BLOCK_MENRIL_LOG.getDefaultState(), BlockMenrilLogFilledConfig.filledMenrilLogChance)
