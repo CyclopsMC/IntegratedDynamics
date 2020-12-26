@@ -17,16 +17,15 @@ public class FluidLiquidChorusConfig extends FluidConfig {
         super(
                 IntegratedDynamics._instance,
                 "liquid_chorus",
-                fluidConfig -> new ForgeFlowingFluid.Source(
-                        getDefaultFluidProperties(IntegratedDynamics._instance,
-                                "block/liquid_chorus",
-                                builder -> builder
-                                        .density(1500)
-                                        .viscosity(3000)
-                                        .rarity(Rarity.EPIC)
-                                        .translationKey("block.integrateddynamics.block_liquid_chorus"))
-                                .bucket(() -> RegistryEntries.ITEM_BUCKET_LIQUID_CHORUS)
-                                .block(() -> RegistryEntries.BLOCK_FLUID_LIQUID_CHORUS))
+                fluidConfig -> getDefaultFluidProperties(IntegratedDynamics._instance,
+                        "block/liquid_chorus",
+                        builder -> builder
+                                .density(1500)
+                                .viscosity(3000)
+                                .rarity(Rarity.EPIC)
+                                .translationKey("block.integrateddynamics.block_liquid_chorus"))
+                        .bucket(() -> RegistryEntries.ITEM_BUCKET_LIQUID_CHORUS)
+                        .block(() -> RegistryEntries.BLOCK_FLUID_LIQUID_CHORUS)
         );
     }
 

@@ -17,16 +17,15 @@ public class FluidMenrilResinConfig extends FluidConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_resin",
-                fluidConfig -> new ForgeFlowingFluid.Source(
-                        getDefaultFluidProperties(IntegratedDynamics._instance,
-                                "block/menril_resin",
-                                builder -> builder
-                                        .density(1500)
-                                        .viscosity(3000)
-                                        .rarity(Rarity.RARE)
-                                        .translationKey("block.integrateddynamics.block_menril_resin"))
-                                .bucket(() -> RegistryEntries.ITEM_BUCKET_MENRIL_RESIN)
-                                .block(() -> RegistryEntries.BLOCK_FLUID_MENRIL_RESIN))
+                fluidConfig -> getDefaultFluidProperties(IntegratedDynamics._instance,
+                        "block/menril_resin",
+                        builder -> builder
+                                .density(1500)
+                                .viscosity(3000)
+                                .rarity(Rarity.RARE)
+                                .translationKey("block.integrateddynamics.block_menril_resin"))
+                        .bucket(() -> RegistryEntries.ITEM_BUCKET_MENRIL_RESIN)
+                        .block(() -> RegistryEntries.BLOCK_FLUID_MENRIL_RESIN)
         );
     }
 }
