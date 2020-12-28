@@ -1,0 +1,4 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.9.0 or higher.
+
+Initial 1.16 release
