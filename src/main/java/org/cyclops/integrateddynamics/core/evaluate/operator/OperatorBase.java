@@ -145,7 +145,7 @@ public abstract class OperatorBase implements IOperator {
                     new TranslationTextComponent(this.getTranslationKey())
             ));
         }
-        ITextComponent error = validateTypes(ValueHelpers.from(input));
+        IFormattableTextComponent error = validateTypes(ValueHelpers.from(input));
         if(error != null) {
             this.recursiveInvocations--;
             throw new EvaluationException(error);

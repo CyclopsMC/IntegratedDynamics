@@ -40,6 +40,7 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeHooks;
@@ -1774,7 +1775,7 @@ public final class Operators {
                 ValueTypeList.ValueList a = variables.getValue(0, ValueTypes.LIST);
                 ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
                 if (!ValueHelpers.correspondsTo(a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK)) {
-                    ITextComponent error = new TranslationTextComponent(
+                    IFormattableTextComponent error = new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                             new TranslationTextComponent(a.getRawValue().getValueType().getTranslationKey()),
                             ValueTypes.OBJECT_ITEMSTACK);

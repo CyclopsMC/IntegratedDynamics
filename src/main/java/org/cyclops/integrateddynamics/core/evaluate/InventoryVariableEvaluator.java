@@ -35,7 +35,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
     private final IValueType containingValueType;
 
     private IVariableFacade variableStored = null;
-    private List<ITextComponent> errors = Lists.newLinkedList();
+    private List<IFormattableTextComponent> errors = Lists.newLinkedList();
 
     public InventoryVariableEvaluator(IInventory inventory, int slot, IValueType<V> containingValueType) {
         this.inventory = inventory;
@@ -119,12 +119,12 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         onErrorsChanged();
     }
 
-    public void setErrors(List<ITextComponent> errors) {
+    public void setErrors(List<IFormattableTextComponent> errors) {
         this.errors = errors;
         onErrorsChanged();
     }
 
-    public List<ITextComponent> getErrors() {
+    public List<IFormattableTextComponent> getErrors() {
         return errors;
     }
 

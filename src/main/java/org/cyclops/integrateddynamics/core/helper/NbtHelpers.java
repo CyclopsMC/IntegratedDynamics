@@ -8,6 +8,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.IntArrayNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.LongArrayNBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -159,7 +160,7 @@ public class NbtHelpers {
         ListNBT list = new ListNBT();
         for (IValue valueNbt : value.getRawValue()) {
             if (value.getRawValue().getValueType() != ValueTypes.NBT) {
-                ITextComponent error = new TranslationTextComponent(
+                IFormattableTextComponent error = new TranslationTextComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
                         value.getType(), 1, ValueTypes.NBT);
@@ -180,7 +181,7 @@ public class NbtHelpers {
         List<Byte> list = Lists.newLinkedList();
         for (IValue valueNbt : value.getRawValue()) {
             if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
-                ITextComponent error = new TranslationTextComponent(
+                IFormattableTextComponent error = new TranslationTextComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
                         value.getType(), 1, ValueTypes.INTEGER);
@@ -201,7 +202,7 @@ public class NbtHelpers {
         List<Integer> list = Lists.newLinkedList();
         for (IValue valueNbt : value.getRawValue()) {
             if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
-                ITextComponent error = new TranslationTextComponent(
+                IFormattableTextComponent error = new TranslationTextComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
                         value.getType(), 1, ValueTypes.INTEGER);
@@ -222,7 +223,7 @@ public class NbtHelpers {
         List<Long> list = Lists.newLinkedList();
         for (IValue valueNbt : value.getRawValue()) {
             if (value.getRawValue().getValueType() != ValueTypes.LONG) {
-                ITextComponent error = new TranslationTextComponent(
+                IFormattableTextComponent error = new TranslationTextComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
                         value.getType(), 1, ValueTypes.LONG);

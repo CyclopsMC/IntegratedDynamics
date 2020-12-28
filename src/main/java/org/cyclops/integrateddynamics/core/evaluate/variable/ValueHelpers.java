@@ -230,7 +230,7 @@ public class ValueHelpers {
      */
     public static void validatePredicateOutput(IOperator predicate, IValue result) throws EvaluationException {
         if (!(result instanceof ValueTypeBoolean.ValueBoolean)) {
-            ITextComponent error = new TranslationTextComponent(
+            IFormattableTextComponent error = new TranslationTextComponent(
                     L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
                     predicate.getLocalizedNameFull(),
                     new TranslationTextComponent(result.getType().getTranslationKey()),

@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -198,13 +199,13 @@ public class OperatorBuilders {
                 IOperator innerOperator = input.getValue(0, ValueTypes.OPERATOR).getRawValue();
                 if (innerOperator.getRequiredInputLength() == 1) {
                     IValue applyingValue = input.getValue(1);
-                    ITextComponent error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
+                    IFormattableTextComponent error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
                     if (error != null) {
                         throw new EvaluationException(error);
                     }
                 } else {
                     if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
-                        ITextComponent error = new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
+                        IFormattableTextComponent error = new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
                                 new TranslationTextComponent(innerOperator.getTranslationKey()),
                                 new TranslationTextComponent(input.getVariables()[0].getType().getTranslationKey()),
                                 0,
@@ -356,7 +357,7 @@ public class OperatorBuilders {
     public static IOperator getSafeOperator(ValueTypeOperator.ValueOperator value, IValueType expectedOutput) throws EvaluationException {
         IOperator operator = value.getRawValue();
         if (!ValueHelpers.correspondsTo(operator.getOutputType(), expectedOutput)) {
-            ITextComponent error = new TranslationTextComponent(L10NValues.OPERATOR_ERROR_ILLEGALPROPERY,
+            IFormattableTextComponent error = new TranslationTextComponent(L10NValues.OPERATOR_ERROR_ILLEGALPROPERY,
                     expectedOutput, operator.getOutputType(), operator.getLocalizedNameFull());
             throw new EvaluationException(error);
         }

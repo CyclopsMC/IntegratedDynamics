@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.tileentity;
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
@@ -61,7 +62,7 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
-        List<ITextComponent> errors = evaluator.getErrors();
+        List<IFormattableTextComponent> errors = evaluator.getErrors();
         NBTClassType.writeNbt(List.class, "errors", errors, tag);
         return super.write(tag);
     }
