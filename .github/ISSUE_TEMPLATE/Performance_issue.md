@@ -8,7 +8,7 @@ about: An issue with the performance of this mod, such as abnormal lag.
 
 #### Issue type:
 
-- :snail: Performance issue
+- :snail: Performance issue <!--Don't change this issue type!-->
 
 ____
 

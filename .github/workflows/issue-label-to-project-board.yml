@@ -1,0 +1,42 @@
+name: "Add labeled issues to project board"
+on:
+  issues:
+    types: [labeled]
+
+env:
+  MY_GITHUB_TOKEN: ${{ secrets.PAT }}
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Maintenance Issues
+      uses: srggrs/assign-one-project-github-action@1.2.0
+      if: |
+        contains(github.event.issue.labels.*.name, 'bug') ||
+        contains(github.event.issue.labels.*.name, 'performance') ||
+        contains(github.event.issue.labels.*.name, 'question')
+      with:
+        project: 'https://github.com/orgs/CyclopsMC/projects/1'
+        column_name: 'To Do'
+    - name: Feature Optional
+      uses: srggrs/assign-one-project-github-action@1.2.0
+      if: |
+        contains(github.event.issue.labels.*.name, 'feature-long-term')
+      with:
+        project: 'https://github.com/orgs/CyclopsMC/projects/2'
+        column_name: 'Options'
+    - name: Feature Accepted
+      uses: srggrs/assign-one-project-github-action@1.2.0
+      if: |
+        contains(github.event.issue.labels.*.name, 'feature')
+      with:
+        project: 'https://github.com/orgs/CyclopsMC/projects/2'
+        column_name: 'Accepted (To Do)'
+    - name: More Information Needed
+      uses: srggrs/assign-one-project-github-action@1.2.0
+      if: |
+        contains(github.event.issue.labels.*.name, 'more-information-needed')
+      with:
+        project: 'https://github.com/orgs/CyclopsMC/projects/1'
+        column_name: 'On hold (awaiting input)'

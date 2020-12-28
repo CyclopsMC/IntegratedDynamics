@@ -8,7 +8,7 @@ about: If something is not working as expected or crashes
 
 #### Issue type:
 
-- :bug: Bug
+- :bug: Bug <!--Don't change this issue type!-->
 
 ____
 

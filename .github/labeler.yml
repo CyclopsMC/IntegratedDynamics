@@ -1,0 +1,17 @@
+bug:
+    - '- :bug: Bug'
+feature-long-term:
+	- '- :heavy_plus_sign: Feature request'
+performance:
+	- '- :snail: Performance issue'
+question:
+	- '- :question: Question'
+
+mc-1.12:
+	- 'Minecraft: 1.12'
+mc-1.14:
+	- 'Minecraft: 1.14'
+mc-1.15:
+	- 'Minecraft: 1.15'
+mc-1.16:
+	- 'Minecraft: 1.16'
