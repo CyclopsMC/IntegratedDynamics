@@ -54,8 +54,8 @@
                 </advancements>
                 <rewards>
                     <reward type="item" amount="64">integrateddynamics:cable</reward>
-                    <reward type="item" amount="16" meta="1">integrateddynamics:variable_transformer</reward>
-                    <reward type="item" amount="16" meta="0">integrateddynamics:variable_transformer</reward>
+                    <reward type="item" amount="16">integrateddynamics:variable_transformer_input</reward>
+                    <reward type="item" amount="16">integrateddynamics:variable_transformer_output</reward>
                 </rewards>
             </appendix>
         </section>
