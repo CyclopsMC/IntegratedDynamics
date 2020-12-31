@@ -159,12 +159,6 @@ public class BlockSqueezer extends BlockTile {
         }
     }
 
-    @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos)
-                .with(AXIS, facing.getAxis());
-    }
-
     public float getRelativeTopPositionTop(IBlockReader world, BlockPos blockPos, BlockState blockState) {
         return (9 - blockState.get(HEIGHT)) * 0.125F;
     }
