@@ -118,6 +118,13 @@ public class BiomeMeneglinConfig extends BiomeConfig {
             if (configProperty.getName().equals("meneglin.generateInOverworld") && generateInOverworld) {
                 BiomeDictionary.addTypes(getRegistryKey(), BiomeDictionary.Type.OVERWORLD);
             }
+            BiomeDictionary.addTypes(getRegistryKey(),
+                    BiomeDictionary.Type.COLD,
+                    BiomeDictionary.Type.DENSE,
+                    BiomeDictionary.Type.WET,
+                    BiomeDictionary.Type.CONIFEROUS,
+                    BiomeDictionary.Type.MAGICAL,
+                    BiomeDictionary.Type.FOREST);
         }
     }
 
