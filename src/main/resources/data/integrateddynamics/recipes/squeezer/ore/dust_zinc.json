@@ -1,0 +1,33 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "tag": "forge:ores/zinc"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/zinc"
+      },
+      {
+        "tag": "forge:dusts/zinc",
+        "chance": 0.75
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/zinc"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ores/zinc"
+      }
+    }
+  ]
+}

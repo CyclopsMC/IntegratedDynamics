@@ -1,0 +1,33 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "tag": "forge:ores/alumimium"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:dusts/alumimium"
+      },
+      {
+        "tag": "forge:dusts/alumimiumw",
+        "chance": 0.75
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:dusts/alumimium"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ores/alumimium"
+      }
+    }
+  ]
+}
