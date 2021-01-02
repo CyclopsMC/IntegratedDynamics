@@ -109,7 +109,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     new BlockItemUseContext(world, player, hand, itemStack, targetRayTrace))) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(RegistryEntries.BLOCK_CABLE);
                 itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
-                if (itemBlockCable.onItemUse(new ItemUseContext(player, hand, targetRayTrace)) == ActionResultType.SUCCESS) {
+                if (itemBlockCable.onItemUse(new ItemUseContext(player, hand, targetRayTrace)).isSuccessOrConsume()) {
                     IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide).orElse(null);
                     if (partContainer != null) {
                         ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target, targetSide).orElse(null);
