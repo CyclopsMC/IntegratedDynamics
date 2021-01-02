@@ -1,7 +1,7 @@
 {
   "type": "integrateddynamics:squeezer",
   "item": {
-    "tag": "forge:ore/platinum"
+    "tag": "forge:ores/platinum"
   },
   "result": {
     "items": [
@@ -26,7 +26,7 @@
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:ore/platinum"
+        "tag": "forge:ores/platinum"
       }
     }
   ]

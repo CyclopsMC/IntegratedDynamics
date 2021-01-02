@@ -1,7 +1,7 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
   "item": {
-    "tag": "forge:ore/silver"
+    "tag": "forge:ores/silver"
   },
   "result": {
     "items": [
@@ -28,7 +28,7 @@
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:ore/silver"
+        "tag": "forge:ores/silver"
       }
     }
   ]

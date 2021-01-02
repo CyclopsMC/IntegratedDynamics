@@ -1,7 +1,7 @@
 {
   "type": "integrateddynamics:squeezer",
   "item": {
-    "tag": "forge:ore/lead"
+    "tag": "forge:ores/lead"
   },
   "result": {
     "items": [
@@ -26,7 +26,7 @@
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:ore/lead"
+        "tag": "forge:ores/lead"
       }
     }
   ]

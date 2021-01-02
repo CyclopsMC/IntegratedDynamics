@@ -1,7 +1,7 @@
 {
   "type": "integrateddynamics:squeezer",
   "item": {
-    "tag": "forge:ore/cobalt"
+    "tag": "forge:ores/cobalt"
   },
   "result": {
     "items": [
@@ -26,7 +26,7 @@
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:ore/cobalt"
+        "tag": "forge:ores/cobalt"
       }
     }
   ]

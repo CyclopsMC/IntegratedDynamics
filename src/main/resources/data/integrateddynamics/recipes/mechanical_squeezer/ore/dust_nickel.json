@@ -1,7 +1,7 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
   "item": {
-    "tag": "forge:ore/nickel"
+    "tag": "forge:ores/nickel"
   },
   "result": {
     "items": [
@@ -28,7 +28,7 @@
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:ore/nickel"
+        "tag": "forge:ores/nickel"
       }
     }
   ]
