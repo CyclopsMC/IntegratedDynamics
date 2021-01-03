@@ -7,9 +7,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.BlockPartRotation;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.BlockPartFace;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,6 +25,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,6 +39,7 @@ import org.cyclops.integrateddynamics.block.BlockCable;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
+import java.util.Random;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +49,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel {
 
+    private static final FaceBakery FACE_BAKERY = new FaceBakery();
     private static final Cache<Triple<IRenderState, EnumFacing, BlockRenderLayer>, List<BakedQuad>> CACHE_QUADS = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
 
     private static final int RADIUS = 4;
@@ -83,7 +91,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     public CableModelBase() {
         super();
     }
-    
+
     protected static float[][][] makeQuadVertexes(float min, float max, float length) {
         return new float[][][]{
                 {
@@ -126,24 +134,23 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     public List<BakedQuad> getFacadeQuads(IBlockState blockState, EnumFacing side, PartRenderPosition partRenderPosition) {
+        Random rand = new Random();
         List<BakedQuad> ret = Lists.newLinkedList();
         IBakedModel model = RenderHelpers.getBakedModel(blockState);
-        TextureAtlasSprite texture = model.getParticleTexture();
+        BakedQuad originalQuad = model.getQuads(blockState, side, rand.nextLong()).get(0);
         if(partRenderPosition == PartRenderPosition.NONE) {
-            addBakedQuad(ret, 0, 1, 0, 1, 1, texture, side);
+            addFacadeQuad(ret, originalQuad, 0, 0, 1f, 1f, side);
         } else {
             float w = partRenderPosition.getWidthFactorSide();
             float h = partRenderPosition.getHeightFactorSide();
-
-            float x0 = 0F;
-            float x1 = (1F - w) / 2;
-            float x2 = x1 + w;
-            float x3 = 1F;
-            float z0 = 0F;
-            float z1 = (1F - h) / 2;
-            float z2 = z1 + h;
-            float z3 = 1F;
-
+            float u0 = 0f;
+            float v0 = 0f;
+            float u1 = (1f - w) / 2;
+            float v1 = (1f - h) / 2;
+            float u2 = u1 + w;
+            float v2 = v1 + h;
+            float u3 = 1f;
+            float v3 = 1f;
             /*
              * We render the following eight boxes, excluding the part box in the middle.
              * -------
@@ -154,21 +161,34 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
              * |6|7|8|
              * -------
              */
-
-            addBakedQuad(ret, x0, x1, z0, z1, 1, texture, side); // 1
-            addBakedQuad(ret, x1, x2, z0, z1, 1, texture, side); // 2
-            addBakedQuad(ret, x2, x3, z0, z1, 1, texture, side); // 3
-
-            addBakedQuad(ret, x0, x1, z1, z2, 1, texture, side); // 4
-            // P
-            addBakedQuad(ret, x2, x3, z1, z2, 1, texture, side); // 5
-
-            addBakedQuad(ret, x0, x1, z2, z3, 1, texture, side); // 6
-            addBakedQuad(ret, x1, x2, z2, z3, 1, texture, side); // 7
-            addBakedQuad(ret, x2, x3, z2, z3, 1, texture, side); // 8
+            addFacadeQuad(ret, originalQuad, u0, v0, u1, v1, side); // 1
+            addFacadeQuad(ret, originalQuad, u1, v0, u2, v1, side); // 2
+            addFacadeQuad(ret, originalQuad, u2, v0, u3, v1, side); // 3
+            addFacadeQuad(ret, originalQuad, u0, v1, u1, v2, side); // 4
+            addFacadeQuad(ret, originalQuad, u2, v1, u3, v2, side); // 5
+            addFacadeQuad(ret, originalQuad, u0, v2, u1, v3, side); // 6
+            addFacadeQuad(ret, originalQuad, u1, v2, u2, v3, side); // 7
+            addFacadeQuad(ret, originalQuad, u2, v2, u3, v3, side); // 8
         }
-
         return ret;
+    }
+
+    private void addFacadeQuad(List<BakedQuad> quads, BakedQuad originalQuad, float u0, float v0, float u1, float v1, EnumFacing side) {
+        org.lwjgl.util.vector.Vector3f from = new org.lwjgl.util.vector.Vector3f(u0 * 16f, v0 * 16f, 0f);
+        org.lwjgl.util.vector.Vector3f to = new org.lwjgl.util.vector.Vector3f(u1 * 16f, v1 * 16f, 0f);
+        TextureAtlasSprite texture = originalQuad.getSprite();
+        float[] uvArray = { 16f - u1 * 16f, 16f - v1 * 16f, 16f - u0 * 16f, 16f - v0 * 16f };
+        int ROTATION_NONE = 0;
+        BlockFaceUV blockFaceUV = new BlockFaceUV(uvArray, ROTATION_NONE);
+        EnumFacing NO_FACE_CULLING = null;
+        int TINT_INDEX_NONE = -1;
+        String DUMMY_TEXTURE_NAME = "";
+        BlockPartFace blockPartFace = new BlockPartFace(NO_FACE_CULLING, TINT_INDEX_NONE, DUMMY_TEXTURE_NAME, blockFaceUV);
+        ITransformation transformation = TRSRTransformation.from(side);
+        BlockPartRotation DEFAULT_ROTATION = null;
+        boolean UV_LOCKED = true;
+        boolean APPLY_SHADING = true;
+        quads.add(FACE_BAKERY.makeBakedQuad(from, to, blockPartFace, texture, EnumFacing.NORTH, transformation, DEFAULT_ROTATION, UV_LOCKED, APPLY_SHADING));
     }
 
     protected abstract boolean isRealCable();
