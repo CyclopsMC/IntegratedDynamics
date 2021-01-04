@@ -203,7 +203,6 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public int hashCode() {
         int result = part.hashCode();
         result = 31 * result + target.hashCode();
-        result = 31 * result + getPriority();
         return result;
     }
 
