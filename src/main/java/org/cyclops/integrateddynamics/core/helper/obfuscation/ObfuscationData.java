@@ -13,12 +13,12 @@ public class ObfuscationData {
     /**
      * Field from {@link net.minecraft.entity.EntityLivingBase}.
      */
-    public static final String[] ENTITYLIVINGBASE_HURTSOUND = new String[] { "getHurtSound", "func_70621_aR", "aR" };
+    public static final String[] ENTITYLIVINGBASE_HURTSOUND = new String[] { "getHurtSound", "func_184601_bQ", "bQ" };
 
     /**
      * Field from {@link net.minecraft.entity.EntityLivingBase}.
      */
-    public static final String[] ENTITYLIVINGBASE_DEATHSOUND = new String[] { "getDeathSound", "func_70673_aS", "aS" };
+    public static final String[] ENTITYLIVINGBASE_DEATHSOUND = new String[] { "getDeathSound", "func_184615_bR", "bR" };
 
     /**
      * Field from {@link net.minecraft.util.SoundEvent}.
