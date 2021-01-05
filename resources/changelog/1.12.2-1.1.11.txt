@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.6.5 or higher.
+
+Changes:
+* Remove priority from PartNetworkElement hashCode
+  Improves performance #940
+
+Fixes:
+* Fix crash when reading entity hurt/death sound, Closes #946
+* Fix lighting and orientation of facades Closes #180
