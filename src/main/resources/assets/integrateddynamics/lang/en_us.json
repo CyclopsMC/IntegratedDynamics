@@ -1610,6 +1610,7 @@
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text1": "An abstract crafting recipe, that takes &8Ingredients&0 as input and outputs another &8Ingredients&0 value.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text2": "Recipes can be created visually using the &lLogic Programmer&r, or they can be read from (supported) machines using the &lMachine Reader&r.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text3": "These recipes can be used for autocrafting mods such as &lIntegrated Crafting&r.",
+    "info_book.integrateddynamics.manual.logic.value_types.recipe.text4": "To quickly find specific recipes among existing &lVariable Cards&r inside a GUI, you can hold shift to temporarily display what the output item of the recipe is.",
 
     "info_book.integrateddynamics.manual.logic.variables": "Variables",
 

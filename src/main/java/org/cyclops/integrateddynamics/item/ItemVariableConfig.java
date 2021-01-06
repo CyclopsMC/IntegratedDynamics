@@ -11,6 +11,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.client.render.tileentity.ItemStackTileEntityVariableRender;
 import org.cyclops.integrateddynamics.core.client.model.ModelLoaderVariable;
 
 /**
@@ -24,7 +25,8 @@ public class ItemVariableConfig extends ItemConfig {
                 IntegratedDynamics._instance,
                 "variable",
                 eConfig -> new ItemVariable(new Item.Properties()
-                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .group(IntegratedDynamics._instance.getDefaultItemGroup())
+                        .setISTER(() -> ItemStackTileEntityVariableRender::new))
         );
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
     }

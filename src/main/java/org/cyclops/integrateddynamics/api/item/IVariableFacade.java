@@ -1,6 +1,14 @@
 package org.cyclops.integrateddynamics.api.item;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -76,6 +84,34 @@ public interface IVariableFacade {
      */
     @OnlyIn(Dist.CLIENT)
     public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData);
+
+    /**
+     * An optional baked model to override when rendering the variable as item.
+     * @param model The original baked model.
+     * @param stack The variable stack.
+     * @param world The client world.
+     * @param livingEntity The entity holding the stack.
+     * @return The overridden model. Will fallback to default if null.
+     */
+    @Nullable
+    @OnlyIn(Dist.CLIENT)
+    public default IBakedModel getVariableItemOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+        return null;
+    }
+
+    /**
+     * Called during ISTER rendering of an variable item.
+     * @param stack The variable stack.
+     * @param transformType Transform type.
+     * @param matrixStack Matrix stack.
+     * @param buffer Render buffer.
+     * @param combinedLight Lighting.
+     * @param combinedOverlay Overlay.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public default void renderISTER(ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+
+    }
 
     public static interface IValidator {
 

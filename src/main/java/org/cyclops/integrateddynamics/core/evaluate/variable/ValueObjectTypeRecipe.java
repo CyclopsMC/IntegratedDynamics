@@ -1,17 +1,29 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.ToString;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -19,6 +31,9 @@ import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeRecipeLPElement;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Value type with values that are recipes.
@@ -100,6 +115,39 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     @Override
     public ValueTypeLPElementBase createLogicProgrammerElement() {
         return new ValueTypeRecipeLPElement();
+    }
+
+    @Nullable
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public IBakedModel getVariableItemOverrideModel(ValueRecipe value, IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+        if (!MinecraftHelpers.isShifted()) {
+            return null;
+        }
+        return value.getRawValue()
+                .map((recipe) -> {
+                    List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
+                    if (!itemStacks.isEmpty()) {
+                        return Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(itemStacks.get(0), world, livingEntity);
+                    }
+                    return null;
+                })
+                .orElse(null);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void renderISTER(ValueRecipe value, ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+        if (MinecraftHelpers.isShifted()) {
+            value.getRawValue()
+                    .ifPresent((recipe) -> {
+                        List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
+                        if (!itemStacks.isEmpty()) {
+                            ItemStack actualStack = itemStacks.get(0);
+                            actualStack.getItem().getItemStackTileEntityRenderer().func_239207_a_(actualStack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
+                        }
+                    });
+        }
     }
 
     @ToString

@@ -1,11 +1,21 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
@@ -157,6 +167,36 @@ public interface IValueType<V extends IValue> {
      * @throws EvaluationException If the incorrect value type was found.
      */
     public V cast(IValue value) throws EvaluationException;
+
+    /**
+     * An optional baked model to override when rendering the variable as item.
+     * @param value The value to value to get the model for.
+     * @param model The original baked model.
+     * @param stack The variable stack.
+     * @param world The client world.
+     * @param livingEntity The entity holding the stack.
+     * @return The overridden model. Will fallback to default if null.
+     */
+    @Nullable
+    @OnlyIn(Dist.CLIENT)
+    public default IBakedModel getVariableItemOverrideModel(V value, IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+        return null;
+    }
+
+    /**
+     * Called during ISTER rendering of an variable item.
+     * @param value The value to value to render.
+     * @param stack The variable stack.
+     * @param transformType Transform type.
+     * @param matrixStack Matrix stack.
+     * @param buffer Render buffer.
+     * @param combinedLight Lighting.
+     * @param combinedOverlay Overlay.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public default void renderISTER(V value, ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+
+    }
 
     /**
      * Use this comparator for any comparisons with value types.

@@ -373,6 +373,7 @@
                     <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text1</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text2</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text3</paragraph>
+                    <paragraph>info_book.integrateddynamics.manual.logic.value_types.recipe.text4</paragraph>
                 </section>
             </section>
             <section name="info_book.integrateddynamics.manual.logic.variables">

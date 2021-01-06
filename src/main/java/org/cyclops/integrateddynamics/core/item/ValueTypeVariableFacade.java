@@ -1,9 +1,15 @@
 package org.cyclops.integrateddynamics.core.item;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -22,6 +28,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
@@ -118,4 +125,20 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
         }
     }
 
+    @Nullable
+    @Override
+    public IBakedModel getVariableItemOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+        if(isValid()) {
+            return getValueType().getVariableItemOverrideModel(getValue(), model, stack, world, livingEntity);
+        }
+        return null;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void renderISTER(ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+        if(isValid()) {
+            getValueType().renderISTER(getValue(), stack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
+        }
+    }
 }

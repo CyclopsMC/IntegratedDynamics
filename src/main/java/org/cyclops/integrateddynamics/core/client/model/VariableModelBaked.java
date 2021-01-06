@@ -1,13 +1,17 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverride;
+import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -20,6 +24,7 @@ import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -78,5 +83,26 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
         return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS_ITEM;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return new ItemOverrideList() {
+            @Nullable
+            @Override
+            public IBakedModel getOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(stack);
+                IBakedModel overrideModel = variableFacade.getVariableItemOverrideModel(model, stack, world, livingEntity);
+                if (overrideModel != null) {
+                    return overrideModel;
+                }
+                return VariableModelBaked.super.getOverrides().getOverrideModel(model, stack, world, livingEntity);
+            }
+
+            @Override
+            public ImmutableList<ItemOverride> getOverrides() {
+                return baseModel.getOverrides().getOverrides();
+            }
+        };
     }
 }
