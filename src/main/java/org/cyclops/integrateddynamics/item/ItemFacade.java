@@ -101,7 +101,8 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     @Override
     public IBakedModel createDynamicModel(ModelBakeEvent event) {
         // Don't throw away the original model, but use if for displaying an unbound facade item.
-        FacadeModel.emptyModel = event.getModelRegistry().get(new ModelResourceLocation(Reference.MOD_ID + ":facade", "inventory"));
+        ModelResourceLocation location = new ModelResourceLocation(getRegistryName(), "inventory");
+        FacadeModel.emptyModel = event.getModelRegistry().get(location);
         return new FacadeModel();
     }
 

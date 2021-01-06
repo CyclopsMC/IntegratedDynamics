@@ -80,7 +80,7 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
 
     @Override
     public boolean isSideLit() {
-        return false; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
+        return true; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
     }
 
     @Override
