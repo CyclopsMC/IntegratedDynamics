@@ -61,7 +61,7 @@ public class BlockDryingBasin extends BlockTileGui {
                         tile.sendUpdate();
                         return ActionResultType.SUCCESS;
                     } else if (itemFluidHandler != null && !tank.isFull()
-                            && FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
+                            && !itemFluidHandler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE).isEmpty()) {
                         FluidActionResult fluidAction = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
                         if (fluidAction.isSuccess()) {
                             ItemStack newItemStack = fluidAction.getResult();
@@ -70,7 +70,7 @@ public class BlockDryingBasin extends BlockTileGui {
                         }
                         return ActionResultType.SUCCESS;
                     } else if (itemFluidHandler != null && !tank.isEmpty() &&
-                            FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, false).isSuccess()) {
+                            itemFluidHandler.fill(tank.getFluid(), IFluidHandler.FluidAction.SIMULATE) > 0) {
                         FluidActionResult fluidAction = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
                         if (fluidAction.isSuccess()) {
                             ItemStack newItemStack = fluidAction.getResult();
