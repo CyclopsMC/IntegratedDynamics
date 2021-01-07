@@ -30,7 +30,7 @@ public class BlockMaterializer extends BlockTileGuiCabled {
     }
 
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing());
     }
 
 }
