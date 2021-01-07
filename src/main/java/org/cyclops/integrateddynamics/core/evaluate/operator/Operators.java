@@ -3191,7 +3191,7 @@ public final class Operators {
      * The string value of an NBT value
      */
     public static final IOperator NBT_AS_STRING = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.DOUBLE).operatorName("as_string").symbol("NBT.as_string")
+            .output(ValueTypes.STRING).operatorName("as_string").symbol("NBT.as_string")
             .function(OperatorBuilders.FUNCTION_NBT_TO_STRING.build(
                     o -> o.map(tag -> tag instanceof StringNBT ? ((StringNBT) tag).getString() : "").orElse("")
             )).build());
