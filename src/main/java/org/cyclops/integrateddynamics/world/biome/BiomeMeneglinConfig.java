@@ -37,11 +37,8 @@ import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatures;
  */
 public class BiomeMeneglinConfig extends BiomeConfig {
 
-    @ConfigurableProperty(category = "biome", comment = "The weight of spawning.", minimalValue = 0)
+    @ConfigurableProperty(category = "biome", comment = "The weight of spawning in the overworld, 0 disables spawning.", minimalValue = 0)
     public static int spawnWeight = 5;
-
-    @ConfigurableProperty(category = "biome", comment = "If this biome should automatically generate in the overworld dimension.")
-    public static boolean generateInOverworld = true;
 
     @ConfigurableProperty(category = "worldgeneration", comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0, requiresMcRestart = true, configLocation = ModConfig.Type.SERVER)
     public static int wildMenrilTreeChance = 100;
@@ -98,33 +95,21 @@ public class BiomeMeneglinConfig extends BiomeConfig {
         );
         MinecraftForge.EVENT_BUS.addListener(this::onBiomeLoadingEvent);
     }
-    
-    @Override
-    public void onForgeRegistered() {
-        super.onForgeRegistered();
-        BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(getRegistryKey(), 10));
-        BiomeDictionary.addTypes(getRegistryKey(),
-                BiomeDictionary.Type.COLD,
-                BiomeDictionary.Type.MAGICAL
-        );
-    }
 
     @Override
     public void onConfigPropertyReload(ConfigurablePropertyData<?> configProperty, boolean reload) {
         if (!reload) {
             if (configProperty.getName().equals("meneglin.spawnWeight") && spawnWeight > 0) {
                 BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(getRegistryKey(), spawnWeight));
-            }
-            if (configProperty.getName().equals("meneglin.generateInOverworld") && generateInOverworld) {
                 BiomeDictionary.addTypes(getRegistryKey(), BiomeDictionary.Type.OVERWORLD);
+                BiomeDictionary.addTypes(getRegistryKey(),
+                        BiomeDictionary.Type.COLD,
+                        BiomeDictionary.Type.DENSE,
+                        BiomeDictionary.Type.WET,
+                        BiomeDictionary.Type.CONIFEROUS,
+                        BiomeDictionary.Type.MAGICAL,
+                        BiomeDictionary.Type.FOREST);
             }
-            BiomeDictionary.addTypes(getRegistryKey(),
-                    BiomeDictionary.Type.COLD,
-                    BiomeDictionary.Type.DENSE,
-                    BiomeDictionary.Type.WET,
-                    BiomeDictionary.Type.CONIFEROUS,
-                    BiomeDictionary.Type.MAGICAL,
-                    BiomeDictionary.Type.FOREST);
         }
     }
 
