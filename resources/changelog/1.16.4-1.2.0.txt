@@ -1,0 +1,25 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.9.5 or higher.
+
+Additions:
+* Improve cable facade rendering
+* Show recipe duration and energy usage in JEI, Closes #958
+* Show variable recipe output items when holding shift
+
+Changes:
+* Update zh-CN translation
+* Remove priority from PartNetworkElement hashCode, Improves performance #940
+
+Fixes:
+* Fix console spawn when reading a machine's recipes
+* Fix meneglin biome still spawning when disabling it
+  This also removes the generateInOverworld option,
+  which can now be achieved by setting spawnWeight to 0.
+  Closes #951
+* Fix NBT.as_string operator having wrong output type, Closes #941
+* Fix proxy and materializer being places with wrong facing
+* Fix drying basin sometimes duplicating fluids, Closes #954
+* Fix incorrect facade item rendering, Related to #961
+* Fix crash when reading entity hurt/death sound, Closes #946
+* Fix lighting and orientation of facades Closes #180
+* Fix incorrect aluminium recipes
