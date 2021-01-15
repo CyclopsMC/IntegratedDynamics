@@ -39,6 +39,8 @@
     "gui.integrateddynamics.mechanical_squeezer.togglefluidautoeject.info": "Push to adjacent tanks.",
     "gui.integrateddynamics.input_short": "Input",
     "gui.integrateddynamics.output_short": "Output",
+    "gui.integrateddynamics.recipe.strictnbt": "Strict NBT",
+    "gui.integrateddynamics.recipe.tagvariants": "Item tag variants",
 
     "_comment": "Diagnostics",
     "gui.integrateddynamics.diagnostics.parts": "Parts",
@@ -264,17 +266,7 @@
     "valuetype.integrateddynamics.ingredients": "Ingredients",
     "valuetype.integrateddynamics.recipe": "Recipe",
 
-    "valuetype.integrateddynamics.ingredients.slot.info": "Shift click to change.",
-    "valuetype.integrateddynamics.ingredients.match.itemmeta": "Item Meta",
-    "valuetype.integrateddynamics.ingredients.match.itemmeta.desc": "§cMatch by §nitem type§r§c and §nmeta value§r.",
-    "valuetype.integrateddynamics.ingredients.match.item": "Item",
-    "valuetype.integrateddynamics.ingredients.match.item.desc": "§cMatch by §nitem type§r§c.",
-    "valuetype.integrateddynamics.ingredients.match.itemmetanbt": "Item Meta NBT",
-    "valuetype.integrateddynamics.ingredients.match.itemmetanbt.desc": "§cMatch by §nitem type§r§c, §nmeta value§r§c and §nNBT§r§c.",
-    "valuetype.integrateddynamics.ingredients.match.itemnbt": "Item NBT",
-    "valuetype.integrateddynamics.ingredients.match.itemnbt.desc": "§cMatch by §nitem type§r§c and §nNBT§r§c.",
-    "valuetype.integrateddynamics.ingredients.match.tag": "Tag",
-    "valuetype.integrateddynamics.ingredients.match.tag.desc": "§cMatch by equivalent §nTag§r§c entries.",
+    "valuetype.integrateddynamics.ingredients.slot.info": "Shift click to configure",
 
     "_comment": "Part types",
     "parttype.integrateddynamics.error.low_energy": "Not enough energy",

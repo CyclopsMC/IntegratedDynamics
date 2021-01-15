@@ -9,12 +9,13 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ import java.util.Set;
  */
 public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
 
-    private final Set<IDropdownEntry<T>> possibilities;
+    private Set<IDropdownEntry<T>> possibilities;
     private List<IDropdownEntry<T>> visiblePossibilities = Collections.emptyList();
     private int visiblePossibilitiesIndex = -1;
     @Getter
@@ -45,12 +46,26 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     public WidgetTextFieldDropdown(FontRenderer fontrenderer, int x, int y, int width, int height,
                                    ITextComponent narrationMessage, boolean background, Set<IDropdownEntry<T>> possibilities) {
         super(fontrenderer, x, y, width, height, narrationMessage, background);
-        this.possibilities = Objects.requireNonNull(possibilities);
+        setPossibilities(Objects.requireNonNull(possibilities));
     }
 
     public WidgetTextFieldDropdown(FontRenderer fontrenderer, int x, int y, int width, int height,
                                    ITextComponent narrationMessage, boolean background) {
         this(fontrenderer, x, y, width, height, narrationMessage, background, Collections.emptySet());
+    }
+
+    public void setPossibilities(Set<IDropdownEntry<T>> possibilities) {
+        this.possibilities = possibilities;
+        this.visiblePossibilities = Collections.emptyList();
+    }
+
+    public int getPossibilitiesCount() {
+        return possibilities.size();
+    }
+
+    @Nullable
+    public IDropdownEntry<T> getVisiblePossibility(int index) {
+        return visiblePossibilities.get(index);
     }
 
     protected void refreshDropdownList() {
@@ -66,12 +81,23 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 }
             }
             visiblePossibilitiesIndex = -1;
-            if (visiblePossibilities.size() == 1 && visiblePossibilities.get(0).getMatchString().equals(getText())) {
-                selectedDropdownPossibility = visiblePossibilities.get(0);
+            if (!visiblePossibilities.isEmpty()) {
+                selectedDropdownPossibility = visiblePossibilities.stream()
+                        .filter(e -> e.getMatchString().equals(getText()))
+                        .findFirst()
+                        .orElse(null);
             }
             if (dropdownEntryListener != null) {
                 dropdownEntryListener.onSetDropdownPossiblity(selectedDropdownPossibility);
             }
+        }
+    }
+
+    @Override
+    public void setFocused2(boolean isFocusedIn) {
+        super.setFocused2(isFocusedIn);
+        if (isFocusedIn) {
+            refreshDropdownList();
         }
     }
 
@@ -126,9 +152,9 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
         selectPossibility(visiblePossibilities.get(visiblePossibilitiesIndex));
     }
 
-    public void selectPossibility(IDropdownEntry<T> entry) {
+    public void selectPossibility(@Nullable IDropdownEntry<T> entry) {
         selectedDropdownPossibility = entry;
-        setText(selectedDropdownPossibility.getDisplayString().getString());
+        setText(selectedDropdownPossibility != null ? selectedDropdownPossibility.getDisplayString().getString() : "");
         visiblePossibilities = Lists.newArrayList();
         visiblePossibilitiesIndex = -1;
         if (dropdownEntryListener != null) {
@@ -138,6 +164,9 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
 
     @Override
     public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        // Display text red that is in an "invalid" state (no valid dropdrown entry selected)
+        this.setTextColor(this.selectedDropdownPossibility == null ? Helpers.RGBToInt(220, 10, 10) : 14737632);
+
         super.renderButton(matrixStack, mouseX, mouseY, partialTicks);
         if (this.getVisible() && isFocused()) {
             FontRenderer fontRenderer = Minecraft.getInstance().getRenderManager().getFontRenderer();
@@ -210,43 +239,52 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         if (this.getVisible() && isFocused()) {
-            FontRenderer fontRenderer = Minecraft.getInstance().getRenderManager().getFontRenderer();
-            int yOffset = fontRenderer.FONT_HEIGHT + 3;
-
-            int x = this.x;
-            int y = this.y + yOffset;
-            int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
-            int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
-            int cy = y;
-
-            // Draw ... if we are not at the first element
-            if (startIndex > 0) {
-                cy += 10;
-            }
-
-            for (int i = startIndex; i < endIndex; i++) {
-                // Initialize entry
-                IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);
-                boolean active = visiblePossibilitiesIndex == i;
-                int entryHeight = yOffset;
-
-                // Optionally initialize tooltip
-                boolean addTooltip = (active && MinecraftHelpers.isShifted())
-                        || RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
-                if (RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY)) {
-                    selectVisiblePossibility(i);
-                    return true;
-                }
-                List<IFormattableTextComponent> tooltipLines = null;
-                if (addTooltip) {
-                    tooltipLines = dropdownEntry.getTooltip();
-                    entryHeight += tooltipLines.size() * yOffset;
-                }
-
-                cy += entryHeight;
+            int i = getHoveredVisiblePossibility(mouseX, mouseY);
+            if (i >= 0) {
+                selectVisiblePossibility(i);
+                return true;
             }
         }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    public int getHoveredVisiblePossibility(double mouseX, double mouseY) {
+        FontRenderer fontRenderer = Minecraft.getInstance().getRenderManager().getFontRenderer();
+        int yOffset = fontRenderer.FONT_HEIGHT + 3;
+
+        int x = this.x;
+        int y = this.y + yOffset;
+        int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
+        int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
+        int cy = y;
+
+        // Draw ... if we are not at the first element
+        if (startIndex > 0) {
+            cy += 10;
+        }
+
+        for (int i = startIndex; i < endIndex; i++) {
+            // Initialize entry
+            IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);
+            boolean active = visiblePossibilitiesIndex == i;
+            int entryHeight = yOffset;
+
+            // Optionally initialize tooltip
+            boolean addTooltip = (active && MinecraftHelpers.isShifted())
+                    || RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
+            if (RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY)) {
+                return i;
+            }
+            List<IFormattableTextComponent> tooltipLines = null;
+            if (addTooltip) {
+                tooltipLines = dropdownEntry.getTooltip();
+                entryHeight += tooltipLines.size() * yOffset;
+            }
+
+            cy += entryHeight;
+        }
+
+        return -1;
     }
 
 }

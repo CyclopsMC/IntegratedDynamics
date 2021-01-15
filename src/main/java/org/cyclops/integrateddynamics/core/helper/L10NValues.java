@@ -30,6 +30,8 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
     public static final String GUI_INPUT = "gui." + NS + ".input";
     public static final String GUI_OUTPUT = "gui." + NS + ".output";
+    public static final String GUI_RECIPE_STRICTNBT = "gui." + NS + ".recipe.strictnbt";
+    public static final String GUI_RECIPE_TAGVARIANTS = "gui." + NS + ".recipe.tagvariants";
     // 0: value
     public static final String GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT = "gui." + NS + ".mechanical_squeezer.togglefluidautoeject";
 

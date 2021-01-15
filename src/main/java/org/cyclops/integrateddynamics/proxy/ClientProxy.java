@@ -3,9 +3,7 @@ package org.cyclops.integrateddynamics.proxy;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,8 +14,6 @@ import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.core.client.model.ModelLoaderVariable;
-import org.cyclops.integrateddynamics.core.ingredient.ItemMatchType;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.lwjgl.glfw.GLFW;
@@ -67,18 +63,12 @@ public class ClientProxy extends ClientProxyComponent {
     public void onPreTextureStitch(TextureStitchEvent.Pre event) {
         if (event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE)) {
             event.addSprite(SlotVariable.VARIABLE_EMPTY);
-            for (ItemMatchType itemMatchType : ItemMatchType.values()) {
-                event.addSprite(itemMatchType.getSlotSpriteName());
-            }
         }
     }
 
     public void onPostTextureStitch(TextureStitchEvent.Post event) {
         if (event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE)) {
             event.getMap().getSprite(SlotVariable.VARIABLE_EMPTY);
-            for (ItemMatchType itemMatchType : ItemMatchType.values()) {
-                event.getMap().getSprite(itemMatchType.getSlotSpriteName());
-            }
         }
     }
 }

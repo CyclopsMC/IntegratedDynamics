@@ -54,25 +54,31 @@ public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C 
 
     }
 
+    protected boolean drawRenderPattern() {
+        return true;
+    }
+
     @Override
     public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-        IConfigRenderPattern configRenderPattern = element.getRenderPattern();
+        if (drawRenderPattern()) {
+            IConfigRenderPattern configRenderPattern = element.getRenderPattern();
 
-        int baseX = getX() + guiLeft;
-        int baseY = getY() + guiTop;
+            int baseX = getX() + guiLeft;
+            int baseY = getY() + guiTop;
 
-        for(Pair<Integer, Integer> slot : configRenderPattern.getSlotPositions()) {
-            drawSlot(matrixStack, baseX + slot.getLeft(), baseY + slot.getRight());
+            for (Pair<Integer, Integer> slot : configRenderPattern.getSlotPositions()) {
+                drawSlot(matrixStack, baseX + slot.getLeft(), baseY + slot.getRight());
+            }
+
+            if (configRenderPattern.getSymbolPosition() != null) {
+                RenderHelpers.drawScaledCenteredString(matrixStack, fontRenderer, element.getSymbol(),
+                        baseX + configRenderPattern.getSymbolPosition().getLeft(),
+                        baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
+                        0, 1, 0);
+            }
+            RenderSystem.color3f(1, 1, 1);
         }
-
-        if(configRenderPattern.getSymbolPosition() != null) {
-            RenderHelpers.drawScaledCenteredString(matrixStack, fontRenderer, element.getSymbol(),
-                    baseX + configRenderPattern.getSymbolPosition().getLeft(),
-                    baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
-                    0, 1, 0);
-        }
-        RenderSystem.color3f(1, 1, 1);
     }
 
     @Override

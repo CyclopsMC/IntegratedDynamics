@@ -1,25 +1,28 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.gui.widget.button.CheckboxButton;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,7 +30,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
@@ -35,10 +37,13 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinit
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
-import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
+import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
+import org.cyclops.cyclopscore.client.gui.component.input.IInputListener;
+import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -46,18 +51,22 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
+import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
+import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeRecipe;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.ingredient.ItemMatchType;
+import org.cyclops.integrateddynamics.core.ingredient.ItemMatchProperties;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
-import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRecipeValueChangedPacket;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -67,10 +76,14 @@ import java.util.stream.Collectors;
  */
 public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
-    @OnlyIn(Dist.CLIENT)
-    private SubGuiRenderPattern lastGui;
+    public static final int SLOT_OFFSET = 4;
+    public static final int TICK_DELAY = 30;
 
-    private NonNullList<Pair<ItemStack, ItemMatchType>> inputStacks;
+    @OnlyIn(Dist.CLIENT)
+    public ValueTypeRecipeLPElementMasterSubGui lastGui;
+
+    @Getter
+    private NonNullList<ItemMatchProperties> inputStacks;
     private ItemStack inputFluid;
     @Getter
     @Setter
@@ -86,10 +99,6 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     @Getter
     @Setter
     private String outputEnergy = "0";
-
-    public static ItemMatchType getDefaultItemMatch() {
-        return ItemMatchType.ITEM;
-    }
 
     public ValueTypeRecipeLPElement() {
         super(ValueTypes.OBJECT_RECIPE);
@@ -112,7 +121,13 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
 
         if (slotId >= 0 && slotId < 9) {
-            inputStacks.set(slotId, Pair.of(itemStack.copy(), inputStacks.get(slotId).getRight()));
+            ItemStack itemStackOld = inputStacks.get(slotId).getItemStack();
+            if (itemStackOld.getItem() != itemStack.getItem()) {
+                inputStacks.set(slotId, new ItemMatchProperties(itemStack.copy()));
+                if (MinecraftHelpers.isClientSideThread()) {
+                    refreshPropertiesGui(slotId);
+                }
+            }
         }
         if (slotId == 9) {
             inputFluid = itemStack.copy();
@@ -140,24 +155,42 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @OnlyIn(Dist.CLIENT)
+    protected void refreshPropertiesGui(int slot) {
+        if (this.lastGui != null && this.lastGui.isPropertySubGuiActive(slot)) {
+            this.lastGui.propertiesSubGuis.get(slot).loadStateToGui();
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
     protected void refreshInputFluidAmountBox() {
-        if (this.lastGui != null && this.lastGui.getInputFluidAmountBox() != null) {
-            this.lastGui.getInputFluidAmountBox().setText(inputFluidAmount);
+        if (this.lastGui != null && this.lastGui.subGuiRecipe.getInputFluidAmountBox() != null) {
+            this.lastGui.subGuiRecipe.getInputFluidAmountBox().setText(inputFluidAmount);
         }
     }
 
     @OnlyIn(Dist.CLIENT)
     protected void refreshOutputFluidAmountBox() {
-        if (this.lastGui != null && this.lastGui.getOutputFluidAmountBox() != null) {
-            this.lastGui.getOutputFluidAmountBox().setText(outputFluidAmount);
+        if (this.lastGui != null && this.lastGui.subGuiRecipe.getOutputFluidAmountBox() != null) {
+            this.lastGui.subGuiRecipe.getOutputFluidAmountBox().setText(outputFluidAmount);
         }
     }
 
+    public void sendSlotPropertiesToServer(int slotId, ItemMatchProperties props) {
+        IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                new LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket(
+                        slotId, props.isNbt(), props.getItemTag() == null ? "" : props.getItemTag(), props.getTagQuantity()));
+    }
+
     // Used by ID-Compat for JEI recipe transfer handler
-    public boolean isValidForRecipeGrid(List<ItemStack> itemInputs, List<FluidStack> fluidInputs,
+    public boolean isValidForRecipeGrid(List<ItemMatchProperties> itemInputs, List<FluidStack> fluidInputs,
                                         List<ItemStack> itemOutputs, List<FluidStack> fluidOutputs) {
         return itemInputs.size() <= 9 && itemOutputs.size() <= 3
                 && fluidInputs.size() <= 1 && fluidOutputs.size() <= 1;
+    }
+
+    protected void putItemPropertiesInContainer(ContainerLogicProgrammerBase container, int slot, ItemMatchProperties props) {
+        putStackInContainer(container, slot, props.getItemStack());
+        getInputStacks().set(slot, props);
     }
 
     protected void putStackInContainer(ContainerLogicProgrammerBase container, int slot, ItemStack itemStack) {
@@ -167,17 +200,17 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     // Used by ID-Compat for JEI recipe transfer handler
     public void setRecipeGrid(ContainerLogicProgrammerBase container,
-                              List<ItemStack> itemInputs, List<FluidStack> fluidInputs,
+                              List<ItemMatchProperties> itemInputs, List<FluidStack> fluidInputs,
                               List<ItemStack> itemOutputs, List<FluidStack> fluidOutputs) {
         int slot = 0;
 
         // Fill input item slots
-        for (ItemStack itemInput : itemInputs) {
-            putStackInContainer(container, slot, itemInput);
+        for (ItemMatchProperties itemInput : itemInputs) {
+            putItemPropertiesInContainer(container, slot, itemInput);
             slot++;
         }
         while (slot < 9) {
-            putStackInContainer(container, slot, ItemStack.EMPTY);
+            putItemPropertiesInContainer(container, slot, new ItemMatchProperties(ItemStack.EMPTY));
             slot++;
         }
 
@@ -225,7 +258,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     protected boolean isInputValid() {
-        return inputStacks.stream().anyMatch(stack -> !stack.getLeft().isEmpty())
+        return inputStacks.stream().anyMatch(ItemMatchProperties::isValid)
                 || !inputFluid.isEmpty() || !inputFluidAmount.equalsIgnoreCase("0")
                 || !inputEnergy.equalsIgnoreCase("0");
     }
@@ -243,7 +276,10 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     @Override
     public void activate() {
-        inputStacks = NonNullList.withSize(9, Pair.of(ItemStack.EMPTY, getDefaultItemMatch()));
+        inputStacks = NonNullList.withSize(9, new ItemMatchProperties(ItemStack.EMPTY));
+        for (int i = 0; i < 9; i++) {
+            inputStacks.set(i, new ItemMatchProperties(ItemStack.EMPTY));
+        }
         inputFluid = ItemStack.EMPTY;
         inputFluidAmount = "0";
         inputEnergy = "0";
@@ -295,24 +331,72 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    public Slot createSlot(IInventory temporaryInputSlots, int slotId, int x, int y) {
-        Slot slot = ILogicProgrammerElement.createSlotDefault(this, temporaryInputSlots, slotId, x, y);
-        if (slotId < 9) {
-            slot.setBackground(PlayerContainer.LOCATION_BLOCKS_TEXTURE, getDefaultItemMatch().getSlotSpriteName());
-        }
-        return slot;
-    }
-
-    @Override
     public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player) {
-        if (slotId >= 4 && slotId < 13 && mouseButton == 0 && clickType == ClickType.QUICK_MOVE) {
-            int id = slotId - 4;
-            this.inputStacks.set(id, Pair.of(this.inputStacks.get(id).getLeft(), this.inputStacks.get(id).getRight().next()));
-            slot.setBackground(PlayerContainer.LOCATION_BLOCKS_TEXTURE, this.inputStacks.get(id).getRight().getSlotSpriteName());
-            return true;
+        if (slotId >= SLOT_OFFSET && slotId < 9 + SLOT_OFFSET) {
+            if (clickType == ClickType.QUICK_MOVE && mouseButton == 0) {
+                if (player.world.isRemote()) {
+                    int id = slotId - SLOT_OFFSET;
+                    lastGui.setPropertySubGui(id);
+                }
+                return true;
+            } else {
+                // Similar logic as ContainerExtended.adjustPhantomSlot
+                ItemMatchProperties props = getInputStacks().get(slotId - SLOT_OFFSET);
+                int quantityCurrent = props.getTagQuantity();
+                int quantityNew;
+                if (clickType == ClickType.QUICK_MOVE) {
+                    quantityNew = mouseButton == 0 ? (quantityCurrent + 1) / 2 : quantityCurrent * 2;
+                } else {
+                    quantityNew = mouseButton == 0 ? quantityCurrent - 1 : quantityCurrent + 1;
+                }
+
+                if (quantityNew > slot.getSlotStackLimit()) {
+                    quantityNew = slot.getSlotStackLimit();
+                }
+
+                props.setTagQuantity(quantityNew);
+
+                if (quantityNew <= 0) {
+                    props.setItemTag(null);
+                    props.setTagQuantity(1);
+                    if (MinecraftHelpers.isClientSideThread()) {
+                        refreshPropertiesGui(slotId - SLOT_OFFSET);
+                    }
+                }
+            }
         }
 
         return super.slotClick(slotId, slot, mouseButton, clickType, player);
+    }
+
+    @Override
+    public Slot createSlot(IInventory temporaryInputSlots, int slotId, int x, int y) {
+        SlotExtended slot = new SlotExtended(temporaryInputSlots, slotId, x, y) {
+            @Override
+            public boolean isItemValid(ItemStack itemStack) {
+                return ValueTypeRecipeLPElement.this.isItemValidForSlot(slotId, itemStack);
+            }
+
+            @Override
+            public ItemStack getStack() {
+                if (MinecraftHelpers.isClientSideThread() && slotId < 9) {
+                    ItemMatchProperties props = getInputStacks().get(slotId);
+                    String tagName = props.getItemTag();
+                    if (tagName != null) {
+                        ITag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(tagName));
+                        if (tag != null) {
+                            List<Item> items = tag.getAllElements();
+                            int tick = ((int) Minecraft.getInstance().world.getGameTime()) / TICK_DELAY;
+                            Item item = items.get(tick % items.size());
+                            return new ItemStack(item, props.getTagQuantity());
+                        }
+                    }
+                }
+                return super.getStack();
+            }
+        };
+        slot.setPhantom(true);
+        return slot;
     }
 
     @Override
@@ -320,13 +404,13 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return 64;
     }
 
-    protected Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> getInputs(List<Pair<ItemStack, ItemMatchType>> itemStacks,
+    protected Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> getInputs(List<ItemMatchProperties> itemStacks,
                                                                                                       ItemStack fluid, int fluidAmount,
                                                                                                       int energy) {
         // Cut of itemStacks list until last non-empty stack
         int lastNonEmpty = 0;
         for (int i = 0; i < itemStacks.size(); i++) {
-            if (!itemStacks.get(i).getLeft().isEmpty()) {
+            if (itemStacks.get(i).isValid()) {
                 lastNonEmpty = i + 1;
             }
         }
@@ -340,7 +424,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
         Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> inputs = Maps.newIdentityHashMap();
         List<IPrototypedIngredientAlternatives<ItemStack, Integer>> items = itemStacks.stream()
-                .map(stack -> stack.getRight().getPrototypeHandler().getPrototypesFor(stack.getLeft()))
+                .map(ItemMatchProperties::createPrototypedIngredient)
                 .collect(Collectors.toList());
         List<IPrototypedIngredientAlternatives<FluidStack, Integer>> fluids = !fluidStack.isEmpty()
                 ? Collections.singletonList(new PrototypedIngredientAlternativesList<>(
@@ -411,17 +495,17 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                    ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-        return lastGui = new SubGuiRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+        return lastGui = new ValueTypeRecipeLPElementMasterSubGui(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setValueInGui(ISubGuiBox subGui) {
-        ValueTypeRecipeLPElement.SubGuiRenderPattern gui = ((ValueTypeRecipeLPElement.SubGuiRenderPattern) subGui);
+        ValueTypeRecipeLPElementRecipeSubGui gui = ((ValueTypeRecipeLPElementRecipeSubGui) subGui);
         IInventory slots = gui.container.getTemporaryInputSlots();
         for (int i = 0; i < this.inputStacks.size(); i++) {
-            Pair<ItemStack, ItemMatchType> entry = this.inputStacks.get(i);
-            slots.setInventorySlotContents(i, entry.getLeft());
+            ItemMatchProperties entry = this.inputStacks.get(i);
+            slots.setInventorySlotContents(i, entry.getItemStack());
         }
         slots.setInventorySlotContents(9, this.inputFluid);
         if (gui.getInputFluidAmountBox() != null) {
@@ -434,154 +518,6 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             slots.setInventorySlotContents(13, this.outputFluid);
             gui.getOutputFluidAmountBox().setText(this.outputFluidAmount);
             gui.getOutputEnergyBox().setText(this.outputEnergy);
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    protected static class SubGuiRenderPattern extends RenderPattern<ValueTypeRecipeLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
-            implements IRenderPatternValueTypeTooltip {
-
-        @Getter
-        @Setter
-        private boolean renderTooltip = true;
-        @Getter
-        private WidgetTextFieldExtended inputFluidAmountBox = null;
-        @Getter
-        private WidgetTextFieldExtended inputEnergyBox = null;
-        @Getter
-        private WidgetTextFieldExtended outputFluidAmountBox = null;
-        @Getter
-        private WidgetTextFieldExtended outputEnergyBox = null;
-
-        public SubGuiRenderPattern(ValueTypeRecipeLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-            super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-        }
-
-        protected static WidgetTextFieldExtended makeTextBox(int componentId, int x, int y, String text) {
-            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
-            int searchWidth = 35;
-
-            WidgetTextFieldExtended box = new WidgetTextFieldExtended(fontRenderer, x, y,
-                    searchWidth, fontRenderer.FONT_HEIGHT + 3, new TranslationTextComponent("gui.cyclopscore.search"), true);
-            box.setMaxStringLength(10);
-            box.setEnableBackgroundDrawing(false);
-            box.setVisible(true);
-            box.setTextColor(16777215);
-            box.setCanLoseFocus(true);
-            box.setText(text);
-            box.setWidth(searchWidth);
-            return box;
-        }
-
-        @Override
-        public void init(int guiLeft, int guiTop) {
-            super.init(guiLeft, guiTop);
-
-            this.inputFluidAmountBox = makeTextBox(0, guiLeft + getX() + 21, guiTop + getY() + 59, element.getInputFluidAmount());
-            this.inputEnergyBox = makeTextBox(1, guiLeft + getX() + 21, guiTop + getY() + 77, element.getInputEnergy());
-            this.outputFluidAmountBox = makeTextBox(2, guiLeft + getX() + 101, guiTop + getY() + 59, element.getOutputFluidAmount());
-            this.outputEnergyBox = makeTextBox(3, guiLeft + getX() + 101, guiTop + getY() + 77, element.getOutputEnergy());
-        }
-
-        @Override
-        public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-
-            // Output type tooltip
-            this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
-
-            // Render the overlay of the input item slots
-            for (int slotId = 0; slotId < this.container.inventorySlots.size(); ++slotId) {
-                Slot slot = this.container.inventorySlots.get(slotId);
-                if (slotId >= 4 && slotId < 13) {
-                    int slotX = slot.xPos;
-                    int slotY = slot.yPos;
-                    // Only render if the slot has a stack, otherwise vanilla will already render the overlay.
-                    if (slot.getHasStack() && slot.isEnabled()) {
-                        com.mojang.datafixers.util.Pair<ResourceLocation, ResourceLocation> slotTexturePair = slot.getBackground();
-                        if (slotTexturePair != null) {
-                            // Adapted from ContainerScreen#drawSlot
-                            TextureAtlasSprite textureatlassprite = Minecraft.getInstance().getAtlasSpriteGetter(slotTexturePair.getFirst()).apply(slotTexturePair.getSecond());
-                            Minecraft.getInstance().getTextureManager().bindTexture(textureatlassprite.getAtlasTexture().getTextureLocation());
-                            blit(matrixStack, slotX, slotY, this.getBlitOffset(), 16, 16, textureatlassprite);
-                        }
-                    }
-
-                    // Draw tooltips
-                    if (gui.isPointInRegion(slotX, slotY, 16, 16, mouseX, mouseY)) {
-                        String name = "valuetype.integrateddynamics.ingredients.match."
-                                + this.element.inputStacks.get(slot.getSlotIndex()).getRight().name().toLowerCase(Locale.ENGLISH);
-                        gui.drawTooltip(Lists.newArrayList(
-                                new TranslationTextComponent(name + ".desc")
-                                        .appendString(" ")
-                                        .mergeStyle(TextFormatting.ITALIC)
-                                        .append(new TranslationTextComponent("valuetype.integrateddynamics.ingredients.slot.info"))
-                        ), mouseX - guiLeft, mouseY - guiTop - 15);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-
-            // Draw crafting arrow
-            this.blit(matrixStack, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
-
-            inputFluidAmountBox.render(matrixStack, mouseX, mouseY, partialTicks);
-            fontRenderer.drawString(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0);
-            inputEnergyBox.render(matrixStack, mouseX, mouseY, partialTicks);
-            outputFluidAmountBox.render(matrixStack, mouseX, mouseY, partialTicks);
-            fontRenderer.drawString(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0);
-            outputEnergyBox.render(matrixStack, mouseX, mouseY, partialTicks);
-        }
-
-        @Override
-        public boolean charTyped(char typedChar, int keyCode) {
-            if (inputFluidAmountBox.charTyped(typedChar, keyCode)) {
-                element.setInputFluidAmount(inputFluidAmountBox.getText());
-                container.onDirty();
-                IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                        new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputFluidAmount(),
-                                LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_FLUID));
-                return true;
-            }
-            if (inputEnergyBox.charTyped(typedChar, keyCode)) {
-                element.setInputEnergy(inputEnergyBox.getText());
-                container.onDirty();
-                IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                        new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputEnergy(),
-                                LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_ENERGY));
-                return true;
-            }
-            if (outputFluidAmountBox.charTyped(typedChar, keyCode)) {
-                element.setOutputFluidAmount(outputFluidAmountBox.getText());
-                container.onDirty();
-                IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                        new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputFluidAmount(),
-                                LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_FLUID));
-                return true;
-            }
-            if (outputEnergyBox.charTyped(typedChar, keyCode)) {
-                element.setOutputEnergy(outputEnergyBox.getText());
-                container.onDirty();
-                IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                        new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputEnergy(),
-                                LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_ENERGY));
-                return true;
-            }
-            return super.charTyped(typedChar, keyCode);
-        }
-
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            return inputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton)
-                    || inputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton)
-                    || outputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton)
-                    || outputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton)
-                    || super.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 
