@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -447,17 +448,16 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return inputs;
     }
 
-    protected Map<IngredientComponent<?, ?>, List<?>> getOutputs(List<ItemStack> itemStacks,
+    protected Map<IngredientComponent<?, ?>, List<?>> getOutputs(List<ItemStack> itemStacksIn,
                                                                  ItemStack fluid, int fluidAmount,
                                                                  int energy) {
         // Cut of itemStacks list until last non-empty stack
-        int lastNonEmpty = 0;
-        for (int i = 0; i < itemStacks.size(); i++) {
-            if (!itemStacks.get(i).isEmpty()) {
-                lastNonEmpty = i + 1;
+        List<ItemStack> itemStacks = Lists.newArrayList();
+        for (int i = 0; i < itemStacksIn.size(); i++) {
+            if (!itemStacksIn.get(i).isEmpty()) {
+                itemStacks.add(itemStacksIn.get(i));
             }
         }
-        itemStacks = itemStacks.subList(0, lastNonEmpty);
 
         // Override fluid amount
         FluidStack fluidStack = Helpers.getFluidStack(fluid);
