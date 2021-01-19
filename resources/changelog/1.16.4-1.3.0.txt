@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.10.0 or higher.
+
+Additions:
+* Improve selection of tags for defining recipes in LP
+
+Fixes:
+* Fix broken recipes when leaving first or second output empty, Closes CyclopsMC/IntegratedCrafting#52
+* Fix zh-CN translation issues
+* Fix tool_for_obsidian advancement not being obtainable, Closes #969
