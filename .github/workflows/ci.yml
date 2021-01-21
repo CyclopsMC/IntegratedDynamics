@@ -1,0 +1,75 @@
+name: "CI"
+on: [push, pull_request]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: 'Cache'
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+            ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('build.gradle') }}
+      - name: 'Setup Java'
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+          java-package: jdk
+      - name: 'Mark tag as release'
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo "RELEASE=true" >> $GITHUB_ENV
+      - name: 'Unlock keystore'
+        id: unlock_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore.jks'
+          encodedString: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: 'Expose keystore'
+        run: cp ${{ steps.unlock_keystore.outputs.filePath }} .
+      - name: 'Build'
+        run: ./gradlew build -S --max-workers 1
+        env:
+          SIGN_KEYSTORE: ${{ secrets.SIGN_KEYSTORE }}
+          SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
+          SIGN_KEYPASS: ${{ secrets.SIGN_KEYPASS }}
+          SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
+      - name: 'Test'
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        if: ${{ env.COVERALLS_REPO_TOKEN }}
+        run: ./gradlew test jacocoTestReport coveralls
+      - name: 'Deploy to CurseForge'
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          CURSEFORGE_KEY_SECRET: ${{ secrets.CURSEFORGE_KEY_SECRET }}
+        run: ./gradlew curseforge -S
+      - name: 'Create GitHub release'
+        id: create_release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+      - name: 'Deploy to Maven'
+        if: startsWith(github.ref, 'refs/heads/master')
+        env:
+          MAVEN_URL: ${{ secrets.MAVEN_URL }}
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_KEY: ${{ secrets.MAVEN_KEY }}
+        run: ./gradlew uploadArchives -S
+      - name: 'Deploy JavaDoc to GitHub Pages'
+        if: startsWith(github.ref, 'refs/heads/master')
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: build/docs/javadoc
+          CLEAN: true

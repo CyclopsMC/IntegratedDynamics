@@ -18,7 +18,7 @@ plugins {
     // For people who want stable
     //id "net.minecraftforge.gradle.forge" version "2.0.2"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-	id 'com.github.kt3k.coveralls' version '2.8.2'
+	id 'com.github.kt3k.coveralls' version '2.10.2'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -52,7 +52,8 @@ def loadProperties() {
         project.buildnumber = System.getenv().BUILD_NUMBER
     if (System.getenv().TRAVIS_BUILD_NUMBER)
         project.buildnumber = System.getenv().TRAVIS_BUILD_NUMBER
-
+    if (System.getenv().GITHUB_RUN_ID)
+        project.buildnumber = System.getenv().GITHUB_RUN_NUMBER
     if (System.getenv().RELEASE || System.getenv().TRAVIS_TAG)
         project.buildnumber = "RELEASE"
     logger.lifecycle "BUILDING VERSION: " + project.buildnumber
@@ -259,7 +260,7 @@ artifacts {
 curseforge {
     if(project.hasProperty("curseforge_key")) {
         apiKey = project.curseforge_key
-    } else if(System.getenv().TRAVIS && System.getenv().CURSEFORGE_KEY_SECRET) {
+    } else if((System.getenv().TRAVIS || System.getenv().GITHUB_ACTIONS) && System.getenv().CURSEFORGE_KEY_SECRET) {
         apiKey = System.getenv().CURSEFORGE_KEY_SECRET
     }
 
