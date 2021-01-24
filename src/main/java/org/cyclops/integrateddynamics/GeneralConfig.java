@@ -124,6 +124,9 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "core", comment = "How deep the recursion stack on an operator can become. This is to avoid game crashes when building things like the omega operator.", isCommandable = true, configLocation = ModConfig.Type.SERVER)
     public static int operatorRecursionLimit = 256;
 
+    @ConfigurableProperty(category = "machine", comment = "Priority list of mod id's when determining tag-based recipe outputs.", isCommandable = true, configLocation = ModConfig.Type.SERVER)
+    public static List<String> recipeTagOutputModPriorities = Lists.newArrayList();
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }

@@ -24,6 +24,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 
 import javax.annotation.Nullable;
 
@@ -43,7 +44,7 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<IRecipeSeria
         FluidStack inputFluid = RecipeSerializerHelpers.getJsonFluidStack(json, "fluid", false);
 
         // Output
-        ItemStack outputItemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(result, false);
+        ItemStack outputItemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(result, false, GeneralConfig.recipeTagOutputModPriorities);
         FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
 
         // Other stuff

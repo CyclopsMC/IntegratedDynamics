@@ -14,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 
 import javax.annotation.Nullable;
 
@@ -25,7 +26,7 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
         implements IRecipeSerializer<RecipeSqueezer> {
 
     protected static RecipeSqueezer.ItemStackChance getJsonItemStackChance(JsonObject json) {
-        ItemStack itemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(json, true);
+        ItemStack itemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(json, true, GeneralConfig.recipeTagOutputModPriorities);
         float chance = JSONUtils.getFloat(json, "chance", 1.0F);
         return new RecipeSqueezer.ItemStackChance(itemStack, chance);
     }
