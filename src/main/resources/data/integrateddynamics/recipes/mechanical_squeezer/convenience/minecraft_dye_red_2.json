@@ -1,7 +1,7 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
   "item": {
-    "item": "minecraft:red_tulip"
+    "item": "minecraft:rose_bush"
   },
   "result": {
     "items": [

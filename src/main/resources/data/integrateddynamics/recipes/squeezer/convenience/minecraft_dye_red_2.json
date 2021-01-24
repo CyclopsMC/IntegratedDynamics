@@ -1,13 +1,13 @@
 {
   "type": "integrateddynamics:squeezer",
   "item": {
-    "item": "minecraft:red_tulip"
+    "item": "minecraft:rose_bush"
   },
   "result": {
     "items": [
       {
         "item": {
-          "item": "minecraft:rose_bush",
+          "item": "minecraft:red_dye",
           "count": 8
         }
       }
