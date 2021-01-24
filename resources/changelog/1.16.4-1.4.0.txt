@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.0 or higher.
+
+Additions:
+* Enable tag-based recipe output prioritization for machines
+  This is done with the new `recipeTagOutputModPriorities` config option.
+  Closes #976
+
+Fixes:
+* Fix incorrect Red Dye recipes in (Mechanical) Squeezer, Closes #977
+* Fix battery auto-supply crash, Closes #970
