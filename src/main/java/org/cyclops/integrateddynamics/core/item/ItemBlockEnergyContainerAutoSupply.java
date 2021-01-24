@@ -44,7 +44,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
                 for (Hand hand : Hand.values()) {
                     ItemStack held = player.getHeldItem(hand);
                     ItemStack filled = tryFillContainerForPlayer(source, held, tickAmount, player);
-                    if (filled != null) {
+                    if (!filled.isEmpty()) {
                         player.setHeldItem(hand, filled);
                     }
                 }
@@ -59,8 +59,8 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
                     if (moved > 0) {
                         return held;
                     }
-                    return null;
-                }).orElse(null);
+                    return ItemStack.EMPTY;
+                }).orElse(ItemStack.EMPTY);
     }
 
     @Override
