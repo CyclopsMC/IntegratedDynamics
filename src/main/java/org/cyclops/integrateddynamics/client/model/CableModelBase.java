@@ -189,8 +189,8 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     public static ModelRotation getRotation(Direction facing) {
         switch (facing) {
-            case DOWN:  return ModelRotation.X90_Y0;
-            case UP:    return ModelRotation.X270_Y0;
+            case DOWN:  return ModelRotation.X90_Y180;
+            case UP:    return ModelRotation.X270_Y180;
             case NORTH: return ModelRotation.X0_Y0;
             case SOUTH: return ModelRotation.X0_Y180;
             case WEST:  return ModelRotation.X0_Y270;
