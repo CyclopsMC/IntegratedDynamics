@@ -26,6 +26,9 @@ jobs:
         run: echo "RELEASE=true" >> $GITHUB_ENV
       - name: 'Unlock keystore'
         id: unlock_keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        if: ${{ env.KEYSTORE_BASE64 }}
         uses: timheuer/base64-to-file@v1
         with:
           fileName: 'keystore.jks'
