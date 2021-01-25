@@ -75,17 +75,17 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
             CompoundNBT elementTag = list.getCompound(i);
             ResourceLocation dimensionId = new ResourceLocation(elementTag.getString("dimension"));
             RegistryKey<World> dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimensionId);
+            World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
             BlockPos pos = BlockPos.fromLong(elementTag.getLong("pos"));
             Direction side = null;
             if (elementTag.contains("side", Constants.NBT.TAG_INT)) {
                 side = Direction.values()[elementTag.getInt("side")];
             }
 
-            if (dimension == null) {
+            if (world == null) {
                 IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at the " +
                         "invalid dimension id %s.", dimensionId));
             } else {
-                World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
                 IPathElement pathElement = TileHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY).orElse(null);
                 if(pathElement == null) {
                     IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +
