@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.LivingEntity;
@@ -223,7 +224,9 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             List<BakedQuad> ret = Lists.newLinkedList();
             TextureAtlasSprite texture = getParticleTexture();
             Optional<BlockState> blockStateHolder = getFacade(modelData);
-            boolean renderCable = isItemStack() || (isRealCable(modelData) && MinecraftForgeClient.getRenderLayer() == RenderType.getSolid() && !blockStateHolder.isPresent());
+            boolean renderCable = isItemStack() || (isRealCable(modelData) && (
+                    (!blockStateHolder.isPresent() && MinecraftForgeClient.getRenderLayer() == RenderType.getSolid())
+                            || (blockStateHolder.isPresent() && MinecraftForgeClient.getRenderLayer() == RenderType.getTranslucent())));
             for (Direction side : Direction.values()) {
                 boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
                 boolean hasPart = !isItemStack() && hasPart(modelData, side);
@@ -273,7 +276,8 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                 }
             }
 
-            if (blockStateHolder.isPresent() && shouldRenderParts(modelData)) {
+            if (blockStateHolder.isPresent() && shouldRenderParts(modelData)
+                    && RenderTypeLookup.canRenderInLayer(blockStateHolder.get(), MinecraftForgeClient.getRenderLayer())) {
                 for (Direction side : Direction.values()) {
                     boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
                     PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
