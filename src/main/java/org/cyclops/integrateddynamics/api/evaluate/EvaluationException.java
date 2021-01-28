@@ -11,7 +11,7 @@ public class EvaluationException extends Exception {
     private final IFormattableTextComponent errorMessage;
 
     public EvaluationException(IFormattableTextComponent errorMessage) {
-        super(errorMessage.getString());
+        super(errorMessage.toString());
         this.errorMessage = errorMessage;
     }
 
