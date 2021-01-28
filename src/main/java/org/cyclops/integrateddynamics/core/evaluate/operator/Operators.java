@@ -1200,7 +1200,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                        return a.getRawValue().isPresent() ? ForgeRegistries.BLOCKS.getKey(a.getRawValue().get().getBlock()) : null;
+                        return a.getRawValue().isPresent() ? ForgeRegistries.BLOCKS.getKey(a.getRawValue().get().getBlock()) : new ResourceLocation("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1541,7 +1541,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                        return !a.getRawValue().isEmpty() ? ForgeRegistries.ITEMS.getKey(a.getRawValue().getItem()) : null;
+                        return !a.getRawValue().isEmpty() ? ForgeRegistries.ITEMS.getKey(a.getRawValue().getItem()) : new ResourceLocation("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
