@@ -34,6 +34,9 @@ jobs:
           fileName: 'keystore.jks'
           encodedString: ${{ secrets.KEYSTORE_BASE64 }}
       - name: 'Expose keystore'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        if: ${{ env.KEYSTORE_BASE64 }}
         run: cp ${{ steps.unlock_keystore.outputs.filePath }} .
       - name: 'Build'
         run: ./gradlew build -S --max-workers 1
