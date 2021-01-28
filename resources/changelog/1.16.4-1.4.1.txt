@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.0 or higher.
+
+Changes:
+* Enable Forge version checker
+* [ImgBot] Optimize images (#978)
+
+Fixes:
+* Fix serialization issues with configured features, Closes #975
+* Fix crash when throwing EvaluationException server-side, Closes #981
+* Fix crash when determining mod name of an undefined block or entity, Closes #982
+* Fix incorrect rendering of transparent facades, Closes #980
+* Fix server crash when restarting after removing a dimension, Closes CyclopsMC/CyclopsCore#149
+* Fix orientation of top and bottom facade faces, Closes #974
