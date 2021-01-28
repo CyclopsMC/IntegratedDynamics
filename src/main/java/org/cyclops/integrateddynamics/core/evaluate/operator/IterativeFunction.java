@@ -25,6 +25,10 @@ public class IterativeFunction implements OperatorBase.IFunction {
     public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
         Object output = variables;
         for (IOperatorValuePropagator valuePropagator : valuePropagators) {
+            if (output == null) {
+                // Don't try to call the operator on a `null` value.
+                return null;
+            }
             output = valuePropagator.getOutput(output);
         }
         return (IValue) output;
