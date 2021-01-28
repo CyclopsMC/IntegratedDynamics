@@ -20,8 +20,8 @@ public class TrunkPlacerMenrilConfig extends TrunkPlacerConfig<TrunkPlacerMenril
     }
 
     @Override
-    public void onForgeRegistered() {
-        super.onForgeRegistered();
+    public void onRegistered() {
+        super.onRegistered();
         RegistryEntries.TRUNK_PLACER_MENRIL = getInstance();
     }
     

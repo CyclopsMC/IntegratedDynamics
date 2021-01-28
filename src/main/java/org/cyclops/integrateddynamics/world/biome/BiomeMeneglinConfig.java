@@ -1,9 +1,13 @@
 package org.cyclops.integrateddynamics.world.biome;
 
+import com.google.common.collect.ImmutableList;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraft.world.biome.BiomeGenerationSettings;
@@ -12,16 +16,28 @@ import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.biome.MoodSoundAmbience;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
+import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.FeatureSpread;
+import net.minecraft.world.gen.feature.Features;
+import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.gen.feature.TwoLayerFeature;
 import net.minecraft.world.gen.feature.structure.StructureFeatures;
+import net.minecraft.world.gen.foliageplacer.MegaPineFoliagePlacer;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
+import net.minecraft.world.gen.treedecorator.AlterGroundTreeDecorator;
+import net.minecraft.world.gen.trunkplacer.GiantTrunkPlacer;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.ConfigurablePropertyData;
 import org.cyclops.cyclopscore.config.extendedconfig.BiomeConfig;
@@ -42,6 +58,9 @@ public class BiomeMeneglinConfig extends BiomeConfig {
 
     @ConfigurableProperty(category = "worldgeneration", comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0, requiresMcRestart = true, configLocation = ModConfig.Type.SERVER)
     public static int wildMenrilTreeChance = 100;
+
+    public static ConfiguredFeature<?, ?> CONFIGURED_FEATURE_GENERAL;
+    public static ConfiguredFeature<?, ?> CONFIGURED_FEATURE_MENEGLIN;
 
     public BiomeMeneglinConfig() {
         super(
@@ -94,6 +113,7 @@ public class BiomeMeneglinConfig extends BiomeConfig {
                 }
         );
         MinecraftForge.EVENT_BUS.addListener(this::onBiomeLoadingEvent);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModSetup);
     }
 
     @Override
@@ -113,18 +133,27 @@ public class BiomeMeneglinConfig extends BiomeConfig {
         }
     }
 
+    public void onModSetup(FMLCommonSetupEvent event) {
+        CONFIGURED_FEATURE_MENEGLIN = Registry.register(WorldGenRegistries.CONFIGURED_FEATURE,
+                new ResourceLocation(getMod().getModId(), "tree_menril_meneglin"),
+                Feature.TREE
+                        .withConfiguration(TreeMenril.getMenrilTreeConfig())
+                        .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(1, 0.05F, 1))));
+        CONFIGURED_FEATURE_GENERAL = Registry.register(WorldGenRegistries.CONFIGURED_FEATURE,
+                new ResourceLocation(getMod().getModId(), "tree_menril_general"),
+                Feature.TREE
+                        .withConfiguration(TreeMenril.getMenrilTreeConfig())
+                        .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(0, 1F / wildMenrilTreeChance, 1))));
+    }
+
     public void onBiomeLoadingEvent(BiomeLoadingEvent event) {
         if (event.getName().equals(new ResourceLocation("integrateddynamics:meneglin"))) {
             event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)
-                    .add(() -> Feature.TREE
-                            .withConfiguration(TreeMenril.getMenrilTreeConfig())
-                            .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(1, 0.05F, 1))));
+                    .add(() -> CONFIGURED_FEATURE_MENEGLIN);
         } else if (BiomeDictionary.getTypes(RegistryKey.getOrCreateKey(RegistryKey.getOrCreateRootKey(getRegistry().getRegistryName()), event.getName()))
                 .contains(BiomeDictionary.Type.OVERWORLD)) {
             event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)
-                    .add(() -> Feature.TREE
-                            .withConfiguration(TreeMenril.getMenrilTreeConfig())
-                            .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(0, 1F / wildMenrilTreeChance, 1))));
+                    .add(() -> CONFIGURED_FEATURE_GENERAL);
         }
     }
     

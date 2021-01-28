@@ -8,8 +8,11 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.FeatureSpread;
 import net.minecraft.world.gen.feature.TwoLayerFeature;
+import net.minecraft.world.gen.foliageplacer.MegaPineFoliagePlacer;
+import net.minecraft.world.gen.trunkplacer.GiantTrunkPlacer;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogFilledConfig;
+import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenril;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
 
@@ -38,7 +41,7 @@ public class TreeMenril extends Tree {
     @Nullable
     @Override
     protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getTreeFeature(Random random, boolean b) {
-        return Feature.TREE.withConfiguration(getMenrilTreeConfig());
+        return (ConfiguredFeature<BaseTreeFeatureConfig, ?>) BiomeMeneglinConfig.CONFIGURED_FEATURE_GENERAL;
     }
 
 }
