@@ -352,7 +352,9 @@ public class CableHelpers {
      * @return If it has a facade.
      */
     public static boolean hasFacade(IBlockReader world, BlockPos pos) {
-        return TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY)
+        LazyOptional<IFacadeable> ret = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
+        ret.resolve(); // TODO: remove me (temp workaround to resolve race condition https://github.com/CyclopsMC/IntegratedDynamics/issues/986)
+        return ret
                 .map(IFacadeable::hasFacade)
                 .orElse(false);
     }
