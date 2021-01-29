@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.client.model;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import net.minecraft.block.BlockState;
@@ -131,7 +132,11 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         Random rand = new Random();
         List<BakedQuad> ret = Lists.newLinkedList();
         IBakedModel model = RenderHelpers.getBakedModel(blockState);
-        BakedQuad originalQuad = model.getQuads(blockState, side, rand).get(0);
+        BakedQuad originalQuad = Iterables.getFirst(model.getQuads(blockState, side, rand), null);
+        if (originalQuad == null) {
+            // Return immediately if the model produces no quads
+            return ret;
+        }
         if(partRenderPosition == PartRenderPosition.NONE) {
             addFacadeQuad(ret, originalQuad, 0, 0, 1f, 1f, side);
         } else {
