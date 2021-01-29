@@ -41,7 +41,7 @@ public class TreeMenril extends Tree {
     @Nullable
     @Override
     protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getTreeFeature(Random random, boolean b) {
-        return (ConfiguredFeature<BaseTreeFeatureConfig, ?>) BiomeMeneglinConfig.CONFIGURED_FEATURE_GENERAL;
+        return Feature.TREE.withConfiguration(getMenrilTreeConfig());
     }
 
 }
