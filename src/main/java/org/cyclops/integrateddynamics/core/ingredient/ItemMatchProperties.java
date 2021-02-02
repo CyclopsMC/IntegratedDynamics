@@ -33,7 +33,7 @@ public class ItemMatchProperties {
             public Object decode(PacketBuffer packetBuffer) {
                 ItemStack itemStack = (ItemStack) PacketCodec.getAction(ItemStack.class).decode(packetBuffer);
                 boolean nbt = packetBuffer.readBoolean();
-                String itemTag = packetBuffer.readString();
+                String itemTag = packetBuffer.readString(32767);
                 int tagQuantity = packetBuffer.readInt();
                 return new ItemMatchProperties(itemStack, nbt, itemTag.isEmpty() ? null : itemTag, tagQuantity);
             }
