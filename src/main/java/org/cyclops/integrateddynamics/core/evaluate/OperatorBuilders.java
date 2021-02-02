@@ -114,6 +114,7 @@ public class OperatorBuilders {
 
     // --------------- Number builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER = OperatorBuilder.forType(ValueTypes.CATEGORY_NUMBER).appendKind("number");
+    // TODO: BREAKING: use NUMBER as prefix instead of DOUBLE
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER_1_PREFIX = DOUBLE.inputTypes(1, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.PREFIX_1);
 
     // --------------- Nullable builders ---------------

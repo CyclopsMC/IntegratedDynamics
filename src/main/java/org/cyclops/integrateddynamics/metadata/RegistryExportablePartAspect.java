@@ -23,7 +23,7 @@ public class RegistryExportablePartAspect implements IRegistryExportable {
             for (IAspect aspect : Aspects.REGISTRY.getAspects(partType)) {
                 array.add(aspect.getUniqueName().toString());
             }
-            element.add(partType.getTranslationKey(), array);
+            element.add(partType.getUniqueName().toString(), array);
         }
 
         return element;

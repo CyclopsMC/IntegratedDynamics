@@ -20,8 +20,9 @@ public class RegistryExportableOperator implements IRegistryExportable {
         for (IOperator operator : Operators.REGISTRY.getOperators()) {
             JsonObject object = new JsonObject();
 
+            object.addProperty("id", operator.getUniqueName().toString());
             object.addProperty("name", operator.getTranslationKey());
-            object.addProperty("description", operator.getTranslationKey().substring(0, operator.getTranslationKey().length() - 5) + ".info");
+            object.addProperty("description", operator.getTranslationKey() + ".info");
             object.addProperty("symbol", operator.getSymbol());
             JsonArray inputs = new JsonArray();
             for (IValueType inputType : operator.getInputTypes()) {
@@ -30,7 +31,7 @@ public class RegistryExportableOperator implements IRegistryExportable {
             object.add("inputs", inputs);
             object.add("output", serializeValueType(operator.getOutputType()));
 
-            element.add(operator.getTranslationKey(), object);
+            element.add(operator.getUniqueName().toString(), object);
         }
 
         return element;

@@ -804,7 +804,7 @@ public final class Operators {
     /**
      * Double ceil operator with one input double and one output integers.
      */
-    public static final IOperator NUMBER_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
+    public static final IOperator NUMBER_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX // TODO: BREAKING: use NUMBER as prefix instead of DOUBLE
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.ceil(variables.getVariables()[0])
@@ -813,7 +813,7 @@ public final class Operators {
     /**
      * Double floor operator with one input double and one output integers.
      */
-    public static final IOperator NUMBER_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX
+    public static final IOperator NUMBER_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX // TODO: BREAKING: use NUMBER as prefix instead of DOUBLE
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.floor(variables.getVariables()[0])

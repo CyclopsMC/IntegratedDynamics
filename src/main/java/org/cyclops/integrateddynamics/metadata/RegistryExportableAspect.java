@@ -23,8 +23,9 @@ public class RegistryExportableAspect implements IRegistryExportable {
         for (IAspect aspect : Aspects.REGISTRY.getAspects()) {
             JsonObject object = new JsonObject();
 
+            object.addProperty("id", aspect.getUniqueName().toString());
             object.addProperty("name", aspect.getTranslationKey());
-            object.addProperty("description", aspect.getTranslationKey().substring(0, aspect.getTranslationKey().length() - 5) + ".info");
+            object.addProperty("description", aspect.getTranslationKey() + ".info");
             object.addProperty("type", aspect instanceof IAspectWrite ? "write" : "read");
             if (aspect instanceof IAspectWrite) {
                 object.add("input", RegistryExportableOperator.serializeValueType(aspect.getValueType()));
@@ -37,7 +38,7 @@ public class RegistryExportableAspect implements IRegistryExportable {
             }
             object.add("properties", properties);
 
-            element.add(aspect.getTranslationKey(), object);
+            element.add(aspect.getUniqueName().toString(), object);
         }
 
         return element;
