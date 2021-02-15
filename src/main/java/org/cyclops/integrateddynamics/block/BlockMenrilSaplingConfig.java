@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.ComposterBlock;
 import net.minecraft.block.SaplingBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -36,5 +37,10 @@ public class BlockMenrilSaplingConfig extends BlockConfig {
     public void onClientSetup(FMLClientSetupEvent event) {
         RenderTypeLookup.setRenderLayer(getInstance(), RenderType.getCutout());
     }
-    
+
+    @Override
+    public void onForgeRegistered() {
+        super.onForgeRegistered();
+        ComposterBlock.CHANCES.put(getItemInstance(), 0.3F);
+    }
 }

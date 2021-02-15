@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.item;
 
+import net.minecraft.block.ComposterBlock;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.potion.EffectInstance;
@@ -37,6 +38,12 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
             builder = builder.effect(new EffectInstance(Effects.NIGHT_VISION, 20, 1), 1);
         }
         return builder.build();
+    }
+
+    @Override
+    public void onForgeRegistered() {
+        super.onForgeRegistered();
+        ComposterBlock.CHANCES.put(getInstance(), 0.65F);
     }
     
 }

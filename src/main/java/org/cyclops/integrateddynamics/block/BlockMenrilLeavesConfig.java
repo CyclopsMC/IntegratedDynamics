@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ComposterBlock;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.SoundType;
@@ -32,8 +33,10 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
     }
     
     @Override
-    public void onRegistered() {
-        BlockHelpers.setFireInfo(RegistryEntries.BLOCK_MENRIL_LEAVES, 5, 20);
+    public void onForgeRegistered() {
+        super.onForgeRegistered();
+        BlockHelpers.setFireInfo(getInstance(), 5, 20);
+        ComposterBlock.CHANCES.put(getItemInstance(), 0.3F);
     }
     
 }
