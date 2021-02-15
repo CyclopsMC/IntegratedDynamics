@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "integrateddynamics:menril_log_stripped"
+    },
+    {
+      "item": "integrateddynamics:menril_log_stripped"
+    },
+    {
+      "item": "integrateddynamics:menril_log_stripped"
+    },
+    {
+      "item": "integrateddynamics:menril_log_stripped"
+    }
+  ],
+  "result": {
+    "item": "integrateddynamics:menril_wood_stripped",
+    "count": 3
+  }
+}

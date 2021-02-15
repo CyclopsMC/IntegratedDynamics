@@ -88,6 +88,9 @@ public class Configs {
         configHandler.addConfigurable(new BlockProxyConfig());
         configHandler.addConfigurable(new BlockMaterializerConfig());
         configHandler.addConfigurable(new BlockMenrilLogConfig());
+        configHandler.addConfigurable(new BlockMenrilLogStrippedConfig());
+        configHandler.addConfigurable(new BlockMenrilWoodConfig());
+        configHandler.addConfigurable(new BlockMenrilWoodStrippedConfig());
         configHandler.addConfigurable(new BlockMenrilLogFilledConfig());
         configHandler.addConfigurable(new BlockMenrilLeavesConfig());
         configHandler.addConfigurable(new BlockMenrilSaplingConfig());

@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "axis=y": { "model": "integrateddynamics:block/menril_wood" },
+        "axis=z": { "model": "integrateddynamics:block/menril_wood", "x": 90 },
+        "axis=x": { "model": "integrateddynamics:block/menril_wood", "x": 90, "y": 90 }
+    }
+}

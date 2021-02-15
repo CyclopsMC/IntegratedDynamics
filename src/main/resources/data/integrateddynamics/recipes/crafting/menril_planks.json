@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "integrateddynamics:menril_log"
+      "tag": "integrateddynamics:menril_logs"
     }
   ],
   "result": {

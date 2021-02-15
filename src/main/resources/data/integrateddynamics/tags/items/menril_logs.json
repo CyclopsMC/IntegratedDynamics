@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "integrateddynamics:menril_log",
+    "integrateddynamics:menril_wood",
+    "integrateddynamics:menril_log_stripped",
+    "integrateddynamics:menril_wood_stripped"
+  ]
+}

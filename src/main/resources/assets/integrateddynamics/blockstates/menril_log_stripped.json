@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "axis=y": { "model": "integrateddynamics:block/menril_log_stripped" },
+        "axis=z": { "model": "integrateddynamics:block/menril_log_stripped", "x": 90 },
+        "axis=x": { "model": "integrateddynamics:block/menril_log_stripped", "x": 90, "y": 90 }
+    }
+}

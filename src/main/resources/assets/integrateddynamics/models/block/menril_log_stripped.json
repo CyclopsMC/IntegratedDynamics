@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end" : "integrateddynamics:block/menril_log_top_stripped",
+    "side": "integrateddynamics:block/menril_log_stripped"
+  }
+}

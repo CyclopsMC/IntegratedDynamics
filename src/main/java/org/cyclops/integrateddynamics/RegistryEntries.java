@@ -112,6 +112,12 @@ public class RegistryEntries {
     public static final Block BLOCK_MENRIL_LOG = null;
     @ObjectHolder("integrateddynamics:menril_log_filled")
     public static final Block BLOCK_MENRIL_LOG_FILLED = null;
+    @ObjectHolder("integrateddynamics:menril_log_stripped")
+    public static final Block BLOCK_MENRIL_LOG_STRIPPED = null;
+    @ObjectHolder("integrateddynamics:menril_wood")
+    public static final Block BLOCK_MENRIL_WOOD = null;
+    @ObjectHolder("integrateddynamics:menril_wood_stripped")
+    public static final Block BLOCK_MENRIL_WOOD_STRIPPED = null;
     @ObjectHolder("integrateddynamics:menril_planks")
     public static final Block BLOCK_MENRIL_PLANKS = null;
     @ObjectHolder("integrateddynamics:menril_planks_stairs")

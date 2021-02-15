@@ -8,16 +8,16 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
- * Config for the Menril Log.
+ * Config for the Stripped Menril Wood.
  * @author rubensworks
  *
  */
-public class BlockMenrilLogConfig extends BlockConfig {
+public class BlockMenrilWoodConfig extends BlockConfig {
 
-    public BlockMenrilLogConfig() {
+    public BlockMenrilWoodConfig() {
         super(
                 IntegratedDynamics._instance,
-                "menril_log",
+                "menril_wood",
                 eConfig -> Blocks.createLogBlock(MaterialColor.CYAN, MaterialColor.CYAN),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
