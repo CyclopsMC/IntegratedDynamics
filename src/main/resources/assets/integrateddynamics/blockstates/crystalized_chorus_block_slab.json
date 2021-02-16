@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "integrateddynamics:block/crystalized_chorus_block_slab"
+    },
+    "type=double": {
+      "model": "integrateddynamics:block/crystalized_chorus_block"
+    },
+    "type=top": {
+      "model": "integrateddynamics:block/crystalized_chorus_block_slab_top"
+    }
+  }
+}

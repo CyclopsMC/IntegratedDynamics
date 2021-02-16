@@ -112,6 +112,10 @@
     "block.integrateddynamics.mechanical_squeezer.info": "Squeezes, flattens and crushes using energy.",
     "block.integrateddynamics.mechanical_drying_basin": "Mechanical Drying Basin",
     "block.integrateddynamics.mechanical_drying_basin.info": "For drying items and fluids using energy.",
+    "block.integrateddynamics.crystalized_menril_block_slab": "Crystalized Menril Slab",
+    "block.integrateddynamics.crystalized_menril_brick_slab": "Crystalized Menril Brick Slab",
+    "block.integrateddynamics.crystalized_chorus_block_slab": "Crystalized Chorus Slab",
+    "block.integrateddynamics.crystalized_chorus_brick_slab": "Crystalized Chorus Brick Slab",
 
     "_comment": "Items",
     "item.integrateddynamics.general.id": "§e§lID: §r%s",

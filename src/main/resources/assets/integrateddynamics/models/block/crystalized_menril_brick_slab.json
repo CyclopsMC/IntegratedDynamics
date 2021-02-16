@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "integrateddynamics:block/crystalized_menril_brick",
+    "top": "integrateddynamics:block/crystalized_menril_brick",
+    "side": "integrateddynamics:block/crystalized_menril_brick"
+  }
+}

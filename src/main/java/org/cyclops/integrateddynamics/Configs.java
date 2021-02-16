@@ -117,6 +117,10 @@ public class Configs {
         configHandler.addConfigurable(new BlockCrystalizedChorusBrickStairsConfig());
         configHandler.addConfigurable(new BlockMechanicalSqueezerConfig());
         configHandler.addConfigurable(new BlockMechanicalDryingBasinConfig());
+        configHandler.addConfigurable(new BlockCrystalizedMenrilBlockSlabConfig());
+        configHandler.addConfigurable(new BlockCrystalizedMenrilBrickSlabConfig());
+        configHandler.addConfigurable(new BlockCrystalizedChorusBlockSlabConfig());
+        configHandler.addConfigurable(new BlockCrystalizedChorusBrickSlabConfig());
 
         // Items
         configHandler.addConfigurable(new ItemBucketLiquidChorusConfig());
