@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "integrateddynamics:block/menril_slab"
+    },
+    "type=double": {
+      "model": "integrateddynamics:block/menril_planks"
+    },
+    "type=top": {
+      "model": "integrateddynamics:block/menril_slab_top"
+    }
+  }
+}

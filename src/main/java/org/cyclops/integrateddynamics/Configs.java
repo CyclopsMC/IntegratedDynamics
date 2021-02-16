@@ -95,6 +95,7 @@ public class Configs {
         configHandler.addConfigurable(new BlockMenrilLeavesConfig());
         configHandler.addConfigurable(new BlockMenrilSaplingConfig());
         configHandler.addConfigurable(new BlockMenrilPlanksConfig());
+        configHandler.addConfigurable(new BlockMenrilSlabConfig());
         configHandler.addConfigurable(new BlockCrystalizedMenrilBlockConfig());
         configHandler.addConfigurable(new BlockCrystalizedMenrilBrickConfig());
         configHandler.addConfigurable(new BlockFluidMenrilResinConfig());
