@@ -85,6 +85,8 @@
     "block.integrateddynamics.menril_sapling": "Menril Sapling",
     "block.integrateddynamics.menril_planks": "Menril Planks",
     "block.integrateddynamics.menril_slab": "Menril Slab",
+    "block.integrateddynamics.menril_fence": "Menril Fence",
+    "block.integrateddynamics.menril_fence_gate": "Menril Fence Gate",
     "block.integrateddynamics.menril_wood": "Menril Wood",
     "block.integrateddynamics.menril_wood_stripped": "Stripped Menril Wood",
     "block.integrateddynamics.crystalized_menril_block": "Block of Crystalized Menril",
