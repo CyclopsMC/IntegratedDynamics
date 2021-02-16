@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.1 or higher.
+
+Additions:
+* Add Menril Fence and Menril Fence Gate, #272
+* Add Crystalized Chorus and Menril Slabs, #272
+* Add Menril Slabs, #272
+* Add composter support for menril leaves, sapling and berries
+* Add Menril Wood and stripped variants, Closes #993
+
+Fixes:
+* Fix typo in infobook, Closes #994
+* Resolve minor infobook issues
