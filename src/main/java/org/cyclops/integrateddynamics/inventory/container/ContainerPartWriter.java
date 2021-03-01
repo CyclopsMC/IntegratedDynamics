@@ -181,7 +181,11 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     @Nullable
     public IAspect getPartStateActiveAspect() {
-        return AspectRegistry.getInstance().getAspect(new ResourceLocation(ValueNotifierHelpers.getValueString(this, activeAspectId)));
+        String aspectName = ValueNotifierHelpers.getValueString(this, activeAspectId);
+        if (aspectName == null) {
+            return null;
+        }
+        return AspectRegistry.getInstance().getAspect(new ResourceLocation(aspectName));
     }
 
 }
