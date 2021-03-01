@@ -359,7 +359,9 @@ public class OperatorBuilders {
         IOperator operator = value.getRawValue();
         if (!ValueHelpers.correspondsTo(operator.getOutputType(), expectedOutput)) {
             IFormattableTextComponent error = new TranslationTextComponent(L10NValues.OPERATOR_ERROR_ILLEGALPROPERY,
-                    expectedOutput, operator.getOutputType(), operator.getLocalizedNameFull());
+                    new TranslationTextComponent(expectedOutput.getTranslationKey()),
+                    new TranslationTextComponent(operator.getOutputType().getTranslationKey()),
+                    operator.getLocalizedNameFull());
             throw new EvaluationException(error);
         }
         return operator;

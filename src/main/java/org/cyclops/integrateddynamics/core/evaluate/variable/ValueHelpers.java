@@ -234,7 +234,7 @@ public class ValueHelpers {
                     L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
                     predicate.getLocalizedNameFull(),
                     new TranslationTextComponent(result.getType().getTranslationKey()),
-                    ValueTypes.BOOLEAN);
+                    new TranslationTextComponent(ValueTypes.BOOLEAN.getTranslationKey()));
             throw new EvaluationException(error);
         }
     }

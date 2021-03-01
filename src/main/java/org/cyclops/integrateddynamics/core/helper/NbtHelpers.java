@@ -163,7 +163,9 @@ public class NbtHelpers {
                 IFormattableTextComponent error = new TranslationTextComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        value.getType(), 1, ValueTypes.NBT);
+                        new TranslationTextComponent(value.getType().getTranslationKey()),
+                        1,
+                        new TranslationTextComponent(ValueTypes.NBT.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
             ((ValueTypeNbt.ValueNbt) valueNbt).getRawValue().ifPresent(list::add);
@@ -184,7 +186,9 @@ public class NbtHelpers {
                 IFormattableTextComponent error = new TranslationTextComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        value.getType(), 1, ValueTypes.INTEGER);
+                        new TranslationTextComponent(value.getType().getTranslationKey()),
+                        1,
+                        new TranslationTextComponent(ValueTypes.INTEGER.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
             list.add((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue());
@@ -205,7 +209,9 @@ public class NbtHelpers {
                 IFormattableTextComponent error = new TranslationTextComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        value.getType(), 1, ValueTypes.INTEGER);
+                        new TranslationTextComponent(value.getType().getTranslationKey()),
+                        1,
+                        new TranslationTextComponent(ValueTypes.INTEGER.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
             list.add(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue());
@@ -226,7 +232,9 @@ public class NbtHelpers {
                 IFormattableTextComponent error = new TranslationTextComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        value.getType(), 1, ValueTypes.LONG);
+                        new TranslationTextComponent(value.getType().getTranslationKey()),
+                        1,
+                        new TranslationTextComponent(ValueTypes.LONG.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
             list.add(((ValueTypeLong.ValueLong) valueNbt).getRawValue());

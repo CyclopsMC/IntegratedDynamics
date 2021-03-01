@@ -912,7 +912,7 @@ public final class Operators {
                     if (!ValueHelpers.correspondsTo(a.getValueType(), variables.getVariables()[2].getType())) {
                         throw new EvaluationException(new TranslationTextComponent(
                                 L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                                a.getValueType(),
+                                new TranslationTextComponent(a.getValueType().getTranslationKey()),
                                 new TranslationTextComponent(variables.getVariables()[2].getType().getTranslationKey())));
                     }
                     return variables.getValue(2);
