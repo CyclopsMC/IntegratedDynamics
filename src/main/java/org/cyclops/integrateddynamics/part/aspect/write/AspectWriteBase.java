@@ -58,7 +58,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
             try {
                 write(partTypeWriter, target, writerState, variable);
             } catch (EvaluationException e) {
-                writerState.addError(this, new TranslationTextComponent(e.getLocalizedMessage()));
+                writerState.addError(this, e.getErrorMessage());
                 writerState.setDeactivated(true);
             }
         } else if(!writerState.isDeactivated()) {

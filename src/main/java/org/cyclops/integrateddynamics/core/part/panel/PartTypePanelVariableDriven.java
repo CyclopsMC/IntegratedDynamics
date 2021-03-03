@@ -131,7 +131,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
                 }
             } catch (EvaluationException e) {
-                state.addGlobalError(new TranslationTextComponent(e.getLocalizedMessage()));
+                state.addGlobalError(e.getErrorMessage());
             }
         }
         if(!ValueHelpers.areValuesEqual(lastValue, newValue)) {
@@ -183,7 +183,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 }
                 materializedValue = newValue.getType().materialize(newValue);
             } catch (EvaluationException e) {
-                state.addGlobalError(new TranslationTextComponent(e.getLocalizedMessage()));
+                state.addGlobalError(e.getErrorMessage());
             }
             state.setDisplayValue(materializedValue);
         }
