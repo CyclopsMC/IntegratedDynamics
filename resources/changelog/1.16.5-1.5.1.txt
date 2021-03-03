@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.1 or higher.
+
+Fixes:
+* Fix incorrectly formatted error messages in parts, #996
+* Fix crash when selecting Recipe in List LP element, Closes #1001
+* Fix random NPE when opening GUIs, Closes #999
+* Fix crash when throwing EvaluationException with value types server-side, Closes #998
+
