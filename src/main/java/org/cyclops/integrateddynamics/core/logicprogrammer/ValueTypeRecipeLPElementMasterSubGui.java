@@ -38,6 +38,10 @@ class ValueTypeRecipeLPElementMasterSubGui extends RenderPattern<ValueTypeRecipe
         setSubGui(this.subGuiRecipe);
     }
 
+    public ValueTypeRecipeLPElementRecipeSubGui getSubGuiRecipe() {
+        return subGuiRecipe;
+    }
+
     public void setSubGui(ISubGui subGui) {
         if (subGuiActive != null) {
             subGuiHolder.removeSubGui(subGuiActive);

@@ -501,7 +501,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setValueInGui(ISubGuiBox subGui) {
-        ValueTypeRecipeLPElementRecipeSubGui gui = ((ValueTypeRecipeLPElementRecipeSubGui) subGui);
+        ValueTypeRecipeLPElementRecipeSubGui gui = ((ValueTypeRecipeLPElementMasterSubGui) subGui).getSubGuiRecipe();
         IInventory slots = gui.container.getTemporaryInputSlots();
         for (int i = 0; i < this.inputStacks.size(); i++) {
             ItemMatchProperties entry = this.inputStacks.get(i);
