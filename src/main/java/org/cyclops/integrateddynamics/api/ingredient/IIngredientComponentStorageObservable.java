@@ -64,6 +64,12 @@ public interface IIngredientComponentStorageObservable<T, M> {
     public boolean shouldObserve();
 
     /**
+     * @param channel The channel to check for a forced observation in.
+     * @return If the given channel contains a forced observation scheduling that has not been processed yet.
+     */
+    public boolean isObservationForcedPending(int channel);
+
+    /**
      * Get the last indexed storage at the given channel.
      * @param channel A channel id.
      * @return A channel index.

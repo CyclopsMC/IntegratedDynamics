@@ -165,6 +165,20 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
+    public boolean isObservationForcedPending(int channel) {
+        if (channel == IPositionedAddonsNetwork.WILDCARD_CHANNEL) {
+            for (int channelActual : getChannels()) {
+                if (this.ingredientObserver.isTickResetPending(channelActual)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return this.ingredientObserver.isTickResetPending(channel);
+        }
+    }
+
+    @Override
     public IIngredientPositionsIndex<T, M> getChannelIndex(int channel) {
         IIngredientPositionsIndex<T, M> index = getInstanceLocationsIndex(channel);
         if (index == null) {

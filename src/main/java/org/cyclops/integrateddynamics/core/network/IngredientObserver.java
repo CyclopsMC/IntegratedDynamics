@@ -45,6 +45,7 @@ public class IngredientObserver<T, M> {
     private final Int2ObjectMap<Map<PartPos, Integer>> observeTargetTickIntervals;
     private final Int2ObjectMap<Map<PartPos, Integer>> observeTargetTicks;
     private final Int2ObjectMap<Map<PrioritizedPartPos, IngredientCollectionDiffManager<T, M>>> channeledDiffManagers;
+    private final Int2ObjectMap<Set<PartPos>> pendingTickResets;
 
     private final Int2ObjectMap<List<PrioritizedPartPos>> lastRemoved;
     private final Map<PartPos, Integer> lastInventoryStates;
@@ -56,6 +57,7 @@ public class IngredientObserver<T, M> {
         this.observeTargetTickIntervals = new Int2ObjectOpenHashMap<>();
         this.observeTargetTicks = new Int2ObjectOpenHashMap<>();
         this.channeledDiffManagers = new Int2ObjectOpenHashMap<>();
+        this.pendingTickResets = new Int2ObjectOpenHashMap<>();
         this.lastRemoved = new Int2ObjectOpenHashMap<>();
         this.lastInventoryStates = Maps.newHashMap();
 
@@ -209,6 +211,17 @@ public class IngredientObserver<T, M> {
             // Check if we should observe this position in this tick
             int lastTick = channelTargetTicks.getOrDefault(partPos.getPartPos(), currentTick);
             if (lastTick <= currentTick) {
+                // Remove this position from the pending tick reset set
+                synchronized (this.pendingTickResets) {
+                    Set<PartPos> pendingTickResetsChannel = this.pendingTickResets.get(channel);
+                    if (pendingTickResetsChannel != null) {
+                        pendingTickResetsChannel.remove(partPos.getPartPos());
+                        if (pendingTickResetsChannel.isEmpty()) {
+                            this.pendingTickResets.remove(channel);
+                        }
+                    }
+                }
+
                 // If an inventory state is exposed, check if it has changed since the last observation call.
                 boolean skipPosition = false;
 
@@ -330,12 +343,29 @@ public class IngredientObserver<T, M> {
     }
 
     public void resetTickInterval(int channel, PartPos targetPos) {
+        // Reset the channel ticks
         Map<PartPos, Integer> channelTicks = this.observeTargetTicks.get(channel);
         if (channelTicks == null) {
             channelTicks = Maps.newHashMap();
             this.observeTargetTicks.put(channel, channelTicks);
         }
         channelTicks.put(targetPos, getCurrentTick() + GeneralConfig.ingredientNetworkObserverFrequencyForced);
+
+        // Keep an overview of the pending positions per channel that require tick resets
+        synchronized (this.pendingTickResets) {
+            Set<PartPos> pendingTickResetsChannel = this.pendingTickResets.get(channel);
+            if (pendingTickResetsChannel == null) {
+                pendingTickResetsChannel = Sets.newHashSet();
+                this.pendingTickResets.put(channel, pendingTickResetsChannel);
+            }
+            pendingTickResetsChannel.add(targetPos);
+        }
+    }
+
+    public boolean isTickResetPending(int channel) {
+        synchronized (this.pendingTickResets) {
+            return this.pendingTickResets.containsKey(channel);
+        }
     }
 
 }
