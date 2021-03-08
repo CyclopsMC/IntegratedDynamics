@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.1 or higher.
+
+Additions:
+* Expose check for pending forced ingredient network observation
+  Required for CyclopsMC/IntegratedCrafting#48
+
+Fixes:
+* Fix wrong entity being read in entity reader, Closes #1003
+  This caused entities to sometimes contain wrong data.
+
