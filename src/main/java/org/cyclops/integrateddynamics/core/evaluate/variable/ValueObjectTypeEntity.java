@@ -152,7 +152,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
             Optional<UUID> uuid = getUuid();
             if (uuid.isPresent()) {
                 Optional<Entity> optionalEntity = DistExecutor.callWhenOn(Dist.CLIENT, ()->()-> {
-                    if (MinecraftHelpers.isClientSide()) {
+                    if (MinecraftHelpers.isClientSideThread()) {
                         for (Entity entity : Minecraft.getInstance().world.getAllEntities()) {
                             if (entity.getUniqueID().equals(uuid.get())) {
                                 return Optional.of(entity);
