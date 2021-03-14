@@ -59,6 +59,7 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
 
     @Setter
     private PlayerEntity lastPlayer = null;
+    private boolean writeVariable;
 
     public TileProxy() {
         this(RegistryEntries.TILE_ENTITY_PROXY, TileProxy.INVENTORY_SIZE);
@@ -139,7 +140,16 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
     @Override
     public void onDirty() {
         super.onDirty();
-        if(!world.isRemote()) {
+        if (!world.isRemote()) {
+            this.writeVariable = true;
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if(!world.isRemote() && this.writeVariable) {
             if (!getInventory().getStackInSlot(getSlotWriteIn()).isEmpty() && getInventory().getStackInSlot(getSlotWriteOut()).isEmpty()) {
                 // Write proxy reference
                 ItemStack outputStack = writeProxyInfo(!getWorld().isRemote, getInventory().removeStackFromSlot(getSlotWriteIn()), proxyId);
