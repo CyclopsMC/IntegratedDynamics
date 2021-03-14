@@ -169,10 +169,12 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     @Override
     public void onBlockExploded(BlockState state, World world, BlockPos blockPos, Explosion explosion) {
+        CableHelpers.setRemovingCable(true);
         CableHelpers.onCableRemoving(world, blockPos, true, false);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
         super.onBlockExploded(state, world, blockPos, explosion);
         CableHelpers.onCableRemoved(world, blockPos, connectedCables);
+        CableHelpers.setRemovingCable(false);
     }
 
     @Override
@@ -183,6 +185,23 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
             return false;
         }
         return rayTraceResult != null && super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+    }
+
+    @Override
+    public void onReplaced(BlockState state, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+        if (newState.getBlock() != this) {
+            Collection<Direction> connectedCables = null;
+            if (!CableHelpers.isRemovingCable()) {
+                CableHelpers.onCableRemoving(world, blockPos, false, false);
+                connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
+            }
+            super.onReplaced(state, world, blockPos, newState, isMoving);
+            if (!CableHelpers.isRemovingCable()) {
+                CableHelpers.onCableRemoved(world, blockPos, connectedCables);
+            }
+        } else {
+            super.onReplaced(state, world, blockPos, newState, isMoving);
+        }
     }
 
     @Override

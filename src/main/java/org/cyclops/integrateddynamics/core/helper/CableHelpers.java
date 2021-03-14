@@ -311,6 +311,20 @@ public class CableHelpers {
         return true;
     }
 
+    private static boolean removingCable = false;
+    /**
+     * @return If {@link #removeCable} is currently being called.
+     */
+    public static boolean isRemovingCable() {
+        return removingCable;
+    }
+    /**
+     * @param removingCable If the removing cable flag should be set
+     */
+    public static void setRemovingCable(boolean removingCable) {
+        CableHelpers.removingCable = removingCable;
+    }
+
     /**
      * Remove a cable.
      * This will automatically handle sounds, drops,
@@ -320,11 +334,15 @@ public class CableHelpers {
      * @param player The player removing the cable or null.
      */
     public static void removeCable(World world, BlockPos pos, @Nullable PlayerEntity player) {
+        removingCable = true;
         ICable cable = getCable(world, pos, null).orElse(null);
         ICableFakeable cableFakeable = getCableFakeable(world, pos, null).orElse(null);
         IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, null).orElse(null);
         BlockState blockState = world.getBlockState(pos);
-        if (cable == null) return;
+        if (cable == null) {
+            removingCable = false;
+            return;
+        }
 
         Collection<Direction> connectedCables = getCableConnections(cable);
         CableHelpers.onCableRemoving(world, pos, false, false);
@@ -343,6 +361,8 @@ public class CableHelpers {
         CableHelpers.onCableRemoved(world, pos, connectedCables);
 
         ItemBlockCable.playBreakSound(world, pos, blockState);
+
+        removingCable = false;
     }
 
     /**

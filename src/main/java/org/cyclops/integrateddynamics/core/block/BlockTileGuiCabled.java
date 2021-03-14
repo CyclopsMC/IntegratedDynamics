@@ -77,10 +77,12 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
 
     @Override
     public void onBlockExploded(BlockState state, World world, BlockPos blockPos, Explosion explosion) {
+        CableHelpers.setRemovingCable(true);
         CableHelpers.onCableRemoving(world, blockPos, true, false);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
         super.onBlockExploded(state, world, blockPos, explosion);
         CableHelpers.onCableRemoved(world, blockPos, connectedCables);
+        CableHelpers.setRemovingCable(false);
     }
 
     @SuppressWarnings("deprecation")
@@ -109,13 +111,14 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
         if (oldState.getBlock() != newState.getBlock()) {
             TileHelpers.getSafeTile(world, blockPos, TileCableConnectableInventory.class)
                     .ifPresent(tile -> InventoryHelpers.dropItems(world, tile.getInventory(), blockPos));
-            if (newState.isAir()) {
+            Collection<Direction> connectedCables = null;
+            if (!CableHelpers.isRemovingCable()) {
                 CableHelpers.onCableRemoving(world, blockPos, true, false);
-                Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
-                super.onReplaced(oldState, world, blockPos, newState, isMoving);
+                connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
+            }
+            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+            if (!CableHelpers.isRemovingCable()) {
                 CableHelpers.onCableRemoved(world, blockPos, connectedCables);
-            } else {
-                super.onReplaced(oldState, world, blockPos, newState, isMoving);
             }
         }
     }
