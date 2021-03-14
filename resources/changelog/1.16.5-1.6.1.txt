@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.1 or higher.
+
+Fixes:
+* Fix crash when cables are removed indirectly, Closes #1005
+* Fix Materializer not being able to handle curried operators, Closes #1004
+* Fix wrong text rendering in delay gui
+* Fix Materializer and Proxy not immediately noticing slot changes, #1004
+* Fix crash when inserting invalid sound name in audio writer, Closes #1006
