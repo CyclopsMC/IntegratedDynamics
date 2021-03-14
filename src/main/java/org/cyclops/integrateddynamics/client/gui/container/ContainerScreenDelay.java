@@ -119,8 +119,8 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.renderButton(matrixStack, mouseX - guiLeft, mouseY - guiTop, partialTicks);
         numberFieldCapacity.renderButton(matrixStack, mouseX - guiLeft, mouseY - guiTop, partialTicks);
         // MCP: drawString
-        font.func_243246_a(matrixStack, new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 104, Helpers.RGBToInt(0, 0, 0));
-        font.func_243246_a(matrixStack, new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), guiLeft + 8, guiTop + 128, Helpers.RGBToInt(0, 0, 0));
+        font.func_243248_b(matrixStack, new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 104, Helpers.RGBToInt(0, 0, 0));
+        font.func_243248_b(matrixStack, new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), guiLeft + 8, guiTop + 128, Helpers.RGBToInt(0, 0, 0));
     }
 
     @Override
