@@ -392,7 +392,9 @@ public class CombinedOperator extends OperatorBase {
             CompoundNBT tag = new CompoundNBT();
             ListNBT list = new ListNBT();
             for (IOperator functionOperator : operators) {
-                list.add(Operators.REGISTRY.serialize(functionOperator));
+                CompoundNBT elementTag = new CompoundNBT();
+                elementTag.put("v", Operators.REGISTRY.serialize(functionOperator));
+                list.add(elementTag);
             }
             tag.put("operators", list);
             return tag;
@@ -411,7 +413,12 @@ public class CombinedOperator extends OperatorBase {
             }
             IOperator[] operators = new IOperator[list.size()];
             for (int i = 0; i < list.size(); i++) {
-                operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.get(i)));
+                try {
+                    operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.getCompound(i).get("v")));
+                } catch (Throwable e) {
+                    // TODO: remove this in next major version (and try-catch block), as we just needed it for backwards-compat.
+                    operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.get(i)));
+                }
             }
             return newFunction(operators);
         }
