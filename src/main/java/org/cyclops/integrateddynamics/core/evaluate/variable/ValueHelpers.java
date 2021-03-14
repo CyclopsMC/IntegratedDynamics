@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -260,6 +261,21 @@ public class ValueHelpers {
             }
         }
         return Pair.of(readValue, readValueColor);
+    }
+
+    /**
+     * Create a ResourceLocation from the given value.
+     * Any ResourceLocationExceptions will be emitted as EvaluationException.
+     * @param value A ResourceLocation value.
+     * @return A ResourceLocation
+     * @throws EvaluationException If a ResourceLocationException was thrown.
+     */
+    public static ResourceLocation createResourceLocationInEvaluation(String value) throws EvaluationException {
+        try {
+            return new ResourceLocation(value);
+        } catch (ResourceLocationException e) {
+            throw new EvaluationException(new StringTextComponent(e.getMessage()));
+        }
     }
 
 }

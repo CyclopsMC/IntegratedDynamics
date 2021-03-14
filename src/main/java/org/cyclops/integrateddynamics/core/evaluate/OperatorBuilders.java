@@ -338,12 +338,8 @@ public class OperatorBuilders {
 
     public static final IterativeFunction.PrePostBuilder<ResourceLocation, IValue> FUNCTION_STRING_TO_RESOURCE_LOCATION = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
-                try {
-                    ValueTypeString.ValueString a = input.getValue(0, ValueTypes.STRING);
-                    return new ResourceLocation(a.getRawValue());
-                } catch (ResourceLocationException e) {
-                    throw new EvaluationException(new StringTextComponent(e.getMessage()));
-                }
+                ValueTypeString.ValueString a = input.getValue(0, ValueTypes.STRING);
+                return ValueHelpers.createResourceLocationInEvaluation(a.getRawValue());
             });
 
     // --------------- Operator helpers ---------------

@@ -855,7 +855,8 @@ public class Aspects {
                                 if(!StringUtils.isNullOrEmpty(input.getRight())) {
                                     float f = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_FREQUENCY).getRawValue();
                                     float volume = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_VOLUME).getRawValue();
-                                    SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation(input.getRight()));
+                                    SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(ValueHelpers
+                                            .createResourceLocationInEvaluation(input.getRight()));
 
                                     if (soundEvent != null) {
                                         World world = input.getLeft().getTarget().getPos().getWorld(false);
