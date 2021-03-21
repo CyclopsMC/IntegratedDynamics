@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
  */
 public final class WrenchHelpers {
 
-    public static final ResourceLocation TAG_WRENCH = new ResourceLocation("forge", "wrench");
+    public static final ResourceLocation TAG_WRENCH = new ResourceLocation("forge", "tools/wrench");
 
     /**
      * Checks if the given player can wrench something.
