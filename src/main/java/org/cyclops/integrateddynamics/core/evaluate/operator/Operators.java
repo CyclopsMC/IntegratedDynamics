@@ -1266,7 +1266,7 @@ public final class Operators {
             .symbol("plant_type").operatorName("planttype")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                String type = "None";
+                String type = "none";
                 if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
                     type = ((IPlantable) a.getRawValue().get().getBlock()).getPlantType(null, null).getName();
                 }
@@ -1707,7 +1707,7 @@ public final class Operators {
             .symbol("plant_type").operatorName("planttype")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                String type = "None";
+                String type = "none";
                 if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem
                         && ((BlockItem) a.getRawValue().getItem()).getBlock() instanceof IPlantable) {
                     type = ((IPlantable) ((BlockItem) a.getRawValue().getItem()).getBlock()).getPlantType(null, null).getName();

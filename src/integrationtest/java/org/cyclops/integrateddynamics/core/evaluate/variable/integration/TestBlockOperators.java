@@ -261,10 +261,10 @@ public class TestBlockOperators {
     public void testBlockPlantType() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_PLANTTYPE.evaluate(new IVariable[]{bAir});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "None", "planttype(air) = None");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "none", "planttype(air) = none");
 
         IValue res2 = Operators.OBJECT_BLOCK_PLANTTYPE.evaluate(new IVariable[]{bReed});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Beach", "planttype(reed) = Beach");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "beach", "planttype(reed) = beach");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

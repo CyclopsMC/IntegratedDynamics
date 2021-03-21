@@ -1091,10 +1091,10 @@ public class TestItemStackOperators {
     public void testItemStackPlantType() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{iApple});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "None", "planttype(apple) = None");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "none", "planttype(apple) = none");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{iSeedWheat});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "Crop", "planttype(seedWheat) = Crop");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "crop", "planttype(seedWheat) = crop");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
