@@ -1237,6 +1237,8 @@
     "operator.integrateddynamics.fluidstack.mod.info": "The name of the mod owning the given fluid",
     "operator.integrateddynamics.fluidstack.nbt": "Fluid NBT",
     "operator.integrateddynamics.fluidstack.nbt.info": "Get the NBT tag of the given fluid.",
+    "operator.integrateddynamics.fluidstack.with_amount": "Fluid With Amount",
+    "operator.integrateddynamics.fluidstack.with_amount.info": "Copy the given fluid with the given amount",
 
     "operator.integrateddynamics.nbt": "NBT",
     "operator.integrateddynamics.nbt.basename": "NBT %s",

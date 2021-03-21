@@ -2461,6 +2461,20 @@ public final class Operators {
             }).build());
 
     /**
+     * Create a new fluidstack with the given amount.
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_WITH_AMOUNT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2
+            .inputTypes(ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.INTEGER)
+            .output(ValueTypes.BOOLEAN).symbolOperator("with_amount")
+            .function(variables -> {
+                ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+                ValueTypeInteger.ValueInteger valueInteger = variables.getValue(1, ValueTypes.INTEGER);
+                FluidStack fluidStack = valueFluidStack.getRawValue().copy();
+                fluidStack.setAmount(valueInteger.getRawValue());
+                return ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack);
+            }).build());
+
+    /**
      * ----------------------------------- OPERATOR OPERATORS -----------------------------------
      */
 

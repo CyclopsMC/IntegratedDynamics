@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -34,6 +35,7 @@ public class TestFluidStackOperators {
     private DummyVariableFluidStack eBucketWater;
     private DummyVariableFluidStack eWater100;
     private DummyVariableFluidStack eWater100Tag;
+    private DummyVariable<ValueTypeInteger.ValueInteger> i99;
 
     @IntegrationBefore
     public void before() {
@@ -43,6 +45,7 @@ public class TestFluidStackOperators {
         eWater100Tag = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 100)));
         eWater100Tag.getValue().getRawValue().setTag(new CompoundNBT());
         eWater100Tag.getValue().getRawValue().getTag().putString("a", "abc");
+        i99 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(99));
     }
 
     /**
@@ -338,6 +341,36 @@ public class TestFluidStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeNbt() throws EvaluationException {
         Operators.OBJECT_FLUIDSTACK_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_AMOUNT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testWithAmount() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_FLUIDSTACK_WITH_AMOUNT.evaluate(new IVariable[]{eBucketLava, i99});
+        Asserts.check(res1 instanceof ValueObjectTypeFluidStack.ValueFluidStack, "result is an integer");
+        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().getFluid(), eBucketLava.getValue().getRawValue().getFluid(), "withamount(lava, 99) = lava@99");
+        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().getAmount(), 99, "withamount(lava, 99) = lava@99");
+
+        // Check if original amount is not changed
+        TestHelpers.assertEqual(eBucketLava.getValue().getRawValue().getAmount(), FluidHelpers.BUCKET_VOLUME, "original value is not changed");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeWithAmountLarge() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_AMOUNT.evaluate(new IVariable[]{eBucketLava, i99, i99});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeWithAmountSmall() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_AMOUNT.evaluate(new IVariable[]{eBucketLava});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeWithAmount() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_AMOUNT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }
