@@ -16,6 +16,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
@@ -73,7 +74,12 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
             if (partContainer == null) { // equivalent to: CableHelpers.isCableConnected(world, blockPos, direction)
                 return BOUNDS.get(direction);
             }
-            return partContainer.getPart(direction).getPartRenderPosition().getSidedCableBoundingBox(direction);
+            IPartType part = partContainer.getPart(direction);
+            if (part == null) {
+                // Can happen rarely on client desyncs
+                return BOUNDS.get(direction);
+            }
+            return part.getPartRenderPosition().getSidedCableBoundingBox(direction);
         }
 
         @Override
