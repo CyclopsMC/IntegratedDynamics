@@ -8,6 +8,9 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.cyclops.commoncapabilities.api.capability.inventorystate.IInventoryState;
 import org.cyclops.cyclopscore.helper.TileHelpers;
@@ -29,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 /**
  * Instances of this class are able to watch ingredient positions and emit diffs.
@@ -38,6 +42,11 @@ import java.util.concurrent.Future;
 public class IngredientObserver<T, M> {
 
     private static final ExecutorService WORKER_POOL = Executors.newFixedThreadPool(GeneralConfig.ingredientNetworkObserverThreads);
+    static {
+        MinecraftForge.EVENT_BUS.addListener((Consumer<FMLServerStoppingEvent>) event -> {
+            WORKER_POOL.shutdown();
+        });
+    }
 
     private final IPositionedAddonsNetworkIngredients<T, M> network;
 
