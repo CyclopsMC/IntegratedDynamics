@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.1 or higher.
+
+Fixes:
+* Fix crash while deserializing curried operators, Closes #1007
+* Fix IngredientObserver not allowing servers to be stopped, Closes #1013
+* Fix rare crash on cable shape lookup, Closes #1014
