@@ -405,7 +405,7 @@ public class CombinedOperator extends OperatorBase {
             ListNBT list;
             try {
                 CompoundNBT tag = (CompoundNBT) valueOperator;
-                list = tag.getList("operators", Constants.NBT.TAG_STRING);
+                list = (ListNBT) tag.get("operators");
             } catch (ClassCastException e) {
                 e.printStackTrace();
                 throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
