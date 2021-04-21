@@ -44,7 +44,9 @@ public class IngredientObserver<T, M> {
     private static final ExecutorService WORKER_POOL = Executors.newFixedThreadPool(GeneralConfig.ingredientNetworkObserverThreads);
     static {
         MinecraftForge.EVENT_BUS.addListener((Consumer<FMLServerStoppingEvent>) event -> {
-            WORKER_POOL.shutdown();
+            if (event.getServer().isDedicatedServer()) {
+                WORKER_POOL.shutdown();
+            }
         });
     }
 
