@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -130,10 +131,18 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         Iterator<PartPos> it = partPosIteratorData.getRight();
         while (it.hasNext()) {
             PartPos pos = it.next();
+
             // Skip if the position is not loaded or disabled
             if (!pos.getPos().isLoaded() || network.isPositionDisabled(pos)) {
                 continue;
             }
+
+            // Skip if a filter was set that doesn't match the ingredient
+            Predicate<T> filter = this.network.getPositionedStorageFilter(pos);
+            if (filter != null && !filter.test(ingredient)) {
+                continue;
+            }
+
             this.network.disablePosition(pos);
             long quantityBefore = matcher.getQuantity(ingredient);
             ingredient = this.network.getPositionedStorage(pos).insert(ingredient, simulate);
@@ -175,12 +184,32 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
         Iterator<PartPos> it = partPosIteratorData.getRight();
         while (it.hasNext()) {
             PartPos pos = it.next();
+
             // Skip if the position is not loaded or disabled
             if (!pos.getPos().isLoaded() || network.isPositionDisabled(pos)) {
                 continue;
             }
+
+            // Obtain storage
             this.network.disablePosition(pos);
-            T extracted = this.network.getPositionedStorage(pos).extract(maxQuantity, simulate);
+            IIngredientComponentStorage<T, M> positionedStorage = this.network.getPositionedStorage(pos);
+
+            // If we do an effective extraction, first simulate to check if it matches the filter
+            Predicate<T> filter = this.network.getPositionedStorageFilter(pos);
+            if (filter != null && !simulate) {
+                T extractedSimulated = positionedStorage.extract(maxQuantity, true);
+                if (!filter.test(extractedSimulated)) {
+                    continue;
+                }
+            }
+
+            T extracted = positionedStorage.extract(maxQuantity, simulate);
+
+            // If simulating, just check the output
+            if (filter != null && simulate && !filter.test(extracted)) {
+                continue;
+            }
+
             this.network.enablePosition(pos);
             if (!matcher.isEmpty(extracted)) {
                 if (!simulate) {
@@ -250,6 +279,12 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             T extractedSimulated = this.network.getPositionedStorage(pos).extract(prototypeFinal, finalMatchFlags, true);
             this.network.enablePosition(pos);
             T storagePrototype = getComponent().getMatcher().withQuantity(extractedSimulated, 1);
+
+            // Skip if a filter was set that doesn't match the simulated extraction
+            Predicate<T> filter = this.network.getPositionedStorageFilter(pos);
+            if (filter != null && !filter.test(extractedSimulated)) {
+                continue;
+            }
 
             // Get existing value from temporary mapping
             Pair<Wrapper<Long>, List<PartPos>> existingValue = validInstancesCollapsed.get(storagePrototype);

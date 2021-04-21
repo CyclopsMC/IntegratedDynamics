@@ -1,10 +1,12 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Iterators;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 /**
  * An ingredient channel that naively iterates over all positions in the network.
@@ -79,6 +81,10 @@ public class IngredientChannelPositioned<T, M> extends IngredientChannelAdapter<
                         continue;
                     }
                     this.lastPos = this.network.getPositionedStorage(pos).iterator(prototype, matchFlags);
+                    Predicate<T> filter = this.network.getPositionedStorageFilter(pos);
+                    if (filter != null) {
+                        this.lastPos = Iterators.filter(this.lastPos, filter::test);
+                    }
                 } else {
                     this.lastPos = null;
                 }

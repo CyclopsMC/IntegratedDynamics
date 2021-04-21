@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Iterators;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageSlotted;
@@ -11,6 +12,7 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 /**
  * A slotted wrapper over {@link IngredientChannelAdapter}.
@@ -57,7 +59,7 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
         return slots;
     }
 
-    protected Pair<IIngredientComponentStorage<T, M>, Integer> getStorageAndRelativeSlot(int slot) {
+    protected Triple<IIngredientComponentStorage<T, M>, Integer, PartPos> getStorageAndRelativeSlot(int slot) {
         IPositionedAddonsNetworkIngredients<T, M> network = this.channel.getNetwork();
 
         for (PartPos pos : network.getPositions()) {
@@ -70,20 +72,21 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
             int storageSize = getIngredientComponentStorageSize(storage);
             network.enablePosition(pos);
             if (slot < storageSize) {
-                return Pair.of(storage, slot);
+                return Triple.of(storage, slot, pos);
             } else {
                 slot -= storageSize;
             }
         }
 
-        return Pair.of(null, -1);
+        return Triple.of(null, -1, null);
     }
 
     @Override
     public T getSlotContents(int slotAbsolute) {
-        Pair<IIngredientComponentStorage<T, M>, Integer> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
+        Triple<IIngredientComponentStorage<T, M>, Integer, PartPos> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
         IIngredientComponentStorage<T, M> storage = storageAndSlot.getLeft();
-        int slotRelative = storageAndSlot.getRight();
+        int slotRelative = storageAndSlot.getMiddle();
+        PartPos pos = storageAndSlot.getRight();
         if (storage == null) {
             return getComponent().getMatcher().getEmptyInstance();
         }
@@ -92,7 +95,12 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
             return ((IIngredientComponentStorageSlotted<T, M>) storage).getSlotContents(slotRelative);
         } else {
             try {
-                return Iterators.get(storage.iterator(), slotRelative);
+                T ingredient = Iterators.get(storage.iterator(), slotRelative);
+                Predicate<T> filter = this.channel.getNetwork().getPositionedStorageFilter(pos);
+                if (filter != null && !filter.test(ingredient)) {
+                    return getComponent().getMatcher().getEmptyInstance();
+                }
+                return ingredient;
             } catch (IndexOutOfBoundsException e) {
                 return getComponent().getMatcher().getEmptyInstance();
             }
@@ -101,9 +109,9 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
 
     @Override
     public long getMaxQuantity(int slotAbsolute) {
-        Pair<IIngredientComponentStorage<T, M>, Integer> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
+        Triple<IIngredientComponentStorage<T, M>, Integer, PartPos> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
         IIngredientComponentStorage<T, M> storage = storageAndSlot.getLeft();
-        int slotRelative = storageAndSlot.getRight();
+        int slotRelative = storageAndSlot.getMiddle();
         if (storage == null) {
             return 0;
         }
@@ -117,10 +125,16 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
 
     @Override
     public T insert(int slotAbsolute, @Nonnull T ingredient, boolean simulate) {
-        Pair<IIngredientComponentStorage<T, M>, Integer> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
+        Triple<IIngredientComponentStorage<T, M>, Integer, PartPos> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
         IIngredientComponentStorage<T, M> storage = storageAndSlot.getLeft();
-        int slotRelative = storageAndSlot.getRight();
+        int slotRelative = storageAndSlot.getMiddle();
+        PartPos pos = storageAndSlot.getRight();
         if (storage == null) {
+            return ingredient;
+        }
+
+        Predicate<T> filter = this.channel.getNetwork().getPositionedStorageFilter(pos);
+        if (filter != null && !filter.test(ingredient)) {
             return ingredient;
         }
 
@@ -133,18 +147,41 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
 
     @Override
     public T extract(int slotAbsolute, long maxQuantity, boolean simulate) {
-        Pair<IIngredientComponentStorage<T, M>, Integer> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
+        Triple<IIngredientComponentStorage<T, M>, Integer, PartPos> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
         IIngredientComponentStorage<T, M> storage = storageAndSlot.getLeft();
-        int slotRelative = storageAndSlot.getRight();
+        int slotRelative = storageAndSlot.getMiddle();
+        PartPos pos = storageAndSlot.getRight();
         if (storage == null) {
             return getComponent().getMatcher().getEmptyInstance();
         }
 
-        if (storage instanceof IIngredientComponentStorageSlotted) {
-            return ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, simulate);
-        } else {
-            return storage.extract(maxQuantity, simulate);
+        // If we do an effective extraction, first simulate to check if it matches the filter
+        Predicate<T> filter = this.channel.getNetwork().getPositionedStorageFilter(pos);
+        if (filter != null && !simulate) {
+            T extractedSimulated;
+            if (storage instanceof IIngredientComponentStorageSlotted) {
+                extractedSimulated = ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, simulate);
+            } else {
+                extractedSimulated = storage.extract(maxQuantity, simulate);
+            }
+            if (!filter.test(extractedSimulated)) {
+                return getComponent().getMatcher().getEmptyInstance();
+            }
         }
+
+        T extracted;
+        if (storage instanceof IIngredientComponentStorageSlotted) {
+            extracted = ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, simulate);
+        } else {
+            extracted = storage.extract(maxQuantity, simulate);
+        }
+
+        // If simulating, just check the output
+        if (filter != null && simulate && !filter.test(extracted)) {
+            return getComponent().getMatcher().getEmptyInstance();
+        }
+
+        return extracted;
     }
 
     @Override

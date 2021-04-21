@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
+import com.google.common.collect.Iterators;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -16,6 +17,7 @@ import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -47,12 +49,32 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
     }
 
     /**
+     * Set an ingredient filter for the given storage position.
+     * Unsets the filter if null is provided.
+     * @param pos A position.
+     * @param filter An ingredient filter.
+     */
+    public void setPositionedStorageFilter(PartPos pos, @Nullable Predicate<T> filter);
+
+    /**
+     * @param pos A position.
+     * @return An optional ingredient filter for the given storage position.
+     */
+    @Nullable
+    public Predicate<T> getPositionedStorageFilter(PartPos pos);
+
+    /**
      * Get all instances at the target position.
      * @param pos A part position.
      * @return A collection of instances. This can not be a view, and must be a deep copy of the target.
      */
     public default Iterator<T> getRawInstances(PartPos pos) {
-        return getPositionedStorage(pos).iterator();
+        Iterator<T> it = getPositionedStorage(pos).iterator();
+        Predicate<T> filter = getPositionedStorageFilter(pos);
+        if (filter != null) {
+            it = Iterators.filter(it, filter::test);
+        }
+        return it;
     }
 
     /**

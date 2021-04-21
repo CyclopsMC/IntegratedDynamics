@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.api.path.IPathElement;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -39,6 +40,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     private final IngredientObserver<T, M> ingredientObserver;
     private final Int2ObjectMap<IngredientPositionsIndex<T, M>> indexes;
+    private final Map<PartPos, Predicate<T>> positionFilters = Maps.newHashMap();
 
     private boolean observe;
     private Map<PartPos, Long> lastSecondDurations = Maps.newHashMap();
@@ -66,6 +68,22 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     @Override
     public boolean addPosition(PartPos pos, int priority, int channel) {
         return getPositionedStorageUnsafe(pos) != null && super.addPosition(pos, priority, channel);
+    }
+
+    @Override
+    public void setPositionedStorageFilter(PartPos pos, @Nullable Predicate<T> filter) {
+        if (filter == null) {
+            positionFilters.remove(pos);
+        } else {
+            positionFilters.put(pos, filter);
+            scheduleObservationForced(IPositionedAddonsNetwork.WILDCARD_CHANNEL, pos);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Predicate<T> getPositionedStorageFilter(PartPos pos) {
+        return positionFilters.get(pos);
     }
 
     @Override
