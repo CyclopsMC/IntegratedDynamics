@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
@@ -17,6 +16,7 @@ import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
+import org.cyclops.integrateddynamics.api.network.PositionedAddonsNetworkIngredientsFilter;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -24,7 +24,6 @@ import org.cyclops.integrateddynamics.api.path.IPathElement;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -40,7 +39,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     private final IngredientObserver<T, M> ingredientObserver;
     private final Int2ObjectMap<IngredientPositionsIndex<T, M>> indexes;
-    private final Map<PartPos, Predicate<T>> positionFilters = Maps.newHashMap();
+    private final Map<PartPos, PositionedAddonsNetworkIngredientsFilter<T>> positionFilters = Maps.newHashMap();
 
     private boolean observe;
     private Map<PartPos, Long> lastSecondDurations = Maps.newHashMap();
@@ -71,7 +70,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
-    public void setPositionedStorageFilter(PartPos pos, @Nullable Predicate<T> filter) {
+    public void setPositionedStorageFilter(PartPos pos, @Nullable PositionedAddonsNetworkIngredientsFilter<T> filter) {
         if (filter == null) {
             positionFilters.remove(pos);
         } else {
@@ -82,7 +81,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     @Nullable
     @Override
-    public Predicate<T> getPositionedStorageFilter(PartPos pos) {
+    public PositionedAddonsNetworkIngredientsFilter<T> getPositionedStorageFilter(PartPos pos) {
         return positionFilters.get(pos);
     }
 

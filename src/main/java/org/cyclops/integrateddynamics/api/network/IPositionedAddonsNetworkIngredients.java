@@ -17,7 +17,6 @@ import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -54,14 +53,14 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
      * @param pos A position.
      * @param filter An ingredient filter.
      */
-    public void setPositionedStorageFilter(PartPos pos, @Nullable Predicate<T> filter);
+    public void setPositionedStorageFilter(PartPos pos, @Nullable PositionedAddonsNetworkIngredientsFilter<T> filter);
 
     /**
      * @param pos A position.
      * @return An optional ingredient filter for the given storage position.
      */
     @Nullable
-    public Predicate<T> getPositionedStorageFilter(PartPos pos);
+    public PositionedAddonsNetworkIngredientsFilter<T> getPositionedStorageFilter(PartPos pos);
 
     /**
      * Get all instances at the target position.
@@ -70,9 +69,9 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
      */
     public default Iterator<T> getRawInstances(PartPos pos) {
         Iterator<T> it = getPositionedStorage(pos).iterator();
-        Predicate<T> filter = getPositionedStorageFilter(pos);
+        PositionedAddonsNetworkIngredientsFilter<T> filter = getPositionedStorageFilter(pos);
         if (filter != null) {
-            it = Iterators.filter(it, filter::test);
+            it = Iterators.filter(it, filter::testView);
         }
         return it;
     }
