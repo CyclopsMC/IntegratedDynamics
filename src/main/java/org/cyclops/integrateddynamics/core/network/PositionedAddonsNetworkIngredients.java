@@ -75,7 +75,6 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
             positionFilters.remove(pos);
         } else {
             positionFilters.put(pos, filter);
-            scheduleObservationForced(IPositionedAddonsNetwork.WILDCARD_CHANNEL, pos);
         }
     }
 
