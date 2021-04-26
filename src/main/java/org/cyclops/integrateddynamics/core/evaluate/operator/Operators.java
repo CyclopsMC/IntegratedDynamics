@@ -1767,12 +1767,12 @@ public final class Operators {
     /**
      * Get the total item count of the given item in a list.
      */
-    public static final IOperator OBJECT_ITEMSTACK_LIST_COUNT= REGISTRY.register(OperatorBuilders.ITEMSTACK_2_LONG
+    public static final IOperator OBJECT_ITEMSTACK_LIST_COUNT = REGISTRY.register(OperatorBuilders.ITEMSTACK_2_LONG
             .inputTypes(ValueTypes.LIST, ValueTypes.OBJECT_ITEMSTACK)
             .output(ValueTypes.INTEGER)
             .symbol("item_list_count").operatorName("itemlistcount")
             .function(variables -> {
-                ValueTypeList.ValueList a = variables.getValue(0, ValueTypes.LIST);
+                ValueTypeList.ValueList<IValueType<IValue>, IValue> a = variables.getValue(0, ValueTypes.LIST);
                 ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
                 if (!ValueHelpers.correspondsTo(a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK)) {
                     IFormattableTextComponent error = new TranslationTextComponent(
@@ -1784,17 +1784,18 @@ public final class Operators {
 
                 ItemStack itemStack = b.getRawValue();
                 int count = 0;
-                for (ValueObjectTypeItemStack.ValueItemStack listValue :
-                        (IValueTypeListProxy<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack>) a.getRawValue()) {
-                    if (!listValue.getRawValue().isEmpty()) {
-                        ItemStack listItem = listValue.getRawValue();
-                        if (!itemStack.isEmpty()) {
-                            if (itemStack.isItemEqual(listItem) && ItemStack.areItemStackTagsEqual(itemStack, listItem)) {
+                for (IValue listValueRaw : a.getRawValue()) {
+                    if (listValueRaw.getType().correspondsTo(ValueTypes.OBJECT_ITEMSTACK)) {
+                        ValueObjectTypeItemStack.ValueItemStack listValue = (ValueObjectTypeItemStack.ValueItemStack) listValueRaw;
+                        if (!listValue.getRawValue().isEmpty()) {
+                            ItemStack listItem = listValue.getRawValue();
+                            if (!itemStack.isEmpty()) {
+                                if (itemStack.isItemEqual(listItem) && ItemStack.areItemStackTagsEqual(itemStack, listItem)) {
+                                    count += listItem.getCount();
+                                }
+                            } else {
                                 count += listItem.getCount();
                             }
-
-                        } else {
-                            count += listItem.getCount();
                         }
                     }
                 }
