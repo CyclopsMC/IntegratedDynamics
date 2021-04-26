@@ -83,6 +83,8 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             // Forge returns air for tags with negative count,
             // so we set it to 1 for deserialization and fix it afterwards.
             int realCount = tag.getInt("Count");
+            // Consider the tag immutable, to avoid changes elsewhere
+            tag = tag.copy();
             tag.putByte("Count", (byte)1);
             ItemStack itemStack = ItemStack.read(tag);
             if (!itemStack.isEmpty()) {
