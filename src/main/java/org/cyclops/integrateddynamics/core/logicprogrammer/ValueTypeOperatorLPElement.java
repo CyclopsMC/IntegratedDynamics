@@ -10,6 +10,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -29,6 +30,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeDropdownList;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeOperatorValueChangedPacket;
 
@@ -69,11 +71,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     @Override
     public ITextComponent validate() {
         if (selectedOperator == null) {
-            try {
-                ValueHelpers.parseString(getValueType(), getInnerGuiElement().getInputString());
-            } catch (EvaluationException e) {
-                return e.getErrorMessage();
-            }
+            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, getInnerGuiElement().getInputString());
         }
         return null;
     }
