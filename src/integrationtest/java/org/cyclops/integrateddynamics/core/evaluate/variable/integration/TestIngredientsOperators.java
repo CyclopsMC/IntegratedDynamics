@@ -100,7 +100,7 @@ public class TestIngredientsOperators {
 
         iEnergies = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
                 MixedIngredients.ofInstances(IngredientComponent.ENERGY, Lists.newArrayList(
-                        666, 777, 0)
+                        666L, 777L, 0L)
                 )));
         lEnergies = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
                 ValueTypeInteger.ValueInteger.of(666),
@@ -109,7 +109,7 @@ public class TestIngredientsOperators {
         ));
 
         Map<IngredientComponent<?, ?>, List<?>> ingredients = Maps.newIdentityHashMap();
-        ingredients.put(IngredientComponent.ENERGY, Lists.newArrayList(777));
+        ingredients.put(IngredientComponent.ENERGY, Lists.newArrayList(777L));
         ingredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(Fluids.WATER, 125)));
         ingredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.OAK_BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));
         inputIngredients = new MixedIngredients(ingredients);
@@ -331,9 +331,9 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_WITH_ENERGY.evaluate(new IVariable[]{iMix, i0, iEnergy});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
         IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
-        List<Integer> outputList1 = outputIngredients1.getInstances(IngredientComponent.ENERGY);
+        List<Long> outputList1 = outputIngredients1.getInstances(IngredientComponent.ENERGY);
         TestHelpers.assertEqual(outputList1.size(), 1, "with_energy(mix, 0, energy)[0]size = 2");
-        TestHelpers.assertEqual(outputList1.get(0), 123, "with_energy(mix, 0, energy)[0][0] = energy[0]");
+        TestHelpers.assertEqual(outputList1.get(0), 123L, "with_energy(mix, 0, energy)[0][0] = energy[0]");
 
         TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ENERGY).size(), inputIngredients.getInstances(IngredientComponent.ENERGY).size(), "Energies size remains the same");
         TestHelpers.assertNonEqual(outputIngredients1.getInstances(IngredientComponent.ENERGY).get(0), inputIngredients.getInstances(IngredientComponent.ENERGY).get(0), "Energies 0 changes");
@@ -343,11 +343,11 @@ public class TestIngredientsOperators {
 
         IValue res2 = Operators.INGREDIENTS_WITH_ENERGY.evaluate(new IVariable[]{iMix, i2, iEnergy});
         IMixedIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
-        List<Integer> outputList2 = outputIngredients2.getInstances(IngredientComponent.ENERGY);
+        List<Long> outputList2 = outputIngredients2.getInstances(IngredientComponent.ENERGY);
         TestHelpers.assertEqual(outputList2.size(), 3, "with_energy(mix, 2, energy)[0]size = 3");
-        TestHelpers.assertEqual(outputList2.get(0), 777, "with_energy(mix, 2, energy)[3][0] = energy[0]");
-        TestHelpers.assertEqual(outputList2.get(1), 0, "with_energy(mix, 2, energy)[3][0] = energy[0]");
-        TestHelpers.assertEqual(outputList2.get(2), 123, "with_energy(mix, 2, energy)[3][0] = energy[0]");
+        TestHelpers.assertEqual(outputList2.get(0), 777L, "with_energy(mix, 2, energy)[3][0] = energy[0]");
+        TestHelpers.assertEqual(outputList2.get(1), 0L, "with_energy(mix, 2, energy)[3][0] = energy[0]");
+        TestHelpers.assertEqual(outputList2.get(2), 123L, "with_energy(mix, 2, energy)[3][0] = energy[0]");
 
         TestHelpers.assertNonEqual(outputIngredients2.getInstances(IngredientComponent.ENERGY).size(), inputIngredients.getInstances(IngredientComponent.ENERGY).size(), "Energies size changes");
         TestHelpers.assertNonEqual(outputIngredients2.getInstances(IngredientComponent.ENERGY).get(2), Collections.emptyList(), "Energies 3 is not empty");
@@ -453,13 +453,13 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_WITH_ENERGIES.evaluate(new IVariable[]{iMix, lEnergies});
         Asserts.check(res1 instanceof ValueObjectTypeIngredients.ValueIngredients, "result is an ingredient");
         IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
-        List<Integer> outputList1 = outputIngredients1.getInstances(IngredientComponent.ENERGY);
+        List<Long> outputList1 = outputIngredients1.getInstances(IngredientComponent.ENERGY);
         TestHelpers.assertEqual(outputList1.size(), 3, "with_energies(mix, energies)[0]size = 3");
-        TestHelpers.assertEqual(outputList1.get(0), 666,
+        TestHelpers.assertEqual(outputList1.get(0), 666L,
                 "with_energies(mix, energies)[0] = energies[0]");
-        TestHelpers.assertEqual(outputList1.get(1), 777,
+        TestHelpers.assertEqual(outputList1.get(1), 777L,
                 "with_energies(mix, energies)[1] = energies[1]");
-        TestHelpers.assertEqual(outputList1.get(2), 0,
+        TestHelpers.assertEqual(outputList1.get(2), 0L,
                 "with_energies(mix, energies)[2] = energies[2]");
 
         TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ITEMSTACK), inputIngredients.getInstances(IngredientComponent.ITEMSTACK), "Item remains the same");

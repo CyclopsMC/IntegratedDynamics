@@ -3536,6 +3536,7 @@ public final class Operators {
             .operatorName("with_energy").symbol("Ingr.with_energy")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
+                // TODO: in next breaking update, make this a long-based operation
                 ValueTypeInteger.ValueInteger index = variables.getValue(1, ValueTypes.INTEGER);
                 ValueTypeInteger.ValueInteger energy = variables.getValue(2, ValueTypes.INTEGER);
                 if (!value.getRawValue().isPresent()) {
@@ -3543,7 +3544,7 @@ public final class Operators {
                 }
                 IMixedIngredients baseIngredients = value.getRawValue().get();
                 return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsSingle<>(baseIngredients,
-                        index.getRawValue(), IngredientComponent.ENERGY, energy.getRawValue()));
+                        index.getRawValue(), IngredientComponent.ENERGY, (long) energy.getRawValue()));
             }).build());
 
     /**

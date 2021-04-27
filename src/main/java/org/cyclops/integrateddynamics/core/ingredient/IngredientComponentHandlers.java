@@ -7,6 +7,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
@@ -95,26 +96,27 @@ public class IngredientComponentHandlers {
                 return value.getRawValue();
             }
         });
-        REGISTRY.register(new IIngredientComponentHandler<ValueTypeInteger, ValueTypeInteger.ValueInteger, Integer, Boolean>() {
+        REGISTRY.register(new IIngredientComponentHandler<ValueTypeInteger, ValueTypeInteger.ValueInteger, Long, Boolean>() {
+            // TODO: in next breaking change, change this to be a ValueLong
             @Override
             public ValueTypeInteger getValueType() {
                 return ValueTypes.INTEGER;
             }
 
             @Override
-            public IngredientComponent<Integer, Boolean> getComponent() {
+            public IngredientComponent<Long, Boolean> getComponent() {
                 return componentEnergy;
             }
 
             @Override
-            public ValueTypeInteger.ValueInteger toValue(@Nullable Integer instance) {
-                return ValueTypeInteger.ValueInteger.of(instance);
+            public ValueTypeInteger.ValueInteger toValue(@Nullable Long instance) {
+                return ValueTypeInteger.ValueInteger.of(Helpers.castSafe(instance));
             }
 
             @Nullable
             @Override
-            public Integer toInstance(ValueTypeInteger.ValueInteger value) {
-                return value.getRawValue();
+            public Long toInstance(ValueTypeInteger.ValueInteger value) {
+                return (long) value.getRawValue();
             }
 
             @Override

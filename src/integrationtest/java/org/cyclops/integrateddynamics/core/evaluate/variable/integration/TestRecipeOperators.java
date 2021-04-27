@@ -53,7 +53,7 @@ public class TestRecipeOperators {
         ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
 
         Map<IngredientComponent<?, ?>, List<?>> ingredientsOut = Maps.newIdentityHashMap();
-        ingredientsOut.put(IngredientComponent.ENERGY, Lists.newArrayList(777));
+        ingredientsOut.put(IngredientComponent.ENERGY, Lists.newArrayList(777L));
         ingredientsOut.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(Fluids.WATER, 123)));
         ingredientsOut.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.OAK_BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));
         iMainOut = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(

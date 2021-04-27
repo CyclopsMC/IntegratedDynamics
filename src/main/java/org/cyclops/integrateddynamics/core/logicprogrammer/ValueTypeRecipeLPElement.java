@@ -431,9 +431,10 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                 ? Collections.singletonList(new PrototypedIngredientAlternativesList<>(
                         Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.FLUID | FluidMatch.NBT))))
                 : Collections.emptyList();
-        List<IPrototypedIngredientAlternatives<Integer, Boolean>> energies = energy > 0 ?
+        // TODO: in next breaking update, make energy a long throughout this class
+        List<IPrototypedIngredientAlternatives<Long, Boolean>> energies = energy > 0 ?
                 Collections.singletonList(new PrototypedIngredientAlternativesList<>(
-                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ENERGY, energy, false))))
+                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ENERGY, (long) energy, false))))
                 : Collections.emptyList();
         if (!items.isEmpty()) {
             inputs.put(IngredientComponent.ITEMSTACK, (List) items);

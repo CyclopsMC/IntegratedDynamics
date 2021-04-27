@@ -10,6 +10,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.LongNBT;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
@@ -70,7 +71,7 @@ public class TestVariables {
         ingredientsIn.add(Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, ItemStack.EMPTY, ItemMatch.EXACT)));
 
         Map<IngredientComponent<?, ?>, List<?>> ingredientsOut = Maps.newIdentityHashMap();
-        ingredientsOut.put(IngredientComponent.ENERGY, Lists.newArrayList(777));
+        ingredientsOut.put(IngredientComponent.ENERGY, Lists.newArrayList(777L));
         ingredientsOut.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(Fluids.WATER, 123)));
         ingredientsOut.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.OAK_BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));
         DummyVariableIngredients iMainOut = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
@@ -87,7 +88,7 @@ public class TestVariables {
 
         CompoundNBT output = new CompoundNBT();
         ListNBT energies = new ListNBT();
-        energies.add(IntNBT.valueOf(777));
+        energies.add(LongNBT.valueOf(777L));
         output.put("minecraft:energy", energies);
         ListNBT itemStacks = new ListNBT();
         itemStacks.add(new ItemStack(Items.OAK_BOAT).serializeNBT());

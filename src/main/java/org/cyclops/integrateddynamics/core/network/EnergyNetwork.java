@@ -13,14 +13,14 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
  * A network that can hold energy.
  * @author rubensworks
  */
-public class EnergyNetwork extends PositionedAddonsNetworkIngredients<Integer, Boolean>
+public class EnergyNetwork extends PositionedAddonsNetworkIngredients<Long, Boolean>
         implements IEnergyNetwork {
 
     @Getter
     @Setter
     private INetwork network;
 
-    public EnergyNetwork(IngredientComponent<Integer, Boolean> component) {
+    public EnergyNetwork(IngredientComponent<Long, Boolean> component) {
         super(component);
     }
 
