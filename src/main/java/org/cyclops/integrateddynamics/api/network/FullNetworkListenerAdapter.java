@@ -29,6 +29,11 @@ public class FullNetworkListenerAdapter implements IFullNetworkListener {
     }
 
     @Override
+    public void updateGuaranteed() {
+
+    }
+
+    @Override
     public void update() {
 
     }

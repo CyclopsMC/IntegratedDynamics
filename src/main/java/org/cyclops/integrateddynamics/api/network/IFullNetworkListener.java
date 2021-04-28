@@ -43,6 +43,11 @@ public interface IFullNetworkListener {
     public void update();
 
     /**
+     * This guaranteed network updating should be called each tick, even in safe-mode.
+     */
+    public void updateGuaranteed();
+
+    /**
      * Remove the given path element from the network.
      * If the path element had any network elements registered in the network, these will be killed and removed as well.
      * @param pathElement The path element.

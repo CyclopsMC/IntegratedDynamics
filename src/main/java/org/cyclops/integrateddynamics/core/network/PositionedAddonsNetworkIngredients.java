@@ -234,6 +234,12 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     }
 
+    @Override
+    public void updateGuaranteed() {
+
+    }
+
+    @Override
     public void update() {
         if (this.shouldObserve()) {
             if (this.ingredientObserver.observe()) {

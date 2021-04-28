@@ -375,12 +375,15 @@ public class Network implements INetwork {
     }
 
     @Override
-    public final synchronized void update() {
+    public void updateGuaranteed() {
         if (this.toRead != null) {
             this.fromNBTEffective(this.toRead);
             this.toRead = null;
         }
+    }
 
+    @Override
+    public final synchronized void update() {
         this.changed = false;
         if(killIfEmpty() || killed) {
             NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
