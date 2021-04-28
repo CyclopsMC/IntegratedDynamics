@@ -1,0 +1,22 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.1 or higher.
+
+Additions:
+* (core change, required for Integrated Tunnels)
+  Allow filters to be placed on positions in ingredient networks
+  Required for CyclopsMC/IntegratedTunnels#98
+
+Changes:
+* Migrate energy ingredient component to long-based values
+  Required for #1023
+
+Fixes:
+* Fix going in and out of safe-mode corrupting all networks, Mentioned in #1034
+* Fix erroring aspects not updating anymore, Closes #1035
+  This was the cause of network reader aspects always showing
+  ERROR, even after a cable was added in front of it to enable
+  these aspects.
+* Fix itemstack values always materializing to stacksize 1, Closes #1025
+* Fix item list count operator crashing on heterogeneous lists, Closes #1030
+* Fix crash when creating list of operators, Closes #1031
+* Fix crash when starting a singleplayer world for the second time
