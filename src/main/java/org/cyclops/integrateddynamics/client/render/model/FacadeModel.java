@@ -48,6 +48,7 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
 
     @Override
     public List<BakedQuad> getGeneralQuads() {
+        this.rand.setSeed(0); // To avoid weighted blockstates to change each tick
         try {
             return baseModel.getQuads(this.blockState, getRenderingSide(), this.rand);
         } catch (Exception e) {
