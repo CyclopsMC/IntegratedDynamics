@@ -28,6 +28,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
@@ -72,6 +73,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -319,7 +321,17 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         if(disableCollisionBox) {
             return VoxelShapes.empty();
         }
-        return super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
+
+        // Combine all VoxelShapes using IBooleanFunction.OR,
+        // because for some reason our VoxelShapeComponents aggregator does not handle collisions properly.
+        // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
+        VoxelShapeComponents voxelShapeComponents = (VoxelShapeComponents) super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
+        Iterator<VoxelShape> it = voxelShapeComponents.iterator();
+        VoxelShape shape = it.next();
+        while (it.hasNext()) {
+            shape = VoxelShapes.combine(shape, it.next(), IBooleanFunction.OR);
+        }
+        return shape.simplify();
     }
 
     @Override
