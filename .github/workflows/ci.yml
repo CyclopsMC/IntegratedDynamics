@@ -45,6 +45,8 @@ jobs:
           SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
           SIGN_KEYPASS: ${{ secrets.SIGN_KEYPASS }}
           SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_KEY: ${{ secrets.MAVEN_KEY }}
       - name: 'Test'
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

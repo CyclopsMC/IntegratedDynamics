@@ -85,7 +85,11 @@ repositories {
 	mavenLocal()
     maven {
         name "Cyclops Repo"
-        url "https://oss.jfrog.org/artifactory/simple/libs-release/"
+        url "https://maven.pkg.github.com/CyclopsMC/packages"
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("MAVEN_USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("MAVEN_KEY")
+        }
     }
 }
 
@@ -94,26 +98,26 @@ dependencies {
 
     // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local CyclopsCore version.
     if(project.hasProperty("cyclopscore_version_local")) {
-        compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${project.cyclopscore_version_local}:deobf"
+        compile "org.cyclops.cyclopscore:cyclopscore:${config.minecraft_version}-${project.cyclopscore_version_local}:deobf"
     } else {
-        compile "org.cyclops.cyclopscore:CyclopsCore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
+        compile "org.cyclops.cyclopscore:cyclopscore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
     }
 	
     // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local Integrated Dynamics Compat version.
     if(project.hasProperty("integrateddynamicscompat_version_local")) {
-        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${project.integrateddynamicscompat_version_local}") {
+        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat:${project.integrateddynamicscompat_version_local}") {
             transitive = false
         }
     } else {
-        shadow("org.cyclops.integrateddynamicscompat:IntegratedDynamicsCompat:${config.integrateddynamicscompat_version}") {
+        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat:${config.integrateddynamicscompat_version}") {
             transitive = false
         }
     }
 
     if(project.hasProperty("commoncapabilities_version_local")) {
-        compile "org.cyclops.commoncapabilities:CommonCapabilities:${project.commoncapabilities_version_local}:deobf"
+        compile "org.cyclops.commoncapabilities:commoncapabilities:${project.commoncapabilities_version_local}:deobf"
     } else {
-        compile fg.deobf("org.cyclops.commoncapabilities:CommonCapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
+        compile fg.deobf("org.cyclops.commoncapabilities:commoncapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
             transitive = false
         }
     }
@@ -318,7 +322,7 @@ uploadArchives {
         pom {
             groupId = project.group
             version = project.version
-            artifactId = project.archivesBaseName
+            artifactId = project.archivesBaseName.toLowerCase()
         }
         pom.project {
             name project.archivesBaseName
