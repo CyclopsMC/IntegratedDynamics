@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -153,11 +154,22 @@ public class IngredientObserver<T, M> {
     }
 
     /**
+     * @param forceSync If observation should happen synchronously.
      * @return If an observation job was successfully started if it was needed.
      */
-    protected boolean observe() {
+    protected boolean observe(boolean forceSync) {
         if (!this.changeObservers.isEmpty()) {
-            if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
+            // If we forcefully observe sync, make sure that no async observers are still running
+            if (forceSync && GeneralConfig.ingredientNetworkObserverEnableMultithreading
+                    && this.lastObserverBarrier != null && !this.lastObserverBarrier.isDone()) {
+                try {
+                    this.lastObserverBarrier.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    // Ignore errors
+                }
+            }
+
+            if (GeneralConfig.ingredientNetworkObserverEnableMultithreading && !forceSync) {
                 // If we still have an uncompleted job from the previous tick, don't start a new one yet!
                 if (this.lastObserverBarrier != null && !this.lastObserverBarrier.isDone()) {
                     return false;

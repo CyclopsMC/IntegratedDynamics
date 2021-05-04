@@ -195,6 +195,13 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
+    public void runObserverSync() {
+        if (this.ingredientObserver.observe(true)) {
+            this.observe = false;
+        }
+    }
+
+    @Override
     public IIngredientPositionsIndex<T, M> getChannelIndex(int channel) {
         IIngredientPositionsIndex<T, M> index = getInstanceLocationsIndex(channel);
         if (index == null) {
@@ -242,7 +249,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     @Override
     public void update() {
         if (this.shouldObserve()) {
-            if (this.ingredientObserver.observe()) {
+            if (this.ingredientObserver.observe(false)) {
                 this.observe = false;
             }
         }
