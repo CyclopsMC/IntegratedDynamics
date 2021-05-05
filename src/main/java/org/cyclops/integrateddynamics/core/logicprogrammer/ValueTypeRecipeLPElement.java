@@ -314,12 +314,12 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputFluidAmount);
         }
         try {
-            Integer.parseInt(inputEnergy);
+            Long.parseLong(inputEnergy);
         } catch (NumberFormatException e) {
             return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputEnergy);
         }
         try {
-            Integer.parseInt(outputEnergy);
+            Long.parseLong(outputEnergy);
         } catch (NumberFormatException e) {
             return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputEnergy);
         }
@@ -407,7 +407,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     protected Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> getInputs(List<ItemMatchProperties> itemStacks,
                                                                                                       ItemStack fluid, int fluidAmount,
-                                                                                                      int energy) {
+                                                                                                      long energy) {
         // Cut of itemStacks list until last non-empty stack
         int lastNonEmpty = 0;
         for (int i = 0; i < itemStacks.size(); i++) {
@@ -434,7 +434,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         // TODO: in next breaking update, make energy a long throughout this class
         List<IPrototypedIngredientAlternatives<Long, Boolean>> energies = energy > 0 ?
                 Collections.singletonList(new PrototypedIngredientAlternativesList<>(
-                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ENERGY, (long) energy, false))))
+                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ENERGY, energy, false))))
                 : Collections.emptyList();
         if (!items.isEmpty()) {
             inputs.put(IngredientComponent.ITEMSTACK, (List) items);
@@ -451,7 +451,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     protected Map<IngredientComponent<?, ?>, List<?>> getOutputs(List<ItemStack> itemStacksIn,
                                                                  ItemStack fluid, int fluidAmount,
-                                                                 int energy) {
+                                                                 long energy) {
         // Cut of itemStacks list until last non-empty stack
         List<ItemStack> itemStacks = Lists.newArrayList();
         for (int i = 0; i < itemStacksIn.size(); i++) {
@@ -487,9 +487,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         }
         return ValueObjectTypeRecipe.ValueRecipe.of(
                 new RecipeDefinition(getInputs(this.inputStacks, this.inputFluid,
-                        Integer.parseInt(this.inputFluidAmount), Integer.parseInt(this.inputEnergy)),
+                        Integer.parseInt(this.inputFluidAmount), Long.parseLong(this.inputEnergy)),
                 new MixedIngredients(getOutputs(this.outputStacks, this.outputFluid,
-                        Integer.parseInt(this.outputFluidAmount), Integer.parseInt(this.outputEnergy)))));
+                        Integer.parseInt(this.outputFluidAmount), Long.parseLong(this.outputEnergy)))));
     }
 
     @Override
