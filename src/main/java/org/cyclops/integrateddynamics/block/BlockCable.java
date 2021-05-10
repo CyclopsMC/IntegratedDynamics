@@ -149,6 +149,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         if (stateIn.get(WATERLOGGED)) {
             worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
         }
+        NetworkHelpers.onElementProviderBlockNeighborChange((World) worldIn, currentPos, facingState.getBlock(), facing, facingPos);
         return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 

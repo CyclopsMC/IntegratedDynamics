@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
@@ -231,7 +232,8 @@ public class NetworkHelpers {
      * when a neighbouring block is updated, more specifically when
      * {@link net.minecraft.block.Block#neighborChanged(BlockState, World, BlockPos, Block, BlockPos, boolean)},
      * {@link Block#onNeighborChange(BlockState, IWorldReader, BlockPos, BlockPos)}}
-     * or {@link Block#observedNeighborChange(BlockState, World, BlockPos, Block, BlockPos)} is called.
+     * or {@link Block#observedNeighborChange(BlockState, World, BlockPos, Block, BlockPos)}
+     * or {@link Block#updatePostPlacement(BlockState, Direction, BlockState, IWorld, BlockPos, BlockPos)}is called.
      * @param world The world in which the neighbour was updated.
      * @param pos The position of the center block.
      * @param side The side at the center block.
