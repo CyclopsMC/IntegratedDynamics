@@ -2466,7 +2466,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_FLUIDSTACK_WITH_AMOUNT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2
             .inputTypes(ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.INTEGER)
-            .output(ValueTypes.BOOLEAN).symbolOperator("with_amount")
+            .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("with_amount")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 ValueTypeInteger.ValueInteger valueInteger = variables.getValue(1, ValueTypes.INTEGER);
