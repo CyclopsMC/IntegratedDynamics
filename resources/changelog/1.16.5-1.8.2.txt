@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Fixes:
+* Fix Fluid with amount operator having wrong output type, Closes #1044
+* Fix crash when cable does not have collision box, Closes #1043
+
