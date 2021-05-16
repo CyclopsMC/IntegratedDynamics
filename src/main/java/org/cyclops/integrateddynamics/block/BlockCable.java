@@ -328,6 +328,9 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
         VoxelShapeComponents voxelShapeComponents = (VoxelShapeComponents) super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
         Iterator<VoxelShape> it = voxelShapeComponents.iterator();
+        if (!it.hasNext()) {
+            return VoxelShapes.empty();
+        }
         VoxelShape shape = it.next();
         while (it.hasNext()) {
             shape = VoxelShapes.combine(shape, it.next(), IBooleanFunction.OR);
