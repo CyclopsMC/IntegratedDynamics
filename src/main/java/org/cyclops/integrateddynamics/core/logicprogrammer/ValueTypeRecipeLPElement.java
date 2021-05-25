@@ -356,6 +356,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                 }
 
                 props.setTagQuantity(quantityNew);
+                if (!props.getItemStack().isEmpty()) {
+                    props.getItemStack().setCount(quantityNew);
+                }
 
                 if (quantityNew <= 0) {
                     props.setItemTag(null);
