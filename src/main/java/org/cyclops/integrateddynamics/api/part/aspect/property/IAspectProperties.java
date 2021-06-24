@@ -40,6 +40,14 @@ public interface IAspectProperties extends INBTSerializable {
     public <T extends IValueType<V>, V extends IValue> void setValue(IAspectPropertyTypeInstance<T, V> type, V value);
 
     /**
+     * Remove the value of the given type.
+     * @param type The type to get the value from.
+     * @param <T> The value type type.
+     * @param <V> The value type.
+     */
+    public <T extends IValueType<V>, V extends IValue> void removeValue(IAspectPropertyTypeInstance<T, V> type);
+
+    /**
      * @return A deep copy of the properties.
      */
     @SuppressWarnings({"CloneDoesntCallSuperClone", "deprecation"})
