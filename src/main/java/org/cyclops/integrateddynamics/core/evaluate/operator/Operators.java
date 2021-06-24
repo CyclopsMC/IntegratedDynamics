@@ -741,7 +741,7 @@ public final class Operators {
                         throw new EvaluationException(new TranslationTextComponent(
                                 L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                                 new TranslationTextComponent(elements.getRawValue().getValueType().getTranslationKey()),
-                                ValueTypes.STRING));
+                                new TranslationTextComponent(ValueTypes.STRING.getTranslationKey())));
                     }
 
                     // Don't allow joining on an infinite list
@@ -757,7 +757,7 @@ public final class Operators {
                             throw new EvaluationException(new TranslationTextComponent(
                                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                                     new TranslationTextComponent(value.getType().getTranslationKey()),
-                                    ValueTypes.STRING));
+                                    new TranslationTextComponent(ValueTypes.STRING.getTranslationKey())));
                         }
                         if (sb.length() > 0) {
                             sb.append(delimiter.getRawValue());
@@ -1778,7 +1778,7 @@ public final class Operators {
                     IFormattableTextComponent error = new TranslationTextComponent(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                             new TranslationTextComponent(a.getRawValue().getValueType().getTranslationKey()),
-                            ValueTypes.OBJECT_ITEMSTACK);
+                            new TranslationTextComponent(ValueTypes.OBJECT_ITEMSTACK.getTranslationKey()));
                     throw new EvaluationException(error);
                 }
 

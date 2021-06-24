@@ -30,7 +30,7 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
                 IValue value = variables.getValue(0);
                 if(value.getType() != from) {
                     throw new EvaluationException(new TranslationTextComponent(
-                            L10NValues.OPERATOR_ERROR_CAST_UNEXPECTED, new TranslationTextComponent(value.getType().getTranslationKey()), from, to));
+                            L10NValues.OPERATOR_ERROR_CAST_UNEXPECTED, new TranslationTextComponent(value.getType().getTranslationKey()), new TranslationTextComponent(from.getTranslationKey()), new TranslationTextComponent(to.getTranslationKey())));
                 }
                 return mapping.cast((V1) value);
             }
