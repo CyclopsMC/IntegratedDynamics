@@ -33,6 +33,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
@@ -359,6 +360,11 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         } else {
             return super.addHitEffects(blockState, world, target, particleManager);
         }
+    }
+
+    @Override
+    public boolean shouldDisplayFluidOverlay(BlockState state, IBlockDisplayReader world, BlockPos pos, FluidState fluidState) {
+        return CableHelpers.getFacade(world, pos).isPresent();
     }
 
     /* --------------- Start IDynamicRedstone --------------- */
