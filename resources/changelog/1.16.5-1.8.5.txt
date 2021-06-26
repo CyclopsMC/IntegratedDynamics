@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Changes:
+* Allow removal of aspect properties
+  Required for CyclopsMC/IntegratedTunnels#231
+
+Fixes:
+* Add sanity checks in set slot packet, Closes CyclopsMC/IntegratedDynamics-Compat#27
+* Fix fluid rendering on cables with facades, Closes #1055
+* Fix strong redstone power option not always causing updates, Closes #1053
+* Fix some operators using client-side logic in error reporting, Closes #1054
+* Fix Display Panels not rotating correctly, Closes #1051
