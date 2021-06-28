@@ -4,6 +4,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.CropsBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.SoundEvents;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -14,6 +17,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBloc
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
@@ -46,6 +50,8 @@ public class TestBlockOperators {
 
     private DummyVariable<ValueTypeString.ValueString> sSponge;
 
+    private DummyVariable<ValueTypeNbt.ValueNbt> nbtCarrotGrown;
+
     @IntegrationBefore
     public void before() {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.getDefaultState()));
@@ -63,6 +69,10 @@ public class TestBlockOperators {
         iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
 
         sSponge = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:sponge"));
+
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString("age", "1");
+        nbtCarrotGrown = new DummyVariable<>(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(tag));
     }
 
     /**
@@ -367,6 +377,97 @@ public class TestBlockOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeBlockByName() throws EvaluationException {
         Operators.OBJECT_BLOCK_BY_NAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- BLOCK_PROPERTIES -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockBlockProperties() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_PROPERTIES.evaluate(new IVariable[]{bCarrotGrown});
+        Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString("age", "1");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), tag, "blockproperties(minecraft:carrot) = {...}");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeBlockPropertiesLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_PROPERTIES.evaluate(new IVariable[]{bLeaves, bLeaves});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeBlockPropertiesSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_PROPERTIES.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeBlockProperties() throws EvaluationException {
+        Operators.OBJECT_BLOCK_PROPERTIES.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- BLOCK_WITH_PROPERTIES -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockBlockWithProperties() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_WITH_PROPERTIES.evaluate(new IVariable[]{bCarrot, nbtCarrotGrown});
+        Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), bCarrotGrown.getValue().getRawValue().get(), "blockwithproperties(minecraft:carrot, ...) = {...}");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeBlockWithPropertiesLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_WITH_PROPERTIES.evaluate(new IVariable[]{bLeaves, nbtCarrotGrown, bLeaves});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeBlockWithPropertiesSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_WITH_PROPERTIES.evaluate(new IVariable[]{bLeaves});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeBlockWithProperties() throws EvaluationException {
+        Operators.OBJECT_BLOCK_WITH_PROPERTIES.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- BLOCK_POSSIBLE_PROPERTIES -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockBlockPossibleProperties() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_POSSIBLE_PROPERTIES.evaluate(new IVariable[]{bCarrotGrown});
+        Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
+        CompoundNBT tag = new CompoundNBT();
+        ListNBT list = new ListNBT();
+        list.add(StringNBT.valueOf("0"));
+        list.add(StringNBT.valueOf("1"));
+        list.add(StringNBT.valueOf("2"));
+        list.add(StringNBT.valueOf("3"));
+        list.add(StringNBT.valueOf("4"));
+        list.add(StringNBT.valueOf("5"));
+        list.add(StringNBT.valueOf("6"));
+        list.add(StringNBT.valueOf("7"));
+        tag.put("age", list);
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), tag, "blockpossibleproperties(minecraft:carrot) = {...}");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeBlockPossiblePropertiesLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_POSSIBLE_PROPERTIES.evaluate(new IVariable[]{bLeaves, bLeaves});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeBlockPossiblePropertiesSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_POSSIBLE_PROPERTIES.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeBlockPossibleProperties() throws EvaluationException {
+        Operators.OBJECT_BLOCK_POSSIBLE_PROPERTIES.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

@@ -1055,6 +1055,12 @@
     "operator.integrateddynamics.block.plantage.info": "The age of the given plant block",
     "operator.integrateddynamics.block.blockbyname": "Block By Name",
     "operator.integrateddynamics.block.blockbyname.info": "Get the block corresponding to the given unique name, add space+number for indicating the metadata.",
+    "operator.integrateddynamics.block.blockproperties": "Block Properties",
+    "operator.integrateddynamics.block.blockproperties.info": "Get the block properties as NBT compound tag.",
+    "operator.integrateddynamics.block.blockfromproperties": "Block Properties",
+    "operator.integrateddynamics.block.blockfromproperties.info": "Get the given block applied with the given properties.",
+    "operator.integrateddynamics.block.blockpossibleproperties": "Block Properties",
+    "operator.integrateddynamics.block.blockpossibleproperties.info": "Get all possible block properties as NBT compound tag with list values.",
 
     "operator.integrateddynamics.itemstack": "Item",
     "operator.integrateddynamics.itemstack.basename": "Item %s",

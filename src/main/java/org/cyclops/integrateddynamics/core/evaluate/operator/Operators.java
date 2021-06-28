@@ -41,12 +41,12 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -92,6 +92,7 @@ import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -1316,6 +1317,73 @@ public final class Operators {
                         Block block = ForgeRegistries.BLOCKS.getValue(input);
                         return ValueObjectTypeBlock.ValueBlock.of(block.getDefaultState());
                     })).build());
+
+    /**
+     * Get the block properties as NBT compound tag.
+     */
+    public static final IOperator OBJECT_BLOCK_PROPERTIES = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .output(ValueTypes.NBT)
+            .symbol("block_props").operatorName("blockproperties")
+            .function(variables -> {
+                ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
+                return ValueTypeNbt.ValueNbt.of(a.getRawValue().map(blockState -> {
+                    CompoundNBT tag = new CompoundNBT();
+                    for (Property property : blockState.getProperties()) {
+                        Comparable<?> value = blockState.get(property);
+                        tag.putString(property.getName(), property.getName(value));
+                    }
+                    return tag;
+                }));
+            }).build());
+
+    /**
+     * Get the given block applied with the given properties.
+     */
+    public static final IOperator OBJECT_BLOCK_WITH_PROPERTIES = REGISTRY.register(OperatorBuilders.BLOCK_INFIX_VERYLONG
+            .inputTypes(ValueTypes.OBJECT_BLOCK, ValueTypes.NBT).output(ValueTypes.OBJECT_BLOCK)
+            .symbol("block_with_props").operatorName("blockfromproperties")
+            .function(variables -> {
+                ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
+                ValueTypeNbt.ValueNbt b = variables.getValue(1, ValueTypes.NBT);
+                if (a.getRawValue().isPresent() && a.getRawValue().isPresent()) {
+                    BlockState blockState = a.getRawValue().get();
+                    INBT tagRaw = b.getRawValue().get();
+                    if (tagRaw instanceof CompoundNBT) {
+                        CompoundNBT tag = (CompoundNBT) tagRaw;
+                        for (Property property : blockState.getProperties()) {
+                            if (tag.contains(property.getName(), Constants.NBT.TAG_STRING)) {
+                                Optional<Comparable> valueOptional = property.parseValue(tag.getString(property.getName()));
+                                if (valueOptional.isPresent()) {
+                                    blockState = blockState.with(property, valueOptional.get());
+                                }
+                            }
+                        }
+                        return ValueObjectTypeBlock.ValueBlock.of(blockState);
+                    }
+                }
+                return a;
+            }).build());
+
+    /**
+     * Get all possible block properties as NBT compound tag with list values.
+     */
+    public static final IOperator OBJECT_BLOCK_POSSIBLE_PROPERTIES = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .output(ValueTypes.NBT)
+            .symbol("block_all_props").operatorName("blockpossibleproperties")
+            .function(variables -> {
+                ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
+                return ValueTypeNbt.ValueNbt.of(a.getRawValue().map(blockState -> {
+                    CompoundNBT tag = new CompoundNBT();
+                    for (Property property : blockState.getProperties()) {
+                        ListNBT list = new ListNBT();
+                        for (Comparable value : (Collection<Comparable>) property.getAllowedValues()) {
+                            list.add(StringNBT.valueOf(property.getName(value)));
+                        }
+                        tag.put(property.getName(), list);
+                    }
+                    return tag;
+                }));
+            }).build());
 
     /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
