@@ -1,5 +1,5 @@
 {
-  "type": "integrateddynamics:squeezer",
+  "type": "integrateddynamics:mechanical_squeezer",
   "item": {
     "item": "minecraft:bone"
   },
