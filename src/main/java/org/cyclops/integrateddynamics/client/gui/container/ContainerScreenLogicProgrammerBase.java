@@ -18,7 +18,6 @@ import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenScrolling;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -438,8 +437,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         @Override
         public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-            if (this.searchField.getVisible() && typedChar != GLFW.GLFW_KEY_ESCAPE) {
-                this.searchField.keyPressed(typedChar, keyCode, modifiers);
+            if (this.searchField.getVisible() && typedChar != GLFW.GLFW_KEY_ESCAPE && this.searchField.keyPressed(typedChar, keyCode, modifiers)) {
                 label(this.searchField.getText());
                 return true;
             }
@@ -448,8 +446,8 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            if(this.searchField.getVisible()) {
-                return this.searchField.mouseClicked(mouseX, mouseY, mouseButton);
+            if(this.searchField.getVisible() && this.searchField.mouseClicked(mouseX, mouseY, mouseButton)) {
+                return true;
             }
             return super.mouseClicked(mouseX, mouseY, mouseButton);
         }
