@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Fixes:
+* Fix networks corrupting after restart on OpenJ9 JVM
+  Caused by an odd FML edge-case.
+  Closes CyclopsMC/IntegratedTunnels#212
+* Fix focus issues after labelling within logic programmer, Closes #1061
+* Fix temporary client desync when copying omni-dir connectors, Closes #1062
+* Fix sneak actions not working while crawling, Closes #1064
+
