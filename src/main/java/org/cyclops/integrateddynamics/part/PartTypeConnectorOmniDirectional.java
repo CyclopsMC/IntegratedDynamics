@@ -172,13 +172,11 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 groupId = -1; // If we're resetting a connector, give it a new ID
             }
 
-            if (!event.getPlayer().getEntityWorld().isRemote()) {
-                if (groupId < 0) {
-                    groupId = generateGroupId();
-                }
-                CompoundNBT tag = event.getCrafting().getOrCreateTag();
-                tag.putInt(NBT_KEY_ID, groupId);
+            if (groupId < 0) {
+                groupId = event.getPlayer().getEntityWorld().isRemote() ? -1 : generateGroupId();
             }
+            CompoundNBT tag = event.getCrafting().getOrCreateTag();
+            tag.putInt(NBT_KEY_ID, groupId);
         }
     }
 
