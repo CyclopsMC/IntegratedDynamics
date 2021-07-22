@@ -133,7 +133,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     public ActionResultType onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
                                             ItemStack heldItem, BlockRayTraceResult hit) {
         // Drop through if the player is sneaking
-        if(player.isCrouching()) {
+        if(player.isSecondaryUseActive()) {
             return ActionResultType.PASS;
         }
 

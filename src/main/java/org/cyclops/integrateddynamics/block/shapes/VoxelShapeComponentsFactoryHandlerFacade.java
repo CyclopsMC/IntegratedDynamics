@@ -94,7 +94,7 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
         @Override
         public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getHeldItem(hand);
-            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isCrouching()) {
+            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isSecondaryUseActive()) {
                 if (!world.isRemote()) {
                     destroy(world, blockPos, player, true);
                     world.notifyNeighborsOfStateChange(blockPos, state.getBlock());

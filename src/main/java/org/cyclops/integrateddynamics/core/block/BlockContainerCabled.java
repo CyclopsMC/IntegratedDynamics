@@ -37,7 +37,7 @@ public abstract class BlockContainerCabled extends BlockTile {
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
                                              BlockRayTraceResult blockRayTraceResult) {
         ItemStack heldItem = player.getHeldItem(hand);
-        if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getFace()) && player.isCrouching()) {
+        if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getFace()) && player.isSecondaryUseActive()) {
             world.destroyBlock(pos, true);
             return ActionResultType.SUCCESS;
         }

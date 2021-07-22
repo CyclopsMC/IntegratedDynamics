@@ -20,8 +20,8 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -36,7 +36,6 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
-import org.cyclops.integrateddynamics.GeneralConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -186,7 +185,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     @Override
     public ActionResultType onPartActivated(State partState, BlockPos pos, World world, PlayerEntity player, Hand hand, ItemStack heldItem, BlockRayTraceResult hit) {
         // Drop through if the player is sneaking
-        if(player.isCrouching() || !partState.isEnabled()) {
+        if(player.isSecondaryUseActive() || !partState.isEnabled()) {
             return ActionResultType.PASS;
         }
         if (world.isRemote()) {

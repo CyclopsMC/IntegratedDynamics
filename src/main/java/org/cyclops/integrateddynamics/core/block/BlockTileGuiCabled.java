@@ -43,7 +43,7 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
                                              Hand hand, BlockRayTraceResult rayTraceResult) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, blockPos, rayTraceResult.getFace())
-                && player.isCrouching()) {
+                && player.isSecondaryUseActive()) {
             Block.spawnDrops(blockState, world, blockPos, blockState.hasTileEntity() ? world.getTileEntity(blockPos) : null, player, heldItem);
             world.destroyBlock(blockPos, false);
             return ActionResultType.SUCCESS;

@@ -178,7 +178,7 @@ public class CableHelpers {
             if (world.isRemote()) {
                 return ActionResultType.SUCCESS; // Don't do anything client-side
             }
-            if (player.isCrouching()) {
+            if (player.isSecondaryUseActive()) {
                 removeCable(world, pos, player);
             } else if (cableConnectionHit != null) {
                 // Disconnect cable side

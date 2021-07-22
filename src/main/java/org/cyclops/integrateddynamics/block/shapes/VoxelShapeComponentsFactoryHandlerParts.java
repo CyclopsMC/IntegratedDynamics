@@ -85,7 +85,7 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         @Override
         public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getHeldItem(hand);
-            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isCrouching()) {
+            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isSecondaryUseActive()) {
                 // Remove part from cable
                 if (!world.isRemote()) {
                     destroy(world, blockPos, player, true);
