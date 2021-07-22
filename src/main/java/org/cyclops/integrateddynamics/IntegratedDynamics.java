@@ -137,6 +137,8 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         }
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(IngredientComponent.class, EventPriority.LOWEST, IngredientComponentHandlers::onIngredientComponentsPopulated);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegistriesCreate);
+
+        MinecraftForge.EVENT_BUS.addListener(this::onServerStartedLoadedGroups);
     }
 
     public void onRegistriesCreate(RegistryEvent.NewRegistry event) {
@@ -189,10 +191,8 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         MinecraftForge.EVENT_BUS.register(new NetworkCapabilityConstructors());
     }
 
-    @Override
-    protected void onServerStarted(FMLServerStartedEvent event) {
+    protected void onServerStartedLoadedGroups(FMLServerStartedEvent event) {
         PartTypeConnectorOmniDirectional.LOADED_GROUPS.onStartedEvent(event);
-        super.onServerStarted(event);
     }
 
     @Override
