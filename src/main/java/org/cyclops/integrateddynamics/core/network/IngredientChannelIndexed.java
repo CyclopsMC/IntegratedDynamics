@@ -22,6 +22,10 @@ public class IngredientChannelIndexed<T, M> extends IngredientChannelAdapter<T, 
         this.index = index;
     }
 
+    public IIngredientPositionsIndex<T, M> getIndex() {
+        return index;
+    }
+
     @Override
     protected Iterator<PartPos> getNonFullPositions() {
         this.scheduleObservation();
