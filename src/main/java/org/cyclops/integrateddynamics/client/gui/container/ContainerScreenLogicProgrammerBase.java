@@ -427,7 +427,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         @Override
         public boolean charTyped(char typedChar, int keyCode) {
-            if (!this.searchField.getVisible() || !this.searchField.charTyped(typedChar, keyCode)) {
+            if (!this.searchField.isFocused() || !this.searchField.charTyped(typedChar, keyCode)) {
                 return super.charTyped(typedChar, keyCode);
             } else {
                 label(this.searchField.getText());
@@ -437,8 +437,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         @Override
         public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-            if (this.searchField.getVisible() && typedChar != GLFW.GLFW_KEY_ESCAPE && this.searchField.keyPressed(typedChar, keyCode, modifiers)) {
+            if (this.searchField.isFocused() && typedChar != GLFW.GLFW_KEY_ESCAPE) {
                 label(this.searchField.getText());
+                this.searchField.keyPressed(typedChar, keyCode, modifiers);
                 return true;
             }
             return super.keyPressed(typedChar, keyCode, modifiers);
