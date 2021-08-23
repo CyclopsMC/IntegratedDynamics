@@ -297,7 +297,7 @@ public class PartHelpers {
         } else {
             world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
             // If there is a cable in the direction of the removed part, try connecting with it.
-            if (CableHelpers.getCable(world, pos.offset(side), side.getOpposite()) != null) {
+            if (CableHelpers.getCable(world, pos.offset(side), side.getOpposite()).isPresent()) {
                 CableHelpers.updateConnections(world, pos, side);
                 CableHelpers.updateConnections(world, pos.offset(side), side.getOpposite());
                 NetworkHelpers.initNetwork(world, pos, side);

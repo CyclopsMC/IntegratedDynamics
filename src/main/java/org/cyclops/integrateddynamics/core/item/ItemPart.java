@@ -28,8 +28,10 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
@@ -133,6 +135,12 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             } else {
                 IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide).orElse(null);
                 if(partContainer != null) {
+                    // Edge-case: if the pos was a full network block (part of the same network as target), make sure that we disconnect this part of the network first
+                    if (!world.isRemote() && NetworkHelpers.getNetwork(PartPos.of(world, pos, side)).isPresent() && partContainer.canAddPart(targetSide, getPart())) {
+                        CableHelpers.getCable(world, target, targetSide)
+                                .ifPresent(cable -> CableHelpers.disconnectCable(world, target, targetSide, cable, targetSide));
+                    }
+
                     // Add part to existing cable
                     if(PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack)) {
                         if(world.isRemote()) {

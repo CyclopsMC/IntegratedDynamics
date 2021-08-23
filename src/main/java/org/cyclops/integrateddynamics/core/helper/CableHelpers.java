@@ -156,6 +156,29 @@ public class CableHelpers {
     }
 
     /**
+     * Disconnect a cable's side.
+     * @param world The cable world.
+     * @param pos The cable position.
+     * @param side The cable side.
+     * @param cable The cable to disconnect.
+     * @param disconnectSide The side to disconnect.
+     */
+    public static void disconnectCable(World world, BlockPos pos, Direction side, ICable cable, Direction disconnectSide) {
+        // Store the disconnection in the part entity
+        cable.disconnect(disconnectSide);
+
+        // Signal changes
+        cable.updateConnections();
+        Collection<Direction> sidesToUpdate = getCableConnections(cable);
+        sidesToUpdate.add(disconnectSide);
+        CableHelpers.updateConnectionsNeighbours(world, pos, sidesToUpdate);
+
+        // Reinit the networks for this block and the disconnected neighbour.
+        NetworkHelpers.initNetwork(world, pos, side);
+        NetworkHelpers.initNetwork(world, pos.offset(disconnectSide), side.getOpposite());
+    }
+
+    /**
      * Actions to be performed when a player right clicks on a cable.
      * @param world The world  of the cable.
      * @param pos The position of the cable.
@@ -181,20 +204,7 @@ public class CableHelpers {
             if (player.isSecondaryUseActive()) {
                 removeCable(world, pos, player);
             } else if (cableConnectionHit != null) {
-                // Disconnect cable side
-
-                // Store the disconnection in the part entity
-                cable.disconnect(cableConnectionHit);
-
-                // Signal changes
-                cable.updateConnections();
-                Collection<Direction> sidesToUpdate = getCableConnections(cable);
-                sidesToUpdate.add(cableConnectionHit);
-                CableHelpers.updateConnectionsNeighbours(world, pos, sidesToUpdate);
-
-                // Reinit the networks for this block and the disconnected neighbour.
-                NetworkHelpers.initNetwork(world, pos, side);
-                NetworkHelpers.initNetwork(world, pos.offset(cableConnectionHit), side.getOpposite());
+                disconnectCable(world, pos, side, cable, cableConnectionHit);
             } else if (cableConnectionHit == null) {
                 // Reconnect cable side
                 BlockPos neighbourPos = pos.offset(side);
