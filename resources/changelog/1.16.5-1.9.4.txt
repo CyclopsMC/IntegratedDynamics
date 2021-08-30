@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Fixes:
+* Fix console error on displaying ore recipes in JEI
+  Closes CyclopsMC/IntegratedDynamics#1082
+* Fix full network blocks not disconnecting on placing parts inbetween
+  This caused issues when for example placing energy interfaces against
+  batteries that were already connected directly.
+  Closes #1077
