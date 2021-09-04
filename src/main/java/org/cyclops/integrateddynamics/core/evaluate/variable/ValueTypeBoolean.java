@@ -11,6 +11,9 @@ import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeBooleanLPElement;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeStringLPElement;
 
 /**
  * Value type with values 'true' or 'false'
@@ -49,6 +52,11 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
     @Override
     public String toString(ValueBoolean value) {
         return Boolean.toString(value.getRawValue());
+    }
+
+    @Override
+    public ValueTypeLPElementBase createLogicProgrammerElement() {
+        return new ValueTypeBooleanLPElement(this);
     }
 
     @Override
