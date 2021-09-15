@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -12,6 +14,8 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
+import javax.annotation.Nullable;
+
 /**
  * Element for value types that can be read from and written to strings.
  * @author rubensworks
@@ -23,6 +27,12 @@ public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
     public ValueTypeStringLPElement(IValueType valueType) {
         super(valueType);
         this.innerGuiElement = new GuiElementValueTypeString<>(getValueType(), getRenderPattern());
+    }
+
+    @Nullable
+    @Override
+    public <G2 extends AbstractGui, C2 extends Container> GuiElementValueTypeString<G2, C2> createInnerGuiElement() {
+        return new GuiElementValueTypeString<>(getValueType(), getRenderPattern());
     }
 
     @Override
@@ -62,12 +72,7 @@ public class ValueTypeStringLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IValue getValue() {
-        try {
-            return ValueHelpers.parseString(getInnerGuiElement().getValueType(), getInnerGuiElement().getInputString());
-        } catch (EvaluationException e) {
-            // Should not occur, as validation must've happened before.
-            return getInnerGuiElement().getValueType().getDefault();
-        }
+       return getInnerGuiElement().getValue();
     }
 
     @Override

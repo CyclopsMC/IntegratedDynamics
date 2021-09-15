@@ -17,14 +17,12 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
-import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeStringRenderPattern;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 import org.lwjgl.glfw.GLFW;
@@ -44,9 +42,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     private final List<IAspectPropertyTypeInstance> propertyTypes;
     protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
-    protected GuiElementValueTypeString<ContainerScreenAspectSettings, ContainerAspectSettings> guiElement = null;
+    protected IGuiInputElementValueType<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings> guiElement = null;
     protected int activePropertyIndex = 0;
-    protected GuiElementValueTypeStringRenderPattern propertyConfigPattern = null;
+    protected RenderPattern propertyConfigPattern = null;
     protected SubGuiValueTypeInfo propertyInfo = null;
     private ButtonText buttonLeft = null;
     private ButtonText buttonRight = null;
@@ -71,11 +69,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     protected void saveSetting() {
         if(guiElement != null && lastError == null) {
-            try {
-                container.setValue(getActiveProperty(), ValueHelpers.parseString(guiElement.getValueType(), guiElement.getInputString()));
-            } catch (EvaluationException e) {
-                // Validation already happened before, so we ignore the error here
-            }
+            container.setValue(getActiveProperty(), guiElement.getValue());
         }
     }
 
@@ -161,7 +155,14 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
         if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
-            return this.subGuiHolder.keyPressed(typedChar, keyCode, modifiers);
+            if (this.subGuiHolder.keyPressed(typedChar, keyCode, modifiers)) {
+                if(guiElement != null) {
+                    onValueChanged();
+                }
+                return true;
+            } else {
+                return false;
+            }
         } else {
             saveSetting();
             return super.keyPressed(typedChar, keyCode, modifiers);
@@ -187,12 +188,21 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     protected void onActivateElement(IAspectPropertyTypeInstance property) {
+        // Deactivate old element
         if(guiElement != null) {
             guiElement.deactivate();
             subGuiHolder.removeSubGui(propertyConfigPattern);
             subGuiHolder.removeSubGui(propertyInfo);
         }
-        guiElement = new GuiElementValueTypeString<>(property.getType(), IConfigRenderPattern.NONE);
+
+        // Determine element type
+        IValueTypeLogicProgrammerElement lpElement = property.getType().createLogicProgrammerElement();
+        guiElement = lpElement.createInnerGuiElement();
+        if (guiElement == null) {
+            throw new UnsupportedOperationException("Tried to invoke createInnerGuiElement on a value type that does not have an inner gui element: " + property.getType().getTypeName());
+        }
+
+        // Create new element
         guiElement.setValidator(property.getValidator());
         subGuiHolder.addSubGui(propertyConfigPattern = guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getContainer()));
         subGuiHolder.addSubGui(propertyInfo = new SubGuiValueTypeInfo(guiElement));
@@ -206,8 +216,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
         IAspectPropertyTypeInstance property = getActiveProperty();
         IValue value = container.getPropertyValue(property);
         if(value != null) {
-            guiElement.setInputString(ValueHelpers.toString(value), propertyConfigPattern);
+            guiElement.setValue(value, propertyConfigPattern);
         }
+        onValueChanged();
     }
 
 

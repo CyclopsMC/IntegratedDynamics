@@ -1,12 +1,13 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Container;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+
+import javax.annotation.Nullable;
 
 /**
  * An element instantiation of a value type inside the logic programmer.
@@ -33,5 +34,13 @@ public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extend
      * @param subGui The sub gui to put the currently stored value in.
      */
     public void setValueInGui(S subGui);
+
+    /**
+     * @return Create an inner gui element for modifying the value, may be null if it doesn't apply.
+     * @param <G2> The type of gui.
+     * @param <C2> The type of container.
+     */
+    @Nullable
+    public <G2 extends AbstractGui, C2 extends Container> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement();
 
 }

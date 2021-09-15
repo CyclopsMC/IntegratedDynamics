@@ -1,39 +1,39 @@
-package org.cyclops.integrateddynamics.core.logicprogrammer;
+package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonCheckbox;
-import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
-import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeStringRenderPattern;
-import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.core.logicprogrammer.IRenderPatternValueTypeTooltip;
+import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeBooleanValueChangedPacket;
-import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeStringValueChangedPacket;
-
-import java.awt.*;
 
 /**
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class ValueTypeBooleanLPElementRenderPattern extends RenderPattern<ValueTypeBooleanLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
+public class GuiElementValueTypeBooleanRenderPattern<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends RenderPattern<GuiElementValueTypeBoolean<G, C>, G, C>
         implements IRenderPatternValueTypeTooltip {
 
+    @Getter
+    protected final GuiElementValueTypeBoolean<G, C> element;
     private boolean renderTooltip = true;
     @Getter
     private ButtonCheckbox checkbox = null;
 
-    public ValueTypeBooleanLPElementRenderPattern(ValueTypeBooleanLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+    public GuiElementValueTypeBooleanRenderPattern(GuiElementValueTypeBoolean<G, C> element, int baseX, int baseY, int maxWidth, int maxHeight,
+                                                   G gui, C container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
+        this.element = element;
     }
 
     @Override
@@ -42,19 +42,15 @@ public class ValueTypeBooleanLPElementRenderPattern extends RenderPattern<ValueT
 
         this.checkbox = new ButtonCheckbox(guiLeft + getX(), guiTop + getY(), getElement().getRenderPattern().getWidth(), getElement().getRenderPattern().getHeight(),
                 new TranslationTextComponent(this.getElement().getValueType().getTranslationKey()), (entry) -> this.onChecked(this.checkbox.isChecked()));
-        this.checkbox.setChecked(this.getElement().isInputBoolean());
+
+        boolean value = element.getInputBoolean();
+        this.checkbox.setChecked(value);
     }
 
     @Override
     public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         this.checkbox.render(matrixStack, mouseX, mouseY, partialTicks);
-    }
-
-    @Override
-    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-        this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
     }
 
     @Override

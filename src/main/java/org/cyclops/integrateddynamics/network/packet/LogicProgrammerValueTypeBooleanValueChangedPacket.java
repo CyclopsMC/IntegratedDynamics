@@ -9,7 +9,6 @@ import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeBooleanLPElement;
-import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeStringLPElement;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
@@ -46,7 +45,7 @@ public class LogicProgrammerValueTypeBooleanValueChangedPacket extends PacketCod
 		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
 			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
 			if(element instanceof ValueTypeBooleanLPElement) {
-				((ValueTypeBooleanLPElement) element).setInputBoolean(checked);
+				((ValueTypeBooleanLPElement) element).getInnerGuiElement().setInputBoolean(checked);
                 ((ContainerLogicProgrammerBase) player.openContainer).onDirty();
 			}
 		}

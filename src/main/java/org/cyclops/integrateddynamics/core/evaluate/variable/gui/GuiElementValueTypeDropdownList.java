@@ -20,6 +20,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeDropdownList<T, G extends AbstractGui, C extends Container> implements IGuiInputElement<RenderPattern, G, C>, IDropdownEntryListener<T> {
+public class GuiElementValueTypeDropdownList<T, G extends AbstractGui, C extends Container> implements IGuiInputElementValueType<RenderPattern, G, C>, IDropdownEntryListener<T> {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
@@ -57,8 +58,19 @@ public class GuiElementValueTypeDropdownList<T, G extends AbstractGui, C extends
         this.renderPattern = renderPattern;
     }
 
+    @Override
     public void setValidator(Predicate<IValue> validator) {
         this.validator = validator;
+    }
+
+    @Override
+    public void setValue(IValue value, RenderPattern propertyConfigPattern) {
+        throw new UnsupportedOperationException("This method has not been implemented yet");
+    }
+
+    @Override
+    public IValue getValue() {
+        throw new UnsupportedOperationException("This method has not been implemented yet");
     }
 
     @Override

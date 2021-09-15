@@ -20,6 +20,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -28,7 +29,6 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeString<G extends AbstractGui, C extends Container> implements IGuiInputElement<RenderPattern, G, C> {
+public class GuiElementValueTypeString<G extends AbstractGui, C extends Container> implements IGuiInputElementValueType<GuiElementValueTypeStringRenderPattern, G, C> {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
@@ -54,6 +54,11 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
         defaultInputString = ValueHelpers.toString(getValueType().getDefault());
     }
 
+    @Override
+    public void setValue(IValue value, GuiElementValueTypeStringRenderPattern propertyConfigPattern) {
+        setInputString(ValueHelpers.toString(value), propertyConfigPattern);
+    }
+
     public void setInputString(String inputString, GuiElementValueTypeStringRenderPattern subGui) {
         this.inputString = inputString;
         if(subGui != null) {
@@ -61,8 +66,19 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
         }
     }
 
+    @Override
     public void setValidator(Predicate<IValue> validator) {
         this.validator = validator;
+    }
+
+    @Override
+    public IValue getValue() {
+        try {
+            return ValueHelpers.parseString(getValueType(), getInputString());
+        } catch (EvaluationException e) {
+            // Should not occur, as validation must've happened before.
+            return getValueType().getDefault();
+        }
     }
 
     @Override

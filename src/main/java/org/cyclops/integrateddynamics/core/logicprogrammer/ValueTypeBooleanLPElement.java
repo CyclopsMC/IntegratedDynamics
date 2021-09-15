@@ -1,19 +1,20 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import lombok.Getter;
-import lombok.Setter;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeBooleanRenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
+
+import javax.annotation.Nullable;
 
 /**
  * Element for the boolean value type that is controlled via a checkbox.
@@ -21,34 +22,49 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class ValueTypeBooleanLPElement extends ValueTypeLPElementBase {
 
-    @Getter
-    @Setter
-    private boolean inputBoolean = false;
+    private GuiElementValueTypeBoolean<ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> innerGuiElement;
 
     public ValueTypeBooleanLPElement(IValueType valueType) {
         super(valueType);
+        this.innerGuiElement = createInnerGuiElement();
+    }
+
+    @Nullable
+    @Override
+    public <G2 extends AbstractGui, C2 extends Container> GuiElementValueTypeBoolean<G2, C2> createInnerGuiElement() {
+        return new GuiElementValueTypeBoolean<>((ValueTypeBoolean) getValueType(), getRenderPattern());
+    }
+
+    @Override
+    public GuiElementValueTypeBoolean<ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> getInnerGuiElement() {
+        return innerGuiElement;
     }
 
     @Override
     public void activate() {
-        this.inputBoolean = false;
+        getInnerGuiElement().activate();
+    }
+
+    @Override
+    public void deactivate() {
+        getInnerGuiElement().deactivate();
     }
 
     @Override
     public ITextComponent validate() {
-        return null;
+        return getInnerGuiElement().validate();
     }
 
     @Override
     public IValue getValue() {
-        return ValueTypeBoolean.ValueBoolean.of(inputBoolean);
+        return getInnerGuiElement().getValue();
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                    ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-        return new ValueTypeBooleanLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+        return new GuiElementValueTypeBooleanRenderPattern<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>(this.getInnerGuiElement(), baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
 }
