@@ -40,12 +40,8 @@ public class ValueTypeBooleanLPElementRenderPattern extends RenderPattern<ValueT
     public void init(int guiLeft, int guiTop) {
         super.init(guiLeft, guiTop);
 
-        int buttonX = getX() + getElement().getRenderPattern().getWidth() / 2 - 5;
-        int buttonY = getY() + 6;
-        this.checkbox = new ButtonCheckbox(guiLeft + buttonX, guiTop + buttonY, 10, 10,
-                new TranslationTextComponent(this.getElement().getValueType().getTranslationKey()), (entry) -> {
-            this.onChecked(this.checkbox.isChecked());
-        });
+        this.checkbox = new ButtonCheckbox(guiLeft + getX(), guiTop + getY(), getElement().getRenderPattern().getWidth(), getElement().getRenderPattern().getHeight(),
+                new TranslationTextComponent(this.getElement().getValueType().getTranslationKey()), (entry) -> this.onChecked(this.checkbox.isChecked()));
         this.checkbox.setChecked(this.getElement().isInputBoolean());
     }
 
