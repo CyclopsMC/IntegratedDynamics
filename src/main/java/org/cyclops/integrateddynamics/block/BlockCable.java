@@ -233,7 +233,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onBlockAdded(state, world, pos, oldState, isMoving);
-        if (!world.isRemote()) {
+        if (!world.isRemote() && !state.hasTileEntity()) {
             CableHelpers.onCableAdded(world, pos);
         }
     }
