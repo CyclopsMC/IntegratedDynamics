@@ -121,14 +121,17 @@ public abstract class PartContainerDefault implements IPartContainer {
                     return null;
                 }
 
+                // Don't drop main element when in creative mode
+                if(player != null && player.isCreative()) {
+                    dropMainElement = false;
+                }
+
                 // Drop all parts types as item.
                 List<ItemStack> itemStacks = Lists.newLinkedList();
                 networkElement.addDrops(itemStacks, dropMainElement, saveState);
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
-                        if (!player.isCreative()) {
-                            ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
-                        }
+                        ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
                     } else {
                         ItemStackHelpers.spawnItemStack(getWorld(), getPos(), itemStack);
                     }
