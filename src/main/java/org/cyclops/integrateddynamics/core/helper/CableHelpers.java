@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Helpers related to cables.
@@ -395,9 +396,10 @@ public class CableHelpers {
      * @param pos The position.
      * @return The optional facade.
      */
-    public static LazyOptional<BlockState> getFacade(IBlockReader world, BlockPos pos) {
+    public static Optional<BlockState> getFacade(IBlockReader world, BlockPos pos) {
         return TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY)
-                .lazyMap(IFacadeable::getFacade);
+                .resolve()
+                .flatMap(facadeable -> Optional.ofNullable(facadeable.getFacade()));
     }
 
     public static boolean isLightTransparent(IBlockReader world, BlockPos pos, @Nullable Direction side) {

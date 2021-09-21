@@ -6,7 +6,9 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -73,6 +75,7 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -433,6 +436,17 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=true"), model);
         event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "inventory"), model);
         return model;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static class BlockColor implements IBlockColor {
+        @Override
+        public int getColor(BlockState blockState, @Nullable IBlockDisplayReader world, @Nullable BlockPos blockPos, int color) {
+            // Only modify color if we have a facade
+            return CableHelpers.getFacade(world, blockPos)
+                    .map(facadeState -> Minecraft.getInstance().getBlockColors().getColor(facadeState, world, blockPos, color))
+                    .orElse(color);
+        }
     }
 
 }

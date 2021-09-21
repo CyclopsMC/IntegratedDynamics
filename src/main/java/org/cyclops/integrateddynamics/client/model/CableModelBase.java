@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.client.model;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import net.minecraft.block.BlockState;
@@ -40,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * A base dynamic model for cables.
@@ -130,46 +130,46 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     public List<BakedQuad> getFacadeQuads(BlockState blockState, Direction side, PartRenderPosition partRenderPosition) {
         Random rand = new Random();
-        List<BakedQuad> ret = Lists.newLinkedList();
         IBakedModel model = RenderHelpers.getBakedModel(blockState);
-        BakedQuad originalQuad = Iterables.getFirst(model.getQuads(blockState, side, rand), null);
-        if (originalQuad == null) {
-            // Return immediately if the model produces no quads
-            return ret;
-        }
-        if(partRenderPosition == PartRenderPosition.NONE) {
-            addFacadeQuad(ret, originalQuad, 0, 0, 1f, 1f, side);
-        } else {
-            float w = partRenderPosition.getWidthFactorSide();
-            float h = partRenderPosition.getHeightFactorSide();
-            float u0 = 0f;
-            float v0 = 0f;
-            float u1 = (1f - w) / 2;
-            float v1 = (1f - h) / 2;
-            float u2 = u1 + w;
-            float v2 = v1 + h;
-            float u3 = 1f;
-            float v3 = 1f;
-            /*
-             * We render the following eight boxes, excluding the part box in the middle.
-             * -------
-             * |1|2|3|
-             * -------
-             * |4|P|5|
-             * -------
-             * |6|7|8|
-             * -------
-             */
-            addFacadeQuad(ret, originalQuad, u0, v0, u1, v1, side); // 1
-            addFacadeQuad(ret, originalQuad, u1, v0, u2, v1, side); // 2
-            addFacadeQuad(ret, originalQuad, u2, v0, u3, v1, side); // 3
-            addFacadeQuad(ret, originalQuad, u0, v1, u1, v2, side); // 4
-            addFacadeQuad(ret, originalQuad, u2, v1, u3, v2, side); // 5
-            addFacadeQuad(ret, originalQuad, u0, v2, u1, v3, side); // 6
-            addFacadeQuad(ret, originalQuad, u1, v2, u2, v3, side); // 7
-            addFacadeQuad(ret, originalQuad, u2, v2, u3, v3, side); // 8
-        }
-        return ret;
+        List<BakedQuad> originalQuads = model.getQuads(blockState, side, rand);
+        return originalQuads.stream()
+                .flatMap(originalQuad -> {
+                    List<BakedQuad> ret = Lists.newLinkedList();
+                    if(partRenderPosition == PartRenderPosition.NONE) {
+                        addFacadeQuad(ret, originalQuad, 0, 0, 1f, 1f, side);
+                    } else {
+                        float w = partRenderPosition.getWidthFactorSide();
+                        float h = partRenderPosition.getHeightFactorSide();
+                        float u0 = 0f;
+                        float v0 = 0f;
+                        float u1 = (1f - w) / 2;
+                        float v1 = (1f - h) / 2;
+                        float u2 = u1 + w;
+                        float v2 = v1 + h;
+                        float u3 = 1f;
+                        float v3 = 1f;
+                        /*
+                         * We render the following eight boxes, excluding the part box in the middle.
+                         * -------
+                         * |1|2|3|
+                         * -------
+                         * |4|P|5|
+                         * -------
+                         * |6|7|8|
+                         * -------
+                         */
+                        addFacadeQuad(ret, originalQuad, u0, v0, u1, v1, side); // 1
+                        addFacadeQuad(ret, originalQuad, u1, v0, u2, v1, side); // 2
+                        addFacadeQuad(ret, originalQuad, u2, v0, u3, v1, side); // 3
+                        addFacadeQuad(ret, originalQuad, u0, v1, u1, v2, side); // 4
+                        addFacadeQuad(ret, originalQuad, u2, v1, u3, v2, side); // 5
+                        addFacadeQuad(ret, originalQuad, u0, v2, u1, v3, side); // 6
+                        addFacadeQuad(ret, originalQuad, u1, v2, u2, v3, side); // 7
+                        addFacadeQuad(ret, originalQuad, u2, v2, u3, v3, side); // 8
+                    }
+                    return ret.stream();
+                })
+                .collect(Collectors.toList());
     }
 
     private void addFacadeQuad(List<BakedQuad> quads, BakedQuad originalQuad, float u0, float v0, float u1, float v1, Direction side) {
@@ -180,9 +180,8 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         int ROTATION_NONE = 0;
         BlockFaceUV blockFaceUV = new BlockFaceUV(uvArray, ROTATION_NONE);
         Direction NO_FACE_CULLING = null;
-        int TINT_INDEX_NONE = -1;
         String DUMMY_TEXTURE_NAME = "";
-        BlockPartFace blockPartFace = new BlockPartFace(NO_FACE_CULLING, TINT_INDEX_NONE, DUMMY_TEXTURE_NAME, blockFaceUV);
+        BlockPartFace blockPartFace = new BlockPartFace(NO_FACE_CULLING, originalQuad.getTintIndex(), DUMMY_TEXTURE_NAME, blockFaceUV);
         IModelTransform transformation = new SimpleModelTransform(getMatrix(getRotation(side)));
         BlockPartRotation DEFAULT_ROTATION = null;
         boolean APPLY_SHADING = true;

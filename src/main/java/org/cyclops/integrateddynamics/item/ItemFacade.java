@@ -1,15 +1,14 @@
 package org.cyclops.integrateddynamics.item;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
@@ -21,7 +20,6 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
@@ -30,8 +28,6 @@ import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
  * An item that represents a facade of a certain type.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = false)
-@Data
 public class ItemFacade extends Item implements IDynamicModelElement {
 
     public ItemFacade(Properties properties) {
@@ -104,6 +100,15 @@ public class ItemFacade extends Item implements IDynamicModelElement {
         ModelResourceLocation location = new ModelResourceLocation(getRegistryName(), "inventory");
         FacadeModel.emptyModel = event.getModelRegistry().get(location);
         return new FacadeModel();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static class ItemColor implements IItemColor {
+        @Override
+        public int getColor(ItemStack itemStack, int color) {
+            BlockState blockstate = ((ItemFacade) itemStack.getItem()).getFacadeBlock(itemStack);
+            return Minecraft.getInstance().getBlockColors().getColor(blockstate, null, null, color);
+        }
     }
 
 }
