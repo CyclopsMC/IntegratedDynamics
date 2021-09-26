@@ -99,7 +99,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
         PrioritizedPartPos pos = event.getPos();
         IngredientPositionsIndex<T, M> index = getIndexSafe(channel);
         if (event.getChangeType() == IIngredientComponentStorageObservable.Change.DELETION) {
-            index.removeAll(instances);
+            index.removeAll(pos, instances);
             if (event.isCompleteChange()) {
                 for (T instance : instances) {
                     index.removePosition(instance, pos);
@@ -111,7 +111,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
                 this.indexes.remove(channel);
             }
         } else if (event.getChangeType() == IIngredientComponentStorageObservable.Change.ADDITION) {
-            index.addAll(instances);
+            index.addAll(pos, instances);
             for (T instance : instances) {
                 index.addPosition(instance, pos);
             }
