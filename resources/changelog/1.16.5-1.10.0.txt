@@ -1,0 +1,23 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Additions:
+* Allow boolean values to be set via checkbox in LP and aspect settings
+  Closes CyclopsMC/IntegratedTunnels#186
+
+Changes:
+* Ensure observer world reads happen in main world thread
+  This fixes many weird race conditions and mod conflicts
+  caused by reading the world within another thread in an
+  unsafe manner. Closes #1081
+* Drop variables when breaking/wrenching parts in creative mode, Closes #1084
+
+Fixes:
+* Fix priorities not being considered in ingredient networks
+  This could for example cause Integrated Tunnels networks
+  ignoring priorities when exporting items.
+  Closes CyclopsMC/IntegratedTunnels#244
+* Fix colored facades (like grass) missing colors, Closes #1092
+* Fix cable-less parts connecting to network in recent Forge versions
+  Closes CyclopsMC/IntegratedTunnels#243
+
