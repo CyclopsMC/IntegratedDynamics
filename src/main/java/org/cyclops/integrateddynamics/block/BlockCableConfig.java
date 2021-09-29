@@ -11,6 +11,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
@@ -31,10 +32,13 @@ public class BlockCableConfig extends BlockConfig {
                 (eConfig, block) -> new ItemBlockCable(block, new Item.Properties()
                         .group(IntegratedDynamics._instance.getDefaultItemGroup()))
                 );
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModLoaded);
+        if (MinecraftHelpers.isClientSide()) {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModLoaded);
+        }
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void onClientSetup(FMLClientSetupEvent event) {
         // Render the cable in all layers, and handle layer checking inside the model
         RenderTypeLookup.setRenderLayer(getInstance(), (type) -> true);
