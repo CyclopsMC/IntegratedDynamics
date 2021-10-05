@@ -445,7 +445,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
             // Only modify color if we have a facade
             return CableHelpers.getFacade(world, blockPos)
                     .map(facadeState -> Minecraft.getInstance().getBlockColors().getColor(facadeState, world, blockPos, color))
-                    .orElse(color);
+                    .orElse(-1);
         }
     }
 
