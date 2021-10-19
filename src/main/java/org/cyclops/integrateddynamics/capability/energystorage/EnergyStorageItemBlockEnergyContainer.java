@@ -40,21 +40,29 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         return block instanceof BlockEnergyBatteryBase && ((BlockEnergyBatteryBase) block).isCreative();
     }
 
-    @Override
-    public int getEnergyStored() {
+    protected int getEnergyStoredSingular() {
         if(isCreative()) return Integer.MAX_VALUE;
         CompoundNBT tag = itemStack.getOrCreateTag();
         return tag.getInt(itemBlockEnergyContainer.get().getEneryContainerNBTName());
     }
 
     @Override
-    public int getMaxEnergyStored() {
+    public int getEnergyStored() {
+        return getEnergyStoredSingular() * this.itemStack.getCount();
+    }
+
+    public int getMaxEnergyStoredSingular() {
         if(isCreative()) return Integer.MAX_VALUE;
         CompoundNBT tag = itemStack.getOrCreateTag();
         if (!tag.contains(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName())) {
             return BlockEnergyBatteryConfig.capacity;
         }
         return tag.getInt(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
+    }
+
+    @Override
+    public int getMaxEnergyStored() {
+        return getMaxEnergyStoredSingular() * this.itemStack.getCount();
     }
 
     @Override
@@ -70,25 +78,29 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
         if(isCreative()) return 0;
+        int stackSize = this.itemStack.getCount();
+        energy /= stackSize;
         energy = Math.min(energy, getRate());
-        int stored = getEnergyStored();
-        int energyReceived = Math.min(getMaxEnergyStored() - stored, energy);
+        int stored = getEnergyStoredSingular();
+        int energyReceived = Math.min(getMaxEnergyStoredSingular() - stored, energy);
         if(!simulate) {
             setItemStackEnergy(itemStack, stored + energyReceived);
         }
-        return energyReceived;
+        return energyReceived * stackSize;
     }
 
     @Override
     public int extractEnergy(int energy, boolean simulate) {
         if(isCreative()) return energy;
+        int stackSize = this.itemStack.getCount();
+        energy /= stackSize;
         energy = Math.min(energy, getRate());
-        int stored = getEnergyStored();
+        int stored = getEnergyStoredSingular();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {
             setItemStackEnergy(itemStack, newEnergy);
         }
-        return stored - newEnergy;
+        return (stored - newEnergy) * stackSize;
     }
 
     protected void setItemStackEnergy(ItemStack itemStack, int energy) {
