@@ -281,6 +281,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             }
 
             if (blockStateHolder.isPresent() && shouldRenderParts(modelData)
+                    && MinecraftForgeClient.getRenderLayer() != null
                     && RenderTypeLookup.canRenderInLayer(blockStateHolder.get(), MinecraftForgeClient.getRenderLayer())) {
                 for (Direction side : Direction.values()) {
                     boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
