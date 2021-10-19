@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.state.properties.NoteBlockInstrument;
 import net.minecraft.util.SoundCategory;
@@ -132,8 +131,7 @@ public class AspectWriteBuilders {
                     if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
                         float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
                         float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                        world.playSound((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                                instrument.getSound(), SoundCategory.RECORDS, volume, f, true);
+                        world.playSound(null, pos, instrument.getSound(), SoundCategory.RECORDS, volume, f);
                     }
                 }
             }
