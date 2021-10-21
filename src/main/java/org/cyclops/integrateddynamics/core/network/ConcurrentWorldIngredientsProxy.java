@@ -55,7 +55,7 @@ public class ConcurrentWorldIngredientsProxy<T, M> {
     }
 
     protected Collection<PartPos> getPositions() {
-        return getNetwork().getPositions();
+        return Lists.newArrayList(getNetwork().getPositions());
     }
 
     public void onWorldTick() {

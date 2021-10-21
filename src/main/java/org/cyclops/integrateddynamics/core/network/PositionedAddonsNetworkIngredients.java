@@ -1,5 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -8,6 +11,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageWrapperHandler;
+import org.cyclops.commoncapabilities.api.ingredient.storage.IngredientComponentStorageEmpty;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollection;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable;
@@ -24,6 +28,7 @@ import org.cyclops.integrateddynamics.api.path.IPathElement;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -40,6 +45,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     private final IngredientObserver<T, M> ingredientObserver;
     private final Int2ObjectMap<IngredientPositionsIndex<T, M>> indexes;
     private final Map<PartPos, PositionedAddonsNetworkIngredientsFilter<T>> positionFilters = Maps.newHashMap();
+    private final LoadingCache<PartPos, IIngredientComponentStorage<T, M>> cacheStorage;
 
     private boolean observe;
     private Map<PartPos, Long> lastSecondDurations = Maps.newHashMap();
@@ -50,6 +56,14 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
         this.ingredientObserver = new IngredientObserver<>(this);
         this.ingredientObserver.addChangeObserver(this);
         this.indexes = new Int2ObjectOpenHashMap<>();
+        // This cache is invalidated after every tick
+        this.cacheStorage = CacheBuilder.newBuilder()
+                .build(new CacheLoader<PartPos, IIngredientComponentStorage<T, M>>() {
+            public IIngredientComponentStorage<T, M> load(PartPos pos) {
+                IIngredientComponentStorage<T, M> storage = getPositionedStorageUnsafe(pos);
+                return storage == null ? new IngredientComponentStorageEmpty<>(getComponent()) : storage;
+            }
+        });
 
         this.observe = false;
     }
@@ -57,6 +71,15 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     @Override
     public IngredientComponent<T, M> getComponent() {
         return component;
+    }
+
+    @Override
+    public IIngredientComponentStorage<T, M> getPositionedStorage(PartPos pos) {
+        try {
+            return this.cacheStorage.get(pos);
+        } catch (ExecutionException e) {
+            return new IngredientComponentStorageEmpty<>(getComponent());
+        }
     }
 
     @Nullable
@@ -253,6 +276,9 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
                 this.observe = false;
             }
         }
+
+        // Clear storage cache after each tick
+        this.cacheStorage.invalidateAll();
     }
 
     @Override
