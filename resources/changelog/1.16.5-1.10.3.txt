@@ -1,0 +1,17 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Changes:
+* Allow draining/filling batteries in item-form when stacked
+  This also fixes power dupe issues with mods such as Mekanism
+  Closes #1100
+
+Fixes:
+* Cache expensive positioned storage lookup for a tick
+  This improves performance for massive networks with passive interaction.
+  Closes #1101
+* Fix crash when rendering with Chisel, Closes #1098
+* Fix notes in audio writer not working, Closes #1099
+* Fix type in recipe handling tutorial
+
+
