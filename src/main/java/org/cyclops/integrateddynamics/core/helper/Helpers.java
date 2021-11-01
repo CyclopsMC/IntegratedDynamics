@@ -27,6 +27,7 @@ import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -159,9 +160,9 @@ public final class Helpers {
      * @return The localized string.
      */
     public static ITextComponent getLocalizedEnergyLevel(int stored, int capacity) {
-        return new StringTextComponent(String.format("%,d", stored))
+        return new StringTextComponent(String.format(Locale.ROOT, "%,d", stored))
                 .appendString(" / ")
-                .appendString(String.format("%,d", capacity))
+                .appendString(String.format(Locale.ROOT, "%,d", capacity))
                 .appendString(" ")
                 .append(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
     }

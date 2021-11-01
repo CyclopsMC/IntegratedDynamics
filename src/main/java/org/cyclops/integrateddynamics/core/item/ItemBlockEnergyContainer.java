@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@link BlockItem} that can be used for blocks that implement the {@link IEnergyStorage} capability.
@@ -64,7 +65,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
                 .ifPresent(energyStorage -> {
                     int amount = energyStorage.getEnergyStored();
                     int capacity = energyStorage.getMaxEnergyStored();
-                    String line = String.format("%,d", amount) + " / " + String.format("%,d", capacity) + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
+                    String line = String.format(Locale.ROOT, "%,d", amount) + " / " + String.format(Locale.ROOT, "%,d", capacity) + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
                     list.add(new StringTextComponent(IInformationProvider.ITEM_PREFIX + line));
                 });
     }
