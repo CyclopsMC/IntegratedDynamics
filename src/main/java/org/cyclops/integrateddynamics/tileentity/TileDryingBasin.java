@@ -153,18 +153,26 @@ public class TileDryingBasin extends CyclopsTileEntity implements CyclopsTileEnt
             } else if (currentRecipe.isPresent()) {
                 RecipeDryingBasin recipe = currentRecipe.get();
                 if (progress >= recipe.getDuration()) {
+                    // Consume input fluid
+                    int amount = FluidHelpers.getAmount(recipe.getInputFluid());
+                    getTank().drain(amount, IFluidHandler.FluidAction.EXECUTE);
+
+                    // Produce output item
                     ItemStack output = recipe.getOutputItem();
                     if (!output.isEmpty()) {
                         output = output.copy();
                         getInventory().setInventorySlotContents(0, output);
-                        int amount = FluidHelpers.getAmount(recipe.getInputFluid());
-                        getTank().drain(amount, IFluidHandler.FluidAction.EXECUTE);
-                        if (!recipe.getOutputFluid().isEmpty()) {
-                            if (getTank().fill(recipe.getOutputFluid(), IFluidHandler.FluidAction.EXECUTE) == 0) {
-                                IntegratedDynamics.clog(Level.ERROR, "Encountered an invalid recipe: " + recipe.getId());
-                            }
+                    } else {
+                        getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
+                    }
+
+                    // Produce output fluid
+                    if (!recipe.getOutputFluid().isEmpty()) {
+                        if (getTank().fill(recipe.getOutputFluid(), IFluidHandler.FluidAction.EXECUTE) == 0) {
+                            IntegratedDynamics.clog(Level.ERROR, "Encountered an invalid recipe: " + recipe.getId());
                         }
                     }
+
                     progress = 0;
                 } else {
                     progress++;
