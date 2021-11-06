@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Fixes:
+* Fix filled variant not included in menril_logs tag, Closes #1106
+* Fix Drying Basin not handling recipes without output items, Closes #1105
+* Fix amount formatting errors in other locales
+
