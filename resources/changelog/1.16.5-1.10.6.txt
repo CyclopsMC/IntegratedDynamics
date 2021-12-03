@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Fixes:
+* Fix energy dupe bug when crafting batteries together, Closes #1113
+  Related to #1100
+* Fix BlockCable$BlockColor#getColor not checking null args
