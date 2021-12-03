@@ -75,7 +75,7 @@ public class RecipeEnergyContainerCombination extends SpecialRecipe {
 		
 		// Loop over the grid and count the total contents and capacity + collect energy.
 		for(int j = 0; j < grid.getSizeInventory(); j++) {
-			ItemStack element = grid.getStackInSlot(j);
+			ItemStack element = grid.getStackInSlot(j).copy().split(1);
 			if(!element.isEmpty()) {
 				if(this.batteryItem.test(element)) {
 					IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(CapabilityEnergy.ENERGY).orElse(null);
