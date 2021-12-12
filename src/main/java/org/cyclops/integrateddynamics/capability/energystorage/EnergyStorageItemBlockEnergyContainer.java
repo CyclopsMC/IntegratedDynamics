@@ -79,6 +79,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     public int receiveEnergy(int energy, boolean simulate) {
         if(isCreative()) return 0;
         int stackSize = this.itemStack.getCount();
+        if (stackSize == 0) return 0;
         energy /= stackSize;
         energy = Math.min(energy, getRate());
         int stored = getEnergyStoredSingular();
@@ -93,6 +94,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     public int extractEnergy(int energy, boolean simulate) {
         if(isCreative()) return energy;
         int stackSize = this.itemStack.getCount();
+        if (stackSize == 0) return energy;
         energy /= stackSize;
         energy = Math.min(energy, getRate());
         int stored = getEnergyStoredSingular();
