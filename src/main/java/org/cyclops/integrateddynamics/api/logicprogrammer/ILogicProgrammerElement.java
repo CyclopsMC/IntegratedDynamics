@@ -65,7 +65,7 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Abstrac
     public static Slot createSlotDefault(ILogicProgrammerElement logicProgrammerElement, IInventory temporaryInputSlots, int slotId, int x, int y) {
         SlotExtended slot = new SlotExtended(temporaryInputSlots, slotId, x, y) {
             @Override
-            public boolean isItemValid(ItemStack itemStack) {
+            public boolean mayPlace(ItemStack itemStack) {
                 return logicProgrammerElement.isItemValidForSlot(slotId, itemStack);
             }
         };

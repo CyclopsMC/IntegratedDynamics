@@ -116,8 +116,8 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     @Override
     public ItemStack writeElement(PlayerEntity player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        return registry.writeVariableFacadeItem(!player.world.isRemote(), itemStack, ValueTypes.REGISTRY,
-                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.getDefaultState());
+        return registry.writeVariableFacadeItem(!player.level.isClientSide(), itemStack, ValueTypes.REGISTRY,
+                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
     }
 
     @Override

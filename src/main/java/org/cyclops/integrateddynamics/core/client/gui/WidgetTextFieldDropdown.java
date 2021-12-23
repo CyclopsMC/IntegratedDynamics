@@ -70,20 +70,20 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
 
     protected void refreshDropdownList() {
         // Remove all colors and formatting when changing text
-        if(getText().contains("§")) {
-            setText(getText().replaceAll("§.", ""));
+        if(getValue().contains("§")) {
+            setValue(getValue().replaceAll("§.", ""));
         }
         if (!possibilities.isEmpty()) {
             visiblePossibilities = Lists.newArrayList();
             for (IDropdownEntry<T> possibility : possibilities) {
-                if (possibility.getMatchString().toLowerCase().contains(getText().toLowerCase())) {
+                if (possibility.getMatchString().toLowerCase().contains(getValue().toLowerCase())) {
                     visiblePossibilities.add(possibility);
                 }
             }
             visiblePossibilitiesIndex = -1;
             if (!visiblePossibilities.isEmpty()) {
                 selectedDropdownPossibility = visiblePossibilities.stream()
-                        .filter(e -> e.getMatchString().equals(getText()))
+                        .filter(e -> e.getMatchString().equals(getValue()))
                         .findFirst()
                         .orElse(null);
             }
@@ -94,8 +94,8 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public void setFocused2(boolean isFocusedIn) {
-        super.setFocused2(isFocusedIn);
+    public void setFocus(boolean isFocusedIn) {
+        super.setFocus(isFocusedIn);
         if (isFocusedIn) {
             refreshDropdownList();
         }
@@ -154,7 +154,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
 
     public void selectPossibility(@Nullable IDropdownEntry<T> entry) {
         selectedDropdownPossibility = entry;
-        setText(selectedDropdownPossibility != null ? selectedDropdownPossibility.getDisplayString().getString() : "");
+        setValue(selectedDropdownPossibility != null ? selectedDropdownPossibility.getDisplayString().getString() : "");
         visiblePossibilities = Lists.newArrayList();
         visiblePossibilitiesIndex = -1;
         if (dropdownEntryListener != null) {
@@ -168,9 +168,9 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
         this.setTextColor(this.selectedDropdownPossibility == null ? Helpers.RGBToInt(220, 10, 10) : 14737632);
 
         super.renderButton(matrixStack, mouseX, mouseY, partialTicks);
-        if (this.getVisible() && isFocused()) {
-            FontRenderer fontRenderer = Minecraft.getInstance().getRenderManager().getFontRenderer();
-            int yOffset = fontRenderer.FONT_HEIGHT + 3;
+        if (this.isVisible() && isFocused()) {
+            FontRenderer fontRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getFont();
+            int yOffset = fontRenderer.lineHeight + 3;
 
             int x = this.x;
             int y = this.y + yOffset;
@@ -185,7 +185,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 fill(matrixStack, x, cy - 1, x + width, cy + 11, -6250336);
                 fill(matrixStack, x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                fontRenderer.drawStringWithShadow(matrixStack, "...", (float)x + 1, (float)cy + 2, disabledColor);
+                fontRenderer.drawShadow(matrixStack, "...", (float)x + 1, (float)cy + 2, disabledColor);
 
                 cy += 10;
             }
@@ -194,7 +194,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 // Initialize entry
                 IDropdownEntry<?> dropdownEntry = visiblePossibilities.get(i);
                 IFormattableTextComponent possibility = dropdownEntry.getDisplayString();
-                List<IReorderingProcessor> displayPossibility = fontRenderer.trimStringToWidth(possibility, width);
+                List<IReorderingProcessor> displayPossibility = fontRenderer.split(possibility, width);
                 boolean active = visiblePossibilitiesIndex == i;
                 int entryHeight = yOffset;
 
@@ -213,12 +213,12 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
 
                 // Draw text
                 // MCP: drawStringWithShadow
-                fontRenderer.func_238407_a_(matrixStack, displayPossibility.get(0), (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor);
+                fontRenderer.drawShadow(matrixStack, displayPossibility.get(0), (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor);
                 if(addTooltip) {
                     int tooltipLineOffsetY = 2;
                     for (ITextComponent tooltipLine : tooltipLines) {
                         tooltipLineOffsetY += yOffset;
-                        fontRenderer.drawStringWithShadow(matrixStack, tooltipLine.getString(), (float)x + 1, (float)cy + tooltipLineOffsetY, enabledColor);
+                        fontRenderer.drawShadow(matrixStack, tooltipLine.getString(), (float)x + 1, (float)cy + tooltipLineOffsetY, enabledColor);
                     }
                 }
 
@@ -231,14 +231,14 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 fill(matrixStack, x, cy - 1, x + width, cy + 11, -6250336);
                 fill(matrixStack, x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                fontRenderer.drawStringWithShadow(matrixStack, "...", (float)x + 1, (float)cy + 2, disabledColor);
+                fontRenderer.drawShadow(matrixStack, "...", (float)x + 1, (float)cy + 2, disabledColor);
             }
         }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (this.getVisible() && isFocused()) {
+        if (this.isVisible() && isFocused()) {
             int i = getHoveredVisiblePossibility(mouseX, mouseY);
             if (i >= 0) {
                 selectVisiblePossibility(i);
@@ -249,8 +249,8 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     public int getHoveredVisiblePossibility(double mouseX, double mouseY) {
-        FontRenderer fontRenderer = Minecraft.getInstance().getRenderManager().getFontRenderer();
-        int yOffset = fontRenderer.FONT_HEIGHT + 3;
+        FontRenderer fontRenderer = Minecraft.getInstance().gui.getFont();
+        int yOffset = fontRenderer.lineHeight + 3;
 
         int x = this.x;
         int y = this.y + yOffset;

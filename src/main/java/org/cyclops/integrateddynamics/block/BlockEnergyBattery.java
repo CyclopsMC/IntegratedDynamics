@@ -32,7 +32,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
     }
 
     @Override
-    public void fillItemGroup(ItemGroup tab, NonNullList<ItemStack> list) {
+    public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> list) {
         ItemStack itemStack = new ItemStack(this);
 
         int capacityOriginal = BlockEnergyBatteryConfig.capacity;

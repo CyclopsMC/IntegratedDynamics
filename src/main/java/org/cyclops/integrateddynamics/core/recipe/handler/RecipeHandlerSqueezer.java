@@ -38,7 +38,7 @@ public class RecipeHandlerSqueezer extends RecipeHandlerRecipeType<IInventory, R
     @Override
     protected IInventory getRecipeInputContainer(IMixedIngredients input) {
         IInventory inventory = new Inventory(1);
-        inventory.setInventorySlotContents(0, input.getInstances(IngredientComponent.ITEMSTACK).get(0));
+        inventory.setItem(0, input.getInstances(IngredientComponent.ITEMSTACK).get(0));
         return inventory;
     }
 

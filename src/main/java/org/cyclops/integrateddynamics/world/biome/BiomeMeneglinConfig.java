@@ -68,47 +68,47 @@ public class BiomeMeneglinConfig extends BiomeConfig {
                 "meneglin",
                 eConfig -> {
                     // A lot of stuff is copied from forest biome: BiomeMaker.makeGenericForestBiome
-                    BiomeGenerationSettings.Builder generationBuilder = (new BiomeGenerationSettings.Builder()).withSurfaceBuilder(ConfiguredSurfaceBuilders.field_244178_j);
-                    DefaultBiomeFeatures.withStrongholdAndMineshaft(generationBuilder);
-                    generationBuilder.withStructure(StructureFeatures.RUINED_PORTAL);
-                    DefaultBiomeFeatures.withCavesAndCanyons(generationBuilder);
-                    DefaultBiomeFeatures.withLavaAndWaterLakes(generationBuilder);
-                    DefaultBiomeFeatures.withMonsterRoom(generationBuilder);
+                    BiomeGenerationSettings.Builder generationBuilder = (new BiomeGenerationSettings.Builder()).surfaceBuilder(ConfiguredSurfaceBuilders.GRASS);
+                    DefaultBiomeFeatures.addDefaultOverworldLandStructures(generationBuilder);
+                    generationBuilder.addStructureStart(StructureFeatures.RUINED_PORTAL_STANDARD);
+                    DefaultBiomeFeatures.addDefaultCarvers(generationBuilder);
+                    DefaultBiomeFeatures.addDefaultLakes(generationBuilder);
+                    DefaultBiomeFeatures.addDefaultMonsterRoom(generationBuilder);
                     // DefaultBiomeFeatures.withAllForestFlowerGeneration(biomegenerationsettings$builder);
 
-                    DefaultBiomeFeatures.withCommonOverworldBlocks(generationBuilder);
-                    DefaultBiomeFeatures.withOverworldOres(generationBuilder);
-                    DefaultBiomeFeatures.withDisks(generationBuilder);
+                    DefaultBiomeFeatures.addDefaultUndergroundVariety(generationBuilder);
+                    DefaultBiomeFeatures.addDefaultOres(generationBuilder);
+                    DefaultBiomeFeatures.addDefaultSoftDisks(generationBuilder);
                     //DefaultBiomeFeatures.withForestBirchTrees(generationBuilder);
-                    generationBuilder.withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, WorldFeatures.TREES_MENEGLIN);
+                    generationBuilder.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, WorldFeatures.TREES_MENEGLIN);
                     // DefaultBiomeFeatures.withDefaultFlowers(generationBuilder);
-                    generationBuilder.withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, WorldFeatures.FLOWERS_MENEGLIN);
-                    DefaultBiomeFeatures.withForestGrass(generationBuilder);
+                    generationBuilder.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, WorldFeatures.FLOWERS_MENEGLIN);
+                    DefaultBiomeFeatures.addForestGrass(generationBuilder);
 
                     // DefaultBiomeFeatures.withNormalMushroomGeneration(generationBuilder);
-                    DefaultBiomeFeatures.withSugarCaneAndPumpkins(generationBuilder);
-                    DefaultBiomeFeatures.withLavaAndWaterSprings(generationBuilder);
-                    DefaultBiomeFeatures.withFrozenTopLayer(generationBuilder);
+                    DefaultBiomeFeatures.addDefaultExtraVegetation(generationBuilder);
+                    DefaultBiomeFeatures.addDefaultSprings(generationBuilder);
+                    DefaultBiomeFeatures.addSurfaceFreezing(generationBuilder);
                     return (new Biome.Builder())
                             .precipitation(Biome.RainType.RAIN)
-                            .category(Biome.Category.FOREST)
+                            .biomeCategory(Biome.Category.FOREST)
                             .depth(0.4F)
                             .scale(0.4F)
                             .temperature(0.7F)
                             .downfall(0.25F)
-                            .setEffects((new BiomeAmbience.Builder())
-                                    .setWaterColor(4445678)
-                                    .setWaterFogColor(Helpers.RGBToInt(85, 168, 221))
-                                    .setFogColor(12638463)
-                                    .withGrassColor(Helpers.RGBToInt(85, 221, 168))
-                                    .withFoliageColor(Helpers.RGBToInt(128, 208, 185))
-                                    .withSkyColor(Helpers.RGBToInt(178, 238, 233))
-                                    .setMoodSound(MoodSoundAmbience.DEFAULT_CAVE)
+                            .specialEffects((new BiomeAmbience.Builder())
+                                    .waterColor(4445678)
+                                    .waterFogColor(Helpers.RGBToInt(85, 168, 221))
+                                    .fogColor(12638463)
+                                    .grassColorOverride(Helpers.RGBToInt(85, 221, 168))
+                                    .foliageColorOverride(Helpers.RGBToInt(128, 208, 185))
+                                    .skyColor(Helpers.RGBToInt(178, 238, 233))
+                                    .ambientMoodSound(MoodSoundAmbience.LEGACY_CAVE_SETTINGS)
                                     .build())
-                            .withMobSpawnSettings(BiomeMaker.getStandardMobSpawnBuilder()
-                                    .withSpawner(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(EntityType.RABBIT, 4, 2, 3))
-                                    .copy())
-                            .withGenerationSettings(generationBuilder.build())
+                            .mobSpawnSettings(BiomeMaker.defaultSpawns()
+                                    .addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(EntityType.RABBIT, 4, 2, 3))
+                                    .build())
+                            .generationSettings(generationBuilder.build())
                             .build();
                 }
         );
@@ -137,20 +137,20 @@ public class BiomeMeneglinConfig extends BiomeConfig {
         CONFIGURED_FEATURE_MENEGLIN = Registry.register(WorldGenRegistries.CONFIGURED_FEATURE,
                 new ResourceLocation(getMod().getModId(), "tree_menril_meneglin"),
                 Feature.TREE
-                        .withConfiguration(TreeMenril.getMenrilTreeConfig())
-                        .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(1, 0.05F, 1))));
+                        .configured(TreeMenril.getMenrilTreeConfig())
+                        .decorated(Placement.COUNT_EXTRA.configured(new AtSurfaceWithExtraConfig(1, 0.05F, 1))));
         CONFIGURED_FEATURE_GENERAL = Registry.register(WorldGenRegistries.CONFIGURED_FEATURE,
                 new ResourceLocation(getMod().getModId(), "tree_menril_general"),
                 Feature.TREE
-                        .withConfiguration(TreeMenril.getMenrilTreeConfig())
-                        .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(0, 1F / wildMenrilTreeChance, 1))));
+                        .configured(TreeMenril.getMenrilTreeConfig())
+                        .decorated(Placement.COUNT_EXTRA.configured(new AtSurfaceWithExtraConfig(0, 1F / wildMenrilTreeChance, 1))));
     }
 
     public void onBiomeLoadingEvent(BiomeLoadingEvent event) {
         if (event.getName().equals(new ResourceLocation("integrateddynamics:meneglin"))) {
             event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)
                     .add(() -> CONFIGURED_FEATURE_MENEGLIN);
-        } else if (BiomeDictionary.getTypes(RegistryKey.getOrCreateKey(RegistryKey.getOrCreateRootKey(getRegistry().getRegistryName()), event.getName()))
+        } else if (BiomeDictionary.getTypes(RegistryKey.create(RegistryKey.createRegistryKey(getRegistry().getRegistryName()), event.getName()))
                 .contains(BiomeDictionary.Type.OVERWORLD)) {
             event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)
                     .add(() -> CONFIGURED_FEATURE_GENERAL);

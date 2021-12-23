@@ -35,12 +35,12 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "energy_battery",
-                eConfig -> new BlockEnergyBattery(Block.Properties.create(Material.ANVIL)
+                eConfig -> new BlockEnergyBattery(Block.Properties.of(Material.HEAVY_METAL)
                         .sound(SoundType.METAL)
-                        .hardnessAndResistance(5.0F)),
+                        .strength(5.0F)),
                 (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block,
                         new Item.Properties()
-                                .group(IntegratedDynamics._instance.getDefaultItemGroup())
+                                .tab(IntegratedDynamics._instance.getDefaultItemGroup())
                                 .setISTER(() -> ItemStackTileEntityEnergyBatteryRender::new))
         );
     }

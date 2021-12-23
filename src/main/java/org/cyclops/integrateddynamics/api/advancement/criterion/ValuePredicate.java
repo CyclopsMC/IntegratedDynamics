@@ -49,12 +49,12 @@ public class ValuePredicate<V extends IValue> {
         IValue value = null;
         if (valueElement != null && !valueElement.isJsonNull()) {
             if (valueElement.isJsonPrimitive()) {
-                String valueString = JSONUtils.getString(jsonObject, "value");
+                String valueString = JSONUtils.getAsString(jsonObject, "value");
                 if (valueType == null) {
                     throw new JsonSyntaxException("A value '" + valueString + "' requires a corresponding valueType to be defined");
                 }
                 try {
-                    INBT tag = JsonToNBT.getTagFromJson(valueString);
+                    INBT tag = JsonToNBT.parseTag(valueString);
                     if (((CompoundNBT) tag).contains("Primitive")) {
                         tag = ((CompoundNBT) tag).get("Primitive");
                     }

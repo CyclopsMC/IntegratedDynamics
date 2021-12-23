@@ -25,7 +25,7 @@ public class ItemMatchProperties {
                 ItemMatchProperties props = ((ItemMatchProperties) o);
                 PacketCodec.getAction(ItemStack.class).encode(props.itemStack, packetBuffer);
                 packetBuffer.writeBoolean(props.nbt);
-                packetBuffer.writeString(props.itemTag != null ? props.itemTag : "");
+                packetBuffer.writeUtf(props.itemTag != null ? props.itemTag : "");
                 packetBuffer.writeInt(props.tagQuantity);
             }
 
@@ -33,7 +33,7 @@ public class ItemMatchProperties {
             public Object decode(PacketBuffer packetBuffer) {
                 ItemStack itemStack = (ItemStack) PacketCodec.getAction(ItemStack.class).decode(packetBuffer);
                 boolean nbt = packetBuffer.readBoolean();
-                String itemTag = packetBuffer.readString(32767);
+                String itemTag = packetBuffer.readUtf(32767);
                 int tagQuantity = packetBuffer.readInt();
                 return new ItemMatchProperties(itemStack, nbt, itemTag.isEmpty() ? null : itemTag, tagQuantity);
             }

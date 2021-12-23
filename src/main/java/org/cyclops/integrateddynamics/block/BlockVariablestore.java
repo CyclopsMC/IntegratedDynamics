@@ -22,17 +22,17 @@ public class BlockVariablestore extends BlockTileGuiCabled {
     public BlockVariablestore(Properties properties) {
         super(properties, TileVariablestore::new);
 
-        this.setDefaultState(this.stateContainer.getBaseState()
-                .with(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection());
     }
 
 }

@@ -24,6 +24,8 @@ import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * An item that represents a facade of a certain type.
  * @author rubensworks
@@ -57,35 +59,35 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack itemStack) {
+    public ITextComponent getName(ItemStack itemStack) {
         ITextComponent suffix = new TranslationTextComponent("general.integrateddynamics.info.none")
-                .mergeStyle(TextFormatting.ITALIC);
+                .withStyle(TextFormatting.ITALIC);
         ItemStack itemStackInner = getFacadeBlockItem(itemStack);
         if(itemStackInner != null) {
-            suffix = getFacadeBlockItem(itemStack).getDisplayName();
+            suffix = getFacadeBlockItem(itemStack).getHoverName();
         }
-        return ((IFormattableTextComponent) super.getDisplayName(itemStack))
-                .appendString(" - ")
+        return ((IFormattableTextComponent) super.getName(itemStack))
+                .append(" - ")
                 .append(suffix);
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        ItemStack itemStack = context.getItem();
-        if(!context.getWorld().isRemote()) {
-            IFacadeable facadeable = TileHelpers.getCapability(context.getWorld(), context.getPos(), null, FacadeableConfig.CAPABILITY).orElse(null);
+    public ActionResultType useOn(ItemUseContext context) {
+        ItemStack itemStack = context.getItemInHand();
+        if(!context.getLevel().isClientSide()) {
+            IFacadeable facadeable = TileHelpers.getCapability(context.getLevel(), context.getClickedPos(), null, FacadeableConfig.CAPABILITY).orElse(null);
             BlockState blockState = getFacadeBlock(itemStack);
             if(facadeable != null && blockState != null) {
                 // Add facade to existing cable
                 if (!facadeable.hasFacade()) {
                     facadeable.setFacade(blockState);
-                    ItemBlockCable.playPlaceSound(context.getWorld(), context.getPos());
+                    ItemBlockCable.playPlaceSound(context.getLevel(), context.getClickedPos());
                     itemStack.shrink(1);
                 }
             }
             return ActionResultType.SUCCESS;
         }
-        return super.onItemUse(context);
+        return super.useOn(context);
     }
 
     @Override

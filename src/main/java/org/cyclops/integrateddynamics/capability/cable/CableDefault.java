@@ -18,9 +18,9 @@ public abstract class CableDefault implements ICable {
     protected abstract boolean isForceDisconnectable();
     protected abstract EnumFacingMap<Boolean> getForceDisconnected();
     protected abstract EnumFacingMap<Boolean> getConnected();
-    protected abstract void markDirty();
+    protected abstract void setChanged();
     protected abstract void sendUpdate();
-    protected abstract World getWorld();
+    protected abstract World getLevel();
     protected abstract BlockPos getPos();
 
     protected boolean isForceDisconnected(Direction side) {
@@ -36,7 +36,7 @@ public abstract class CableDefault implements ICable {
 
     @Override
     public void updateConnections() {
-        World world = getWorld();
+        World world = getLevel();
         for (Direction side : Direction.values()) {
             boolean cableConnected = CableHelpers.canCableConnectTo(world, getPos(), side, this);
             getConnected().put(side, cableConnected);
@@ -46,7 +46,7 @@ public abstract class CableDefault implements ICable {
                 getForceDisconnected().put(side, false);
             }
         }
-        markDirty();
+        setChanged();
         sendUpdate();
     }
 

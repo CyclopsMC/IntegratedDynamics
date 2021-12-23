@@ -35,6 +35,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.minecraft.util.math.shapes.VoxelShapePart.ILineConsumer;
+
 /**
  * A {@link VoxelShape} that contains one or more {@link VoxelShapeComponents.IComponent}.
  *
@@ -55,7 +57,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
 
     protected static VoxelShapePart createInnerPart(Collection<Pair<VoxelShape, IComponent>> entries) {
         return new Part(entries.stream()
-                .map(pair -> pair.getLeft().part)
+                .map(pair -> pair.getLeft().shape)
                 .collect(Collectors.toList()));
     }
 
@@ -75,11 +77,11 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
     }
 
     @Override
-    public double getStart(Direction.Axis axis) {
+    public double min(Direction.Axis axis) {
         boolean first = true;
         double startMin = 0;
         for (VoxelShape shape : this) {
-            double start = shape.getStart(axis);
+            double start = shape.min(axis);
             if (first || start < startMin) {
                 startMin = start;
                 first = false;
@@ -89,11 +91,11 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
     }
 
     @Override
-    public double getEnd(Direction.Axis axis) {
+    public double max(Direction.Axis axis) {
         boolean first = true;
         double endMax = 0;
         for (VoxelShape shape : this) {
-            double end = shape.getEnd(axis);
+            double end = shape.max(axis);
             if (first || end > endMax) {
                 endMax = end;
                 first = false;
@@ -103,10 +105,10 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
     }
 
     @Override
-    public DoubleList getValues(Direction.Axis axis) {
+    public DoubleList getCoords(Direction.Axis axis) {
         DoubleArrayList values = new DoubleArrayList();
         for (VoxelShape shape : this) {
-            values.addAll(shape.getValues(axis));
+            values.addAll(shape.getCoords(axis));
         }
         return values;
     }
@@ -122,25 +124,25 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
     }
 
     @Override
-    public VoxelShape withOffset(double x, double y, double z) {
+    public VoxelShape move(double x, double y, double z) {
         List<Pair<VoxelShape, IComponent>> entries = Lists.newArrayList();
         for (Pair<VoxelShape, IComponent> entry : this.entries) {
-            entries.add(Pair.of(entry.getLeft().withOffset(x, y, z), entry.getRight()));
+            entries.add(Pair.of(entry.getLeft().move(x, y, z), entry.getRight()));
         }
         return new VoxelShapeComponents(entries);
     }
 
     @Override
-    public void forEachEdge(VoxelShapes.ILineConsumer consumer) {
+    public void forAllEdges(VoxelShapes.ILineConsumer consumer) {
         for (VoxelShape shape : this) {
-            shape.forEachEdge(consumer);
+            shape.forAllEdges(consumer);
         }
     }
 
     @Override
-    public void forEachBox(VoxelShapes.ILineConsumer consumer) {
+    public void forAllBoxes(VoxelShapes.ILineConsumer consumer) {
         for (VoxelShape shape : this) {
-            shape.forEachBox(consumer);
+            shape.forAllBoxes(consumer);
         }
     }
 
@@ -159,9 +161,9 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
     }
 
     @Override
-    public boolean contains(double x, double y, double z) {
+    public boolean isFullWide(double x, double y, double z) {
         for (VoxelShape shape : this) {
-            if (shape.contains(x, y, z)) {
+            if (shape.isFullWide(x, y, z)) {
                 return true;
             }
         }
@@ -170,7 +172,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
 
     @Nullable
     @Override
-    public BlockRayTraceResultComponent rayTrace(Vector3d startVec, Vector3d endVec, BlockPos pos) {
+    public BlockRayTraceResultComponent clip(Vector3d startVec, Vector3d endVec, BlockPos pos) {
         // Find component with shape that is closest to the startVec
         double distanceMin = Double.POSITIVE_INFINITY;
         VoxelShapeComponents.IComponent componentMin = null;
@@ -178,9 +180,9 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
 
         for (Pair<VoxelShape, IComponent> entry : entries) {
             VoxelShape shape = entry.getLeft();
-            BlockRayTraceResult result = shape.rayTrace(startVec, endVec, pos);
+            BlockRayTraceResult result = shape.clip(startVec, endVec, pos);
             if (result != null) {
-                double distance = result.getHitVec().squareDistanceTo(startVec);
+                double distance = result.getLocation().distanceToSqr(startVec);
                 if (distance < distanceMin) {
                     distanceMin = distance;
                     componentMin = entry.getRight();
@@ -211,20 +213,20 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         ModifiableAttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(ForgeMod.REACH_DISTANCE.get()) : null;
         double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
-        double eyeHeight = entity.getEntityWorld().isRemote() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
-        Vector3d lookVec = entity.getLookVec();
-        Vector3d origin = new Vector3d(entity.getPosX(), entity.getPosY() + eyeHeight, entity.getPosZ());
+        double eyeHeight = entity.getCommandSenderWorld().isClientSide() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
+        Vector3d lookVec = entity.getLookAngle();
+        Vector3d origin = new Vector3d(entity.getX(), entity.getY() + eyeHeight, entity.getZ());
         Vector3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
-        return rayTrace(origin, direction, pos);
+        return clip(origin, direction, pos);
     }
 
     @Override
-    public double getAllowedOffset(AxisRotation rotation, AxisAlignedBB axisAlignedBB, double range) {
+    public double collideX(AxisRotation rotation, AxisAlignedBB axisAlignedBB, double range) {
         boolean first = true;
         double valueBest = 0D;
         for (VoxelShape shape : this) {
-            double value = shape.getAllowedOffset(rotation, axisAlignedBB, range);
+            double value = shape.collideX(rotation, axisAlignedBB, range);
             if (range > 0) {
                 if (first || value < valueBest) {
                     valueBest = value;
@@ -255,9 +257,9 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         }
 
         @Override
-        public boolean contains(int x, int y, int z) {
+        public boolean isFullWide(int x, int y, int z) {
             for (VoxelShapePart part : this) {
-                if (part.contains(x, y, z)) {
+                if (part.isFullWide(x, y, z)) {
                     return true;
                 }
             }
@@ -265,9 +267,9 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         }
 
         @Override
-        public boolean isFilled(int x, int y, int z) {
+        public boolean isFull(int x, int y, int z) {
             for (VoxelShapePart part : this) {
-                if (part.isFilled(x, y, z)) {
+                if (part.isFull(x, y, z)) {
                     return true;
                 }
             }
@@ -275,18 +277,18 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         }
 
         @Override
-        public void setFilled(int x, int y, int z, boolean b, boolean b1) {
+        public void setFull(int x, int y, int z, boolean b, boolean b1) {
             for (VoxelShapePart part : this) {
-                part.setFilled(x, y, z, b, b1);
+                part.setFull(x, y, z, b, b1);
             }
         }
 
         @Override
-        public int getStart(Direction.Axis axis) {
+        public int firstFull(Direction.Axis axis) {
             boolean first = true;
             int startMin = 0;
             for (VoxelShapePart part : this) {
-                int start = part.getStart(axis);
+                int start = part.firstFull(axis);
                 if (first || start < startMin) {
                     startMin = start;
                     first = false;
@@ -296,11 +298,11 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         }
 
         @Override
-        public int getEnd(Direction.Axis axis) {
+        public int lastFull(Direction.Axis axis) {
             boolean first = true;
             int endMax = 0;
             for (VoxelShapePart part : this) {
-                int end = part.getEnd(axis);
+                int end = part.lastFull(axis);
                 if (first || end > endMax) {
                     endMax = end;
                     first = false;
@@ -324,9 +326,9 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         }
 
         @Override
-        public void forEachBox(ILineConsumer consumer, boolean p_197831_2_) {
+        public void forAllBoxes(ILineConsumer consumer, boolean p_197831_2_) {
             for (VoxelShapePart part : this) {
-                part.forEachBox(consumer, p_197831_2_);
+                part.forAllBoxes(consumer, p_197831_2_);
             }
         }
     }

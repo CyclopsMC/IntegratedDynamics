@@ -23,20 +23,20 @@ import org.cyclops.integrateddynamics.Reference;
 public class WorldFeatures {
 
     public static final ConfiguredFeature<?, ?> FLOWERS_MENEGLIN = register("flowers_meneglin", Feature.RANDOM_PATCH
-            .withConfiguration((new BlockClusterFeatureConfig.Builder((new WeightedBlockStateProvider())
-                    .addWeightedBlockstate(Blocks.BLUE_ORCHID.getDefaultState(), 200)
-                    .addWeightedBlockstate(Blocks.OXEYE_DAISY.getDefaultState(), 70)
-                    .addWeightedBlockstate(Blocks.WHITE_TULIP.getDefaultState(), 70)
-                    .addWeightedBlockstate(Blocks.LILY_OF_THE_VALLEY.getDefaultState(), 70), SimpleBlockPlacer.PLACER))
+            .configured((new BlockClusterFeatureConfig.Builder((new WeightedBlockStateProvider())
+                    .add(Blocks.BLUE_ORCHID.defaultBlockState(), 200)
+                    .add(Blocks.OXEYE_DAISY.defaultBlockState(), 70)
+                    .add(Blocks.WHITE_TULIP.defaultBlockState(), 70)
+                    .add(Blocks.LILY_OF_THE_VALLEY.defaultBlockState(), 70), SimpleBlockPlacer.INSTANCE))
                     .tries(64).build())
-            .withPlacement(Features.Placements.VEGETATION_PLACEMENT)
-            .withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT)
-            .func_242731_b(2));
+            .decorated(Features.Placements.ADD_32)
+            .decorated(Features.Placements.HEIGHTMAP_SQUARE)
+            .count(2));
     public static final ConfiguredFeature<?, ?> TREES_MENEGLIN = register("trees_meneglin", Feature.RANDOM_SELECTOR
-            .withConfiguration(new MultipleRandomFeatureConfig(ImmutableList.of(Features.FANCY_OAK_BEES_0002.withChance(0.1F)), Features.OAK_BEES_0002))
-            .withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT)
-            .withPlacement(Placement.COUNT_EXTRA
-                    .configure(new AtSurfaceWithExtraConfig(2, 0.1F, 1))));
+            .configured(new MultipleRandomFeatureConfig(ImmutableList.of(Features.FANCY_OAK_BEES_0002.weighted(0.1F)), Features.OAK_BEES_0002))
+            .decorated(Features.Placements.HEIGHTMAP_SQUARE)
+            .decorated(Placement.COUNT_EXTRA
+                    .configured(new AtSurfaceWithExtraConfig(2, 0.1F, 1))));
 
     private static <FC extends IFeatureConfig> ConfiguredFeature<FC, ?> register(String key, ConfiguredFeature<FC, ?> feature) {
         return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(Reference.MOD_ID, key), feature);

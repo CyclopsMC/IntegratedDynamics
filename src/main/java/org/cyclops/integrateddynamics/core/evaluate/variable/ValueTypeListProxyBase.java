@@ -41,19 +41,19 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
     public IFormattableTextComponent toCompactString() {
         StringTextComponent sb = new StringTextComponent("");
         boolean first = true;
-        sb.appendString("[");
+        sb.append("[");
         for(V value : this) {
             if(!first) {
-                sb.appendString(", ");
+                sb.append(", ");
             }
             first = false;
             sb.append(value.getType().toCompactString(value));
             if(sb.getString().length() > 10 || true) {
-                sb.appendString("...");
+                sb.append("...");
                 break;
             }
         }
-        sb.appendString("]");
+        sb.append("]");
         return sb;
     }
 

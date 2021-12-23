@@ -128,7 +128,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
                 .map((recipe) -> {
                     List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
                     if (!itemStacks.isEmpty()) {
-                        return Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(itemStacks.get(0), world, livingEntity);
+                        return Minecraft.getInstance().getItemRenderer().getModel(itemStacks.get(0), world, livingEntity);
                     }
                     return null;
                 })
@@ -144,7 +144,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
                         List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
                         if (!itemStacks.isEmpty()) {
                             ItemStack actualStack = itemStacks.get(0);
-                            actualStack.getItem().getItemStackTileEntityRenderer().func_239207_a_(actualStack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
+                            actualStack.getItem().getItemStackTileEntityRenderer().renderByItem(actualStack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
                         }
                     });
         }

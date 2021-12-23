@@ -75,10 +75,10 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+    public void broadcastChanges() {
+        super.broadcastChanges();
 
-        if (!player.world.isRemote()) {
+        if (!player.level.isClientSide()) {
             IFormattableTextComponent readValue = new StringTextComponent("");
             int readValueColor = 0;
             if (!NetworkHelpers.shouldWork()) {
@@ -98,7 +98,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
 
     @Override
     public void onDirty() {
-        if (!player.world.isRemote()) {
+        if (!player.level.isClientSide()) {
             S partState = getPartState().get();
             partState.onVariableContentsUpdated(getPartType(), getTarget().get());
             LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(getTarget().get().getCenter());

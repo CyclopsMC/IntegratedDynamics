@@ -38,7 +38,7 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Co
         for (int i = 0; i < valueTypes.length; i++) {
             IValueType valueType = valueTypes[i];
             IInventory temporaryInputSlots = container.getTemporaryInputSlots();
-            if (temporaryInputSlots.getStackInSlot(i).isEmpty()) {
+            if (temporaryInputSlots.getItem(i).isEmpty()) {
                 Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
                 if (gui.isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
                         ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {

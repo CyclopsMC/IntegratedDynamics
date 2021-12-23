@@ -8,7 +8,6 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.IIdentifiableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;

@@ -64,7 +64,7 @@ public class ContainerPartSettings extends InventoryContainer {
         this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
-        this.world = player.getEntityWorld();
+        this.world = player.getCommandSenderWorld();
 
         addPlayerInventory(player.inventory, 27, getPlayerInventoryOffsetY());
 
@@ -75,7 +75,7 @@ public class ContainerPartSettings extends InventoryContainer {
         lastMinUpdateValueId = getNextValueId();
 
         putButtonAction(ContainerPartSettings.BUTTON_SAVE, (s, containerExtended) -> {
-            if(!world.isRemote()) {
+            if(!world.isClientSide()) {
                 PartHelpers.openContainerPart((ServerPlayerEntity) player, target.getCenter(), getPartType());
             }
         });
@@ -148,7 +148,7 @@ public class ContainerPartSettings extends InventoryContainer {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity player) {
+    public boolean stillValid(PlayerEntity player) {
         return PartHelpers.canInteractWith(getTarget(), player, this.partContainer.get());
     }
 
@@ -161,7 +161,7 @@ public class ContainerPartSettings extends InventoryContainer {
     public void onUpdate(int valueId, CompoundNBT value) {
         super.onUpdate(valueId, value);
         try {
-            if(!world.isRemote()) {
+            if(!world.isClientSide()) {
                 PartTarget target = getTarget();
                 DimPos dimPos = target.getCenter().getPos();
                 INetwork network = NetworkHelpers.getNetworkChecked(dimPos.getWorld(true), dimPos.getBlockPos(), target.getCenter().getSide());
@@ -173,7 +173,7 @@ public class ContainerPartSettings extends InventoryContainer {
                 network.setPriorityAndChannel(networkElement, getLastPriorityValue(), getLastChannelValue());
             }
         } catch (PartStateException e) {
-            player.closeScreen();
+            player.closeContainer();
         }
     }
 

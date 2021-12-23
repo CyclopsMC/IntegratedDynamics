@@ -39,12 +39,12 @@ public class VariableFacadePredicate<V extends IVariableFacade> {
 
     public static VariableFacadePredicate deserialize(@Nullable JsonElement element) {
         if (element != null && !element.isJsonNull()) {
-            JsonObject jsonobject = JSONUtils.getJsonObject(element, "variable_facade");
+            JsonObject jsonobject = JSONUtils.convertToJsonObject(element, "variable_facade");
             IVariableFacadeHandler handler;
 
             JsonElement typeElement = jsonobject.get("type");
             if (typeElement != null && !typeElement.isJsonNull()) {
-                String type = JSONUtils.getString(jsonobject, "type");
+                String type = JSONUtils.getAsString(jsonobject, "type");
                 handler = VARIABLE_FACADE_HANDLER_REGISTRY.getHandler(new ResourceLocation(type));
                 if (handler == null) {
                     throw new JsonSyntaxException("Unknown variable type '" + type + "', valid types are: "

@@ -29,6 +29,8 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import java.util.List;
 import java.util.Random;
 
+import org.cyclops.integrateddynamics.api.item.IVariableFacade.IValidator;
+
 /**
  * Variable facade for variables determined for operators based on other variables in the network determined by their id.
  * @author rubensworks
@@ -182,7 +184,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(List<ITextComponent> list, World world) {
+    public void appendHoverText(List<ITextComponent> list, World world) {
         if(isValid()) {
             getOperator().loadTooltip(list, false);
             StringBuilder sb = new StringBuilder();
@@ -198,7 +200,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
             sb.append("}");
             list.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_VARIABLEIDS, sb.toString()));
         }
-        super.addInformation(list, world);
+        super.appendHoverText(list, world);
     }
 
     @OnlyIn(Dist.CLIENT)

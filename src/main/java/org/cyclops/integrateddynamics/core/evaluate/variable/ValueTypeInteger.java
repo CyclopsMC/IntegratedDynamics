@@ -42,7 +42,7 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     @Override
     public ValueInteger deserialize(INBT value) {
         if (value.getId() == Constants.NBT.TAG_INT) {
-            return ValueInteger.of(((IntNBT) value).getInt());
+            return ValueInteger.of(((IntNBT) value).getAsInt());
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to an integer.", value));
         }

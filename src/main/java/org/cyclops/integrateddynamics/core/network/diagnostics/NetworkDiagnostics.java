@@ -37,12 +37,12 @@ public class NetworkDiagnostics {
     }
 
     protected ServerPlayerEntity getPlayer(UUID uuid) {
-        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(uuid);
+        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
     }
 
     public synchronized void registerPlayer(ServerPlayerEntity player) {
-        if (!players.contains(player.getUniqueID())) {
-            players.add(player.getUniqueID());
+        if (!players.contains(player.getUUID())) {
+            players.add(player.getUUID());
             for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                 sendNetworkUpdateToPlayer(player, network);
             }
@@ -51,7 +51,7 @@ public class NetworkDiagnostics {
     }
 
     public synchronized void unRegisterPlayer(ServerPlayerEntity player) {
-        players.remove(player.getUniqueID());
+        players.remove(player.getUUID());
     }
 
     public void sendNetworkUpdateToPlayer(ServerPlayerEntity player, INetwork network) {

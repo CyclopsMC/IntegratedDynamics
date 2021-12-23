@@ -13,7 +13,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidUtil;
@@ -35,27 +34,27 @@ public class BlockMechanicalDryingBasin extends BlockMechanicalMachine {
     public BlockMechanicalDryingBasin(Properties properties) {
         super(properties, TileMechanicalDryingBasin::new);
 
-        this.setDefaultState(this.stateContainer.getBaseState()
-                .with(LIT, false));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(LIT, false));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(LIT);
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
+    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
         if (FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, Direction.UP)
                 || FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, Direction.DOWN)) {
             return ActionResultType.SUCCESS;
         }
-        return super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
+        return super.use(blockState, world, blockPos, player, hand, rayTraceResult);
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (!world.isRemote()) {
+    public void setPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        if (!world.isClientSide()) {
             TileHelpers.getSafeTile(world, blockPos, TileMechanicalDryingBasin.class)
                     .ifPresent(tile -> {
                         if (itemStack.hasTag()) {
@@ -68,7 +67,7 @@ public class BlockMechanicalDryingBasin extends BlockMechanicalMachine {
                         }
                     });
         }
-        super.onBlockPlacedBy(world, blockPos, state, placer, itemStack);
+        super.setPlacedBy(world, blockPos, state, placer, itemStack);
     }
 
     @Override

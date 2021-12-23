@@ -38,7 +38,7 @@ public class PartContainerConfig extends CapabilityConfig<IPartContainer> {
                     }
 
                     @Override
-                    protected void markDirty() {
+                    protected void setChanged() {
 
                     }
 
@@ -48,7 +48,7 @@ public class PartContainerConfig extends CapabilityConfig<IPartContainer> {
                     }
 
                     @Override
-                    protected World getWorld() {
+                    protected World getLevel() {
                         return null;
                     }
 

@@ -49,11 +49,11 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
-        ITextComponent readValue = getContainer().getReadValue();
-        int readValueColor = getContainer().getReadValueColor();
+        ITextComponent readValue = getMenu().getReadValue();
+        int readValueColor = getMenu().getReadValueColor();
         boolean ok = false;
         if(readValue != null) {
             ok = true;
@@ -62,15 +62,15 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
         }
 
         RenderSystem.color3f(1, 1, 1);
-        displayErrors.drawBackground(matrixStack, getContainer().getReadErrors(), ERROR_X, ERROR_Y, OK_X, OK_Y, this,
-                this.guiLeft, this.guiTop, ok);
+        displayErrors.drawBackground(matrixStack, getMenu().getReadErrors(), ERROR_X, ERROR_Y, OK_X, OK_Y, this,
+                this.leftPos, this.topPos, ok);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.renderLabels(matrixStack, mouseX, mouseY);
         // Render error tooltip
-        displayErrors.drawForeground(matrixStack, getContainer().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.guiLeft, this.guiTop);
+        displayErrors.drawForeground(matrixStack, getMenu().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.leftPos, this.topPos);
 
         // Draw tooltip over copy button
         GuiHelpers.renderTooltip(this, 128, 32, 30, 12, mouseX, mouseY,
@@ -97,9 +97,9 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     }
 
     protected void valueToClipboard() {
-        ITextComponent readValue = getContainer().getReadValue();
+        ITextComponent readValue = getMenu().getReadValue();
         if (readValue != null) {
-            getMinecraft().keyboardListener.setClipboardString(readValue.getString());
+            getMinecraft().keyboardHandler.setClipboard(readValue.getString());
         }
     }
 }

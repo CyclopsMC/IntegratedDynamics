@@ -66,7 +66,7 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
 
         @Override
         public boolean destroy(World world, BlockPos pos, PlayerEntity player, boolean saveState) {
-            if(!world.isRemote()) {
+            if(!world.isClientSide()) {
                 TileHelpers.getCapability(world, pos, FacadeableConfig.CAPABILITY)
                         .ifPresent(facadeable -> {
                             BlockState blockState = facadeable.getFacade();
@@ -93,11 +93,11 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
 
         @Override
         public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
-            ItemStack heldItem = player.getHeldItem(hand);
-            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isSecondaryUseActive()) {
-                if (!world.isRemote()) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getDirection()) && player.isSecondaryUseActive()) {
+                if (!world.isClientSide()) {
                     destroy(world, blockPos, player, true);
-                    world.notifyNeighborsOfStateChange(blockPos, state.getBlock());
+                    world.updateNeighborsAt(blockPos, state.getBlock());
                 }
                 return ActionResultType.SUCCESS;
             }

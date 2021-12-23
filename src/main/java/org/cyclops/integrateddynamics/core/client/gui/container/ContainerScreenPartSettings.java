@@ -53,19 +53,19 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
             if (isFieldSideEnabled()) {
                 Direction selectedSide = dropdownFieldSide.getSelectedDropdownPossibility() == null ? null : dropdownFieldSide.getSelectedDropdownPossibility().getValue();
                 int side = selectedSide != null && selectedSide != getDefaultSide() ? selectedSide.ordinal() : -1;
-                ValueNotifierHelpers.setValue(getContainer(), getContainer().getLastSideValueId(), side);
+                ValueNotifierHelpers.setValue(getMenu(), getMenu().getLastSideValueId(), side);
             }
             if (isFieldUpdateIntervalEnabled()) {
                 int updateInterval = numberFieldUpdateInterval.getInt();
-                ValueNotifierHelpers.setValue(getContainer(), getContainer().getLastUpdateValueId(), updateInterval);
+                ValueNotifierHelpers.setValue(getMenu(), getMenu().getLastUpdateValueId(), updateInterval);
             }
             if (isFieldPriorityEnabled()) {
                 int priority = numberFieldPriority.getInt();
-                ValueNotifierHelpers.setValue(getContainer(), getContainer().getLastPriorityValueId(), priority);
+                ValueNotifierHelpers.setValue(getMenu(), getMenu().getLastPriorityValueId(), priority);
             }
             if (isFieldChannelEnabled()) {
                 int channel = numberFieldChannel.getInt();
-                ValueNotifierHelpers.setValue(getContainer(), getContainer().getLastChannelValueId(), channel);
+                ValueNotifierHelpers.setValue(getMenu(), getMenu().getLastChannelValueId(), channel);
             }
         } catch (NumberFormatException e) { }
     }
@@ -76,38 +76,38 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     protected Direction getCurrentSide() {
-        return getContainer().getTarget().getTarget().getSide();
+        return getMenu().getTarget().getTarget().getSide();
     }
 
     protected Direction getDefaultSide() {
-        return getContainer().getTarget().getCenter().getSide().getOpposite();
+        return getMenu().getTarget().getCenter().getSide().getOpposite();
     }
 
     protected String getSideText(Direction side) {
-        return side.getString().toLowerCase(Locale.ENGLISH);
+        return side.getSerializedName().toLowerCase(Locale.ENGLISH);
     }
 
     @Override
     public void init() {
         super.init();
-        getMinecraft().keyboardListener.enableRepeatEvents(true);
+        getMinecraft().keyboardHandler.setSendRepeatsToGui(true);
 
         if (isFieldSideEnabled()) {
             dropdownEntries = Arrays.stream(Direction.values()).map(SideDropdownEntry::new).collect(Collectors.toList());
-            dropdownFieldSide = new WidgetTextFieldDropdown(font, guiLeft + 106, guiTop + getFieldSideY(),
+            dropdownFieldSide = new WidgetTextFieldDropdown(font, leftPos + 106, topPos + getFieldSideY(),
                     70, 14, new TranslationTextComponent("gui.integrateddynamics.partsettings.side"), true,
                     Sets.newHashSet(dropdownEntries));
             setSideInDropdownField(getCurrentSide());
-            dropdownFieldSide.setMaxStringLength(15);
+            dropdownFieldSide.setMaxLength(15);
             dropdownFieldSide.setVisible(true);
             dropdownFieldSide.setTextColor(16777215);
             dropdownFieldSide.setCanLoseFocus(true);
         }
 
         if (isFieldUpdateIntervalEnabled()) {
-            numberFieldUpdateInterval = new WidgetNumberField(font, guiLeft + 106, guiTop + getFieldUpdateIntervalY(), 70, 14, true,
+            numberFieldUpdateInterval = new WidgetNumberField(font, leftPos + 106, topPos + getFieldUpdateIntervalY(), 70, 14, true,
                     new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), true);
-            numberFieldUpdateInterval.setMaxStringLength(15);
+            numberFieldUpdateInterval.setMaxLength(15);
             numberFieldUpdateInterval.setVisible(true);
             numberFieldUpdateInterval.setTextColor(16777215);
             numberFieldUpdateInterval.setCanLoseFocus(true);
@@ -115,20 +115,20 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         }
 
         if (isFieldPriorityEnabled()) {
-            numberFieldPriority = new WidgetNumberField(font, guiLeft + 106, guiTop + getFieldPriorityY(), 70, 14, true,
+            numberFieldPriority = new WidgetNumberField(font, leftPos + 106, topPos + getFieldPriorityY(), 70, 14, true,
                     new TranslationTextComponent("gui.integrateddynamics.partsettings.priority"), true);
             numberFieldPriority.setPositiveOnly(false);
-            numberFieldPriority.setMaxStringLength(15);
+            numberFieldPriority.setMaxLength(15);
             numberFieldPriority.setVisible(true);
             numberFieldPriority.setTextColor(16777215);
             numberFieldPriority.setCanLoseFocus(true);
         }
 
         if (isFieldChannelEnabled()) {
-            numberFieldChannel = new WidgetNumberField(font, guiLeft + 106, guiTop + getFieldChannelY(), 70, 14, true,
+            numberFieldChannel = new WidgetNumberField(font, leftPos + 106, topPos + getFieldChannelY(), 70, 14, true,
                     new TranslationTextComponent("gui.integrateddynamics.partsettings.channel"), true);
             numberFieldChannel.setPositiveOnly(false);
-            numberFieldChannel.setMaxStringLength(15);
+            numberFieldChannel.setMaxLength(15);
             numberFieldChannel.setVisible(true);
             numberFieldChannel.setTextColor(16777215);
             numberFieldChannel.setCanLoseFocus(true);
@@ -137,10 +137,15 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         TranslationTextComponent save = new TranslationTextComponent("gui.integrateddynamics.button.save");
         // MCP: getStringWidth
-        addButton(new ButtonText(this.guiLeft + 178, this.guiTop + 8, font.func_243245_a(save.func_241878_f()) + 6, 16, save, save,
+        addButton(new ButtonText(this.leftPos + 178, this.topPos + 8, font.width(save.getVisualOrderText()) + 6, 16, save, save,
                 createServerPressable(ContainerPartSettings.BUTTON_SAVE, b -> onSave()), true));
 
         this.refreshValues();
+    }
+
+    @Override
+    protected void renderBg(MatrixStack p_230450_1_, float p_230450_2_, int p_230450_3_, int p_230450_4_) {
+        // TODO: rm
     }
 
     protected int getFieldSideY() {
@@ -244,25 +249,25 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
         if (isFieldUpdateIntervalEnabled()) {
-            font.drawString(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0));
+            font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0));
             numberFieldUpdateInterval.render(matrixStack, mouseX, mouseY, partialTicks);
         }
         if (isFieldPriorityEnabled()) {
-            font.drawString(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), guiLeft + 8, guiTop + getFieldPriorityY() + 3, Helpers.RGBToInt(0, 0, 0));
+            font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, Helpers.RGBToInt(0, 0, 0));
             numberFieldPriority.render(matrixStack, mouseX, mouseY, partialTicks);
         }
         if (isFieldChannelEnabled()) {
-            font.drawString(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), guiLeft + 8, guiTop + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
+            font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
             numberFieldChannel.render(matrixStack, mouseX, mouseY, partialTicks);
         }
         if (isFieldSideEnabled()) {
-            font.drawString(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), guiLeft + 8, guiTop + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0));
+            font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0));
             dropdownFieldSide.render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
             GuiHelpers.renderTooltip(this, 8, 87, 100, 20, mouseX, mouseY,
@@ -290,21 +295,21 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
     @Override
     public void onUpdate(int valueId, CompoundNBT value) {
-        if (isFieldSideEnabled() && valueId == getContainer().getLastSideValueId()) {
-            int side = getContainer().getLastSideValue();
+        if (isFieldSideEnabled() && valueId == getMenu().getLastSideValueId()) {
+            int side = getMenu().getLastSideValue();
             setSideInDropdownField(side == -1 ? getDefaultSide() : Direction.values()[side]);
         }
-        if (isFieldUpdateIntervalEnabled() && valueId == getContainer().getLastUpdateValueId()) {
-            numberFieldUpdateInterval.setText(Integer.toString(getContainer().getLastUpdateValue()));
+        if (isFieldUpdateIntervalEnabled() && valueId == getMenu().getLastUpdateValueId()) {
+            numberFieldUpdateInterval.setText(Integer.toString(getMenu().getLastUpdateValue()));
         }
-        if (isFieldUpdateIntervalEnabled() && valueId == getContainer().getLastMinUpdateValueId()) {
-            numberFieldUpdateInterval.setMinValue(getContainer().getLastMinUpdateValue());
+        if (isFieldUpdateIntervalEnabled() && valueId == getMenu().getLastMinUpdateValueId()) {
+            numberFieldUpdateInterval.setMinValue(getMenu().getLastMinUpdateValue());
         }
-        if (isFieldPriorityEnabled() && valueId == getContainer().getLastPriorityValueId()) {
-            numberFieldPriority.setText(Integer.toString(getContainer().getLastPriorityValue()));
+        if (isFieldPriorityEnabled() && valueId == getMenu().getLastPriorityValueId()) {
+            numberFieldPriority.setText(Integer.toString(getMenu().getLastPriorityValue()));
         }
-        if (isFieldChannelEnabled() && valueId == getContainer().getLastChannelValueId()) {
-            numberFieldChannel.setText(Integer.toString(getContainer().getLastChannelValue()));
+        if (isFieldChannelEnabled() && valueId == getMenu().getLastChannelValueId()) {
+            numberFieldChannel.setText(Integer.toString(getMenu().getLastChannelValue()));
         }
     }
 
@@ -324,7 +329,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         @Override
         public IFormattableTextComponent getDisplayString() {
             if (getDefaultSide() == this.side) {
-                return new StringTextComponent(getMatchString()).mergeStyle(TextFormatting.YELLOW);
+                return new StringTextComponent(getMatchString()).withStyle(TextFormatting.YELLOW);
             }
             return new StringTextComponent(getMatchString());
         }

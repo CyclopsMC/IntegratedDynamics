@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable.IIndexChangeObserver;
+
 /**
  * An ingredient network that can hold prioritized positions.
  * @param <T> The instance type.

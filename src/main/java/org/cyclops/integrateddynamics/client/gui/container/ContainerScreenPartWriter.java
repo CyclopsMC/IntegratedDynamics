@@ -40,8 +40,8 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     @Override
     protected void drawAdditionalElementInfoForeground(MatrixStack matrixStack, ContainerPartWriter<P, S> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
         // Render error tooltip
-        if(getContainer().isPartStateEnabled()) {
-            displayErrors.drawForeground(matrixStack, getContainer().getAspectErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.guiLeft, this.guiTop);
+        if(getMenu().isPartStateEnabled()) {
+            displayErrors.drawForeground(matrixStack, getMenu().getAspectErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.leftPos, this.topPos);
         }
     }
 
@@ -53,22 +53,22 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
         // This could be cached if this would prove to be a bottleneck
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), aspect);
         Rectangle pos = getElementPosition(container, index, true);
-        RenderHelper.enableStandardItemLighting();
-        itemRenderer.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
+        RenderHelper.turnBackOn();
+        itemRenderer.renderAndDecorateItem(itemStack, pos.x, pos.y);
 
         // Render error symbol
-        if(getContainer().isPartStateEnabled()) {
-            displayErrors.drawBackground(matrixStack, getContainer().getAspectErrors(aspect), ERROR_X, ERROR_Y + aspectBoxHeight * index, OK_X, OK_Y + aspectBoxHeight * index, this,
-                    this.guiLeft, this.guiTop, getContainer().getPartStateActiveAspect() == aspect);
+        if(getMenu().isPartStateEnabled()) {
+            displayErrors.drawBackground(matrixStack, getMenu().getAspectErrors(aspect), ERROR_X, ERROR_Y + aspectBoxHeight * index, OK_X, OK_Y + aspectBoxHeight * index, this,
+                    this.leftPos, this.topPos, getMenu().getPartStateActiveAspect() == aspect);
         }
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
-        ContainerPartWriter<?, ?> container = (ContainerPartWriter<?, ?>) getContainer();
-        RenderHelpers.drawScaledCenteredString(matrixStack, font, container.getWriteValue().getString(), this.guiLeft + offsetX + 53,
-                this.guiTop + offsetY + 132, 70, container.getWriteValueColor());
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+        ContainerPartWriter<?, ?> container = (ContainerPartWriter<?, ?>) getMenu();
+        RenderHelpers.drawScaledCenteredString(matrixStack, font, container.getWriteValue().getString(), this.leftPos + offsetX + 53,
+                this.topPos + offsetY + 132, 70, container.getWriteValueColor());
     }
 
     @Override

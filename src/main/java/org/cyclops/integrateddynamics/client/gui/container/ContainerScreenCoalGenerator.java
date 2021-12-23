@@ -25,9 +25,9 @@ public class ContainerScreenCoalGenerator extends ContainerScreenExtended<Contai
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
-        int lastProgress = getContainer().getProgress();
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
+        int lastProgress = getMenu().getProgress();
         if (lastProgress >= 0) {
             this.blit(matrixStack, getGuiLeftTotal() + 81, getGuiTopTotal() + 30 + lastProgress, 176,
                     lastProgress, 14, TileCoalGenerator.MAX_PROGRESS - lastProgress + 1);
@@ -35,8 +35,8 @@ public class ContainerScreenCoalGenerator extends ContainerScreenExtended<Contai
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
     }
 }

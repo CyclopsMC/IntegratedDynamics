@@ -65,14 +65,14 @@ public class TileDryingBasin extends CyclopsTileEntity implements CyclopsTileEnt
         // Create inventory and tank
         this.inventory = new SimpleInventory(1, 1) {
             @Override
-            public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-                return getStackInSlot(0).isEmpty();
+            public boolean canPlaceItem(int i, ItemStack itemstack) {
+                return getItem(0).isEmpty();
             }
 
             @Override
-            public void setInventorySlotContents(int slotId, ItemStack itemstack) {
-                super.setInventorySlotContents(slotId, itemstack);
-                TileDryingBasin.this.randomRotation = world.rand.nextFloat() * 360;
+            public void setItem(int slotId, ItemStack itemstack) {
+                // super.setItem(slotId, itemstack); // TODO: restore
+                TileDryingBasin.this.randomRotation = level.random.nextFloat() * 360;
                 sendUpdate();
             }
         };
@@ -83,29 +83,29 @@ public class TileDryingBasin extends CyclopsTileEntity implements CyclopsTileEnt
 
         // Add dirty mark listeners to inventory and tank
         this.inventory.addDirtyMarkListener(this::sendUpdate);
-        this.tank.addDirtyMarkListener(this.inventory::markDirty);
+        this.tank.addDirtyMarkListener(this.inventory::setChanged);
 
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(new SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeDryingBasin>>() {
             @Override
             public Optional<RecipeDryingBasin> getNewValue(Pair<ItemStack, FluidStack> key) {
                 IInventoryFluid recipeInput = new InventoryFluid(
-                        NonNullList.from(ItemStack.EMPTY, key.getLeft()),
-                        NonNullList.from(FluidStack.EMPTY, key.getRight()));
-                return CraftingHelpers.findServerRecipe(getRegistry(), recipeInput, getWorld());
+                        NonNullList.of(ItemStack.EMPTY, key.getLeft()),
+                        NonNullList.of(FluidStack.EMPTY, key.getRight()));
+                return CraftingHelpers.findServerRecipe(getRegistry(), recipeInput, getLevel());
             }
 
             @Override
             public boolean isKeyEqual(Pair<ItemStack, FluidStack> cacheKey, Pair<ItemStack, FluidStack> newKey) {
                 return cacheKey == null || newKey == null ||
-                        (ItemStack.areItemStacksEqual(cacheKey.getLeft(), newKey.getLeft()) &&
+                        (ItemStack.matches(cacheKey.getLeft(), newKey.getLeft()) &&
                                 FluidStack.areFluidStackTagsEqual(cacheKey.getRight(), newKey.getRight())) &&
                                 FluidHelpers.getAmount(cacheKey.getRight()) == FluidHelpers.getAmount(newKey.getRight());
             }
         });
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getWorld)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getLevel)));
     }
 
     public SimpleInventory getInventory() {
@@ -124,10 +124,10 @@ public class TileDryingBasin extends CyclopsTileEntity implements CyclopsTileEnt
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         inventory.writeToNBT(tag, "inventory");
         tank.writeToNBT(tag, "tank");
-        return super.write(tag);
+        return super.save(tag);
     }
 
     protected IRecipeType<RecipeDryingBasin> getRegistry() {
@@ -135,19 +135,19 @@ public class TileDryingBasin extends CyclopsTileEntity implements CyclopsTileEnt
     }
 
     public Optional<RecipeDryingBasin> getCurrentRecipe() {
-        return recipeCache.get(Pair.of(getInventory().getStackInSlot(0).copy(), FluidHelpers.copy(getTank().getFluid())));
+        return recipeCache.get(Pair.of(getInventory().getItem(0).copy(), FluidHelpers.copy(getTank().getFluid())));
     }
 
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if(!world.isRemote()) {
+        if(!level.isClientSide()) {
             Optional<RecipeDryingBasin> currentRecipe = getCurrentRecipe();
             if (!getTank().isEmpty() && getTank().getFluid().getFluid().getAttributes().getTemperature(getTank().getFluid()) >= WOOD_IGNITION_TEMPERATURE) {
                 if (++fire >= 100) {
-                    getWorld().setBlockState(getPos(), Blocks.FIRE.getDefaultState());
-                } else if (getWorld().isAirBlock(getPos().offset(Direction.UP)) && world.rand.nextInt(10) == 0) {
-                    getWorld().setBlockState(getPos().offset(Direction.UP), Blocks.FIRE.getDefaultState());
+                    getLevel().setBlockAndUpdate(getBlockPos(), Blocks.FIRE.defaultBlockState());
+                } else if (getLevel().isEmptyBlock(getBlockPos().relative(Direction.UP)) && level.random.nextInt(10) == 0) {
+                    getLevel().setBlockAndUpdate(getBlockPos().relative(Direction.UP), Blocks.FIRE.defaultBlockState());
                 }
 
             } else if (currentRecipe.isPresent()) {
@@ -161,9 +161,9 @@ public class TileDryingBasin extends CyclopsTileEntity implements CyclopsTileEnt
                     ItemStack output = recipe.getOutputItem();
                     if (!output.isEmpty()) {
                         output = output.copy();
-                        getInventory().setInventorySlotContents(0, output);
+                        getInventory().setItem(0, output);
                     } else {
-                        getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
+                        getInventory().setItem(0, ItemStack.EMPTY);
                     }
 
                     // Produce output fluid
@@ -176,33 +176,33 @@ public class TileDryingBasin extends CyclopsTileEntity implements CyclopsTileEnt
                     progress = 0;
                 } else {
                     progress++;
-                    markDirty();
+                    setChanged();
                 }
                 fire = 0;
             } else {
                 if ((progress > 0) || (fire > 0)) {
                     progress = 0;
                     fire = 0;
-                    markDirty();
+                    setChanged();
                 }
             }
-        } else if(progress > 0 && world.rand.nextInt(5) == 0) {
+        } else if(progress > 0 && level.random.nextInt(5) == 0) {
             if(!getTank().isEmpty()) {
-                BlockState blockState = getTank().getFluid().getFluid().getAttributes().getBlock(getWorld(), getPos(),
-                        getTank().getFluid().getFluid().getDefaultState());
+                BlockState blockState = getTank().getFluid().getFluid().getAttributes().getBlock(getLevel(), getBlockPos(),
+                        getTank().getFluid().getFluid().defaultFluidState());
                 if(blockState != null) {
                     // TODO: send via packet to client
-                    getWorld().addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, blockState),
-                            getPos().getX() + Math.random() * 0.8D + 0.1D, getPos().getY() + Math.random() * 0.1D + 0.9D,
-                            getPos().getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0);
+                    getLevel().addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, blockState),
+                            getBlockPos().getX() + Math.random() * 0.8D + 0.1D, getBlockPos().getY() + Math.random() * 0.1D + 0.9D,
+                            getBlockPos().getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0);
                 }
             }
-            if(!getInventory().getStackInSlot(0).isEmpty()) {
-                ItemStack itemStack = getInventory().getStackInSlot(0);
+            if(!getInventory().getItem(0).isEmpty()) {
+                ItemStack itemStack = getInventory().getItem(0);
                 // TODO: send via packet to client
-                getWorld().addParticle(new ItemParticleData(ParticleTypes.ITEM, itemStack),
-                        getPos().getX() + Math.random() * 0.8D + 0.1D, getPos().getY() + Math.random() * 0.1D + 0.9D,
-                        getPos().getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0);
+                getLevel().addParticle(new ItemParticleData(ParticleTypes.ITEM, itemStack),
+                        getBlockPos().getX() + Math.random() * 0.8D + 0.1D, getBlockPos().getY() + Math.random() * 0.1D + 0.9D,
+                        getBlockPos().getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0);
             }
         }
     }

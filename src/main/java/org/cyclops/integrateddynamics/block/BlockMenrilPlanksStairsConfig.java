@@ -23,8 +23,8 @@ public class BlockMenrilPlanksStairsConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_planks_stairs",
-                eConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_MENRIL_PLANKS.getDefaultState(), Block.Properties.create(Material.WOOD, MaterialColor.CYAN)
-                        .hardnessAndResistance(2.0F)
+                eConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_MENRIL_PLANKS.defaultBlockState(), Block.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
+                        .strength(2.0F)
                         .sound(SoundType.WOOD)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

@@ -29,15 +29,15 @@ public class ContainerScreenVariablestore extends ContainerScreenExtended<Contai
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        this.getMinecraft().getTextureManager().bindTexture(texture);
-        this.blit(matrixStack, guiLeft + offsetX, guiTop + offsetY, 0, 0, this.xSize, TileVariablestore.ROWS * 18 + 17);
-        this.blit(matrixStack, guiLeft + offsetX, guiTop + offsetY + TileVariablestore.ROWS * 18 + 17, 0, 126, this.xSize, 96);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        this.getMinecraft().getTextureManager().bind(texture);
+        this.blit(matrixStack, leftPos + offsetX, topPos + offsetY, 0, 0, this.imageWidth, TileVariablestore.ROWS * 18 + 17);
+        this.blit(matrixStack, leftPos + offsetX, topPos + offsetY + TileVariablestore.ROWS * 18 + 17, 0, 126, this.imageWidth, 96);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
     }
 }

@@ -21,7 +21,7 @@ public class ItemFacadeConfig extends ItemConfig {
                 IntegratedDynamics._instance,
                 "facade",
                 eConfig -> new ItemFacade(new Item.Properties()
-                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
     }

@@ -19,23 +19,23 @@ public class RecipeSerializerEnergyContainerCombination extends ForgeRegistryEnt
         implements IRecipeSerializer<RecipeEnergyContainerCombination> {
 
     @Override
-    public RecipeEnergyContainerCombination read(ResourceLocation recipeId, JsonObject json) {
+    public RecipeEnergyContainerCombination fromJson(ResourceLocation recipeId, JsonObject json) {
         Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", false);
-        int maxCapacity = JSONUtils.getInt(json, "maxCapacity");
+        int maxCapacity = JSONUtils.getAsInt(json, "maxCapacity");
         return new RecipeEnergyContainerCombination(recipeId, inputIngredient, maxCapacity);
     }
 
     @Nullable
     @Override
-    public RecipeEnergyContainerCombination read(ResourceLocation recipeId, PacketBuffer buffer) {
-        Ingredient inputIngredient = Ingredient.read(buffer);
+    public RecipeEnergyContainerCombination fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+        Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
         int maxCapacity = buffer.readInt();
         return new RecipeEnergyContainerCombination(recipeId, inputIngredient, maxCapacity);
     }
 
     @Override
-    public void write(PacketBuffer buffer, RecipeEnergyContainerCombination recipe) {
-        recipe.getBatteryItem().write(buffer);
+    public void toNetwork(PacketBuffer buffer, RecipeEnergyContainerCombination recipe) {
+        recipe.getBatteryItem().toNetwork(buffer);
         buffer.writeInt(recipe.getMaxCapacity());
     }
 }

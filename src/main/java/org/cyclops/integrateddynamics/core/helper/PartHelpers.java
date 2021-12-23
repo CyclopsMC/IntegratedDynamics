@@ -141,7 +141,7 @@ public class PartHelpers {
      */
     public static void writePartTypeToNBT(CompoundNBT partTag, Direction side, IPartType partType) {
         partTag.putString("__partType", partType.getUniqueName().toString());
-        partTag.putString("__side", side.getString());
+        partTag.putString("__side", side.getSerializedName());
     }
 
     /**
@@ -249,7 +249,7 @@ public class PartHelpers {
         }
 
         // Trigger block render update if at least one of the parts requires it.
-        if (world != null && world.isRemote()) {
+        if (world != null && world.isClientSide()) {
             boolean triggerBlockRenderUpdate = false;
             for (Direction side : Direction.values()) {
                 PartStateHolder<?, ?> oldData = oldPartData.get(side);
@@ -293,13 +293,13 @@ public class PartHelpers {
         // Remove full cable block if this was the last part and if it was already an unreal cable.
         boolean removeCompletely = destroyIfEmpty && (cableFakeable == null || !cableFakeable.isRealCable()) && !partContainer.hasParts();
         if(removeCompletely) {
-            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+            world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
         } else {
-            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
+            world.updateNeighborsAt(pos, world.getBlockState(pos).getBlock());
             // If there is a cable in the direction of the removed part, try connecting with it.
-            if (CableHelpers.getCable(world, pos.offset(side), side.getOpposite()).isPresent()) {
+            if (CableHelpers.getCable(world, pos.relative(side), side.getOpposite()).isPresent()) {
                 CableHelpers.updateConnections(world, pos, side);
-                CableHelpers.updateConnections(world, pos.offset(side), side.getOpposite());
+                CableHelpers.updateConnections(world, pos.relative(side), side.getOpposite());
                 NetworkHelpers.initNetwork(world, pos, side);
             }
         }
@@ -319,7 +319,7 @@ public class PartHelpers {
     public static boolean addPart(World world, BlockPos pos, Direction side, IPartType partType, ItemStack itemStack) {
         IPartContainer partContainer = getPartContainerChecked(world, pos, side);
         if(partContainer.canAddPart(side, partType)) {
-            if(!world.isRemote()) {
+            if(!world.isClientSide()) {
                 partContainer.setPart(side, partType, partType.getState(itemStack));
             }
             return true;
@@ -339,7 +339,7 @@ public class PartHelpers {
     public static boolean addPart(World world, BlockPos pos, Direction side, IPartType partType, IPartState partState) {
         IPartContainer partContainer = getPartContainerChecked(world, pos, side);
         if(partContainer.canAddPart(side, partType)) {
-            if(!world.isRemote()) {
+            if(!world.isClientSide()) {
                 partContainer.setPart(side, partType, partState);
             }
             return true;
@@ -366,7 +366,7 @@ public class PartHelpers {
             if(!network.addNetworkElement(networkElement, false)) {
                 // In this case, the addition failed because that part id is already present in the network,
                 // therefore we have to make a new state for that part (with a new id) and retry.
-                partState = part.getDefaultState();
+                partState = part.defaultBlockState();
                 callback.onSet(PartStateHolder.of(part, partState));
                 IntegratedDynamics.clog(Level.WARN, "A part already existed in the network, this is possibly a " +
                         "result from item duplication.");
@@ -443,7 +443,7 @@ public class PartHelpers {
      */
     public static void openContainerAspectSettings(ServerPlayerEntity player, PartPos pos, IAspect<?, ?> aspect) {
         NetworkHooks.openGui(player, aspect.getPropertiesContainerProvider(pos),
-                packetBuffer -> packetBuffer.writeString(aspect.getUniqueName().toString()));
+                packetBuffer -> packetBuffer.writeUtf(aspect.getUniqueName().toString()));
     }
 
     /**
@@ -484,7 +484,7 @@ public class PartHelpers {
      * @param <S> The part state type.
      */
     public static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(PacketBuffer packetBuffer) {
-        String name = packetBuffer.readString();
+        String name = packetBuffer.readUtf();
         return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(new ResourceLocation(name)),
                 String.format("Could not find a part by name %s", name));
     }

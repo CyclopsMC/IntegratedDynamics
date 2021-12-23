@@ -44,7 +44,7 @@ public class RecipeHandlerDryingBasin extends RecipeHandlerRecipeType<IInventory
     protected IInventoryFluid getRecipeInputContainer(IMixedIngredients input) {
         IInventoryFluid inventory = new InventoryFluid(NonNullList.withSize(1, ItemStack.EMPTY), NonNullList.withSize(1, FluidStack.EMPTY));
         if (!input.getInstances(IngredientComponent.ITEMSTACK).isEmpty()) {
-            inventory.setInventorySlotContents(0, input.getInstances(IngredientComponent.ITEMSTACK).get(0));
+            inventory.setItem(0, input.getInstances(IngredientComponent.ITEMSTACK).get(0));
         }
         if (!input.getInstances(IngredientComponent.FLUIDSTACK).isEmpty()) {
             inventory.getFluidHandler().fill(input.getInstances(IngredientComponent.FLUIDSTACK).get(0), IFluidHandler.FluidAction.EXECUTE);
@@ -56,7 +56,7 @@ public class RecipeHandlerDryingBasin extends RecipeHandlerRecipeType<IInventory
     @Override
     protected Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> getRecipeInputIngredients(RecipeDryingBasin recipe) {
         Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> inputs = Maps.newIdentityHashMap();
-        if (!recipe.getInputIngredient().hasNoMatchingItems()) {
+        if (!recipe.getInputIngredient().isEmpty()) {
             inputs.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(IngredientRecipeHelpers.getPrototypesFromIngredient(recipe.getInputIngredient())));
         }
         if (!recipe.getInputFluid().isEmpty()) {

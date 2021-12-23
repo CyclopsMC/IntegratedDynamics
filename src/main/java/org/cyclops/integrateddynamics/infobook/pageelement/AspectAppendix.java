@@ -68,8 +68,8 @@ public class AspectAppendix extends SectionAppendix {
         gui.drawTextBanner(matrixStack, x + width / 2, y - 2 - yOffset);
         gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
-        RenderHelper.enableStandardItemLighting();
-        Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(itemStack, x, y);
+        RenderHelper.turnBackOn();
+        Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(itemStack, x, y);
 
         // Base information
         String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
@@ -77,15 +77,15 @@ public class AspectAppendix extends SectionAppendix {
         gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
         String valueString = L10NHelpers.localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
         //gui.getFontRenderer().setBidiFlag(true);
-        gui.getFontRenderer().drawString(matrixStack, L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0);
+        gui.getFontRenderer().draw(matrixStack, L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0);
 
         // Settings
         if (aspect.hasProperties()) {
             int offsetY = 26;
-            gui.getFontRenderer().drawString(matrixStack, TextFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
+            gui.getFontRenderer().draw(matrixStack, TextFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
             for (IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                 offsetY += 10;
-                gui.getFontRenderer().drawString(matrixStack, TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
+                gui.getFontRenderer().draw(matrixStack, TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
             }
         }
         //gui.getFontRenderer().setBidiFlag(wasUnicode);
@@ -94,19 +94,19 @@ public class AspectAppendix extends SectionAppendix {
     @Override
     @OnlyIn(Dist.CLIENT)
     protected void postDrawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
-        GlStateManager.pushMatrix();
+        GlStateManager._pushMatrix();
         if(mx >= x && my >= y && mx <= x + SLOT_SIZE && my <= y + SLOT_SIZE ) {
             List<ITextComponent> lines = Lists.newArrayList();
             aspect.loadTooltip(lines, true);
             // MCP: renderTooltip
-            gui.func_243308_b(matrixStack, lines, mx, my);
+            gui.renderComponentTooltip(matrixStack, lines, mx, my);
         }
-        GlStateManager.popMatrix();
+        GlStateManager._popMatrix();
 
-        GlStateManager.disableLighting();
+        GlStateManager._disableLighting();
 
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager._enableBlend();
+        GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     @Override

@@ -159,7 +159,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
             partState = fromNBT(itemStack.getTag());
         }
         if(partState == null) {
-            partState = getDefaultState();
+            partState = defaultBlockState();
         }
         return partState;
     }
@@ -170,7 +170,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     protected abstract S constructDefaultState();
 
     @Override
-    public S getDefaultState() {
+    public S defaultBlockState() {
         S defaultState = constructDefaultState();
         defaultState.generateId();
         defaultState.gatherCapabilities((P) this);

@@ -53,7 +53,7 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
 
     @Override
     public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        textureManager.bindTexture(TEXTURE);
+        textureManager.bind(TEXTURE);
 
         int textureWidth = 19;
         int textureHeight = textureWidth;
@@ -130,7 +130,7 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
         for (int i = 0; i < this.buttonList.size(); ++i) {
             Button guibutton = this.buttonList.get(i);
             if (guibutton.mouseClicked(mouseX, mouseY, mouseButton)) {
-                guibutton.playDownSound(Minecraft.getInstance().getSoundHandler());
+                guibutton.playDownSound(Minecraft.getInstance().getSoundManager());
                 this.actionPerformed(guibutton);
                 return true;
             }

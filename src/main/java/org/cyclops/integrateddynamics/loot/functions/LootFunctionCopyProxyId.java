@@ -11,7 +11,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
-import net.minecraft.loot.functions.ILootFunction;
 import org.cyclops.cyclopscore.helper.LootHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockProxy;
@@ -29,8 +28,8 @@ public class LootFunctionCopyProxyId extends LootFunction {
     }
 
     @Override
-    public ItemStack doApply(ItemStack itemStack, LootContext lootContext) {
-        TileEntity tile = lootContext.get(LootParameters.BLOCK_ENTITY);
+    public ItemStack run(ItemStack itemStack, LootContext lootContext) {
+        TileEntity tile = lootContext.getParamOrNull(LootParameters.BLOCK_ENTITY);
         if (tile instanceof TileProxy) {
             itemStack.getOrCreateTag().putInt(BlockProxy.NBT_ID, ((TileProxy) tile).getProxyId());
         }
@@ -38,7 +37,7 @@ public class LootFunctionCopyProxyId extends LootFunction {
     }
 
     @Override
-    public LootFunctionType getFunctionType() {
+    public LootFunctionType getType() {
         return TYPE;
     }
 

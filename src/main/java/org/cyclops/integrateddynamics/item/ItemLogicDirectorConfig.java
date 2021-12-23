@@ -16,7 +16,7 @@ public class ItemLogicDirectorConfig extends ItemConfig {
                 IntegratedDynamics._instance,
                 "logic_director",
                 eConfig -> new Item(new Item.Properties()
-                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
     

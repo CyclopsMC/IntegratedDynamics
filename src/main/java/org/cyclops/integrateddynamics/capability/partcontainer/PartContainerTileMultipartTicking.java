@@ -30,8 +30,8 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
     }
 
     @Override
-    protected void markDirty() {
-        getTile().markDirty();
+    protected void setChanged() {
+        getTile().setChanged();
     }
 
     @Override
@@ -40,13 +40,13 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
     }
 
     @Override
-    protected World getWorld() {
-        return getTile().getWorld();
+    protected World getLevel() {
+        return getTile().getLevel();
     }
 
     @Override
     protected BlockPos getPos() {
-        return getTile().getPos();
+        return getTile().getBlockPos();
     }
 
     @Override
@@ -58,10 +58,10 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
     @Override
     public Direction getWatchingSide(World world, BlockPos pos, PlayerEntity player) {
         BlockRayTraceResultComponent rayTraceResult = ((BlockCable) world.getBlockState(pos).getBlock())
-                .getSelectedShape(world.getBlockState(pos), world, pos, ISelectionContext.forEntity(player))
+                .getSelectedShape(world.getBlockState(pos), world, pos, ISelectionContext.of(player))
                 .rayTrace(pos, player);
         if(rayTraceResult != null) {
-            return rayTraceResult.getFace();
+            return rayTraceResult.getDirection();
         }
         return null;
     }

@@ -33,11 +33,11 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float f, int x, int y) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, f, x, y);
+    protected void renderBg(MatrixStack matrixStack, float f, int x, int y) {
+        // super.renderBg(matrixStack, f, x, y); // TODO: restore
 
-        ITextComponent readValue = getContainer().getReadValue();
-        int readValueColor = getContainer().getReadValueColor();
+        ITextComponent readValue = getMenu().getReadValue();
+        int readValueColor = getMenu().getReadValueColor();
         boolean ok = false;
         if (readValue != null) {
             ok = true;
@@ -46,14 +46,14 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
         }
 
         RenderSystem.color3f(1, 1, 1);
-        displayErrors.drawBackground(matrixStack, getContainer().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
-                this.guiLeft, this.guiTop, ok);
+        displayErrors.drawBackground(matrixStack, getMenu().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
+                this.leftPos, this.topPos, ok);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
-        displayErrors.drawForeground(matrixStack, getContainer().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.guiLeft, this.guiTop);
+        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
+        displayErrors.drawForeground(matrixStack, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 }

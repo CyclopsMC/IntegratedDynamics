@@ -36,33 +36,33 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             int i3 = brightness & 0xFFFF;
 
             // Fluid
-            matrixStack.push();
+            matrixStack.pushPose();
             TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStack, Direction.UP);
-            Triple<Float, Float, Float> color = Helpers.intToRGB(fluidStack.getFluid().getAttributes().getColor(rendererDispatcher.world, rendererDispatcher.renderInfo.getBlockPos()));
+            Triple<Float, Float, Float> color = Helpers.intToRGB(fluidStack.getFluid().getAttributes().getColor(rendererDispatcher.level, rendererDispatcher.camera.getBlockPosition()));
 
-            IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.getText(icon.getAtlasTexture().getTextureLocation()));
-            Matrix4f matrix = matrixStack.getLast().getMatrix();
+            IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+            Matrix4f matrix = matrixStack.last().pose();
 
             float min = 0F;
             float max = 12.5F;
-            float u1 = icon.getMinU();
-            float u2 = icon.getMaxU();
-            float v1 = icon.getMinV();
-            float v2 = icon.getMaxV();
-            vb.pos(matrix, max, max, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).tex(u2, v2).lightmap(l2, i3).endVertex();
-            vb.pos(matrix, max, min, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).tex(u2, v1).lightmap(l2, i3).endVertex();
-            vb.pos(matrix, min, min, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).tex(u1, v1).lightmap(l2, i3).endVertex();
-            vb.pos(matrix, min, max, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).tex(u1, v2).lightmap(l2, i3).endVertex();
+            float u1 = icon.getU0();
+            float u2 = icon.getU1();
+            float v1 = icon.getV0();
+            float v2 = icon.getV1();
+            vb.vertex(matrix, max, max, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).uv(u2, v2).uv2(l2, i3).endVertex();
+            vb.vertex(matrix, max, min, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).uv(u2, v1).uv2(l2, i3).endVertex();
+            vb.vertex(matrix, min, min, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).uv(u1, v1).uv2(l2, i3).endVertex();
+            vb.vertex(matrix, min, max, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).uv(u1, v2).uv2(l2, i3).endVertex();
 
             // Stack size
             matrixStack.translate(7F, 8.5F, 0.1F);
             String string = String.valueOf(fluidStack.getAmount());
-            float scale = ((float) 5) / (float) rendererDispatcher.getFontRenderer().getStringWidth(string);
+            float scale = ((float) 5) / (float) rendererDispatcher.getFont().width(string);
             matrixStack.scale(scale, scale, 1F);
-            rendererDispatcher.getFontRenderer().renderString(string,
+            rendererDispatcher.getFont().drawInBatch(string,
                     0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)),
-                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
-            matrixStack.pop();
+                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+            matrixStack.popPose();
         }
     }
 

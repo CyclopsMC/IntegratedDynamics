@@ -9,6 +9,8 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Menril wood block that is filled.
  * @author rubensworks
@@ -20,19 +22,19 @@ public class BlockMenrilLogFilled extends RotatedPillarBlock {
     public BlockMenrilLogFilled(Properties properties) {
         super(properties);
 
-        this.setDefaultState(this.stateContainer.getBaseState()
-                .with(AXIS, Direction.Axis.Y)
-                .with(SIDE, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(AXIS, Direction.Axis.Y)
+                .setValue(SIDE, Direction.NORTH));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(AXIS, SIDE);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(SIDE, context.getPlacementHorizontalFacing().getOpposite());
+        return this.defaultBlockState().setValue(SIDE, context.getHorizontalDirection().getOpposite());
     }
 
 }

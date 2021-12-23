@@ -36,7 +36,7 @@ public class ContainerLogicProgrammerPortable extends ContainerLogicProgrammerBa
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean stillValid(PlayerEntity playerIn) {
         ItemStack item = getItemStack(player);
         return item != null && item.getItem() == RegistryEntries.ITEM_PORTABLE_LOGIC_PROGRAMMER;
     }

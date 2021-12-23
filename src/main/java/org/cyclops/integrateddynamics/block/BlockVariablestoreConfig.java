@@ -16,8 +16,8 @@ public class BlockVariablestoreConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "variablestore",
-                eConfig -> new BlockVariablestore(Block.Properties.create(Material.ANVIL)
-                        .hardnessAndResistance(5.0F)
+                eConfig -> new BlockVariablestore(Block.Properties.of(Material.HEAVY_METAL)
+                        .strength(5.0F)
                         .sound(SoundType.METAL)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

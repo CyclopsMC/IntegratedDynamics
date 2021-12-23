@@ -38,7 +38,7 @@ public class VariableCreatedTrigger extends AbstractCriterionTrigger<VariableCre
     }
 
     @Override
-    public Instance deserializeTrigger(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
+    public Instance createInstance(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
         JsonElement blockElement = json.get("block");
         Block block = null;
         if (blockElement != null && !blockElement.isJsonNull()) {
@@ -51,7 +51,7 @@ public class VariableCreatedTrigger extends AbstractCriterionTrigger<VariableCre
     }
 
     public void test(ServerPlayerEntity player, LogicProgrammerVariableFacadeCreatedEvent event) {
-        this.triggerListeners(player, (instance) -> instance.test(player, event));
+        this.trigger(player, (instance) -> instance.test(player, event));
     }
 
     @SubscribeEvent

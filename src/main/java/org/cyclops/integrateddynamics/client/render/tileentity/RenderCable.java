@@ -30,7 +30,7 @@ public class RenderCable extends TileEntityRenderer<TileMultipartTicking> {
                        IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay) {
         for (Map.Entry<Direction, IPartType<?, ?>> entry : tile.getPartContainer().getParts().entrySet()) {
             for (IPartOverlayRenderer renderer : PartOverlayRenderers.REGISTRY.getRenderers(entry.getValue())) {
-                renderer.renderPartOverlay(renderDispatcher, tile.getPartContainer(), entry.getKey(), entry.getValue(),
+                renderer.renderPartOverlay(this.renderer, tile.getPartContainer(), entry.getKey(), entry.getValue(),
                         partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay);
             }
         }

@@ -40,8 +40,8 @@ public class ItemStackRenamePacket extends PacketCodec {
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLabeller) {
-			((ContainerLabeller) player.openContainer).setItemStackName(this.name);
+		if(player.containerMenu instanceof ContainerLabeller) {
+			((ContainerLabeller) player.containerMenu).setItemStackName(this.name);
 		}
 	}
 	

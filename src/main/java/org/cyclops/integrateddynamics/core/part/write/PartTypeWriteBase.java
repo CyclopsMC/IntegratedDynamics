@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.cyclops.integrateddynamics.core.part.PartTypeBase.IEventAction;
+
 /**
  * An abstract {@link IPartTypeWriter}.
  * @author rubensworks
@@ -92,13 +94,13 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     @Override
     public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
-        for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
-            ItemStack itemStack = state.getInventory().getStackInSlot(i);
+        for(int i = 0; i < state.getInventory().getContainerSize(); i++) {
+            ItemStack itemStack = state.getInventory().getItem(i);
             if(!itemStack.isEmpty()) {
                 itemStacks.add(itemStack);
             }
         }
-        state.getInventory().clear();
+        // state.getInventory().clearContent(); // TODO: restore
         state.triggerAspectInfoUpdate((P) this, target, null);
         super.addDrops(target, state, itemStacks, dropMainElement, saveState);
     }
@@ -142,8 +144,8 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     public void updateActivation(PartTarget target, S partState, @Nullable PlayerEntity player) {
         // Check inside the inventory for a variable item and determine everything with that.
         int activeIndex = -1;
-        for(int i = 0 ; i < partState.getInventory().getSizeInventory(); i++) {
-            if(!partState.getInventory().getStackInSlot(i).isEmpty()) {
+        for(int i = 0 ; i < partState.getInventory().getContainerSize(); i++) {
+            if(!partState.getInventory().getItem(i).isEmpty()) {
                 activeIndex = i;
                 break;
             }
@@ -156,7 +158,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
             IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network).orElse(null);
             if (partNetwork != null) {
                 MinecraftForge.EVENT_BUS.post(new PartWriterAspectEvent<>(network, partNetwork, target, (P) this,
-                        partState, player, aspect, partState.getInventory().getStackInSlot(activeIndex)));
+                        partState, player, aspect, partState.getInventory().getItem(activeIndex)));
             }
         }
         if (network != null) {
@@ -185,8 +187,8 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
                                     Direction side) {
         IgnoredBlockStatus.Status status = getStatus(partContainer != null
                 ? (IPartStateWriter) partContainer.getPartState(side) : null);
-        return getBlock().getDefaultState().with(IgnoredBlock.FACING, side).
-                with(IgnoredBlockStatus.STATUS, status);
+        return getBlock().defaultBlockState().setValue(IgnoredBlock.FACING, side)
+                .setValue(IgnoredBlockStatus.STATUS, status);
     }
 
     @Override
@@ -199,12 +201,12 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
                         L10NValues.PART_TOOLTIP_WRITER_ACTIVEASPECT,
                         new TranslationTextComponent(aspectWrite.getTranslationKey()),
                         new TranslationTextComponent(aspectWrite.getValueType().getTranslationKey())
-                                .mergeStyle(aspectWrite.getValueType().getDisplayColorFormat())));
+                                .withStyle(aspectWrite.getValueType().getDisplayColorFormat())));
             } else {
                 lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS)
-                        .mergeStyle(TextFormatting.RED));
+                        .withStyle(TextFormatting.RED));
                 for (IFormattableTextComponent error : state.getErrors(aspectWrite)) {
-                    lines.add(error.mergeStyle(TextFormatting.RED));
+                    lines.add(error.withStyle(TextFormatting.RED));
                 }
             }
         } else {

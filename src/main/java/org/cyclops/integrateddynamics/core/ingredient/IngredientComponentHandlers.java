@@ -122,7 +122,7 @@ public class IngredientComponentHandlers {
             @Override
             public ITextComponent toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
                 return getValueType().toCompactString(ingredientValue)
-                        .appendString(" ")
+                        .append(" ")
                         .append(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
             }
         });

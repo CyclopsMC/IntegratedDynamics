@@ -35,7 +35,7 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                             Direction direction, IPartType partType, IValue value, float partialTicks,
                             MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
                             int combinedLight, int combinedOverlay, float alpha) {
-        FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
+        FontRenderer fontRenderer = rendererDispatcher.getFont();
         float maxWidth = 0;
 
         ValueTypeOperator.ValueOperator valueOperator = ((ValueTypeOperator.ValueOperator) value);
@@ -44,14 +44,14 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         lines.add(new StringTextComponent(ValueTypes.OPERATOR.getName(valueOperator) + " ::"));
         lines.addAll(ValueTypeOperator.getSignatureLines(operator, true));
         for (ITextComponent line : lines) {
-            float width = fontRenderer.getStringWidth(line.getString()) - 1;
+            float width = fontRenderer.width(line.getString()) - 1;
             maxWidth = Math.max(maxWidth, width);
         }
 
-        float singleHeight = fontRenderer.FONT_HEIGHT;
+        float singleHeight = fontRenderer.lineHeight;
         float totalHeight = singleHeight * lines.size();
 
-        matrixStack.push();
+        matrixStack.pushPose();
 
         float scaleX = MAX / (maxWidth * MARGIN_FACTOR);
         float scaleY = MAX / (totalHeight * MARGIN_FACTOR);
@@ -64,11 +64,11 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         int offset = 0;
         for(ITextComponent line : lines) {
             int color = Helpers.addAlphaToColor(ValueTypes.OPERATOR.getDisplayColor(), alpha);
-            rendererDispatcher.getFontRenderer().renderString(line.getString(), 0, offset, color,
-                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
+            rendererDispatcher.getFont().drawInBatch(line.getString(), 0, offset, color,
+                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
             offset += singleHeight;
         }
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }

@@ -292,7 +292,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         @Override
         public void init(int guiLeft, int guiTop) {
             super.init(guiLeft, guiTop);
-            valueTypeSelector = new WidgetArrowedListField<IngredientComponent>(Minecraft.getInstance().fontRenderer,
+            valueTypeSelector = new WidgetArrowedListField<IngredientComponent>(Minecraft.getInstance().font,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, new TranslationTextComponent("valuetype.integrateddynamics.value_type"), true, getValueTypes()) {
                 @Override
                 protected String activeElementToString(IngredientComponent element) {
@@ -355,7 +355,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
             }
             int x = getX() + baseX - 24;
             int y = getY() + baseY - 23;
-            gui.getContainer().setElementInventory(subElement, x, y);
+            gui.getMenu().setElementInventory(subElement, x, y);
             subElement.setValueInGui(subGui);
             subGuiHolder.addSubGui(subGui);
 

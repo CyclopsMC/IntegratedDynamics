@@ -12,6 +12,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 
 import javax.annotation.Nullable;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * A portable logic programmer.
  * @author rubensworks
@@ -25,7 +27,7 @@ public class ItemPortableLogicProgrammer extends ItemGui {
     @Nullable
     @Override
     public INamedContainerProvider getContainer(World world, PlayerEntity playerEntity, int itemIndex, Hand hand, ItemStack itemStack) {
-        return new NamedContainerProviderItem(itemIndex, hand, itemStack.getDisplayName(), ContainerLogicProgrammerPortable::new);
+        return new NamedContainerProviderItem(itemIndex, hand, itemStack.getHoverName(), ContainerLogicProgrammerPortable::new);
     }
 
     @Override

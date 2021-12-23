@@ -58,14 +58,14 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
         // Create inventory and tank
         this.inventory = new SimpleInventory(1, 1) {
             @Override
-            public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-                return getWorld().getBlockState(getPos()).get(BlockSqueezer.HEIGHT) == 1
-                        && getStackInSlot(0).isEmpty() && super.isItemValidForSlot(slot, itemStack);
+            public boolean canPlaceItem(int slot, ItemStack itemStack) {
+                return getLevel().getBlockState(getBlockPos()).getValue(BlockSqueezer.HEIGHT) == 1
+                        && getItem(0).isEmpty() && super.canPlaceItem(slot, itemStack);
             }
 
             @Override
-            public void setInventorySlotContents(int slotId, ItemStack itemstack) {
-                super.setInventorySlotContents(slotId, itemstack);
+            public void setItem(int slotId, ItemStack itemstack) {
+                // super.setItem(slotId, itemstack); // TODO: restore
                 itemHeight = 1;
                 sendUpdate();
             }
@@ -77,7 +77,7 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
 
         // Add dirty mark listeners to inventory and tank
         this.inventory.addDirtyMarkListener(this::sendUpdate);
-        this.tank.addDirtyMarkListener(this.inventory::markDirty);
+        this.tank.addDirtyMarkListener(this.inventory::setChanged);
 
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(
@@ -85,17 +85,17 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
                     @Override
                     public Optional<RecipeSqueezer> getNewValue(ItemStack key) {
                         IInventory recipeInput = new Inventory(key);
-                        return CraftingHelpers.findServerRecipe(getRegistry(), recipeInput, getWorld());
+                        return CraftingHelpers.findServerRecipe(getRegistry(), recipeInput, getLevel());
                     }
 
                     @Override
                     public boolean isKeyEqual(ItemStack cacheKey, ItemStack newKey) {
-                        return ItemStack.areItemStacksEqual(cacheKey, newKey);
+                        return ItemStack.matches(cacheKey, newKey);
                     }
                 });
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getWorld)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getLevel)));
     }
 
     public SimpleInventory getInventory() {
@@ -114,10 +114,10 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         inventory.writeToNBT(tag, "inventory");
         tank.writeToNBT(tag, "tank");
-        return super.write(tag);
+        return super.save(tag);
     }
 
     protected IRecipeType<RecipeSqueezer> getRegistry() {
@@ -125,20 +125,20 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
     }
 
     public Optional<RecipeSqueezer> getCurrentRecipe() {
-        return recipeCache.get(getInventory().getStackInSlot(0).copy());
+        return recipeCache.get(getInventory().getItem(0).copy());
     }
 
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if(!getWorld().isRemote) {
+        if(!getLevel().isClientSide) {
             if(!getTank().isEmpty()) {
-                Direction.Axis axis = getWorld().getBlockState(getPos()).get(BlockSqueezer.AXIS);
+                Direction.Axis axis = getLevel().getBlockState(getBlockPos()).getValue(BlockSqueezer.AXIS);
                 Arrays.stream(Direction.AxisDirection.values())
-                        .map(axisDirection -> Direction.getFacingFromAxis(axisDirection, axis))
+                        .map(axisDirection -> Direction.get(axisDirection, axis))
                         .forEach(side -> {
                             if (!getTank().isEmpty()) {
-                                TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+                                TileHelpers.getCapability(getLevel(), getBlockPos().relative(side), side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
                                         .ifPresent(handler -> {
                                             FluidStack fluidStack = new FluidStack(getTank().getFluid(),
                                                     Math.min(100, getTank().getFluidAmount()));
@@ -154,20 +154,20 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
                     Optional<RecipeSqueezer> recipeOptional = getCurrentRecipe();
                     if (recipeOptional.isPresent()) {
                         RecipeSqueezer recipe = recipeOptional.get();
-                        getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
+                        getInventory().setItem(0, ItemStack.EMPTY);
                         for (RecipeSqueezer.ItemStackChance itemStackChance : recipe.getOutputItems()) {
-                            if (itemStackChance.getChance() == 1.0F || itemStackChance.getChance() >= getWorld().rand.nextFloat()) {
+                            if (itemStackChance.getChance() == 1.0F || itemStackChance.getChance() >= getLevel().random.nextFloat()) {
                                 ItemStack resultStack = itemStackChance.getItemStack().copy();
                                 for (Direction side : Direction.values()) {
                                     if (!resultStack.isEmpty() && side != Direction.UP) {
-                                        IItemHandler itemHandler = TileHelpers.getCapability(getWorld(), getPos().offset(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+                                        IItemHandler itemHandler = TileHelpers.getCapability(getLevel(), getBlockPos().relative(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
                                         if (itemHandler != null) {
                                             resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
                                         }
                                     }
                                 }
                                 if (!resultStack.isEmpty()) {
-                                    ItemStackHelpers.spawnItemStack(getWorld(), getPos(), resultStack);
+                                    ItemStackHelpers.spawnItemStack(getLevel(), getBlockPos(), resultStack);
                                 }
                             }
                         }
@@ -183,6 +183,6 @@ public class TileSqueezer extends CyclopsTileEntity implements CyclopsTileEntity
     public void setItemHeight(int itemHeight) {
         this.itemHeight = itemHeight;
         sendUpdate();
-        getInventory().markDirty();
+        getInventory().setChanged();
     }
 }

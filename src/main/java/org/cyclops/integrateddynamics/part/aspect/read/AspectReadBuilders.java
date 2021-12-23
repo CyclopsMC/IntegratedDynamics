@@ -152,8 +152,8 @@ public class AspectReadBuilders {
                     if (world != null) {
                         BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
                         int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
-                        if (world.getDimensionType() == event.getWorld().getDimensionType()
-                                && pos.distanceSq(event.getPos()) <= range * range) {
+                        if (world.dimensionType() == event.getWorld().dimensionType()
+                                && pos.distSqr(event.getPos()) <= range * range) {
                             return event.getVanillaNoteId();
                         }
                     }
@@ -392,18 +392,18 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            int power = dimPos.getWorld(true).getRedstonePower(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
+            int power = dimPos.getWorld(true).getSignal(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
             if (power == 0) {
                 BlockState targetBlockState = dimPos.getWorld(true).getBlockState(dimPos.getBlockPos());
-                power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.get(RedstoneWireBlock.POWER) : 0;
+                power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.getValue(RedstoneWireBlock.POWER) : 0;
             }
             return power;
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET_COMPARATOR = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             BlockState blockState = dimPos.getWorld(true).getBlockState(dimPos.getBlockPos());
-            return blockState.hasComparatorInputOverride()
-                    ? blockState.getComparatorInputOverride(dimPos.getWorld(true), dimPos.getBlockPos()) : 0;
+            return blockState.hasAnalogOutputSignal()
+                    ? blockState.getAnalogOutputSignal(dimPos.getWorld(true), dimPos.getBlockPos()) : 0;
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = input -> {
             int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());
@@ -441,10 +441,10 @@ public class AspectReadBuilders {
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemFrameEntity> PROP_GET_ITEMFRAME = pair -> {
             DimPos dimPos = pair.getLeft().getTarget().getPos();
             Direction facing = pair.getLeft().getTarget().getSide();
-            List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntitiesInAABBexcluding(null,
-                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
+            List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntities((net.minecraft.entity.Entity) null,
+                    new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
             for(net.minecraft.entity.Entity entity : entities) {
-                if(Direction.fromAngle(((ItemFrameEntity) entity).rotationYaw) == facing.getOpposite()) {
+                if(Direction.fromYRot(((ItemFrameEntity) entity).yRot) == facing.getOpposite()) {
                     return ((ItemFrameEntity) entity);
                 }
             }

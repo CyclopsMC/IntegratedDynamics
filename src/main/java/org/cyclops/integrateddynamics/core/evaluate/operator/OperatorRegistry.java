@@ -175,9 +175,9 @@ public class OperatorRegistry implements IOperatorRegistry {
         JsonElement operatorElement = element.get("operator");
         IOperator operator = null;
         if (operatorElement != null && !operatorElement.isJsonNull()) {
-            operator = Operators.REGISTRY.getOperator(new ResourceLocation(JSONUtils.getString(element, "operator")));
+            operator = Operators.REGISTRY.getOperator(new ResourceLocation(JSONUtils.getAsString(element, "operator")));
             if (operator == null) {
-                throw new JsonSyntaxException("Unknown operator type '" + JSONUtils.getString(element, "operator")
+                throw new JsonSyntaxException("Unknown operator type '" + JSONUtils.getAsString(element, "operator")
                         + "', valid types are: " + Operators.REGISTRY.getOperators().stream()
                         .map(IOperator::getUniqueName).collect(Collectors.toList()));
             }

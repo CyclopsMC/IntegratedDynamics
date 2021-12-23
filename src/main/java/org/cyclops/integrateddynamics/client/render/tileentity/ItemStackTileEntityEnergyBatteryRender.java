@@ -18,7 +18,7 @@ import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 public class ItemStackTileEntityEnergyBatteryRender extends ItemStackTileEntityRenderer {
 
     @Override
-    public void func_239207_a_(ItemStack itemStackIn, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void renderByItem(ItemStack itemStackIn, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
         TileEnergyBattery tile = new TileEnergyBattery();
         BlockEnergyBatteryBase.itemStackToTile(itemStackIn, tile);
         TileEntityRendererDispatcher.instance.renderItem(tile, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);

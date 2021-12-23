@@ -21,10 +21,10 @@ public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted>
         super(
                 IntegratedDynamics._instance,
                 "entityItemTargetted",
-                eConfig -> EntityType.Builder.<EntityItemTargetted>create(EntityItemTargetted::new, EntityClassification.MISC)
-                        .immuneToFire()
+                eConfig -> EntityType.Builder.<EntityItemTargetted>of(EntityItemTargetted::new, EntityClassification.MISC)
+                        .fireImmune()
                         .setShouldReceiveVelocityUpdates(true)
-                        .size(0.25F, 0.25F)
+                        .sized(0.25F, 0.25F)
         );
     }
 

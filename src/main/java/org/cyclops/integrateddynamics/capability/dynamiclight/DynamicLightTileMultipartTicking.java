@@ -25,7 +25,7 @@ public class DynamicLightTileMultipartTicking implements IDynamicLight {
 
     @Override
     public void setLightLevel(int level) {
-        if(!tile.getWorld().isRemote) {
+        if(!tile.getLevel().isClientSide) {
             boolean sendUpdate = false;
             EnumFacingMap<Integer> lightLevels = getLightLevels();
             if(lightLevels.containsKey(side)) {

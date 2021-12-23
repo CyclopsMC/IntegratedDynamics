@@ -60,18 +60,18 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         super(container, playerInventory, title);
         container.setGui(this);
 
-        this.hasLabeller = playerInventory.hasItemStack(new ItemStack(RegistryEntries.ITEM_LABELLER));
+        this.hasLabeller = playerInventory.contains(new ItemStack(RegistryEntries.ITEM_LABELLER));
     }
 
     @Override
     protected Rectangle getScrollRegion() {
-        return new Rectangle(this.guiLeft + 19, this.guiTop + 18, 57, 178);
+        return new Rectangle(this.leftPos + 19, this.topPos + 18, 57, 178);
     }
 
     @Override
     public void init() {
         super.init();
-        subGuiHolder.init(this.guiLeft, this.guiTop);
+        subGuiHolder.init(this.leftPos, this.topPos);
         if (firstInit) {
             setSearchFieldFocussed(true);
             firstInit = false;
@@ -125,17 +125,17 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().textureManager, font, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: rm
+        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().textureManager, font, partialTicks, mouseX, mouseY);
 
         // Draw container name
         // MCP: drawString
-        font.func_243246_a(matrixStack, new TranslationTextComponent(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
-                this.guiLeft + offsetX + 5, this.guiTop + offsetY + 208, Helpers.RGBToInt(80, 80, 80));
+        font.drawShadow(matrixStack, new TranslationTextComponent(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
+                this.leftPos + offsetX + 5, this.topPos + offsetY + 208, Helpers.RGBToInt(80, 80, 80));
 
         // Draw operators
-        ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getContainer();
+        ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getMenu();
         int boxHeight = BOX_HEIGHT;
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
@@ -150,14 +150,14 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
                 // Background
                 RenderHelpers.bindTexture(texture);
-                blit(matrixStack, guiLeft + offsetX + ITEM_POSITION.x,
-                        guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
+                blit(matrixStack, leftPos + offsetX + ITEM_POSITION.x,
+                        topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
 
                 RenderSystem.enableAlphaTest();
                 // Arrow
                 if(hover) {
-                    blit(matrixStack, guiLeft + offsetX + ITEM_POSITION.x,
-                            guiTop + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16);
+                    blit(matrixStack, leftPos + offsetX + ITEM_POSITION.x,
+                            topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16);
                 }
                 RenderSystem.disableAlphaTest();
                 RenderSystem.color3f(1, 1, 1);
@@ -165,33 +165,33 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 // Operator info
                 String aspectName = element.getSymbol();
                 RenderHelpers.drawScaledCenteredString(matrixStack, font, aspectName,
-                        this.guiLeft + offsetX + (hover ? 22 : 21),
-                        this.guiTop + offsetY + 26 + boxHeight * i,
+                        this.leftPos + offsetX + (hover ? 22 : 21),
+                        this.topPos + offsetY + 26 + boxHeight * i,
                         53, Helpers.RGBToInt(40, 40, 40));
             }
         }
     }
 
     protected Rectangle getElementPosition(ContainerLogicProgrammerBase container, int i, boolean absolute) {
-        return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.guiLeft : 0),
-                ITEM_POSITION.y + BOX_HEIGHT * i + offsetY + (absolute ? this.guiTop : 0),
+        return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.leftPos : 0),
+                ITEM_POSITION.y + BOX_HEIGHT * i + offsetY + (absolute ? this.topPos : 0),
                 ITEM_POSITION.width, ITEM_POSITION.height
         );
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().textureManager, font, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().textureManager, font, mouseX, mouseY);
         // Draw operator tooltips
-        ContainerLogicProgrammerBase container = getContainer();
+        ContainerLogicProgrammerBase container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
                 if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
                     List<ITextComponent> lines = Lists.newLinkedList();
                     element.loadTooltip(lines);
-                    drawTooltip(lines, mouseX - this.guiLeft, mouseY - this.guiTop);
+                    drawTooltip(lines, mouseX - this.leftPos, mouseY - this.topPos);
                 }
             }
         }
@@ -199,9 +199,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     protected void onActivateElement(ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> element) {
         subGuiHolder.addSubGui(operatorInfoPattern = new SubGuiOperatorInfo(element));
-        operatorInfoPattern.init(guiLeft, guiTop);
-        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammerBase) getContainer()));
-        operatorConfigPattern.init(guiLeft, guiTop);
+        operatorInfoPattern.init(leftPos, topPos);
+        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammerBase) getMenu()));
+        operatorConfigPattern.init(leftPos, topPos);
     }
 
     protected void onDeactivateElement(ILogicProgrammerElement element) {
@@ -210,7 +210,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     public boolean handleElementActivation(ILogicProgrammerElement element) {
         boolean activate = false;
-        ContainerLogicProgrammerBase container = getContainer();
+        ContainerLogicProgrammerBase container = getMenu();
         ILogicProgrammerElement newActive = null;
         onDeactivateElement(element);
         if(container.getActiveElement() != element) {
@@ -243,7 +243,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     protected boolean selectPageElement(int elementId) {
-        ContainerLogicProgrammerBase container = getContainer();
+        ContainerLogicProgrammerBase container = getMenu();
 
         // Deactivate current element
         if (elementId < 0) {
@@ -267,9 +267,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     protected boolean handleKeyCode(int keyCode, int scanCode) {
-        InputMappings.Input inputCode = InputMappings.getInputByCode(keyCode, scanCode);
+        InputMappings.Input inputCode = InputMappings.getKey(keyCode, scanCode);
         if(keyCode != GLFW.GLFW_KEY_LEFT_SHIFT && keyCode != GLFW.GLFW_KEY_RIGHT_SHIFT) {
-            ContainerLogicProgrammerBase container = getContainer();
+            ContainerLogicProgrammerBase container = getMenu();
             int pageSize = container.getPageSize();
             int stepModifier = MinecraftHelpers.isShifted() ? pageSize - 1 : 1;
             boolean isElementFocused = container.getActiveElement() != null && container.getActiveElement().isFocused(operatorConfigPattern);
@@ -334,7 +334,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton);
-        ContainerLogicProgrammerBase container = getContainer();
+        ContainerLogicProgrammerBase container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
             if (container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
@@ -377,7 +377,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         private ButtonText button = null;
 
         public SubGuiOperatorInfo(IGuiInputElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> element) {
-            super(ContainerScreenLogicProgrammerBase.this, getContainer(), element, 88, 106, 139, 20);
+            super(ContainerScreenLogicProgrammerBase.this, getMenu(), element, 88, 106, 139, 20);
 
             if(hasLabeller()) {
                 buttonList.add(button = new ButtonText(0, 0, 6, 10, new TranslationTextComponent("gui.integrateddynamics.button.edit"), new StringTextComponent("E"),
@@ -387,12 +387,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             int searchWidth = 113;
             this.searchField = new WidgetTextFieldExtended(ContainerScreenLogicProgrammerBase.this.font, 0, 0, searchWidth, 11,
                     new TranslationTextComponent("gui.cyclopscore.search"));
-            this.searchField.setMaxStringLength(64);
-            this.searchField.setEnableBackgroundDrawing(true);
+            this.searchField.setMaxLength(64);
+            this.searchField.setBordered(true);
             this.searchField.setVisible(false);
             this.searchField.setTextColor(16777215);
             this.searchField.setCanLoseFocus(true);
-            this.searchField.setText("");
+            this.searchField.setValue("");
             this.searchField.setWidth(searchWidth);
         }
 
@@ -430,7 +430,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             if (!this.searchField.isFocused() || !this.searchField.charTyped(typedChar, keyCode)) {
                 return super.charTyped(typedChar, keyCode);
             } else {
-                label(this.searchField.getText());
+                label(this.searchField.getValue());
                 return true;
             }
         }
@@ -438,7 +438,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         @Override
         public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
             if (this.searchField.isFocused() && typedChar != GLFW.GLFW_KEY_ESCAPE) {
-                label(this.searchField.getText());
+                label(this.searchField.getValue());
                 this.searchField.keyPressed(typedChar, keyCode, modifiers);
                 return true;
             }
@@ -447,7 +447,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            if(this.searchField.getVisible() && this.searchField.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if(this.searchField.isVisible() && this.searchField.mouseClicked(mouseX, mouseY, mouseButton)) {
                 return true;
             }
             return super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -456,15 +456,15 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         @Override
         public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer font, float partialTicks, int mouseX, int mouseY) {
             super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, font, partialTicks, mouseX, mouseY);
-            Minecraft.getInstance().keyboardListener.enableRepeatEvents(true);
+            Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(true);
             this.searchField.render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
         public void onButtonEditClick() {
-            this.searchField.setVisible(!this.searchField.getVisible());
-            if(this.searchField.getVisible()) {
+            this.searchField.setVisible(!this.searchField.isVisible());
+            if(this.searchField.isVisible()) {
                 this.searchField.changeFocus(true);
-                label(this.searchField.getText());
+                label(this.searchField.getValue());
             } else {
                 label("");
             }

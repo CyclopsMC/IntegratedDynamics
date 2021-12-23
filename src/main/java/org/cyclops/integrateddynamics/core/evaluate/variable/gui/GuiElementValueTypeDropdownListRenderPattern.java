@@ -44,15 +44,15 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
 
     @Override
     public void init(int guiLeft, int guiTop) {
-        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+        FontRenderer fontRenderer = Minecraft.getInstance().font;
         int searchWidth = getElement().getRenderPattern().getWidth() - 28;
         int searchX = getX() + 14;
         int searchY = getY() + 6;
         this.searchField = new WidgetTextFieldDropdown<>(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.FONT_HEIGHT + 3, new TranslationTextComponent("gui.cyclopscore.search"), true, getDropdownPossibilities());
+                fontRenderer.lineHeight + 3, new TranslationTextComponent("gui.cyclopscore.search"), true, getDropdownPossibilities());
         this.searchField.setDropdownEntryListener(this);
-        this.searchField.setMaxStringLength(64);
-        this.searchField.setEnableBackgroundDrawing(false);
+        this.searchField.setMaxLength(64);
+        this.searchField.setBordered(false);
         this.searchField.setVisible(true);
         this.searchField.setTextColor(16777215);
         this.searchField.setCanLoseFocus(true);
@@ -61,7 +61,7 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
             value = "";
         }
         this.searchField.setText(value);
-        element.setInputString(searchField.getText());
+        element.setInputString(searchField.getValue());
         this.searchField.setWidth(searchWidth);
         this.searchField.x = guiLeft + (searchX + searchWidth) - this.searchField.getWidth();
     }
@@ -99,7 +99,7 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
     }
 
     private void onTyped() {
-        element.setInputString(searchField.getText());
+        element.setInputString(searchField.getValue());
         if (container instanceof IDirtyMarkListener) {
             ((IDirtyMarkListener) container).onDirty();
         }

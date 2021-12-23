@@ -115,13 +115,13 @@ public class IngredientObserver<T, M> {
     }
 
     protected int getCurrentTick() {
-        return ServerLifecycleHooks.getCurrentServer().getTickCounter();
+        return ServerLifecycleHooks.getCurrentServer().getTickCount();
     }
 
     protected void emitEvent(IIngredientComponentStorageObservable.StorageChangeEvent<T, M> event) {
         if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
             // Make sure we are running on the main server thread to avoid concurrency exceptions
-            ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
+            ServerLifecycleHooks.getCurrentServer().submitAsync(() -> {
                 for (IIngredientComponentStorageObservable.IIndexChangeObserver<T, M> observer : getObserversCopy()) {
                     observer.onChange(event);
                 }

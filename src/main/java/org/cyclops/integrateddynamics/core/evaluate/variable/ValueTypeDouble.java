@@ -41,7 +41,7 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     @Override
     public ValueDouble deserialize(INBT value) {
         if (value.getId() == Constants.NBT.TAG_DOUBLE) {
-            return ValueDouble.of(((DoubleNBT) value).getDouble());
+            return ValueDouble.of(((DoubleNBT) value).getAsDouble());
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a double.", value));
         }

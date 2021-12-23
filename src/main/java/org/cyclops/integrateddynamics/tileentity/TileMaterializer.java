@@ -80,8 +80,8 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     protected SimpleInventory createInventory(int inventorySize, int stackSize) {
         return new SimpleInventory(inventorySize, stackSize) {
             @Override
-            public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-                return slot != SLOT_WRITE_OUT && super.isItemValidForSlot(slot, itemStack);
+            public boolean canPlaceItem(int slot, ItemStack itemStack) {
+                return slot != SLOT_WRITE_OUT && super.canPlaceItem(slot, itemStack);
             }
         };
     }
@@ -100,7 +100,7 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     @Override
     public void onDirty() {
         super.onDirty();
-        if (!world.isRemote()) {
+        if (!level.isClientSide()) {
             this.writeVariable = true;
         }
     }
@@ -109,14 +109,14 @@ public class TileMaterializer extends TileActiveVariableBase<MaterializerNetwork
     public void tick() {
         super.tick();
 
-        if (!world.isRemote() && this.writeVariable && !getInventory().getStackInSlot(SLOT_WRITE_IN).isEmpty() && canWrite() && getInventory().getStackInSlot(SLOT_WRITE_OUT).isEmpty()) {
+        if (!level.isClientSide() && this.writeVariable && !getInventory().getItem(SLOT_WRITE_IN).isEmpty() && canWrite() && getInventory().getItem(SLOT_WRITE_OUT).isEmpty()) {
             this.writeVariable = false;
 
             // Write proxy reference
-            ItemStack outputStack = writeMaterialized(!getWorld().isRemote, getInventory().getStackInSlot(SLOT_WRITE_IN));
+            ItemStack outputStack = writeMaterialized(!getLevel().isClientSide, getInventory().getItem(SLOT_WRITE_IN));
             if(!outputStack.isEmpty()) {
-                getInventory().setInventorySlotContents(SLOT_WRITE_OUT, outputStack);
-                getInventory().removeStackFromSlot(SLOT_WRITE_IN);
+                getInventory().setItem(SLOT_WRITE_OUT, outputStack);
+                getInventory().removeItemNoUpdate(SLOT_WRITE_IN);
             }
         }
     }

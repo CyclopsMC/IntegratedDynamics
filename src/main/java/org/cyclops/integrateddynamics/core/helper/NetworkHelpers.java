@@ -233,7 +233,7 @@ public class NetworkHelpers {
      * {@link net.minecraft.block.Block#neighborChanged(BlockState, World, BlockPos, Block, BlockPos, boolean)},
      * {@link Block#onNeighborChange(BlockState, IWorldReader, BlockPos, BlockPos)}}
      * or {@link Block#observedNeighborChange(BlockState, World, BlockPos, Block, BlockPos)}
-     * or {@link Block#updatePostPlacement(BlockState, Direction, BlockState, IWorld, BlockPos, BlockPos)}is called.
+     * or {@link Block#updateShape(BlockState, Direction, BlockState, IWorld, BlockPos, BlockPos)}is called.
      * @param world The world in which the neighbour was updated.
      * @param pos The position of the center block.
      * @param side The side at the center block.
@@ -242,7 +242,7 @@ public class NetworkHelpers {
      */
     public static void onElementProviderBlockNeighborChange(World world, BlockPos pos, Block neighbourBlock,
                                                             @Nullable Direction side, BlockPos neighbourBlockPos) {
-        if (!world.isRemote()) {
+        if (!world.isClientSide()) {
             getNetwork(world, pos, side).ifPresent(network -> {
                 getNetworkElementProvider(world, pos, side).ifPresent(networkElementProvider -> {
                     for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {

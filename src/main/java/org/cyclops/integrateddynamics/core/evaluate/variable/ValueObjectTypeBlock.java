@@ -33,12 +33,12 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     }
 
     public static IFormattableTextComponent getBlockkDisplayNameSafe(BlockState blockState) {
-        return new TranslationTextComponent(blockState.getBlock().getTranslationKey());
+        return new TranslationTextComponent(blockState.getBlock().getDescriptionId());
     }
 
     @Override
     public ValueBlock getDefault() {
-        return ValueBlock.of(Blocks.AIR.getDefaultState());
+        return ValueBlock.of(Blocks.AIR.defaultBlockState());
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     @Override
     public ValueBlock deserialize(INBT value) {
         if (value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty())) {
-            return ValueBlock.of(Blocks.AIR.getDefaultState());
+            return ValueBlock.of(Blocks.AIR.defaultBlockState());
         }
         return ValueBlock.of(BlockHelpers.deserializeBlockState((CompoundNBT) value));
     }
@@ -97,7 +97,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             @Override
             public ValueObjectTypeBlock.ValueBlock getValue(ItemStack itemStack) {
                 return ValueObjectTypeBlock.ValueBlock.of(
-                        itemStack.isEmpty() ? Blocks.AIR.getDefaultState() : BlockHelpers.getBlockStateFromItemStack(itemStack));
+                        itemStack.isEmpty() ? Blocks.AIR.defaultBlockState() : BlockHelpers.getBlockStateFromItemStack(itemStack));
             }
         });
     }

@@ -11,6 +11,8 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import javax.annotation.Nullable;
 import java.util.Map;
 
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeLightLevelRegistry.ILightLevelCalculator;
+
 /**
  * @author rubensworks
  */

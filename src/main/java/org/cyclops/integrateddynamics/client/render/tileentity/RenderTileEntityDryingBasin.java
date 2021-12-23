@@ -38,11 +38,11 @@ public class RenderTileEntityDryingBasin extends TileEntityRenderer<TileDryingBa
     public void render(TileDryingBasin tile, float partialTicks, MatrixStack matrixStack,
                        IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay) {
         if(tile != null) {
-            if(!tile.getInventory().getStackInSlot(0).isEmpty()) {
-                matrixStack.push();
+            if(!tile.getInventory().getItem(0).isEmpty()) {
+                matrixStack.pushPose();
                 matrixStack.translate(-0.5F, -0.5F, -0.5F);
-                renderItem(matrixStack, renderTypeBuffer, tile.getInventory().getStackInSlot(0), tile.getRandomRotation());
-                matrixStack.pop();
+                renderItem(matrixStack, renderTypeBuffer, tile.getInventory().getItem(0), tile.getRandomRotation());
+                matrixStack.popPose();
             }
 
             FluidStack fluid = tile.getTank().getFluid();
@@ -53,31 +53,31 @@ public class RenderTileEntityDryingBasin extends TileEntityRenderer<TileDryingBa
                 int i3 = brightness & 0xFFFF;
 
                 TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluid, Direction.UP);
-                Triple<Float, Float, Float> color = Helpers.intToRGB(fluid.getFluid().getAttributes().getColor(tile.getWorld(), tile.getPos()));
+                Triple<Float, Float, Float> color = Helpers.intToRGB(fluid.getFluid().getAttributes().getColor(tile.getLevel(), tile.getBlockPos()));
 
-                IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.getText(icon.getAtlasTexture().getTextureLocation()));
-                Matrix4f matrix = matrixStack.getLast().getMatrix();
-                vb.pos(matrix, 0.0625F, height, 0.0625F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMinU(), icon.getMaxV()).lightmap(l2, i3).endVertex();
-                vb.pos(matrix, 0.0625F, height, 0.9375F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).endVertex();
-                vb.pos(matrix, 0.9375F, height, 0.9375F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMaxU(), icon.getMinV()).lightmap(l2, i3).endVertex();
-                vb.pos(matrix, 0.9375F, height, 0.0625F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMaxU(), icon.getMaxV()).lightmap(l2, i3).endVertex();
+                IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+                Matrix4f matrix = matrixStack.last().pose();
+                vb.vertex(matrix, 0.0625F, height, 0.0625F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU0(), icon.getV1()).uv2(l2, i3).endVertex();
+                vb.vertex(matrix, 0.0625F, height, 0.9375F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU0(), icon.getV0()).uv2(l2, i3).endVertex();
+                vb.vertex(matrix, 0.9375F, height, 0.9375F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU1(), icon.getV0()).uv2(l2, i3).endVertex();
+                vb.vertex(matrix, 0.9375F, height, 0.0625F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU1(), icon.getV1()).uv2(l2, i3).endVertex();
             });
         }
 	}
 	
 	private void renderItem(MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, ItemStack itemStack, float rotation) {
-        IBakedModel model = Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
+        IBakedModel model = Minecraft.getInstance().getItemRenderer().getModel(itemStack, null, null);
         if (model.isGui3d()) {
             matrixStack.translate(1F, 1.2F, 1F);
             matrixStack.scale(1.2F, 1.2F, 1.2F);
         } else {
             matrixStack.translate(1F, 1.2F, 1F);
-            matrixStack.rotate(Vector3f.XP.rotationDegrees(25F));
-            matrixStack.rotate(Vector3f.YP.rotationDegrees(25F));
-            matrixStack.rotate(Vector3f.YP.rotationDegrees(rotation));
+            matrixStack.mulPose(Vector3f.XP.rotationDegrees(25F));
+            matrixStack.mulPose(Vector3f.YP.rotationDegrees(25F));
+            matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotation));
         }
 
-        Minecraft.getInstance().getItemRenderer().renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer);
+        Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemCameraTransforms.TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer);
     }
 
 }

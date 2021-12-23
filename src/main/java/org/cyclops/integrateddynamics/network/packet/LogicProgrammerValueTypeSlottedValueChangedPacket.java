@@ -43,11 +43,11 @@ public class LogicProgrammerValueTypeSlottedValueChangedPacket extends PacketCod
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
+		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
 			if(element instanceof ValueTypeLPElementBase) {
-				int slotId = player.openContainer.inventorySlots.size() - 1;
-				player.openContainer.putStackInSlot(slotId, itemStack.copy());
+				int slotId = player.containerMenu.slots.size() - 1;
+				player.containerMenu.setItem(slotId, itemStack.copy());
 			}
 		}
 	}

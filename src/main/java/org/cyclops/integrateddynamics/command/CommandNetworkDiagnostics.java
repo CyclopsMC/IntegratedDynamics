@@ -23,10 +23,10 @@ public class CommandNetworkDiagnostics implements Command<CommandSource> {
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         Style downloadStyle = Style.EMPTY;
-        downloadStyle.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to visit the relevant GitHub issue")));
-        downloadStyle.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/CyclopsMC/IntegratedDynamics/issues/863"));
+        downloadStyle.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to visit the relevant GitHub issue")));
+        downloadStyle.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/CyclopsMC/IntegratedDynamics/issues/863"));
         ITextComponent message = new StringTextComponent("Network diagnostics are not working (yet) in 1.15. Click here to help (re)making it!").setStyle(downloadStyle);
-        context.getSource().asPlayer().sendMessage(message, Util.DUMMY_UUID);
+        context.getSource().getPlayerOrException().sendMessage(message, Util.NIL_UUID);
         // TODO: rewrite gui in LWJGL
         //IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new NetworkDiagnosticsOpenClient(), context.getSource().asPlayer());
         return 0;
@@ -34,7 +34,7 @@ public class CommandNetworkDiagnostics implements Command<CommandSource> {
 
     public static LiteralArgumentBuilder<CommandSource> make() {
         return Commands.literal("networkdiagnostics")
-                .requires((commandSource) -> commandSource.hasPermissionLevel(2))
+                .requires((commandSource) -> commandSource.hasPermission(2))
                 .executes(new CommandNetworkDiagnostics());
     }
 }

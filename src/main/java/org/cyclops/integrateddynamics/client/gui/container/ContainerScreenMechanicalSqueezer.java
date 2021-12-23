@@ -47,40 +47,40 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
                 createServerPressable(ContainerMechanicalSqueezer.BUTTON_TOGGLE_FLUID_EJECT, (button) -> {}),imageArrowDownDisabled));
     }
 
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
 
         // Update the image in the fluid eject toggle button
-        buttonToggleFluidEject.setImage(getContainer().isAutoEjectFluids()
+        buttonToggleFluidEject.setImage(getMenu().isAutoEjectFluids()
                 ? imageArrowDownEnabled : imageArrowDownDisabled);
 
         // Render progress
         GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
                 176, 120, GuiHelpers.ProgressDirection.DOWN,
-                getContainer().getProgress(), getContainer().getMaxProgress());
+                getMenu().getProgress(), getMenu().getMaxProgress());
 
         // Render energy level
         GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
                 176, 60, GuiHelpers.ProgressDirection.UP,
-                getContainer().getEnergy(), getContainer().getMaxEnergy());
+                getMenu().getEnergy(), getMenu().getMaxEnergy());
 
         // Render fluid tank
-        GuiHelpers.renderOverlayedFluidTank(this, matrixStack, getContainer().getFluidStack(),
-                getContainer().getFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 10,
+        GuiHelpers.renderOverlayedFluidTank(this, matrixStack, getMenu().getFluidStack(),
+                getMenu().getFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 10,
                 18, 60, texture, 176, 0);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.renderLabels(matrixStack, mouseX, mouseY);
 
         drawEnergyBarTooltip(8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getContainer().getFluidStack(), getContainer().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
 
         // Draw fluid auto-eject toggle
         GuiHelpers.renderTooltip(this, 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
                 new TranslationTextComponent(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT,
-                        TextFormatting.AQUA + L10NHelpers.localize(getContainer().isAutoEjectFluids() ?
+                        TextFormatting.AQUA + L10NHelpers.localize(getMenu().isAutoEjectFluids() ?
                                 L10NValues.GENERAL_TRUE : L10NValues.GENERAL_FALSE)),
                 new TranslationTextComponent(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT + ".info")));
     }

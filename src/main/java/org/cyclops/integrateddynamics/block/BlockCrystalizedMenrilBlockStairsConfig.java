@@ -20,9 +20,9 @@ public class BlockCrystalizedMenrilBlockStairsConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_menril_block_stairs",
-                nulleConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_MENRIL_BLOCK.getDefaultState(), Block.Properties.create(Material.CLAY)
+                nulleConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_MENRIL_BLOCK.defaultBlockState(), Block.Properties.of(Material.CLAY)
                         .sound(SoundType.SNOW)
-                        .hardnessAndResistance(1.5F)
+                        .strength(1.5F)
                         .harvestLevel(0)
                         .harvestTool(ToolType.PICKAXE)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

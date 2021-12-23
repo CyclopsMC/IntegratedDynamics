@@ -48,16 +48,16 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
         BlockPos pos = partContainer.getPosition().getBlockPos();
         if(!shouldRender(pos)) return;
 
-        if (rand.nextInt(20) == 0 && !Minecraft.getInstance().isGamePaused()) {
+        if (rand.nextInt(20) == 0 && !Minecraft.getInstance().isPaused()) {
             IPartState partStateUnsafe = partContainer.getPartState(direction);
             if (partStateUnsafe instanceof PartTypeConnectorOmniDirectional.State) {
                 PartTypeConnectorOmniDirectional.State partState = (PartTypeConnectorOmniDirectional.State) partStateUnsafe;
                 if (partState.hasConnectorId()) {
-                    double tx = pos.getX() + 0.5F + direction.getXOffset() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                    double tx = pos.getX() + 0.5F + direction.getStepX() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
                             + (direction.getAxis() != Direction.Axis.X ? 0.25F - rand.nextFloat() * 0.5F : 0F);
-                    double ty = pos.getY() + 0.5F + direction.getYOffset() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                    double ty = pos.getY() + 0.5F + direction.getStepY() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
                             + (direction.getAxis() != Direction.Axis.Y ? 0.25F - rand.nextFloat() * 0.5F : 0F);
-                    double tz = pos.getZ() + 0.5F + direction.getZOffset() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
+                    double tz = pos.getZ() + 0.5F + direction.getStepZ() * 1.15F - 0.03F + rand.nextFloat() * 0.04F
                             + (direction.getAxis() != Direction.Axis.Z ? 0.25F - rand.nextFloat() * 0.5F : 0F);
 
                     float scale = 0.15F;
@@ -67,12 +67,12 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
                     float blue = colors.getRight() + rand.nextFloat() * 0.1F - 0.05F;
                     float ageMultiplier = 17F;
 
-                    Minecraft.getInstance().worldRenderer.addParticle(
+                    Minecraft.getInstance().levelRenderer.addParticle(
                             new ParticleBlurData(red, green, blue, scale, ageMultiplier), false,
                             tx, ty, tz,
-                            -(direction.getXOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
-                            -(direction.getYOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
-                            -(direction.getZOffset() * 0.05F + rand.nextFloat() * 0.02F - 0.01F));
+                            -(direction.getStepX() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
+                            -(direction.getStepY() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
+                            -(direction.getStepZ() * 0.05F + rand.nextFloat() * 0.02F - 0.01F));
                 }
             }
         }

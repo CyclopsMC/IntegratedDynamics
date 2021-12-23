@@ -66,22 +66,32 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
         variableFacade.addModelOverlay(this, quads, this.rand, this.modelData);
 
-        return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.isAmbientOcclusion(), this.isSideLit(), this.isGui3d(),
-                this.getParticleTexture(), this.getItemCameraTransforms(), this.getOverrides());
+        return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.useAmbientOcclusion(), this.usesBlockLight(), this.isGui3d(),
+                this.getParticleIcon(), this.getTransforms(), this.getOverrides());
     }
 
     @Override
-    public boolean isSideLit() {
+    public boolean useAmbientOcclusion() {
+        return false; // TODO: rm
+    }
+
+    @Override
+    public boolean usesBlockLight() {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return this.baseModel.getParticleTexture();
+    public boolean isCustomRenderer() {
+        return false; // TODO: rm
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+    public TextureAtlasSprite getParticleIcon() {
+        return this.baseModel.getParticleIcon();
+    }
+
+    @Override
+    public ItemCameraTransforms getTransforms() {
         return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS_ITEM;
     }
 
@@ -90,13 +100,13 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         return new ItemOverrideList() {
             @Nullable
             @Override
-            public IBakedModel getOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+            public IBakedModel resolve(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
                 IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(stack);
                 IBakedModel overrideModel = variableFacade.getVariableItemOverrideModel(model, stack, world, livingEntity);
                 if (overrideModel != null) {
                     return overrideModel;
                 }
-                return VariableModelBaked.super.getOverrides().getOverrideModel(model, stack, world, livingEntity);
+                return VariableModelBaked.super.getOverrides().resolve(model, stack, world, livingEntity);
             }
 
             @Override

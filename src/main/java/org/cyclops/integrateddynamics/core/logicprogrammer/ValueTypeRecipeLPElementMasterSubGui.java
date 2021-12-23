@@ -56,8 +56,8 @@ class ValueTypeRecipeLPElementMasterSubGui extends RenderPattern<ValueTypeRecipe
 
         // Restore slots
         for (int i = ValueTypeRecipeLPElement.SLOT_OFFSET; i < element.getRenderPattern().getSlotPositions().length + ValueTypeRecipeLPElement.SLOT_OFFSET; i++) {
-            ContainerExtended.setSlotPosX(container.inventorySlots.get(i), 1 + getX() + element.getRenderPattern().getSlotPositions()[i - ValueTypeRecipeLPElement.SLOT_OFFSET].getLeft());
-            ContainerExtended.setSlotPosY(container.inventorySlots.get(i), 1 + getY() + element.getRenderPattern().getSlotPositions()[i - ValueTypeRecipeLPElement.SLOT_OFFSET].getRight());
+            ContainerExtended.setSlotPosX(container.slots.get(i), 1 + getX() + element.getRenderPattern().getSlotPositions()[i - ValueTypeRecipeLPElement.SLOT_OFFSET].getLeft());
+            ContainerExtended.setSlotPosY(container.slots.get(i), 1 + getY() + element.getRenderPattern().getSlotPositions()[i - ValueTypeRecipeLPElement.SLOT_OFFSET].getRight());
         }
     }
 
@@ -70,13 +70,13 @@ class ValueTypeRecipeLPElementMasterSubGui extends RenderPattern<ValueTypeRecipe
 
         // Hide slots (without removing them)
         for (int i = ValueTypeRecipeLPElement.SLOT_OFFSET; i < element.getRenderPattern().getSlotPositions().length + ValueTypeRecipeLPElement.SLOT_OFFSET; i++) {
-            ContainerExtended.setSlotPosX(container.inventorySlots.get(i), -100);
-            ContainerExtended.setSlotPosY(container.inventorySlots.get(i), -100);
+            ContainerExtended.setSlotPosX(container.slots.get(i), -100);
+            ContainerExtended.setSlotPosY(container.slots.get(i), -100);
         }
 
         // Place the selected slot in view
-        ContainerExtended.setSlotPosX(container.inventorySlots.get(ValueTypeRecipeLPElement.SLOT_OFFSET + index), 1 + getX() + 116);
-        ContainerExtended.setSlotPosY(container.inventorySlots.get(ValueTypeRecipeLPElement.SLOT_OFFSET + index), 1 + getY() + 2);
+        ContainerExtended.setSlotPosX(container.slots.get(ValueTypeRecipeLPElement.SLOT_OFFSET + index), 1 + getX() + 116);
+        ContainerExtended.setSlotPosY(container.slots.get(ValueTypeRecipeLPElement.SLOT_OFFSET + index), 1 + getY() + 2);
     }
 
     @Override

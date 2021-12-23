@@ -84,9 +84,9 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
 
         @Override
         public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
-            ItemStack heldItem = player.getHeldItem(hand);
-            ActionResultType actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getFace(), direction);
-            if(actionResult.isSuccessOrConsume()) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            ActionResultType actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getDirection(), direction);
+            if(actionResult.consumesAction()) {
                 return actionResult;
             }
             return ActionResultType.PASS;

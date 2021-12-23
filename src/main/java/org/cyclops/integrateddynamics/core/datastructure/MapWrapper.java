@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import java.util.Map.Entry;
+
 /**
  * A simple Map wrapper.
  * @author rubensworks

@@ -134,11 +134,11 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(List<ITextComponent> list, World world) {
+    public void appendHoverText(List<ITextComponent> list, World world) {
         if(isValid()) {
             list.add(getProxyTooltip());
         }
-        super.addInformation(list, world);
+        super.appendHoverText(list, world);
     }
 
     @OnlyIn(Dist.CLIENT)

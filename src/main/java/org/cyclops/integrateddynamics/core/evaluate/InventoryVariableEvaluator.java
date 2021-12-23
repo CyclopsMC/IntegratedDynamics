@@ -47,7 +47,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
      * @return If the configured slot has an item.
      */
     public boolean hasVariable() {
-        return !inventory.getStackInSlot(slot).isEmpty();
+        return !inventory.getItem(slot).isEmpty();
     }
 
     /**
@@ -62,9 +62,9 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
 
         int lastVariabledId = this.variableStored == null ? -1 : this.variableStored.getId();
         int variableId = -1;
-        if (!inventory.getStackInSlot(slot).isEmpty() && NetworkHelpers.shouldWork()) {
+        if (!inventory.getItem(slot).isEmpty() && NetworkHelpers.shouldWork()) {
             // Update proxy input
-            ItemStack itemStack = inventory.getStackInSlot(slot);
+            ItemStack itemStack = inventory.getItem(slot);
             this.variableStored = handler.handle(itemStack);
             if(this.variableStored != null) {
                 variableId = this.variableStored.getId();

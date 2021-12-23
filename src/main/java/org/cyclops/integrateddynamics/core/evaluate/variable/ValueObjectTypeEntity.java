@@ -57,7 +57,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
             if(entity.isPresent()) {
                 Entity e = entity.get();
                 if(e instanceof ItemEntity) {
-                    return (IFormattableTextComponent) ((ItemEntity) e).getItem().getDisplayName();
+                    return (IFormattableTextComponent) ((ItemEntity) e).getItem().getHoverName();
                 } else {
                     return (IFormattableTextComponent) e.getName();
                 }
@@ -79,7 +79,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     @Override
     public ValueEntity deserialize(INBT value) {
         try {
-            return ValueEntity.of(UUID.fromString(value.getString()));
+            return ValueEntity.of(UUID.fromString(value.getAsString()));
         } catch (IllegalArgumentException e) {}
         return ValueEntity.of((UUID) null);
     }
@@ -137,7 +137,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
         protected ValueEntity(@Nullable Entity value) {
             super(ValueTypes.OBJECT_ENTITY);
-            this.value = value == null ? Optional.<UUID>empty() : Optional.of(value.getUniqueID());
+            this.value = value == null ? Optional.<UUID>empty() : Optional.of(value.getUUID());
         }
 
         private ValueEntity(@Nullable UUID entityUuid) {
@@ -153,8 +153,8 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
             if (uuid.isPresent()) {
                 Optional<Entity> optionalEntity = DistExecutor.callWhenOn(Dist.CLIENT, ()->()-> {
                     if (MinecraftHelpers.isClientSideThread()) {
-                        for (Entity entity : Minecraft.getInstance().world.getAllEntities()) {
-                            if (entity.getUniqueID().equals(uuid.get())) {
+                        for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()) {
+                            if (entity.getUUID().equals(uuid.get())) {
                                 return Optional.of(entity);
                             }
                         }
@@ -163,8 +163,8 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
                     return null;
                 });
                 if (optionalEntity == null) {
-                    for (ServerWorld world : ServerLifecycleHooks.getCurrentServer().getWorlds()) {
-                        Entity entity = world.getEntityByUuid(uuid.get());
+                    for (ServerWorld world : ServerLifecycleHooks.getCurrentServer().getAllLevels()) {
+                        Entity entity = world.getEntity(uuid.get());
                         if (entity != null) {
                             return Optional.of(entity);
                         }

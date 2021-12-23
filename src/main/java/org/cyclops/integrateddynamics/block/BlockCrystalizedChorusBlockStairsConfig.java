@@ -20,9 +20,9 @@ public class BlockCrystalizedChorusBlockStairsConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_chorus_block_stairs",
-                eConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_CHORUS_BLOCK.getDefaultState(), Block.Properties.create(Material.CLAY)
+                eConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_CHORUS_BLOCK.defaultBlockState(), Block.Properties.of(Material.CLAY)
                         .sound(SoundType.SNOW)
-                        .hardnessAndResistance(1.5F)
+                        .strength(1.5F)
                         .harvestLevel(0)
                         .harvestTool(ToolType.PICKAXE)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

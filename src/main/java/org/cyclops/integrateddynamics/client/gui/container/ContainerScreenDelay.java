@@ -55,21 +55,21 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     public void init() {
         super.init();
 
-        numberFieldUpdateInterval = new WidgetNumberField(font, guiLeft + 98, guiTop + 102, 73, 14, true,
+        numberFieldUpdateInterval = new WidgetNumberField(font, leftPos + 98, topPos + 102, 73, 14, true,
                 new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), true);
         numberFieldUpdateInterval.setPositiveOnly(true);
-        numberFieldUpdateInterval.setMaxStringLength(64);
-        numberFieldUpdateInterval.setMaxStringLength(15);
+        numberFieldUpdateInterval.setMaxLength(64);
+        numberFieldUpdateInterval.setMaxLength(15);
         numberFieldUpdateInterval.setVisible(true);
         numberFieldUpdateInterval.setTextColor(16777215);
         numberFieldUpdateInterval.setCanLoseFocus(true);
 
-        numberFieldCapacity = new WidgetNumberField(font, guiLeft + 98, guiTop + 126, 73, 14, true,
+        numberFieldCapacity = new WidgetNumberField(font, leftPos + 98, topPos + 126, 73, 14, true,
                 new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), true);
         numberFieldCapacity.setMinValue(1);
         numberFieldCapacity.setMaxValue(BlockDelayConfig.maxHistoryCapacity);
-        numberFieldCapacity.setMaxStringLength(64);
-        numberFieldCapacity.setMaxStringLength(15);
+        numberFieldCapacity.setMaxLength(64);
+        numberFieldCapacity.setMaxLength(15);
         numberFieldCapacity.setVisible(true);
         numberFieldCapacity.setTextColor(16777215);
         numberFieldCapacity.setCanLoseFocus(true);
@@ -96,8 +96,8 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         try {
             capacity = numberFieldCapacity.getInt();
         } catch (NumberFormatException e) {}
-        ValueNotifierHelpers.setValue(getContainer(), getContainer().getLastUpdateValueId(), updateInterval);
-        ValueNotifierHelpers.setValue(getContainer(), getContainer().getLastCapacityValueId(), capacity);
+        ValueNotifierHelpers.setValue(getMenu(), getMenu().getLastUpdateValueId(), updateInterval);
+        ValueNotifierHelpers.setValue(getMenu(), getMenu().getLastCapacityValueId(), capacity);
     }
 
     @Override
@@ -114,28 +114,28 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
-        numberFieldUpdateInterval.renderButton(matrixStack, mouseX - guiLeft, mouseY - guiTop, partialTicks);
-        numberFieldCapacity.renderButton(matrixStack, mouseX - guiLeft, mouseY - guiTop, partialTicks);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+        numberFieldUpdateInterval.renderButton(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
+        numberFieldCapacity.renderButton(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
         // MCP: drawString
-        font.func_243248_b(matrixStack, new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), guiLeft + 8, guiTop + 104, Helpers.RGBToInt(0, 0, 0));
-        font.func_243248_b(matrixStack, new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), guiLeft + 8, guiTop + 128, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0));
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
     }
 
     @Override
     public void onUpdate(int valueId, CompoundNBT value) {
-        if (valueId == getContainer().getLastUpdateValueId()) {
-            numberFieldUpdateInterval.setText(Integer.toString(getContainer().getLastUpdateValue()));
+        if (valueId == getMenu().getLastUpdateValueId()) {
+            numberFieldUpdateInterval.setValue(Integer.toString(getMenu().getLastUpdateValue()));
         }
-        if (valueId == ((ContainerDelay) getContainer()).getLastCapacityValueId()) {
-            numberFieldCapacity.setText(Integer.toString(((ContainerDelay) getContainer()).getLastCapacityValue()));
+        if (valueId == ((ContainerDelay) getMenu()).getLastCapacityValueId()) {
+            numberFieldCapacity.setValue(Integer.toString(((ContainerDelay) getMenu()).getLastCapacityValue()));
         }
     }
 }

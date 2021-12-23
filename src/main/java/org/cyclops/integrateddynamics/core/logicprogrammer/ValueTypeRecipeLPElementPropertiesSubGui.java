@@ -75,18 +75,18 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             saveGuiToState();
             loadStateToGui();
             if (this.inputTags.isChecked()) {
-                this.inputTagsDropdown.setFocused2(true);
+                this.inputTagsDropdown.setFocus(true);
             }
         });
-        this.inputTagsDropdown = new WidgetTextFieldDropdown<>(Minecraft.getInstance().fontRenderer,
+        this.inputTagsDropdown = new WidgetTextFieldDropdown<>(Minecraft.getInstance().font,
                 guiLeft + getX() + 2, guiTop + getY() + 23,
                 134, 14,
                 new TranslationTextComponent("gui.cyclopscore.search"), true,
                 Sets.newHashSet());
         this.inputTagsDropdown.setDropdownEntryListener((entry) -> saveGuiToState());
-        this.inputTagsDropdown.setMaxStringLength(64);
+        this.inputTagsDropdown.setMaxLength(64);
         this.inputTagsDropdown.setDropdownSize(4);
-        this.inputTagsDropdown.setEnableBackgroundDrawing(false);
+        this.inputTagsDropdown.setBordered(false);
         this.inputTagsDropdown.setTextColor(16777215);
         this.inputTagsDropdown.setCanLoseFocus(true);
         this.inputSave = new ButtonImage(guiLeft + getX() + 116, guiTop + getY() + 72,
@@ -96,7 +96,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             if (!this.inputTags.isChecked() || this.inputTagsDropdown.getSelectedDropdownPossibility() != null) {
                 element.lastGui.setRecipeSubGui();
             } else {
-                this.inputTagsDropdown.setFocused2(true);
+                this.inputTagsDropdown.changeFocus(true);
             }
                 }, Images.OK);
 
@@ -104,12 +104,12 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         loadStateToGui();
         // Show dropdown if a tag was already set
         if (this.inputTags.isChecked()) {
-            this.inputTagsDropdown.setFocused2(true);
+            this.inputTagsDropdown.changeFocus(true);
         }
     }
 
     public ItemStack getSlotContents() {
-        return container.inventorySlots.get(slotId + ValueTypeRecipeLPElement.SLOT_OFFSET).getStack();
+        return container.slots.get(slotId + ValueTypeRecipeLPElement.SLOT_OFFSET).getItem();
     }
 
     public ItemMatchProperties getSlotProperties() {
@@ -119,12 +119,12 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     private Set<IDropdownEntry<ResourceLocation>> getDropdownEntries() {
         LinkedHashSet<IDropdownEntry<ResourceLocation>> set = Sets.newLinkedHashSet();
         if (getSlotContents().isEmpty()) {
-            for (ResourceLocation registeredTag : ItemTags.getCollection().getRegisteredTags()) {
+            for (ResourceLocation registeredTag : ItemTags.getAllTags().getAvailableTags()) {
                 set.add(new DropdownEntry(registeredTag));
             }
 
         } else {
-            for (ResourceLocation registeredTag : ItemTags.getCollection().getOwningTags(getSlotContents().getItem())) {
+            for (ResourceLocation registeredTag : ItemTags.getAllTags().getMatchingTags(getSlotContents().getItem())) {
                 set.add(new DropdownEntry(registeredTag));
             }
         }
@@ -160,7 +160,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
 
     public void saveGuiToState() {
         boolean nbt = this.inputNbt.isChecked();
-        String tag = this.inputTags.isChecked() ? this.inputTagsDropdown.getText() : null;
+        String tag = this.inputTags.isChecked() ? this.inputTagsDropdown.getValue() : null;
         getSlotProperties().setNbt(nbt);
         getSlotProperties().setItemTag(tag);
         element.sendSlotPropertiesToServer(slotId, getSlotProperties());
@@ -178,9 +178,9 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         drawSlot(matrixStack, getX() + guiLeft + 116, getY() + guiTop + 2);
 
         this.inputNbt.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.drawString(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, 0);
+        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, 0);
         this.inputTags.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.drawString(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 13, 0);
+        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 13, 0);
         this.inputSave.render(matrixStack, mouseX, mouseY, partialTicks);
         this.inputTagsDropdown.render(matrixStack, mouseX, mouseY, partialTicks);
     }
@@ -202,7 +202,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
                                    int mouseX, int mouseY, int columns, int offset) {
         int x = mouseX - guiLeft;
         int y = mouseY - guiTop;
-        List<Item> items = ItemTags.getCollection().get(hoveredPossibility.getValue()).getAllElements();
+        List<Item> items = ItemTags.getAllTags().getTag(hoveredPossibility.getValue()).getValues();
 
         // Draw background
         GuiHelpers.drawTooltipBackground(x, y, Math.min(items.size(), columns) * offset,
@@ -211,16 +211,16 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         // Draw item grid
         int passed = 0;
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        itemRenderer.zLevel = 300F;
+        itemRenderer.blitOffset = 300F;
         for (Item item : items) {
-            itemRenderer.renderItemAndEffectIntoGUI(new ItemStack(item), x, y);
+            itemRenderer.renderGuiItem(new ItemStack(item), x, y);
             x += offset;
             if (passed++ % columns == columns - 1) {
                 y += offset;
                 x = mouseX - guiLeft;
             }
         }
-        itemRenderer.zLevel = 0F;
+        itemRenderer.blitOffset = 0F;
     }
 
     @Override

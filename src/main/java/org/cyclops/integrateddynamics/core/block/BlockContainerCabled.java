@@ -34,37 +34,37 @@ public abstract class BlockContainerCabled extends BlockTile {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
                                              BlockRayTraceResult blockRayTraceResult) {
-        ItemStack heldItem = player.getHeldItem(hand);
-        if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getFace()) && player.isSecondaryUseActive()) {
+        ItemStack heldItem = player.getItemInHand(hand);
+        if (!world.isClientSide() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getDirection()) && player.isSecondaryUseActive()) {
             world.destroyBlock(pos, true);
             return ActionResultType.SUCCESS;
         }
-        return super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
+        return super.use(state, world, pos, player, hand, blockRayTraceResult);
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        super.onBlockAdded(state, world, pos, oldState, isMoving);
-        if (!world.isRemote()) {
+    public void onPlace(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, world, pos, oldState, isMoving);
+        if (!world.isClientSide()) {
             CableHelpers.onCableAdded(world, pos);
         }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        if (!world.isRemote()) {
+    public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(world, pos, state, placer, itemStack);
+        if (!world.isClientSide()) {
             CableHelpers.onCableAddedByPlayer(world, pos, placer);
         }
     }
 
     @Override
-    public void onPlayerDestroy(IWorld world, BlockPos blockPos, BlockState blockState) {
+    public void destroy(IWorld world, BlockPos blockPos, BlockState blockState) {
         CableHelpers.onCableRemoving((World) world, blockPos, true, false);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables((World) world, blockPos);
-        super.onPlayerDestroy(world, blockPos, blockState);
+        super.destroy(world, blockPos, blockState);
         CableHelpers.onCableRemoved((World) world, blockPos, connectedCables);
     }
 
@@ -100,19 +100,19 @@ public abstract class BlockContainerCabled extends BlockTile {
     }
 
     @Override
-    public void onReplaced(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (oldState.getBlock() != newState.getBlock()) {
             Collection<Direction> connectedCables = null;
             if (!CableHelpers.isRemovingCable()) {
                 CableHelpers.onCableRemoving(world, blockPos, true, false);
                 connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
             }
-            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+            super.onRemove(oldState, world, blockPos, newState, isMoving);
             if (!CableHelpers.isRemovingCable()) {
                 CableHelpers.onCableRemoved(world, blockPos, connectedCables);
             }
         } else {
-            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+            super.onRemove(oldState, world, blockPos, newState, isMoving);
         }
     }
 }

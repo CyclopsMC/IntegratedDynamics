@@ -40,7 +40,7 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     @Override
     public IFormattableTextComponent toCompactString(ValueFluidStack value) {
         FluidStack fluidStack = value.getRawValue();
-        return !fluidStack.isEmpty() ? ((IFormattableTextComponent) fluidStack.getDisplayName()).appendString(String.format(" (%s mB)", fluidStack.getAmount())) : new StringTextComponent("");
+        return !fluidStack.isEmpty() ? ((IFormattableTextComponent) fluidStack.getDisplayName()).append(String.format(" (%s mB)", fluidStack.getAmount())) : new StringTextComponent("");
     }
 
     @Override

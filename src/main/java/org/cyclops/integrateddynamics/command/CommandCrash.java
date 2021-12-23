@@ -19,14 +19,14 @@ public class CommandCrash implements Command<CommandSource> {
 
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        IntegratedDynamics.clog(Level.WARN, context.getSource().getName() + " initialized a server crash.");
+        IntegratedDynamics.clog(Level.WARN, context.getSource().getTextName() + " initialized a server crash.");
         TickHandler.getInstance().setShouldCrash();
         return 0;
     }
 
     public static LiteralArgumentBuilder<CommandSource> make() {
         return Commands.literal("crash")
-                .requires((commandSource) -> commandSource.hasPermissionLevel(2))
+                .requires((commandSource) -> commandSource.hasPermission(2))
                         .executes(new CommandCrash());
     }
 

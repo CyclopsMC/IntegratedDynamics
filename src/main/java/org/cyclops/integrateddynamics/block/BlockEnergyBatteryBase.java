@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,17 +41,17 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     public abstract boolean isCreative();
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
                                              BlockRayTraceResult blockRayTraceResult) {
-        ActionResultType superActionResult = super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
-        if (superActionResult.isSuccessOrConsume()) {
+        ActionResultType superActionResult = super.use(state, world, pos, player, hand, blockRayTraceResult);
+        if (superActionResult.consumesAction()) {
             return superActionResult;
         }
 
-        if (player.getHeldItem(hand).isEmpty()) {
+        if (player.getItemInHand(hand).isEmpty()) {
             return TileHelpers.getSafeTile(world, pos, TileEnergyBattery.class)
                     .map(tile -> {
-                        player.sendStatusMessage(Helpers.getLocalizedEnergyLevel(
+                        player.displayClientMessage(Helpers.getLocalizedEnergyLevel(
                                 tile.getEnergyStored(), tile.getMaxEnergyStored()), true);
                         return ActionResultType.SUCCESS;
                     })
@@ -75,12 +74,12 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (!world.isRemote()) {
+    public void setPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        if (!world.isClientSide()) {
             TileHelpers.getSafeTile(world, blockPos, TileEnergyBattery.class)
                     .ifPresent(tile -> itemStackToTile(itemStack, tile));
         }
-        super.onBlockPlacedBy(world, blockPos, state, placer, itemStack);
+        super.setPlacedBy(world, blockPos, state, placer, itemStack);
     }
 
     public static void itemStackToTile(ItemStack itemStack, TileEnergyBattery tile) {

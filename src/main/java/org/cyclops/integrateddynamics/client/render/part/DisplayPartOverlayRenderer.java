@@ -33,9 +33,9 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     @Override
     protected void setMatrixOrientation(MatrixStack matrixStack, Direction direction) {
         super.setMatrixOrientation(matrixStack, direction);
-        float translateX = -1F - direction.getXOffset() + 4 * pixel;
-        float translateY = 1F - direction.getYOffset() - 4 * pixel;
-        float translateZ = direction.getZOffset() - pixel + 0.0025F;
+        float translateX = -1F - direction.getStepX() + 4 * pixel;
+        float translateY = 1F - direction.getStepY() - 4 * pixel;
+        float translateZ = direction.getStepZ() - pixel + 0.0025F;
         if (direction == Direction.NORTH) {
             translateZ += 1F;
         } else if (direction == Direction.EAST) {
@@ -62,11 +62,11 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
 
         // Calculate the alpha to be used when the player is almost out of rendering bounds.
         Entity renderEntity = Minecraft.getInstance().player;
-        float distanceFactor = (float) ((getMaxRenderDistance() - renderEntity.getDistanceSq(pos.getX(), pos.getY(), pos.getZ())) / 5);
+        float distanceFactor = (float) ((getMaxRenderDistance() - renderEntity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ())) / 5);
         float distanceAlpha = Math.min(1.0F, distanceFactor);
         if(distanceAlpha < 0.05F) distanceAlpha = 0.05F; // Can't be 0 because the MC font renderer doesn't handle 0 alpha's properly.
 
-        matrixStack.push();
+        matrixStack.pushPose();
 
         float scale = 0.04F;
         setMatrixOrientation(matrixStack, direction);
@@ -84,7 +84,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
             }
             int rotation = partState.getFacingRotation().ordinal() - 2;
             matrixStack.translate(6, 6, 0);
-            matrixStack.rotate(Vector3f.ZP.rotationDegrees(rotation * 90));
+            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(rotation * 90));
             matrixStack.translate(-6, -6, 0);
 
             IValue value = partState.getDisplayValue();
@@ -100,7 +100,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
             }
         }
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     protected void drawError(TileEntityRendererDispatcher rendererDispatcher, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,

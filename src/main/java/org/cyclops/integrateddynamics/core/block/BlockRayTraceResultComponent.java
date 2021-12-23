@@ -11,7 +11,7 @@ public class BlockRayTraceResultComponent extends BlockRayTraceResult {
     private final VoxelShapeComponents.IComponent component;
 
     public BlockRayTraceResultComponent(BlockRayTraceResult blockRayTraceResult, VoxelShapeComponents.IComponent component) {
-        super(blockRayTraceResult.getHitVec(), blockRayTraceResult.getFace(), blockRayTraceResult.getPos(), blockRayTraceResult.isInside());
+        super(blockRayTraceResult.getLocation(), blockRayTraceResult.getDirection(), blockRayTraceResult.getBlockPos(), blockRayTraceResult.isInside());
         this.component = component;
     }
 

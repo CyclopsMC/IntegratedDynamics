@@ -31,7 +31,7 @@ public class NetworkInitializedEvent extends Event {
         return network;
     }
 
-    public World getWorld() {
+    public World getLevel() {
         return world;
     }
 

@@ -23,13 +23,13 @@ public class RawPartData implements IRawData {
 
     @Override
     public String toString() {
-        return String.format("%s: %s,%s,%s,%s (%s)", name, pos.getX(), pos.getY(), pos.getZ(), side, dimension.getLocation());
+        return String.format("%s: %s,%s,%s,%s (%s)", name, pos.getX(), pos.getY(), pos.getZ(), side, dimension.location());
     }
 
     public CompoundNBT toNbt() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putString("dimension", dimension.getLocation().toString());
-        tag.putLong("pos", pos.toLong());
+        tag.putString("dimension", dimension.location().toString());
+        tag.putLong("pos", pos.asLong());
         tag.putInt("side", side.ordinal());
         tag.putString("name", name);
         tag.putLong("last20TicksDurationNs", last20TicksDurationNs);
@@ -37,7 +37,7 @@ public class RawPartData implements IRawData {
     }
 
     public static RawPartData fromNbt(CompoundNBT tag) {
-        return new RawPartData(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(tag.getString("dimension"))), BlockPos.fromLong(tag.getLong("pos")),
+        return new RawPartData(RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
                 Direction.values()[tag.getInt("side")], tag.getString("name"), tag.getLong("last20TicksDurationNs"));
     }
 

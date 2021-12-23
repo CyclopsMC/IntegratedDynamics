@@ -57,7 +57,7 @@ public class ContainerAspectSettings extends InventoryContainer {
     }
 
     protected static IAspect<?, ?> readAspect(PacketBuffer packetBuffer) {
-        String name = packetBuffer.readString();
+        String name = packetBuffer.readUtf();
         return Objects.requireNonNull(AspectRegistry.getInstance().getAspect(new ResourceLocation(name)),
                 String.format("Could not find an aspect by name %s", name));
     }
@@ -69,7 +69,7 @@ public class ContainerAspectSettings extends InventoryContainer {
         this.target = target;
         this.partType = partType;
         this.partContainer = partContainer;
-        this.world = player.getEntityWorld();
+        this.world = player.getCommandSenderWorld();
         this.aspect = aspect;
 
         addPlayerInventory(player.inventory, 8, 131);
@@ -79,7 +79,7 @@ public class ContainerAspectSettings extends InventoryContainer {
         }
 
         putButtonAction(ContainerAspectSettings.BUTTON_EXIT, (s, containerExtended) -> {
-            if (!world.isRemote()) {
+            if (!world.isClientSide()) {
                 PartHelpers.openContainerPart((ServerPlayerEntity) playerInventory.player, getTarget().get().getCenter(), getPartType().get());
             }
         });
@@ -119,7 +119,7 @@ public class ContainerAspectSettings extends InventoryContainer {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity player) {
+    public boolean stillValid(PlayerEntity player) {
         return true;
     }
 
@@ -141,7 +141,7 @@ public class ContainerAspectSettings extends InventoryContainer {
     @Override
     public void onUpdate(int valueId, CompoundNBT value) {
         super.onUpdate(valueId, value);
-        if(!world.isRemote()) {
+        if(!world.isClientSide()) {
             IAspectPropertyTypeInstance property = propertyIds.get(valueId);
             if (property != null) {
                 IPartType partType = getPartType().get();

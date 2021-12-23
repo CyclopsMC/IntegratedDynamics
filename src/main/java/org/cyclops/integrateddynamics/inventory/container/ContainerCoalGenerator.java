@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
@@ -19,13 +20,13 @@ public class ContainerCoalGenerator extends InventoryContainer {
     private final IntReferenceHolder referenceProgress;
 
     public ContainerCoalGenerator(int id, PlayerInventory playerInventory) {
-        this(id, playerInventory, new Inventory(TileCoalGenerator.INVENTORY_SIZE), IntReferenceHolder.single());
+        this(id, playerInventory, new Inventory(TileCoalGenerator.INVENTORY_SIZE), IntReferenceHolder.standalone());
     }
 
     public ContainerCoalGenerator(int id, PlayerInventory playerInventory, IInventory inventory, IntReferenceHolder progressReference) {
         super(RegistryEntries.CONTAINER_COAL_GENERATOR, id, playerInventory, inventory);
 
-        this.referenceProgress = trackInt(progressReference);
+        this.referenceProgress = addDataSlot(progressReference);
 
         addInventory(inventory, 0, offsetX + 80, offsetY + 11, 1, 1);
         addPlayerInventory(playerInventory, offsetX + 8, offsetY + 46);
@@ -43,4 +44,8 @@ public class ContainerCoalGenerator extends InventoryContainer {
         return this.referenceProgress.get();
     }
 
+    @Override
+    public boolean stillValid(PlayerEntity p_75145_1_) {
+        return false; // TODO: rm
+    }
 }

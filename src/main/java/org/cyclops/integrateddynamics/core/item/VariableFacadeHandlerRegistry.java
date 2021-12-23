@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.cyclops.integrateddynamics.api.item.IVariableFacade.IValidator;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry.IVariableFacadeFactory;
+
 /**
  * The variable facade handler registry.
  * @author rubensworks
@@ -203,7 +206,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void addInformation(List<ITextComponent> list, World world) {
+        public void appendHoverText(List<ITextComponent> list, World world) {
 
         }
 

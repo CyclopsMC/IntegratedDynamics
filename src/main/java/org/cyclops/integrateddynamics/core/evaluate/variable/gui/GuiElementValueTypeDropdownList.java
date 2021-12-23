@@ -169,7 +169,7 @@ public class GuiElementValueTypeDropdownList<T, G extends AbstractGui, C extends
             int y = guiTop + getY();
 
             // MCP: drawString
-            fontRenderer.func_243246_a(matrixStack, element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
+            fontRenderer.drawShadow(matrixStack, element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
 
             if(showError()) {
                 ITextComponent lastError = getLastError();

@@ -26,8 +26,8 @@ public class BlockMechanicalSqueezerConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "mechanical_squeezer",
-                eConfig -> new BlockMechanicalSqueezer(Block.Properties.create(Material.ANVIL)
-                        .hardnessAndResistance(5.0F)
+                eConfig -> new BlockMechanicalSqueezer(Block.Properties.of(Material.HEAVY_METAL)
+                        .strength(5.0F)
                         .sound(SoundType.METAL)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

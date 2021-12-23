@@ -60,7 +60,7 @@ public class EnergyHelpers {
     public static int fillNeigbours(World world, BlockPos pos, int energy, boolean simulate) {
         int toFill = energy;
         for(Direction side : Direction.values()) {
-            IEnergyStorage energyStorage = getEnergyStorage(world, pos.offset(side), side.getOpposite()).orElse(null);
+            IEnergyStorage energyStorage = getEnergyStorage(world, pos.relative(side), side.getOpposite()).orElse(null);
             if(energyStorage != null) {
                 toFill -= energyStorage.receiveEnergy(toFill, simulate);
                 if(toFill <= 0) {

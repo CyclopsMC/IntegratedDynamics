@@ -62,7 +62,7 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
         addCapabilityInternal(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, LazyOptional.of(() -> this.tank));
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getWorld)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getLevel)));
 
         // Add tank update listeners
         tank.addDirtyMarkListener(this::onTankChanged);
@@ -74,12 +74,12 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
             @Override
             public Optional<RecipeMechanicalSqueezer> getNewValue(ItemStack key) {
                 IInventory recipeInput = new Inventory(key);
-                return CraftingHelpers.findServerRecipe(getRecipeRegistry(), recipeInput, getWorld());
+                return CraftingHelpers.findServerRecipe(getRecipeRegistry(), recipeInput, getLevel());
             }
 
             @Override
             public boolean isKeyEqual(ItemStack cacheKey, ItemStack newKey) {
-                return ItemStack.areItemStacksEqual(cacheKey, newKey);
+                return ItemStack.matches(cacheKey, newKey);
             }
         };
     }
@@ -96,13 +96,13 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
 
     @Override
     public boolean wasWorking() {
-        return getWorld().getBlockState(getPos()).get(BlockMechanicalSqueezer.LIT);
+        return getLevel().getBlockState(getBlockPos()).getValue(BlockMechanicalSqueezer.LIT);
     }
 
     @Override
     public void setWorking(boolean working) {
-        getWorld().setBlockState(getPos(), getWorld().getBlockState(getPos())
-                .with(BlockMechanicalSqueezer.LIT, working));
+        getLevel().setBlockAndUpdate(getBlockPos(), getLevel().getBlockState(getBlockPos())
+                .setValue(BlockMechanicalSqueezer.LIT, working));
     }
 
     public SingleUseTank getTank() {
@@ -116,9 +116,9 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         tag.put("tank", getTank().writeToNBT(new CompoundNBT()));
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
 
     @Override
     protected ItemStack getCurrentRecipeCacheKey() {
-        return getInventory().getStackInSlot(SLOT_INPUT).copy();
+        return getInventory().getItem(SLOT_INPUT).copy();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
         for (RecipeSqueezer.ItemStackChance itemStackChance : recipe.getOutputItems()) {
             ItemStack outputStack = itemStackChance.getItemStack().copy();
             if (!outputStack.isEmpty() && (simulate || itemStackChance.getChance() == 1.0F
-                    || itemStackChance.getChance() >= getWorld().rand.nextFloat())) {
+                    || itemStackChance.getChance() >= getLevel().random.nextFloat())) {
                 InventoryHelpers.addStackToList(outputStacks, outputStack);
             }
         }
@@ -161,7 +161,7 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
 
         // Only consume items if we are not simulating
         if (!simulate) {
-            getInventory().decrStackSize(SLOT_INPUT, 1);
+            getInventory().removeItem(SLOT_INPUT, 1);
         }
 
         return true;
@@ -180,11 +180,11 @@ public class TileMechanicalSqueezer extends TileMechanicalMachine<ItemStack, Rec
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (!world.isRemote()) {
+        if (!level.isClientSide()) {
             // Auto-eject fluid
             if (isAutoEjectFluids() && !getTank().isEmpty()) {
                 for (Direction side : Direction.values()) {
-                    IFluidHandler handler = TileHelpers.getCapability(getWorld(), getPos().offset(side),
+                    IFluidHandler handler = TileHelpers.getCapability(getLevel(), getBlockPos().relative(side),
                             side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
                     if(handler != null) {
                         FluidStack fluidStack = getTank().getFluid().copy();

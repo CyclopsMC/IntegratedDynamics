@@ -28,6 +28,8 @@ import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInvent
 import java.util.Collection;
 import java.util.function.Supplier;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * A base block with a gui and part entity that can connect to cables.
  * @author rubensworks
@@ -39,39 +41,39 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player,
+    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player,
                                              Hand hand, BlockRayTraceResult rayTraceResult) {
-        ItemStack heldItem = player.getHeldItem(hand);
-        if (!world.isRemote() && WrenchHelpers.isWrench(player, heldItem, world, blockPos, rayTraceResult.getFace())
+        ItemStack heldItem = player.getItemInHand(hand);
+        if (!world.isClientSide() && WrenchHelpers.isWrench(player, heldItem, world, blockPos, rayTraceResult.getDirection())
                 && player.isSecondaryUseActive()) {
-            Block.spawnDrops(blockState, world, blockPos, blockState.hasTileEntity() ? world.getTileEntity(blockPos) : null, player, heldItem);
+            Block.dropResources(blockState, world, blockPos, blockState.hasTileEntity() ? world.getBlockEntity(blockPos) : null, player, heldItem);
             world.destroyBlock(blockPos, false);
             return ActionResultType.SUCCESS;
         }
-        return super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
+        return super.use(blockState, world, blockPos, player, hand, rayTraceResult);
     }
 
     @Override
-    public void onBlockAdded(BlockState blockState, World world, BlockPos blockPos, BlockState oldState, boolean isMoving) {
-        super.onBlockAdded(blockState, world, blockPos, oldState, isMoving);
-        if (!world.isRemote()) {
+    public void onPlace(BlockState blockState, World world, BlockPos blockPos, BlockState oldState, boolean isMoving) {
+        super.onPlace(blockState, world, blockPos, oldState, isMoving);
+        if (!world.isClientSide()) {
             CableHelpers.onCableAdded(world, blockPos);
         }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        if (!world.isRemote()) {
+    public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(world, pos, state, placer, itemStack);
+        if (!world.isClientSide()) {
             CableHelpers.onCableAddedByPlayer(world, pos, placer);
         }
     }
 
     @Override
-    public void onPlayerDestroy(IWorld world, BlockPos blockPos, BlockState blockState) {
+    public void destroy(IWorld world, BlockPos blockPos, BlockState blockState) {
         CableHelpers.onCableRemoving((World) world, blockPos, true, false);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables((World) world, blockPos);
-        super.onPlayerDestroy(world, blockPos, blockState);
+        super.destroy(world, blockPos, blockState);
         CableHelpers.onCableRemoved((World) world, blockPos, connectedCables);
     }
 
@@ -107,7 +109,7 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
     }
 
     @Override
-    public void onReplaced(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (oldState.getBlock() != newState.getBlock()) {
             TileHelpers.getSafeTile(world, blockPos, TileCableConnectableInventory.class)
                     .ifPresent(tile -> InventoryHelpers.dropItems(world, tile.getInventory(), blockPos));
@@ -116,7 +118,7 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
                 CableHelpers.onCableRemoving(world, blockPos, true, false);
                 connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
             }
-            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+            super.onRemove(oldState, world, blockPos, newState, isMoving);
             if (!CableHelpers.isRemovingCable()) {
                 CableHelpers.onCableRemoved(world, blockPos, connectedCables);
             }
@@ -132,7 +134,7 @@ public abstract class BlockTileGuiCabled extends BlockTileGui {
         if (isPickBlockPersistData()) {
             return super.getPickBlock(state, target, world, blockPos, player);
         } else {
-            return getBlock().getItem(world, blockPos, state);
+            return getBlock().getCloneItemStack(world, blockPos, state);
         }
     }
 

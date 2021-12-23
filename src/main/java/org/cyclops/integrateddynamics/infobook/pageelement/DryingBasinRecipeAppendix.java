@@ -13,6 +13,9 @@ import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
 
+import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix.FluidButton;
+import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix.ItemButton;
+
 /**
  * Drying basin recipes.
  * @author rubensworks
@@ -64,7 +67,7 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
 
         // Prepare items
         int tick = getTick(gui);
-        ItemStack inputItem = prepareItemStacks(recipe.getInputIngredient().getMatchingStacks(), tick);
+        ItemStack inputItem = prepareItemStacks(recipe.getInputIngredient().getItems(), tick);
         FluidStack inputFluid = recipe.getInputFluid();
         ItemStack resultItem = prepareItemStack(recipe.getOutputItem(), tick);
         FluidStack resultFluid = recipe.getOutputFluid();

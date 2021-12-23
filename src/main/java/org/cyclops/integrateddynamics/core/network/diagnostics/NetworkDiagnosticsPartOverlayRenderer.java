@@ -57,9 +57,9 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             PlayerEntity player = Minecraft.getInstance().player;
             float partialTicks = event.getPartialTicks();
 
-            double offsetX = player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * (double) partialTicks;
-            double offsetY = player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * (double) partialTicks;
-            double offsetZ = player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * (double) partialTicks;
+            double offsetX = player.xOld + (player.getX() - player.xOld) * (double) partialTicks;
+            double offsetY = player.yOld + (player.getY() - player.yOld) * (double) partialTicks;
+            double offsetZ = player.zOld + (player.getZ() - player.zOld) * (double) partialTicks;
 
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -69,23 +69,23 @@ public class NetworkDiagnosticsPartOverlayRenderer {
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (PartPos partPos : partList) {
-                if (partPos.getPos().getWorldKey().getLocation().equals(player.world.getDimensionKey().getLocation()) && partPos.getPos().getBlockPos().distanceSq(player.getPosition()) < 10000) {
+                if (partPos.getPos().getWorldKey().location().equals(player.level.dimension().location()) && partPos.getPos().getBlockPos().distSqr(player.blockPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
                     final VoxelShape shape;
                     if (partStateHolder != null) {
                         shape = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide());
                     } else {
-                        shape = VoxelShapes.FULL_CUBE;
+                        shape = VoxelShapes.BLOCK;
                     }
 
                     AxisAlignedBB bb = shape
-                            .getBoundingBox()
-                            .offset(partPos.getPos().getBlockPos())
-                            .offset(-offsetX, -offsetY, -offsetZ)
-                            .expand(0.05, 0.05, 0.05)
-                            .expand(-0.05, -0.05, -0.05);
-                    WorldRenderer.drawBoundingBox(event.getMatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource().getBuffer(RenderType.getLines()),
-                            bb, 1.0F, 0.2F, 0.1F, 0.8F);
+                            .bounds()
+                            .move(partPos.getPos().getBlockPos())
+                            .move(-offsetX, -offsetY, -offsetZ)
+                            .inflate(0.05, 0.05, 0.05)
+                            .inflate(-0.05, -0.05, -0.05);
+                    /*WorldRenderer.renderLineBox(event.getMatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource().getBuffer(RenderType.getLines()),
+                            bb, 1.0F, 0.2F, 0.1F, 0.8F);*/
                 }
             }
 

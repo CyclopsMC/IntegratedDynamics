@@ -27,6 +27,6 @@ public class SlotVariable extends SlotSingleItem {
      */
     public SlotVariable(IInventory inventory, int index, int x, int y) {
         super(inventory, index, x, y, RegistryEntries.ITEM_VARIABLE);
-        DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> setBackground(AtlasTexture.LOCATION_BLOCKS_TEXTURE, SlotVariable.VARIABLE_EMPTY));
+        DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> setBackground(AtlasTexture.LOCATION_BLOCKS, SlotVariable.VARIABLE_EMPTY));
     }
 }

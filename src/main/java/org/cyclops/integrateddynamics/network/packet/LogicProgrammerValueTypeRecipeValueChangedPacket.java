@@ -45,8 +45,8 @@ public class LogicProgrammerValueTypeRecipeValueChangedPacket extends PacketCode
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
+		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
 			if(element instanceof ValueTypeRecipeLPElement) {
 				Type type = Type.values()[this.type];
 				switch (type) {
@@ -63,7 +63,7 @@ public class LogicProgrammerValueTypeRecipeValueChangedPacket extends PacketCode
 						((ValueTypeRecipeLPElement) element).setOutputEnergy(value);
 						break;
 				}
-                ((ContainerLogicProgrammerBase) player.openContainer).onDirty();
+                ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
 			}
 		}
 	}

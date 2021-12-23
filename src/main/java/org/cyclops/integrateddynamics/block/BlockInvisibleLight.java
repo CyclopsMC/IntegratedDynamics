@@ -16,6 +16,8 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * An invisible light source with variable intensity.
  * @author rubensworks
@@ -27,29 +29,29 @@ public class BlockInvisibleLight extends Block {
     public BlockInvisibleLight(Properties properties) {
         super(properties);
 
-        this.setDefaultState(this.stateContainer.getBaseState()
-                .with(LIGHT, 0));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(LIGHT, 0));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(LIGHT);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public BlockRenderType getRenderType(BlockState blockState) {
+    public BlockRenderType getRenderShape(BlockState blockState) {
         return BlockRenderType.INVISIBLE;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public PushReaction getPushReaction(BlockState blockState) {
+    public PushReaction getPistonPushReaction(BlockState blockState) {
         return PushReaction.NORMAL;
     }
 
     @Override
-    public boolean isReplaceable(BlockState blockState, BlockItemUseContext blockItemUseContext) {
+    public boolean canBeReplaced(BlockState blockState, BlockItemUseContext blockItemUseContext) {
         return false;
     }
 
@@ -59,12 +61,12 @@ public class BlockInvisibleLight extends Block {
     }
 
     @Override
-    public void fillItemGroup(ItemGroup p_149666_1_, NonNullList<ItemStack> p_149666_2_) {
+    public void fillItemCategory(ItemGroup p_149666_1_, NonNullList<ItemStack> p_149666_2_) {
         // Do not appear in creative tab
     }
 
     @Override
     public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
-        return world.getBlockState(pos).get(LIGHT);
+        return world.getBlockState(pos).getValue(LIGHT);
     }
 }

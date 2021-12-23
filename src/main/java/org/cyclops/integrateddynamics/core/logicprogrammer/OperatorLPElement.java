@@ -111,8 +111,8 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     public ItemStack writeElement(PlayerEntity player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         int[] variableIds = getVariableIds(inputVariables);
-        return registry.writeVariableFacadeItem(!player.world.isRemote(), itemStack, Operators.REGISTRY,
-                new OperatorVariableFacadeFactory(operator, variableIds), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.getDefaultState());
+        return registry.writeVariableFacadeItem(!player.level.isClientSide(), itemStack, Operators.REGISTRY,
+                new OperatorVariableFacadeFactory(operator, variableIds), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
     }
 
     @Override

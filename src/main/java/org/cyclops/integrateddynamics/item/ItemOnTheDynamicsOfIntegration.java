@@ -20,6 +20,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerOnTheDynamics
 
 import javax.annotation.Nullable;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * On the Dynamics of Integration book.
  * @author rubensworks
@@ -57,18 +59,18 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
             if (!playerTag.contains(NBT_INFOBOOK_SPAWNED)) {
                 playerTag.putBoolean(NBT_INFOBOOK_SPAWNED, true);
 
-                World world = event.getPlayer().getEntityWorld();
+                World world = event.getPlayer().getCommandSenderWorld();
                 PlayerEntity player = event.getPlayer();
                 ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_ON_THE_DYNAMICS_OF_INTEGRATION);
                 EntityItemTargetted entity = new EntityItemTargetted(world,
-                        player.getPosition().getX() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.rand.nextFloat(),
-                        player.getPosition().getY() + SPAWN_RANGE * world.rand.nextFloat(),
-                        player.getPosition().getZ() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.rand.nextFloat()
+                        player.blockPosition().getX() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.random.nextFloat(),
+                        player.blockPosition().getY() + SPAWN_RANGE * world.random.nextFloat(),
+                        player.blockPosition().getZ() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.random.nextFloat()
                 );
 
                 entity.setItem(itemStack);
                 entity.setTarget(player);
-                world.addEntity(entity);
+                world.addFreshEntity(entity);
             }
         }
     }

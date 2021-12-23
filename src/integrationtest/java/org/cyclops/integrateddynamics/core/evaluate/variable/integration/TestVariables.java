@@ -73,7 +73,7 @@ public class TestVariables {
         Map<IngredientComponent<?, ?>, List<?>> ingredientsOut = Maps.newIdentityHashMap();
         ingredientsOut.put(IngredientComponent.ENERGY, Lists.newArrayList(777L));
         ingredientsOut.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(Fluids.WATER, 123)));
-        ingredientsOut.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.OAK_BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));
+        ingredientsOut.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.OAK_BOAT), new ItemStack(Item.byBlock(Blocks.STONE))));
         DummyVariableIngredients iMainOut = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(
                 new MixedIngredients(ingredientsOut)));
         IRecipeDefinition rawRecipe = RecipeDefinition.ofIngredients(

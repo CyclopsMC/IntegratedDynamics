@@ -39,16 +39,16 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
         this.target = target;
         this.partType = partType;
         this.partContainer = partContainer;
-        this.world = player.getEntityWorld();
+        this.world = player.getCommandSenderWorld();
 
         putButtonAction(ContainerMultipart.BUTTON_SETTINGS, (s, containerExtended) -> {
-            if(!world.isRemote()) {
+            if(!world.isClientSide()) {
                 PartHelpers.openContainerPart((ServerPlayerEntity) player, target.get().getCenter(), partType);
             }
         });
     }
 
-    public World getWorld() {
+    public World getLevel() {
         return world;
     }
 
@@ -69,7 +69,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean stillValid(PlayerEntity playerIn) {
         return PartHelpers.canInteractWith(getTarget().get(), player, this.partContainer.get());
     }
 

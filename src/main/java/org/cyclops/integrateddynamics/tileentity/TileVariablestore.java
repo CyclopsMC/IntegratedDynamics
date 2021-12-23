@@ -70,8 +70,8 @@ public class TileVariablestore extends TileCableConnectableInventory
     protected SimpleInventory createInventory(int inventorySize, int stackSize) {
         return new SimpleInventory(inventorySize, stackSize) {
             @Override
-            public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-                return super.isItemValidForSlot(slot, itemStack)
+            public boolean canPlaceItem(int slot, ItemStack itemStack) {
+                return super.canPlaceItem(slot, itemStack)
                         && (itemStack.isEmpty() || itemStack.getCapability(VariableFacadeHolderConfig.CAPABILITY, null).isPresent());
             }
         };
@@ -89,7 +89,7 @@ public class TileVariablestore extends TileCableConnectableInventory
 
     @Override
     public void onDirty() {
-        if(!world.isRemote()) {
+        if(!level.isClientSide()) {
             refreshVariables(true);
         }
     }

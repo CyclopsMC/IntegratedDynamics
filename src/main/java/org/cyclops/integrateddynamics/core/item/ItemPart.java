@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.item;
 
 import com.google.common.collect.Lists;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,7 +41,6 @@ import java.util.List;
  * @author rubensworks
  */
 @EqualsAndHashCode(callSuper = false)
-@Data
 public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extends Item {
 
     private static final List<IUseAction> USE_ACTIONS = Lists.newArrayList();
@@ -54,13 +52,17 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         this.part = part;
     }
 
+    public IPartType<P, S> getPart() {
+        return part;
+    }
+
     @Override
-    public String getTranslationKey() {
+    public String getDescriptionId() {
         return part.getTranslationKey();
     }
 
     @Override
-    public String getTranslationKey(ItemStack stack) {
+    public String getDescriptionId(ItemStack stack) {
         return part.getTranslationKey();
     }
 
@@ -73,24 +75,24 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack p_200295_1_) {
-        return new TranslationTextComponent(getTranslationKey());
+    public ITextComponent getName(ItemStack p_200295_1_) {
+        return new TranslationTextComponent(getDescriptionId());
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        World world = context.getWorld();
+    public ActionResultType useOn(ItemUseContext context) {
+        World world = context.getLevel();
         PlayerEntity player = context.getPlayer();
         Hand hand = context.getHand();
-        BlockPos pos = context.getPos();
-        Direction side = context.getFace();
+        BlockPos pos = context.getClickedPos();
+        Direction side = context.getClickedFace();
 
-        ItemStack itemStack = player.getHeldItem(hand);
+        ItemStack itemStack = player.getItemInHand(hand);
         IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos, side).orElse(null);
         if(partContainerFirst != null) {
             // Add part to existing cable
             if(PartHelpers.addPart(world, pos, side, getPart(), itemStack)) {
-                if(world.isRemote()) {
+                if(world.isClientSide()) {
                     ItemBlockCable.playPlaceSound(world, pos);
                 }
                 if(!player.isCreative()) {
@@ -100,22 +102,22 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
             return ActionResultType.SUCCESS;
         } else {
             // Place part at a new position with an unreal cable
-            BlockPos target = pos.offset(side);
+            BlockPos target = pos.relative(side);
             Direction targetSide = side.getOpposite();
             BlockRayTraceResult targetRayTrace = new BlockRayTraceResult(new Vector3d(
-                    (double) target.getX() + 0.5D + (double) targetSide.getXOffset() * 0.5D,
-                    (double) target.getY() + 0.5D + (double) targetSide.getYOffset() * 0.5D,
-                    (double) target.getZ() + 0.5D + (double) targetSide.getZOffset() * 0.5D),
+                    (double) target.getX() + 0.5D + (double) targetSide.getStepX() * 0.5D,
+                    (double) target.getY() + 0.5D + (double) targetSide.getStepY() * 0.5D,
+                    (double) target.getZ() + 0.5D + (double) targetSide.getStepZ() * 0.5D),
                     targetSide, target, false);
-            if(world.getBlockState(target).getBlock().isReplaceable(world.getBlockState(target),
+            if(world.getBlockState(target).getBlock().canBeReplaced(world.getBlockState(target),
                     new BlockItemUseContext(world, player, hand, itemStack, targetRayTrace))) {
-                ItemBlockCable itemBlockCable = (ItemBlockCable) Item.getItemFromBlock(RegistryEntries.BLOCK_CABLE);
+                ItemBlockCable itemBlockCable = (ItemBlockCable) Item.byBlock(RegistryEntries.BLOCK_CABLE);
                 itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
-                if (itemBlockCable.onItemUse(new ItemUseContext(player, hand, targetRayTrace)).isSuccessOrConsume()) {
+                if (itemBlockCable.useOn(new ItemUseContext(player, hand, targetRayTrace)).consumesAction()) {
                     IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide).orElse(null);
                     if (partContainer != null) {
                         ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target, targetSide).orElse(null);
-                        if(!world.isRemote()) {
+                        if(!world.isClientSide()) {
                             PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack);
                             if (cableFakeable != null) {
                                 CableHelpers.onCableRemoving(world, target, false, false);
@@ -136,14 +138,14 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide).orElse(null);
                 if(partContainer != null) {
                     // Edge-case: if the pos was a full network block (part of the same network as target), make sure that we disconnect this part of the network first
-                    if (!world.isRemote() && NetworkHelpers.getNetwork(PartPos.of(world, pos, side)).isPresent() && partContainer.canAddPart(targetSide, getPart())) {
+                    if (!world.isClientSide() && NetworkHelpers.getNetwork(PartPos.of(world, pos, side)).isPresent() && partContainer.canAddPart(targetSide, getPart())) {
                         CableHelpers.getCable(world, target, targetSide)
                                 .ifPresent(cable -> CableHelpers.disconnectCable(world, target, targetSide, cable, targetSide));
                     }
 
                     // Add part to existing cable
                     if(PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack)) {
-                        if(world.isRemote()) {
+                        if(world.isClientSide()) {
                             ItemBlockCable.playPlaceSound(world, target);
                         }
                         if(!player.isCreative()) {
@@ -161,19 +163,19 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 }
             }
         }
-        return super.onItemUse(context);
+        return super.useOn(context);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
         if(itemStack.getTag() != null
                 && itemStack.getTag().contains("id", Constants.NBT.TAG_INT)) {
             int id = itemStack.getTag().getInt("id");
             list.add(new TranslationTextComponent(L10NValues.GENERAL_ITEM_ID, id));
         }
         getPart().loadTooltip(itemStack, list);
-        super.addInformation(itemStack, world, list, flag);
+        super.appendHoverText(itemStack, world, list, flag);
     }
 
     public static interface IUseAction {

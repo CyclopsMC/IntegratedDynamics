@@ -36,7 +36,7 @@ public class NbtHelpers {
      * @return If tag a is a subset (or equal) of tag b.
      */
     public static boolean nbtMatchesSubset(CompoundNBT a, CompoundNBT b, boolean recursive) {
-        for (String key : a.keySet()) {
+        for (String key : a.getAllKeys()) {
             INBT valueA = a.get(key);
             if (recursive && (valueA instanceof CompoundNBT || valueA instanceof ListNBT)) {
                 INBT valueB = b.get(key);
@@ -109,7 +109,7 @@ public class NbtHelpers {
             if (tag == null) {
                 tag = inputTag.copy();
             } else {
-                Set<String> keys = Sets.newHashSet(tag.keySet());
+                Set<String> keys = Sets.newHashSet(tag.getAllKeys());
                 for (String key : keys) {
                     int type = tag.get(key).getId();
                     if (!inputTag.contains(key, type)) {
@@ -132,7 +132,7 @@ public class NbtHelpers {
      */
     public static CompoundNBT minus(CompoundNBT a, CompoundNBT b) {
         CompoundNBT tag = a.copy();
-        for (String key : b.keySet()) {
+        for (String key : b.getAllKeys()) {
             int type = b.get(key).getId();
             if (tag.contains(key, type)) {
                 if (type == Constants.NBT.TAG_COMPOUND) {

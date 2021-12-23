@@ -78,21 +78,21 @@ public class RenderTileEntityEnergyBattery extends TileEntityRenderer<TileEnergy
             // Re-scale height to [0.125, 0.875] range as the energy bar does not take up 100% of the height.
             height = (height * 12 / 16) + 0.125F;
 
-            matrixStack.push();
+            matrixStack.pushPose();
 
             for(Direction side : Direction.Plane.HORIZONTAL) {
-                combinedLight = WorldRenderer.getCombinedLight(tile.getWorld(), tile.getPos().add(side.getDirectionVec()));
+                combinedLight = WorldRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(side.getNormal()));
                 TextureAtlasSprite icon = RegistryEntries.BLOCK_ENERGY_BATTERY.iconOverlay;
 
                 float[][] c = coordinates[side.ordinal()];
-                float replacedMaxV = icon.getMaxV();
-                float replacedMinV = (icon.getMinV() - icon.getMaxV()) * height + icon.getMaxV();
+                float replacedMaxV = icon.getV1();
+                float replacedMinV = (icon.getV0() - icon.getV1()) * height + icon.getV1();
 
                 float r = 1.0F;
                 float g = 1.0F;
                 float b = 1.0F;
                 if (tile.isCreative()) {
-                    float tickFactor = (((float) tile.getWorld().getGameTime() % 20) / 10);
+                    float tickFactor = (((float) tile.getLevel().getGameTime() % 20) / 10);
                     if (tickFactor > 1) {
                         tickFactor = -tickFactor + 1;
                     }
@@ -101,15 +101,15 @@ public class RenderTileEntityEnergyBattery extends TileEntityRenderer<TileEnergy
                     b = 0.60F + 0.40F * tickFactor;
                 }
 
-                IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.getText(icon.getAtlasTexture().getTextureLocation()));
-                Matrix4f matrix = matrixStack.getLast().getMatrix();
-                vb.pos(matrix, c[0][0], c[0][1] * height, c[0][2]).color(r, g, b, 1).tex(icon.getMinU(), replacedMaxV).lightmap(combinedLight).endVertex();
-                vb.pos(matrix, c[1][0], c[1][1] * height, c[1][2]).color(r, g, b, 1).tex(icon.getMinU(), replacedMinV).lightmap(combinedLight).endVertex();
-                vb.pos(matrix, c[2][0], c[2][1] * height, c[2][2]).color(r, g, b, 1).tex(icon.getMaxU(), replacedMinV).lightmap(combinedLight).endVertex();
-                vb.pos(matrix, c[3][0], c[3][1] * height, c[3][2]).color(r, g, b, 1).tex(icon.getMaxU(), replacedMaxV).lightmap(combinedLight).endVertex();
+                IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+                Matrix4f matrix = matrixStack.last().pose();
+                vb.vertex(matrix, c[0][0], c[0][1] * height, c[0][2]).color(r, g, b, 1).uv(icon.getU0(), replacedMaxV).uv2(combinedLight).endVertex();
+                vb.vertex(matrix, c[1][0], c[1][1] * height, c[1][2]).color(r, g, b, 1).uv(icon.getU0(), replacedMinV).uv2(combinedLight).endVertex();
+                vb.vertex(matrix, c[2][0], c[2][1] * height, c[2][2]).color(r, g, b, 1).uv(icon.getU1(), replacedMinV).uv2(combinedLight).endVertex();
+                vb.vertex(matrix, c[3][0], c[3][1] * height, c[3][2]).color(r, g, b, 1).uv(icon.getU1(), replacedMaxV).uv2(combinedLight).endVertex();
             }
 
-            matrixStack.pop();
+            matrixStack.popPose();
         }
 	}
 

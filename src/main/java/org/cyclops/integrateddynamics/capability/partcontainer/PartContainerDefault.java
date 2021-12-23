@@ -47,7 +47,7 @@ public abstract class PartContainerDefault implements IPartContainer {
             // Loop over all part states to check their dirtiness
             for (PartHelpers.PartStateHolder<?, ?> partStateHolder : partData.values()) {
                 if (partStateHolder.getState().isDirtyAndReset()) {
-                    markDirty();
+                    setChanged();
                 }
                 if (partStateHolder.getState().isUpdateAndReset()) {
                     sendUpdate();
@@ -58,7 +58,7 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public DimPos getPosition() {
-        return DimPos.of(getWorld(), getPos());
+        return DimPos.of(getLevel(), getPos());
     }
 
     @Override
@@ -84,7 +84,7 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public <P extends IPartType<P, S>, S extends IPartState<P>>void setPart(final Direction side, final IPartType<P, S> part, final IPartState<P> partState) {
-        PartHelpers.setPart(getNetwork(), getWorld(), getPos(), side, Objects.requireNonNull(part),
+        PartHelpers.setPart(getNetwork(), getLevel(), getPos(), side, Objects.requireNonNull(part),
                 Objects.requireNonNull(partState), new PartHelpers.IPartStateHolderCallback() {
                     @Override
                     public void onSet(PartHelpers.PartStateHolder<?, ?> partStateHolder) {
@@ -131,9 +131,9 @@ public abstract class PartContainerDefault implements IPartContainer {
                 networkElement.addDrops(itemStacks, dropMainElement, saveState);
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
-                        ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
+                        ItemStackHelpers.spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
                     } else {
-                        ItemStackHelpers.spawnItemStack(getWorld(), getPos(), itemStack);
+                        ItemStackHelpers.spawnItemStack(getLevel(), getPos(), itemStack);
                     }
                 }
 
@@ -151,10 +151,10 @@ public abstract class PartContainerDefault implements IPartContainer {
                 ItemStack itemStack = removed.getItemStack(partStateHolder.getState(), saveState);
                 if(player != null) {
                     if (!player.isCreative()) {
-                        ItemStackHelpers.spawnItemStackToPlayer(getWorld(), getPos(), itemStack, player);
+                        ItemStackHelpers.spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
                     }
                 } else {
-                    ItemStackHelpers.spawnItemStack(getWorld(), getPos(), itemStack);
+                    ItemStackHelpers.spawnItemStack(getLevel(), getPos(), itemStack);
                 }
             }
             // Finally remove the part data from this part.
@@ -223,18 +223,18 @@ public abstract class PartContainerDefault implements IPartContainer {
     @Override
     public void deserializeNBT(CompoundNBT tag) {
         synchronized (this.partData) {
-            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getWorld());
+            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getLevel());
         }
     }
 
     protected void onPartsChanged() {
-        markDirty();
+        setChanged();
         sendUpdate();
     }
 
-    protected abstract void markDirty();
+    protected abstract void setChanged();
     protected abstract void sendUpdate();
-    protected abstract World getWorld();
+    protected abstract World getLevel();
     protected abstract BlockPos getPos();
     protected abstract INetwork getNetwork();
 

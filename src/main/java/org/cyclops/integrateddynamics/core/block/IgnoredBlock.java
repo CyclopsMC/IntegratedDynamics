@@ -20,16 +20,16 @@ public class IgnoredBlock extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
     public IgnoredBlock() {
-        super(Block.Properties.create(Material.GLASS));
+        super(Block.Properties.of(Material.GLASS));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
     @Override
-    public void fillItemGroup(ItemGroup tab, NonNullList<ItemStack> list) {
+    public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> list) {
         // Don't show block in creative tab
     }
 

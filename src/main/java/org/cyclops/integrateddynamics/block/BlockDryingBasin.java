@@ -28,12 +28,12 @@ import org.cyclops.integrateddynamics.tileentity.TileDryingBasin;
  */
 public class BlockDryingBasin extends BlockTileGui {
 
-    private static final VoxelShape SHAPE_RAYTRACE = makeCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D);
-    private static final VoxelShape SHAPE = VoxelShapes.combineAndSimplify(VoxelShapes.fullCube(), VoxelShapes.or(
-            makeCuboidShape(0.0D, 0.0D, 4.0D, 16.0D, 3.0D, 12.0D),
+    private static final VoxelShape SHAPE_RAYTRACE = box(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+    private static final VoxelShape SHAPE = VoxelShapes.join(VoxelShapes.block(), VoxelShapes.or(
+            box(0.0D, 0.0D, 4.0D, 16.0D, 3.0D, 12.0D),
             new VoxelShape[]{
-                    makeCuboidShape(4.0D, 0.0D, 0.0D, 12.0D, 3.0D, 16.0D),
-                    makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 3.0D, 14.0D),
+                    box(4.0D, 0.0D, 0.0D, 12.0D, 3.0D, 16.0D),
+                    box(2.0D, 0.0D, 2.0D, 14.0D, 3.0D, 14.0D),
                     SHAPE_RAYTRACE
             }), IBooleanFunction.ONLY_FIRST);
 
@@ -42,22 +42,22 @@ public class BlockDryingBasin extends BlockTileGui {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player,
+    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player,
                                              Hand hand, BlockRayTraceResult rayTraceResult) {
         return TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class)
                 .map(tile -> {
-                    ItemStack itemStack = player.inventory.getCurrentItem();
+                    ItemStack itemStack = player.inventory.getSelected();
                     IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack).orElse(null);
                     SingleUseTank tank = tile.getTank();
-                    ItemStack tileStack = tile.getInventory().getStackInSlot(0);
+                    ItemStack tileStack = tile.getInventory().getItem(0);
 
                     if (itemStack.isEmpty() && !tileStack.isEmpty()) {
-                        player.inventory.setInventorySlotContents(player.inventory.currentItem, tileStack);
-                        tile.getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
+                        player.inventory.setItem(player.inventory.selected, tileStack);
+                        tile.getInventory().setItem(0, ItemStack.EMPTY);
                         tile.sendUpdate();
                         return ActionResultType.SUCCESS;
-                    } else if(player.inventory.addItemStackToInventory(tileStack)){
-                        tile.getInventory().setInventorySlotContents(0, ItemStack.EMPTY);
+                    } else if(player.inventory.add(tileStack)){
+                        tile.getInventory().setItem(0, ItemStack.EMPTY);
                         tile.sendUpdate();
                         return ActionResultType.SUCCESS;
                     } else if (itemFluidHandler != null && !tank.isFull()
@@ -78,8 +78,8 @@ public class BlockDryingBasin extends BlockTileGui {
                         }
                         return ActionResultType.SUCCESS;
                     } else if (!itemStack.isEmpty() && tileStack.isEmpty()) {
-                        tile.getInventory().setInventorySlotContents(0, itemStack.split(1));
-                        if(itemStack.getCount() <= 0) player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
+                        tile.getInventory().setItem(0, itemStack.split(1));
+                        if(itemStack.getCount() <= 0) player.inventory.setItem(player.inventory.selected, ItemStack.EMPTY);
                         tile.sendUpdate();
                         return ActionResultType.SUCCESS;
                     }
@@ -90,15 +90,15 @@ public class BlockDryingBasin extends BlockTileGui {
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean hasComparatorInputOverride(BlockState blockState) {
+    public boolean hasAnalogOutputSignal(BlockState blockState) {
         return true;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getComparatorInputOverride(BlockState blockState, World world, BlockPos blockPos) {
+    public int getAnalogOutputSignal(BlockState blockState, World world, BlockPos blockPos) {
         return TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class)
-                .map(tile -> tile.getInventory().getStackInSlot(0) != null ? 15 : 0)
+                .map(tile -> tile.getInventory().getItem(0) != null ? 15 : 0)
                 .orElse(0);
     }
 
@@ -108,19 +108,19 @@ public class BlockDryingBasin extends BlockTileGui {
     }
 
     @Override
-    public VoxelShape getRaytraceShape(BlockState blockState, IBlockReader world, BlockPos blockPos) {
+    public VoxelShape getInteractionShape(BlockState blockState, IBlockReader world, BlockPos blockPos) {
         return SHAPE_RAYTRACE;
     }
 
     @Override
-    public void onReplaced(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (oldState.getBlock() != newState.getBlock()) {
             TileHelpers.getSafeTile(world, blockPos, TileDryingBasin.class)
                     .ifPresent(tile -> {
                         InventoryHelpers.dropItems(world, tile.getInventory(), blockPos);
-                        world.updateComparatorOutputLevel(blockPos, oldState.getBlock());
+                        world.updateNeighbourForOutputSignal(blockPos, oldState.getBlock());
                     });
-            super.onReplaced(oldState, world, blockPos, newState, isMoving);
+            super.onRemove(oldState, world, blockPos, newState, isMoving);
         }
     }
 }

@@ -122,7 +122,7 @@ public abstract class TileMechanicalMachine<RCK, R extends IRecipe> extends Tile
      */
     public boolean canWork() {
         int rate = getEnergyConsumptionRate();
-        return drainEnergy(rate, true) == rate && !world.isBlockPowered(getPos());
+        return drainEnergy(rate, true) == rate && !level.hasNeighborSignal(getBlockPos());
     }
 
     /**
@@ -137,16 +137,16 @@ public abstract class TileMechanicalMachine<RCK, R extends IRecipe> extends Tile
     }
 
     public void onTankChanged() {
-        markDirty();
-        getInventory().markDirty();
+        setChanged();
+        getInventory().setChanged();
     }
 
     @Override
     protected SimpleInventory createInventory(int inventorySize, int stackSize) {
         return new SimpleInventory(inventorySize, stackSize) {
             @Override
-            public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-                return ArrayUtils.contains(getInputSlots(), i) && super.isItemValidForSlot(i, itemstack);
+            public boolean canPlaceItem(int i, ItemStack itemstack) {
+                return ArrayUtils.contains(getInputSlots(), i) && super.canPlaceItem(i, itemstack);
             }
 
             @Override
@@ -209,10 +209,10 @@ public abstract class TileMechanicalMachine<RCK, R extends IRecipe> extends Tile
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (!world.isRemote()) {
+        if (!level.isClientSide()) {
             if (isSleeping()) {
                 this.sleep--;
-                this.markDirty();
+                this.setChanged();
             } else if (canWork()) {
                 Optional<R> recipeOptional = getCurrentRecipe();
                 if (recipeOptional.isPresent()) {
@@ -308,7 +308,7 @@ public abstract class TileMechanicalMachine<RCK, R extends IRecipe> extends Tile
         int lastEnergy = this.energy;
         if (lastEnergy != energy) {
             this.energy = energy;
-            markDirty();
+            setChanged();
         }
     }
 

@@ -21,9 +21,9 @@ public class BlockCrystalizedChorusBlockSlabConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_chorus_block_slab",
-                eConfig -> new SlabBlock(AbstractBlock.Properties.create(Material.CLAY, MaterialColor.PINK)
+                eConfig -> new SlabBlock(AbstractBlock.Properties.of(Material.CLAY, MaterialColor.COLOR_PINK)
                         .sound(SoundType.SNOW)
-                        .hardnessAndResistance(1.5F)
+                        .strength(1.5F)
                         .harvestLevel(0)
                         .harvestTool(ToolType.PICKAXE)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

@@ -79,7 +79,7 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
             int lastEnergy = this.energy;
             if (lastEnergy != energy) {
                 this.energy = energy;
-                markDirty();
+                setChanged();
                 sendUpdate();
             }
         }
@@ -92,8 +92,8 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
 
     @Override
     protected void onSendUpdate() {
-        BlockState blockState = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, blockState, blockState,
+        BlockState blockState = level.getBlockState(worldPosition);
+        level.sendBlockUpdated(worldPosition, blockState, blockState,
                 MinecraftHelpers.BLOCK_NOTIFY | MinecraftHelpers.BLOCK_NOTIFY_CLIENT | MinecraftHelpers.BLOCK_NOTIFY_NO_RERENDER);
     }
 
@@ -142,13 +142,13 @@ public class TileEnergyBattery extends TileCableConnectable implements IEnergySt
     }
 
     protected int addEnergyFe(int energy, boolean simulate) {
-        return EnergyHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+        return EnergyHelpers.fillNeigbours(getLevel(), getBlockPos(), energy, simulate);
     }
 
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (!getWorld().isRemote && getEnergyStored() > 0 && getWorld().isBlockPowered(getPos())) {
+        if (!getLevel().isClientSide && getEnergyStored() > 0 && getLevel().hasNeighborSignal(getBlockPos())) {
             addEnergy(Math.min(getEnergyPerTick(), getEnergyStored()));
         }
     }

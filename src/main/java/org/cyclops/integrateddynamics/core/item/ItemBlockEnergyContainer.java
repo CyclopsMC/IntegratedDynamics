@@ -59,8 +59,8 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
 	
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
-        super.addInformation(itemStack, world, list, flag);
+    public void appendHoverText(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.appendHoverText(itemStack, world, list, flag);
         getEnergyBattery(itemStack)
                 .ifPresent(energyStorage -> {
                     int amount = energyStorage.getEnergyStored();
@@ -88,7 +88,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack) {
-        return MathHelper.hsvToRGB(Math.max(0.0F, 1 - (float) getDurabilityForDisplay(stack)) / 3.0F, 1.0F, 1.0F);
+        return MathHelper.hsvToRgb(Math.max(0.0F, 1 - (float) getDurabilityForDisplay(stack)) / 3.0F, 1.0F, 1.0F);
     }
 
     protected EnergyStorageItemBlockEnergyContainer createCapability(ItemStack itemStack) {

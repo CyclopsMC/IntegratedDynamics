@@ -52,14 +52,14 @@ public class LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket extends P
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
+		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
 			if(element instanceof ValueTypeRecipeLPElement) {
 				ItemMatchProperties props = ((ValueTypeRecipeLPElement) element).getInputStacks().get(slot);
 				props.setNbt(nbt);
 				props.setItemTag(tag.isEmpty() ? null : tag);
 				props.setTagQuantity(this.tagQuantity);
-                ((ContainerLogicProgrammerBase) player.openContainer).onDirty();
+                ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
 			}
 		}
 	}

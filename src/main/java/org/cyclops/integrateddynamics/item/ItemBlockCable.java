@@ -56,35 +56,35 @@ public class ItemBlockCable extends BlockItem {
 
     @Override
     protected boolean canPlace(BlockItemUseContext context, BlockState blockState) {
-        World world = context.getWorld();
-        BlockPos pos = context.getPos();
-        Direction side = context.getFace();
-        BlockPos target = pos.offset(side);
+        World world = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        Direction side = context.getClickedFace();
+        BlockPos target = pos.relative(side);
         // First check if the target is an unreal cable.
         if(checkCableAt(world, pos, side)) return true;
         // Then check if the target is covered by an unreal cable at the given side.
         if(checkCableAt(world, target, side.getOpposite())) return true;
         // Skips client-side entity collision detection for placing cables.
-        return (!this.checkPosition() || blockState.isValidPosition(context.getWorld(), target));
+        return (!this.mustSurvive() || blockState.canSurvive(context.getLevel(), target));
     }
 
     protected boolean attempItemUseTarget(ItemUseContext context, BlockPos pos, Direction side, BlockCable blockCable, boolean offsetAdded) {
-        BlockState blockState = context.getWorld().getBlockState(pos);
+        BlockState blockState = context.getLevel().getBlockState(pos);
         Block block = blockState.getBlock();
-        if(!block.isAir(blockState, context.getWorld(), pos)) {
-            ICableFakeable cable = CableHelpers.getCableFakeable(context.getWorld(), pos, side).orElse(null);
+        if(!block.isAir(blockState, context.getLevel(), pos)) {
+            ICableFakeable cable = CableHelpers.getCableFakeable(context.getLevel(), pos, side).orElse(null);
             if (cable != null && !cable.isRealCable()) {
-                if (!context.getWorld().isRemote()) {
+                if (!context.getLevel().isClientSide()) {
                     cable.setRealCable(true);
-                    CableHelpers.updateConnections(context.getWorld(), pos, side);
-                    CableHelpers.onCableAdded(context.getWorld(), pos);
-                    CableHelpers.onCableAddedByPlayer(context.getWorld(), pos, context.getPlayer());
+                    CableHelpers.updateConnections(context.getLevel(), pos, side);
+                    CableHelpers.onCableAdded(context.getLevel(), pos);
+                    CableHelpers.onCableAddedByPlayer(context.getLevel(), pos, context.getPlayer());
                 }
                 return true;
             }
             if(!offsetAdded){
                 for (IUseAction useAction : USE_ACTIONS) {
-	                if (useAction.attempItemUseTarget(context.getItem(), context.getWorld(), pos, blockCable)) {
+	                if (useAction.attempItemUseTarget(context.getItemInHand(), context.getLevel(), pos, blockCable)) {
 	                    return true;
 	                }
             	}
@@ -95,8 +95,8 @@ public class ItemBlockCable extends BlockItem {
 
     protected void afterItemUse(ItemUseContext context, BlockPos pos, BlockCable blockCable, boolean calledSuper) {
         if(!calledSuper) {
-            playPlaceSound(context.getWorld(), pos);
-            context.getItem().shrink(1);
+            playPlaceSound(context.getLevel(), pos);
+            context.getItemInHand().shrink(1);
         }
         blockCable.setDisableCollisionBox(false);
     }
@@ -104,39 +104,39 @@ public class ItemBlockCable extends BlockItem {
     @SuppressWarnings("deprecation")
     public static void playPlaceSound(World world, BlockPos pos) {
         Block block = RegistryEntries.BLOCK_CABLE;
-        SoundType soundType = block.getSoundType(block.getDefaultState());
-        world.playSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
+        SoundType soundType = block.getSoundType(block.defaultBlockState());
+        world.playLocalSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
                 soundType.getPlaceSound(), SoundCategory.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F, false);
     }
 
     public static void playBreakSound(World world, BlockPos pos, BlockState blockState) {
-        world.playBroadcastSound(2001, pos, Block.getStateId(blockState));
+        world.globalLevelEvent(2001, pos, Block.getId(blockState));
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        ItemStack itemStack = context.getItem();
+    public ActionResultType useOn(ItemUseContext context) {
+        ItemStack itemStack = context.getItemInHand();
         // Skips server-side entity collision detection for placing cables.
         // We temporary disable the collision box of the cable so that it can be placed even if an entity is in the way.
         BlockCable blockCable = (BlockCable) getBlock();
         blockCable.setDisableCollisionBox(true);
 
         // Avoid regular block placement when the target is an unreal cable.
-        if(attempItemUseTarget(context, context.getPos(), context.getFace(), blockCable, false)) {
-            afterItemUse(context, context.getPos(), blockCable, false);
+        if(attempItemUseTarget(context, context.getClickedPos(), context.getClickedFace(), blockCable, false)) {
+            afterItemUse(context, context.getClickedPos(), blockCable, false);
             return ActionResultType.SUCCESS;
         }
 
         // Change pos and side when we are targeting a block that is blocked by an unreal cable, so we want to target
         // the unreal cable.
-        BlockPos posOffset = context.getPos().offset(context.getFace());
-        if(attempItemUseTarget(context, posOffset, context.getFace().getOpposite(), blockCable, true)) {
+        BlockPos posOffset = context.getClickedPos().relative(context.getClickedFace());
+        if(attempItemUseTarget(context, posOffset, context.getClickedFace().getOpposite(), blockCable, true)) {
             afterItemUse(context, posOffset, blockCable, false);
             return ActionResultType.SUCCESS;
         }
 
-        ActionResultType ret = super.onItemUse(context);
-        afterItemUse(context, context.getPos(), blockCable, true);
+        ActionResultType ret = super.useOn(context);
+        afterItemUse(context, context.getClickedPos(), blockCable, true);
         return ret;
     }
 

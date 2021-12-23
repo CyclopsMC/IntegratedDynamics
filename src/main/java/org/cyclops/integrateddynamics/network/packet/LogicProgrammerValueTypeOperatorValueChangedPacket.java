@@ -53,8 +53,8 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
+		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
 			if(element instanceof ValueTypeOperatorLPElement) {
 				IOperator operator;
 				try {
@@ -63,7 +63,7 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 					operator = null;
 				}
 				((ValueTypeOperatorLPElement) element).setSelectedOperator(operator);
-                ((ContainerLogicProgrammerBase) player.openContainer).onDirty();
+                ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
 			}
 		}
 	}

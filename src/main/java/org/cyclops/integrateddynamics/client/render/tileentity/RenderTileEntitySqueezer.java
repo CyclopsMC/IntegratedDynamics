@@ -83,16 +83,16 @@ public class RenderTileEntitySqueezer extends TileEntityRenderer<TileSqueezer> {
 	public void render(TileSqueezer tile, float partialTicks, MatrixStack matrixStack,
                        IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay) {
         if(tile != null) {
-            if(!tile.getInventory().getStackInSlot(0).isEmpty()) {
-                matrixStack.push();
+            if(!tile.getInventory().getItem(0).isEmpty()) {
+                matrixStack.pushPose();
                 matrixStack.translate(-0.5F, -0.5F, -0.5F);
-                renderItem(matrixStack, renderTypeBuffer, tile.getInventory().getStackInSlot(0), tile);
-                matrixStack.pop();
+                renderItem(matrixStack, renderTypeBuffer, tile.getInventory().getItem(0), tile);
+                matrixStack.popPose();
             }
 
             if(!tile.getTank().isEmpty()) {
                 FluidStack fluid = tile.getTank().getFluid();
-                int combinedLightCorrected = WorldRenderer.getCombinedLight(tile.getWorld(), tile.getPos().add(Direction.UP.getDirectionVec()));
+                int combinedLightCorrected = WorldRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(Direction.UP.getNormal()));
                 RenderHelpers.renderFluidContext(fluid, matrixStack, () -> {
                     float height = Math.max(0.0625F - OFFSET, fluid.getAmount() * 0.0625F / FluidHelpers.BUCKET_VOLUME + 0.0625F - OFFSET);
                     int brightness = Math.max(combinedLightCorrected, fluid.getFluid().getAttributes().getLuminosity(fluid));
@@ -101,18 +101,18 @@ public class RenderTileEntitySqueezer extends TileEntityRenderer<TileSqueezer> {
 
                     for(Direction side : DirectionHelpers.DIRECTIONS) {
                         TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluid, Direction.UP);
-                        Triple<Float, Float, Float> color = Helpers.intToRGB(fluid.getFluid().getAttributes().getColor(tile.getWorld(), tile.getPos()));
+                        Triple<Float, Float, Float> color = Helpers.intToRGB(fluid.getFluid().getAttributes().getColor(tile.getLevel(), tile.getBlockPos()));
 
-                        IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.getText(icon.getAtlasTexture().getTextureLocation()));
-                        Matrix4f matrix = matrixStack.getLast().getMatrix();
+                        IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+                        Matrix4f matrix = matrixStack.last().pose();
 
                         float[][] c = coordinates[side.ordinal()];
                         float replacedMaxV = (side == Direction.UP || side == Direction.DOWN) ?
-                                icon.getMaxV() : ((icon.getMaxV() - icon.getMinV()) * height + icon.getMinV());
-                        vb.pos(matrix, c[0][0], getHeight(side, c[0][1], height), c[0][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMinU(), replacedMaxV).lightmap(l2, i3).endVertex();
-                        vb.pos(matrix, c[1][0], getHeight(side, c[1][1], height), c[1][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMinU(), icon.getMinV()).lightmap(l2, i3).endVertex();
-                        vb.pos(matrix, c[2][0], getHeight(side, c[2][1], height), c[2][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMaxU(), icon.getMinV()).lightmap(l2, i3).endVertex();
-                        vb.pos(matrix, c[3][0], getHeight(side, c[3][1], height), c[3][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).tex(icon.getMaxU(), replacedMaxV).lightmap(l2, i3).endVertex();
+                                icon.getV1() : ((icon.getV1() - icon.getV0()) * height + icon.getV0());
+                        vb.vertex(matrix, c[0][0], getHeight(side, c[0][1], height), c[0][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU0(), replacedMaxV).uv2(l2, i3).endVertex();
+                        vb.vertex(matrix, c[1][0], getHeight(side, c[1][1], height), c[1][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU0(), icon.getV0()).uv2(l2, i3).endVertex();
+                        vb.vertex(matrix, c[2][0], getHeight(side, c[2][1], height), c[2][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU1(), icon.getV0()).uv2(l2, i3).endVertex();
+                        vb.vertex(matrix, c[3][0], getHeight(side, c[3][1], height), c[3][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU1(), replacedMaxV).uv2(l2, i3).endVertex();
                     }
                 });
             }
@@ -120,17 +120,17 @@ public class RenderTileEntitySqueezer extends TileEntityRenderer<TileSqueezer> {
 	}
 	
 	private void renderItem(MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, ItemStack itemStack, TileSqueezer tile) {
-        matrixStack.push();
+        matrixStack.pushPose();
         float yTop = (9 - tile.getItemHeight()) * 0.125F;
         matrixStack.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
-        IBakedModel model = Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
+        IBakedModel model = Minecraft.getInstance().getItemRenderer().getModel(itemStack, null, null);
         if (model.isGui3d()) {
             matrixStack.scale(1.7F, 1.7F, 1.7F);
         }
         matrixStack.scale(1F, yTop - 0.125F, 1F);
 
-        Minecraft.getInstance().getItemRenderer().renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer);
-        matrixStack.pop();
+        Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemCameraTransforms.TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer);
+        matrixStack.popPose();
     }
 
     private static float getHeight(Direction side, float height, float replaceHeight) {

@@ -39,12 +39,12 @@ public class CommandTest implements Command<CommandSource> {
 
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        context.getSource().asPlayer().sendMessage(new StringTextComponent("Running tests..."), Util.DUMMY_UUID);
+        context.getSource().getPlayerOrException().sendMessage(new StringTextComponent("Running tests..."), Util.NIL_UUID);
         try {
             if(!test()) {
-                context.getSource().asPlayer().sendMessage(new StringTextComponent("There were failing tests, see results in console."), Util.DUMMY_UUID);
+                context.getSource().getPlayerOrException().sendMessage(new StringTextComponent("There were failing tests, see results in console."), Util.NIL_UUID);
             } else {
-                context.getSource().asPlayer().sendMessage(new StringTextComponent("All tests succeeded!"), Util.DUMMY_UUID);
+                context.getSource().getPlayerOrException().sendMessage(new StringTextComponent("All tests succeeded!"), Util.NIL_UUID);
             }
             return 0;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -114,7 +114,7 @@ public class CommandTest implements Command<CommandSource> {
 
     public static LiteralArgumentBuilder<CommandSource> make() {
         return Commands.literal("test")
-                .requires((commandSource) -> commandSource.hasPermissionLevel(2))
+                .requires((commandSource) -> commandSource.hasPermission(2))
                 .executes(new CommandTest());
     }
 

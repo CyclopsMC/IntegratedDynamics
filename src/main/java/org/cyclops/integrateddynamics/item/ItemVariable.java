@@ -34,24 +34,24 @@ public class ItemVariable extends Item {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
         IVariableFacade variableFacade = getVariableFacade(itemStack);
-        variableFacade.addInformation(list, world);
+        variableFacade.appendHoverText(list, world);
         if (variableFacade != VariableFacadeHandlerRegistry.DUMMY_FACADE && Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
             list.add(new TranslationTextComponent("item.integrateddynamics.variable.warning"));
         }
-        super.addInformation(itemStack, world, list, flag);
+        super.appendHoverText(itemStack, world, list, flag);
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack itemStack) {
+    public ITextComponent getName(ItemStack itemStack) {
         IVariableFacade variableFacade = getVariableFacade(itemStack);
         String label;
         if(variableFacade.isValid() && (label = variableFacade.getLabel()) != null) {
             return new StringTextComponent(label)
-                    .mergeStyle(TextFormatting.ITALIC);
+                    .withStyle(TextFormatting.ITALIC);
         }
-        return super.getDisplayName(itemStack);
+        return super.getName(itemStack);
     }
 
     @Override

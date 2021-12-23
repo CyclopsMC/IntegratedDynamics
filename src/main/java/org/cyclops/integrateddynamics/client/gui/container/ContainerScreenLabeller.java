@@ -41,36 +41,36 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     @Override
     public void init() {
         super.init();
-        addButton(new ButtonText(this.guiLeft + 133,  this.guiTop + 8,
+        addButton(new ButtonText(this.leftPos + 133,  this.topPos + 8,
                 new TranslationTextComponent("item.integrateddynamics.labeller.button.write"),
                 new TranslationTextComponent("item.integrateddynamics.labeller.button.write"), button -> {
-            ItemStack itemStack = getContainer().getItemStack();
+            ItemStack itemStack = getMenu().getItemStack();
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             IVariableFacade variableFacade = registry.handle(itemStack);
             if(variableFacade.isValid()) {
                 int variableId = variableFacade.getId();
-                String label = StringUtils.isBlank(searchField.getText()) ? "" : searchField.getText();
+                String label = StringUtils.isBlank(searchField.getValue()) ? "" : searchField.getValue();
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableId, label);
             } else if(!itemStack.isEmpty()) {
-                String name = searchField.getText();
+                String name = searchField.getValue();
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(new ItemStackRenamePacket(name));
-                getContainer().setItemStackName(name);
+                getMenu().setItemStackName(name);
             }
         }));
 
-        this.minecraft.keyboardListener.enableRepeatEvents(true);
+        this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
         int searchWidth = 87;
         int searchX = 36;
         int searchY = 11;
-        this.searchField = new WidgetTextFieldExtended(font, this.guiLeft + searchX, this.guiTop + searchY, searchWidth, font.FONT_HEIGHT, new TranslationTextComponent("gui.cyclopscore.search"));
-        this.searchField.setMaxStringLength(64);
-        this.searchField.setEnableBackgroundDrawing(false);
+        this.searchField = new WidgetTextFieldExtended(font, this.leftPos + searchX, this.topPos + searchY, searchWidth, font.lineHeight, new TranslationTextComponent("gui.cyclopscore.search"));
+        this.searchField.setMaxLength(64);
+        this.searchField.setBordered(false);
         this.searchField.setVisible(true);
         this.searchField.changeFocus(true);
         this.searchField.setTextColor(16777215);
         this.searchField.setCanLoseFocus(false);
-        this.searchField.setText("");
-        this.searchField.x = this.guiLeft + (searchX + searchWidth) - this.searchField.getWidth();
+        this.searchField.setValue("");
+        this.searchField.x = this.leftPos + (searchX + searchWidth) - this.searchField.getWidth();
     }
 
     @Override
@@ -102,18 +102,18 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
         // super
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
         this.searchField.renderButton(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     public void setText(String text) {
-        this.searchField.setText(text);
+        this.searchField.setValue(text);
     }
 
 }

@@ -41,7 +41,7 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     @Override
     public ValueLong deserialize(INBT value) {
         if (value.getId() == Constants.NBT.TAG_LONG) {
-            return ValueLong.of(((LongNBT) value).getLong());
+            return ValueLong.of(((LongNBT) value).getAsLong());
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a long.", value));
         }

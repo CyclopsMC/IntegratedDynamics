@@ -23,9 +23,9 @@ public class ItemOnTheDynamicsOfIntegrationConfig extends ItemConfig {
                 IntegratedDynamics._instance,
                 "on_the_dynamics_of_integration",
                 eConfig -> new ItemOnTheDynamicsOfIntegration(new Item.Properties()
-                        .maxStackSize(1)
+                        .stacksTo(1)
                         .rarity(Rarity.UNCOMMON)
-                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 

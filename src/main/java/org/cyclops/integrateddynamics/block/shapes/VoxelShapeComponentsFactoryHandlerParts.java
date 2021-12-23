@@ -68,7 +68,7 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
 
         @Override
         public boolean destroy(World world, BlockPos pos, PlayerEntity player, boolean saveState) {
-            if(!world.isRemote()) {
+            if(!world.isClientSide()) {
                 return PartHelpers.removePart(world, pos, direction, player, true, true, saveState);
             }
             return false;
@@ -84,18 +84,18 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
 
         @Override
         public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
-            ItemStack heldItem = player.getHeldItem(hand);
-            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getFace()) && player.isSecondaryUseActive()) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getDirection()) && player.isSecondaryUseActive()) {
                 // Remove part from cable
-                if (!world.isRemote()) {
+                if (!world.isClientSide()) {
                     destroy(world, blockPos, player, true);
                     ItemBlockCable.playBreakSound(world, blockPos, state);
                 }
                 return ActionResultType.SUCCESS;
-            } else if(CableHelpers.isNoFakeCable(world, blockPos, hit.getFace())) {
+            } else if(CableHelpers.isNoFakeCable(world, blockPos, hit.getDirection())) {
                 // Delegate activated call to part
                 return partContainer.getPart(direction).onPartActivated(partContainer.getPartState(direction), blockPos, world,
-                        player, hand, heldItem, hit.withFace(direction));
+                        player, hand, heldItem, hit.withDirection(direction));
             }
             return ActionResultType.PASS;
         }

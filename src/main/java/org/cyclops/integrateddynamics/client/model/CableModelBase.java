@@ -125,7 +125,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         } else if (dir == 4) {
             dir += (c.z >= 0.5) ? 1 : 0;
         }
-        return Direction.byIndex(dir);
+        return Direction.from3DDataValue(dir);
     }
 
     public List<BakedQuad> getFacadeQuads(BlockState blockState, Direction side, PartRenderPosition partRenderPosition) {
@@ -226,11 +226,11 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         }
         if (cachedQuads == null) {
             List<BakedQuad> ret = Lists.newLinkedList();
-            TextureAtlasSprite texture = getParticleTexture();
+            TextureAtlasSprite texture = getParticleIcon();
             Optional<BlockState> blockStateHolder = getFacade(modelData);
             boolean renderCable = isItemStack() || (isRealCable(modelData) && (
-                    (!blockStateHolder.isPresent() && MinecraftForgeClient.getRenderLayer() == RenderType.getSolid())
-                            || (blockStateHolder.isPresent() && MinecraftForgeClient.getRenderLayer() == RenderType.getTranslucent())));
+                    (!blockStateHolder.isPresent() && MinecraftForgeClient.getRenderLayer() == RenderType.solid())
+                            || (blockStateHolder.isPresent() && MinecraftForgeClient.getRenderLayer() == RenderType.translucent())));
             for (Direction side : Direction.values()) {
                 boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
                 boolean hasPart = !isItemStack() && hasPart(modelData, side);
@@ -307,7 +307,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+    public TextureAtlasSprite getParticleIcon() {
         return RegistryEntries.BLOCK_CABLE.texture;
     }
 
@@ -321,12 +321,12 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     @Override
-    public boolean isSideLit() {
+    public boolean usesBlockLight() {
         return false; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+    public ItemCameraTransforms getTransforms() {
         return TRANSFORMS;
     }
 

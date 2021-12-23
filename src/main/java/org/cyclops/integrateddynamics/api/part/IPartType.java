@@ -92,7 +92,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * @return The default state of this part.
      */
-    public S getDefaultState();
+    public S defaultBlockState();
 
     /**
      * Set the update interval for this part.

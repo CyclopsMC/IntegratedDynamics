@@ -23,11 +23,11 @@ public class BlockMechanicalDryingBasinConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "mechanical_drying_basin",
-                eConfig -> new BlockMechanicalDryingBasin(Block.Properties.create(Material.ANVIL)
-                        .hardnessAndResistance(5.0F)
+                eConfig -> new BlockMechanicalDryingBasin(Block.Properties.of(Material.HEAVY_METAL)
+                        .strength(5.0F)
                         .sound(SoundType.METAL)
-                        .notSolid()
-                        .setOpaque((blockState, world, pos) -> false)),
+                        .noOcclusion()
+                        .isRedstoneConductor((blockState, world, pos) -> false)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

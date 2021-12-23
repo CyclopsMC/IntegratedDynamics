@@ -135,8 +135,8 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         IgnoredBlockStatus.Status status = getStatus(partContainer != null
                 ? (PartTypeConnectorMonoDirectional.State) partContainer.getPartState(side) : null);
         return super.getBlockState(partContainer, side)
-                .with(IgnoredBlock.FACING, side)
-                .with(IgnoredBlockStatus.STATUS, status);
+                .setValue(IgnoredBlock.FACING, side)
+                .setValue(IgnoredBlockStatus.STATUS, status);
     }
 
     public static class State extends PartTypeConnector.State<PartTypeConnectorMonoDirectional> {
@@ -164,9 +164,9 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
             if (dimPos != null && this.offset > 0) {
                 BlockPos pos = dimPos.getBlockPos();
                 for (int i = 1; i < this.offset; i++) {
-                    pos = pos.offset(getPartPos().getSide());
+                    pos = pos.relative(getPartPos().getSide());
                     ((ServerWorld) getPosition().getWorld(true))
-                            .spawnParticle(RedstoneParticleData.REDSTONE_DUST,
+                            .sendParticles(RedstoneParticleData.REDSTONE,
                                     pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 1, 0D, 0D, 0D, 0);
                 }
             }
@@ -232,7 +232,7 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
 
         protected static DimPos getTargetPos(PartPos origin, int offset) {
             return DimPos.of(origin.getPos().getWorldKey(),
-                    origin.getPos().getBlockPos().offset(origin.getSide(), offset));
+                    origin.getPos().getBlockPos().relative(origin.getSide(), offset));
         }
     }
 

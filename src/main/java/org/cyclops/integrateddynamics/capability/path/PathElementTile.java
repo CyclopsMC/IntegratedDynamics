@@ -30,7 +30,7 @@ public class PathElementTile<T extends TileEntity> extends PathElementCable {
 
     @Override
     public DimPos getPosition() {
-        return DimPos.of(tile.getWorld(), tile.getPos());
+        return DimPos.of(tile.getLevel(), tile.getBlockPos());
     }
 
 }

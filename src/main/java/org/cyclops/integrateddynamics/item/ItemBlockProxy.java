@@ -14,6 +14,8 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * The item for the proxy.
  * @author rubensworks
@@ -26,11 +28,11 @@ public class ItemBlockProxy extends ItemBlockNBT {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
         if(itemStack.getTag() != null) {
             int id = itemStack.getTag().getInt(BlockProxy.NBT_ID);
             list.add(new TranslationTextComponent(L10NValues.GENERAL_ITEM_ID, id));
         }
-        super.addInformation(itemStack, world, list, flag);
+        super.appendHoverText(itemStack, world, list, flag);
     }
 }

@@ -9,9 +9,9 @@ public interface IDynamicRedstone {
     /**
      * Set the redstone level.
      * @param level The redstone level.
-     * @param strongPower If the redstone power should be strong.
+     * @param direct If the redstone power should be direct.
      */
-    public void setRedstoneLevel(int level, boolean strongPower);
+    public void setRedstoneLevel(int level, boolean direct);
 
     /**
      * Get the redstone level.
@@ -20,9 +20,9 @@ public interface IDynamicRedstone {
     public int getRedstoneLevel();
 
     /**
-     * @return If the redstone power is strong.
+     * @return If the redstone power is direct.
      */
-    public boolean isStrong();
+    public boolean isDirect();
 
     /**
      * Set if this side allows redstone to be inputted.

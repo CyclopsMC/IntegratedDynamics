@@ -25,15 +25,15 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
                 "menril_berries",
                 eConfig -> new Item(new Item.Properties()
                         .food(createFood())
-                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 
     protected static Food createFood() {
         Food.Builder builder = new Food.Builder()
-                .hunger(4)
-                .saturation(0.3F)
-                .fastToEat();
+                .nutrition(4)
+                .saturationMod(0.3F)
+                .fast();
         if (nightVision) {
             builder = builder.effect(new EffectInstance(Effects.NIGHT_VISION, 20, 1), 1);
         }
@@ -43,7 +43,7 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
     @Override
     public void onForgeRegistered() {
         super.onForgeRegistered();
-        ComposterBlock.CHANCES.put(getInstance(), 0.65F);
+        ComposterBlock.COMPOSTABLES.put(getInstance(), 0.65F);
     }
     
 }

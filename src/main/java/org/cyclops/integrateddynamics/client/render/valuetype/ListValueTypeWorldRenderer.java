@@ -31,7 +31,7 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                             Direction direction, IPartType partType, IValue value, float partialTicks,
                             MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
                             int combinedLight, int combinedOverlay, float alpha) {
-        FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
+        FontRenderer fontRenderer = rendererDispatcher.getFont();
         float maxWidth = 0;
 
         List<Pair<String, Integer>> lines = Lists.newLinkedList();
@@ -43,16 +43,16 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             } else {
                 IValueType elementType = element.getType();
                 String string = " - " + elementType.toCompactString(element).getString();
-                float width = fontRenderer.getStringWidth(string) - 1;
+                float width = fontRenderer.width(string) - 1;
                 lines.add(Pair.of(string, elementType.getDisplayColor()));
                 maxWidth = Math.max(maxWidth, width);
             }
         }
 
-        float singleHeight = fontRenderer.FONT_HEIGHT;
+        float singleHeight = fontRenderer.lineHeight;
         float totalHeight = singleHeight * lines.size();
 
-        matrixStack.push();
+        matrixStack.pushPose();
 
         float scaleX = MAX / (maxWidth * MARGIN_FACTOR);
         float scaleY = MAX / (totalHeight * MARGIN_FACTOR);
@@ -65,11 +65,11 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         int offset = 0;
         for(Pair<String, Integer> line : lines) {
             int color = Helpers.addAlphaToColor(line.getRight(), alpha);
-            rendererDispatcher.getFontRenderer().renderString(line.getLeft(), 0, offset, color,
-                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
+            rendererDispatcher.getFont().drawInBatch(line.getLeft(), 0, offset, color,
+                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
             offset += singleHeight;
         }
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }

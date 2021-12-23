@@ -73,7 +73,7 @@ public interface IVariableFacade {
      * @param world The world.
      */
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(List<ITextComponent> list, World world);
+    public void appendHoverText(List<ITextComponent> list, World world);
 
     /**
      * Handle the quads for the given baked model.

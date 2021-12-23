@@ -32,26 +32,26 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
     public BlockMechanicalSqueezer(Properties properties) {
         super(properties, TileMechanicalSqueezer::new);
 
-        this.setDefaultState(this.stateContainer.getBaseState()
-                .with(LIT, false));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(LIT, false));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(LIT);
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
-        if (FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, rayTraceResult.getFace())) {
+    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
+        if (FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, rayTraceResult.getDirection())) {
             return ActionResultType.SUCCESS;
         }
-        return super.onBlockActivated(blockState, world, blockPos, player, hand, rayTraceResult);
+        return super.use(blockState, world, blockPos, player, hand, rayTraceResult);
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (!world.isRemote()) {
+    public void setPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        if (!world.isClientSide()) {
             TileHelpers.getSafeTile(world, blockPos, TileMechanicalSqueezer.class)
                     .ifPresent(tile -> {
                         if (itemStack.hasTag() && itemStack.getTag().contains(NBT_TANK, Constants.NBT.TAG_COMPOUND)) {
@@ -59,7 +59,7 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
                         }
                     });
         }
-        super.onBlockPlacedBy(world, blockPos, state, placer, itemStack);
+        super.setPlacedBy(world, blockPos, state, placer, itemStack);
     }
 
     @Override

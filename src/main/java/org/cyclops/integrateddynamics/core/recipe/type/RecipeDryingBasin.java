@@ -56,23 +56,23 @@ public class RecipeDryingBasin implements IRecipe<IInventoryFluid> {
 
     @Override
     public boolean matches(IInventoryFluid inv, World worldIn) {
-        return inputIngredient.test(inv.getStackInSlot(0))
+        return inputIngredient.test(inv.getItem(0))
                 && inputFluid.getFluid() == inv.getFluidHandler().getFluidInTank(0).getFluid()
                 && inputFluid.getAmount() <= inv.getFluidHandler().getFluidInTank(0).getAmount();
     }
 
     @Override
-    public ItemStack getCraftingResult(IInventoryFluid inv) {
+    public ItemStack assemble(IInventoryFluid inv) {
         return this.outputItem.copy();
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width * height <= 1;
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return this.outputItem;
     }
 

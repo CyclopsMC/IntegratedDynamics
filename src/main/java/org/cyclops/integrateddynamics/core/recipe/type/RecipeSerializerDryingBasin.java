@@ -36,8 +36,8 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<IRecipeSeria
         implements IRecipeSerializer<RecipeDryingBasin> {
 
     @Override
-    public RecipeDryingBasin read(ResourceLocation recipeId, JsonObject json) {
-        JsonObject result = JSONUtils.getJsonObject(json, "result");
+    public RecipeDryingBasin fromJson(ResourceLocation recipeId, JsonObject json) {
+        JsonObject result = JSONUtils.getAsJsonObject(json, "result");
 
         // Input
         Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", false);
@@ -48,10 +48,10 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<IRecipeSeria
         FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
 
         // Other stuff
-        int duration = JSONUtils.getInt(json, "duration");
+        int duration = JSONUtils.getAsInt(json, "duration");
 
         // Validation
-        if (inputIngredient.hasNoMatchingItems() && inputFluid.isEmpty()) {
+        if (inputIngredient.isEmpty() && inputFluid.isEmpty()) {
             throw new JsonSyntaxException("An input item or fluid is required");
         }
         if (outputItemStack.isEmpty() && outputFluid.isEmpty()) {
@@ -69,13 +69,13 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<IRecipeSeria
 
     @Nullable
     @Override
-    public RecipeDryingBasin read(ResourceLocation recipeId, PacketBuffer buffer) {
+    public RecipeDryingBasin fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
         // Input
-        Ingredient inputIngredient = Ingredient.read(buffer);
+        Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
         FluidStack inputFluid = FluidStack.readFromPacket(buffer);
 
         // Output
-        ItemStack outputItemStack = buffer.readItemStack();
+        ItemStack outputItemStack = buffer.readItem();
         FluidStack outputFluid = FluidStack.readFromPacket(buffer);
 
         // Other stuff
@@ -85,13 +85,13 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<IRecipeSeria
     }
 
     @Override
-    public void write(PacketBuffer buffer, RecipeDryingBasin recipe) {
+    public void toNetwork(PacketBuffer buffer, RecipeDryingBasin recipe) {
         // Input
-        recipe.getInputIngredient().write(buffer);
+        recipe.getInputIngredient().toNetwork(buffer);
         recipe.getInputFluid().writeToPacket(buffer);
 
         // Output
-        buffer.writeItemStack(recipe.getOutputItem());
+        buffer.writeItem(recipe.getOutputItem());
         recipe.getOutputFluid().writeToPacket(buffer);
 
         // Other stuff

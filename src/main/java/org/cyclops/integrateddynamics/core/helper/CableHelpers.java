@@ -93,7 +93,7 @@ public class CableHelpers {
      */
     public static void updateConnectionsNeighbours(IBlockReader world, BlockPos pos, Collection<Direction> sides) {
         for(Direction side : sides) {
-            updateConnections(world, pos.offset(side), side.getOpposite());
+            updateConnections(world, pos.relative(side), side.getOpposite());
         }
     }
 
@@ -134,7 +134,7 @@ public class CableHelpers {
      * @return If it can connect.
      */
     public static boolean canCableConnectTo(IBlockReader world, BlockPos pos, Direction side, ICable originCable) {
-        BlockPos neighbourPos = pos.offset(side);
+        BlockPos neighbourPos = pos.relative(side);
         return getCable(world, neighbourPos, side.getOpposite())
                 .map(neighbourCable -> originCable.canConnect(neighbourCable, side)
                         && neighbourCable.canConnect(originCable, side.getOpposite()))
@@ -176,7 +176,7 @@ public class CableHelpers {
 
         // Reinit the networks for this block and the disconnected neighbour.
         NetworkHelpers.initNetwork(world, pos, side);
-        NetworkHelpers.initNetwork(world, pos.offset(disconnectSide), side.getOpposite());
+        NetworkHelpers.initNetwork(world, pos.relative(disconnectSide), side.getOpposite());
     }
 
     /**
@@ -199,7 +199,7 @@ public class CableHelpers {
         }
 
         if(WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
-            if (world.isRemote()) {
+            if (world.isClientSide()) {
                 return ActionResultType.SUCCESS; // Don't do anything client-side
             }
             if (player.isSecondaryUseActive()) {
@@ -208,7 +208,7 @@ public class CableHelpers {
                 disconnectCable(world, pos, side, cable, cableConnectionHit);
             } else if (cableConnectionHit == null) {
                 // Reconnect cable side
-                BlockPos neighbourPos = pos.offset(side);
+                BlockPos neighbourPos = pos.relative(side);
                 ICable neighbourCable = CableHelpers.getCable(world, neighbourPos, side.getOpposite()).orElse(null);
                 if(neighbourCable != null && !cable.isConnected(side) &&
                         (cable.canConnect(neighbourCable, side) || neighbourCable.canConnect(cable, side.getOpposite()))
@@ -243,7 +243,7 @@ public class CableHelpers {
      */
     public static void onCableAdded(World world, BlockPos pos) {
         CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
-        if(!world.isRemote()) {
+        if(!world.isClientSide()) {
             NetworkHelpers.initNetwork(world, pos, null)
                     .ifPresent(network -> MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, null)));
         }
@@ -259,7 +259,7 @@ public class CableHelpers {
      */
     public static void onCableAddedByPlayer(World world, BlockPos pos, @Nullable LivingEntity placer) {
         CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
-        if(!world.isRemote()) {
+        if(!world.isClientSide()) {
             NetworkHelpers.initNetwork(world, pos, null)
                     .ifPresent(network -> MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer)));
         }
@@ -275,7 +275,7 @@ public class CableHelpers {
      * @return If the cable was removed from the network.
      */
     public static boolean onCableRemoving(World world, BlockPos pos, boolean dropMainElement, boolean saveState) {
-        if (!world.isRemote() && CableHelpers.isNoFakeCable(world, pos, null)) {
+        if (!world.isClientSide() && CableHelpers.isNoFakeCable(world, pos, null)) {
             INetworkCarrier networkCarrier = NetworkHelpers.getNetworkCarrier(world, pos, null).orElse(null);
 
             // Get all drops from the network elements this cable provides.
@@ -286,7 +286,7 @@ public class CableHelpers {
                     networkElement.addDrops(itemStacks, dropMainElement, saveState);
                 }
                 for (ItemStack itemStack : itemStacks) {
-                    Block.spawnAsEntity(world, pos, itemStack);
+                    Block.popResource(world, pos, itemStack);
                 }
             }
 
@@ -312,10 +312,10 @@ public class CableHelpers {
      */
     public static boolean onCableRemoved(World world, BlockPos pos, Collection<Direction> sides) {
         updateConnectionsNeighbours(world, pos, sides);
-        if (!world.isRemote()) {
+        if (!world.isClientSide()) {
             // Reinit neighbouring networks.
             for(Direction side : sides) {
-                BlockPos sidePos = pos.offset(side);
+                BlockPos sidePos = pos.relative(side);
                 NetworkHelpers.initNetwork(world, sidePos, side.getOpposite());
             }
         }
@@ -440,7 +440,7 @@ public class CableHelpers {
     public static Collection<Direction> getExternallyConnectedCables(World world, BlockPos pos) {
         Collection<Direction> sides = Sets.newIdentityHashSet();
         for (Direction side : Direction.values()) {
-            if (CableHelpers.isCableConnected(world, pos.offset(side), side.getOpposite())) {
+            if (CableHelpers.isCableConnected(world, pos.relative(side), side.getOpposite())) {
                 sides.add(side);
             }
         }

@@ -103,7 +103,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         JsonElement jsonElement = element.get("infinite_list");
         Boolean infinite = null;
         if (jsonElement != null && !jsonElement.isJsonNull()) {
-            infinite = JSONUtils.getBoolean(jsonElement, "infinite_list");
+            infinite = JSONUtils.convertToBoolean(jsonElement, "infinite_list");
         }
         return new ValueListPredicate(this, value, infinite);
     }

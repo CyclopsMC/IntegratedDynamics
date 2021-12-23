@@ -21,9 +21,9 @@ import java.util.Random;
  */
 public class EntityItemTargetted extends ItemEntity {
 
-	private static final DataParameter<Float> TARGET_X = EntityDataManager.createKey(EntityItemTargetted.class, DataSerializers.FLOAT);
-	private static final DataParameter<Float> TARGET_Y = EntityDataManager.createKey(EntityItemTargetted.class, DataSerializers.FLOAT);
-	private static final DataParameter<Float> TARGET_Z = EntityDataManager.createKey(EntityItemTargetted.class, DataSerializers.FLOAT);
+	private static final DataParameter<Float> TARGET_X = EntityDataManager.defineId(EntityItemTargetted.class, DataSerializers.FLOAT);
+	private static final DataParameter<Float> TARGET_Y = EntityDataManager.defineId(EntityItemTargetted.class, DataSerializers.FLOAT);
+	private static final DataParameter<Float> TARGET_Z = EntityDataManager.defineId(EntityItemTargetted.class, DataSerializers.FLOAT);
 
 	private LivingEntity targetEntity = null;
 
@@ -43,35 +43,35 @@ public class EntityItemTargetted extends ItemEntity {
     }
 
 	@Override
-	protected void registerData() {
-		super.registerData();
-		this.getDataManager().register(TARGET_X, (float) getPosY());
-		this.getDataManager().register(TARGET_Y, (float) getPosY());
-		this.getDataManager().register(TARGET_Z, (float) getPosY());
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.getEntityData().define(TARGET_X, (float) getY());
+		this.getEntityData().define(TARGET_Y, (float) getY());
+		this.getEntityData().define(TARGET_Z, (float) getY());
 		setNoGravity(true);
 	}
 
 	public void setTarget(float x, float y, float z) {
-		this.getDataManager().set(TARGET_X, x);
-		this.getDataManager().set(TARGET_Y, y);
-		this.getDataManager().set(TARGET_Z, z);
+		this.getEntityData().set(TARGET_X, x);
+		this.getEntityData().set(TARGET_Y, y);
+		this.getEntityData().set(TARGET_Z, z);
 	}
 
 	public void setTarget(LivingEntity targetEntity) {
 		this.targetEntity = targetEntity;
-		this.setTarget((float) targetEntity.getPosX(), (float) targetEntity.getPosY(), (float) targetEntity.getPosZ());
+		this.setTarget((float) targetEntity.getX(), (float) targetEntity.getY(), (float) targetEntity.getZ());
 	}
 
 	public float getTargetX() {
-		return this.getDataManager().get(TARGET_X);
+		return this.getEntityData().get(TARGET_X);
 	}
 
 	public float getTargetY() {
-		return this.getDataManager().get(TARGET_Y);
+		return this.getEntityData().get(TARGET_Y);
 	}
 
 	public float getTargetZ() {
-		return this.getDataManager().get(TARGET_Z);
+		return this.getEntityData().get(TARGET_Z);
 	}
 
 	@Override
@@ -79,12 +79,12 @@ public class EntityItemTargetted extends ItemEntity {
 		super.tick();
 
 		if (targetEntity != null) {
-			this.setTarget((float) targetEntity.getPosX(), (float) targetEntity.getPosY(), (float) targetEntity.getPosZ());
+			this.setTarget((float) targetEntity.getX(), (float) targetEntity.getY(), (float) targetEntity.getZ());
 		}
 
-		double dx = this.getPosX() - getTargetX();
-		double dy = this.getPosY() - (getTargetY() + 1F);
-		double dz = this.getPosZ() - getTargetZ();
+		double dx = this.getX() - getTargetX();
+		double dy = this.getY() - (getTargetY() + 1F);
+		double dz = this.getZ() - getTargetZ();
 		double strength = -0.1;
 
 		double d = MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
@@ -93,38 +93,38 @@ public class EntityItemTargetted extends ItemEntity {
 			dx *= m;
 			dy *= m;
 			dz *= m;
-			this.setMotion(dx, dy, dz);
-			if(this.collidedHorizontally) {
-				this.setMotion(this.getMotion().x, 0.3, this.getMotion().z);
+			this.setDeltaMovement(dx, dy, dz);
+			if(this.horizontalCollision) {
+				this.setDeltaMovement(this.getDeltaMovement().x, 0.3, this.getDeltaMovement().z);
 			}
 		}
-		if (rand.nextInt(5) == 0) {
+		if (random.nextInt(5) == 0) {
 			showEntityMoved();
 		}
 	}
 
 	protected void showEntityMoved() {
-		Random rand = world.rand;
+		Random rand = level.random;
 		float scale = 0.10F;
 		float red = rand.nextFloat() * 0.20F + 0.8F;
 		float green = rand.nextFloat() * 0.20F + 0.8F;
 		float blue = rand.nextFloat() * 0.10F + 0.10F;
 		float ageMultiplier = (float) (rand.nextDouble() * 25D + 50D);
 
-		((ServerWorld) getEntityWorld()).spawnParticle(
+		((ServerWorld) getCommandSenderWorld()).sendParticles(
 				new ParticleBlurData(red, green, blue, scale, ageMultiplier),
-				this.getPosX(), this.getPosY() + 0.5D, this.getPosZ(), 1,
+				this.getX(), this.getY() + 0.5D, this.getZ(), 1,
 				0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0D);
 
 		if (rand.nextInt(5) == 0) {
-			double dx = this.getPosX() - (getTargetX() + 0.5F);
-			double dy = this.getPosY() - (getTargetY() + 1F);
-			double dz = this.getPosZ() - (getTargetZ() + 0.5F);
+			double dx = this.getX() - (getTargetX() + 0.5F);
+			double dy = this.getY() - (getTargetY() + 1F);
+			double dz = this.getZ() - (getTargetZ() + 0.5F);
 			double factor = rand.nextDouble();
-			double x = this.getPosX() - dx * factor;
-			double y = this.getPosY() - dy * factor;
-			double z = this.getPosZ() - dz * factor;
-			((ServerWorld) getEntityWorld()).spawnParticle(
+			double x = this.getX() - dx * factor;
+			double y = this.getY() - dy * factor;
+			double z = this.getZ() - dz * factor;
+			((ServerWorld) getCommandSenderWorld()).sendParticles(
 					new ParticleBlurData(red, green, blue, scale, ageMultiplier),
 					x, y, z, 1,
 					-0.02 * dx, -0.02 * dy, -0.02 * dz, 0D);

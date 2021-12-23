@@ -38,7 +38,7 @@ public class PartWriterAspectTrigger extends AbstractCriterionTrigger<PartWriter
     }
 
     @Override
-    public Instance deserializeTrigger(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
+    public Instance createInstance(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
         return new Instance(getId(), entityPredicate,
                 JsonDeserializers.deserializePartType(json),
                 JsonDeserializers.deserializeAspect(json),
@@ -46,7 +46,7 @@ public class PartWriterAspectTrigger extends AbstractCriterionTrigger<PartWriter
     }
 
     public void test(ServerPlayerEntity player, PartWriterAspectEvent event) {
-        this.triggerListeners(player, (instance) -> instance.test(player, event));
+        this.trigger(player, (instance) -> instance.test(player, event));
     }
 
     @SubscribeEvent

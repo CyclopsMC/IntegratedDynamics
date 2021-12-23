@@ -81,7 +81,7 @@ public class TestItemStackOperators {
         iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ENDER_PEARL)));
         iHoe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
         iHoe100 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
-        iHoe100.getValue().getRawValue().setDamage(100);
+        iHoe100.getValue().getRawValue().setDamageValue(100);
         ItemStack hoeEnchanted = new ItemStack(Items.DIAMOND_HOE);
         EnchantmentHelpers.setEnchantmentLevel(hoeEnchanted, Enchantments.AQUA_AFFINITY, 1);
         hoeEnchanted.setRepairCost(10);
@@ -104,8 +104,8 @@ public class TestItemStackOperators {
         iShulkerBox = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(shulkerBox));
         iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
 
-        bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.getDefaultState()));
-        bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.getDefaultState()));
+        bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.defaultBlockState()));
+        bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.defaultBlockState()));
 
         sPlankWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:planks"));
 
@@ -488,12 +488,12 @@ public class TestItemStackOperators {
     public void testItemStackBlock() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_BLOCK.evaluate(new IVariable[]{iStone});
         Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.STONE.getDefaultState(), "block(stone) = stone");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.STONE.defaultBlockState(), "block(stone) = stone");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_BLOCK.evaluate(new IVariable[]{iDarkOakLeaves});
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get(), Blocks.DARK_OAK_LEAVES.getDefaultState()
-                .with(LeavesBlock.DISTANCE, 7)
-                .with(LeavesBlock.PERSISTENT, false), "block(dark_oak_leaves) = dark_oak_leaves");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get(), Blocks.DARK_OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.DISTANCE, 7)
+                .setValue(LeavesBlock.PERSISTENT, false), "block(dark_oak_leaves) = dark_oak_leaves");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

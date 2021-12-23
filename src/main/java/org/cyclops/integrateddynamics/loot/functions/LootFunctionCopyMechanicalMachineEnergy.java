@@ -29,8 +29,8 @@ public class LootFunctionCopyMechanicalMachineEnergy extends LootFunction {
     }
 
     @Override
-    public ItemStack doApply(ItemStack itemStack, LootContext lootContext) {
-        TileEntity tile = lootContext.get(LootParameters.BLOCK_ENTITY);
+    public ItemStack run(ItemStack itemStack, LootContext lootContext) {
+        TileEntity tile = lootContext.getParamOrNull(LootParameters.BLOCK_ENTITY);
         if (tile instanceof TileMechanicalMachine) {
             itemStack.getOrCreateTag().putInt(BlockMechanicalMachine.NBT_ENERGY, ((TileMechanicalMachine) tile).getEnergy());
         }
@@ -38,7 +38,7 @@ public class LootFunctionCopyMechanicalMachineEnergy extends LootFunction {
     }
 
     @Override
-    public LootFunctionType getFunctionType() {
+    public LootFunctionType getType() {
         return TYPE;
     }
 

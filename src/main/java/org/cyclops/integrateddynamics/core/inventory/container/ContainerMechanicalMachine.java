@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ContainerType;
@@ -50,5 +51,10 @@ public class ContainerMechanicalMachine<T extends TileMechanicalMachine<?, ?>> e
 
     public int getEnergy() {
         return variableEnergy.get();
+    }
+
+    @Override
+    public boolean stillValid(PlayerEntity p_75145_1_) {
+        return false; // TODO: rm
     }
 }

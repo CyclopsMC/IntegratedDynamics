@@ -61,13 +61,13 @@ public class ClientProxy extends ClientProxyComponent {
     }
 
     public void onPreTextureStitch(TextureStitchEvent.Pre event) {
-        if (event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE)) {
+        if (event.getMap().location().equals(AtlasTexture.LOCATION_BLOCKS)) {
             event.addSprite(SlotVariable.VARIABLE_EMPTY);
         }
     }
 
     public void onPostTextureStitch(TextureStitchEvent.Post event) {
-        if (event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE)) {
+        if (event.getMap().location().equals(AtlasTexture.LOCATION_BLOCKS)) {
             event.getMap().getSprite(SlotVariable.VARIABLE_EMPTY);
         }
     }

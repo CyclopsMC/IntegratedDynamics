@@ -18,7 +18,7 @@ public class BlockMenrilLogConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_log",
-                eConfig -> Blocks.createLogBlock(MaterialColor.CYAN, MaterialColor.CYAN),
+                eConfig -> Blocks.log(MaterialColor.COLOR_CYAN, MaterialColor.COLOR_CYAN),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

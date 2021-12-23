@@ -55,7 +55,7 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
                                   Direction direction, IPartType partType, List<IValue> values, float partialTicks,
                                   MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
                                   int combinedLight, int combinedOverlay, float alpha) {
-        matrixStack.push();
+        matrixStack.pushPose();
         int matrixRadius = getSmallestSquareFrom(values.size());
         float scale = 1F / matrixRadius;
         matrixStack.scale(scale, scale, 1);
@@ -67,7 +67,7 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
                 }
                 IValue renderValue = values.get(realIndex);
                 if (renderValue != null) {
-                    matrixStack.push();
+                    matrixStack.pushPose();
                     matrixStack.translate(j * DisplayPartOverlayRenderer.MAX, i * DisplayPartOverlayRenderer.MAX, 0);
 
                     // Call value renderer for each value
@@ -77,11 +77,11 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
                     }
                     renderer.renderValue(rendererDispatcher, partContainer, direction, partType, renderValue,
                             partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
-                    matrixStack.pop();
+                    matrixStack.popPose();
                 }
             }
         }
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     @Nullable

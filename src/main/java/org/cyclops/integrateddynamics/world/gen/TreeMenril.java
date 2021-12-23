@@ -28,20 +28,20 @@ public class TreeMenril extends Tree {
     public static BaseTreeFeatureConfig getMenrilTreeConfig() {
         return new BaseTreeFeatureConfig.Builder(
                 new WeightedBlockStateProvider()
-                        .addWeightedBlockstate(RegistryEntries.BLOCK_MENRIL_LOG.getDefaultState(), BlockMenrilLogFilledConfig.filledMenrilLogChance)
-                        .addWeightedBlockstate(RegistryEntries.BLOCK_MENRIL_LOG_FILLED.getDefaultState(), 1),
-                new SimpleBlockStateProvider(RegistryEntries.BLOCK_MENRIL_LEAVES.getDefaultState()),
-                new FoliagePlacerMenril(FeatureSpread.func_242252_a(2), FeatureSpread.func_242252_a(0)),
+                        .add(RegistryEntries.BLOCK_MENRIL_LOG.defaultBlockState(), BlockMenrilLogFilledConfig.filledMenrilLogChance)
+                        .add(RegistryEntries.BLOCK_MENRIL_LOG_FILLED.defaultBlockState(), 1),
+                new SimpleBlockStateProvider(RegistryEntries.BLOCK_MENRIL_LEAVES.defaultBlockState()),
+                new FoliagePlacerMenril(FeatureSpread.fixed(2), FeatureSpread.fixed(0)),
                 new TrunkPlacerMenril(5, 2, 2, 3),
                 new TwoLayerFeature(1, 0, 2))
-                .setIgnoreVines()
+                .ignoreVines()
                 .build();
     }
 
     @Nullable
     @Override
-    protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getTreeFeature(Random random, boolean b) {
-        return Feature.TREE.withConfiguration(getMenrilTreeConfig());
+    protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredFeature(Random random, boolean b) {
+        return Feature.TREE.configured(getMenrilTreeConfig());
     }
 
 }

@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -82,7 +83,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-
 /**
  * A block that is built up from different parts.
  * This block refers to a ticking part entity.
@@ -136,41 +136,41 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     public BlockCable(Properties properties) {
         super(properties, TileMultipartTicking::new);
-        this.setDefaultState(this.stateContainer.getBaseState().with(WATERLOGGED, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
         if (MinecraftHelpers.isClientSide()) {
             IntegratedDynamics._instance.getIconProvider().registerIconHolderObject(this);
         }
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        super.fillStateContainer(builder);
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(WATERLOGGED);
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        if (stateIn.get(WATERLOGGED)) {
-            worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        if (stateIn.getValue(WATERLOGGED)) {
+            worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         }
         NetworkHelpers.onElementProviderBlockNeighborChange((World) worldIn, currentPos, facingState.getBlock(), facing, facingPos);
-        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
-        return this.getDefaultState().with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
+        FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
+        return this.defaultBlockState().setValue(WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
     }
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
-    public boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
-        return !state.get(BlockStateProperties.WATERLOGGED) && fluidIn == Fluids.WATER
+    public boolean canPlaceLiquid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
+        return !state.getValue(BlockStateProperties.WATERLOGGED) && fluidIn == Fluids.WATER
                 && !CableHelpers.hasFacade(worldIn, pos);
     }
 
@@ -186,7 +186,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     @Override
     public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
-        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.forEntity(player))
+        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.of(player))
                 .rayTrace(pos, player);
         if (rayTraceResult != null && rayTraceResult.getComponent().destroy(world, pos, player, false)) {
             return false;
@@ -195,24 +195,24 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public void onReplaced(BlockState state, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (newState.getBlock() != this) {
             Collection<Direction> connectedCables = null;
             if (!CableHelpers.isRemovingCable()) {
                 CableHelpers.onCableRemoving(world, blockPos, false, false);
                 connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
             }
-            super.onReplaced(state, world, blockPos, newState, isMoving);
+            super.onRemove(state, world, blockPos, newState, isMoving);
             if (!CableHelpers.isRemovingCable()) {
                 CableHelpers.onCableRemoved(world, blockPos, connectedCables);
             }
         } else {
-            super.onReplaced(state, world, blockPos, newState, isMoving);
+            super.onRemove(state, world, blockPos, newState, isMoving);
         }
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         /*
             Wrench: sneak + right-click anywhere on cable to remove cable
                     right-click on a cable side to disconnect on that side
@@ -221,30 +221,30 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
          */
         TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class).orElse(null);
         if(tile != null) {
-            BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.forEntity(player))
+            BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.of(player))
                     .rayTrace(pos, player);
             if(rayTraceResult != null) {
                 ActionResultType actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, hand, rayTraceResult);
-                if (actionResultType.isSuccessOrConsume()) {
+                if (actionResultType.consumesAction()) {
                     return actionResultType;
                 }
             }
         }
-        return super.onBlockActivated(state, world, pos, player, hand, hit);
+        return super.use(state, world, pos, player, hand, hit);
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        super.onBlockAdded(state, world, pos, oldState, isMoving);
-        if (!world.isRemote() && !state.hasTileEntity()) {
+    public void onPlace(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, world, pos, oldState, isMoving);
+        if (!world.isClientSide() && !state.hasTileEntity()) {
             CableHelpers.onCableAdded(world, pos);
         }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        super.onBlockPlacedBy(world, pos, state, placer, itemStack);
-        if (!world.isRemote()) {
+    public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(world, pos, state, placer, itemStack);
+        if (!world.isClientSide()) {
             CableHelpers.onCableAddedByPlayer(world, pos, placer);
         }
     }
@@ -252,12 +252,12 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     @Override
     public ItemStack getPickBlock(BlockState state, net.minecraft.util.math.RayTraceResult target, IBlockReader world,
                                   BlockPos blockPos, PlayerEntity player) {
-        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, blockPos, ISelectionContext.forEntity(player))
+        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, blockPos, ISelectionContext.of(player))
                 .rayTrace(blockPos, player);
         if(rayTraceResult != null) {
             return rayTraceResult.getComponent().getPickBlock((World) world, blockPos);
         }
-        return getItem(world, blockPos, state);
+        return getCloneItemStack(world, blockPos, state);
     }
 
     @SuppressWarnings("deprecation")
@@ -337,13 +337,13 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         }
         VoxelShape shape = it.next();
         while (it.hasNext()) {
-            shape = VoxelShapes.combine(shape, it.next(), IBooleanFunction.OR);
+            shape = VoxelShapes.join(shape, it.next(), IBooleanFunction.OR);
         }
-        return shape.simplify();
+        return shape.optimize();
     }
 
     @Override
-    public int getOpacity(BlockState blockState, IBlockReader world, BlockPos pos) {
+    public int getLightBlock(BlockState blockState, IBlockReader world, BlockPos pos) {
         return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos, null) ? 255 : 0;
     }
 
@@ -355,10 +355,10 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean addHitEffects(BlockState blockState, World world, RayTraceResult target, ParticleManager particleManager) {
-        BlockPos blockPos = ((BlockRayTraceResult) target).getPos();
+        BlockPos blockPos = ((BlockRayTraceResult) target).getBlockPos();
         if(CableHelpers.hasFacade(world, blockPos)) {
             CableHelpers.getFacade(world, blockPos)
-                    .ifPresent(facadeState -> RenderHelpers.addBlockHitEffects(particleManager, (ClientWorld) world, facadeState, blockPos, ((BlockRayTraceResult) target).getFace()));
+                    .ifPresent(facadeState -> RenderHelpers.addBlockHitEffects(particleManager, (ClientWorld) world, facadeState, blockPos, ((BlockRayTraceResult) target).getDirection()));
             return true;
         } else {
             return super.addHitEffects(blockState, world, target, particleManager);
@@ -374,7 +374,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean canProvidePower(BlockState blockState) {
+    public boolean isSignalSource(BlockState blockState) {
         return true;
     }
 
@@ -395,14 +395,14 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getStrongPower(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
+    public int getDirectSignal(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
         IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
-        return dynamicRedstone != null && dynamicRedstone.isStrong() ? dynamicRedstone.getRedstoneLevel() : 0;
+        return dynamicRedstone != null && dynamicRedstone.isDirect() ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getWeakPower(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
+    public int getSignal(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
         IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
         return dynamicRedstone != null ? dynamicRedstone.getRedstoneLevel() : 0;
     }
@@ -436,6 +436,12 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=true"), model);
         event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "inventory"), model);
         return model;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity newBlockEntity(IBlockReader p_196283_1_) {
+        return null; // TODO: rm
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
@@ -31,6 +32,11 @@ public class ContainerVariablestore extends InventoryContainer {
             return super.createNewSlot(inventory, index, row, column);
         }
         return new SlotVariable(inventory, index, row, column);
+    }
+
+    @Override
+    public boolean stillValid(PlayerEntity p_75145_1_) {
+        return false; // TODO: rm
     }
 
 }

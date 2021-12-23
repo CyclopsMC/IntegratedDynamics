@@ -43,7 +43,7 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
     @Override
     public ValueBoolean deserialize(INBT value) {
         if (value.getId() == Constants.NBT.TAG_BYTE) {
-            return ValueBoolean.of(((ByteNBT) value).getByte() == 1);
+            return ValueBoolean.of(((ByteNBT) value).getAsByte() == 1);
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a boolean.", value));
         }

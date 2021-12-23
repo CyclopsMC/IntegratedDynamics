@@ -39,20 +39,20 @@ public class RecipeEnergyContainerCombination extends SpecialRecipe {
 
 	@Override
 	public boolean matches(CraftingInventory grid, World world) {
-		return !getCraftingResult(grid).isEmpty();
+		return !assemble(grid).isEmpty();
 	}
 	
 	@Override
-	public ItemStack getRecipeOutput() {
-		return this.batteryItem.getMatchingStacks()[0];
+	public ItemStack getResultItem() {
+		return this.batteryItem.getItems()[0];
 	}
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInventory inventory) {
-		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
+		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
 
         for (int i = 0; i < aitemstack.size(); ++i) {
-            ItemStack itemstack = inventory.getStackInSlot(i);
+            ItemStack itemstack = inventory.getItem(i);
             aitemstack.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
         }
 
@@ -65,8 +65,8 @@ public class RecipeEnergyContainerCombination extends SpecialRecipe {
 	}
 
 	@Override
-	public ItemStack getCraftingResult(CraftingInventory grid) {
-		ItemStack output = getRecipeOutput().copy();
+	public ItemStack assemble(CraftingInventory grid) {
+		ItemStack output = getResultItem().copy();
 		IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(CapabilityEnergy.ENERGY).orElse(null);
 
 		int totalCapacity = 0;
@@ -74,8 +74,8 @@ public class RecipeEnergyContainerCombination extends SpecialRecipe {
 		int inputItems = 0;
 		
 		// Loop over the grid and count the total contents and capacity + collect energy.
-		for(int j = 0; j < grid.getSizeInventory(); j++) {
-			ItemStack element = grid.getStackInSlot(j).copy().split(1);
+		for(int j = 0; j < grid.getContainerSize(); j++) {
+			ItemStack element = grid.getItem(j).copy().split(1);
 			if(!element.isEmpty()) {
 				if(this.batteryItem.test(element)) {
 					IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(CapabilityEnergy.ENERGY).orElse(null);
@@ -101,7 +101,7 @@ public class RecipeEnergyContainerCombination extends SpecialRecipe {
 	}
 
 	@Override
-	public boolean canFit(int width, int height) {
+	public boolean canCraftInDimensions(int width, int height) {
 		return width * height >= 9;
 	}
 

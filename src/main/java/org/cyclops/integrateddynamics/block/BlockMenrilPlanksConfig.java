@@ -22,8 +22,8 @@ public class BlockMenrilPlanksConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_planks",
-                eConfig -> new Block(Block.Properties.create(Material.WOOD, MaterialColor.CYAN)
-                        .hardnessAndResistance(2.0F, 3.0F)
+                eConfig -> new Block(Block.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
+                        .strength(2.0F, 3.0F)
                         .sound(SoundType.WOOD)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

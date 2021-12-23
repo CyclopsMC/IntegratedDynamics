@@ -23,11 +23,11 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_leaves",
-                eConfig -> new LeavesBlock(Block.Properties.create(Material.LEAVES)
-                        .hardnessAndResistance(0.2F)
-                        .tickRandomly()
-                        .sound(SoundType.PLANT)
-                        .notSolid()),
+                eConfig -> new LeavesBlock(Block.Properties.of(Material.LEAVES)
+                        .strength(0.2F)
+                        .randomTicks()
+                        .sound(SoundType.GRASS)
+                        .noOcclusion()),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
@@ -36,7 +36,7 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
     public void onForgeRegistered() {
         super.onForgeRegistered();
         BlockHelpers.setFireInfo(getInstance(), 5, 20);
-        ComposterBlock.CHANCES.put(getItemInstance(), 0.3F);
+        ComposterBlock.COMPOSTABLES.put(getItemInstance(), 0.3F);
     }
     
 }

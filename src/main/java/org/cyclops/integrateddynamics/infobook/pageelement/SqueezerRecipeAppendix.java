@@ -17,6 +17,9 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix.FluidButton;
+import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix.ItemButton;
+
 /**
  * Squeezer recipes.
  * @author rubensworks
@@ -73,7 +76,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<RecipeSqueezer> {
 
         // Prepare items
         int tick = getTick(gui);
-        ItemStack inputItem = recipe.getInputIngredient() == null ? null : prepareItemStacks(recipe.getInputIngredient().getMatchingStacks(), tick);
+        ItemStack inputItem = recipe.getInputIngredient() == null ? null : prepareItemStacks(recipe.getInputIngredient().getItems(), tick);
         List<ItemStack> outputItems = recipe.getOutputItems().stream()
                 .map(RecipeSqueezer.ItemStackChance::getItemStack)
                 .collect(Collectors.toList());

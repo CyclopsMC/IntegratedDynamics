@@ -33,10 +33,10 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_torch_stone",
-                eConfig -> new TorchBlock(Block.Properties.create(Material.MISCELLANEOUS)
-                        .doesNotBlockMovement()
-                        .hardnessAndResistance(0)
-                        .setLightLevel((blockState) -> 14)
+                eConfig -> new TorchBlock(Block.Properties.of(Material.DECORATION)
+                        .noCollission()
+                        .strength(0)
+                        .lightLevel((blockState) -> 14)
                         .sound(SoundType.STONE), ParticleTypes.FLAME) {
                     @Override
                     @OnlyIn(Dist.CLIENT)
@@ -46,13 +46,13 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
                 },
                 (eConfig, block) -> new WallOrFloorItem(block,
                         RegistryEntries.BLOCK_MENRIL_TORCH_STONE_WALL,
-                        new Item.Properties().group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        new Item.Properties().tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
-        RenderTypeLookup.setRenderLayer(getInstance(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(getInstance(), RenderType.cutout());
     }
 
 }

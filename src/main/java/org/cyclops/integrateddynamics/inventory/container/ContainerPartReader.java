@@ -133,18 +133,18 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity player) {
-        super.onContainerClosed(player);
-        if (!player.world.isRemote()) {
+    public void removed(PlayerEntity player) {
+        super.removed(player);
+        if (!player.level.isClientSide()) {
             for (int i = 0; i < getUnfilteredItemCount(); ++i) {
                 ItemStack itemStack;
-                itemStack = inputSlots.removeStackFromSlot(i);
+                itemStack = inputSlots.removeItemNoUpdate(i);
                 if (!itemStack.isEmpty()) {
-                    player.dropItem(itemStack, false);
+                    player.drop(itemStack, false);
                 }
-                itemStack = outputSlots.removeStackFromSlot(i);
+                itemStack = outputSlots.removeItemNoUpdate(i);
                 if (!itemStack.isEmpty()) {
-                    player.dropItem(itemStack, false);
+                    player.drop(itemStack, false);
                 }
             }
         }
@@ -153,21 +153,21 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     @Override
     public void onDirty() {
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
-            ItemStack itemStack = inputSlots.getStackInSlot(i);
-            if(!itemStack.isEmpty() && outputSlots.getStackInSlot(i).isEmpty()) {
-                ItemStack outputStack = writeAspectInfo(!player.world.isRemote(), itemStack.copy(), getUnfilteredItems().get(i));
-                outputSlots.setInventorySlotContents(i, outputStack);
-                inputSlots.decrStackSize(i, 1);
+            ItemStack itemStack = inputSlots.getItem(i);
+            if(!itemStack.isEmpty() && outputSlots.getItem(i).isEmpty()) {
+                ItemStack outputStack = writeAspectInfo(!player.level.isClientSide(), itemStack.copy(), getUnfilteredItems().get(i));
+                outputSlots.setItem(i, outputStack);
+                inputSlots.removeItem(i, 1);
             }
         }
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+    public void broadcastChanges() {
+        super.broadcastChanges();
 
         try {
-            if (!player.world.isRemote()) {
+            if (!player.level.isClientSide()) {
                 for (IAspectRead aspectRead : getUnfilteredItems()) {
                     Pair<IFormattableTextComponent, Integer> readValue;
                     if(getPartState().isEnabled()) {
@@ -181,7 +181,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
                 }
             }
         } catch (PartStateException e) {
-            player.closeScreen();
+            player.closeContainer();
         }
     }
 
@@ -205,7 +205,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     @Override
     public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
         ItemStack resultStack = super.writeAspectInfo(generateId, itemStack, aspect);
-        if (player.world.isRemote()) {
+        if (player.level.isClientSide()) {
             return resultStack;
         }
 

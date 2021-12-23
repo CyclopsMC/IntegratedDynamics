@@ -23,28 +23,28 @@ public class BlockFluidLiquidChorus extends FlowingFluidBlock {
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
-        super.onEntityCollision(state, worldIn, pos, entityIn);
+    public void entityInside(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+        super.entityInside(state, worldIn, pos, entityIn);
 
         // Simulate chorus-eating
         if (entityIn instanceof LivingEntity) {
             LivingEntity entityLiving = (LivingEntity) entityIn;
-            double d0 = entityLiving.getPosX();
-            double d1 = entityLiving.getPosY();
-            double d2 = entityLiving.getPosZ();
+            double d0 = entityLiving.getX();
+            double d1 = entityLiving.getY();
+            double d2 = entityLiving.getZ();
 
             for (int i = 0; i < 16; ++i) {
-                double d3 = entityLiving.getPosX() + (entityLiving.getRNG().nextDouble() - 0.5D) * 16.0D;
-                double d4 = MathHelper.clamp(entityLiving.getPosY() + (double) (entityLiving.getRNG().nextInt(16) - 8), 0.0D, worldIn.getHeight() - 1);
-                double d5 = entityLiving.getPosZ() + (entityLiving.getRNG().nextDouble() - 0.5D) * 16.0D;
+                double d3 = entityLiving.getX() + (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
+                double d4 = MathHelper.clamp(entityLiving.getY() + (double) (entityLiving.getRandom().nextInt(16) - 8), 0.0D, worldIn.getMaxBuildHeight() - 1);
+                double d5 = entityLiving.getZ() + (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
 
                 if (entityLiving.isPassenger()) {
                     entityLiving.stopRiding();
                 }
 
-                if (entityLiving.attemptTeleport(d3, d4, d5, true)) {
-                    worldIn.playSound(null, d0, d1, d2, SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                    entityLiving.playSound(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
+                if (entityLiving.randomTeleport(d3, d4, d5, true)) {
+                    worldIn.playSound(null, d0, d1, d2, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    entityLiving.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
                     break;
                 }
             }

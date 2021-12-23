@@ -24,36 +24,36 @@ public class ContainerScreenMechanicalDryingBasin extends ContainerScreenMechani
         return new ResourceLocation(Reference.MOD_ID, "textures/gui/mechanical_drying_basin.png");
     }
 
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
 
         // Render progress
         GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 84, getGuiTopTotal() + 31, 11, 28,
                 176, 120, GuiHelpers.ProgressDirection.UP,
-                getContainer().getProgress(), getContainer().getMaxProgress());
+                getMenu().getProgress(), getMenu().getMaxProgress());
 
         // Render energy level
         GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
                 176, 60, GuiHelpers.ProgressDirection.UP,
-                getContainer().getEnergy(), getContainer().getMaxEnergy());
+                getMenu().getEnergy(), getMenu().getMaxEnergy());
 
         // Render input fluid tank
-        GuiHelpers.renderOverlayedFluidTank(this, matrixStack, getContainer().getInputFluidStack(),
-                getContainer().getInputFluidCapacity(), getGuiLeftTotal() + 28, getGuiTopTotal() + 16,
+        GuiHelpers.renderOverlayedFluidTank(this, matrixStack, getMenu().getInputFluidStack(),
+                getMenu().getInputFluidCapacity(), getGuiLeftTotal() + 28, getGuiTopTotal() + 16,
                 18, 60, texture, 176, 0);
 
         // Render output fluid tank
-        GuiHelpers.renderOverlayedFluidTank(this, matrixStack, getContainer().getOutputFluidStack(),
-                getContainer().getOutputFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 16,
+        GuiHelpers.renderOverlayedFluidTank(this, matrixStack, getMenu().getOutputFluidStack(),
+                getMenu().getOutputFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 16,
                 18, 60, texture, 176, 0);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.renderLabels(matrixStack, mouseX, mouseY);
 
         drawEnergyBarTooltip(8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getContainer().getInputFluidStack(), getContainer().getInputFluidCapacity(), 28, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getContainer().getOutputFluidStack(), getContainer().getOutputFluidCapacity(), 150, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(getMenu().getInputFluidStack(), getMenu().getInputFluidCapacity(), 28, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(getMenu().getOutputFluidStack(), getMenu().getOutputFluidCapacity(), 150, 16, 18, 60, mouseX, mouseY);
     }
 }

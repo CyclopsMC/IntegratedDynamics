@@ -12,6 +12,8 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * The default wrench for this mod.
  * @author rubensworks
@@ -28,25 +30,25 @@ public class ItemWrench extends Item {
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        BlockState blockState = context.getWorld().getBlockState(context.getPos());
+    public ActionResultType useOn(ItemUseContext context) {
+        BlockState blockState = context.getLevel().getBlockState(context.getClickedPos());
         if (context.getPlayer() != null && context.getPlayer().isSecondaryUseActive()) {
-            return super.onItemUse(context);
+            return super.useOn(context);
         }
-        if (context.getFace().getAxis() == Direction.Axis.Y
+        if (context.getClickedFace().getAxis() == Direction.Axis.Y
                 && blockState.hasProperty(BlockStateProperties.FACING)) {
             // If pointing top or bottom, and we can rotate to UP and DOWN, rotate to that direction or opposite
-            blockState = blockState.with(BlockStateProperties.FACING, blockState.get(BlockStateProperties.FACING) == Direction.UP ? Direction.DOWN : Direction.UP);
-        } else if (context.getFace().getAxis() != Direction.Axis.Y
+            blockState = blockState.setValue(BlockStateProperties.FACING, blockState.getValue(BlockStateProperties.FACING) == Direction.UP ? Direction.DOWN : Direction.UP);
+        } else if (context.getClickedFace().getAxis() != Direction.Axis.Y
                 && blockState.hasProperty(BlockStateProperties.FACING)
-                && blockState.get(BlockStateProperties.FACING).getAxis() == Direction.Axis.Y) {
+                && blockState.getValue(BlockStateProperties.FACING).getAxis() == Direction.Axis.Y) {
             // If not pointing top or bottom, and rotation is UP or DOWN, rotate to facing
-            blockState = blockState.with(BlockStateProperties.FACING, context.getFace());
+            blockState = blockState.setValue(BlockStateProperties.FACING, context.getClickedFace());
         } else {
             // Otherwise, just call rotate method
-            blockState = blockState.rotate(context.getWorld(), context.getPos(), Rotation.CLOCKWISE_90);
+            blockState = blockState.rotate(context.getLevel(), context.getClickedPos(), Rotation.CLOCKWISE_90);
         }
-        context.getWorld().setBlockState(context.getPos(), blockState);
+        context.getLevel().setBlockAndUpdate(context.getClickedPos(), blockState);
         return ActionResultType.SUCCESS;
     }
 

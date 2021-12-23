@@ -124,8 +124,8 @@ public class TileDelay extends TileProxy implements INamedContainerProvider {
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
-        tag = super.write(tag);
+    public CompoundNBT save(CompoundNBT tag) {
+        tag = super.save(tag);
         ListNBT valueList = new ListNBT();
         for (IValue value : getValues()) {
             valueList.add(ValueHelpers.serialize(value));
@@ -152,7 +152,7 @@ public class TileDelay extends TileProxy implements INamedContainerProvider {
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if (!getWorld().isRemote && updateInterval > 0 && getWorld().getGameTime() % updateInterval == 0) {
+        if (!getLevel().isClientSide && updateInterval > 0 && getLevel().getGameTime() % updateInterval == 0) {
             // Remove oldest elements from the queue until we have room for a new one.
             while (getValues().size() >= this.capacity) {
                 getValues().poll();

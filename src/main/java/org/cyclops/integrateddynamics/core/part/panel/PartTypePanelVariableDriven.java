@@ -63,6 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.cyclops.integrateddynamics.core.part.PartTypeBase.IEventAction;
+
 /**
  * A panel part that is driven by a contained variable.
  * @author rubensworks
@@ -90,13 +92,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
     @Override
     public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
-        for(int i = 0; i < state.getInventory().getSizeInventory(); i++) {
-            ItemStack itemStack = state.getInventory().getStackInSlot(i);
+        for(int i = 0; i < state.getInventory().getContainerSize(); i++) {
+            ItemStack itemStack = state.getInventory().getItem(i);
             if(!itemStack.isEmpty()) {
                 itemStacks.add(itemStack);
             }
         }
-        state.getInventory().clear();
+        // state.getInventory().clearContent(); // TODO: restore
         state.onVariableContentsUpdated((P) this, target);
         super.addDrops(target, state, itemStacks, dropMainElement, saveState);
     }
@@ -235,9 +237,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                                     Direction side) {
         IgnoredBlockStatus.Status status = getStatus(partContainer != null
                 ? (PartTypePanelVariableDriven.State) partContainer.getPartState(side) : null);
-        return getBlock().getDefaultState()
-                .with(IgnoredBlock.FACING, side)
-                .with(IgnoredBlockStatus.STATUS, status);
+        return getBlock().defaultBlockState()
+                .setValue(IgnoredBlock.FACING, side)
+                .setValue(IgnoredBlockStatus.STATUS, status);
     }
 
     protected void onVariableContentsUpdated(IPartNetwork network, PartTarget target, S state) {
@@ -247,9 +249,9 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     @Override
     public ActionResultType onPartActivated(final S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
                                             ItemStack heldItem, BlockRayTraceResult hit) {
-        if(WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getFace())) {
-            WrenchHelpers.wrench(player, heldItem, world, pos, hit.getFace(),
-                    (player1, pos1, parameter) -> partState.setFacingRotation(partState.getFacingRotation().rotateY()));
+        if(WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getDirection())) {
+            WrenchHelpers.wrench(player, heldItem, world, pos, hit.getDirection(),
+                    (player1, pos1, parameter) -> partState.setFacingRotation(partState.getFacingRotation().getClockWise()));
             return ActionResultType.SUCCESS;
         }
         return super.onPartActivated(partState, pos, world, player, hand, heldItem, hit);
@@ -264,13 +266,13 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     IValueType valueType = value.getType();
                     lines.add(new TranslationTextComponent(
                             L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
-                            valueType.toCompactString(value).mergeStyle(valueType.getDisplayColorFormat()),
+                            valueType.toCompactString(value).withStyle(valueType.getDisplayColorFormat()),
                             new TranslationTextComponent(valueType.getTranslationKey())));
                 }
             } else {
-                lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS).mergeStyle(TextFormatting.RED));
+                lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS).withStyle(TextFormatting.RED));
                 for (IFormattableTextComponent error : state.getGlobalErrors()) {
-                    lines.add(error.mergeStyle(TextFormatting.RED));
+                    lines.add(error.withStyle(TextFormatting.RED));
                 }
             }
         } else {

@@ -74,9 +74,9 @@ public class CableModel extends CableModelBase {
         IPartContainer partContainer = ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null);
         BlockState blockState = partContainer != null && partContainer.hasPart(side) ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
         Minecraft mc = Minecraft.getInstance();
-        BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRendererDispatcher();
-        BlockModelShapes blockModelShapes = blockRendererDispatcher.getBlockModelShapes();
-        return blockModelShapes.getModel(blockState);
+        BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRenderer();
+        BlockModelShapes blockModelShapes = blockRendererDispatcher.getBlockModelShaper();
+        return blockModelShapes.getBlockModel(blockState);
     }
 
     @Override
@@ -94,4 +94,13 @@ public class CableModel extends CableModelBase {
         return new CableModel(stack, world, entity);
     }
 
+    @Override
+    public boolean useAmbientOcclusion() {
+        return false; // TODO: rm
+    }
+
+    @Override
+    public boolean isCustomRenderer() {
+        return false; // TODO: rm
+    }
 }

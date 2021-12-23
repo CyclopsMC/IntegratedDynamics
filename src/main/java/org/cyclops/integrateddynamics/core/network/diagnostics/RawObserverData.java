@@ -24,13 +24,13 @@ public class RawObserverData implements IRawData {
 
     @Override
     public String toString() {
-        return String.format("%s: %s,%s,%s,%s (%s)", name, pos.getX(), pos.getY(), pos.getZ(), side, dimension.getLocation());
+        return String.format("%s: %s,%s,%s,%s (%s)", name, pos.getX(), pos.getY(), pos.getZ(), side, dimension.location());
     }
 
     public CompoundNBT toNbt() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putString("dimension", dimension.getLocation().toString());
-        tag.putLong("pos", pos.toLong());
+        tag.putString("dimension", dimension.location().toString());
+        tag.putLong("pos", pos.asLong());
         if (side != null) {
             tag.putInt("side", side.ordinal());
         }
@@ -40,7 +40,7 @@ public class RawObserverData implements IRawData {
     }
 
     public static RawObserverData fromNbt(CompoundNBT tag) {
-        return new RawObserverData(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(tag.getString("dimension"))), BlockPos.fromLong(tag.getLong("pos")),
+        return new RawObserverData(RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
                 tag.contains("side") ? Direction.values()[tag.getInt("side")] : null, tag.getString("name"), tag.getLong("last20TicksDurationNs"));
     }
 

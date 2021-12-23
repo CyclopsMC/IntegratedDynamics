@@ -36,9 +36,9 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
     public void init() {
         buttons.clear();
         super.init();
-        P partType = getContainer().getPartType();
+        P partType = getMenu().getPartType();
         if(partType instanceof PartTypeConfigurable && partType.getContainerProviderSettings(null).isPresent()) {
-            addButton(new ButtonImage(this.guiLeft + 174, this.guiTop + 4, 15, 15,
+            addButton(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
                     new TranslationTextComponent("gui.integrateddynamics.part_settings"),
                     createServerPressable(ContainerMultipart.BUTTON_SETTINGS, (button) -> {}), true,
                     Images.CONFIG_BOARD, -2, -3));
@@ -57,16 +57,16 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
 
         // Draw part name
         // MCP: drawString
-        font.func_243248_b(matrixStack, getTitle(), guiLeft + 8, guiTop + 6, 4210752);
+        font.draw(matrixStack, getTitle(), leftPos + 8, topPos + 6, 4210752);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
     }
 }

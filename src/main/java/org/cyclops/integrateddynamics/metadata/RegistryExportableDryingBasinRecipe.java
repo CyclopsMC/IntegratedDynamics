@@ -29,7 +29,7 @@ public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecip
 
         // Inputs
         JsonObject inputObject = new JsonObject();
-        ItemStack[] inputItems = recipe.getInputIngredient().getMatchingStacks();
+        ItemStack[] inputItems = recipe.getInputIngredient().getItems();
         JsonArray arrayInputs = new JsonArray();
         for (ItemStack input : inputItems) {
             arrayInputs.add(IRegistryExportable.serializeItemStack(input));

@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -22,7 +23,6 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
-import org.cyclops.integrateddynamics.GeneralConfig;
 
 /**
  * A part that can display variables.
@@ -113,12 +113,12 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         if (BlockInvisibleLightConfig.invisibleLightBlock) {
             World world = target.getTarget().getPos().getWorld(true);
             BlockPos pos = target.getTarget().getPos().getBlockPos();
-            if(world.isAirBlock(pos)) {
+            if(world.isEmptyBlock(pos)) {
                 if(lightLevel > 0) {
-                    world.setBlockState(pos, RegistryEntries.BLOCK_INVISIBLE_LIGHT.getDefaultState().
-                            with(BlockInvisibleLight.LIGHT, lightLevel));
+                    world.setBlockAndUpdate(pos, RegistryEntries.BLOCK_INVISIBLE_LIGHT.defaultBlockState()
+                            .setValue(BlockInvisibleLight.LIGHT, lightLevel));
                 } else {
-                    world.setBlockState(pos, Blocks.AIR.getDefaultState(), MinecraftHelpers.BLOCK_NOTIFY_CLIENT);
+                    world.setBlock(pos, Blocks.AIR.defaultBlockState(), MinecraftHelpers.BLOCK_NOTIFY_CLIENT);
                 }
             }
         } else {

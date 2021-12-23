@@ -56,7 +56,7 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
         for(ISidedPathElement e : elements) {
             CompoundNBT elementTag = new CompoundNBT();
             elementTag.putString("dimension", e.getPathElement().getPosition().getWorld());
-            elementTag.putLong("pos", e.getPathElement().getPosition().getBlockPos().toLong());
+            elementTag.putLong("pos", e.getPathElement().getPosition().getBlockPos().asLong());
             if (e.getSide() != null) {
                 elementTag.putInt("side", e.getSide().ordinal());
             }
@@ -74,9 +74,9 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
         for(int i = 0; i < list.size(); i++) {
             CompoundNBT elementTag = list.getCompound(i);
             ResourceLocation dimensionId = new ResourceLocation(elementTag.getString("dimension"));
-            RegistryKey<World> dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimensionId);
-            World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
-            BlockPos pos = BlockPos.fromLong(elementTag.getLong("pos"));
+            RegistryKey<World> dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, dimensionId);
+            World world = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
+            BlockPos pos = BlockPos.of(elementTag.getLong("pos"));
             Direction side = null;
             if (elementTag.contains("side", Constants.NBT.TAG_INT)) {
                 side = Direction.values()[elementTag.getInt("side")];

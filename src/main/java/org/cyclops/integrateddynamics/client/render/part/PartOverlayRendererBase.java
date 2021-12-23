@@ -25,7 +25,7 @@ public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
             return false;
         }
         Entity renderEntity = Minecraft.getInstance().player;
-        return renderEntity.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) < getMaxRenderDistance();
+        return renderEntity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < getMaxRenderDistance();
     }
 
     /**
@@ -49,8 +49,8 @@ public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
         } else if (direction == Direction.DOWN) {
             rotationX = 90;
         }
-        matrixStack.rotate(Vector3f.YP.rotationDegrees(rotationY));
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(rotationX));
+        matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationY));
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(rotationX));
     }
 
 }

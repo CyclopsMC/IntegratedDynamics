@@ -38,7 +38,7 @@ public class PlayerTeleportPacket extends PacketCodec {
     }
 
     public PlayerTeleportPacket(RegistryKey<World> dimension, double x, double y, double z, float yaw, float pitch) {
-		this.dimension = dimension.getLocation().toString();
+		this.dimension = dimension.location().toString();
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -59,11 +59,11 @@ public class PlayerTeleportPacket extends PacketCodec {
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		RegistryKey<World> dimensionType = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(this.dimension));
-		if (!dimensionType.getLocation().equals(player.getServerWorld().getDimensionKey().getLocation())) {
-			player.changeDimension(ServerLifecycleHooks.getCurrentServer().getWorld(dimensionType));
+		RegistryKey<World> dimensionType = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(this.dimension));
+		if (!dimensionType.location().equals(player.getLevel().dimension().location())) {
+			player.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType));
 		}
-		player.connection.setPlayerLocation(x + 0.5F, y + 0.5F, z + 0.5F, yaw, pitch);
+		player.connection.teleport(x + 0.5F, y + 0.5F, z + 0.5F, yaw, pitch);
 	}
 	
 }

@@ -25,7 +25,7 @@ public class ItemFacadeRecipe extends SpecialRecipe {
 
 	@Getter(lazy = true)
 	private final NonNullList<Ingredient> ingredients =
-			NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()), new BlocksIngredient());
+			NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()), new BlocksIngredient());
 
 	public ItemFacadeRecipe(ResourceLocation id) {
 		super(id);
@@ -33,20 +33,20 @@ public class ItemFacadeRecipe extends SpecialRecipe {
 
 	@Override
 	public boolean matches(CraftingInventory grid, World world) {
-		return !getCraftingResult(grid).isEmpty();
+		return !assemble(grid).isEmpty();
 	}
 	
 	@Override
-	public ItemStack getRecipeOutput() {
+	public ItemStack getResultItem() {
 		return new ItemStack(RegistryEntries.ITEM_FACADE);
 	}
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInventory inventory) {
-		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
+		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
 
         for (int i = 0; i < aitemstack.size(); ++i) {
-            ItemStack itemstack = inventory.getStackInSlot(i);
+            ItemStack itemstack = inventory.getItem(i);
             aitemstack.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
         }
 
@@ -54,14 +54,14 @@ public class ItemFacadeRecipe extends SpecialRecipe {
     }
 
     @Override
-	public ItemStack getCraftingResult(CraftingInventory grid) {
-		ItemStack output = getRecipeOutput().copy();
+	public ItemStack assemble(CraftingInventory grid) {
+		ItemStack output = getResultItem().copy();
 
 		int facades = 0;
 		ItemStack block = ItemStack.EMPTY;
 
-		for(int j = 0; j < grid.getSizeInventory(); j++) {
-			ItemStack element = grid.getStackInSlot(j);
+		for(int j = 0; j < grid.getContainerSize(); j++) {
+			ItemStack element = grid.getItem(j);
 			if(!element.isEmpty()) {
 				if(element.getItem() == output.getItem()) {
 					facades++;
@@ -82,12 +82,12 @@ public class ItemFacadeRecipe extends SpecialRecipe {
 	}
 
 	@Override
-	public boolean canFit(int width, int height) {
+	public boolean canCraftInDimensions(int width, int height) {
 		return width * height >= 2;
 	}
 
 	@Override
-	public boolean isDynamic() {
+	public boolean isSpecial() {
 		return true;
 	}
 

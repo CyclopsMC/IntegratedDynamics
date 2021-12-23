@@ -110,7 +110,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The item instance.
      */
     protected Item createItem(BlockConfig blockConfig, Block block) {
-        return new ItemPart<>(new Item.Properties().group(blockConfig.getMod().getDefaultItemGroup()), this);
+        return new ItemPart<>(new Item.Properties().tab(blockConfig.getMod().getDefaultItemGroup()), this);
     }
 
     @Override
@@ -137,9 +137,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             return ActionResultType.PASS;
         }
 
-        PartPos partPos = PartPos.of(world, pos, hit.getFace());
+        PartPos partPos = PartPos.of(world, pos, hit.getDirection());
         if(getContainerProvider(partPos).isPresent()) {
-            if (!world.isRemote()) {
+            if (!world.isClientSide()) {
                 return PartHelpers.openContainerPart((ServerPlayerEntity) player, partPos, this);
             }
             return ActionResultType.SUCCESS;
@@ -149,13 +149,13 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public BlockState getBlockState(IPartContainer partContainer, Direction side) {
-        return getBlock().getDefaultState()
-                .with(IgnoredBlock.FACING, side);
+        return getBlock().defaultBlockState()
+                .setValue(IgnoredBlock.FACING, side);
     }
 
     @Override
     public BlockState getBaseBlockState() {
-        return getBlock().getDefaultState();
+        return getBlock().defaultBlockState();
     }
 
     @Override
@@ -199,7 +199,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
-        packetBuffer.writeString(this.getUniqueName().toString());
+        packetBuffer.writeUtf(this.getUniqueName().toString());
     }
 
     public interface IEventAction<P extends IPartType<P, S>, S extends IPartState<P>, E extends INetworkEvent> {

@@ -31,12 +31,12 @@ public class NetworkInitializedTrigger extends AbstractCriterionTrigger<NetworkI
     }
 
     @Override
-    public Instance deserializeTrigger(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
+    public Instance createInstance(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
         return new Instance(getId(), entityPredicate, json.get("min_cables").getAsInt());
     }
 
     public void test(ServerPlayerEntity player, NetworkInitializedEvent event) {
-        this.triggerListeners(player, (instance) -> instance.test(player, event));
+        this.trigger(player, (instance) -> instance.test(player, event));
     }
 
     @SubscribeEvent

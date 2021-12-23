@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase.IFunction;
+
 /**
  * Immutable builder for operators.
  * Appending the kinds "a", "b" and "c" for example will result in the base localization key of "operator.operators.MOD_ID.a.b.c.".

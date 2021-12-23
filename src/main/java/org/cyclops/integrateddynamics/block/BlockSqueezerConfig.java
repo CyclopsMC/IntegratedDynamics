@@ -16,11 +16,11 @@ public class BlockSqueezerConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "squeezer",
-                eConfig -> new BlockSqueezer(Block.Properties.create(Material.IRON)
-                        .hardnessAndResistance(5.0F)
+                eConfig -> new BlockSqueezer(Block.Properties.of(Material.METAL)
+                        .strength(5.0F)
                         .sound(SoundType.METAL)
-                        .notSolid()
-                        .setOpaque((blockState, world, pos) -> false)),
+                        .noOcclusion()
+                        .isRedstoneConductor((blockState, world, pos) -> false)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

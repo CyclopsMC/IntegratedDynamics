@@ -46,7 +46,7 @@ public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPart
         super.loadTooltip(itemStack, lines);
         if (getAspects().isEmpty()) {
             lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_NOASPECTS)
-                    .mergeStyle(TextFormatting.GOLD));
+                    .withStyle(TextFormatting.GOLD));
         }
     }
 }

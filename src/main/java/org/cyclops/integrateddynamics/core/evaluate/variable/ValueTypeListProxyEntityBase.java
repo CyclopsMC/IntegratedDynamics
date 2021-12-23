@@ -22,14 +22,14 @@ public abstract class ValueTypeListProxyEntityBase<T extends IValueType<V>, V ex
 
     public ValueTypeListProxyEntityBase(ResourceLocation name, T valueType, World world, Entity entity) {
         super(name, valueType);
-        this.world = (world == null ? World.OVERWORLD : world.getDimensionKey()).getLocation().toString();
-        this.entity = entity == null ? -1 : entity.getEntityId();
+        this.world = (world == null ? World.OVERWORLD : world.dimension()).location().toString();
+        this.entity = entity == null ? -1 : entity.getId();
     }
 
     protected Entity getEntity() {
-        ServerWorld worldServer = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(this.world)));
+        ServerWorld worldServer = ServerLifecycleHooks.getCurrentServer().getLevel(RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(this.world)));
         if(worldServer != null) {
-            return worldServer.getEntityByID(entity);
+            return worldServer.getEntity(entity);
         }
         return null;
     }

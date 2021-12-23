@@ -196,7 +196,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     protected void putStackInContainer(ContainerLogicProgrammerBase container, int slot, ItemStack itemStack) {
         // Offset: Player inventory, recipe grid slots
-        container.putStackInSlot(container.inventorySlots.size() - (36 + 14) + slot, itemStack);
+        container.setItem(container.getItems().size() - (36 + 14) + slot, itemStack);
     }
 
     // Used by ID-Compat for JEI recipe transfer handler
@@ -335,7 +335,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player) {
         if (slotId >= SLOT_OFFSET && slotId < 9 + SLOT_OFFSET) {
             if (clickType == ClickType.QUICK_MOVE && mouseButton == 0) {
-                if (player.world.isRemote()) {
+                if (player.level.isClientSide()) {
                     int id = slotId - SLOT_OFFSET;
                     lastGui.setPropertySubGui(id);
                 }
@@ -351,8 +351,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     quantityNew = mouseButton == 0 ? quantityCurrent - 1 : quantityCurrent + 1;
                 }
 
-                if (quantityNew > slot.getSlotStackLimit()) {
-                    quantityNew = slot.getSlotStackLimit();
+                if (quantityNew > slot.getMaxStackSize()) {
+                    quantityNew = slot.getMaxStackSize();
                 }
 
                 props.setTagQuantity(quantityNew);
@@ -382,21 +382,21 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             }
 
             @Override
-            public ItemStack getStack() {
+            public ItemStack getItem() {
                 if (MinecraftHelpers.isClientSideThread() && slotId < 9) {
                     ItemMatchProperties props = getInputStacks().get(slotId);
                     String tagName = props.getItemTag();
                     if (tagName != null) {
-                        ITag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(tagName));
+                        ITag<Item> tag = ItemTags.getAllTags().getTag(new ResourceLocation(tagName));
                         if (tag != null) {
-                            List<Item> items = tag.getAllElements();
-                            int tick = ((int) Minecraft.getInstance().world.getGameTime()) / TICK_DELAY;
+                            List<Item> items = tag.getValues();
+                            int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;
                             Item item = items.get(tick % items.size());
                             return new ItemStack(item, props.getTagQuantity());
                         }
                     }
                 }
-                return super.getStack();
+                return super.getItem();
             }
         };
         slot.setPhantom(true);
@@ -509,17 +509,17 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         IInventory slots = gui.container.getTemporaryInputSlots();
         for (int i = 0; i < this.inputStacks.size(); i++) {
             ItemMatchProperties entry = this.inputStacks.get(i);
-            slots.setInventorySlotContents(i, entry.getItemStack());
+            slots.setItem(i, entry.getItemStack());
         }
-        slots.setInventorySlotContents(9, this.inputFluid);
+        slots.setItem(9, this.inputFluid);
         if (gui.getInputFluidAmountBox() != null) {
             gui.getInputFluidAmountBox().setText(this.inputFluidAmount);
             gui.getInputEnergyBox().setText(this.inputEnergy);
             for (int i = 0; i < this.outputStacks.size(); i++) {
-                slots.setInventorySlotContents(10 + i, this.outputStacks.get(i));
+                slots.setItem(10 + i, this.outputStacks.get(i));
                 // No need to set slot type, as this can't be changed for output stacks
             }
-            slots.setInventorySlotContents(13, this.outputFluid);
+            slots.setItem(13, this.outputFluid);
             gui.getOutputFluidAmountBox().setText(this.outputFluidAmount);
             gui.getOutputEnergyBox().setText(this.outputEnergy);
         }

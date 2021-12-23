@@ -42,8 +42,8 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
         // Get current aspect value
         Pair<ITextComponent, Integer> readValues = container.getReadValue(aspect);
         if(readValues != null && readValues.getLeft() != null) {
-            RenderHelpers.drawScaledCenteredString(matrixStack, font, readValues.getLeft().getString(), this.guiLeft + offsetX + 16,
-                    this.guiTop + offsetY + 39 + container.getAspectBoxHeight() * index,
+            RenderHelpers.drawScaledCenteredString(matrixStack, font, readValues.getLeft().getString(), this.leftPos + offsetX + 16,
+                    this.topPos + offsetY + 39 + container.getAspectBoxHeight() * index,
                     70, readValues.getRight());
         }
 
@@ -52,8 +52,8 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), aspect);
         Rectangle pos = getElementPosition(container, index, true);
 
-        RenderHelper.enableStandardItemLighting();
-        itemRenderer.renderItemAndEffectIntoGUI(itemStack, pos.x, pos.y);
+        RenderHelper.turnBackOn();
+        itemRenderer.renderAndDecorateItem(itemStack, pos.x, pos.y);
     }
 
     @Override

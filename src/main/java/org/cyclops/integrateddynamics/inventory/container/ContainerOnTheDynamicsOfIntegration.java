@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
@@ -23,5 +24,10 @@ public class ContainerOnTheDynamicsOfIntegration extends ItemInventoryContainer 
     @Override
     protected int getSizeInventory() {
         return 0;
+    }
+
+    @Override
+    public boolean stillValid(PlayerEntity p_75145_1_) {
+        return false; // TODO: rm
     }
 }

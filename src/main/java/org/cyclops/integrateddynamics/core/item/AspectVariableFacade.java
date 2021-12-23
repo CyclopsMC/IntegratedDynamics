@@ -24,6 +24,8 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import java.util.List;
 import java.util.Random;
 
+import org.cyclops.integrateddynamics.api.item.IVariableFacade.IValidator;
+
 /**
  * Variable facade for variables determined by part aspects.
  * @author rubensworks
@@ -84,12 +86,12 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(List<ITextComponent> list, World world) {
+    public void appendHoverText(List<ITextComponent> list, World world) {
         if(isValid()) {
             getAspect().loadTooltip(list, false);
             list.add(new TranslationTextComponent(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
         }
-        super.addInformation(list, world);
+        super.appendHoverText(list, world);
     }
 
     @OnlyIn(Dist.CLIENT)

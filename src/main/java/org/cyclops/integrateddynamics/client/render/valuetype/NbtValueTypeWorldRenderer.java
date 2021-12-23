@@ -35,7 +35,7 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                             Direction direction, IPartType partType, IValue value, float partialTicks,
                             MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
                             int combinedLight, int combinedOverlay, float alpha) {
-        FontRenderer fontRenderer = rendererDispatcher.getFontRenderer();
+        FontRenderer fontRenderer = rendererDispatcher.getFont();
         Wrapper<Float> maxWidth = new Wrapper<>(0F);
 
         List<String> lines = Lists.newLinkedList();
@@ -43,14 +43,14 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             if (tag instanceof CompoundNBT) {
                 CompoundNBT tagCompound = (CompoundNBT) tag;
                 lines.add("{");
-                for (String key : tagCompound.keySet()) {
+                for (String key : tagCompound.getAllKeys()) {
                     if (lines.size() >= MAX_LINES) {
                         lines.add("...");
                         break;
                     } else {
                         INBT subTag = ValueTypes.NBT.filterBlacklistedTags(tagCompound.get(key));
                         String string = "  " + key + ": " + StringUtils.abbreviate(subTag.toString(), 40) + "";
-                        float width = fontRenderer.getStringWidth(string) - 1;
+                        float width = fontRenderer.width(string) - 1;
                         lines.add(string);
                         maxWidth.set(Math.max(maxWidth.get(), width));
                     }
@@ -59,14 +59,14 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             } else {
                 String string = tag.toString();
                 lines.add(string);
-                maxWidth.set((float) (fontRenderer.getStringWidth(string) - 1));
+                maxWidth.set((float) (fontRenderer.width(string) - 1));
             }
         });
 
-        float singleHeight = fontRenderer.FONT_HEIGHT;
+        float singleHeight = fontRenderer.lineHeight;
         float totalHeight = singleHeight * lines.size();
 
-        matrixStack.push();
+        matrixStack.pushPose();
 
         float scaleX = MAX / (maxWidth.get() * MARGIN_FACTOR);
         float scaleY = MAX / (totalHeight * MARGIN_FACTOR);
@@ -79,11 +79,11 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         int offset = 0;
         for(String line : lines) {
             int color = Helpers.addAlphaToColor(ValueTypes.NBT.getDisplayColor(), alpha);
-            rendererDispatcher.getFontRenderer().renderString(line, 0, offset, color,
-                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
+            rendererDispatcher.getFont().drawInBatch(line, 0, offset, color,
+                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
             offset += singleHeight;
         }
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }

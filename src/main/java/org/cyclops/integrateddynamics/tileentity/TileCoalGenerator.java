@@ -64,11 +64,11 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     }
 
     public void updateBlockState() {
-        boolean wasBurning = getWorld().getBlockState(getPos()).get(BlockCoalGenerator.LIT);
+        boolean wasBurning = getLevel().getBlockState(getBlockPos()).getValue(BlockCoalGenerator.LIT);
         boolean isBurning = isBurning();
         if (isBurning != wasBurning) {
-            getWorld().setBlockState(getPos(),
-                    getWorld().getBlockState(getPos()).with(BlockCoalGenerator.LIT, isBurning));
+            getLevel().setBlockAndUpdate(getBlockPos(),
+                    getLevel().getBlockState(getBlockPos()).setValue(BlockCoalGenerator.LIT, isBurning));
         }
     }
 
@@ -106,19 +106,19 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
     }
 
     protected int addEnergyFe(int energy, boolean simulate) {
-        return EnergyHelpers.fillNeigbours(getWorld(), getPos(), energy, simulate);
+        return EnergyHelpers.fillNeigbours(getLevel(), getBlockPos(), energy, simulate);
     }
 
     public static int getFuelTime(ItemStack itemStack) {
         int ret = itemStack.getBurnTime();
         return net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(itemStack, ret == -1
-                ? AbstractFurnaceTileEntity.getBurnTimes().getOrDefault(itemStack.getItem(), 0) : ret);
+                ? AbstractFurnaceTileEntity.getFuel().getOrDefault(itemStack.getItem(), 0) : ret);
     }
 
     @Override
     protected void updateTileEntity() {
         super.updateTileEntity();
-        if(!getWorld().isRemote && (!getInventory().getStackInSlot(SLOT_FUEL).isEmpty() || isBurning()) && canAddEnergy(ENERGY_PER_TICK)) {
+        if(!getLevel().isClientSide && (!getInventory().getItem(SLOT_FUEL).isEmpty() || isBurning()) && canAddEnergy(ENERGY_PER_TICK)) {
             if (isBurning()) {
                 if (currentlyBurning++ >= currentlyBurningMax) {
                     currentlyBurning = 0;
@@ -126,18 +126,18 @@ public class TileCoalGenerator extends TileCableConnectableInventory implements 
                 }
                 int toFill = ENERGY_PER_TICK;
                 addEnergy(toFill);
-                markDirty();
+                setChanged();
             }
             if (!isBurning()) {
                 ItemStack fuel;
-                if (getFuelTime(getInventory().getStackInSlot(SLOT_FUEL)) > 0
-                        && !(fuel = getInventory().decrStackSize(SLOT_FUEL, 1)).isEmpty()) {
-                    if(getInventory().getStackInSlot(SLOT_FUEL).isEmpty()) {
-                        getInventory().setInventorySlotContents(SLOT_FUEL, fuel.getItem().getContainerItem(fuel));
+                if (getFuelTime(getInventory().getItem(SLOT_FUEL)) > 0
+                        && !(fuel = getInventory().removeItem(SLOT_FUEL, 1)).isEmpty()) {
+                    if(getInventory().getItem(SLOT_FUEL).isEmpty()) {
+                        getInventory().setItem(SLOT_FUEL, fuel.getItem().getContainerItem(fuel));
                     }
                     currentlyBurningMax = getFuelTime(fuel);
                     currentlyBurning = 0;
-                    markDirty();
+                    setChanged();
                 }
                 updateBlockState();
             }

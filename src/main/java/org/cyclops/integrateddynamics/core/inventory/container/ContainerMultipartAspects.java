@@ -63,12 +63,12 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         this.target = target;
         this.partContainer = partContainer.orElseGet(() -> PartHelpers.getPartContainerChecked(target.getCenter()));
         this.partType = partType;
-        this.world = player.getEntityWorld();
+        this.world = player.getCommandSenderWorld();
 
         this.inputSlots = constructInputSlotsInventory();
 
         putButtonAction(ContainerMultipartAspects.BUTTON_SETTINGS, (s, containerExtended) -> {
-            if (!world.isRemote()) {
+            if (!world.isClientSide()) {
                 PartHelpers.openContainerPartSettings((ServerPlayerEntity) player, target.getCenter(), partType);
             }
         });
@@ -78,7 +78,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
                 String buttonId = "button_aspect_" + aspect.getUniqueName();
                 aspectPropertyButtons.put(aspect, buttonId);
                 putButtonAction(buttonId, (s, containerExtended) -> {
-                    if (!world.isRemote()) {
+                    if (!world.isClientSide()) {
                         PartHelpers.openContainerAspectSettings((ServerPlayerEntity) player, target.getCenter(), aspect);
                     }
                 });
@@ -115,7 +115,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity player) {
+    public void removed(PlayerEntity player) {
         if (inputSlots instanceof SimpleInventory) {
             ((SimpleInventory) inputSlots).removeDirtyMarkListener(this);
         }
@@ -151,7 +151,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity player) {
+    public boolean stillValid(PlayerEntity player) {
         return PartHelpers.canInteractWith(getTarget(), player, this.partContainer);
     }
 

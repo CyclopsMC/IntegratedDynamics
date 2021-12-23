@@ -41,14 +41,14 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         addSlot(new SlotExtended(temporaryInputSlots, 0, 8, 8));
         this.addPlayerInventory(player.inventory, 8, 31);
 
-        if(inventory.player.world.isRemote()) {
+        if(inventory.player.level.isClientSide()) {
             temporaryInputSlots.addDirtyMarkListener(() -> {
-                ItemStack itemStack = temporaryInputSlots.getStackInSlot(0);
+                ItemStack itemStack = temporaryInputSlots.getItem(0);
                 IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
                 IVariableFacade variableFacade = registry.handle(itemStack);
                 String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
-                if(label == null && !itemStack.isEmpty() && itemStack.hasDisplayName()) {
-                    label = itemStack.getDisplayName().getString();
+                if(label == null && !itemStack.isEmpty() && itemStack.hasCustomHoverName()) {
+                    label = itemStack.getHoverName().getString();
                 }
                 if(label != null) {
                     ContainerLabeller.this.getGui().setText(label);
@@ -68,7 +68,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
     }
 
     public ItemStack getItemStack() {
-        return temporaryInputSlots.getStackInSlot(0);
+        return temporaryInputSlots.getItem(0);
     }
 
     @Override
@@ -77,12 +77,12 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity player) {
-        super.onContainerClosed(player);
-        if (!player.world.isRemote()) {
-            ItemStack itemStack = temporaryInputSlots.getStackInSlot(0);
+    public void removed(PlayerEntity player) {
+        super.removed(player);
+        if (!player.level.isClientSide()) {
+            ItemStack itemStack = temporaryInputSlots.getItem(0);
             if(!itemStack.isEmpty()) {
-                player.dropItem(itemStack, false);
+                player.drop(itemStack, false);
             }
         }
     }
@@ -91,10 +91,15 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         ItemStack itemStack = getItemStack();
         if(!itemStack.isEmpty()) {
             if (StringUtils.isBlank(name)) {
-                itemStack.clearCustomName();
+                itemStack.resetHoverName();
             } else {
-                itemStack.setDisplayName(new StringTextComponent(name));
+                itemStack.setHoverName(new StringTextComponent(name));
             }
         }
+    }
+
+    @Override
+    public boolean stillValid(PlayerEntity p_75145_1_) {
+        return false; // TODO: rm
     }
 }

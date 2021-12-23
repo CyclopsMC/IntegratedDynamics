@@ -41,6 +41,7 @@ group = "org.cyclops.integrateddynamics"
 archivesBaseName = "IntegratedDynamics"
 
 // Set Java details
+compileJava.options.compilerArgs << "-Xmaxerrs" << "9999"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -131,7 +132,7 @@ dependencies {
 }
 
 minecraft {
-    mappings channel: "${project.mcp_mappings_channel}", version: "${project.mcp_mappings_version}"
+    mappings channel: "official", version: "${project.minecraft_version}"
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 

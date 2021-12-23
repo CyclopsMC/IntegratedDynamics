@@ -25,7 +25,7 @@ public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAb
         JsonObject object = new JsonObject();
 
         // Inputs
-        ItemStack[] inputs = recipe.getInputIngredient().getMatchingStacks();
+        ItemStack[] inputs = recipe.getInputIngredient().getItems();
         JsonArray arrayInputs = new JsonArray();
         for (ItemStack input : inputs) {
             arrayInputs.add(IRegistryExportable.serializeItemStack(input));

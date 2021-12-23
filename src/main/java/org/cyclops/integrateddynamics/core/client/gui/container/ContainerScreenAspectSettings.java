@@ -86,18 +86,18 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     @Override
     public void init() {
         super.init();
-        subGuiHolder.init(this.guiLeft, this.guiTop);
-        addButton(buttonExit = new ButtonText(guiLeft + 7, guiTop + 5, 12, 10, new TranslationTextComponent("gui.cyclopscore.up"), new StringTextComponent("<<"), createServerPressable(ContainerAspectSettings.BUTTON_EXIT, (button) -> {
+        subGuiHolder.init(this.leftPos, this.topPos);
+        addButton(buttonExit = new ButtonText(leftPos + 7, topPos + 5, 12, 10, new TranslationTextComponent("gui.cyclopscore.up"), new StringTextComponent("<<"), createServerPressable(ContainerAspectSettings.BUTTON_EXIT, (button) -> {
             saveSetting();
         }), true));
-        addButton(buttonLeft = new ButtonText(guiLeft + 21, guiTop + 5, 10, 10, new TranslationTextComponent("gui.cyclopscore.left"), new StringTextComponent("<"), (button) -> {
+        addButton(buttonLeft = new ButtonText(leftPos + 21, topPos + 5, 10, 10, new TranslationTextComponent("gui.cyclopscore.left"), new StringTextComponent("<"), (button) -> {
             saveSetting();
             if(getActivePropertyIndex() > 0) {
                 setActiveProperty(getActivePropertyIndex() - 1);
                 refreshButtonEnabled();
             }
         }, true));
-        addButton(buttonRight = new ButtonText(guiLeft + 159, guiTop + 5, 10, 10, new TranslationTextComponent("gui.cyclopscore.right"), new StringTextComponent(">"), (button) -> {
+        addButton(buttonRight = new ButtonText(leftPos + 159, topPos + 5, 10, 10, new TranslationTextComponent("gui.cyclopscore.right"), new StringTextComponent(">"), (button) -> {
             saveSetting();
             if(getActivePropertyIndex() < propertyTypes.size()) {
                 setActiveProperty(getActivePropertyIndex() + 1);
@@ -110,26 +110,26 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
+        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.guiLeft, this.guiTop, getMinecraft().getTextureManager(), font, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
 
         IAspectPropertyTypeInstance activeProperty = getActiveProperty();
         if(activeProperty != null) {
             String label = L10NHelpers.localize(activeProperty.getTranslationKey());
             RenderHelpers.drawScaledCenteredString(matrixStack, font, label, 88, 10, 0,
                     1.0F, 140, Helpers.RGBToInt(10, 10, 10));
-            if (RenderHelpers.isPointInRegion(this.guiLeft + 40, this.guiTop, 110, 20, mouseX, mouseY)) {
+            if (RenderHelpers.isPointInRegion(this.leftPos + 40, this.topPos, 110, 20, mouseX, mouseY)) {
                 String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
-                if (I18n.hasKey(unlocalizedInfo)) {
+                if (I18n.exists(unlocalizedInfo)) {
                     drawTooltip(Lists.newArrayList(new TranslationTextComponent(unlocalizedInfo)
-                            .mergeStyle(TextFormatting.GRAY)), mouseX - this.guiLeft, mouseY - this.guiTop + 20);
+                            .withStyle(TextFormatting.GRAY)), mouseX - this.leftPos, mouseY - this.topPos + 20);
                 }
             }
         }
@@ -138,9 +138,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if(!subGuiHolder.charTyped(typedChar, keyCode)) {
-            if (keyCode == 1 || this.getMinecraft().gameSettings.keyBindInventory.getKey().getKeyCode() == keyCode) {
+            if (keyCode == 1 || this.getMinecraft().options.keyInventory.getKey().getValue() == keyCode) {
                 saveSetting();
-                this.getMinecraft().player.closeScreen();
+                this.getMinecraft().player.closeContainer();
             } else {
                 return super.charTyped(typedChar, keyCode);
             }
@@ -204,9 +204,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
         // Create new element
         guiElement.setValidator(property.getValidator());
-        subGuiHolder.addSubGui(propertyConfigPattern = guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getContainer()));
+        subGuiHolder.addSubGui(propertyConfigPattern = guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getMenu()));
         subGuiHolder.addSubGui(propertyInfo = new SubGuiValueTypeInfo(guiElement));
-        propertyConfigPattern.init(guiLeft, guiTop);
+        propertyConfigPattern.init(leftPos, topPos);
         guiElement.activate();
         syncInputValue();
         lastError = guiElement.validate();

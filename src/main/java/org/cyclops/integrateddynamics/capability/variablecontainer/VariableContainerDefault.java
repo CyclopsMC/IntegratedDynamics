@@ -43,8 +43,8 @@ public class VariableContainerDefault implements IVariableContainer {
         // Reset variable facades in inventory
         getVariableCache().clear();
         IVariableFacade firstInvalidVariableFacade = null;
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            ItemStack itemStack = inventory.getStackInSlot(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack itemStack = inventory.getItem(i);
             if (!itemStack.isEmpty()) {
                 IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
                 if (variableFacade != null) {

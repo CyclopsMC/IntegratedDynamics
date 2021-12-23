@@ -38,14 +38,14 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
 
     @Override
     public void init(int guiLeft, int guiTop) {
-        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+        FontRenderer fontRenderer = Minecraft.getInstance().font;
         int searchWidth = getElement().getRenderPattern().getWidth() - 28;
         int searchX = getX() + 14;
         int searchY = getY() + 6;
         this.textField = new WidgetTextFieldExtended(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.FONT_HEIGHT + 3, new TranslationTextComponent(this.getElement().getValueType().getTranslationKey()), true);
-        this.textField.setMaxStringLength(512);
-        this.textField.setEnableBackgroundDrawing(false);
+                fontRenderer.lineHeight + 3, new TranslationTextComponent(this.getElement().getValueType().getTranslationKey()), true);
+        this.textField.setMaxLength(512);
+        this.textField.setBordered(false);
         this.textField.setVisible(true);
         this.textField.setTextColor(16777215);
         this.textField.setCanLoseFocus(true);
@@ -54,7 +54,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
             value = element.getDefaultInputString();
         }
         this.textField.setText(value);
-        element.setInputString(textField.getText());
+        element.setInputString(textField.getValue());
         this.textField.setWidth(searchWidth);
         this.textField.x = guiLeft + (searchX + searchWidth) - this.textField.getWidth();
     }
@@ -94,7 +94,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
     }
 
     private void onTyped() {
-        element.setInputString(textField.getText());
+        element.setInputString(textField.getValue());
         if (container instanceof IDirtyMarkListener) {
             ((IDirtyMarkListener) container).onDirty();
         }

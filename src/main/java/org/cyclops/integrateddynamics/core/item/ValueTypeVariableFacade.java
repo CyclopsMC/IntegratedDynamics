@@ -32,6 +32,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
+import org.cyclops.integrateddynamics.api.item.IVariableFacade.IValidator;
+
 /**
  * Variable facade for variables determined by a raw value.
  * @author rubensworks
@@ -105,13 +107,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(List<ITextComponent> list, World world) {
+    public void appendHoverText(List<ITextComponent> list, World world) {
         if(isValid()) {
             V value = getValue();
             getValueType().loadTooltip(list, false, value);
             list.add(new TranslationTextComponent(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
         }
-        super.addInformation(list, world);
+        super.appendHoverText(list, world);
     }
 
     @OnlyIn(Dist.CLIENT)

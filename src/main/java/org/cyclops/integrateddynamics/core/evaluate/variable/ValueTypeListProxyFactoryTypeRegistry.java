@@ -12,6 +12,9 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyF
 
 import java.util.Map;
 
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry.IProxyFactory;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry.SerializationException;
+
 /**
  * Registry for list value type proxies.
  * @author rubensworks

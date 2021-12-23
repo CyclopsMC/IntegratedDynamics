@@ -201,9 +201,9 @@ public final class AspectRegistry implements IAspectRegistry {
         JsonElement aspectElement = element.get("aspect");
         IAspect aspect = null;
         if (aspectElement != null && !aspectElement.isJsonNull()) {
-            aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(JSONUtils.getString(element, "aspect")));
+            aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(JSONUtils.getAsString(element, "aspect")));
             if (aspect == null) {
-                throw new JsonSyntaxException("Unknown aspect type '" + JSONUtils.getString(element, "aspect") + "', valid types are: "
+                throw new JsonSyntaxException("Unknown aspect type '" + JSONUtils.getAsString(element, "aspect") + "', valid types are: "
                         + Aspects.REGISTRY.getAspects().stream().map(IAspect::getUniqueName).collect(Collectors.toList()));
             }
         }

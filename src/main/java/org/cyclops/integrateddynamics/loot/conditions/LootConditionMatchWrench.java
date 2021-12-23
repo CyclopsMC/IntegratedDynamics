@@ -31,21 +31,21 @@ public class LootConditionMatchWrench implements ILootCondition {
 
     @Override
     public boolean test(LootContext lootContext) {
-        ItemStack itemStack = lootContext.get(LootParameters.TOOL);
-        Entity entity = lootContext.get(LootParameters.THIS_ENTITY);
-        BlockPos blockPos = new BlockPos(lootContext.get(LootParameters.field_237457_g_));
+        ItemStack itemStack = lootContext.getParamOrNull(LootParameters.TOOL);
+        Entity entity = lootContext.getParamOrNull(LootParameters.THIS_ENTITY);
+        BlockPos blockPos = new BlockPos(lootContext.getParamOrNull(LootParameters.ORIGIN));
         return itemStack != null
                 && entity instanceof PlayerEntity
-                && WrenchHelpers.isWrench((PlayerEntity) entity, itemStack, entity.getEntityWorld(), blockPos, null);
+                && WrenchHelpers.isWrench((PlayerEntity) entity, itemStack, entity.getCommandSenderWorld(), blockPos, null);
     }
 
     @Override
-    public Set<LootParameter<?>> getRequiredParameters() {
-        return ImmutableSet.of(LootParameters.TOOL, LootParameters.THIS_ENTITY, LootParameters.field_237457_g_);
+    public Set<LootParameter<?>> getReferencedContextParams() {
+        return ImmutableSet.of(LootParameters.TOOL, LootParameters.THIS_ENTITY, LootParameters.ORIGIN);
     }
 
     @Override
-    public LootConditionType func_230419_b_() {
+    public LootConditionType getType() {
         return TYPE;
     }
 

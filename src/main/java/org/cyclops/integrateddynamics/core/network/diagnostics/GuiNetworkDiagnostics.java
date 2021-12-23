@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -444,8 +443,8 @@ public class GuiNetworkDiagnostics extends JFrame {
             BlockPos blockPos = pos.getPos().getBlockPos();
             float yaw = 0;
             if (pos.getSide() != null) {
-                blockPos = blockPos.offset(pos.getSide());
-                yaw = pos.getSide().getOpposite().getHorizontalAngle();
+                blockPos = blockPos.relative(pos.getSide());
+                yaw = pos.getSide().getOpposite().toYRot();
             }
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
                     pos.getPos().getWorldKey(),
@@ -469,8 +468,8 @@ public class GuiNetworkDiagnostics extends JFrame {
         private final long last20TicksDurationNs;
 
         public PartPos toPartPos() {
-            World world = Minecraft.getInstance().world;
-            if (getDimension().getLocation().equals(world.getDimensionKey().getLocation())) {
+            World world = Minecraft.getInstance().level;
+            if (getDimension().location().equals(world.dimension().location())) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;
@@ -487,8 +486,8 @@ public class GuiNetworkDiagnostics extends JFrame {
         private final long last20TicksDurationNs;
 
         public PartPos toPartPos() {
-            World world = Minecraft.getInstance().world;
-            if (getDimension().getLocation().equals(world.getDimensionKey().getLocation())) {
+            World world = Minecraft.getInstance().level;
+            if (getDimension().location().equals(world.dimension().location())) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;

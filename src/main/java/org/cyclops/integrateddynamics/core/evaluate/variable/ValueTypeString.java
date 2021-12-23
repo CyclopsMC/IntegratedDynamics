@@ -38,7 +38,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
 
     @Override
     public ValueString deserialize(INBT value) {
-        return ValueString.of(value.getString());
+        return ValueString.of(value.getAsString());
     }
 
     @Override

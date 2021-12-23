@@ -39,7 +39,7 @@ public class WriteRedstoneComponent implements IWriteRedstoneComponent {
     public void deactivate(PartTarget target) {
         DimPos dimPos = target.getCenter().getPos();
         getDynamicRedstoneBlock(dimPos, target.getCenter().getSide())
-                .ifPresent(block -> block.setRedstoneLevel(-1, block.isStrong()));
+                .ifPresent(block -> block.setRedstoneLevel(-1, block.isDirect()));
     }
 
     @Override

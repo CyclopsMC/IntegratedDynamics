@@ -62,7 +62,7 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
         addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.EAST, LazyOptional.of(() -> tankIn));
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getWorld)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getLevel)));
 
         // Add tank update listeners
         tankIn.addDirtyMarkListener(this::onTankChanged);
@@ -75,15 +75,15 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
             @Override
             public Optional<RecipeMechanicalDryingBasin> getNewValue(Pair<ItemStack, FluidStack> key) {
                 IInventoryFluid recipeInput = new InventoryFluid(
-                        NonNullList.from(ItemStack.EMPTY, key.getLeft()),
-                        NonNullList.from(FluidStack.EMPTY, key.getRight()));
-                return CraftingHelpers.findServerRecipe(getRecipeRegistry(), recipeInput, getWorld());
+                        NonNullList.of(ItemStack.EMPTY, key.getLeft()),
+                        NonNullList.of(FluidStack.EMPTY, key.getRight()));
+                return CraftingHelpers.findServerRecipe(getRecipeRegistry(), recipeInput, getLevel());
             }
 
             @Override
             public boolean isKeyEqual(Pair<ItemStack, FluidStack> cacheKey, Pair<ItemStack, FluidStack> newKey) {
                 return cacheKey == null || newKey == null ||
-                        (ItemStack.areItemStacksEqual(cacheKey.getLeft(), newKey.getLeft()) &&
+                        (ItemStack.matches(cacheKey.getLeft(), newKey.getLeft()) &&
                                 FluidStack.areFluidStackTagsEqual(cacheKey.getRight(), newKey.getRight())) &&
                                 FluidHelpers.getAmount(cacheKey.getRight()) == FluidHelpers.getAmount(newKey.getRight());
             }
@@ -102,13 +102,13 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
 
     @Override
     public boolean wasWorking() {
-        return getWorld().getBlockState(getPos()).get(BlockMechanicalDryingBasin.LIT);
+        return getLevel().getBlockState(getBlockPos()).getValue(BlockMechanicalDryingBasin.LIT);
     }
 
     @Override
     public void setWorking(boolean working) {
-        getWorld().setBlockState(getPos(), getWorld().getBlockState(getPos())
-                .with(BlockMechanicalDryingBasin.LIT, working));
+        getLevel().setBlockAndUpdate(getBlockPos(), getLevel().getBlockState(getBlockPos())
+                .setValue(BlockMechanicalDryingBasin.LIT, working));
     }
 
     public SingleUseTank getTankInput() {
@@ -127,10 +127,10 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         tag.put("tankIn", getTankInput().writeToNBT(new CompoundNBT()));
         tag.put("tankOut", getTankOutput().writeToNBT(new CompoundNBT()));
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
 
     @Override
     protected Pair<ItemStack, FluidStack> getCurrentRecipeCacheKey() {
-        return Pair.of(getInventory().getStackInSlot(SLOT_INPUT).copy(), FluidHelpers.copy(getTankInput().getFluid()));
+        return Pair.of(getInventory().getItem(SLOT_INPUT).copy(), FluidHelpers.copy(getTankInput().getFluid()));
     }
 
     @Override
@@ -170,8 +170,8 @@ public class TileMechanicalDryingBasin extends TileMechanicalMachine<Pair<ItemSt
 
         // Only consume items if we are not simulating
         if (!simulate) {
-            if (!recipe.getInputIngredient().hasNoMatchingItems()) {
-                getInventory().decrStackSize(SLOT_INPUT, 1);
+            if (!recipe.getInputIngredient().isEmpty()) {
+                getInventory().removeItem(SLOT_INPUT, 1);
             }
         }
 

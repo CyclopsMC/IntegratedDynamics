@@ -19,12 +19,12 @@ public class ValueTypeListProxyNbtValueListInt extends ValueTypeListProxyNbtValu
 
     @Override
     protected int getLength(IntArrayNBT tag) {
-        return tag.getIntArray().length;
+        return tag.getAsIntArray().length;
     }
 
     @Override
     protected ValueTypeInteger.ValueInteger get(IntArrayNBT tag, int index) {
-        return ValueTypeInteger.ValueInteger.of(tag.getIntArray()[index]);
+        return ValueTypeInteger.ValueInteger.of(tag.getAsIntArray()[index]);
     }
 
     public static class Factory extends ValueTypeListProxyNbtValueListGeneric.Factory<ValueTypeListProxyNbtValueListInt, IntArrayNBT, ValueTypeInteger, ValueTypeInteger.ValueInteger> {

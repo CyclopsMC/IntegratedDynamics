@@ -24,8 +24,8 @@ public class BlockMenrilLogFilledConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_log_filled",
-                eConfig -> new BlockMenrilLogFilled(Block.Properties.create(Material.WOOD, MaterialColor.CYAN)
-                        .hardnessAndResistance(2.0F)
+                eConfig -> new BlockMenrilLogFilled(Block.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
+                        .strength(2.0F)
                         .sound(SoundType.WOOD)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

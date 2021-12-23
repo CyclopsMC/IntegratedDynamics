@@ -88,10 +88,10 @@ public class TestFluidStackOperators {
     public void testBlock() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_BLOCK.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.LAVA.getDefaultState(), "block(lava) = lava");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().get(), Blocks.LAVA.defaultBlockState(), "block(lava) = lava");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_BLOCK.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get(), Blocks.WATER.getDefaultState(), "block(water) = water");
+        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get(), Blocks.WATER.defaultBlockState(), "block(water) = water");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

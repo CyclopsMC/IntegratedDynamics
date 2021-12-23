@@ -34,20 +34,20 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             renderItemStack(matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemStackOptional, alpha);
 
             // Stack size
-            matrixStack.push();
+            matrixStack.pushPose();
             matrixStack.translate(7F, 8.5F, 0.3F);
             String stackSize = String.valueOf(itemStackOptional.getCount());
             float scale = 1F / ((float) stackSize.length() + 1F);
             matrixStack.scale(scale, scale, 1F);
-            rendererDispatcher.getFontRenderer().renderString(stackSize,
-                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)), false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
-            matrixStack.pop();
+            rendererDispatcher.getFont().drawInBatch(stackSize,
+                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)), false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+            matrixStack.popPose();
         }
     }
 
     public static void renderItemStack(MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay, ItemStack itemStack, float alpha) {
         // ItemStack
-        matrixStack.push();
+        matrixStack.pushPose();
         matrixStack.translate(6.2, 6.2, 0.1F);
         matrixStack.scale(16F, -16F, 16F);
         matrixStack.scale(0.74F, 0.74F, 0.01F);
@@ -56,17 +56,17 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         // Inspired by: https://github.com/jaquadro/StorageDrawers/blob/1.15/src/main/java/com/jaquadro/minecraft/storagedrawers/client/renderer/TileEntityDrawersRenderer.java
 
-        IBakedModel itemModel = renderItem.getItemModelWithOverrides(itemStack, null, null);
+        IBakedModel itemModel = renderItem.getModel(itemStack, null, null);
         if (itemModel.isGui3d()) {
-            RenderHelper.setupGui3DDiffuseLighting();
+            RenderHelper.setupFor3DItems();
         } else {
-            RenderHelper.setupGuiFlatDiffuseLighting();
+            RenderHelper.setupForFlatItems();
         }
 
-        renderItem.renderItem(itemStack, ItemCameraTransforms.TransformType.GUI, false, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemModel);
+        renderItem.render(itemStack, ItemCameraTransforms.TransformType.GUI, false, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemModel);
 
-        RenderHelper.disableStandardItemLighting();
+        RenderHelper.turnOff();
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }

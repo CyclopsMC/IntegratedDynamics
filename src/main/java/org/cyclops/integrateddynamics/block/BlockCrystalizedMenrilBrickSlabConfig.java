@@ -20,9 +20,9 @@ public class BlockCrystalizedMenrilBrickSlabConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_menril_brick_slab",
-                eConfig -> new SlabBlock(AbstractBlock.Properties.create(Material.CLAY, MaterialColor.CYAN)
+                eConfig -> new SlabBlock(AbstractBlock.Properties.of(Material.CLAY, MaterialColor.COLOR_CYAN)
                         .sound(SoundType.SNOW)
-                        .hardnessAndResistance(1.5F)
+                        .strength(1.5F)
                         .harvestLevel(0)
                         .harvestTool(ToolType.PICKAXE)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

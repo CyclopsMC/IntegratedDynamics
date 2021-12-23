@@ -45,17 +45,17 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
     }
 
     protected static WidgetTextFieldExtended makeTextBox(int componentId, int x, int y, String text) {
-        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+        FontRenderer fontRenderer = Minecraft.getInstance().font;
         int searchWidth = 35;
 
         WidgetTextFieldExtended box = new WidgetTextFieldExtended(fontRenderer, x, y,
-                searchWidth, fontRenderer.FONT_HEIGHT + 3, new TranslationTextComponent("gui.cyclopscore.search"), true);
-        box.setMaxStringLength(10);
-        box.setEnableBackgroundDrawing(false);
+                searchWidth, fontRenderer.lineHeight + 3, new TranslationTextComponent("gui.cyclopscore.search"), true);
+        box.setMaxLength(10);
+        box.setBordered(false);
         box.setVisible(true);
         box.setTextColor(16777215);
         box.setCanLoseFocus(true);
-        box.setText(text);
+        box.setValue(text);
         box.setWidth(searchWidth);
         return box;
     }
@@ -78,18 +78,18 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
         this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
 
         // Render the info tooltip when hovering the input item slots
-        for (int slotId = 0; slotId < this.container.inventorySlots.size(); ++slotId) {
-            Slot slot = this.container.inventorySlots.get(slotId);
+        for (int slotId = 0; slotId < this.container.slots.size(); ++slotId) {
+            Slot slot = this.container.slots.get(slotId);
             if (slotId >= ValueTypeRecipeLPElement.SLOT_OFFSET && slotId < 9 + ValueTypeRecipeLPElement.SLOT_OFFSET) {
-                int slotX = slot.xPos;
-                int slotY = slot.yPos;
+                int slotX = slot.x;
+                int slotY = slot.y;
 
                 // Draw tooltips
                 if (gui.isPointInRegion(slotX, slotY, 16, 16, mouseX, mouseY)) {
                     gui.drawTooltip(Lists.newArrayList(
                             new TranslationTextComponent("valuetype.integrateddynamics.ingredients.slot.info")
-                                    .mergeStyle(TextFormatting.ITALIC)
-                    ), mouseX - guiLeft, mouseY - guiTop - (slot.getStack().isEmpty() ? 0 : 15));
+                                    .withStyle(TextFormatting.ITALIC)
+                    ), mouseX - guiLeft, mouseY - guiTop - (slot.getItem().isEmpty() ? 0 : 15));
                 }
             }
         }
@@ -103,17 +103,17 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
         this.blit(matrixStack, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
 
         inputFluidAmountBox.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.drawString(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0);
+        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0);
         inputEnergyBox.render(matrixStack, mouseX, mouseY, partialTicks);
         outputFluidAmountBox.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.drawString(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0);
+        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0);
         outputEnergyBox.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (inputFluidAmountBox.charTyped(typedChar, keyCode)) {
-            element.setInputFluidAmount(inputFluidAmountBox.getText());
+            element.setInputFluidAmount(inputFluidAmountBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputFluidAmount(),
@@ -121,7 +121,7 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
             return true;
         }
         if (inputEnergyBox.charTyped(typedChar, keyCode)) {
-            element.setInputEnergy(inputEnergyBox.getText());
+            element.setInputEnergy(inputEnergyBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputEnergy(),
@@ -129,7 +129,7 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
             return true;
         }
         if (outputFluidAmountBox.charTyped(typedChar, keyCode)) {
-            element.setOutputFluidAmount(outputFluidAmountBox.getText());
+            element.setOutputFluidAmount(outputFluidAmountBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputFluidAmount(),
@@ -137,7 +137,7 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
             return true;
         }
         if (outputEnergyBox.charTyped(typedChar, keyCode)) {
-            element.setOutputEnergy(outputEnergyBox.getText());
+            element.setOutputEnergy(outputEnergyBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputEnergy(),

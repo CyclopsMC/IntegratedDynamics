@@ -27,7 +27,7 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
 
     protected static RecipeSqueezer.ItemStackChance getJsonItemStackChance(JsonObject json) {
         ItemStack itemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(json, true, GeneralConfig.recipeTagOutputModPriorities);
-        float chance = JSONUtils.getFloat(json, "chance", 1.0F);
+        float chance = JSONUtils.getAsFloat(json, "chance", 1.0F);
         return new RecipeSqueezer.ItemStackChance(itemStack, chance);
     }
 
@@ -48,8 +48,8 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
     }
 
     @Override
-    public RecipeSqueezer read(ResourceLocation recipeId, JsonObject json) {
-        JsonObject result = JSONUtils.getJsonObject(json, "result");
+    public RecipeSqueezer fromJson(ResourceLocation recipeId, JsonObject json) {
+        JsonObject result = JSONUtils.getAsJsonObject(json, "result");
 
         // Input
         Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", true);
@@ -59,7 +59,7 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
         FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
 
         // Validation
-        if (inputIngredient.hasNoMatchingItems()) {
+        if (inputIngredient.isEmpty()) {
             throw new JsonSyntaxException("An input item is required");
         }
         if (outputItemStacks.isEmpty() && outputFluid.isEmpty()) {
@@ -71,16 +71,16 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
 
     @Nullable
     @Override
-    public RecipeSqueezer read(ResourceLocation recipeId, PacketBuffer buffer) {
+    public RecipeSqueezer fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
         // Input
-        Ingredient inputIngredient = Ingredient.read(buffer);
+        Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
 
         // Output
         NonNullList<RecipeSqueezer.ItemStackChance> outputItemStacks = NonNullList.create();
         int outputItemStacksCount = buffer.readInt();
         for (int i = 0; i < outputItemStacksCount; i++) {
             outputItemStacks.add(new RecipeSqueezer.ItemStackChance(
-                    buffer.readItemStack(),
+                    buffer.readItem(),
                     buffer.readFloat()
             ));
         }
@@ -90,14 +90,14 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
     }
 
     @Override
-    public void write(PacketBuffer buffer, RecipeSqueezer recipe) {
+    public void toNetwork(PacketBuffer buffer, RecipeSqueezer recipe) {
         // Input
-        recipe.getInputIngredient().write(buffer);
+        recipe.getInputIngredient().toNetwork(buffer);
 
         // Output
         buffer.writeInt(recipe.getOutputItems().size());
         for (RecipeSqueezer.ItemStackChance outputItem : recipe.getOutputItems()) {
-            buffer.writeItemStack(outputItem.getItemStack());
+            buffer.writeItem(outputItem.getItemStack());
             buffer.writeFloat(outputItem.getChance());
         }
         recipe.getOutputFluid().writeToPacket(buffer);

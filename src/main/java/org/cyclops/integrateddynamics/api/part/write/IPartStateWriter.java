@@ -33,11 +33,10 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
 
     /**
      * Get the current target variable.
-     * @return The active variable to read from.
      * @param <V> The value type.
      * @param network The network this part belongs to.
      * @param partNetwork The part network this part belongs to.
-     * @return The variable.
+     * @return The active variable to read from.
      */
     public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork);
 

@@ -93,8 +93,8 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
     protected SimpleInventory createInventory(int inventorySize, int stackSize) {
         return new SimpleInventory(inventorySize, stackSize) {
             @Override
-            public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-                return slot != SLOT_WRITE_OUT && super.isItemValidForSlot(slot, itemStack);
+            public boolean canPlaceItem(int slot, ItemStack itemStack) {
+                return slot != SLOT_WRITE_OUT && super.canPlaceItem(slot, itemStack);
             }
         };
     }
@@ -121,7 +121,7 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
      */
     public void generateNewProxyId() {
         this.proxyId = IntegratedDynamics.globalCounters.getNext(GLOBALCOUNTER_KEY);
-        markDirty();
+        setChanged();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
     @Override
     public void onDirty() {
         super.onDirty();
-        if (!world.isRemote()) {
+        if (!level.isClientSide()) {
             this.writeVariable = true;
         }
     }
@@ -149,11 +149,11 @@ public class TileProxy extends TileActiveVariableBase<ProxyNetworkElement> imple
     public void tick() {
         super.tick();
 
-        if(!world.isRemote() && this.writeVariable) {
+        if(!level.isClientSide() && this.writeVariable) {
             if (!getInventory().getStackInSlot(getSlotWriteIn()).isEmpty() && getInventory().getStackInSlot(getSlotWriteOut()).isEmpty()) {
                 // Write proxy reference
-                ItemStack outputStack = writeProxyInfo(!getWorld().isRemote, getInventory().removeStackFromSlot(getSlotWriteIn()), proxyId);
-                getInventory().setInventorySlotContents(getSlotWriteOut(), outputStack);
+                ItemStack outputStack = writeProxyInfo(!getLevel().isClientSide, getInventory().removeStackFromSlot(getSlotWriteIn()), proxyId);
+                getInventory().setItem(getSlotWriteOut(), outputStack);
             }
         }
     }

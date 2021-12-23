@@ -76,11 +76,11 @@ public final class Helpers {
      * @return A Stream containing ItemStacks registered for this ore
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
-        ITag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(name));
+        ITag<Item> tag = ItemTags.getAllTags().getTag(new ResourceLocation(name));
         if (tag == null) {
             return Stream.empty();
         }
-        return tag.getAllElements().stream().map(ItemStack::new);
+        return tag.getValues().stream().map(ItemStack::new);
     }
 
     /**
@@ -161,9 +161,9 @@ public final class Helpers {
      */
     public static ITextComponent getLocalizedEnergyLevel(int stored, int capacity) {
         return new StringTextComponent(String.format(Locale.ROOT, "%,d", stored))
-                .appendString(" / ")
-                .appendString(String.format(Locale.ROOT, "%,d", capacity))
-                .appendString(" ")
+                .append(" / ")
+                .append(String.format(Locale.ROOT, "%,d", capacity))
+                .append(" ")
                 .append(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
     }
 

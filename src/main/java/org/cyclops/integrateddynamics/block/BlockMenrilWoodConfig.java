@@ -18,7 +18,7 @@ public class BlockMenrilWoodConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_wood",
-                eConfig -> Blocks.createLogBlock(MaterialColor.CYAN, MaterialColor.CYAN),
+                eConfig -> Blocks.log(MaterialColor.COLOR_CYAN, MaterialColor.COLOR_CYAN),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

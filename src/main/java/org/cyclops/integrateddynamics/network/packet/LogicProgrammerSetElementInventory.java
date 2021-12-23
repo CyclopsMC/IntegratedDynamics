@@ -54,13 +54,13 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.openContainer;
+		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+			ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.containerMenu;
 			ILogicProgrammerElement element = container.getActiveElement();
 			if (element instanceof ValueTypeListLPElement || element instanceof ValueTypeIngredientsLPElement) {
 				IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(this.listValueType));
 				if (valueType != null) {
-					((ContainerLogicProgrammerBase) player.openContainer).setElementInventory(
+					((ContainerLogicProgrammerBase) player.containerMenu).setElementInventory(
 							valueType.createLogicProgrammerElement(), baseX, baseY);
 				} else {
 					IntegratedDynamics.clog(Level.WARN,

@@ -10,6 +10,9 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 import java.util.Map;
 
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry.IMapping;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry.ValueCastException;
+
 /**
  * Registry for casting {@link IValue}.
  * @author rubensworks

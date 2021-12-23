@@ -69,23 +69,33 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
             return new FacadeModel(emptyModel, itemStack, world, entity);
         }
         IBakedModel bakedModel = RenderHelpers.getBakedModel(blockState);
-        bakedModel = bakedModel.getOverrides().getOverrideModel(bakedModel,
+        bakedModel = bakedModel.getOverrides().resolve(bakedModel,
                 RegistryEntries.ITEM_FACADE.getFacadeBlockItem(itemStack), (ClientWorld) world, entity);
         return new FacadeModel(bakedModel, itemStack, world, entity);
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return RenderHelpers.getBakedModel(Blocks.STONE.getDefaultState()).getParticleTexture();
+    public TextureAtlasSprite getParticleIcon() {
+        return RenderHelpers.getBakedModel(Blocks.STONE.defaultBlockState()).getParticleIcon();
     }
 
     @Override
-    public boolean isSideLit() {
+    public boolean useAmbientOcclusion() {
+        return false; // TODO: rm
+    }
+
+    @Override
+    public boolean usesBlockLight() {
         return true; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+    public boolean isCustomRenderer() {
+        return false; // TODO: rm
+    }
+
+    @Override
+    public ItemCameraTransforms getTransforms() {
         return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS;
     }
 }

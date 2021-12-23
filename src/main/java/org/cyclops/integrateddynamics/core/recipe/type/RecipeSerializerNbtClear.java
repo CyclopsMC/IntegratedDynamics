@@ -18,20 +18,20 @@ public class RecipeSerializerNbtClear extends ForgeRegistryEntry<IRecipeSerializ
         implements IRecipeSerializer<RecipeNbtClear> {
 
     @Override
-    public RecipeNbtClear read(ResourceLocation recipeId, JsonObject json) {
+    public RecipeNbtClear fromJson(ResourceLocation recipeId, JsonObject json) {
         Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", false);
         return new RecipeNbtClear(recipeId, inputIngredient);
     }
 
     @Nullable
     @Override
-    public RecipeNbtClear read(ResourceLocation recipeId, PacketBuffer buffer) {
-        Ingredient inputIngredient = Ingredient.read(buffer);
+    public RecipeNbtClear fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+        Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
         return new RecipeNbtClear(recipeId, inputIngredient);
     }
 
     @Override
-    public void write(PacketBuffer buffer, RecipeNbtClear recipe) {
-        recipe.getInputIngredient().write(buffer);
+    public void toNetwork(PacketBuffer buffer, RecipeNbtClear recipe) {
+        recipe.getInputIngredient().toNetwork(buffer);
     }
 }

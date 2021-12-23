@@ -20,7 +20,7 @@ public class BlockMenrilWoodStrippedConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_wood_stripped",
-                eConfig -> Blocks.createLogBlock(MaterialColor.CYAN, MaterialColor.CYAN),
+                eConfig -> Blocks.log(MaterialColor.COLOR_CYAN, MaterialColor.COLOR_CYAN),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
@@ -34,8 +34,8 @@ public class BlockMenrilWoodStrippedConfig extends BlockConfig {
     public void onForgeRegistered() {
         super.onForgeRegistered();
         BlockHelpers.setFireInfo(getInstance(), 5, 20);
-        AxeItem.BLOCK_STRIPPING_MAP = Maps.newHashMap(AxeItem.BLOCK_STRIPPING_MAP);
-        AxeItem.BLOCK_STRIPPING_MAP.put(RegistryEntries.BLOCK_MENRIL_WOOD, RegistryEntries.BLOCK_MENRIL_WOOD_STRIPPED);
+        AxeItem.STRIPABLES = Maps.newHashMap(AxeItem.STRIPABLES);
+        AxeItem.STRIPABLES.put(RegistryEntries.BLOCK_MENRIL_WOOD, RegistryEntries.BLOCK_MENRIL_WOOD_STRIPPED);
     }
 
 }

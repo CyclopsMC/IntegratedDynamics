@@ -41,7 +41,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     public static IFormattableTextComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
         return !itemStack.isEmpty()
-                ? (((IFormattableTextComponent) itemStack.getDisplayName()).appendString((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
+                ? (((IFormattableTextComponent) itemStack.getHoverName()).append((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
                 : new StringTextComponent("");
     }
 
@@ -51,7 +51,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         try {
             return getItemStackDisplayNameUsSafe(itemStack);
         } catch (NoSuchMethodException e) {
-            return new TranslationTextComponent(itemStack.getTranslationKey());
+            return new TranslationTextComponent(itemStack.getDescriptionId());
         }
     }
 
@@ -70,7 +70,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         CompoundNBT tag = new CompoundNBT();
         ItemStack itemStack = value.getRawValue();
         if(!itemStack.isEmpty()) {
-            itemStack.write(tag);
+            itemStack.save(tag);
             tag.putInt("Count", itemStack.getCount());
         }
         return tag;
@@ -86,7 +86,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             // Consider the tag immutable, to avoid changes elsewhere
             tag = tag.copy();
             tag.putByte("Count", (byte)1);
-            ItemStack itemStack = ItemStack.read(tag);
+            ItemStack itemStack = ItemStack.of(tag);
             if (!itemStack.isEmpty()) {
                 itemStack.setCount(realCount);
             }
@@ -131,7 +131,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         JsonElement jsonElement = element.get("value");
         ItemPredicate itemPredicate = null;
         if (jsonElement != null && !jsonElement.isJsonNull()) {
-            itemPredicate = ItemPredicate.deserialize(element.get("value"));
+            itemPredicate = ItemPredicate.fromJson(element.get("value"));
         }
         return new ValueItemStackPredicate(this, value, itemPredicate);
     }
@@ -187,7 +187,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
         @Override
         protected boolean testTyped(ValueItemStack value) {
-            return super.testTyped(value) && (itemPredicate == null || itemPredicate.test(value.getRawValue()));
+            return super.testTyped(value) && (itemPredicate == null || itemPredicate.matches(value.getRawValue()));
         }
     }
 

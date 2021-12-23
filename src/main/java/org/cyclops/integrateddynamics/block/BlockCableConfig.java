@@ -25,12 +25,12 @@ public class BlockCableConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "cable",
-                eConfig -> new BlockCable(Block.Properties.create(BlockCable.BLOCK_MATERIAL)
-                        .hardnessAndResistance(BlockCable.BLOCK_HARDNESS)
+                eConfig -> new BlockCable(Block.Properties.of(BlockCable.BLOCK_MATERIAL)
+                        .strength(BlockCable.BLOCK_HARDNESS)
                         .sound(SoundType.METAL)
-                        .setOpaque((blockState, world, pos) -> false)),
+                        .isRedstoneConductor((blockState, world, pos) -> false)),
                 (eConfig, block) -> new ItemBlockCable(block, new Item.Properties()
-                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
                 );
         if (MinecraftHelpers.isClientSide()) {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);

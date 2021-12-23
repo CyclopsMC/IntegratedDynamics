@@ -116,7 +116,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     public static IFormattableTextComponent getSignature(IOperator operator) {
         return getSignatureLines(operator, false)
                 .stream()
-                .reduce(new StringTextComponent(""), (a, b) -> a.appendString(" ").append(b));
+                .reduce(new StringTextComponent(""), (a, b) -> a.append(" ").append(b));
     }
 
     /**
@@ -128,7 +128,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     public static ITextComponent getSignature(IValueType[] inputTypes, IValueType outputType) {
         return getSignatureLines(inputTypes, outputType, false)
                 .stream()
-                .reduce((prev, next) -> prev.appendString(" ").append(next))
+                .reduce((prev, next) -> prev.append(" ").append(next))
                 .orElseGet(() -> new StringTextComponent(""));
     }
 
@@ -153,18 +153,18 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
                 first = false;
             } else {
                 sb = switchSignatureLineContext(lines, sb);
-                sb.appendString((indent ? "  " : "") + SIGNATURE_LINK + " ");
+                sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ");
             }
-            sb.mergeStyle(inputType.getDisplayColorFormat())
+            sb.withStyle(inputType.getDisplayColorFormat())
                     .append(new TranslationTextComponent(inputType.getTranslationKey()))
-                    .mergeStyle(TextFormatting.RESET);
+                    .withStyle(TextFormatting.RESET);
         }
 
         sb = switchSignatureLineContext(lines, sb);
-        sb.appendString((indent ? "  " : "") + SIGNATURE_LINK + " ")
-                .mergeStyle(outputType.getDisplayColorFormat())
+        sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ")
+                .withStyle(outputType.getDisplayColorFormat())
                 .append(new TranslationTextComponent(outputType.getTranslationKey()))
-                .mergeStyle(TextFormatting.RESET);
+                .withStyle(TextFormatting.RESET);
         switchSignatureLineContext(lines, sb);
         return lines;
     }

@@ -27,17 +27,17 @@ public class ItemVariableCopyRecipe extends SpecialRecipe {
 
     @Override
     public boolean matches(CraftingInventory inv, World worldIn) {
-        return !getCraftingResult(inv).isEmpty();
+        return !assemble(inv).isEmpty();
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         ItemStack withData = ItemStack.EMPTY;
         ItemStack withoutData = ItemStack.EMPTY;
         IVariableFacade facade;
         int count = 0;
-        for(int j = 0; j < inv.getSizeInventory(); j++) {
-            ItemStack element = inv.getStackInSlot(j);
+        for(int j = 0; j < inv.getContainerSize(); j++) {
+            ItemStack element = inv.getItem(j);
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 count++;
                 facade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(element);
@@ -56,20 +56,20 @@ public class ItemVariableCopyRecipe extends SpecialRecipe {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width * height >= 2;
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return new ItemStack(RegistryEntries.ITEM_VARIABLE, 1);
     }
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
-        NonNullList<ItemStack> ret = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
-        for(int j = 0; j < inv.getSizeInventory(); j++) {
-            ItemStack element = inv.getStackInSlot(j);
+        NonNullList<ItemStack> ret = NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
+        for(int j = 0; j < inv.getContainerSize(); j++) {
+            ItemStack element = inv.getItem(j);
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(element);
                 if(facade.isValid()) {
@@ -84,11 +84,11 @@ public class ItemVariableCopyRecipe extends SpecialRecipe {
 
     @Override
     public NonNullList<Ingredient> getIngredients() {
-        return NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()), Ingredient.fromStacks(getRecipeOutput()));
+        return NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()), Ingredient.of(getResultItem()));
     }
 
     @Override
-    public boolean isDynamic() {
+    public boolean isSpecial() {
         return true;
     }
 

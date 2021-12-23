@@ -48,7 +48,7 @@ public class CableConfig extends CapabilityConfig<ICable> {
                     }
 
                     @Override
-                    protected void markDirty() {
+                    protected void setChanged() {
 
                     }
 
@@ -58,7 +58,7 @@ public class CableConfig extends CapabilityConfig<ICable> {
                     }
 
                     @Override
-                    protected World getWorld() {
+                    protected World getLevel() {
                         return null;
                     }
 

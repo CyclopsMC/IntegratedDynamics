@@ -16,12 +16,12 @@ public class FurnaceFuelSlotExtended extends Slot {
         super(inventory, index, xPosition, yPosition);
     }
 
-    public boolean isItemValid(ItemStack itemStack) {
+    public boolean mayPlace(ItemStack itemStack) {
         return AbstractFurnaceTileEntity.isFuel(itemStack) || FurnaceFuelSlot.isBucket(itemStack);
     }
 
-    public int getItemStackLimit(ItemStack itemStack) {
-        return FurnaceFuelSlot.isBucket(itemStack) ? 1 : super.getItemStackLimit(itemStack);
+    public int getMaxStackSize(ItemStack itemStack) {
+        return FurnaceFuelSlot.isBucket(itemStack) ? 1 : super.getMaxStackSize(itemStack);
     }
 
 }

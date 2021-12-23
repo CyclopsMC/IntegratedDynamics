@@ -18,7 +18,7 @@ public interface IRenderPatternValueTypeTooltip {
     public default List<ITextComponent> getValueTypeTooltip(IValueType<?> valueType) {
         List<ITextComponent> lines = Lists.newLinkedList();
         lines.add(new TranslationTextComponent(valueType.getTranslationKey())
-                .mergeStyle(valueType.getDisplayColorFormat()));
+                .withStyle(valueType.getDisplayColorFormat()));
         return lines;
     }
 
@@ -30,10 +30,10 @@ public interface IRenderPatternValueTypeTooltip {
         if (isRenderTooltip()) {
             // Output type tooltip
             if (!container.hasWriteItemInSlot()) {
-                if (gui.isPointInRegion(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
+                /*if (gui.isHovering(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
                         ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
                     gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
-                }
+                }*/ // TODO: restore
             }
         }
     }

@@ -19,8 +19,8 @@ public abstract class CableTile<T extends CyclopsTileEntity> extends CableDefaul
     }
 
     @Override
-    protected void markDirty() {
-        tile.markDirty();
+    protected void setChanged() {
+        tile.setChanged();
     }
 
     @Override
@@ -29,17 +29,17 @@ public abstract class CableTile<T extends CyclopsTileEntity> extends CableDefaul
     }
 
     @Override
-    protected World getWorld() {
-        return tile.getWorld();
+    protected World getLevel() {
+        return tile.getLevel();
     }
 
     @Override
     protected BlockPos getPos() {
-        return tile.getPos();
+        return tile.getBlockPos();
     }
 
     @Override
     public void destroy() {
-        getWorld().setBlockState(getPos(), Blocks.AIR.getDefaultState(), 3);
+        getLevel().setBlock(getPos(), Blocks.AIR.defaultBlockState(), 3);
     }
 }

@@ -149,7 +149,7 @@ public class Aspects {
                             .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> INTEGER_DIMENSION =
                     AspectReadBuilders.Block.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            world -> world.getDimensionKey().getLocation().toString()
+                            world -> world.dimension().location().toString()
                     ).withUpdateType(AspectUpdateType.NEVER)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "dimension").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSX =
@@ -175,10 +175,10 @@ public class Aspects {
                             .handle(AspectReadBuilders.PROP_GET_BLOCK).buildRead();
             public static final IAspectRead<ValueTypeNbt.ValueNbt, ValueTypeNbt> NBT =
                     AspectReadBuilders.Block.BUILDER_NBT.handle(dimPos -> {
-                        TileEntity tile = dimPos.getWorld(true).getTileEntity(dimPos.getBlockPos());
+                        TileEntity tile = dimPos.getWorld(true).getBlockEntity(dimPos.getBlockPos());
                         try {
                             if (tile != null) {
-                                return Optional.<INBT>of(tile.write(new CompoundNBT()));
+                                return Optional.<INBT>of(tile.save(new CompoundNBT()));
                             }
                         } catch (Exception e) {
                             // Catch possible errors
@@ -192,7 +192,7 @@ public class Aspects {
                             ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHT =
-                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(dimPos -> dimPos.getWorld(true).getLight(dimPos.getBlockPos()))
+                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(dimPos -> dimPos.getWorld(true).getMaxLocalRawBrightness(dimPos.getBlockPos()))
                             .handle(AspectReadBuilders.PROP_GET_INTEGER, "light").buildRead();
         }
 
@@ -204,16 +204,16 @@ public class Aspects {
                             .handle(AspectReadBuilders.PROP_GET_INTEGER, "itemframerotation").buildRead();
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ENTITIES =
                     AspectReadBuilders.Entity.BUILDER_LIST.handle(dimPos -> {
-                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntitiesInAABBexcluding(null,
-                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntityPredicates.NOT_SPECTATING);
+                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntities((net.minecraft.entity.Entity) null,
+                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), EntityPredicates.NO_SPECTATORS);
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities,
                             ValueObjectTypeEntity.ValueEntity::of
                         ));
                     }).appendKind("entities").buildRead();
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
                     AspectReadBuilders.Entity.BUILDER_LIST.handle(dimPos -> {
-                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntitiesInAABBexcluding(null,
-                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), Helpers.SELECTOR_IS_PLAYER);
+                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntities((net.minecraft.entity.Entity) null,
+                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), Helpers.SELECTOR_IS_PLAYER);
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities,
                             ValueObjectTypeEntity.ValueEntity::of
                         ));
@@ -223,15 +223,15 @@ public class Aspects {
                     AspectReadBuilders.Entity.BUILDER_ENTITY.withProperties(AspectReadBuilders.LIST_PROPERTIES).handle(input -> {
                         int i = input.getRight().getValue(AspectReadBuilders.PROPERTY_LISTINDEX).getRawValue();
                         DimPos dimPos = input.getLeft().getTarget().getPos();
-                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntitiesInAABBexcluding(null,
-                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().add(1, 1, 1)), EntityPredicates.NOT_SPECTATING);
+                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntities((net.minecraft.entity.Entity) null,
+                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), EntityPredicates.NO_SPECTATORS);
                         return ValueObjectTypeEntity.ValueEntity.of(i < entities.size() ? entities.get(i) : null);
                     }).buildRead();
 
             public static final IAspectRead<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack> ITEMSTACK_ITEMFRAMECONTENTS =
                     AspectReadBuilders.Entity.BUILDER_ITEMSTACK
                             .handle(AspectReadBuilders.World.PROP_GET_ITEMFRAME)
-                            .handle(itemFrame -> itemFrame != null ? itemFrame.getDisplayedItem() : ItemStack.EMPTY)
+                            .handle(itemFrame -> itemFrame != null ? itemFrame.getItem() : ItemStack.EMPTY)
                             .handle(AspectReadBuilders.PROP_GET_ITEMSTACK, "itemframecontents").buildRead();
         }
 
@@ -245,16 +245,16 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "random").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLAYERCOUNT =
                     AspectReadBuilders.ExtraDimensional.BUILDER_INTEGER.handle(
-                        MinecraftServer::getCurrentPlayerCount
+                        MinecraftServer::getPlayerCount
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "playercount").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
                     AspectReadBuilders.ExtraDimensional.BUILDER_INTEGER.handle(
-                        minecraft -> (int) DoubleMath.mean(minecraft.tickTimeArray)
+                        minecraft -> (int) DoubleMath.mean(minecraft.tickTimes)
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TPS =
                     AspectReadBuilders.ExtraDimensional.BUILDER_DOUBLE.handle(
-                            minecraft -> Math.min(20, Stats.meanOf(minecraft.tickTimeArray) / 1000)
+                            minecraft -> Math.min(20, Stats.meanOf(minecraft.tickTimes) / 1000)
                     ).handle(AspectReadBuilders.PROP_GET_DOUBLE, "tps").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
@@ -725,20 +725,20 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("thunder").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISDAY =
                     AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            net.minecraft.world.World::isDaytime
+                            net.minecraft.world.World::isDay
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isday").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISNIGHT =
                     AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> !world.isDaytime()
+                        world -> !world.isDay()
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isnight").buildRead();
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RAINCOUNTDOWN =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> ((IServerWorldInfo) world.getWorldInfo()).getRainTime()
+                        world -> ((IServerWorldInfo) world.getLevelData()).getRainTime()
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "raincountdown").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> (int) DoubleMath.mean(ServerLifecycleHooks.getCurrentServer().getTickTime(world.getDimensionKey()))
+                        world -> (int) DoubleMath.mean(ServerLifecycleHooks.getCurrentServer().getTickTime(world.dimension()))
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
@@ -746,12 +746,12 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "daytime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHTLEVEL =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(
-                        dimPos -> dimPos.getWorld(true).getLight(dimPos.getBlockPos())
+                        dimPos -> dimPos.getWorld(true).getMaxLocalRawBrightness(dimPos.getBlockPos())
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "lightlevel").buildRead();
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TPS =
                     AspectReadBuilders.World.BUILDER_DOUBLE.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            world -> Math.min(20, Stats.meanOf(ServerLifecycleHooks.getCurrentServer().getTickTime(world.getDimensionKey())) / 1000)
+                            world -> Math.min(20, Stats.meanOf(ServerLifecycleHooks.getCurrentServer().getTickTime(world.dimension())) / 1000)
                     ).handle(AspectReadBuilders.PROP_GET_DOUBLE, "tps").buildRead();
 
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
@@ -765,12 +765,12 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_NAME =
                     AspectReadBuilders.World.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> ((IServerWorldInfo) world.getWorldInfo()).getWorldName()
+                        world -> ((IServerWorldInfo) world.getLevelData()).getLevelName()
                     ).handle(AspectReadBuilders.PROP_GET_STRING, "worldname").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
                     AspectReadBuilders.World.BUILDER_LIST.handle(dimPos ->
-                            ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(dimPos.getWorld(true).getPlayers(),
+                            ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(dimPos.getWorld(true).players(),
                                 ValueObjectTypeEntity.ValueEntity::of))
                     ).appendKind("players").buildRead();
 
@@ -912,7 +912,7 @@ public class Aspects {
 
                             ServerWorld world = ((ServerWorld) pos.getPos().getWorld(false));
                             if (world != null) {
-                                world.spawnParticle(particle, x, y, z, numberOfParticles, xDir, yDir, zDir, velocity);
+                                world.sendParticles(particle, x, y, z, numberOfParticles, xDir, yDir, zDir, velocity);
                             }
                             return null;
                         }).buildWrite();

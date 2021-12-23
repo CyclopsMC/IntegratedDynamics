@@ -20,8 +20,8 @@ public class BlockMenrilFenceConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_fence",
-                eConfig -> new FenceBlock(AbstractBlock.Properties.create(Material.WOOD, MaterialColor.CYAN)
-                        .hardnessAndResistance(2.0F, 3.0F)
+                eConfig -> new FenceBlock(AbstractBlock.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
+                        .strength(2.0F, 3.0F)
                         .sound(SoundType.WOOD)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

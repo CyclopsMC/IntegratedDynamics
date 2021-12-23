@@ -532,7 +532,7 @@ public class TestParseOperators {
     public void testNBTFurnaceSpaces () throws EvaluationException, CommandSyntaxException {
         String NBT = "{\rCookTime:\n0,\tx:2005, BurnTime:0,  y:56,ForgeCaps:{},z:-81,Items:[],id:\r\n\t \"minecraft:furnace\",CookTimeTotal  :0,Lock:\"\"}";
         IValue res1 = PARSE_NBT.evaluate(s(NBT));
-        CompoundNBT nbt = (CompoundNBT) ValueTypeNbt.ValueNbt.of(JsonToNBT.getTagFromJson(NBT)).getRawValue().get();
+        CompoundNBT nbt = (CompoundNBT) ValueTypeNbt.ValueNbt.of(JsonToNBT.parseTag(NBT)).getRawValue().get();
         assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("CookTime"), is(0));
         assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("x"), is(2005));
         assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("BurnTime"), is(0));

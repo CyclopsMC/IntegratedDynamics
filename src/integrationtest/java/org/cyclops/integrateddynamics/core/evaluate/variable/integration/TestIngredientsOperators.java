@@ -111,7 +111,7 @@ public class TestIngredientsOperators {
         Map<IngredientComponent<?, ?>, List<?>> ingredients = Maps.newIdentityHashMap();
         ingredients.put(IngredientComponent.ENERGY, Lists.newArrayList(777L));
         ingredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new FluidStack(Fluids.WATER, 125)));
-        ingredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.OAK_BOAT), new ItemStack(Item.getItemFromBlock(Blocks.STONE))));
+        ingredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(new ItemStack(Items.OAK_BOAT), new ItemStack(Item.byBlock(Blocks.STONE))));
         inputIngredients = new MixedIngredients(ingredients);
         iMix = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(inputIngredients));
 
@@ -132,7 +132,7 @@ public class TestIngredientsOperators {
         TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack>) res1)
                 .getRawValue().get(0).getRawValue().getItem(), Items.OAK_BOAT, "items(mix, 0) = boat");
         TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack>) res1)
-                .getRawValue().get(1).getRawValue().getItem(), Item.getItemFromBlock(Blocks.STONE), "items(mix, 0) = boat");
+                .getRawValue().get(1).getRawValue().getItem(), Item.byBlock(Blocks.STONE), "items(mix, 0) = boat");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -226,7 +226,7 @@ public class TestIngredientsOperators {
         TestHelpers.assertEqual(outputList1.size(), 2, "with_items(mix, 0, items)[0]size = 2");
         TestHelpers.assertEqual(outputList1.get(0).getItem(), Items.APPLE,
                 "with_items(mix, 0, items)[0] = items[0]");
-        TestHelpers.assertEqual(outputList1.get(1).getItem(), Item.getItemFromBlock(Blocks.STONE),
+        TestHelpers.assertEqual(outputList1.get(1).getItem(), Item.byBlock(Blocks.STONE),
                 "with_items(mix, 0, items)[1] = items[1]");
 
         TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ITEMSTACK).size(), inputIngredients.getInstances(IngredientComponent.ITEMSTACK).size(), "Items size remains the same");
@@ -242,7 +242,7 @@ public class TestIngredientsOperators {
         TestHelpers.assertEqual(outputList2.size(), 3, "with_items(mix, 2, items)[0]size = 3");
         TestHelpers.assertEqual(outputList2.get(0).getItem(), Items.OAK_BOAT,
                 "with_items(mix, 2, items)[0] = items[0]");
-        TestHelpers.assertEqual(outputList2.get(1).getItem(), Item.getItemFromBlock(Blocks.STONE),
+        TestHelpers.assertEqual(outputList2.get(1).getItem(), Item.byBlock(Blocks.STONE),
                 "with_items(mix, 2, items)[1] = items[1]");
         TestHelpers.assertEqual(outputList2.get(2).getItem(), Items.APPLE,
                 "with_items(mix, 2, items)[2] = items[2]");
@@ -385,7 +385,7 @@ public class TestIngredientsOperators {
                 "with_items(mix, items)[0] = items[0]");
         TestHelpers.assertEqual(outputList1.get(1).getItem(), Items.OAK_BOAT,
                 "with_items(mix, items)[1] = items[1]");
-        TestHelpers.assertEqual(outputList1.get(2).getItem(), Item.getItemFromBlock(Blocks.STONE),
+        TestHelpers.assertEqual(outputList1.get(2).getItem(), Item.byBlock(Blocks.STONE),
                 "with_items(mix, items)[2] = items[2]");
         TestHelpers.assertEqual(outputList1.get(3).getItem(), Items.AIR,
                 "with_items(mix, items)[3] = items[3]");

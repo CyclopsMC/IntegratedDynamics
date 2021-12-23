@@ -42,11 +42,11 @@ public class LogicProgrammerValueTypeStringValueChangedPacket extends PacketCode
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
+		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
 			if(element instanceof ValueTypeStringLPElement) {
 				((ValueTypeStringLPElement) element).getInnerGuiElement().setInputString(value);
-                ((ContainerLogicProgrammerBase) player.openContainer).onDirty();
+                ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
 			}
 		}
 	}

@@ -48,11 +48,11 @@ public class RecipeSqueezer implements IRecipe<IInventory> {
 
     @Override
     public boolean matches(IInventory inv, World worldIn) {
-        return inputIngredient.test(inv.getStackInSlot(0));
+        return inputIngredient.test(inv.getItem(0));
     }
 
     @Override
-    public ItemStack getCraftingResult(IInventory inv) {
+    public ItemStack assemble(IInventory inv) {
         // Should not be called, but lets provide a good fallback
         if (this.outputItems.isEmpty()) {
             return ItemStack.EMPTY;
@@ -61,12 +61,12 @@ public class RecipeSqueezer implements IRecipe<IInventory> {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width * height <= 1;
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         // Should not be called, but lets provide a good fallback
         if (this.outputItems.isEmpty()) {
             return ItemStack.EMPTY;

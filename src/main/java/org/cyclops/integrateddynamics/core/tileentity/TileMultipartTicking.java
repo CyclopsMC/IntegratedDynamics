@@ -50,6 +50,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity.ITickingTile;
+import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity.TickingTileComponent;
+
 /**
  * A ticking part entity which is made up of different parts.
  * @author Ruben Taelman
@@ -109,8 +112,8 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
-        tag = super.write(tag);
+    public CompoundNBT save(CompoundNBT tag) {
+        tag = super.save(tag);
         tag.put("partContainer", partContainer.serializeNBT());
         tag.putBoolean("realCable", cableFakeable.isRealCable());
         return tag;
@@ -122,15 +125,15 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         INBT lastFacadeBlock = facadeBlockTag;
         boolean lastRealCable = cableFakeable.isRealCable();
         partContainer.deserializeNBT(tag.getCompound("partContainer"));
-        boolean wasLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos(), null);
+        boolean wasLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null);
 
         super.read(tag);
         cableFakeable.setRealCable(tag.getBoolean("realCable"));
-        boolean isLightTransparent = getWorld() != null && CableHelpers.isLightTransparent(getWorld(), getPos(), null);
-        if (getWorld() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
+        boolean isLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null);
+        if (getLevel() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
                 || !Objects.equals(lastFacadeBlock, facadeBlockTag)
                 || lastRealCable != cableFakeable.isRealCable() || wasLightTransparent != isLightTransparent)) {
-            BlockHelpers.markForUpdate(getWorld(), getPos());
+            BlockHelpers.markForUpdate(getLevel(), getBlockPos());
         }
     }
 
@@ -140,7 +143,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
             previousLightLevels = lightLevels;
         }
         cachedState = null;
-        BlockHelpers.markForUpdate(getWorld(), getPos());
+        BlockHelpers.markForUpdate(getLevel(), getBlockPos());
     }
 
     public IModelData getConnectionState() {
@@ -181,18 +184,18 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         partContainer.update();
 
         // Revalidate network if that hasn't happened yet
-        if (getWorld() != null && !getWorld().isRemote && getNetwork() == null) {
-            NetworkHelpers.revalidateNetworkElements(getWorld(), getPos());
+        if (getLevel() != null && !getLevel().isClientSide && getNetwork() == null) {
+            NetworkHelpers.revalidateNetworkElements(getLevel(), getBlockPos());
         }
     }
 
     public void updateRedstoneInfo(Direction side, boolean strongPower) {
-        this.markDirty();
-        if (getWorld().isBlockLoaded(getPos().offset(side))) {
-            getWorld().neighborChanged(getPos().offset(side), getBlockState().getBlock(), getPos());
+        this.setChanged();
+        if (getLevel().isLoaded(getBlockPos().relative(side))) {
+            getLevel().neighborChanged(getBlockPos().relative(side), getBlockState().getBlock(), getBlockPos());
             if (strongPower) {
                 // When we are emitting a strong power, also update all neighbours of the target
-                getWorld().notifyNeighborsOfStateChange(getPos().offset(side), getBlockState().getBlock());
+                getLevel().updateNeighborsAt(getBlockPos().relative(side), getBlockState().getBlock());
             }
         }
     }
@@ -238,11 +241,11 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     }
 
     protected void invalidateParts() {
-        if (getWorld() != null && !getWorld().isRemote) {
+        if (getLevel() != null && !getLevel().isClientSide) {
             INetwork network = getNetwork();
             if (network != null) {
                 for (Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : partContainer.getPartData().entrySet()) {
-                    INetworkElement element = entry.getValue().getPart().createNetworkElement(getPartContainer(), DimPos.of(getWorld(), getPos()), entry.getKey());
+                    INetworkElement element = entry.getValue().getPart().createNetworkElement(getPartContainer(), DimPos.of(getLevel(), getBlockPos()), entry.getKey());
                     element.invalidate(network);
                 }
             }

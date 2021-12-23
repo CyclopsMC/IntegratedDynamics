@@ -75,16 +75,16 @@ public class TestEntityOperators {
 
     @IntegrationBefore
     public void before() {
-        World world = ServerLifecycleHooks.getCurrentServer().getWorld(World.OVERWORLD);
+        World world = ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD);
         eZombie = new DummyVariableEntity(makeEntity(new ZombieEntity(world)));
         ZombieEntity zombieBurning = new ZombieEntity(world);
-        zombieBurning.setFire(10);
+        zombieBurning.setSecondsOnFire(10);
         eZombieBurning = new DummyVariableEntity(makeEntity(zombieBurning));
         ZombieEntity zombieWet = new ZombieEntity(world) {
             @Override
-            protected void registerData() {
-                super.registerData();
-                this.inWater = true;
+            protected void registerGoals() {
+                super.registerGoals();
+                this.wasTouchingWater = true;
             }
         };
         eZombieWet = new DummyVariableEntity(makeEntity(zombieWet));
@@ -97,7 +97,7 @@ public class TestEntityOperators {
         eZombieCrouching = new DummyVariableEntity(makeEntity(zombieCrouching));
         ZombieEntity zombieEating = new ZombieEntity(world) {
             @Override
-            public int getItemInUseCount() {
+            public int getUseItemRemainingTicks() {
                 return 1;
             }
         };
@@ -105,38 +105,38 @@ public class TestEntityOperators {
         eChicken = new DummyVariableEntity(makeEntity(new ChickenEntity(EntityType.CHICKEN, world)));
         eItem = new DummyVariableEntity(makeEntity(new ItemEntity(world, 0, 0, 0)));
         eItemFrame = new DummyVariableEntity(makeEntity(new ItemFrameEntity(world, new BlockPos(0, 0, 0), Direction.NORTH)));
-        ePlayer = new DummyVariableEntity(makeEntity(world.getPlayers().get(0)));
+        ePlayer = new DummyVariableEntity(makeEntity(world.players().get(0)));
         ZombieEntity zombieHeldItems = new ZombieEntity(world);
-        zombieHeldItems.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.APPLE));
-        zombieHeldItems.setItemStackToSlot(EquipmentSlotType.OFFHAND, new ItemStack(Items.POTATO));
+        zombieHeldItems.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.APPLE));
+        zombieHeldItems.setItemSlot(EquipmentSlotType.OFFHAND, new ItemStack(Items.POTATO));
         eZombieHeldItems = new DummyVariableEntity(makeEntity(zombieHeldItems));
         BoatEntity boat = new BoatEntity(world, 0, 0, 0);
         eZombie.getValue().getRawValue().get().startRiding(boat, true);
         eBoat = new DummyVariableEntity(makeEntity(boat));
         ItemFrameEntity itemframe = new ItemFrameEntity(world, new BlockPos(0, 0, 0), Direction.NORTH);
-        itemframe.setDisplayedItem(new ItemStack(Items.POTATO));
-        itemframe.setItemRotation(3);
+        itemframe.setItem(new ItemStack(Items.POTATO));
+        itemframe.setRotation(3);
         eItemframe = new DummyVariableEntity(makeEntity(itemframe));
         ZombieEntity zombieAged = new ZombieEntity(world) {
             @Override
-            public int getIdleTime() {
+            public int getNoActionTime() {
                 return 3;
             }
         };
         eZombieAged = new DummyVariableEntity(makeEntity(zombieAged));
         ZombieEntity zombieBaby = new ZombieEntity(world);
-        zombieBaby.setChild(true);
+        zombieBaby.setBaby(true);
         eZombieBaby = new DummyVariableEntity(makeEntity(zombieBaby));
         eCow = new DummyVariableEntity(makeEntity(new CowEntity(EntityType.COW, world)));
         eCowAlreadyBred = new DummyVariableEntity(makeEntity(new CowEntity(EntityType.COW, world) {
             @Override
-            public int getGrowingAge() {
+            public int getAge() {
                 return 10;
             }
         }));
         eCowBaby = new DummyVariableEntity(makeEntity(new CowEntity(EntityType.COW, world) {
             @Override
-            public int getGrowingAge() {
+            public int getAge() {
                 return -10;
             }
         }));

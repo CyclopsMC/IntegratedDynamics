@@ -14,6 +14,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * A labeller for variables.
  * @author rubensworks
@@ -27,7 +29,7 @@ public class ItemLabeller extends ItemGui {
     @Nullable
     @Override
     public INamedContainerProvider getContainer(World world, PlayerEntity playerEntity, int itemIndex, Hand hand, ItemStack itemStack) {
-        return new NamedContainerProviderItem(itemIndex, hand, itemStack.getDisplayName(), ContainerLabeller::new);
+        return new NamedContainerProviderItem(itemIndex, hand, itemStack.getHoverName(), ContainerLabeller::new);
     }
 
     @Override

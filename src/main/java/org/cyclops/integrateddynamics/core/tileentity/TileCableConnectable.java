@@ -17,6 +17,9 @@ import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
+import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity.ITickingTile;
+import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity.TickingTileComponent;
+
 /**
  * A part entity whose block can connect with cables.
  * @author rubensworks
@@ -68,16 +71,16 @@ public class TileCableConnectable extends CyclopsTileEntity implements CyclopsTi
         if (connected.isEmpty()) {
             cable.updateConnections();
         }
-        if (getWorld() != null && !getWorld().isRemote) {
-            NetworkHelpers.revalidateNetworkElements(getWorld(), getPos());
+        if (getLevel() != null && !getLevel().isClientSide) {
+            NetworkHelpers.revalidateNetworkElements(getLevel(), getBlockPos());
         }
     }
 
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
-        if (getWorld() != null && !getWorld().isRemote) {
-            NetworkHelpers.invalidateNetworkElements(getWorld(), getPos(), this);
+        if (getLevel() != null && !getLevel().isClientSide) {
+            NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), this);
         }
     }
 }

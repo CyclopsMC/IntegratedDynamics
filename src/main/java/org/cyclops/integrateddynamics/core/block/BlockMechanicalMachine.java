@@ -12,6 +12,8 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
 
 import java.util.function.Supplier;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * A mechanical machine base block
  * @author rubensworks
@@ -25,8 +27,8 @@ public abstract class BlockMechanicalMachine extends BlockTileGuiCabled {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (!world.isRemote()) {
+    public void setPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        if (!world.isClientSide()) {
             TileHelpers.getSafeTile(world, blockPos, TileMechanicalMachine.class)
                     .ifPresent(tile -> {
                         if (itemStack.hasTag() && itemStack.getTag().contains(NBT_ENERGY, Constants.NBT.TAG_INT)) {
@@ -34,7 +36,7 @@ public abstract class BlockMechanicalMachine extends BlockTileGuiCabled {
                         }
                     });
         }
-        super.onBlockPlacedBy(world, blockPos, state, placer, itemStack);
+        super.setPlacedBy(world, blockPos, state, placer, itemStack);
     }
 
 }

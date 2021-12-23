@@ -26,7 +26,7 @@ public abstract class PathElementCable extends PathElementDefault {
         BlockPos pos = getPosition().getBlockPos();
         for (Direction side : Direction.values()) {
             if (getCable().isConnected(side)) {
-                BlockPos posOffset = pos.offset(side);
+                BlockPos posOffset = pos.relative(side);
                 Direction pathElementSide = side.getOpposite();
                 IPathElement pathElement = TileHelpers.getCapability(getPosition().getWorld(true), posOffset, pathElementSide, PathElementConfig.CAPABILITY).orElse(null);
                 if (pathElement == null) {

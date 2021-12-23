@@ -36,10 +36,10 @@ public class BlockMenrilTorchStoneWallConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "menril_torch_stone_wall",
                 eConfig -> {
-                    WallTorchBlock block = new WallTorchBlock(Block.Properties.create(Material.MISCELLANEOUS)
-                            .doesNotBlockMovement()
-                            .hardnessAndResistance(0)
-                            .setLightLevel((blockState) -> 14)
+                    WallTorchBlock block = new WallTorchBlock(Block.Properties.of(Material.DECORATION)
+                            .noCollission()
+                            .strength(0)
+                            .lightLevel((blockState) -> 14)
                             .sound(SoundType.STONE), ParticleTypes.FLAME) {
                         @Override
                         @OnlyIn(Dist.CLIENT)
@@ -57,7 +57,7 @@ public class BlockMenrilTorchStoneWallConfig extends BlockConfig {
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
-        RenderTypeLookup.setRenderLayer(getInstance(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(getInstance(), RenderType.cutout());
     }
 
 }

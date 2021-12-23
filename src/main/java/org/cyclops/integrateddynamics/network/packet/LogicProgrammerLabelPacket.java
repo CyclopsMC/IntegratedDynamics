@@ -40,8 +40,8 @@ public class LogicProgrammerLabelPacket extends PacketCodec {
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			((ContainerLogicProgrammerBase) player.openContainer).onLabelPacket(label);
+		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+			((ContainerLogicProgrammerBase) player.containerMenu).onLabelPacket(label);
 		}
 	}
 	

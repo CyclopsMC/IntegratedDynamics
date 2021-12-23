@@ -29,6 +29,6 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
 
     @Override
     public IOperator deserialize(INBT value) {
-        return Operators.REGISTRY.getOperator(new ResourceLocation(value.getString()));
+        return Operators.REGISTRY.getOperator(new ResourceLocation(value.getAsString()));
     }
 }

@@ -9,7 +9,7 @@ import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 public class DynamicRedstoneDefault implements IDynamicRedstone {
 
     @Override
-    public void setRedstoneLevel(int level, boolean strongPower) {
+    public void setRedstoneLevel(int level, boolean direct) {
 
     }
 
@@ -19,7 +19,7 @@ public class DynamicRedstoneDefault implements IDynamicRedstone {
     }
 
     @Override
-    public boolean isStrong() {
+    public boolean isDirect() {
         return false;
     }
 

@@ -147,8 +147,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         IgnoredBlockStatus.Status status = getStatus(partContainer != null
                 ? (PartTypeConnectorOmniDirectional.State) partContainer.getPartState(side) : null);
         return super.getBlockState(partContainer, side)
-                .with(IgnoredBlock.FACING, side)
-                .with(IgnoredBlockStatus.STATUS, status);
+                .setValue(IgnoredBlock.FACING, side)
+                .setValue(IgnoredBlockStatus.STATUS, status);
     }
 
     @SubscribeEvent
@@ -156,8 +156,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         // When crafting the item, either copy the group id from the existing item or generate a new id.
         if (event.getCrafting().getItem() == this.getItem()) {
             int groupId = -1, stackCount = 0;
-            for (int i = 0; i < event.getInventory().getSizeInventory(); i++) {
-                ItemStack slotStack = event.getInventory().getStackInSlot(i);
+            for (int i = 0; i < event.getInventory().getContainerSize(); i++) {
+                ItemStack slotStack = event.getInventory().getItem(i);
                 if (!slotStack.isEmpty()) {
                     ++stackCount;
                     if(groupId == -1 && slotStack.getItem() == this.getItem() && slotStack.hasTag()) {
@@ -173,7 +173,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
             }
 
             if (groupId < 0) {
-                groupId = event.getPlayer().getEntityWorld().isRemote() ? -1 : generateGroupId();
+                groupId = event.getPlayer().getCommandSenderWorld().isClientSide() ? -1 : generateGroupId();
             }
             CompoundNBT tag = event.getCrafting().getOrCreateTag();
             tag.putInt(NBT_KEY_ID, groupId);
@@ -186,8 +186,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         if(player.isSecondaryUseActive() || !partState.isEnabled()) {
             return ActionResultType.PASS;
         }
-        if (world.isRemote()) {
-            player.sendStatusMessage(new TranslationTextComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
+        if (world.isClientSide()) {
+            player.displayClientMessage(new TranslationTextComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
                     partState.getGroupId()), true);
         }
 

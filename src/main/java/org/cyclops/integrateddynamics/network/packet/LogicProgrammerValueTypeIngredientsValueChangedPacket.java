@@ -50,11 +50,11 @@ public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends Packe
 
 	@Override
 	public void actionServer(World world, ServerPlayerEntity player) {
-		if(player.openContainer instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.openContainer).getActiveElement();
+		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
 			if(element instanceof ValueTypeIngredientsLPElement) {
 				((ValueTypeIngredientsLPElement) element).setServerValue(getValue());
-				((ContainerLogicProgrammerBase) player.openContainer).onDirty();
+				((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
 			}
 		}
 	}

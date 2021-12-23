@@ -29,14 +29,14 @@ public class RecipeNbtClear extends SpecialRecipe {
 
     @Override
     public boolean matches(CraftingInventory inv, World worldIn) {
-        return !getCraftingResult(inv).isEmpty();
+        return !assemble(inv).isEmpty();
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         ItemStack ret = ItemStack.EMPTY;
-        for(int j = 0; j < inv.getSizeInventory(); j++) {
-            ItemStack element = inv.getStackInSlot(j);
+        for(int j = 0; j < inv.getContainerSize(); j++) {
+            ItemStack element = inv.getItem(j);
             if(!element.isEmpty()) {
                 if (this.inputIngredient.test(element)) {
                     if (!ret.isEmpty()) {
@@ -53,27 +53,27 @@ public class RecipeNbtClear extends SpecialRecipe {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width * height >= 1;
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
-        return inputIngredient.getMatchingStacks()[0]; // This is just a dummy item!
+    public ItemStack getResultItem() {
+        return inputIngredient.getItems()[0]; // This is just a dummy item!
     }
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
-        return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        return NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
     }
 
     @Override
     public NonNullList<Ingredient> getIngredients() {
-        return NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()));
+        return NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()));
     }
 
     @Override
-    public boolean isDynamic() {
+    public boolean isSpecial() {
         return true;
     }
 

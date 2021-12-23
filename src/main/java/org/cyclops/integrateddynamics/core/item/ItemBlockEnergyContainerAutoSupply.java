@@ -16,6 +16,8 @@ import org.cyclops.cyclopscore.helper.L10NHelpers;
 
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * @author rubensworks
  */
@@ -26,26 +28,26 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
-        super.addInformation(itemStack, world, list, flag);
-        L10NHelpers.addStatusInfo(list, isActivated(itemStack), getTranslationKey() + ".info.auto_supply");
+    public void appendHoverText(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.appendHoverText(itemStack, world, list, flag);
+        L10NHelpers.addStatusInfo(list, isActivated(itemStack), getDescriptionId() + ".info.auto_supply");
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        return new ActionResult<>(ActionResultType.PASS, toggleActivation(player.getHeldItem(hand), world, player));
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        return new ActionResult<>(ActionResultType.PASS, toggleActivation(player.getItemInHand(hand), world, player));
     }
 
     public static void autofill(IEnergyStorage source, World world, Entity entity) {
-        if(entity instanceof PlayerEntity && !world.isRemote()) {
+        if(entity instanceof PlayerEntity && !world.isClientSide()) {
             int tickAmount = source.extractEnergy(Integer.MAX_VALUE, true);
             if(tickAmount > 0) {
                 PlayerEntity player = (PlayerEntity) entity;
                 for (Hand hand : Hand.values()) {
-                    ItemStack held = player.getHeldItem(hand);
+                    ItemStack held = player.getItemInHand(hand);
                     ItemStack filled = tryFillContainerForPlayer(source, held, tickAmount, player);
                     if (!filled.isEmpty()) {
-                        player.setHeldItem(hand, filled);
+                        player.setItemInHand(hand, filled);
                     }
                 }
             }
@@ -74,9 +76,9 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
 
     public ItemStack toggleActivation(ItemStack itemStack, World world, PlayerEntity player) {
         if(player.isSecondaryUseActive()) {
-            if(!world.isRemote()) {
+            if(!world.isClientSide()) {
                 ItemStack activated = itemStack.copy();
-                activated.setDamage(1 - activated.getDamage());
+                activated.setDamageValue(1 - activated.getDamageValue());
                 return activated;
             }
             return itemStack;
@@ -85,11 +87,11 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     }
 
     public boolean isActivated(ItemStack itemStack) {
-        return itemStack.getDamage() == 1;
+        return itemStack.getDamageValue() == 1;
     }
 
     @Override
-    public boolean hasEffect(ItemStack itemStack) {
+    public boolean isFoil(ItemStack itemStack) {
         return isActivated(itemStack);
     }
 }

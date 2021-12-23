@@ -18,9 +18,9 @@ public class BlockCrystalizedMenrilBrickConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_menril_brick",
-                eConfig -> new Block(Block.Properties.create(Material.CLAY)
+                eConfig -> new Block(Block.Properties.of(Material.CLAY)
                         .sound(SoundType.SNOW)
-                        .hardnessAndResistance(1.5F)
+                        .strength(1.5F)
                         .harvestLevel(0)
                         .harvestTool(ToolType.PICKAXE)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

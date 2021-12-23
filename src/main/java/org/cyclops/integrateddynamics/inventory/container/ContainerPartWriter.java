@@ -97,7 +97,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     @Override
     protected IInventory constructInputSlotsInventory() {
-        if (!player.world.isRemote()) {
+        if (!player.level.isClientSide()) {
             SimpleInventory inventory = getPartState().getInventory();
             inventory.addDirtyMarkListener(this);
             return inventory;
@@ -108,17 +108,17 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     @Override
     public void onDirty() {
-        if (!player.world.isRemote()) {
+        if (!player.level.isClientSide()) {
             getPartType().updateActivation(getTarget(), getPartState(), player);
         }
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+    public void broadcastChanges() {
+        super.broadcastChanges();
 
         try {
-            if (!player.world.isRemote()) {
+            if (!player.level.isClientSide()) {
                 // Update write value
                 Pair<IFormattableTextComponent, Integer> readValue;
                 S partState = getPartState();
@@ -150,7 +150,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                 ValueNotifierHelpers.setValue(this, activeAspectId, partState.getActiveAspect() != null ? partState.getActiveAspect().getUniqueName().toString() : "");
             }
         } catch (PartStateException e) {
-            player.closeScreen();
+            player.closeContainer();
         }
     }
 

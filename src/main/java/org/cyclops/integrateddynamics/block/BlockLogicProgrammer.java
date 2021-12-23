@@ -21,6 +21,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * A block that can hold defined variables so that they can be referred to elsewhere in the network.
  *
@@ -33,24 +35,24 @@ public class BlockLogicProgrammer extends BlockGui {
     public BlockLogicProgrammer(Properties properties) {
         super(properties);
 
-        this.setDefaultState(this.stateContainer.getBaseState()
-                        .with(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any()
+                        .setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext blockItemUseContext) {
-        return this.getDefaultState().with(FACING, blockItemUseContext.getPlayer().getHorizontalFacing().getOpposite());
+        return this.defaultBlockState().setValue(FACING, blockItemUseContext.getPlayer().getDirection().getOpposite());
     }
 
     @Nullable
     @Override
-    public INamedContainerProvider getContainer(BlockState blockState, World world, BlockPos blockPos) {
+    public INamedContainerProvider getMenuProvider(BlockState blockState, World world, BlockPos blockPos) {
         return new SimpleNamedContainerProvider(new IContainerProvider() {
             @Nullable
             @Override

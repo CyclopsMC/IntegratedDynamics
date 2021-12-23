@@ -50,16 +50,16 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         if(recipeOptional.isPresent()) {
             IRecipeDefinition recipe = recipeOptional.get();
 
-            matrixStack.push();
+            matrixStack.pushPose();
             matrixStack.scale(0.5F, 0.5F, 1F);
 
-            matrixStack.push();
+            matrixStack.pushPose();
             matrixStack.scale(0.3F, 0.3F, 1F);
-            rendererDispatcher.getFontRenderer().renderString(L10NHelpers.localize("gui.integrateddynamics.input_short"), 8, 15, Helpers.RGBToInt(255, 255, 255),
-                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
-            rendererDispatcher.getFontRenderer().renderString(L10NHelpers.localize("gui.integrateddynamics.output_short"), 46, 15, Helpers.RGBToInt(255, 255, 255),
-                    false, matrixStack.getLast().getMatrix(), renderTypeBuffer, false, 0, combinedLight);
-            matrixStack.pop();
+            rendererDispatcher.getFont().drawInBatch(L10NHelpers.localize("gui.integrateddynamics.input_short"), 8, 15, Helpers.RGBToInt(255, 255, 255),
+                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+            rendererDispatcher.getFont().drawInBatch(L10NHelpers.localize("gui.integrateddynamics.output_short"), 46, 15, Helpers.RGBToInt(255, 255, 255),
+                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+            matrixStack.popPose();
 
             matrixStack.translate(0, 2 * DisplayPartOverlayRenderer.MAX / 3, 0);
             renderInput(rendererDispatcher, partContainer, direction, partType, recipe, partialTicks,
@@ -69,7 +69,7 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                     ValueObjectTypeIngredients.ValueIngredients.of(recipe.getOutput()), partialTicks,
                     matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
 
-            matrixStack.pop();
+            matrixStack.popPose();
         }
     }
 
@@ -82,7 +82,7 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         List<IValue> values = Lists.newArrayListWithExpectedSize(ingredientCount);
 
         // For ingredients with multiple possibilities, vary them based on the current tick
-        int tick = ((int) Minecraft.getInstance().world.getGameTime()) / 30;
+        int tick = ((int) Minecraft.getInstance().level.getGameTime()) / 30;
         for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
             IIngredientMatcher<?, ?> matcher = component.getMatcher();
             IIngredientComponentHandler componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);

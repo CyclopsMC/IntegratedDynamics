@@ -20,7 +20,7 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
     }
 
     @Override
-    public void fillItemGroup(ItemGroup tab, NonNullList<ItemStack> list) {
+    public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> list) {
         ItemStack full = new ItemStack(this);
         IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) ((ItemBlockEnergyContainer) full.getItem()).getEnergyBattery(full).orElse(null);
         fill(energyStorage);

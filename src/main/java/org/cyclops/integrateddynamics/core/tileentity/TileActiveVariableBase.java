@@ -61,10 +61,10 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         List<IFormattableTextComponent> errors = evaluator.getErrors();
         NBTClassType.writeNbt(List.class, "errors", errors, tag);
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Override
@@ -76,7 +76,7 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
     public abstract int getSlotRead();
 
     public boolean hasVariable() {
-        return !getInventory().getStackInSlot(getSlotRead()).isEmpty();
+        return !getInventory().getItem(getSlotRead()).isEmpty();
     }
 
     protected void updateReadVariable(boolean sendVariablesUpdateEvent) {
@@ -86,7 +86,7 @@ public abstract class TileActiveVariableBase<E> extends TileCableConnectableInve
 
     @Override
     public void onDirty() {
-        if(!world.isRemote()) {
+        if(!level.isClientSide()) {
             updateReadVariable(true);
         }
     }

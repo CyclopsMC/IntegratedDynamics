@@ -89,7 +89,7 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setValueInGui(ISubGuiBox subGui) {
-        ((ValueTypeItemStackLPElement.SubGuiRenderPattern) subGui).container.getTemporaryInputSlots().setInventorySlotContents(0, this.itemStack);
+        ((ValueTypeItemStackLPElement.SubGuiRenderPattern) subGui).container.getTemporaryInputSlots().setItem(0, this.itemStack);
     }
 
     @OnlyIn(Dist.CLIENT)

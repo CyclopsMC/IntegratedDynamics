@@ -64,12 +64,12 @@ public class OperatorAppendix extends SectionAppendix {
         IValueType[] inputTypes = operator.getInputTypes();
         int offsetY = 14;
         for(int i = 0; i < inputTypes.length; i++) {
-            gui.getFontRenderer().drawString(matrixStack, L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
+            gui.getFontRenderer().draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
                     + inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())), x, y + offsetY, 0);
             offsetY += 8;
         }
         String outputTypeName = L10NHelpers.localize(operator.getOutputType().getTranslationKey());
-        gui.getFontRenderer().drawString(matrixStack, L10NHelpers.localize(L10NValues.GUI_OUTPUT,
+        gui.getFontRenderer().draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_OUTPUT,
                 operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, 0);
 
         //gui.getFontRenderer().setBidiFlag(wasUnicode);
@@ -78,19 +78,19 @@ public class OperatorAppendix extends SectionAppendix {
     @Override
     @OnlyIn(Dist.CLIENT)
     protected void postDrawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
-        GlStateManager.pushMatrix();
-        if(mx >= x && my >= y && mx <= x + getWidth() && my <= y + gui.getFontRenderer().FONT_HEIGHT ) {
+        GlStateManager._pushMatrix();
+        if(mx >= x && my >= y && mx <= x + getWidth() && my <= y + gui.getFontRenderer().lineHeight ) {
             List<ITextComponent> lines = Lists.newArrayList();
             operator.loadTooltip(lines, true);
             // MCP: renderTooltip
-            gui.func_243308_b(matrixStack, lines, mx, my);
+            gui.renderComponentTooltip(matrixStack, lines, mx, my);
         }
-        GlStateManager.popMatrix();
+        GlStateManager._popMatrix();
 
-        GlStateManager.disableLighting();
+        GlStateManager._disableLighting();
 
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager._enableBlend();
+        GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     @Override

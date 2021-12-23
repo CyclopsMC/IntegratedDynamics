@@ -26,14 +26,14 @@ public class IgnoredBlockStatus extends IgnoredBlock {
     public IgnoredBlockStatus() {
         super();
 
-        this.setDefaultState(this.stateContainer.getBaseState()
-                .with(FACING, Direction.NORTH)
-                .with(STATUS, Status.INACTIVE));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(STATUS, Status.INACTIVE));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        super.fillStateContainer(builder);
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(STATUS);
     }
 
@@ -81,7 +81,7 @@ public class IgnoredBlockStatus extends IgnoredBlock {
         ERROR;
 
         @Override
-        public String getString() {
+        public String getSerializedName() {
             return this.name().toLowerCase(Locale.ENGLISH);
         }
     }

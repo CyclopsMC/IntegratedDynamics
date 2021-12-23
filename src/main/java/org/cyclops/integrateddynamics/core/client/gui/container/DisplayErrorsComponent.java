@@ -23,7 +23,7 @@ public class DisplayErrorsComponent {
 
     public void drawForeground(MatrixStack matrixStack, @Nullable List<IFormattableTextComponent> errors, int errorX, int errorY, int mouseX, int mouseY, ContainerScreenExtended<?> gui, int guiLeft, int guiTop) {
         if(errors != null && !errors.isEmpty()) {
-            if(gui.isPointInRegion(errorX, errorY, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
+            /*if(gui.isHovering(errorX, errorY, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
                 List<ITextComponent> lines = Lists.newLinkedList();
                 for(ITextComponent error : errors) {
                     lines.addAll(StringHelpers.splitLines(error.getString(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
@@ -33,7 +33,7 @@ public class DisplayErrorsComponent {
                             .collect(Collectors.toList()));
                 }
                 gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
-            }
+            }*/ // TODO: restore
         }
     }
 

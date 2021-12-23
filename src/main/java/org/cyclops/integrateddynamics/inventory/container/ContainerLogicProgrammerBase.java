@@ -33,6 +33,8 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer.IItemPredicate;
+
 /**
  * Base container for the logic programmer.
  * @author rubensworks
@@ -171,8 +173,8 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
         // This assumes that there is only one other slot, the remaining slots will be erased!
         // (We can do this because they are all ghost slots)
-        inventoryItemStacks.clear();
-        inventorySlots.clear();
+        lastSlots.clear();
+        slots.clear();
         initializeSlotsPre();
         this.temporaryInputSlots.removeDirtyMarkListener(this);
         this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, element == null ? 0 : element.getItemStackSizeLimit());
@@ -180,7 +182,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         this.temporarySlotsElement = element;
         if(element != null) {
             Pair<Integer, Integer>[] slotPositions = element.getRenderPattern().getSlotPositions();
-            for (int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
+            for (int i = 0; i < temporaryInputSlots.getContainerSize(); i++) {
                 addSlot(element.createSlot(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
                         1 + baseY + slotPositions[i].getRight()));
             }
@@ -209,12 +211,12 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity player) {
-        super.onContainerClosed(player);
-        if (!player.world.isRemote()) {
-            ItemStack itemStack = writeSlot.getStackInSlot(0);
+    public void removed(PlayerEntity player) {
+        super.removed(player);
+        if (!player.level.isClientSide()) {
+            ItemStack itemStack = writeSlot.getItem(0);
             if(!itemStack.isEmpty()) {
-                player.dropItem(itemStack, false);
+                player.drop(itemStack, false);
             }
         }
     }
@@ -225,7 +227,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     protected void labelCurrent() {
-        ItemStack itemStack = writeSlot.getStackInSlot(0);
+        ItemStack itemStack = writeSlot.getItem(0);
         if(!itemStack.isEmpty()) {
             IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
             if(this.lastLabel != null && variableFacade.isValid()) {
@@ -235,7 +237,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     protected ItemStack writeElementInfo() {
-        ItemStack itemStack = writeSlot.getStackInSlot(0);
+        ItemStack itemStack = writeSlot.getItem(0);
         ItemStack result = getActiveElement().writeElement(player, itemStack.copy());
         return result;
     }
@@ -244,22 +246,22 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public void onDirty() {
         ILogicProgrammerElement activeElement = getActiveElement();
         if(activeElement != null) {
-            for (int i = 0; i < temporaryInputSlots.getSizeInventory(); i++) {
-                ItemStack itemStack = temporaryInputSlots.getStackInSlot(i);
+            for (int i = 0; i < temporaryInputSlots.getContainerSize(); i++) {
+                ItemStack itemStack = temporaryInputSlots.getItem(i);
                 temporarySlotsElement.onInputSlotUpdated(i, itemStack);
             }
         }
 
-        ItemStack itemStack = writeSlot.getStackInSlot(0);
+        ItemStack itemStack = writeSlot.getItem(0);
         if(canWriteActiveElement() && !itemStack.isEmpty()) {
             // If the variable has a vanilla custom name, make sure we inherit it as variable label
-            if (itemStack.hasDisplayName()) {
-                this.lastLabel = itemStack.getDisplayName().getString();
+            if (itemStack.hasCustomHoverName()) {
+                this.lastLabel = itemStack.getHoverName().getString();
             }
 
             ItemStack outputStack = writeElementInfo();
             writeSlot.removeDirtyMarkListener(this);
-            writeSlot.setInventorySlotContents(0, outputStack);
+            writeSlot.setItem(0, outputStack);
             if(!StringUtils.isNullOrEmpty(this.lastLabel)) {
                 labelCurrent();
             }
@@ -289,7 +291,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     public boolean hasWriteItemInSlot() {
-        return !this.writeSlot.getStackInSlot(0).isEmpty();
+        return !this.writeSlot.getItem(0).isEmpty();
     }
 
     @Override
@@ -300,14 +302,14 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int mouseButton, ClickType clickType, PlayerEntity player) {
+    public ItemStack clicked(int slotId, int mouseButton, ClickType clickType, PlayerEntity player) {
         // Handle cases where the client may have more (phantom) slots than the server.
-        if (slotId >= this.inventorySlots.size() || (this.activeElement != null
-                && this.inventorySlots.size() > slotId && slotId >= 0
+        if (slotId >= this.slots.size() || (this.activeElement != null
+                && this.slots.size() > slotId && slotId >= 0
                 && this.activeElement.slotClick(slotId, this.getSlot(slotId), mouseButton, clickType, player))) {
             return ItemStack.EMPTY;
         }
-        return super.slotClick(slotId, mouseButton, clickType, player);
+        return super.clicked(slotId, mouseButton, clickType, player);
     }
 
     /**
@@ -337,8 +339,8 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
         protected IValueType getValueType(IInventory inventory, int slot) {
             IVariableFacadeHandlerRegistry handler = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-            if(inventory.getStackInSlot(slot) != null) {
-                IVariableFacade variableFacade = handler.handle(inventory.getStackInSlot(slot));
+            if(inventory.getItem(slot) != null) {
+                IVariableFacade variableFacade = handler.handle(inventory.getItem(slot));
                 if(variableFacade.isValid()) {
                     return variableFacade.getOutputType();
                 }

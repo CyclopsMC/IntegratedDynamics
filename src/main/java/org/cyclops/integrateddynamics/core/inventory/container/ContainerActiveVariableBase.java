@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ContainerType;
@@ -38,8 +39,8 @@ public class ContainerActiveVariableBase<T extends TileActiveVariableBase> exten
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+    public void broadcastChanges() {
+        super.broadcastChanges();
 
         tileSupplier.ifPresent(tile -> {
             NetworkHelpers.getPartNetwork(tile.getNetwork())
@@ -67,6 +68,11 @@ public class ContainerActiveVariableBase<T extends TileActiveVariableBase> exten
 
     public List<IFormattableTextComponent> getReadErrors() {
         return ValueNotifierHelpers.getValueTextComponentList(this, readErrorsId);
+    }
+
+    @Override
+    public boolean stillValid(PlayerEntity p_75145_1_) {
+        return false; // TODO: rm
     }
 
 }

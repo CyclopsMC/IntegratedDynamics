@@ -112,7 +112,7 @@ public abstract class OperatorBase implements IOperator {
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
             lines.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME, i + 1)
-            .mergeStyle(inputTypes[i].getDisplayColorFormat())
+            .withStyle(inputTypes[i].getDisplayColorFormat())
             .append(new TranslationTextComponent(inputTypes[i].getTranslationKey())));
         }
         lines.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));

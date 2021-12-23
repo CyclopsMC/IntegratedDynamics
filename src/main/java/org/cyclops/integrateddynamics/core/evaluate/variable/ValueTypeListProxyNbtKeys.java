@@ -25,14 +25,14 @@ public class ValueTypeListProxyNbtKeys extends ValueTypeListProxyBase<ValueTypeS
     @Override
     public int getLength() throws EvaluationException {
         return tag
-                .map(t -> t instanceof CompoundNBT ? ((CompoundNBT) t).keySet().size() : 0)
+                .map(t -> t instanceof CompoundNBT ? ((CompoundNBT) t).getAllKeys().size() : 0)
                 .orElse(0);
     }
 
     @Override
     public ValueTypeString.ValueString get(int index) throws EvaluationException {
         if (index < getLength()) {
-            return ValueTypeString.ValueString.of(Iterables.get(((CompoundNBT) tag.get()).keySet(), index));
+            return ValueTypeString.ValueString.of(Iterables.get(((CompoundNBT) tag.get()).getAllKeys(), index));
         }
         return null;
     }

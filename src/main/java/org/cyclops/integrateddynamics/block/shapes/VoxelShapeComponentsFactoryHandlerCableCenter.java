@@ -60,7 +60,7 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
 
         @Override
         public boolean destroy(World world, BlockPos pos, PlayerEntity player, boolean saveState) {
-            if (!world.isRemote()) {
+            if (!world.isClientSide()) {
                 CableHelpers.removeCable(world, pos, player);
                 return true;
             }
@@ -76,9 +76,9 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
 
         @Override
         public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
-            ItemStack heldItem = player.getHeldItem(hand);
-            ActionResultType actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getFace(), null);
-            if(actionResult.isSuccessOrConsume()) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            ActionResultType actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getDirection(), null);
+            if(actionResult.consumesAction()) {
                 return actionResult;
             }
             return ActionResultType.PASS;

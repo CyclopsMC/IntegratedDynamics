@@ -26,8 +26,8 @@ public abstract class ContainerScreenMechanicalMachine<C extends ContainerMechan
 
     public void drawEnergyBarTooltip(int x, int y, int width, int height, int mouseX, int mouseY) {
         GuiHelpers.renderTooltipOptional(this, 8, 16, 18, 60, mouseX, mouseY, () -> {
-            int energyStored = getContainer().getEnergy();
-            int energyMax = getContainer().getMaxEnergy();
+            int energyStored = getMenu().getEnergy();
+            int energyMax = getMenu().getMaxEnergy();
             if (energyMax > 0) {
                 return Optional.of(Lists.newArrayList(
                         new TranslationTextComponent("general.integrateddynamics.energy"),
@@ -49,8 +49,8 @@ public abstract class ContainerScreenMechanicalMachine<C extends ContainerMechan
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
     }
 }

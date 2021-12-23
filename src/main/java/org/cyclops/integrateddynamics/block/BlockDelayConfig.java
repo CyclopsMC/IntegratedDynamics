@@ -22,11 +22,11 @@ public class BlockDelayConfig extends BlockConfig {
         super(
             IntegratedDynamics._instance,
             "delay",
-            eConfig -> new BlockDelay(Block.Properties.create(Material.ANVIL)
-                    .hardnessAndResistance(5.0F)
+            eConfig -> new BlockDelay(Block.Properties.of(Material.HEAVY_METAL)
+                    .strength(5.0F)
                     .sound(SoundType.METAL)),
                 (eConfig, block) -> new ItemBlockDelay(block, new Item.Properties()
-                        .group(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
 
