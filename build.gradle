@@ -2,62 +2,57 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
+        maven { url = 'https://maven.minecraftforge.net' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
 plugins {
-    // For people who want stable
-    //id "net.minecraftforge.gradle.forge" version "2.0.2"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-	id 'com.github.kt3k.coveralls' version '2.10.2'
+	id 'com.github.kt3k.coveralls' version '2.12.0'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'idea'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'jacoco'
 
-import net.minecraftforge.gradle.common.task.SignJar
+import net.minecraftforge.gradle.common.tasks.SignJar
 
-loadProperties()
+// Determine build number
+String build_number = "DEV" // this will be referenced as simply build_number from now on.
+if (System.getenv().BUILD_NUMBER)
+    build_number = System.getenv().BUILD_NUMBER
+if (System.getenv().TRAVIS_BUILD_NUMBER)
+    build_number = System.getenv().TRAVIS_BUILD_NUMBER
+if (System.getenv().GITHUB_RUN_ID)
+    build_number = System.getenv().GITHUB_RUN_NUMBER
+if (System.getenv().RELEASE || System.getenv().TRAVIS_TAG)
+    build_number = "RELEASE"
+logger.lifecycle "BUILDING VERSION: " + build_number
 
-version = config.mod_version
+// Set mod details
+version = project.mod_version
 group = "org.cyclops.integrateddynamics"
 archivesBaseName = "IntegratedDynamics"
+
+// Set Java details
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-def loadProperties() {
-    // Config file with custom properties
-    ext.configFile = file "build.properties"
-    configFile.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        ext.config = new ConfigSlurper().parse prop
+// Load secrets
+def getSecrets() {
+    Properties props = new Properties()
+    if (file('./secrets.properties').exists()) {
+        props.load(new FileInputStream(file('./secrets.properties')))
     }
-
-    // grab buildNumber
-    ext.buildnumber = "DEV" // this will be referenced as simply project.buildnumber from now on.
-    if (System.getenv().BUILD_NUMBER)
-        project.buildnumber = System.getenv().BUILD_NUMBER
-    if (System.getenv().TRAVIS_BUILD_NUMBER)
-        project.buildnumber = System.getenv().TRAVIS_BUILD_NUMBER
-    if (System.getenv().GITHUB_RUN_ID)
-        project.buildnumber = System.getenv().GITHUB_RUN_NUMBER
-    if (System.getenv().RELEASE || System.getenv().TRAVIS_TAG)
-        project.buildnumber = "RELEASE"
-    logger.lifecycle "BUILDING VERSION: " + project.buildnumber
+    return props
 }
+Properties secrets = getSecrets();
 
 sourceSets {
     main
@@ -70,8 +65,9 @@ sourceSets {
 
 configurations {
     shadow.setTransitive(true);
-    integrationtestCompile.extendsFrom(compile)
-    javadoc.classpath += sourceSets.integrationtest.output
+	integrationtestImplementation.extendsFrom(implementation)
+	integrationtestRuntimeOnly.extendsFrom(runtimeOnly)
+	javadoc.classpath += sourceSets.integrationtest.output
 }
 
 test {
@@ -94,45 +90,48 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${config.minecraft_version}-${config.forge_version}"
+    minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
-    // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local CyclopsCore version.
-    if(project.hasProperty("cyclopscore_version_local")) {
-        compile "org.cyclops.cyclopscore:cyclopscore:${config.minecraft_version}-${project.cyclopscore_version_local}:deobf"
+    // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local CyclopsCore version.
+    if(secrets.cyclopscore_version_local) {
+        implementation "org.cyclops.cyclopscore:cyclopscore:${project.minecraft_version}-${secrets.cyclopscore_version_local}:deobf"
     } else {
-        compile "org.cyclops.cyclopscore:cyclopscore:${config.minecraft_version}-${config.cyclopscore_version}:deobf"
+        implementation "org.cyclops.cyclopscore:cyclopscore:${project.minecraft_version}-${project.cyclopscore_version}:deobf"
     }
 	
-    // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your gradle.properties if you want to use a custom local Integrated Dynamics Compat version.
-    if(project.hasProperty("integrateddynamicscompat_version_local")) {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat:${project.integrateddynamicscompat_version_local}") {
+    // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local Integrated Dynamics Compat version.
+    if(secrets.integrateddynamicscompat_version_local) {
+        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat:${secrets.integrateddynamicscompat_version_local}") {
             transitive = false
         }
     } else {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat:${config.integrateddynamicscompat_version}") {
+        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat:${project.integrateddynamicscompat_version}") {
             transitive = false
         }
     }
 
     if(project.hasProperty("commoncapabilities_version_local")) {
-        compile "org.cyclops.commoncapabilities:commoncapabilities:${project.commoncapabilities_version_local}:deobf"
+        implementation "org.cyclops.commoncapabilities:commoncapabilities:${project.commoncapabilities_version_local}:deobf"
     } else {
-        compile fg.deobf("org.cyclops.commoncapabilities:commoncapabilities:${config.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
+        implementation fg.deobf("org.cyclops.commoncapabilities:commoncapabilities:${project.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
             transitive = false
         }
     }
 	
-    compile "com.google.re2j:re2j:1.1"
+    implementation "com.google.re2j:re2j:1.1"
     shadow "com.google.re2j:re2j:1.1"
 
     // Project lombok
-    compileOnly "org.projectlombok:lombok:1.16.4"
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+	testCompileOnly 'org.projectlombok:lombok:1.18.22'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 	
-	testCompile "junit:junit:4.12"
+	testImplementation "junit:junit:4.12"
 }
 
 minecraft {
-    mappings channel: "${config.mcp_mappings_channel}", version: "${config.mcp_mappings_version}"
+    mappings channel: "${project.mcp_mappings_channel}", version: "${project.mcp_mappings_version}"
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -173,10 +172,10 @@ minecraft {
     }
 }
 
-if (project.buildnumber.equals("RELEASE"))
-    version = "${config.minecraft_version}-${config.mod_version}"
+if (build_number.equals("RELEASE"))
+    version = "${project.minecraft_version}-${project.mod_version}"
 else
-    version = "${config.minecraft_version}-${config.mod_version}-${buildnumber}"
+    version = "${project.minecraft_version}-${project.mod_version}-${build_number}"
 
 jar {
     manifest {
@@ -184,13 +183,20 @@ jar {
                 "FMLAT": "accesstransformer.cfg",
                 "Specification-Title": "${project.name}",
                 "Specification-Vendor": "rubensworks",
-                "Specification-Version": "${config.mod_version}",
+                "Specification-Version": "${project.mod_version}",
                 "Implementation-Title": "${project.name}",
-                "Implementation-Version": "${config.mod_version}",
+                "Implementation-Version": "${project.mod_version}",
                 "Implementation-Vendor" :"rubensworks",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+}
+jar.finalizedBy('reobfJar')
+
+javadoc {
+    source = [sourceSets.main.allJava]
+    // prevent java 8's strict doclint for javadocs from failing builds
+    options.addStringOption('Xdoclint:accessibility,html,reference,syntax', '-quiet')
 }
 
 task signJar(type: SignJar, dependsOn: jar) {
@@ -215,9 +221,9 @@ task deobfJar(type: Jar) {
                 "FMLAT": "accesstransformer.cfg",
                 "Specification-Title": "${project.name}",
                 "Specification-Vendor": "rubensworks",
-                "Specification-Version": "${config.mod_version}",
+                "Specification-Version": "${project.mod_version}",
                 "Implementation-Title": "${project.name}",
-                "Implementation-Version": "${config.mod_version}",
+                "Implementation-Version": "${project.mod_version}",
                 "Implementation-Vendor" :"rubensworks",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
@@ -229,18 +235,20 @@ task apiJar(type: Jar) {
         include "**/api/**/*"
     }
     includeEmptyDirs = false
-    version = "${project.config.api_version}"
+    version = "${project.project.api_version}"
     classifier = "api"
 }
 
-task sourceJar(type: Jar) {
-    classifier = "sources"
+task sourcesJar(type: Jar) {
+    duplicatesStrategy(DuplicatesStrategy.FAIL)
+    archiveClassifier.set('sources')
     from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
+    duplicatesStrategy(DuplicatesStrategy.FAIL)
+    archiveClassifier.set('javadoc')
     from javadoc.destinationDir
-    classifier 'javadoc'
 }
 
 shadowJar {
@@ -257,20 +265,20 @@ reobf {
 artifacts {
     archives deobfJar
 	archives apiJar
-    archives sourceJar
+    archives sourcesJar
     archives javadocJar
 }
 
 curseforge {
-    if(project.hasProperty("curseforge_key")) {
-        apiKey = project.curseforge_key
-    } else if((System.getenv().TRAVIS || System.getenv().GITHUB_ACTIONS) && System.getenv().CURSEFORGE_KEY_SECRET) {
+    if(secrets.curseforge_key) {
+        apiKey = secrets.curseforge_key
+    } else if(System.getenv().GITHUB_ACTIONS && System.getenv().CURSEFORGE_KEY_SECRET) {
         apiKey = System.getenv().CURSEFORGE_KEY_SECRET
     }
 
     project {
         id = "236307" // my project url is http://minecraft.curseforge.com/mc-mods/236307/
-        releaseType = project.config.release_type
+        releaseType = project.project.release_type
         mainArtifact(jar) {
             relations {
                 requiredDependency 'cyclops-core'
@@ -284,74 +292,43 @@ curseforge {
         }
 
         addArtifact deobfJar
-        addArtifact sourceJar
+        addArtifact sourcesJar
         addArtifact javadocJar
     }
 }
 
-configurations {
-    deployerJars
-}
-
-dependencies {
-    deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
-}
-
-uploadArchives {
+publishing {
     repositories {
-        add getProject().repositories.mavenLocal()
-    }
-    repositories.mavenDeployer {
-        configuration = configurations.deployerJars
-
         if (project.hasProperty("filesmaven_url")) {
             logger.info('Publishing to files server')
-            repository(url: project.filesmaven_url) {
-                authentication(userName: project.filesmaven_username, password: project.filesmaven_key)
-            }
-        } else if (System.getenv().MAVEN_URL) {
-            logger.info('Publishing to files server')
-            repository(url: System.getenv().MAVEN_URL) {
-                authentication(userName: System.getenv().MAVEN_USERNAME, password: System.getenv().MAVEN_KEY)
-            }
-        } else {
-            logger.info('Publishing to repo folder')
-            repository(url: 'file://localhost/' + project.file('~/.m2/repository').getAbsolutePath())
-        }
-
-        pom {
-            groupId = project.group
-            version = project.version
-            artifactId = project.archivesBaseName.toLowerCase()
-        }
-        pom.project {
-            name project.archivesBaseName
-            packaging 'jar'
-            description 'todo'
-            url 'https://github.com/CyclopsMC/IntegratedDynamics'
-
-            scm {
-                url 'https://github.com/CyclopsMC/IntegratedDynamics'
-                connection 'scm:git:git://github.com/CyclopsMC/IntegratedDynamics.git'
-                developerConnection 'scm:git:git@github.com:CyclopsMC/IntegratedDynamics.git'
-            }
-
-            issueManagement {
-                system 'github'
-                url 'https://github.com/CyclopsMC/IntegratedDynamics/issues'
-            }
-
-            developers {
-                developer {
-                    id 'rubensworks'
-                    name 'rubensworks'
-                    roles { role 'developer' }
+            maven {
+                url project.filesmaven_url
+                credentials {
+                    username = project.filesmaven_username
+                    password = project.filesmaven_key
                 }
             }
+        } else if (System.getenv("MAVEN_URL")) {
+            logger.info('Publishing to files server')
+            maven {
+                url System.getenv("MAVEN_URL")
+                credentials {
+                    username = System.getenv("MAVEN_USERNAME")
+                    password = System.getenv("MAVEN_KEY")
+                }
+            }
+        } else {
+            logger.error('No maven repo was set!')
+        }
+    }
+
+    publications { PublicationContainer publicationContainer ->
+        publicationContainer.register("maven", MavenPublication) { MavenPublication publication ->
+            publication.artifacts = [jar, javadocJar, deobfJar, sourcesJar]
+            publication.artifactId = project.archivesBaseName.toLowerCase() // GH can't handle uppercase...
         }
     }
 }
-uploadArchives.dependsOn build
 
 idea {
     module {

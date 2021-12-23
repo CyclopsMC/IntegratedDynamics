@@ -22,6 +22,5 @@ keystore.jks
 .DS_Store
 
 # Ignore files specific to dev environments
-gradle.properties
-build_number.properties
+secrets.properties
 changelog.txt
