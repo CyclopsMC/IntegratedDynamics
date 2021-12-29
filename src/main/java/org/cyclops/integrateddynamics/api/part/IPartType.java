@@ -15,6 +15,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -321,8 +323,9 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     /**
      * Called when a neighbouring block is updated, more specifically when
-     * {@link net.minecraft.block.Block#neighborChanged(BlockState, World, BlockPos, Block, BlockPos, boolean)} or
-     * {@link Block#onNeighborChange(BlockState, IWorldReader, BlockPos, BlockPos)} is called.
+     * {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, BlockPos, boolean)},
+     * {@link Block#onNeighborChange(BlockState, LevelReader, BlockPos, BlockPos)}
+     * or {@link Block#updateShape(BlockState, Direction, BlockState, LevelAccessor, BlockPos, BlockPos)} is called.
      * @param network The network to update in.
      * @param partNetwork The part network to update in.
      * @param target The target block.

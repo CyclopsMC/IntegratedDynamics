@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.block;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * A {@link BlockRayTraceResult} that specifies the selected {@link VoxelShapeComponents.IComponent}.
+ * A {@link BlockHitResult} that specifies the selected {@link VoxelShapeComponents.IComponent}.
  * @author rubensworks
  */
 public class BlockRayTraceResultComponent extends BlockHitResult {

@@ -13,6 +13,7 @@ buildscript {
 plugins {
     id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.github.kt3k.coveralls' version '2.12.0'
+    id 'com.diffplug.spotless' version '5.14.3'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -345,5 +346,16 @@ jacocoTestReport {
     reports {
         xml.enabled = true
         html.enabled = true
+    }
+}
+
+spotless {
+    java {
+        target 'src/*/java/org/cyclops/**/*.java'
+
+        endWithNewline()
+        trimTrailingWhitespace()
+        removeUnusedImports()
+        indentWithTabs()
     }
 }
