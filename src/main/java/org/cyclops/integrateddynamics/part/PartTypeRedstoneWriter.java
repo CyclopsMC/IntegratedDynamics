@@ -28,7 +28,7 @@ public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWr
     public PartStateWriterBase<PartTypeRedstoneWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeRedstoneWriter>(Aspects.REGISTRY.getAspects(this).size());
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateWriterBase<PartTypeRedstoneWriter> state) {
         return GeneralConfig.redstoneWriterBaseConsumption;

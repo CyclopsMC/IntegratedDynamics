@@ -4,19 +4,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMechanicalMachine;
 
-import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 /**

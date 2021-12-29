@@ -45,5 +45,5 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
         super.onForgeRegistered();
         ComposterBlock.COMPOSTABLES.put(getInstance(), 0.65F);
     }
-    
+
 }

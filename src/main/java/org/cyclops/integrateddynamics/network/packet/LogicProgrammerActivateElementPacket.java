@@ -17,8 +17,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerActivateElementPacket extends PacketCodec {
 
-	@CodecField
-	private String typeId;
+    @CodecField
+    private String typeId;
     @CodecField
     private String elementId;
 
@@ -27,27 +27,27 @@ public class LogicProgrammerActivateElementPacket extends PacketCodec {
     }
 
     public LogicProgrammerActivateElementPacket(ResourceLocation typeId, ResourceLocation elementId) {
-		this.typeId = typeId.toString();
+        this.typeId = typeId.toString();
         this.elementId = elementId.toString();
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-			((ContainerLogicProgrammerBase) player.containerMenu).setActiveElementById(
-					new ResourceLocation(typeId), new ResourceLocation(elementId));
-		}
-	}
-	
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ((ContainerLogicProgrammerBase) player.containerMenu).setActiveElementById(
+                    new ResourceLocation(typeId), new ResourceLocation(elementId));
+        }
+    }
+
 }

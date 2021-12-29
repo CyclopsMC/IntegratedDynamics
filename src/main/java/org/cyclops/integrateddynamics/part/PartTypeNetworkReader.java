@@ -31,7 +31,7 @@ public class PartTypeNetworkReader extends PartTypeReadBase<PartTypeNetworkReade
     public PartStateReaderBase<PartTypeNetworkReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeNetworkReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeNetworkReader> state) {
         return GeneralConfig.networkReaderBaseConsumption;

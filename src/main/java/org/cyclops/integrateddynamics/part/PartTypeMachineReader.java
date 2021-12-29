@@ -52,7 +52,7 @@ public class PartTypeMachineReader extends PartTypeReadBase<PartTypeMachineReade
     public PartStateReaderBase<PartTypeMachineReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeMachineReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeMachineReader> state) {
         return GeneralConfig.machineReaderBaseConsumption;

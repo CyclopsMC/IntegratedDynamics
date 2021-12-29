@@ -38,7 +38,7 @@ public class PartTypeWorldReader extends PartTypeReadBase<PartTypeWorldReader, P
     public PartStateReaderBase<PartTypeWorldReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeWorldReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeWorldReader> state) {
         return GeneralConfig.worldReaderBaseConsumption;

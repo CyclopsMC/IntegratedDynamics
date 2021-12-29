@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 
 /**
  * Renderer for rendering the energy overlay on the {@link org.cyclops.integrateddynamics.block.BlockEnergyBattery}.
- * 
+ *
  * @author rubensworks
  *
  */
@@ -70,7 +70,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
     }
 
     @Override
-	public void render(BlockEntityEnergyBattery tile, float partialTicks, PoseStack matrixStack,
+    public void render(BlockEntityEnergyBattery tile, float partialTicks, PoseStack matrixStack,
                        MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
         if(tile != null && tile.getEnergyStored() > 0) {
             float height = (float) tile.getEnergyStored() / tile.getMaxEnergyStored();
@@ -111,6 +111,6 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
 
             matrixStack.popPose();
         }
-	}
+    }
 
 }

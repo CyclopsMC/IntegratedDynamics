@@ -22,41 +22,41 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends PacketCodec {
 
-	@CodecField
-	private Tag value;
+    @CodecField
+    private Tag value;
 
     public LogicProgrammerValueTypeIngredientsValueChangedPacket() {
 
     }
 
     public LogicProgrammerValueTypeIngredientsValueChangedPacket(ValueObjectTypeIngredients.ValueIngredients value) {
-		this.value = value.getType().serialize(value);
+        this.value = value.getType().serialize(value);
     }
 
-	protected ValueObjectTypeIngredients.ValueIngredients getValue() {
-		return ValueHelpers.deserializeRaw(ValueTypes.OBJECT_INGREDIENTS, value);
-	}
+    protected ValueObjectTypeIngredients.ValueIngredients getValue() {
+        return ValueHelpers.deserializeRaw(ValueTypes.OBJECT_INGREDIENTS, value);
+    }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
-			if(element instanceof ValueTypeIngredientsLPElement) {
-				((ValueTypeIngredientsLPElement) element).setServerValue(getValue());
-				((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
-			}
-		}
-	}
-	
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
+            if(element instanceof ValueTypeIngredientsLPElement) {
+                ((ValueTypeIngredientsLPElement) element).setServerValue(getValue());
+                ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
+            }
+        }
+    }
+
 }

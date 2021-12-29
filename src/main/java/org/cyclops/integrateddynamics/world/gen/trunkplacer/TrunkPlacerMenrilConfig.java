@@ -24,5 +24,5 @@ public class TrunkPlacerMenrilConfig extends TrunkPlacerConfig<TrunkPlacerMenril
         super.onRegistered();
         RegistryEntries.TRUNK_PLACER_MENRIL = getInstance();
     }
-    
+
 }

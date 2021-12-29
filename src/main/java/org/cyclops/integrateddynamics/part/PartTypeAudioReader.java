@@ -40,7 +40,7 @@ public class PartTypeAudioReader extends PartTypeReadBase<PartTypeAudioReader, P
     public PartStateReaderBase<PartTypeAudioReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeAudioReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeAudioReader> state) {
         return GeneralConfig.audioReaderBaseConsumption;

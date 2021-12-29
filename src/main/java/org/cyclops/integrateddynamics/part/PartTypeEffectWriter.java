@@ -105,7 +105,7 @@ public class PartTypeEffectWriter extends PartTypeWriteBase<PartTypeEffectWriter
     public PartStateWriterBase<PartTypeEffectWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeEffectWriter>(Aspects.REGISTRY.getAspects(this).size());
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateWriterBase<PartTypeEffectWriter> state) {
         return GeneralConfig.effectWriterBaseConsumption;

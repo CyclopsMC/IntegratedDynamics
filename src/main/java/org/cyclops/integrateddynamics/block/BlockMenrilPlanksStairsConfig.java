@@ -27,7 +27,7 @@ public class BlockMenrilPlanksStairsConfig extends BlockConfig {
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
-    
+
     @Override
     public void onRegistered() {
         BlockHelpers.setFireInfo(RegistryEntries.BLOCK_MENRIL_PLANKS_STAIRS, 5, 20);

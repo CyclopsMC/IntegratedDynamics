@@ -27,22 +27,22 @@ public class ItemStackRenamePacket extends PacketCodec {
         this.name = name;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLabeller) {
-			((ContainerLabeller) player.containerMenu).setItemStackName(this.name);
-		}
-	}
-	
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLabeller) {
+            ((ContainerLabeller) player.containerMenu).setItemStackName(this.name);
+        }
+    }
+
 }

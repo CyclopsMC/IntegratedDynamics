@@ -26,7 +26,7 @@ public class TestParseOperators {
         ret[0] = new DummyVariableString(ValueTypeString.ValueString.of(v));
         return ret;
     }
-    
+
     @Before
     public void before() {
 

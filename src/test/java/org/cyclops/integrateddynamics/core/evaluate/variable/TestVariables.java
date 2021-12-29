@@ -188,7 +188,7 @@ public class TestVariables {
         CompoundTag tagString = new CompoundTag();
         tagString.putString("proxyName", "integrateddynamics:materialized");
         tagString.put("serialized", tagStringSerialized);
-        
+
         // Make nested list
         CompoundTag tagStringNestedSerialized = new CompoundTag();
         tagStringNestedSerialized.putString("valueType", "integrateddynamics:list");

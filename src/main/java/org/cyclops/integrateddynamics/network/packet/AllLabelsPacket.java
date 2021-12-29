@@ -19,8 +19,8 @@ import java.util.Map;
  */
 public class AllLabelsPacket extends PacketCodec {
 
-	@CodecField
-	private Map<Integer, String> labels;
+    @CodecField
+    private Map<Integer, String> labels;
 
     public AllLabelsPacket() {
 
@@ -30,24 +30,24 @@ public class AllLabelsPacket extends PacketCodec {
         this.labels = labels;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
         if (labels != null) {
             for (Map.Entry<Integer, String> entry : labels.entrySet()) {
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).putUnsafe(entry.getKey(), entry.getValue());
             }
         }
-	}
+    }
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
 
-	}
-	
+    }
+
 }

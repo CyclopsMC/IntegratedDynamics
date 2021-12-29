@@ -29,7 +29,7 @@ public class PartTypeEntityReader extends PartTypeReadBase<PartTypeEntityReader,
     public PartStateReaderBase<PartTypeEntityReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeEntityReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeEntityReader> state) {
         return GeneralConfig.entityReaderBaseConsumption;

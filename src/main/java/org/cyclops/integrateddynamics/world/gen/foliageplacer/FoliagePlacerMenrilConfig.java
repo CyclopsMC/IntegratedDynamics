@@ -17,5 +17,5 @@ public class FoliagePlacerMenrilConfig extends FoliagePlacerConfig<FoliagePlacer
                 eConfig -> FoliagePlacerMenril.CODEC
         );
     }
-    
+
 }

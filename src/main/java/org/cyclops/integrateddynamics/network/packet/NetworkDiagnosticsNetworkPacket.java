@@ -26,28 +26,28 @@ public class NetworkDiagnosticsNetworkPacket extends PacketCodec {
     }
 
     public NetworkDiagnosticsNetworkPacket(CompoundTag networkData) {
-		this.networkData = networkData;
+        this.networkData = networkData;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		RawNetworkData networkData = RawNetworkData.fromNbt(this.networkData);
-		if (networkData.getParts().isEmpty()) {
-			// Force observers to be cleared when no parts are present.
-			networkData.getObservers().clear();
-		}
-		GuiNetworkDiagnostics.setNetworkData(networkData.getId(), networkData.isKilled() ? null : networkData);
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
+        RawNetworkData networkData = RawNetworkData.fromNbt(this.networkData);
+        if (networkData.getParts().isEmpty()) {
+            // Force observers to be cleared when no parts are present.
+            networkData.getObservers().clear();
+        }
+        GuiNetworkDiagnostics.setNetworkData(networkData.getId(), networkData.isKilled() ? null : networkData);
+    }
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
 
-	}
-	
+    }
+
 }

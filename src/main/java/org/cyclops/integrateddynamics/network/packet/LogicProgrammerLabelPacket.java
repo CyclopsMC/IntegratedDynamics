@@ -24,25 +24,25 @@ public class LogicProgrammerLabelPacket extends PacketCodec {
     }
 
     public LogicProgrammerLabelPacket(String label) {
-		this.label = label;
+        this.label = label;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-			((ContainerLogicProgrammerBase) player.containerMenu).onLabelPacket(label);
-		}
-	}
-	
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ((ContainerLogicProgrammerBase) player.containerMenu).onLabelPacket(label);
+        }
+    }
+
 }

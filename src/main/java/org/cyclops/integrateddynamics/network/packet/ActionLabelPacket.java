@@ -17,8 +17,8 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
  */
 public class ActionLabelPacket extends PacketCodec {
 
-	@CodecField
-	private int variableId;
+    @CodecField
+    private int variableId;
     @CodecField
     private String label; // If null, this action is assumed to be a removal.
 
@@ -31,28 +31,28 @@ public class ActionLabelPacket extends PacketCodec {
         this.label = label;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
         if(label == null) {
             LabelsWorldStorage.getInstance(IntegratedDynamics._instance).removeUnsafe(variableId);
         } else {
             LabelsWorldStorage.getInstance(IntegratedDynamics._instance).putUnsafe(variableId, label);
         }
-	}
+    }
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
         if(label == null) {
             LabelsWorldStorage.getInstance(IntegratedDynamics._instance).remove(variableId);
         } else {
             LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableId, label);
         }
-	}
-	
+    }
+
 }

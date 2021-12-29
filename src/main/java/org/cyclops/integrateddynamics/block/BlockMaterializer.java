@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMaterializer;
 import org.cyclops.integrateddynamics.core.block.BlockWithEntityGuiCabled;
 

@@ -22,41 +22,41 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerValueTypeListValueChangedPacket extends PacketCodec {
 
-	@CodecField
-	private Tag value;
+    @CodecField
+    private Tag value;
 
     public LogicProgrammerValueTypeListValueChangedPacket() {
 
     }
 
     public LogicProgrammerValueTypeListValueChangedPacket(ValueTypeList.ValueList value) {
-		this.value = ValueHelpers.serializeRaw(value);
+        this.value = ValueHelpers.serializeRaw(value);
     }
 
-	protected ValueTypeList.ValueList getListValue() {
-		return ValueHelpers.deserializeRaw(ValueTypes.LIST, value);
-	}
+    protected ValueTypeList.ValueList getListValue() {
+        return ValueHelpers.deserializeRaw(ValueTypes.LIST, value);
+    }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
-			if(element instanceof ValueTypeListLPElement) {
-				((ValueTypeListLPElement) element).setServerValue(getListValue());
-				((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
-			}
-		}
-	}
-	
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
+            if(element instanceof ValueTypeListLPElement) {
+                ((ValueTypeListLPElement) element).setServerValue(getListValue());
+                ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
+            }
+        }
+    }
+
 }

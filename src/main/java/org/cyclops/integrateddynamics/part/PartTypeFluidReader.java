@@ -38,7 +38,7 @@ public class PartTypeFluidReader extends PartTypeReadBase<PartTypeFluidReader, P
     public PartStateReaderBase<PartTypeFluidReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeFluidReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeFluidReader> state) {
         return GeneralConfig.fluidReaderBaseConsumption;

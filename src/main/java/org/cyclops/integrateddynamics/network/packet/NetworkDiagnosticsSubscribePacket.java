@@ -24,35 +24,35 @@ public class NetworkDiagnosticsSubscribePacket extends PacketCodec {
     }
 
     public NetworkDiagnosticsSubscribePacket(boolean subscribe) {
-		this.subscribe = subscribe;
+        this.subscribe = subscribe;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if (subscribe) {
-			NetworkDiagnostics.getInstance().registerPlayer(player);
-		} else {
-			NetworkDiagnostics.getInstance().unRegisterPlayer(player);
-		}
-	}
+    }
 
-	public static NetworkDiagnosticsSubscribePacket subscribe() {
-		return new NetworkDiagnosticsSubscribePacket(true);
-	}
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if (subscribe) {
+            NetworkDiagnostics.getInstance().registerPlayer(player);
+        } else {
+            NetworkDiagnostics.getInstance().unRegisterPlayer(player);
+        }
+    }
 
-	public static NetworkDiagnosticsSubscribePacket unsubscribe() {
-		return new NetworkDiagnosticsSubscribePacket(false);
-	}
-	
+    public static NetworkDiagnosticsSubscribePacket subscribe() {
+        return new NetworkDiagnosticsSubscribePacket(true);
+    }
+
+    public static NetworkDiagnosticsSubscribePacket unsubscribe() {
+        return new NetworkDiagnosticsSubscribePacket(false);
+    }
+
 }

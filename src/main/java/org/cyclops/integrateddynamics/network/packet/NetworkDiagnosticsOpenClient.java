@@ -20,27 +20,27 @@ public class NetworkDiagnosticsOpenClient extends PacketCodec {
 
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				GuiNetworkDiagnostics.clearNetworkData();
-				IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.subscribe());
-				GuiNetworkDiagnostics.start();
-			}
-		}).start();
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                GuiNetworkDiagnostics.clearNetworkData();
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.subscribe());
+                GuiNetworkDiagnostics.start();
+            }
+        }).start();
+    }
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
 
-	}
+    }
 
 }

@@ -19,5 +19,5 @@ public class ItemProtoChorusConfig extends ItemConfig {
                         .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
-    
+
 }

@@ -59,7 +59,7 @@ public class TestIngredientsOperators {
     private DummyVariable<ValueObjectTypeItemStack.ValueItemStack> iItem;
     private Predicate<ValueObjectTypeItemStack.ValueItemStack> pItemRaw;
     private DummyVariable<ValueTypeOperator.ValueOperator> pItem;
-    
+
     private DummyVariable<ValueObjectTypeFluidStack.ValueFluidStack> iFluid;
     private Predicate<ValueObjectTypeFluidStack.ValueFluidStack> pFluidRaw;
     private DummyVariable<ValueTypeOperator.ValueOperator> pFluid;

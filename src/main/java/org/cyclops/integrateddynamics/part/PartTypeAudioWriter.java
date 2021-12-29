@@ -42,7 +42,7 @@ public class PartTypeAudioWriter extends PartTypeWriteBase<PartTypeAudioWriter, 
     public PartStateWriterBase<PartTypeAudioWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeAudioWriter>(Aspects.REGISTRY.getAspects(this).size());
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateWriterBase<PartTypeAudioWriter> state) {
         return GeneralConfig.audioWriterBaseConsumption;

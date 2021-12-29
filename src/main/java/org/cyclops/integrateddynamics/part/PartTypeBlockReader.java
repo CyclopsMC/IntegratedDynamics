@@ -33,7 +33,7 @@ public class PartTypeBlockReader extends PartTypeReadBase<PartTypeBlockReader, P
     public PartStateReaderBase<PartTypeBlockReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeBlockReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeBlockReader> state) {
         return GeneralConfig.blockReaderBaseConsumption;

@@ -27,20 +27,20 @@ public class SpeakTextPacket extends PacketCodec {
         this.text = text;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		Narrator.getNarrator().say(this.text, false);
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
+        Narrator.getNarrator().say(this.text, false);
+    }
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
 
-	}
-	
+    }
+
 }

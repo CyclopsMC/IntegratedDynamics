@@ -33,7 +33,7 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     public PartStateEmpty<PartTypePanelLightStatic> constructDefaultState() {
         return new PartStateEmpty<PartTypePanelLightStatic>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateEmpty<PartTypePanelLightStatic> state) {
         return GeneralConfig.panelLightStaticBaseConsumption;

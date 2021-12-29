@@ -69,5 +69,5 @@ public final class PartTypes {
         REGISTRY.register(CONNECTOR_MONO);
         REGISTRY.register(CONNECTOR_OMNI);
     }
-    
+
 }

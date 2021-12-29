@@ -37,7 +37,7 @@ public class PartTypeRedstoneReader extends PartTypeReadBase<PartTypeRedstoneRea
     public PartStateReaderBase<PartTypeRedstoneReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeRedstoneReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeRedstoneReader> state) {
         return GeneralConfig.redstoneReaderBaseConsumption;

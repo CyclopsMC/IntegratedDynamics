@@ -44,7 +44,7 @@ public class MaterializerNetworkElement extends TileNetworkElement<BlockEntityMa
     public int getChannel() {
         return IPositionedAddonsNetwork.DEFAULT_CHANNEL;
     }
-    
+
     @Override
     public int getConsumptionRate() {
         return GeneralConfig.materializerBaseConsumption;

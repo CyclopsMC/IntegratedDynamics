@@ -34,7 +34,7 @@ public class PartTypeInventoryReader extends PartTypeReadBase<PartTypeInventoryR
     public PartStateReaderBase<PartTypeInventoryReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeInventoryReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeInventoryReader> state) {
         return GeneralConfig.inventoryReaderBaseConsumption;

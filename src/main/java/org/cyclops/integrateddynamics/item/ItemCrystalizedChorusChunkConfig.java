@@ -19,5 +19,5 @@ public class ItemCrystalizedChorusChunkConfig extends ItemConfig {
                         .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
-    
+
 }

@@ -69,7 +69,7 @@ public class TestRecipeOperators {
                         new ItemStack(Items.DIAMOND_PICKAXE), new ItemStack(Blocks.OAK_DOOR), ItemStack.EMPTY)
                 )));
     }
-    
+
     /**
      * ----------------------------------- INPUT -----------------------------------
      */

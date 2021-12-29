@@ -130,7 +130,7 @@ public class GeneralConfig extends DummyConfig {
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }
-    
+
     @Override
     public void onRegistered() {
         if(analytics) {

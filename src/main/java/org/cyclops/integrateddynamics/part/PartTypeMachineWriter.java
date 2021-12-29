@@ -25,7 +25,7 @@ public class PartTypeMachineWriter extends PartTypeWriteBase<PartTypeMachineWrit
     public PartStateWriterBase<PartTypeMachineWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeMachineWriter>(Aspects.REGISTRY.getAspects(this).size());
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateWriterBase<PartTypeMachineWriter> state) {
         return GeneralConfig.machineWriterBaseConsumption;

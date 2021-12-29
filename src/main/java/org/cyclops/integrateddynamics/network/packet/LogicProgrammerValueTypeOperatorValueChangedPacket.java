@@ -24,47 +24,47 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCodec {
 
-	@CodecField
-	private Tag operatorValue;
+    @CodecField
+    private Tag operatorValue;
 
     public LogicProgrammerValueTypeOperatorValueChangedPacket() {
 
     }
 
     public LogicProgrammerValueTypeOperatorValueChangedPacket(ValueTypeOperator.ValueOperator value) {
-		try {
-			this.operatorValue = ValueHelpers.serializeRaw(value);
-		} catch (Exception e) {
-			this.operatorValue = ByteTag.valueOf((byte) 0);
-		}
+        try {
+            this.operatorValue = ValueHelpers.serializeRaw(value);
+        } catch (Exception e) {
+            this.operatorValue = ByteTag.valueOf((byte) 0);
+        }
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
-			if(element instanceof ValueTypeOperatorLPElement) {
-				IOperator operator;
-				try {
-					operator = ValueHelpers.deserializeRaw(ValueTypes.OPERATOR, operatorValue).getRawValue();
-				} catch (IllegalArgumentException e) {
-					operator = null;
-				}
-				((ValueTypeOperatorLPElement) element).setSelectedOperator(operator);
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
+            if(element instanceof ValueTypeOperatorLPElement) {
+                IOperator operator;
+                try {
+                    operator = ValueHelpers.deserializeRaw(ValueTypes.OPERATOR, operatorValue).getRawValue();
+                } catch (IllegalArgumentException e) {
+                    operator = null;
+                }
+                ((ValueTypeOperatorLPElement) element).setSelectedOperator(operator);
                 ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
-			}
-		}
-	}
-	
+            }
+        }
+    }
+
 }

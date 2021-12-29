@@ -24,7 +24,7 @@ import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
 
 /**
  * Renderer for the item inside the {@link org.cyclops.integrateddynamics.block.BlockDryingBasin}.
- * 
+ *
  * @author rubensworks
  *
  */
@@ -63,9 +63,9 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
                 vb.vertex(matrix, 0.9375F, height, 0.0625F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU1(), icon.getV1()).uv2(l2, i3).endVertex();
             });
         }
-	}
-	
-	private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, float rotation) {
+    }
+
+    private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, float rotation) {
         BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(itemStack, null, null, 0);
         if (model.isGui3d()) {
             matrixStack.translate(1F, 1.2F, 1F);

@@ -19,5 +19,5 @@ public class ItemLogicDirectorConfig extends ItemConfig {
                         .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
-    
+
 }

@@ -43,7 +43,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     public PartTypePanelLightDynamic.State constructDefaultState() {
         return new PartTypePanelLightDynamic.State();
     }
-    
+
     @Override
     public int getConsumptionRate(State state) {
         return GeneralConfig.panelLightDynamicBaseConsumption;

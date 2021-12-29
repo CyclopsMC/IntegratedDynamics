@@ -29,7 +29,7 @@ public class PartTypeExtraDimensionalReader extends PartTypeReadBase<PartTypeExt
     public PartStateReaderBase<PartTypeExtraDimensionalReader> constructDefaultState() {
         return new PartStateReaderBase<PartTypeExtraDimensionalReader>();
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateReaderBase<PartTypeExtraDimensionalReader> state) {
         return GeneralConfig.extraDimensionalReaderBaseConsumption;

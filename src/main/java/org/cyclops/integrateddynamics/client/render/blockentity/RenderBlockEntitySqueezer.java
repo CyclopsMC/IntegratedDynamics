@@ -25,7 +25,7 @@ import org.cyclops.integrateddynamics.blockentity.BlockEntitySqueezer;
 
 /**
  * Renderer for the item inside the {@link org.cyclops.integrateddynamics.block.BlockDryingBasin}.
- * 
+ *
  * @author rubensworks
  *
  */
@@ -80,7 +80,7 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
     }
 
     @Override
-	public void render(BlockEntitySqueezer tile, float partialTicks, PoseStack matrixStack,
+    public void render(BlockEntitySqueezer tile, float partialTicks, PoseStack matrixStack,
                        MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
         if(tile != null) {
             if(!tile.getInventory().getItem(0).isEmpty()) {
@@ -117,9 +117,9 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
                 });
             }
         }
-	}
-	
-	private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, BlockEntitySqueezer tile) {
+    }
+
+    private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, BlockEntitySqueezer tile) {
         matrixStack.pushPose();
         float yTop = (9 - tile.getItemHeight()) * 0.125F;
         matrixStack.translate(1F, (yTop - 1F) / 2 + 1F, 1F);

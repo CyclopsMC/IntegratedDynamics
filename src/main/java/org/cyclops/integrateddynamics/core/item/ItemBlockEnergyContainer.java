@@ -35,19 +35,19 @@ import java.util.Locale;
  */
 public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
-	private IEnergyContainerBlock block;
+    private IEnergyContainerBlock block;
 
     public ItemBlockEnergyContainer(Block block, Properties builder) {
         super(block, builder);
         // Will crash if no valid instance of.
         this.block = (IEnergyContainerBlock) block;
     }
-    
+
     /**
      * @return The energy container.
      */
     public IEnergyContainerBlock get() {
-    	return block;
+        return block;
     }
 
     public LazyOptional<IEnergyStorage> getEnergyBattery(ItemStack itemStack) {
@@ -56,7 +56,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         }
         return itemStack.getCapability(CapabilityEnergy.ENERGY);
     }
-	
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {

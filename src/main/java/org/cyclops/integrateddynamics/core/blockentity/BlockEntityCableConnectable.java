@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.blockentity;
 
-import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;

@@ -25,7 +25,7 @@ public class PartTypeEntityWriter extends PartTypeWriteBase<PartTypeEntityWriter
     public PartStateWriterBase<PartTypeEntityWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeEntityWriter>(Aspects.REGISTRY.getAspects(this).size());
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateWriterBase<PartTypeEntityWriter> state) {
         return GeneralConfig.entityWriterBaseConsumption;

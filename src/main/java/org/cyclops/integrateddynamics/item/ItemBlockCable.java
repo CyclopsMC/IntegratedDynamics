@@ -83,10 +83,10 @@ public class ItemBlockCable extends BlockItem {
             }
             if(!offsetAdded){
                 for (IUseAction useAction : USE_ACTIONS) {
-	                if (useAction.attempItemUseTarget(context.getItemInHand(), context.getLevel(), pos, blockCable)) {
-	                    return true;
-	                }
-            	}
+                    if (useAction.attempItemUseTarget(context.getItemInHand(), context.getLevel(), pos, blockCable)) {
+                        return true;
+                    }
+                }
             }
         }
         return false;

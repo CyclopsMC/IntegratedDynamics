@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.core.client.gui.subgui;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;

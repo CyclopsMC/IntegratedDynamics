@@ -19,37 +19,37 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerValueTypeSlottedValueChangedPacket extends PacketCodec {
 
-	@CodecField
-	private ItemStack itemStack;
+    @CodecField
+    private ItemStack itemStack;
 
     public LogicProgrammerValueTypeSlottedValueChangedPacket() {
 
     }
 
     public LogicProgrammerValueTypeSlottedValueChangedPacket(ItemStack itemStack) {
-		this.itemStack = itemStack;
+        this.itemStack = itemStack;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
-			if(element instanceof ValueTypeLPElementBase) {
-				int slotId = player.containerMenu.slots.size() - 1;
-				player.containerMenu.setItem(slotId, 0, itemStack.copy());
-			}
-		}
-	}
-	
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
+            if(element instanceof ValueTypeLPElementBase) {
+                int slotId = player.containerMenu.slots.size() - 1;
+                player.containerMenu.setItem(slotId, 0, itemStack.copy());
+            }
+        }
+    }
+
 }

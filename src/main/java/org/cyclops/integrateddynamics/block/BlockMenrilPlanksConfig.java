@@ -26,10 +26,10 @@ public class BlockMenrilPlanksConfig extends BlockConfig {
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
-    
+
     @Override
     public void onRegistered() {
         BlockHelpers.setFireInfo(RegistryEntries.BLOCK_MENRIL_PLANKS, 5, 20);
     }
-    
+
 }

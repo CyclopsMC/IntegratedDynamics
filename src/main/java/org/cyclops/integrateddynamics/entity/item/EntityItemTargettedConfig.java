@@ -29,8 +29,8 @@ public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted>
     }
 
     @OnlyIn(Dist.CLIENT)
-	@Override
-	public EntityRenderer<EntityItemTargetted> getRender(EntityRendererProvider.Context renderContext, ItemRenderer renderItem) {
+    @Override
+    public EntityRenderer<EntityItemTargetted> getRender(EntityRendererProvider.Context renderContext, ItemRenderer renderItem) {
         return (EntityRenderer) new net.minecraft.client.renderer.entity.ItemEntityRenderer(renderContext);
-	}
+    }
 }

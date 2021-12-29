@@ -23,50 +23,50 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerSetElementInventory extends PacketCodec {
 
-	@CodecField
-	private String listValueType;
-	@CodecField
-	private int baseX;
-	@CodecField
-	private int baseY;
+    @CodecField
+    private String listValueType;
+    @CodecField
+    private int baseX;
+    @CodecField
+    private int baseY;
 
     public LogicProgrammerSetElementInventory() {
 
     }
 
     public LogicProgrammerSetElementInventory(IValueType listValueType, int baseX, int baseY) {
-    	this.listValueType = listValueType.getUniqueName().toString();
-		this.baseX = baseX;
-		this.baseY = baseY;
+        this.listValueType = listValueType.getUniqueName().toString();
+        this.baseX = baseX;
+        this.baseY = baseY;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-			ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.containerMenu;
-			ILogicProgrammerElement element = container.getActiveElement();
-			if (element instanceof ValueTypeListLPElement || element instanceof ValueTypeIngredientsLPElement) {
-				IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(this.listValueType));
-				if (valueType != null) {
-					((ContainerLogicProgrammerBase) player.containerMenu).setElementInventory(
-							valueType.createLogicProgrammerElement(), baseX, baseY);
-				} else {
-					IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN,
-							"Got an invalid LogicProgrammerSetElementInventory packet: " + this.listValueType);
-				}
-			}
-		}
-	}
-	
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.containerMenu;
+            ILogicProgrammerElement element = container.getActiveElement();
+            if (element instanceof ValueTypeListLPElement || element instanceof ValueTypeIngredientsLPElement) {
+                IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(this.listValueType));
+                if (valueType != null) {
+                    ((ContainerLogicProgrammerBase) player.containerMenu).setElementInventory(
+                            valueType.createLogicProgrammerElement(), baseX, baseY);
+                } else {
+                    IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN,
+                            "Got an invalid LogicProgrammerSetElementInventory packet: " + this.listValueType);
+                }
+            }
+        }
+    }
+
 }

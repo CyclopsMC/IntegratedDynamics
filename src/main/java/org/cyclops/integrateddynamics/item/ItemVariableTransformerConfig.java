@@ -19,5 +19,5 @@ public class ItemVariableTransformerConfig extends ItemConfig {
                         .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
-    
+
 }

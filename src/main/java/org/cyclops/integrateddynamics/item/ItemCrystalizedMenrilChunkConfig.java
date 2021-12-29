@@ -19,5 +19,5 @@ public class ItemCrystalizedMenrilChunkConfig extends ItemConfig {
                         .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
     }
-    
+
 }

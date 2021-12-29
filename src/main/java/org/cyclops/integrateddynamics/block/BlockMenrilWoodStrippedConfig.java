@@ -28,7 +28,7 @@ public class BlockMenrilWoodStrippedConfig extends BlockConfig {
         );
         MinecraftForge.EVENT_BUS.addListener(BlockMenrilWoodStrippedConfig::toolActionEvent);
     }
-    
+
     @Override
     public void onRegistered() {
 

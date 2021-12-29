@@ -25,7 +25,7 @@ public class PartTypeInventoryWriter extends PartTypeWriteBase<PartTypeInventory
     public PartStateWriterBase<PartTypeInventoryWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeInventoryWriter>(Aspects.REGISTRY.getAspects(this).size());
     }
-    
+
     @Override
     public int getConsumptionRate(PartStateWriterBase<PartTypeInventoryWriter> state) {
         return GeneralConfig.inventoryWriterBaseConsumption;

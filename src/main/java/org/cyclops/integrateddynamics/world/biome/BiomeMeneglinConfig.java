@@ -157,5 +157,5 @@ public class BiomeMeneglinConfig extends BiomeConfig {
                     .add(() -> PLACED_FEATURE_GENERAL);
         }
     }
-    
+
 }

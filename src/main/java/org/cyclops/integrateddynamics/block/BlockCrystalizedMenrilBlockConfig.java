@@ -23,5 +23,5 @@ public class BlockCrystalizedMenrilBlockConfig extends BlockConfig {
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
-    
+
 }

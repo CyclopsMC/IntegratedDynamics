@@ -23,5 +23,5 @@ public class BlockCrystalizedChorusBrickConfig extends BlockConfig {
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
-    
+
 }

@@ -17,7 +17,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.core.block.BlockContainerCabled;
 import org.cyclops.integrateddynamics.core.helper.Helpers;

@@ -18,37 +18,37 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerValueTypeBooleanValueChangedPacket extends PacketCodec {
 
-	@CodecField
-	private boolean checked;
+    @CodecField
+    private boolean checked;
 
     public LogicProgrammerValueTypeBooleanValueChangedPacket() {
 
     }
 
     public LogicProgrammerValueTypeBooleanValueChangedPacket(boolean checked) {
-		this.checked = checked;
+        this.checked = checked;
     }
 
-	@Override
-	public boolean isAsync() {
-		return false;
-	}
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void actionClient(Level world, Player player) {
-		
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void actionClient(Level world, Player player) {
 
-	@Override
-	public void actionServer(Level world, ServerPlayer player) {
-		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
-			if(element instanceof ValueTypeBooleanLPElement) {
-				((ValueTypeBooleanLPElement) element).getInnerGuiElement().setInputBoolean(checked);
+    }
+
+    @Override
+    public void actionServer(Level world, ServerPlayer player) {
+        if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
+            if(element instanceof ValueTypeBooleanLPElement) {
+                ((ValueTypeBooleanLPElement) element).getInnerGuiElement().setInputBoolean(checked);
                 ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
-			}
-		}
-	}
-	
+            }
+        }
+    }
+
 }
