@@ -2,27 +2,27 @@ package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityProxy;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.tileentity.TileProxy;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,10 +50,10 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
         this.proxyId = proxyId;
     }
 
-    protected Optional<TileProxy> getProxy(IPartNetwork network) {
+    protected Optional<BlockEntityProxy> getProxy(IPartNetwork network) {
         DimPos dimPos = network.getProxy(proxyId);
         if(dimPos != null) {
-            return TileHelpers.getSafeTile(dimPos, TileProxy.class);
+            return BlockEntityHelpers.get(dimPos, BlockEntityProxy.class);
         }
         return Optional.empty();
     }
@@ -83,28 +83,28 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
         return proxyId >= 0;
     }
 
-    protected IFormattableTextComponent getProxyNotInNetworkError() {
-        return new TranslationTextComponent(L10NValues.PROXY_ERROR_PROXYNOTINNETWORK, Integer.toString(proxyId));
+    protected MutableComponent getProxyNotInNetworkError() {
+        return new TranslatableComponent(L10NValues.PROXY_ERROR_PROXYNOTINNETWORK, Integer.toString(proxyId));
     }
 
-    protected IFormattableTextComponent getProxyInvalidError() {
-        return new TranslationTextComponent(L10NValues.PROXY_ERROR_PROXYINVALID, Integer.toString(proxyId));
+    protected MutableComponent getProxyInvalidError() {
+        return new TranslatableComponent(L10NValues.PROXY_ERROR_PROXYINVALID, Integer.toString(proxyId));
     }
 
-    protected IFormattableTextComponent getProxyInvalidTypeError(IPartNetwork network,
+    protected MutableComponent getProxyInvalidTypeError(IPartNetwork network,
                                                                      IValueType containingValueType,
                                                                      IValueType actualType) {
-        return new TranslationTextComponent(L10NValues.PROXY_ERROR_PROXYINVALIDTYPE,
+        return new TranslatableComponent(L10NValues.PROXY_ERROR_PROXYINVALIDTYPE,
                 Integer.toString(proxyId),
-                new TranslationTextComponent(containingValueType.getTranslationKey()),
-                new TranslationTextComponent(actualType.getTranslationKey()));
+                new TranslatableComponent(containingValueType.getTranslationKey()),
+                new TranslatableComponent(actualType.getTranslationKey()));
     }
 
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         Optional<IVariable> targetVariable = getTargetVariable(network);
         if (!isValid()) {
-            validator.addError(new TranslationTextComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else if (network.getProxy(proxyId) == null) {
             validator.addError(getProxyNotInNetworkError());
         } else if (!targetVariable.isPresent()) {
@@ -128,13 +128,13 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
         return ValueTypes.CATEGORY_ANY;
     }
 
-    protected ITextComponent getProxyTooltip() {
-        return new TranslationTextComponent(L10NValues.PROXY_TOOLTIP_PROXYID, proxyId);
+    protected Component getProxyTooltip() {
+        return new TranslatableComponent(L10NValues.PROXY_TOOLTIP_PROXYID, proxyId);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<ITextComponent> list, World world) {
+    public void appendHoverText(List<Component> list, Level world) {
         if(isValid()) {
             list.add(getProxyTooltip());
         }

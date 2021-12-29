@@ -1,19 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.nbt.ByteNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.ByteTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeBooleanLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
-import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeStringLPElement;
 
 /**
  * Value type with values 'true' or 'false'
@@ -22,7 +20,7 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeStringLPElem
 public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolean> {
 
     public ValueTypeBoolean() {
-        super("boolean", Helpers.RGBToInt(43, 47, 231), TextFormatting.BLUE, ValueTypeBoolean.ValueBoolean.class);
+        super("boolean", Helpers.RGBToInt(43, 47, 231), ChatFormatting.BLUE, ValueTypeBoolean.ValueBoolean.class);
     }
 
     @Override
@@ -31,19 +29,19 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueBoolean value) {
-        return new StringTextComponent(Boolean.toString(value.getRawValue()));
+    public MutableComponent toCompactString(ValueBoolean value) {
+        return new TextComponent(Boolean.toString(value.getRawValue()));
     }
 
     @Override
-    public INBT serialize(ValueBoolean value) {
-        return ByteNBT.valueOf(value.getRawValue() ? (byte) 1 : (byte) 0);
+    public Tag serialize(ValueBoolean value) {
+        return ByteTag.valueOf(value.getRawValue() ? (byte) 1 : (byte) 0);
     }
 
     @Override
-    public ValueBoolean deserialize(INBT value) {
-        if (value.getId() == Constants.NBT.TAG_BYTE) {
-            return ValueBoolean.of(((ByteNBT) value).getAsByte() == 1);
+    public ValueBoolean deserialize(Tag value) {
+        if (value.getId() == Tag.TAG_BYTE) {
+            return ValueBoolean.of(((ByteTag) value).getAsByte() == 1);
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a boolean.", value));
         }
@@ -67,8 +65,8 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
         } else if("false".equalsIgnoreCase(value) || "0".equals(value)) {
             b = false;
         } else {
-            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
-                    new TranslationTextComponent(getTranslationKey())));
+            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
+                    new TranslatableComponent(getTranslationKey())));
         }
         return ValueBoolean.of(b);
     }

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;

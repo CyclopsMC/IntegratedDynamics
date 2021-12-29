@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.entity.item;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
 
 import java.util.Random;
@@ -21,23 +21,23 @@ import java.util.Random;
  */
 public class EntityItemTargetted extends ItemEntity {
 
-	private static final DataParameter<Float> TARGET_X = EntityDataManager.defineId(EntityItemTargetted.class, DataSerializers.FLOAT);
-	private static final DataParameter<Float> TARGET_Y = EntityDataManager.defineId(EntityItemTargetted.class, DataSerializers.FLOAT);
-	private static final DataParameter<Float> TARGET_Z = EntityDataManager.defineId(EntityItemTargetted.class, DataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> TARGET_X = SynchedEntityData.defineId(EntityItemTargetted.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> TARGET_Y = SynchedEntityData.defineId(EntityItemTargetted.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> TARGET_Z = SynchedEntityData.defineId(EntityItemTargetted.class, EntityDataSerializers.FLOAT);
 
 	private LivingEntity targetEntity = null;
 
-	public EntityItemTargetted(EntityType<? extends EntityItemTargetted> entityType,  World world) {
+	public EntityItemTargetted(EntityType<? extends EntityItemTargetted> entityType,  Level world) {
         super(entityType, world);
 		this.lifespan = Integer.MAX_VALUE;
     }
 
-    public EntityItemTargetted(World world, double x, double y, double z) {
-        super(world, x, y, z);
+    public EntityItemTargetted(Level world, double x, double y, double z) {
+        super(world, x, y, z, ItemStack.EMPTY);
 		this.lifespan = Integer.MAX_VALUE;
     }
 
-    public EntityItemTargetted(World world, double x, double y, double z, ItemStack itemStack) {
+    public EntityItemTargetted(Level world, double x, double y, double z, ItemStack itemStack) {
         super(world, x, y, z, itemStack);
 		this.lifespan = Integer.MAX_VALUE;
     }
@@ -87,7 +87,7 @@ public class EntityItemTargetted extends ItemEntity {
 		double dz = this.getZ() - getTargetZ();
 		double strength = -0.1;
 
-		double d = MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
+		double d = Mth.sqrt((float) (dx * dx + dy * dy + dz * dz));
 		if(d > 1D) {
 			double m = (1 / (2 * (Math.max(1, d)))) * strength;
 			dx *= m;
@@ -111,7 +111,7 @@ public class EntityItemTargetted extends ItemEntity {
 		float blue = rand.nextFloat() * 0.10F + 0.10F;
 		float ageMultiplier = (float) (rand.nextDouble() * 25D + 50D);
 
-		((ServerWorld) getCommandSenderWorld()).sendParticles(
+		((ServerLevel) getCommandSenderWorld()).sendParticles(
 				new ParticleBlurData(red, green, blue, scale, ageMultiplier),
 				this.getX(), this.getY() + 0.5D, this.getZ(), 1,
 				0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0D);
@@ -124,7 +124,7 @@ public class EntityItemTargetted extends ItemEntity {
 			double x = this.getX() - dx * factor;
 			double y = this.getY() - dy * factor;
 			double z = this.getZ() - dz * factor;
-			((ServerWorld) getCommandSenderWorld()).sendParticles(
+			((ServerLevel) getCommandSenderWorld()).sendParticles(
 					new ParticleBlurData(red, green, blue, scale, ageMultiplier),
 					x, y, z, 1,
 					-0.02 * dx, -0.02 * dy, -0.02 * dz, 0D);

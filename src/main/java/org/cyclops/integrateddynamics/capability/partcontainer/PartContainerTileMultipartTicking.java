@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.capability.partcontainer;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 
 import javax.annotation.Nullable;
 
@@ -19,13 +19,13 @@ import javax.annotation.Nullable;
  */
 public class PartContainerTileMultipartTicking extends PartContainerDefault {
 
-    private final TileMultipartTicking tile;
+    private final BlockEntityMultipartTicking tile;
 
-    public PartContainerTileMultipartTicking(TileMultipartTicking tile) {
+    public PartContainerTileMultipartTicking(BlockEntityMultipartTicking tile) {
         this.tile = tile;
     }
 
-    protected TileMultipartTicking getTile() {
+    protected BlockEntityMultipartTicking getTile() {
         return tile;
     }
 
@@ -40,7 +40,7 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
     }
 
     @Override
-    protected World getLevel() {
+    protected Level getLevel() {
         return getTile().getLevel();
     }
 
@@ -56,9 +56,9 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
 
     @Nullable
     @Override
-    public Direction getWatchingSide(World world, BlockPos pos, PlayerEntity player) {
+    public Direction getWatchingSide(Level world, BlockPos pos, Player player) {
         BlockRayTraceResultComponent rayTraceResult = ((BlockCable) world.getBlockState(pos).getBlock())
-                .getSelectedShape(world.getBlockState(pos), world, pos, ISelectionContext.of(player))
+                .getSelectedShape(world.getBlockState(pos), world, pos, CollisionContext.of(player))
                 .rayTrace(pos, player);
         if(rayTraceResult != null) {
             return rayTraceResult.getDirection();

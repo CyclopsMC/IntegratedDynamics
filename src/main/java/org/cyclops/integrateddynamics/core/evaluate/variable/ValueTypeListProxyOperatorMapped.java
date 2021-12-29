@@ -1,8 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -45,13 +44,13 @@ public class ValueTypeListProxyOperatorMapped extends ValueTypeListProxyBase<IVa
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyOperatorMapped value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected void serializeNbt(ValueTypeListProxyOperatorMapped value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             tag.put("operator", Operators.REGISTRY.serialize(value.operator));
             tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.listProxy));
         }
 
         @Override
-        protected ValueTypeListProxyOperatorMapped deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
+        protected ValueTypeListProxyOperatorMapped deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
             IOperator operator = Operators.REGISTRY.deserialize(tag.get("operator"));
             IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.get("sublist"));
             return new ValueTypeListProxyOperatorMapped(operator, list);

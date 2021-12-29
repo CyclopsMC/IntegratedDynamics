@@ -7,10 +7,10 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TextComponent;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author rubensworks
  *
  */
-public class CommandTest implements Command<CommandSource> {
+public class CommandTest implements Command<CommandSourceStack> {
 
     private static final String P = "org.cyclops.integrateddynamics.core.evaluate.variable.integration.";
     public static final List<String> CLASSES = ImmutableList.of(
@@ -38,13 +38,13 @@ public class CommandTest implements Command<CommandSource> {
     );
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        context.getSource().getPlayerOrException().sendMessage(new StringTextComponent("Running tests..."), Util.NIL_UUID);
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        context.getSource().getPlayerOrException().sendMessage(new TextComponent("Running tests..."), Util.NIL_UUID);
         try {
             if(!test()) {
-                context.getSource().getPlayerOrException().sendMessage(new StringTextComponent("There were failing tests, see results in console."), Util.NIL_UUID);
+                context.getSource().getPlayerOrException().sendMessage(new TextComponent("There were failing tests, see results in console."), Util.NIL_UUID);
             } else {
-                context.getSource().getPlayerOrException().sendMessage(new StringTextComponent("All tests succeeded!"), Util.NIL_UUID);
+                context.getSource().getPlayerOrException().sendMessage(new TextComponent("All tests succeeded!"), Util.NIL_UUID);
             }
             return 0;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -112,7 +112,7 @@ public class CommandTest implements Command<CommandSource> {
         return ok == total;
     }
 
-    public static LiteralArgumentBuilder<CommandSource> make() {
+    public static LiteralArgumentBuilder<CommandSourceStack> make() {
         return Commands.literal("test")
                 .requires((commandSource) -> commandSource.hasPermission(2))
                 .executes(new CommandTest());

@@ -4,21 +4,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import lombok.ToString;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -50,34 +50,34 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueEntity value) {
+    public MutableComponent toCompactString(ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if (uuid.isPresent()) {
             Optional<Entity> entity = value.getRawValue();
             if(entity.isPresent()) {
                 Entity e = entity.get();
                 if(e instanceof ItemEntity) {
-                    return (IFormattableTextComponent) ((ItemEntity) e).getItem().getHoverName();
+                    return (MutableComponent) ((ItemEntity) e).getItem().getHoverName();
                 } else {
-                    return (IFormattableTextComponent) e.getName();
+                    return (MutableComponent) e.getName();
                 }
             }
-            return new StringTextComponent("unknown");
+            return new TextComponent("unknown");
         }
-        return new StringTextComponent("");
+        return new TextComponent("");
     }
 
     @Override
-    public INBT serialize(ValueEntity value) {
+    public Tag serialize(ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if(uuid.isPresent()) {
-            return StringNBT.valueOf(uuid.get().toString());
+            return StringTag.valueOf(uuid.get().toString());
         }
-        return StringNBT.valueOf("");
+        return StringTag.valueOf("");
     }
 
     @Override
-    public ValueEntity deserialize(INBT value) {
+    public ValueEntity deserialize(Tag value) {
         try {
             return ValueEntity.of(UUID.fromString(value.getAsString()));
         } catch (IllegalArgumentException e) {}
@@ -163,7 +163,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
                     return null;
                 });
                 if (optionalEntity == null) {
-                    for (ServerWorld world : ServerLifecycleHooks.getCurrentServer().getAllLevels()) {
+                    for (ServerLevel world : ServerLifecycleHooks.getCurrentServer().getAllLevels()) {
                         Entity entity = world.getEntity(uuid.get());
                         if (entity != null) {
                             return Optional.of(entity);

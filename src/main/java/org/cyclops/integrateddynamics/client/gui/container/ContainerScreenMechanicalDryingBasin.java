@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.helper.GuiHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.gui.ContainerScreenMechanicalMachine;
@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalDry
  */
 public class ContainerScreenMechanicalDryingBasin extends ContainerScreenMechanicalMachine<ContainerMechanicalDryingBasin> {
 
-    public ContainerScreenMechanicalDryingBasin(ContainerMechanicalDryingBasin container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenMechanicalDryingBasin(ContainerMechanicalDryingBasin container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 
@@ -24,8 +24,8 @@ public class ContainerScreenMechanicalDryingBasin extends ContainerScreenMechani
         return new ResourceLocation(Reference.MOD_ID, "textures/gui/mechanical_drying_basin.png");
     }
 
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         // Render progress
         GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 84, getGuiTopTotal() + 31, 11, 28,
@@ -49,11 +49,11 @@ public class ContainerScreenMechanicalDryingBasin extends ContainerScreenMechani
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         super.renderLabels(matrixStack, mouseX, mouseY);
 
-        drawEnergyBarTooltip(8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getMenu().getInputFluidStack(), getMenu().getInputFluidCapacity(), 28, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getMenu().getOutputFluidStack(), getMenu().getOutputFluidCapacity(), 150, 16, 18, 60, mouseX, mouseY);
+        drawEnergyBarTooltip(matrixStack, 8, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(matrixStack, getMenu().getInputFluidStack(), getMenu().getInputFluidCapacity(), 28, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(matrixStack, getMenu().getOutputFluidStack(), getMenu().getOutputFluidCapacity(), 150, 16, 18, 60, mouseX, mouseY);
     }
 }

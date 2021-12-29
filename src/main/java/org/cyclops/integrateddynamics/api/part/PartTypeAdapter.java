@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
@@ -45,12 +45,12 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void toNBT(CompoundNBT tag, S partState) {
+    public void toNBT(CompoundTag tag, S partState) {
         partState.writeToNBT(tag);
     }
 
     @Override
-    public S fromNBT(CompoundNBT tag) {
+    public S fromNBT(CompoundTag tag) {
         S partState = constructDefaultState();
         partState.readFromNBT(tag);
         partState.gatherCapabilities((P) this);
@@ -139,7 +139,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     public ItemStack getItemStack(S state, boolean saveState) {
         ItemStack itemStack = new ItemStack(getItem());
         if (saveState) {
-            CompoundNBT tag = new CompoundNBT();
+            CompoundTag tag = new CompoundTag();
             toNBT(tag, state);
             itemStack.setTag(tag);
         }
@@ -147,7 +147,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public ItemStack getPickBlock(World world, BlockPos pos, S state) {
+    public ItemStack getCloneItemStack(Level world, BlockPos pos, S state) {
         return getItemStack(state, false);
     }
 
@@ -155,7 +155,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     public S getState(ItemStack itemStack) {
         S partState = null;
         if(!itemStack.isEmpty() && itemStack.getTag() != null
-                && itemStack.getTag().contains("id", Constants.NBT.TAG_INT)) {
+                && itemStack.getTag().contains("id", Tag.TAG_INT)) {
             partState = fromNBT(itemStack.getTag());
         }
         if(partState == null) {
@@ -195,12 +195,12 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public ActionResultType onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand, ItemStack heldItem, BlockRayTraceResult hit) {
-        return ActionResultType.PASS;
+    public InteractionResult onPartActivated(S partState, BlockPos pos, Level world, Player player, InteractionHand hand, ItemStack heldItem, BlockHitResult hit) {
+        return InteractionResult.PASS;
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, S partState, Random random) {
+    public void updateTick(Level world, BlockPos pos, S partState, Random random) {
 
     }
 
@@ -216,7 +216,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
-                                      IBlockReader world, Block neighbourBlock, BlockPos neighbourBlockPos) {
+                                      BlockGetter world, Block neighbourBlock, BlockPos neighbourBlockPos) {
 
     }
 
@@ -241,12 +241,12 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void loadTooltip(S state, List<ITextComponent> lines) {
+    public void loadTooltip(S state, List<Component> lines) {
 
     }
 
     @Override
-    public void loadTooltip(ItemStack itemStack, List<ITextComponent> lines) {
+    public void loadTooltip(ItemStack itemStack, List<Component> lines) {
 
     }
 

@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import org.cyclops.commoncapabilities.CommonCapabilities;
 import org.cyclops.cyclopscore.config.extendedconfig.CapabilityConfig;
-import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityStorage;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 
 /**
@@ -14,21 +14,13 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
  */
 public class CableFakeableConfig extends CapabilityConfig<ICableFakeable> {
 
-    @CapabilityInject(ICableFakeable.class)
-    public static Capability<ICableFakeable> CAPABILITY = null;
+    public static Capability<ICableFakeable> CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
     public CableFakeableConfig() {
         super(
                 CommonCapabilities._instance,
                 "cableFakeable",
-                ICableFakeable.class,
-                new DefaultCapabilityStorage<ICableFakeable>(),
-                () -> new CableFakeableDefault() {
-                    @Override
-                    protected void sendUpdate() {
-
-                    }
-                }
+                ICableFakeable.class
         );
     }
 

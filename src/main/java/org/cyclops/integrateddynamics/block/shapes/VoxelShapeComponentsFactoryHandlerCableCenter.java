@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.block.shapes;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -33,13 +33,13 @@ import java.util.Collections;
  */
 public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShapeComponentsFactory.IHandler {
 
-    private static final VoxelShape BOUNDS = VoxelShapes.create(new AxisAlignedBB(
+    private static final VoxelShape BOUNDS = Shapes.create(new AABB(
             CableModel.MIN, CableModel.MIN, CableModel.MIN,
             CableModel.MAX, CableModel.MAX, CableModel.MAX));
     private static final VoxelShapeComponentsFactoryHandlerCableCenter.Component COMPONENT = new Component();
 
     @Override
-    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, IBlockReader world, BlockPos blockPos) {
+    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
         if (CableHelpers.isNoFakeCable(world, blockPos, null)) {
             return Collections.singletonList(COMPONENT);
         }
@@ -49,17 +49,17 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
     public static class Component implements VoxelShapeComponents.IComponent {
 
         @Override
-        public VoxelShape getShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
+        public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
             return BOUNDS;
         }
 
         @Override
-        public ItemStack getPickBlock(World world, BlockPos pos) {
+        public ItemStack getCloneItemStack(Level world, BlockPos pos) {
             return new ItemStack(RegistryEntries.BLOCK_CABLE);
         }
 
         @Override
-        public boolean destroy(World world, BlockPos pos, PlayerEntity player, boolean saveState) {
+        public boolean destroy(Level world, BlockPos pos, Player player, boolean saveState) {
             if (!world.isClientSide()) {
                 CableHelpers.removeCable(world, pos, player);
                 return true;
@@ -70,18 +70,18 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
         @Nullable
         @Override
         @OnlyIn(Dist.CLIENT)
-        public IBakedModel getBreakingBaseModel(World world, BlockPos pos) {
+        public BakedModel getBreakingBaseModel(Level world, BlockPos pos) {
             return RenderHelpers.getDynamicBakedModel(world, pos);
         }
 
         @Override
-        public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
+        public InteractionResult onBlockActivated(BlockState state, Level world, BlockPos blockPos, Player player, InteractionHand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getItemInHand(hand);
-            ActionResultType actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getDirection(), null);
+            InteractionResult actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getDirection(), null);
             if(actionResult.consumesAction()) {
                 return actionResult;
             }
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
 
     }

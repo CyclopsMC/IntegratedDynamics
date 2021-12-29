@@ -98,22 +98,22 @@ public class TestNbtOperators {
         d1_5 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(1.5D));
         btrue = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
 
-        nempty = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new CompoundNBT()));
+        nempty = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new CompoundTag()));
 
-        CompoundNBT tsasa = new CompoundNBT();
+        CompoundTag tsasa = new CompoundTag();
         tsasa.putString("a", "a");
         nsasa = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tsasa));
 
-        CompoundNBT tsbsb = new CompoundNBT();
+        CompoundTag tsbsb = new CompoundTag();
         tsbsb.putString("b", "b");
         nsbsb = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tsbsb));
 
-        CompoundNBT tsasasbsc = new CompoundNBT();
+        CompoundTag tsasasbsc = new CompoundTag();
         tsasasbsc.putString("a", "a");
         tsasasbsc.putString("b", "c");
         nsasasbsc = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tsasasbsc));
 
-        CompoundNBT tall = new CompoundNBT();
+        CompoundTag tall = new CompoundTag();
         tall.putByte("byte", (byte)1);
         tall.putShort("short", (short) 2);
         tall.putInt("integer", 3);
@@ -125,33 +125,33 @@ public class TestNbtOperators {
         tall.putIntArray("intarray", new int[]{11, 12, 13});
         tall.putLongArray("longarray", new long[]{14, 15, 16});
         tall.putBoolean("boolean", true);
-        CompoundNBT subCompound = new CompoundNBT();
+        CompoundTag subCompound = new CompoundTag();
         subCompound.putString("hello", "world");
         tall.put("compound", subCompound);
-        ListNBT subList = new ListNBT();
+        ListTag subList = new ListTag();
         subList.add(subCompound);
         subList.add(subCompound);
         tall.put("list", subList);
         nall = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tall));
 
-        CompoundNBT tsome = new CompoundNBT();
+        CompoundTag tsome = new CompoundTag();
         tsome.putByte("byte", (byte)1);
         tsome.putInt("integer", 3);
         tsome.putFloat("float", 5.5F);
         tsome.putString("string", "seven");
         tsome.putBoolean("boolean", true);
-        CompoundNBT subTagSome = new CompoundNBT();
+        CompoundTag subTagSome = new CompoundTag();
         subTagSome.putString("hello", "world");
         tsome.put("compound", subTagSome);
-        ListNBT subListSome = new ListNBT();
+        ListTag subListSome = new ListTag();
         subListSome.add(subTagSome);
         tsome.put("list", subListSome);
         nsome = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tsome));
 
         ltags = new DummyVariableList(ValueTypeList.ValueList.ofAll(
-                ValueTypeNbt.ValueNbt.of(new CompoundNBT()),
+                ValueTypeNbt.ValueNbt.of(new CompoundTag()),
                 ValueTypeNbt.ValueNbt.of(tsasa),
-                ValueTypeNbt.ValueNbt.of(new CompoundNBT())
+                ValueTypeNbt.ValueNbt.of(new CompoundTag())
         ));
         lints = new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeInteger.ValueInteger.of(5),
@@ -164,18 +164,18 @@ public class TestNbtOperators {
                 ValueTypeLong.ValueLong.of(3)
         ));
 
-        nboolean = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(ByteNBT.ONE));
-        nbyte = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(ByteNBT.ONE));
-        nshort = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(ShortNBT.valueOf((short) 2)));
-        nint = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(IntNBT.valueOf(3)));
-        nlong = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(LongNBT.valueOf(4L)));
-        ndouble = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(DoubleNBT.valueOf(5.5)));
-        nfloat = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(FloatNBT.valueOf(6.5F)));
-        nstring = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(StringNBT.valueOf("7")));
+        nboolean = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(ByteTag.ONE));
+        nbyte = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(ByteTag.ONE));
+        nshort = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(ShortTag.valueOf((short) 2)));
+        nint = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(IntTag.valueOf(3)));
+        nlong = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(LongTag.valueOf(4L)));
+        ndouble = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(DoubleTag.valueOf(5.5)));
+        nfloat = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(FloatTag.valueOf(6.5F)));
+        nstring = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(StringTag.valueOf("7")));
         ntaglist = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(subList));
-        nbytelist = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new ByteArrayNBT(new byte[]{0, 1, 2})));
-        nintlist = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new IntArrayNBT(new int[]{0, 1, 2})));
-        nlonglist = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new LongArrayNBT(new long[]{0, 1, 2})));
+        nbytelist = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new ByteArrayTag(new byte[]{0, 1, 2})));
+        nintlist = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new IntArrayTag(new int[]{0, 1, 2})));
+        nlonglist = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(new LongArrayTag(new long[]{0, 1, 2})));
     }
 
     /**
@@ -332,10 +332,10 @@ public class TestNbtOperators {
         assertThat("valuetag({}, boolean) = false", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(Optional.empty()));
 
         IValue res2 = Operators.NBT_COMPOUND_VALUE_TAG.evaluate(new IVariable[]{nall, sboolean});
-        assertThat("valuetag({...}, boolean) = true", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(ByteNBT.ONE));
+        assertThat("valuetag({...}, boolean) = true", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(ByteTag.ONE));
 
         IValue res3 = Operators.NBT_COMPOUND_VALUE_TAG.evaluate(new IVariable[]{nall, sinteger});
-        assertThat("valuetag({...}, integer) = true", ((ValueTypeNbt.ValueNbt) res3).getRawValue().get(), is(IntNBT.valueOf(3)));
+        assertThat("valuetag({...}, integer) = true", ((ValueTypeNbt.ValueNbt) res3).getRawValue().get(), is(IntTag.valueOf(3)));
     }
 
     @Test(expected = EvaluationException.class)
@@ -521,7 +521,7 @@ public class TestNbtOperators {
         assertThat("valuecompound({}, compound) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue(), is(Optional.empty()));
 
         IValue res2 = Operators.NBT_COMPOUND_VALUE_COMPOUND.evaluate(new IVariable[]{nall, scompound});
-        CompoundNBT subTag = new CompoundNBT();
+        CompoundTag subTag = new CompoundTag();
         subTag.putString("hello", "world");
         assertThat("valuecompound({...}, compound) = {hello:world}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(subTag));
     }
@@ -552,9 +552,9 @@ public class TestNbtOperators {
         assertThat("valuelisttag({}, listtag).size = 0", ((ValueTypeList.ValueList) res1).getRawValue().getLength(), is(0));
 
         IValue res2 = Operators.NBT_COMPOUND_VALUE_LIST_TAG.evaluate(new IVariable[]{nall, slist});
-        CompoundNBT subTag = new CompoundNBT();
+        CompoundTag subTag = new CompoundTag();
         subTag.putString("hello", "world");
-        ListNBT subList = new ListNBT();
+        ListTag subList = new ListTag();
         subList.add(subTag);
         assertThat("valuelisttag({...}, listtag).size = 2", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(2));
         assertThat("valuelisttag({...}, listtag)[0] = ..list..", ((ValueTypeList.ValueList) res2).getRawValue().get(0), is(ValueTypeNbt.ValueNbt.of(subTag)));
@@ -680,10 +680,10 @@ public class TestNbtOperators {
     public void testNbtWithout() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_WITHOUT.evaluate(new IVariable[]{nsasa, sa});
         assertThat("result is a boolean", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        assertThat("without({a:a}, a) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(new CompoundNBT()));
+        assertThat("without({a:a}, a) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(new CompoundTag()));
 
         IValue res2 = Operators.NBT_COMPOUND_WITHOUT.evaluate(new IVariable[]{nsasasbsc, sa});
-        CompoundNBT tsbc = new CompoundNBT();
+        CompoundTag tsbc = new CompoundTag();
         tsbc.putString("b", "c");
         assertThat("without({a:a;b:c}, a) = {b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(tsbc));
     }
@@ -711,13 +711,13 @@ public class TestNbtOperators {
     public void testNbtWithBoolean() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_WITH_BOOLEAN.evaluate(new IVariable[]{nsasa, sc, btrue});
         assertThat("result is a boolean", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.putBoolean("c", true);
         assertThat("withboolean({a:a}, c, true) = {a:a,c:true}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_BOOLEAN.evaluate(new IVariable[]{nsasasbsc, sa, btrue});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.putBoolean("a", true);
         t2.putString("b", "c");
         assertThat("withboolean({a:a;b:c}, a, true) = {a:true;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -746,13 +746,13 @@ public class TestNbtOperators {
     public void testNbtWithShort() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_WITH_SHORT.evaluate(new IVariable[]{nsasa, sc, i1});
         assertThat("result is a short", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.putShort("c", (short) 1);
         assertThat("withshort({a:a}, c, 1) = {a:a,c:1}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_SHORT.evaluate(new IVariable[]{nsasasbsc, sa, i1});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.putShort("a", (short) 1);
         t2.putString("b", "c");
         assertThat("withshort({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -781,13 +781,13 @@ public class TestNbtOperators {
     public void testNbtWithInteger() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_WITH_INTEGER.evaluate(new IVariable[]{nsasa, sc, i1});
         assertThat("result is a integer", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.putInt("c", 1);
         assertThat("withinteger({a:a}, c, 1) = {a:a,c:1}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_INTEGER.evaluate(new IVariable[]{nsasasbsc, sa, i1});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.putInt("a", 1);
         t2.putString("b", "c");
         assertThat("withinteger({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -816,13 +816,13 @@ public class TestNbtOperators {
     public void testNbtWithLong() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_WITH_LONG.evaluate(new IVariable[]{nsasa, sc, l1});
         assertThat("result is a long", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.putLong("c", 1L);
         assertThat("withlong({a:a}, c, 1) = {a:a,c:1}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_LONG.evaluate(new IVariable[]{nsasasbsc, sa, l1});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.putLong("a", 1L);
         t2.putString("b", "c");
         assertThat("withlong({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -851,13 +851,13 @@ public class TestNbtOperators {
     public void testNbtWithDouble() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_WITH_DOUBLE.evaluate(new IVariable[]{nsasa, sc, d1_5});
         assertThat("result is a double", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.putDouble("c", 1.5D);
         assertThat("withdouble({a:a}, c, 1.5) = {a:a,c:1.5}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_DOUBLE.evaluate(new IVariable[]{nsasasbsc, sa, d1_5});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.putDouble("a", 1.5D);
         t2.putString("b", "c");
         assertThat("withdouble({a:a;b:c}, a, 1.5) = {a:1.5;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -886,13 +886,13 @@ public class TestNbtOperators {
     public void testNbtWithFloat() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_WITH_FLOAT.evaluate(new IVariable[]{nsasa, sc, d1_5});
         assertThat("result is a float", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.putFloat("c", 1.5F);
         assertThat("withfloat({a:a}, c, 1.5) = {a:a,c:1.5}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_FLOAT.evaluate(new IVariable[]{nsasasbsc, sa, d1_5});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.putFloat("a", 1.5F);
         t2.putString("b", "c");
         assertThat("withfloat({a:a;b:c}, a, 1.5) = {a:1.5;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -921,13 +921,13 @@ public class TestNbtOperators {
     public void testNbtWithString() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_WITH_STRING.evaluate(new IVariable[]{nsasa, sc, sc});
         assertThat("result is a string", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.putString("c", "c");
         assertThat("withstring({a:a}, c, c) = {a:a,c:c}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_STRING.evaluate(new IVariable[]{nsasasbsc, sa, sc});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.putString("a", "c");
         t2.putString("b", "c");
         assertThat("withstring({a:a;b:c}, a, c) = {a:c;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -954,18 +954,18 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtWithTag() throws EvaluationException {
-        CompoundNBT tsasa = new CompoundNBT();
+        CompoundTag tsasa = new CompoundTag();
         tsasa.putString("a", "a");
 
         IValue res1 = Operators.NBT_COMPOUND_WITH_COMPOUND.evaluate(new IVariable[]{nsasa, sc, nsasa});
         assertThat("result is a tag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.put("c", tsasa);
         assertThat("withtag({a:a}, c, tag) = {a:a,c:tag}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_COMPOUND.evaluate(new IVariable[]{nsasasbsc, sa, nsasa});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.put("a", tsasa);
         t2.putString("b", "c");
         assertThat("withtag({a:a;b:c}, a, tag) = {a:tag;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -992,22 +992,22 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtWithListTag() throws EvaluationException {
-        CompoundNBT tsasa = new CompoundNBT();
+        CompoundTag tsasa = new CompoundTag();
         tsasa.putString("a", "a");
-        ListNBT tlist = new ListNBT();
-        tlist.add(new CompoundNBT());
+        ListTag tlist = new ListTag();
+        tlist.add(new CompoundTag());
         tlist.add(tsasa);
-        tlist.add(new CompoundNBT());
+        tlist.add(new CompoundTag());
 
         IValue res1 = Operators.NBT_COMPOUND_WITH_LIST_TAG.evaluate(new IVariable[]{nsasa, sc, ltags});
         assertThat("result is a listtag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.put("c", tlist);
         assertThat("withlisttag({a:a}, c, listtag) = {a:a,c:listtag}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_LIST_TAG.evaluate(new IVariable[]{nsasasbsc, sa, ltags});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.put("a", tlist);
         t2.putString("b", "c");
         assertThat("withlisttag({a:a;b:c}, a, listtag) = {a:listtag;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -1034,19 +1034,19 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtWithListByte() throws EvaluationException {
-        CompoundNBT tsasa = new CompoundNBT();
+        CompoundTag tsasa = new CompoundTag();
         tsasa.putString("a", "a");
-        ByteArrayNBT tlist = new ByteArrayNBT(new byte[]{5, 4, 3});
+        ByteArrayTag tlist = new ByteArrayTag(new byte[]{5, 4, 3});
 
         IValue res1 = Operators.NBT_COMPOUND_WITH_LIST_BYTE.evaluate(new IVariable[]{nsasa, sc, lints});
         assertThat("result is a listbyte", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.put("c", tlist);
         assertThat("withlistbyte({a:a}, c, listbyte) = {a:a,c:listbyte}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_LIST_BYTE.evaluate(new IVariable[]{nsasasbsc, sa, lints});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.put("a", tlist);
         t2.putString("b", "c");
         assertThat("withlistbyte({a:a;b:c}, a, listbyte) = {a:listbyte;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -1073,19 +1073,19 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtWithListInt() throws EvaluationException {
-        CompoundNBT tsasa = new CompoundNBT();
+        CompoundTag tsasa = new CompoundTag();
         tsasa.putString("a", "a");
-        IntArrayNBT tlist = new IntArrayNBT(new int[]{5, 4, 3});
+        IntArrayTag tlist = new IntArrayTag(new int[]{5, 4, 3});
 
         IValue res1 = Operators.NBT_COMPOUND_WITH_LIST_INT.evaluate(new IVariable[]{nsasa, sc, lints});
         assertThat("result is a listint", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.put("c", tlist);
         assertThat("withlistint({a:a}, c, listint) = {a:a,c:listint}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_LIST_INT.evaluate(new IVariable[]{nsasasbsc, sa, lints});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.put("a", tlist);
         t2.putString("b", "c");
         assertThat("withlistint({a:a;b:c}, a, listint) = {a:listint;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -1112,19 +1112,19 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtWithListLong() throws EvaluationException {
-        CompoundNBT tsasa = new CompoundNBT();
+        CompoundTag tsasa = new CompoundTag();
         tsasa.putString("a", "a");
-        LongArrayNBT tlist = new LongArrayNBT(new long[]{5, 4, 3});
+        LongArrayTag tlist = new LongArrayTag(new long[]{5, 4, 3});
 
         IValue res1 = Operators.NBT_COMPOUND_WITH_LIST_LONG.evaluate(new IVariable[]{nsasa, sc, llongs});
         assertThat("result is a listlong", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        CompoundNBT t1 = new CompoundNBT();
+        CompoundTag t1 = new CompoundTag();
         t1.putString("a", "a");
         t1.put("c", tlist);
         assertThat("withlistlong({a:a}, c, listlong) = {a:a,c:listlong}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(t1));
 
         IValue res2 = Operators.NBT_COMPOUND_WITH_LIST_LONG.evaluate(new IVariable[]{nsasasbsc, sa, llongs});
-        CompoundNBT t2 = new CompoundNBT();
+        CompoundTag t2 = new CompoundTag();
         t2.put("a", tlist);
         t2.putString("b", "c");
         assertThat("withlistlong({a:a;b:c}, a, listlong) = {a:listlong;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
@@ -1194,7 +1194,7 @@ public class TestNbtOperators {
         assertThat("union(some, all) = all", ((ValueTypeNbt.ValueNbt) res3).getRawValue().get(), is(nall.getValue().getRawValue().get()));
 
         IValue res4 = Operators.NBT_COMPOUND_UNION.evaluate(new IVariable[]{nsasa, nsbsb});
-        CompoundNBT tsasasbsb = new CompoundNBT();
+        CompoundTag tsasasbsb = new CompoundTag();
         tsasasbsb.putString("a", "a");
         tsasasbsb.putString("b", "b");
         assertThat("union(sasa, sbsb) = sasasbsb", ((ValueTypeNbt.ValueNbt) res4).getRawValue().get(), is(tsasasbsb));
@@ -1223,16 +1223,16 @@ public class TestNbtOperators {
     public void testNbtIntersection() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nempty, nall});
         assertThat("result is an nbt tag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        assertThat("intersection({}, all) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(new CompoundNBT()));
+        assertThat("intersection({}, all) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(new CompoundTag()));
 
         IValue res2 = Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nall, nempty});
-        assertThat("intersection(all, {}) = {}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(new CompoundNBT()));
+        assertThat("intersection(all, {}) = {}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(new CompoundTag()));
 
         IValue res3 = Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nsome, nall});
         assertThat("intersection(some, all) = some", ((ValueTypeNbt.ValueNbt) res3).getRawValue().get(), is(nsome.getValue().getRawValue().get()));
 
         IValue res4 = Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nsasa, nsbsb});
-        assertThat("intersection(sasa, sbsb) = {}", ((ValueTypeNbt.ValueNbt) res4).getRawValue().get(), is(new CompoundNBT()));
+        assertThat("intersection(sasa, sbsb) = {}", ((ValueTypeNbt.ValueNbt) res4).getRawValue().get(), is(new CompoundTag()));
 
         IValue res5 = Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nsasa, nsasasbsc});
         assertThat("intersection(sasa, sasasbsc) = {}", ((ValueTypeNbt.ValueNbt) res5).getRawValue().get(), is(nsasa.getValue().getRawValue().get()));
@@ -1261,19 +1261,19 @@ public class TestNbtOperators {
     public void testNbtMinus() throws EvaluationException {
         IValue res1 = Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nempty, nall});
         assertThat("result is an nbt tag", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
-        assertThat("minus({}, all) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(new CompoundNBT()));
+        assertThat("minus({}, all) = {}", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(new CompoundTag()));
 
         IValue res2 = Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nall, nempty});
         assertThat("minus(all, {}) = all", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(nall.getValue().getRawValue().get()));
 
         IValue res3 = Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nsome, nall});
-        assertThat("minus(some, all) = {}", ((ValueTypeNbt.ValueNbt) res3).getRawValue().get(), is(new CompoundNBT()));
+        assertThat("minus(some, all) = {}", ((ValueTypeNbt.ValueNbt) res3).getRawValue().get(), is(new CompoundTag()));
 
         IValue res4 = Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nsasa, nsbsb});
         assertThat("minus(sasa, sbsb) = sasa", ((ValueTypeNbt.ValueNbt) res4).getRawValue().get(), is(nsasa.getValue().getRawValue().get()));
 
         IValue res5 = Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nsasasbsc, nsasa});
-        CompoundNBT tsbsc = new CompoundNBT();
+        CompoundTag tsbsc = new CompoundTag();
         tsbsc.putString("b", "c");
         assertThat("minus(sasasbsc, sasa) = {}", ((ValueTypeNbt.ValueNbt) res5).getRawValue().get(), is(tsbsc));
     }
@@ -1531,7 +1531,7 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtAsTagList() throws EvaluationException {
-        CompoundNBT subCompound = new CompoundNBT();
+        CompoundTag subCompound = new CompoundTag();
         subCompound.putString("hello", "world");
 
         IValue res1 = Operators.NBT_AS_TAG_LIST.evaluate(new IVariable[]{ntaglist});
@@ -1873,7 +1873,7 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtFromTagList() throws EvaluationException {
-        CompoundNBT subCompound = new CompoundNBT();
+        CompoundTag subCompound = new CompoundTag();
         subCompound.putString("hello", "world");
         IValue res1 = Operators.NBT_FROM_TAG_LIST.evaluate(new IVariable[]{new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeNbt.ValueNbt.of(subCompound),
@@ -1904,7 +1904,7 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtFromByteList() throws EvaluationException {
-        CompoundNBT subCompound = new CompoundNBT();
+        CompoundTag subCompound = new CompoundTag();
         subCompound.putString("hello", "world");
         IValue res1 = Operators.NBT_FROM_BYTE_LIST.evaluate(new IVariable[]{new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeInteger.ValueInteger.of(0),
@@ -1936,7 +1936,7 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtFromIntList() throws EvaluationException {
-        CompoundNBT subCompound = new CompoundNBT();
+        CompoundTag subCompound = new CompoundTag();
         subCompound.putString("hello", "world");
         IValue res1 = Operators.NBT_FROM_INT_LIST.evaluate(new IVariable[]{new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeInteger.ValueInteger.of(0),
@@ -1968,7 +1968,7 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtFromLongList() throws EvaluationException {
-        CompoundNBT subCompound = new CompoundNBT();
+        CompoundTag subCompound = new CompoundTag();
         subCompound.putString("hello", "world");
         IValue res1 = Operators.NBT_FROM_LONG_LIST.evaluate(new IVariable[]{new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeLong.ValueLong.of(0),
@@ -2000,9 +2000,9 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtPathMatchFirst() throws EvaluationException {
-        CompoundNBT tag2 = new CompoundNBT();
-        CompoundNBT tag3 = new CompoundNBT();
-        StringNBT tag4 = StringNBT.valueOf("x");
+        CompoundTag tag2 = new CompoundTag();
+        CompoundTag tag3 = new CompoundTag();
+        StringTag tag4 = StringTag.valueOf("x");
         tag2.put("a", tag3);
         tag3.put("b", tag4);
 
@@ -2046,10 +2046,10 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtPathMatchAll() throws EvaluationException {
-        CompoundNBT tag2 = new CompoundNBT();
-        CompoundNBT tag3 = new CompoundNBT();
-        StringNBT tag4 = StringNBT.valueOf("x");
-        StringNBT tag5 = StringNBT.valueOf("y");
+        CompoundTag tag2 = new CompoundTag();
+        CompoundTag tag3 = new CompoundTag();
+        StringTag tag4 = StringTag.valueOf("x");
+        StringTag tag5 = StringTag.valueOf("y");
         tag2.put("a", tag3);
         tag3.put("b", tag4);
         tag3.put("c", tag5);
@@ -2097,9 +2097,9 @@ public class TestNbtOperators {
 
     @Test
     public void testNbtPathTest() throws EvaluationException {
-        CompoundNBT tag2 = new CompoundNBT();
-        CompoundNBT tag3 = new CompoundNBT();
-        StringNBT tag4 = StringNBT.valueOf("x");
+        CompoundTag tag2 = new CompoundTag();
+        CompoundTag tag3 = new CompoundTag();
+        StringTag tag4 = StringTag.valueOf("x");
         tag2.put("a", tag3);
         tag3.put("b", tag4);
 

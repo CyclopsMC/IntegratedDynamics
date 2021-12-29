@@ -1,7 +1,11 @@
 package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.helper.AdvancementHelpers;
-import org.cyclops.integrateddynamics.advancement.criterion.*;
+import org.cyclops.integrateddynamics.advancement.criterion.NetworkInitializedTrigger;
+import org.cyclops.integrateddynamics.advancement.criterion.PartReaderAspectTrigger;
+import org.cyclops.integrateddynamics.advancement.criterion.PartVariableDrivenAspectTrigger;
+import org.cyclops.integrateddynamics.advancement.criterion.PartWriterAspectTrigger;
+import org.cyclops.integrateddynamics.advancement.criterion.VariableCreatedTrigger;
 
 /**
  * Advancement-related logic.

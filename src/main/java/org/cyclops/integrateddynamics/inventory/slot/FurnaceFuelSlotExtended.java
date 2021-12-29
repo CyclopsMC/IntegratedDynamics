@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.inventory.slot;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.FurnaceFuelSlot;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.FurnaceFuelSlot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 
 /**
  * A {@link FurnaceFuelSlot} that does not put restrictions on the used tile entity.
@@ -12,12 +12,12 @@ import net.minecraft.tileentity.AbstractFurnaceTileEntity;
  */
 public class FurnaceFuelSlotExtended extends Slot {
 
-    public FurnaceFuelSlotExtended(IInventory inventory, int index, int xPosition, int yPosition) {
+    public FurnaceFuelSlotExtended(Container inventory, int index, int xPosition, int yPosition) {
         super(inventory, index, xPosition, yPosition);
     }
 
     public boolean mayPlace(ItemStack itemStack) {
-        return AbstractFurnaceTileEntity.isFuel(itemStack) || FurnaceFuelSlot.isBucket(itemStack);
+        return AbstractFurnaceBlockEntity.isFuel(itemStack) || FurnaceFuelSlot.isBucket(itemStack);
     }
 
     public int getMaxStackSize(ItemStack itemStack) {

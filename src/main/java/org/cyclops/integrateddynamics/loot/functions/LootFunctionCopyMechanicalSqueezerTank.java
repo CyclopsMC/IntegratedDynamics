@@ -3,42 +3,42 @@ package org.cyclops.integrateddynamics.loot.functions;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootFunction;
-import net.minecraft.loot.LootFunctionType;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.cyclops.cyclopscore.helper.LootHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
-import org.cyclops.integrateddynamics.tileentity.TileMechanicalSqueezer;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalSqueezer;
 
 /**
  * Copies the mechanical squeezer tank.
  * @author rubensworks
  */
-public class LootFunctionCopyMechanicalSqueezerTank extends LootFunction {
-    public static final LootFunctionType TYPE = LootHelpers.registerFunction(new ResourceLocation(Reference.MOD_ID, "copy_mechanical_squeezer_tank"), new LootFunctionCopyMechanicalSqueezerTank.Serializer());
+public class LootFunctionCopyMechanicalSqueezerTank extends LootItemConditionalFunction {
+    public static final LootItemFunctionType TYPE = LootHelpers.registerFunction(new ResourceLocation(Reference.MOD_ID, "copy_mechanical_squeezer_tank"), new LootFunctionCopyMechanicalSqueezerTank.Serializer());
 
-    protected LootFunctionCopyMechanicalSqueezerTank(ILootCondition[] conditionsIn) {
+    protected LootFunctionCopyMechanicalSqueezerTank(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
     }
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        TileEntity tile = lootContext.getParamOrNull(LootParameters.BLOCK_ENTITY);
-        if (tile instanceof TileMechanicalSqueezer) {
-            itemStack.getOrCreateTag().put(BlockMechanicalSqueezer.NBT_TANK, ((TileMechanicalSqueezer) tile).getTank().writeToNBT(new CompoundNBT()));
+        BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        if (tile instanceof BlockEntityMechanicalSqueezer) {
+            itemStack.getOrCreateTag().put(BlockMechanicalSqueezer.NBT_TANK, ((BlockEntityMechanicalSqueezer) tile).getTank().writeToNBT(new CompoundTag()));
         }
         return itemStack;
     }
 
     @Override
-    public LootFunctionType getType() {
+    public LootItemFunctionType getType() {
         return TYPE;
     }
 
@@ -46,14 +46,14 @@ public class LootFunctionCopyMechanicalSqueezerTank extends LootFunction {
         // Dummy call, to enforce class loading
     }
 
-    public static class Serializer extends LootFunction.Serializer<LootFunctionCopyMechanicalSqueezerTank> {
+    public static class Serializer extends LootItemConditionalFunction.Serializer<LootFunctionCopyMechanicalSqueezerTank> {
         @Override
         public void serialize(JsonObject jsonObject, LootFunctionCopyMechanicalSqueezerTank lootFunctionCopyId, JsonSerializationContext jsonSerializationContext) {
 
         }
 
         @Override
-        public LootFunctionCopyMechanicalSqueezerTank deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext, ILootCondition[] conditionsIn) {
+        public LootFunctionCopyMechanicalSqueezerTank deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext, LootItemCondition[] conditionsIn) {
             return new LootFunctionCopyMechanicalSqueezerTank(conditionsIn);
         }
     }

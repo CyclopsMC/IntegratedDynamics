@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
@@ -36,11 +36,11 @@ public class NetworkDiagnostics {
         return _INSTANCE;
     }
 
-    protected ServerPlayerEntity getPlayer(UUID uuid) {
+    protected ServerPlayer getPlayer(UUID uuid) {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
     }
 
-    public synchronized void registerPlayer(ServerPlayerEntity player) {
+    public synchronized void registerPlayer(ServerPlayer player) {
         if (!players.contains(player.getUUID())) {
             players.add(player.getUUID());
             for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
@@ -50,18 +50,18 @@ public class NetworkDiagnostics {
         }
     }
 
-    public synchronized void unRegisterPlayer(ServerPlayerEntity player) {
+    public synchronized void unRegisterPlayer(ServerPlayer player) {
         players.remove(player.getUUID());
     }
 
-    public void sendNetworkUpdateToPlayer(ServerPlayerEntity player, INetwork network) {
+    public void sendNetworkUpdateToPlayer(ServerPlayer player, INetwork network) {
         List<RawPartData> rawParts = Lists.newArrayList();
         for (INetworkElement networkElement : network.getElements()) {
             if (networkElement instanceof IPartNetworkElement) {
                 IPartNetworkElement partNetworkElement = (IPartNetworkElement) networkElement;
                 PartPos pos = partNetworkElement.getTarget().getCenter();
                 long lastSecondDurationNs = network.getLastSecondDuration(networkElement);
-                rawParts.add(new RawPartData(pos.getPos().getWorldKey(),
+                rawParts.add(new RawPartData(pos.getPos().getLevelKey(),
                         pos.getPos().getBlockPos(), pos.getSide(),
                         L10NHelpers.localize(partNetworkElement.getPart().getTranslationKey()),
                         lastSecondDurationNs));
@@ -77,7 +77,7 @@ public class NetworkDiagnostics {
                 Map<PartPos, Long> durations = networkIngredients.getLastSecondDurationIndex();
                 for (Map.Entry<PartPos, Long> durationEntry : durations.entrySet()) {
                     PartPos pos = durationEntry.getKey();
-                    rawObservers.add(new RawObserverData(pos.getPos().getWorldKey(),
+                    rawObservers.add(new RawObserverData(pos.getPos().getLevelKey(),
                             pos.getPos().getBlockPos(), pos.getSide(),
                             networkIngredients.getComponent().getName().toString(), durationEntry.getValue()));
                 }
@@ -91,7 +91,7 @@ public class NetworkDiagnostics {
     public synchronized void sendNetworkUpdate(INetwork network) {
         for (Iterator<UUID> it = players.iterator(); it.hasNext();) {
             UUID uuid = it.next();
-            ServerPlayerEntity player = getPlayer(uuid);
+            ServerPlayer player = getPlayer(uuid);
             if (player != null) {
                 sendNetworkUpdateToPlayer(player, network);
             } else {

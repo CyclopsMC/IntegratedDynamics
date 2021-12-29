@@ -1,17 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Data;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeString<G extends AbstractGui, C extends Container> implements IGuiInputElementValueType<GuiElementValueTypeStringRenderPattern, G, C> {
+public class GuiElementValueTypeString<G extends GuiComponent, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeStringRenderPattern, G, C> {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
@@ -62,7 +62,7 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
     public void setInputString(String inputString, GuiElementValueTypeStringRenderPattern subGui) {
         this.inputString = inputString;
         if(subGui != null) {
-            subGui.getTextField().setText(inputString);
+            subGui.getTextField().setValue(inputString);
         }
     }
 
@@ -82,12 +82,12 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
     }
 
     @Override
-    public ITextComponent getName() {
-        return new TranslationTextComponent(getValueType().getTranslationKey());
+    public Component getName() {
+        return new TranslatableComponent(getValueType().getTranslationKey());
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines) {
+    public void loadTooltip(List<Component> lines) {
         getValueType().loadTooltip(lines, true, null);
     }
 
@@ -107,11 +107,11 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
     }
 
     @Override
-    public ITextComponent validate() {
+    public Component validate() {
         try {
             IValue value = getValueType().parseString(inputString);
             if (!this.validator.test(value)) {
-                return new TranslationTextComponent(L10NValues.VALUE_ERROR);
+                return new TranslatableComponent(L10NValues.VALUE_ERROR);
             }
         } catch (EvaluationException e) {
             return e.getErrorMessage();
@@ -137,7 +137,7 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
     }
 
     @OnlyIn(Dist.CLIENT)
-    public abstract static class SubGuiValueTypeInfo<S extends ISubGuiBox, G extends ContainerScreenExtended<?>, C extends Container> extends SubGuiBox.Base {
+    public abstract static class SubGuiValueTypeInfo<S extends ISubGuiBox, G extends ContainerScreenExtended<?>, C extends AbstractContainerMenu> extends SubGuiBox.Base {
 
         private final IGuiInputElement element;
         protected final G gui;
@@ -151,7 +151,7 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
         }
 
         protected abstract boolean showError();
-        protected abstract ITextComponent getLastError();
+        protected abstract Component getLastError();
         protected abstract ResourceLocation getTexture();
 
         protected int getSignalX() {
@@ -163,8 +163,8 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
         }
 
         @Override
-        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
             int x = guiLeft + getX();
             int y = guiTop + getY();
@@ -173,7 +173,7 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
             fontRenderer.drawShadow(matrixStack, element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
 
             if(showError()) {
-                ITextComponent lastError = getLastError();
+                Component lastError = getLastError();
                 if (lastError != null) {
                     Images.ERROR.draw(this, matrixStack, x + getSignalX(), y + getSignalY() - 1);
                 } else {
@@ -183,21 +183,21 @@ public class GuiElementValueTypeString<G extends AbstractGui, C extends Containe
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+        public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             int x = getX();
             int y = getY();
 
             if(showError()) {
-                ITextComponent lastError = getLastError();
-                if (lastError != null && gui.isPointInRegion(x + getSignalX(), y + getSignalY() - 1, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
-                    List<ITextComponent> lines = StringHelpers.splitLines(lastError.getString(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
-                            TextFormatting.RED.toString())
+                Component lastError = getLastError();
+                if (lastError != null && gui.isHovering(x + getSignalX(), y + getSignalY() - 1, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
+                    List<Component> lines = StringHelpers.splitLines(lastError.getString(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
+                            ChatFormatting.RED.toString())
                             .stream()
-                            .map(StringTextComponent::new)
+                            .map(TextComponent::new)
                             .collect(Collectors.toList());
-                    gui.drawTooltip(lines, mouseX - guiLeft, mouseY - guiTop);
+                    gui.drawTooltip(lines, matrixStack, mouseX - guiLeft, mouseY - guiTop);
                 }
             }
         }

@@ -1,10 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 
@@ -20,7 +19,7 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
     }
 
     @Override
-    public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> list) {
+    public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
         ItemStack full = new ItemStack(this);
         IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) ((ItemBlockEnergyContainer) full.getItem()).getEnergyBattery(full).orElse(null);
         fill(energyStorage);

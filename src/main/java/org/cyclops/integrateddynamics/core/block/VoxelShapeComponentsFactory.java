@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.block;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +29,7 @@ public class VoxelShapeComponentsFactory {
         this.handlers.add(handler);
     }
 
-    public VoxelShapeComponents createShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
+    public VoxelShapeComponents createShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
         List<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
         for (IHandler handler : handlers) {
             components.addAll(handler.createComponents(blockState, world, blockPos));
@@ -38,7 +38,7 @@ public class VoxelShapeComponentsFactory {
     }
 
     public static interface IHandler {
-        public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, IBlockReader world, BlockPos blockPos);
+        public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos);
     }
 
 }

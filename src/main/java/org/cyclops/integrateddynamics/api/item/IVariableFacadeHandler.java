@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.api.item;
 
 import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
@@ -30,14 +30,14 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
      * @param tagCompound The tag containing information that can be read and used to form a variable facade.
      * @return The variable facade
      */
-    public F getVariableFacade(int id, CompoundNBT tagCompound);
+    public F getVariableFacade(int id, CompoundTag tagCompound);
 
     /**
      * Set the variable facade for the given tag.
      * @param tagCompound The tag that is used to write variable facade information to.
      * @param variableFacade The facade to write.
      */
-    public void setVariableFacade(CompoundNBT tagCompound, F variableFacade);
+    public void setVariableFacade(CompoundTag tagCompound, F variableFacade);
 
     /**
      * Deserialize the given JSON element to a variable predicate.

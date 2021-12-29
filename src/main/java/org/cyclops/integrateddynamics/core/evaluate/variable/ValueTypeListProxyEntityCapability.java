@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -21,7 +21,7 @@ public abstract class ValueTypeListProxyEntityCapability<C, T extends IValueType
     private final Capability<C> capability;
     private Direction side;
 
-    public ValueTypeListProxyEntityCapability(ResourceLocation name, T valueType, World world, Entity entity,
+    public ValueTypeListProxyEntityCapability(ResourceLocation name, T valueType, Level world, Entity entity,
                                               Capability<C> capability, @Nullable Direction side) {
         super(name, valueType, world, entity);
         this.capability = capability;
@@ -37,7 +37,7 @@ public abstract class ValueTypeListProxyEntityCapability<C, T extends IValueType
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundNBT tag) {
+    public void writeGeneratedFieldsToNBT(CompoundTag tag) {
         super.writeGeneratedFieldsToNBT(tag);
         if (side != null) {
             tag.putInt("side", side.ordinal());
@@ -45,9 +45,9 @@ public abstract class ValueTypeListProxyEntityCapability<C, T extends IValueType
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundNBT tag) {
+    public void readGeneratedFieldsFromNBT(CompoundTag tag) {
         super.readGeneratedFieldsFromNBT(tag);
-        if (tag.contains("side", Constants.NBT.TAG_INT)) {
+        if (tag.contains("side", Tag.TAG_INT)) {
             this.side = Direction.values()[tag.getInt("side")];
         }
     }

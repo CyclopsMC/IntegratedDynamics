@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -29,8 +29,8 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 IValue value = variables.getValue(0);
                 if(value.getType() != from) {
-                    throw new EvaluationException(new TranslationTextComponent(
-                            L10NValues.OPERATOR_ERROR_CAST_UNEXPECTED, new TranslationTextComponent(value.getType().getTranslationKey()), new TranslationTextComponent(from.getTranslationKey()), new TranslationTextComponent(to.getTranslationKey())));
+                    throw new EvaluationException(new TranslatableComponent(
+                            L10NValues.OPERATOR_ERROR_CAST_UNEXPECTED, new TranslatableComponent(value.getType().getTranslationKey()), new TranslatableComponent(from.getTranslationKey()), new TranslatableComponent(to.getTranslationKey())));
                 }
                 return mapping.cast((V1) value);
             }
@@ -58,10 +58,10 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
-        lines.add(new TranslationTextComponent("operator.integrateddynamics.cast.tooltip",
-                new TranslationTextComponent(from.getTranslationKey()),
-                new TranslationTextComponent(to.getTranslationKey())));
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
+        lines.add(new TranslatableComponent("operator.integrateddynamics.cast.tooltip",
+                new TranslatableComponent(from.getTranslationKey()),
+                new TranslatableComponent(to.getTranslationKey())));
         super.loadTooltip(lines, appendOptionalInfo);
     }
 

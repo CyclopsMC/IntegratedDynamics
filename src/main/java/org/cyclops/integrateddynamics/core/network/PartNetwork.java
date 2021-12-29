@@ -5,11 +5,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.Direction;
-import org.apache.logging.log4j.Level;
+import net.minecraft.core.Direction;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -124,11 +123,11 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
                 DimPos dimPos = it.next();
                 if (dimPos.isLoaded()) {
-                    IVariableContainer variableContainer = TileHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY).orElse(null);
+                    IVariableContainer variableContainer = BlockEntityHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY).orElse(null);
                     if (variableContainer != null) {
                         compositeMap.addElement(variableContainer.getVariableCache());
                     } else {
-                        IntegratedDynamics.clog(Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
+                        IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, "The variable container at " + dimPos + " was invalid, skipping.");
                         it.remove();
                     }
                 }

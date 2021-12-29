@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
 /**

@@ -1,24 +1,23 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -79,7 +78,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param tag The tag to write to. This tag is guaranteed to be empty.
      * @param partState The state of this part.
      */
-    public void toNBT(CompoundNBT tag, S partState);
+    public void toNBT(CompoundTag tag, S partState);
 
     /**
      * Read the properties of this part from nbt.
@@ -87,7 +86,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param tag The tag to read from.
      * @return The state of this part.
      */
-    public S fromNBT(CompoundNBT tag);
+    public S fromNBT(CompoundTag tag);
 
     /**
      * @return The default state of this part.
@@ -219,7 +218,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param state The state.
      * @return The itemstack possibly containing the state information.
      */
-    public ItemStack getPickBlock(World world, BlockPos pos, S state);
+    public ItemStack getCloneItemStack(Level world, BlockPos pos, S state);
 
     /**
      * Get the part state from the given itemstack.
@@ -276,8 +275,8 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param hit The ray trace hit result.
      * @return The action result.
      */
-    public ActionResultType onPartActivated(S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
-                                            ItemStack heldItem, BlockRayTraceResult hit);
+    public InteractionResult onPartActivated(S partState, BlockPos pos, Level world, Player player, InteractionHand hand,
+                                            ItemStack heldItem, BlockHitResult hit);
 
     /**
      * Get the base block state that will be rendered for this part.
@@ -300,7 +299,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param partState The part state.
      * @param random A random instance.
      */
-    public void updateTick(World world, BlockPos pos, S partState, Random random);
+    public void updateTick(Level world, BlockPos pos, S partState, Random random);
 
     /**
      * Called when this element is about to be removed.
@@ -333,7 +332,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param neighbourBlockPos The position of the neighbour that was updated.
      */
     public void onBlockNeighborChange(@Nullable INetwork network, @Nullable IPartNetwork partNetwork, PartTarget target,
-                                      S state, IBlockReader world, Block neighbourBlock, BlockPos neighbourBlockPos);
+                                      S state, BlockGetter world, Block neighbourBlock, BlockPos neighbourBlockPos);
 
     /**
      * @param state The state
@@ -371,14 +370,14 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param state The state.
      * @param lines The list to add lines to.
      */
-    public void loadTooltip(S state, List<ITextComponent> lines);
+    public void loadTooltip(S state, List<Component> lines);
 
     /**
      * Add tooltip lines for this aspect when this part's item is being hovered.
      * @param itemStack The itemstack.
      * @param lines The list to add lines to.
      */
-    public void loadTooltip(ItemStack itemStack, List<ITextComponent> lines);
+    public void loadTooltip(ItemStack itemStack, List<Component> lines);
 
     /**
      * Check if the given state change should trigger a block render update.
@@ -397,11 +396,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public boolean forceLightTransparency(S state);
 
     /**
-     * {@link #writeExtraGuiData(PacketBuffer, PartPos, ServerPlayerEntity)}.
+     * {@link #writeExtraGuiData(FriendlyByteBuf, PartPos, ServerPlayer)}.
      * @return The optional container provider for the part type gui.
      * @param pos The part position. May be null when called client-side, for checking presence.
      */
-    public default Optional<INamedContainerProvider> getContainerProvider(PartPos pos) {
+    public default Optional<MenuProvider> getContainerProvider(PartPos pos) {
         return Optional.empty();
     };
 
@@ -411,16 +410,16 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param pos A part position.
      * @param player The player opening the gui.
      */
-    public default void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+    public default void writeExtraGuiData(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
 
     }
 
     /**
-     * {@link #writeExtraGuiDataSettings(PacketBuffer, PartPos, ServerPlayerEntity)}.
+     * {@link #writeExtraGuiDataSettings(FriendlyByteBuf, PartPos, ServerPlayer)}.
      * @return The optional container provider for the part settings gui.
      * @param pos The part position. May be null when called client-side, for checking presence.
      */
-    public default Optional<INamedContainerProvider> getContainerProviderSettings(PartPos pos) {
+    public default Optional<MenuProvider> getContainerProviderSettings(PartPos pos) {
         return Optional.empty();
     };
 
@@ -431,7 +430,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param pos A part position.
      * @param player The player opening the settings gui.
      */
-    public default void writeExtraGuiDataSettings(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+    public default void writeExtraGuiDataSettings(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
 
     }
 

@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.event;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -9,7 +8,6 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 
 import javax.annotation.Nullable;
 
@@ -20,14 +18,14 @@ import javax.annotation.Nullable;
 public class PartVariableDrivenVariableContentsUpdatedEvent<P extends IPartType<P, S>, S extends IPartState<P>> extends PartEvent<P, S> {
 
     @Nullable
-    private final PlayerEntity entityPlayer;
+    private final Player entityPlayer;
     @Nullable
     private final IVariable variable;
     @Nullable
     private final IValue value;
 
     public PartVariableDrivenVariableContentsUpdatedEvent(INetwork network, IPartNetwork partNetwork, PartTarget target, P partType, S partState,
-                                                          @Nullable PlayerEntity entityPlayer, IVariable variable, IValue value) {
+                                                          @Nullable Player entityPlayer, IVariable variable, IValue value) {
         super(network, partNetwork, target, partType, partState);
         this.entityPlayer = entityPlayer;
         this.variable = variable;
@@ -35,7 +33,7 @@ public class PartVariableDrivenVariableContentsUpdatedEvent<P extends IPartType<
     }
 
     @Nullable
-    public PlayerEntity getEntityPlayer() {
+    public Player getEntityPlayer() {
         return entityPlayer;
     }
 

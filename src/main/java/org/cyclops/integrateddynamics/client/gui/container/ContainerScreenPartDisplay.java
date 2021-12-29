@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
@@ -29,7 +29,7 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     private static final int OK_X = 104;
     private static final int OK_Y = 16;
 
-    public ContainerScreenPartDisplay(ContainerPartPanelVariableDriven<P, S> container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenPartDisplay(ContainerPartPanelVariableDriven<P, S> container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 
@@ -37,9 +37,9 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     public void init() {
         super.init();
 
-        addButton(new ButtonText(getGuiLeftTotal() + 128, getGuiTopTotal() + 32, 30, 12,
-                new TranslationTextComponent("gui.integrateddynamics.button.copy"),
-                new TranslationTextComponent("gui.integrateddynamics.button.copy"),
+        addRenderableWidget(new ButtonText(getGuiLeftTotal() + 128, getGuiTopTotal() + 32, 30, 12,
+                new TranslatableComponent("gui.integrateddynamics.button.copy"),
+                new TranslatableComponent("gui.integrateddynamics.button.copy"),
                 (button) -> valueToClipboard(), true));
     }
 
@@ -49,10 +49,10 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
-        ITextComponent readValue = getMenu().getReadValue();
+        Component readValue = getMenu().getReadValue();
         int readValueColor = getMenu().getReadValueColor();
         boolean ok = false;
         if(readValue != null) {
@@ -61,20 +61,19 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
                     getGuiLeftTotal() + 53, getGuiTopTotal() + 38, 70, readValueColor);
         }
 
-        RenderSystem.color3f(1, 1, 1);
         displayErrors.drawBackground(matrixStack, getMenu().getReadErrors(), ERROR_X, ERROR_Y, OK_X, OK_Y, this,
                 this.leftPos, this.topPos, ok);
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         super.renderLabels(matrixStack, mouseX, mouseY);
         // Render error tooltip
         displayErrors.drawForeground(matrixStack, getMenu().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.leftPos, this.topPos);
 
         // Draw tooltip over copy button
-        GuiHelpers.renderTooltip(this, 128, 32, 30, 12, mouseX, mouseY,
-                () -> Lists.newArrayList(new TranslationTextComponent("gui.integrateddynamics.button.copy.info")));
+        GuiHelpers.renderTooltip(this, matrixStack, 128, 32, 30, 12, mouseX, mouseY,
+                () -> Lists.newArrayList(new TranslatableComponent("gui.integrateddynamics.button.copy.info")));
     }
 
     @Override
@@ -97,7 +96,7 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     }
 
     protected void valueToClipboard() {
-        ITextComponent readValue = getMenu().getReadValue();
+        Component readValue = getMenu().getReadValue();
         if (readValue != null) {
             getMinecraft().keyboardHandler.setClipboard(readValue.getString());
         }

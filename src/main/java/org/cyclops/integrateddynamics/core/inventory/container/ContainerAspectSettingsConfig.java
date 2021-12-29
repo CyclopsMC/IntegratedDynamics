@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
@@ -25,7 +25,7 @@ public class ContainerAspectSettingsConfig extends GuiConfig<ContainerAspectSett
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & IHasContainer<ContainerAspectSettings>> ScreenManager.IScreenFactory<ContainerAspectSettings, U> getScreenFactory() {
+    public <U extends Screen & MenuAccess<ContainerAspectSettings>> MenuScreens.ScreenConstructor<ContainerAspectSettings, U> getScreenFactory() {
         return new ScreenFactorySafe<>(ContainerScreenAspectSettings::new);
     }
 

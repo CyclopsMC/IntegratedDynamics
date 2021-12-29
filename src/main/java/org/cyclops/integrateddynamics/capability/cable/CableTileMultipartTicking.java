@@ -1,17 +1,17 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 
 /**
  * Default implementation of {@link ICable}.
  * @author rubensworks
  */
-public class CableTileMultipartTicking extends CableTile<TileMultipartTicking> {
+public class CableTileMultipartTicking extends CableTile<BlockEntityMultipartTicking> {
 
-    public CableTileMultipartTicking(TileMultipartTicking tile) {
+    public CableTileMultipartTicking(BlockEntityMultipartTicking tile) {
         super(tile);
     }
 

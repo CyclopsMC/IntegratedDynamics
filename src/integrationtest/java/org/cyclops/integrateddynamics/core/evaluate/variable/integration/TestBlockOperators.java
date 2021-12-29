@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CropsBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -63,14 +63,14 @@ public class TestBlockOperators {
         bSand = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.SAND.defaultBlockState()));
         bFarmLand = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.FARMLAND.defaultBlockState()));
         bCarrot = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.CARROTS.defaultBlockState()));
-        bCarrotGrown = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.CARROTS.defaultBlockState().setValue(CropsBlock.AGE, 1)));
+        bCarrotGrown = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.CARROTS.defaultBlockState().setValue(CropBlock.AGE, 1)));
 
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
         iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
 
         sSponge = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:sponge"));
 
-        CompoundNBT tag = new CompoundNBT();
+        CompoundTag tag = new CompoundTag();
         tag.putString("age", "1");
         nbtCarrotGrown = new DummyVariable<>(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(tag));
     }
@@ -387,7 +387,7 @@ public class TestBlockOperators {
     public void testBlockBlockProperties() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_PROPERTIES.evaluate(new IVariable[]{bCarrotGrown});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
-        CompoundNBT tag = new CompoundNBT();
+        CompoundTag tag = new CompoundTag();
         tag.putString("age", "1");
         TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), tag, "blockproperties(minecraft:carrot) = {...}");
     }
@@ -441,16 +441,16 @@ public class TestBlockOperators {
     public void testBlockBlockPossibleProperties() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_POSSIBLE_PROPERTIES.evaluate(new IVariable[]{bCarrotGrown});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
-        CompoundNBT tag = new CompoundNBT();
-        ListNBT list = new ListNBT();
-        list.add(StringNBT.valueOf("0"));
-        list.add(StringNBT.valueOf("1"));
-        list.add(StringNBT.valueOf("2"));
-        list.add(StringNBT.valueOf("3"));
-        list.add(StringNBT.valueOf("4"));
-        list.add(StringNBT.valueOf("5"));
-        list.add(StringNBT.valueOf("6"));
-        list.add(StringNBT.valueOf("7"));
+        CompoundTag tag = new CompoundTag();
+        ListTag list = new ListTag();
+        list.add(StringTag.valueOf("0"));
+        list.add(StringTag.valueOf("1"));
+        list.add(StringTag.valueOf("2"));
+        list.add(StringTag.valueOf("3"));
+        list.add(StringTag.valueOf("4"));
+        list.add(StringTag.valueOf("5"));
+        list.add(StringTag.valueOf("6"));
+        list.add(StringTag.valueOf("7"));
         tag.put("age", list);
         TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), tag, "blockpossibleproperties(minecraft:carrot) = {...}");
     }

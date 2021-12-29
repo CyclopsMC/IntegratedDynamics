@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
@@ -16,7 +16,7 @@ import java.util.Map;
  * An interface for containers that can hold {@link IPartType}s.
  * @author rubensworks
  */
-public interface IPartContainer extends ICapabilitySerializable<CompoundNBT> {
+public interface IPartContainer extends ICapabilitySerializable<CompoundTag> {
 
     /**
      * Should be called every tick, updates parts.
@@ -80,7 +80,7 @@ public interface IPartContainer extends ICapabilitySerializable<CompoundNBT> {
      * @param saveState If the part state should be saved in the item.
      * @return The removed part or null.
      */
-    public IPartType removePart(Direction side, @Nullable PlayerEntity player, boolean dropMainElement, boolean saveState);
+    public IPartType removePart(Direction side, @Nullable Player player, boolean dropMainElement, boolean saveState);
 
     /**dz
      * Set the state of a part.
@@ -107,6 +107,6 @@ public interface IPartContainer extends ICapabilitySerializable<CompoundNBT> {
      * @return The side the player is watching or null.
      */
     public @Nullable
-    Direction getWatchingSide(World world, BlockPos pos, PlayerEntity player);
+    Direction getWatchingSide(Level world, BlockPos pos, Player player);
 
 }

@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Data;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
@@ -77,7 +76,7 @@ public abstract class NetworkElementBase implements INetworkElement {
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, IBlockReader world, Block neighbourBlock,
+    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, Block neighbourBlock,
                                       BlockPos neighbourBlockPos) {
 
     }
@@ -97,7 +96,7 @@ public abstract class NetworkElementBase implements INetworkElement {
     }
 
     protected void revalidatePositioned(INetwork network, DimPos dimPos) {
-        NetworkHelpers.getNetworkCarrier(dimPos.getWorld(true), dimPos.getBlockPos(), null)
+        NetworkHelpers.getNetworkCarrier(dimPos.getLevel(true), dimPos.getBlockPos(), null)
                 .ifPresent(networkCarrier -> networkCarrier.setNetwork(network));
     }
 }

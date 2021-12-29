@@ -10,12 +10,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -113,10 +112,10 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public INBT serialize(IOperator value) {
+    public Tag serialize(IOperator value) {
         for (IOperatorSerializer serializer : serializers) {
             if (serializer.canHandle(value)) {
-                CompoundNBT tag = new CompoundNBT();
+                CompoundTag tag = new CompoundTag();
                 tag.putString("serializer", serializer.getUniqueName().toString());
                 tag.put("value", serializer.serialize(value));
                 return tag;
@@ -126,14 +125,14 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public IOperator deserialize(INBT value) throws EvaluationException {
-        if (value.getId() == Constants.NBT.TAG_COMPOUND) {
-            CompoundNBT tag = (CompoundNBT) value;
+    public IOperator deserialize(Tag value) throws EvaluationException {
+        if (value.getId() == Tag.TAG_COMPOUND) {
+            CompoundTag tag = (CompoundTag) value;
             String serializerName = tag.getString("serializer");
             IOperatorSerializer serializer = namedSerializers.get(serializerName);
             if (serializer == null) {
                 throw new EvaluationException(
-                        new TranslationTextComponent(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value));
+                        new TranslatableComponent(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value));
             }
             return serializer.deserialize(tag.get("value"));
         }
@@ -146,9 +145,9 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public IOperatorVariableFacade getVariableFacade(int id, CompoundNBT tag) {
-        if(!tag.contains("operatorName", Constants.NBT.TAG_STRING)
-                || !tag.contains("variableIds", Constants.NBT.TAG_INT_ARRAY)) {
+    public IOperatorVariableFacade getVariableFacade(int id, CompoundTag tag) {
+        if(!tag.contains("operatorName", Tag.TAG_STRING)
+                || !tag.contains("variableIds", Tag.TAG_INT_ARRAY)) {
             return INVALID_FACADE;
         }
         IOperator operator;
@@ -165,7 +164,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public void setVariableFacade(CompoundNBT tag, IOperatorVariableFacade variableFacade) {
+    public void setVariableFacade(CompoundTag tag, IOperatorVariableFacade variableFacade) {
         tag.put("operatorName", serialize(variableFacade.getOperator()));
         tag.putIntArray("variableIds", variableFacade.getVariableIds());
     }
@@ -175,9 +174,9 @@ public class OperatorRegistry implements IOperatorRegistry {
         JsonElement operatorElement = element.get("operator");
         IOperator operator = null;
         if (operatorElement != null && !operatorElement.isJsonNull()) {
-            operator = Operators.REGISTRY.getOperator(new ResourceLocation(JSONUtils.getAsString(element, "operator")));
+            operator = Operators.REGISTRY.getOperator(new ResourceLocation(GsonHelper.getAsString(element, "operator")));
             if (operator == null) {
-                throw new JsonSyntaxException("Unknown operator type '" + JSONUtils.getAsString(element, "operator")
+                throw new JsonSyntaxException("Unknown operator type '" + GsonHelper.getAsString(element, "operator")
                         + "', valid types are: " + Operators.REGISTRY.getOperators().stream()
                         .map(IOperator::getUniqueName).collect(Collectors.toList()));
             }

@@ -1,12 +1,11 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.container.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
@@ -21,7 +20,7 @@ import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C extends Container> extends SubGuiBox implements ISubGuiBox {
+public class RenderPattern<E extends IGuiInputElement, G extends GuiComponent, C extends AbstractContainerMenu> extends SubGuiBox implements ISubGuiBox {
 
     @Getter
     protected final E element;
@@ -40,7 +39,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C 
         this.container = container;
     }
 
-    protected void drawSlot(MatrixStack matrixStack, int x, int y) {
+    protected void drawSlot(PoseStack matrixStack, int x, int y) {
         this.blit(matrixStack, x, y, 19, 0, 18, 18);
     }
 
@@ -59,8 +58,8 @@ public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C 
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         if (drawRenderPattern()) {
             IConfigRenderPattern configRenderPattern = element.getRenderPattern();
 
@@ -77,7 +76,6 @@ public class RenderPattern<E extends IGuiInputElement, G extends AbstractGui, C 
                         baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
                         0, 1, 0);
             }
-            RenderSystem.color3f(1, 1, 1);
         }
     }
 

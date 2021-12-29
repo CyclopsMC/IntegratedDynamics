@@ -2,10 +2,10 @@ package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -36,26 +36,26 @@ public class DelayVariableFacade extends ProxyVariableFacade implements IDelayVa
     }
 
     @Override
-    protected IFormattableTextComponent getProxyNotInNetworkError() {
-        return new TranslationTextComponent(L10NValues.DELAY_ERROR_DELAYNOTINNETWORK, Integer.toString(getProxyId()));
+    protected MutableComponent getProxyNotInNetworkError() {
+        return new TranslatableComponent(L10NValues.DELAY_ERROR_DELAYNOTINNETWORK, Integer.toString(getProxyId()));
     }
 
     @Override
-    protected IFormattableTextComponent getProxyInvalidError() {
-        return new TranslationTextComponent(L10NValues.DELAY_ERROR_DELAYINVALID, Integer.toString(getProxyId()));
+    protected MutableComponent getProxyInvalidError() {
+        return new TranslatableComponent(L10NValues.DELAY_ERROR_DELAYINVALID, Integer.toString(getProxyId()));
     }
 
     @Override
-    protected IFormattableTextComponent getProxyInvalidTypeError(IPartNetwork network,
+    protected MutableComponent getProxyInvalidTypeError(IPartNetwork network,
                                                                      IValueType containingValueType,
                                                                      IValueType actualType) {
-        return new TranslationTextComponent(L10NValues.DELAY_ERROR_DELAYINVALIDTYPE,
-                new TranslationTextComponent(containingValueType.getTranslationKey()),
-                new TranslationTextComponent(actualType.getTranslationKey()));
+        return new TranslatableComponent(L10NValues.DELAY_ERROR_DELAYINVALIDTYPE,
+                new TranslatableComponent(containingValueType.getTranslationKey()),
+                new TranslatableComponent(actualType.getTranslationKey()));
     }
 
-    protected ITextComponent getProxyTooltip() {
-        return new TranslationTextComponent(L10NValues.DELAY_TOOLTIP_DELAYID, getProxyId());
+    protected Component getProxyTooltip() {
+        return new TranslatableComponent(L10NValues.DELAY_TOOLTIP_DELAYID, getProxyId());
     }
 
     @OnlyIn(Dist.CLIENT)

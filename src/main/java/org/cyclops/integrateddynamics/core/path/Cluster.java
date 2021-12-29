@@ -3,19 +3,17 @@ package org.cyclops.integrateddynamics.core.path;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.experimental.Delegate;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
-import net.minecraft.world.DimensionType;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.server.ServerLifecycleHooks;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -49,13 +47,13 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
     }
 
     @Override
-    public CompoundNBT toNBT() {
-        CompoundNBT tag = new CompoundNBT();
-        ListNBT list = new ListNBT();
+    public CompoundTag toNBT() {
+        CompoundTag tag = new CompoundTag();
+        ListTag list = new ListTag();
 
         for(ISidedPathElement e : elements) {
-            CompoundNBT elementTag = new CompoundNBT();
-            elementTag.putString("dimension", e.getPathElement().getPosition().getWorld());
+            CompoundTag elementTag = new CompoundTag();
+            elementTag.putString("dimension", e.getPathElement().getPosition().getLevel());
             elementTag.putLong("pos", e.getPathElement().getPosition().getBlockPos().asLong());
             if (e.getSide() != null) {
                 elementTag.putInt("side", e.getSide().ordinal());
@@ -68,27 +66,27 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
     }
 
     @Override
-    public void fromNBT(CompoundNBT tag) {
-        ListNBT list = tag.getList("list", Constants.NBT.TAG_COMPOUND);
+    public void fromNBT(CompoundTag tag) {
+        ListTag list = tag.getList("list", Tag.TAG_COMPOUND);
 
         for(int i = 0; i < list.size(); i++) {
-            CompoundNBT elementTag = list.getCompound(i);
+            CompoundTag elementTag = list.getCompound(i);
             ResourceLocation dimensionId = new ResourceLocation(elementTag.getString("dimension"));
-            RegistryKey<World> dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, dimensionId);
-            World world = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
+            ResourceKey<Level> dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, dimensionId);
+            Level world = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
             BlockPos pos = BlockPos.of(elementTag.getLong("pos"));
             Direction side = null;
-            if (elementTag.contains("side", Constants.NBT.TAG_INT)) {
+            if (elementTag.contains("side", Tag.TAG_INT)) {
                 side = Direction.values()[elementTag.getInt("side")];
             }
 
             if (world == null) {
-                IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at the " +
+                IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Skipped loading part from a network at the " +
                         "invalid dimension id %s.", dimensionId));
             } else {
-                IPathElement pathElement = TileHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY).orElse(null);
+                IPathElement pathElement = BlockEntityHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY).orElse(null);
                 if(pathElement == null) {
-                    IntegratedDynamics.clog(Level.WARN, String.format("Skipped loading part from a network at " +
+                    IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Skipped loading part from a network at " +
                             "position %s in world %s because it has no valid path element.", pos, dimensionId));
                 } else {
                     elements.add(SidedPathElement.of(pathElement, side));

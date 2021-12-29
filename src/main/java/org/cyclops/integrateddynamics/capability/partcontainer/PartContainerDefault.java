@@ -3,15 +3,14 @@ package org.cyclops.integrateddynamics.capability.partcontainer;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
@@ -107,10 +106,10 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public IPartType removePart(Direction side, PlayerEntity player, boolean dropMainElement, boolean saveState) {
+    public IPartType removePart(Direction side, Player player, boolean dropMainElement, boolean saveState) {
         PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side); // Don't remove the state just yet! We might need it in network removal.
         if(partStateHolder == null) {
-            IntegratedDynamics.clog(Level.WARN, "Attempted to remove a part at a side where no part was.");
+            IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, "Attempted to remove a part at a side where no part was.");
             return null;
         } else {
             IPartType removed = partStateHolder.getPart();
@@ -214,14 +213,14 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tag = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
         PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT tag) {
+    public void deserializeNBT(CompoundTag tag) {
         synchronized (this.partData) {
             PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getLevel());
         }
@@ -234,7 +233,7 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     protected abstract void setChanged();
     protected abstract void sendUpdate();
-    protected abstract World getLevel();
+    protected abstract Level getLevel();
     protected abstract BlockPos getPos();
     protected abstract INetwork getNetwork();
 

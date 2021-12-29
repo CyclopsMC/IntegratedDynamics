@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -24,13 +24,13 @@ public abstract class ValueTypeListProxyPositioned<T extends IValueType<V>, V ex
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundNBT tag) {
+    public void writeGeneratedFieldsToNBT(CompoundTag tag) {
         NBTClassType.writeNbt(DimPos.class, "pos", pos, tag);
         NBTClassType.writeNbt(Direction.class, "side", side, tag);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundNBT tag) {
+    public void readGeneratedFieldsFromNBT(CompoundTag tag) {
         this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag);
         this.side = NBTClassType.readNbt(Direction.class, "side", tag);
     }

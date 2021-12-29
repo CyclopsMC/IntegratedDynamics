@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.icon.Icon;
@@ -32,7 +32,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
     }
 
     @Override
-    public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> list) {
+    public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
         ItemStack itemStack = new ItemStack(this);
 
         int capacityOriginal = BlockEnergyBatteryConfig.capacity;

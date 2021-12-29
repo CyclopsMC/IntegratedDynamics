@@ -2,16 +2,16 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
@@ -44,7 +44,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     private WidgetTextFieldDropdown<Direction> dropdownFieldSide = null;
     private List<SideDropdownEntry> dropdownEntries;
 
-    public ContainerScreenPartSettings(T container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenPartSettings(T container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 
@@ -95,7 +95,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         if (isFieldSideEnabled()) {
             dropdownEntries = Arrays.stream(Direction.values()).map(SideDropdownEntry::new).collect(Collectors.toList());
             dropdownFieldSide = new WidgetTextFieldDropdown(font, leftPos + 106, topPos + getFieldSideY(),
-                    70, 14, new TranslationTextComponent("gui.integrateddynamics.partsettings.side"), true,
+                    70, 14, new TranslatableComponent("gui.integrateddynamics.partsettings.side"), true,
                     Sets.newHashSet(dropdownEntries));
             setSideInDropdownField(getCurrentSide());
             dropdownFieldSide.setMaxLength(15);
@@ -106,7 +106,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldUpdateIntervalEnabled()) {
             numberFieldUpdateInterval = new WidgetNumberField(font, leftPos + 106, topPos + getFieldUpdateIntervalY(), 70, 14, true,
-                    new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), true);
+                    new TranslatableComponent("gui.integrateddynamics.partsettings.update_interval"), true);
             numberFieldUpdateInterval.setMaxLength(15);
             numberFieldUpdateInterval.setVisible(true);
             numberFieldUpdateInterval.setTextColor(16777215);
@@ -116,7 +116,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldPriorityEnabled()) {
             numberFieldPriority = new WidgetNumberField(font, leftPos + 106, topPos + getFieldPriorityY(), 70, 14, true,
-                    new TranslationTextComponent("gui.integrateddynamics.partsettings.priority"), true);
+                    new TranslatableComponent("gui.integrateddynamics.partsettings.priority"), true);
             numberFieldPriority.setPositiveOnly(false);
             numberFieldPriority.setMaxLength(15);
             numberFieldPriority.setVisible(true);
@@ -126,26 +126,20 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldChannelEnabled()) {
             numberFieldChannel = new WidgetNumberField(font, leftPos + 106, topPos + getFieldChannelY(), 70, 14, true,
-                    new TranslationTextComponent("gui.integrateddynamics.partsettings.channel"), true);
+                    new TranslatableComponent("gui.integrateddynamics.partsettings.channel"), true);
             numberFieldChannel.setPositiveOnly(false);
             numberFieldChannel.setMaxLength(15);
             numberFieldChannel.setVisible(true);
             numberFieldChannel.setTextColor(16777215);
             numberFieldChannel.setCanLoseFocus(true);
-            numberFieldChannel.setEnabled(isChannelEnabled());
+            numberFieldChannel.setEditable(isChannelEnabled());
         }
 
-        TranslationTextComponent save = new TranslationTextComponent("gui.integrateddynamics.button.save");
-        // MCP: getStringWidth
-        addButton(new ButtonText(this.leftPos + 178, this.topPos + 8, font.width(save.getVisualOrderText()) + 6, 16, save, save,
+        TranslatableComponent save = new TranslatableComponent("gui.integrateddynamics.button.save");
+        addRenderableWidget(new ButtonText(this.leftPos + 178, this.topPos + 8, font.width(save.getVisualOrderText()) + 6, 16, save, save,
                 createServerPressable(ContainerPartSettings.BUTTON_SAVE, b -> onSave()), true));
 
         this.refreshValues();
-    }
-
-    @Override
-    protected void renderBg(MatrixStack p_230450_1_, float p_230450_2_, int p_230450_3_, int p_230450_4_) {
-        // TODO: rm
     }
 
     protected int getFieldSideY() {
@@ -246,8 +240,8 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         if (isFieldUpdateIntervalEnabled()) {
             font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0));
             numberFieldUpdateInterval.render(matrixStack, mouseX, mouseY, partialTicks);
@@ -267,11 +261,11 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
-            GuiHelpers.renderTooltip(this, 8, 87, 100, 20, mouseX, mouseY,
-                    () -> Lists.<ITextComponent>newArrayList(new TranslationTextComponent("gui.integrateddynamics.partsettings.channel.disabledinfo")));
+            GuiHelpers.renderTooltip(this, matrixStack, 8, 87, 100, 20, mouseX, mouseY,
+                    () -> Lists.<Component>newArrayList(new TranslatableComponent("gui.integrateddynamics.partsettings.channel.disabledinfo")));
         }
     }
 
@@ -294,22 +288,22 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     @Override
-    public void onUpdate(int valueId, CompoundNBT value) {
+    public void onUpdate(int valueId, CompoundTag value) {
         if (isFieldSideEnabled() && valueId == getMenu().getLastSideValueId()) {
             int side = getMenu().getLastSideValue();
             setSideInDropdownField(side == -1 ? getDefaultSide() : Direction.values()[side]);
         }
         if (isFieldUpdateIntervalEnabled() && valueId == getMenu().getLastUpdateValueId()) {
-            numberFieldUpdateInterval.setText(Integer.toString(getMenu().getLastUpdateValue()));
+            numberFieldUpdateInterval.setValue(Integer.toString(getMenu().getLastUpdateValue()));
         }
         if (isFieldUpdateIntervalEnabled() && valueId == getMenu().getLastMinUpdateValueId()) {
             numberFieldUpdateInterval.setMinValue(getMenu().getLastMinUpdateValue());
         }
         if (isFieldPriorityEnabled() && valueId == getMenu().getLastPriorityValueId()) {
-            numberFieldPriority.setText(Integer.toString(getMenu().getLastPriorityValue()));
+            numberFieldPriority.setValue(Integer.toString(getMenu().getLastPriorityValue()));
         }
         if (isFieldChannelEnabled() && valueId == getMenu().getLastChannelValueId()) {
-            numberFieldChannel.setText(Integer.toString(getMenu().getLastChannelValue()));
+            numberFieldChannel.setValue(Integer.toString(getMenu().getLastChannelValue()));
         }
     }
 
@@ -327,15 +321,15 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         }
 
         @Override
-        public IFormattableTextComponent getDisplayString() {
+        public MutableComponent getDisplayString() {
             if (getDefaultSide() == this.side) {
-                return new StringTextComponent(getMatchString()).withStyle(TextFormatting.YELLOW);
+                return new TextComponent(getMatchString()).withStyle(ChatFormatting.YELLOW);
             }
-            return new StringTextComponent(getMatchString());
+            return new TextComponent(getMatchString());
         }
 
         @Override
-        public List<IFormattableTextComponent> getTooltip() {
+        public List<MutableComponent> getTooltip() {
             return Collections.emptyList();
         }
 

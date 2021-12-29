@@ -2,12 +2,12 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
@@ -19,12 +19,12 @@ import javax.annotation.Nullable;
  * Recipe serializer for mechanical drying basin recipes
  * @author rubensworks
  */
-public class RecipeSerializerMechanicalDryingBasin extends ForgeRegistryEntry<IRecipeSerializer<?>>
-        implements IRecipeSerializer<RecipeMechanicalDryingBasin> {
+public class RecipeSerializerMechanicalDryingBasin extends ForgeRegistryEntry<RecipeSerializer<?>>
+        implements RecipeSerializer<RecipeMechanicalDryingBasin> {
 
     @Override
     public RecipeMechanicalDryingBasin fromJson(ResourceLocation recipeId, JsonObject json) {
-        JsonObject result = JSONUtils.getAsJsonObject(json, "result");
+        JsonObject result = GsonHelper.getAsJsonObject(json, "result");
 
         // Input
         Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", false);
@@ -35,7 +35,7 @@ public class RecipeSerializerMechanicalDryingBasin extends ForgeRegistryEntry<IR
         FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
 
         // Other stuff
-        int duration = JSONUtils.getAsInt(json, "duration");
+        int duration = GsonHelper.getAsInt(json, "duration");
 
         // Validation
         if (inputIngredient.isEmpty() && inputFluid.isEmpty()) {
@@ -56,7 +56,7 @@ public class RecipeSerializerMechanicalDryingBasin extends ForgeRegistryEntry<IR
 
     @Nullable
     @Override
-    public RecipeMechanicalDryingBasin fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+    public RecipeMechanicalDryingBasin fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         // Input
         Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
         FluidStack inputFluid = FluidStack.readFromPacket(buffer);
@@ -72,7 +72,7 @@ public class RecipeSerializerMechanicalDryingBasin extends ForgeRegistryEntry<IR
     }
 
     @Override
-    public void toNetwork(PacketBuffer buffer, RecipeMechanicalDryingBasin recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, RecipeMechanicalDryingBasin recipe) {
         // Input
         recipe.getInputIngredient().toNetwork(buffer);
         recipe.getInputFluid().writeToPacket(buffer);

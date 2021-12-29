@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  * Drying basin recipe
  * @author rubensworks
  */
-public class RecipeDryingBasin implements IRecipe<IInventoryFluid> {
+public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
 
     private final ResourceLocation id;
     private final Ingredient inputIngredient;
@@ -55,7 +55,7 @@ public class RecipeDryingBasin implements IRecipe<IInventoryFluid> {
     }
 
     @Override
-    public boolean matches(IInventoryFluid inv, World worldIn) {
+    public boolean matches(IInventoryFluid inv, Level worldIn) {
         return inputIngredient.test(inv.getItem(0))
                 && inputFluid.getFluid() == inv.getFluidHandler().getFluidInTank(0).getFluid()
                 && inputFluid.getAmount() <= inv.getFluidHandler().getFluidInTank(0).getAmount();
@@ -82,12 +82,12 @@ public class RecipeDryingBasin implements IRecipe<IInventoryFluid> {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return RegistryEntries.RECIPESERIALIZER_DRYING_BASIN;
     }
 
     @Override
-    public IRecipeType<?> getType() {
+    public RecipeType<?> getType() {
         return RegistryEntries.RECIPETYPE_DRYING_BASIN;
     }
 }

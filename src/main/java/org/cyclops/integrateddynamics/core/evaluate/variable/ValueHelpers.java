@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -65,11 +65,11 @@ public class ValueHelpers {
      * @param valueTypes The value types.
      * @return The unlocalized names array corresponding element-wise to the value types array.
      */
-    public static ITextComponent[] from(IValueType<?>... valueTypes) {
-        ITextComponent[] names = new ITextComponent[valueTypes.length];
+    public static Component[] from(IValueType<?>... valueTypes) {
+        Component[] names = new Component[valueTypes.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IValueType<?> valueType = valueTypes[i];
-            names[i] = new TranslationTextComponent(valueType.getTranslationKey());
+            names[i] = new TranslatableComponent(valueType.getTranslationKey());
         }
         return names;
     }
@@ -132,11 +132,11 @@ public class ValueHelpers {
 
                 // Error if the result is NOT an operator
                 if (result.getType() != ValueTypes.OPERATOR) {
-                    throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
-                            new TranslationTextComponent(operator.getTranslationKey()),
+                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
+                            new TranslatableComponent(operator.getTranslationKey()),
                             requiredLength,
                             variables.length,
-                            new TranslationTextComponent(result.getType().getTranslationKey())));
+                            new TranslatableComponent(result.getType().getTranslationKey())));
                 }
 
                 // Pass all remaining variables to the resulting operator
@@ -154,7 +154,7 @@ public class ValueHelpers {
      * @param value The value.
      * @return The NBT tag.
      */
-    public static INBT serializeRaw(IValue value) {
+    public static Tag serializeRaw(IValue value) {
         return value.getType().serialize(value);
     }
 
@@ -163,8 +163,8 @@ public class ValueHelpers {
      * @param value The value.
      * @return The NBT tag.
      */
-    public static CompoundNBT serialize(IValue value) {
-        CompoundNBT tag = new CompoundNBT();
+    public static CompoundTag serialize(IValue value) {
+        CompoundTag tag = new CompoundTag();
         tag.putString("valueType", value.getType().getUniqueName().toString());
         tag.put("value", serializeRaw(value));
         return tag;
@@ -175,7 +175,7 @@ public class ValueHelpers {
      * @param tag The NBT tag containing a value.
      * @return The value.
      */
-    public static IValue deserialize(CompoundNBT tag) {
+    public static IValue deserialize(CompoundTag tag) {
         IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
         if (valueType == null) {
             return null;
@@ -190,7 +190,7 @@ public class ValueHelpers {
      * @param valueString The value tag.
      * @return The value.
      */
-    public static <T extends IValue> T deserializeRaw(IValueType<T> valueType, INBT valueString) {
+    public static <T extends IValue> T deserializeRaw(IValueType<T> valueType, Tag valueString) {
         return valueType.deserialize(valueString);
     }
 
@@ -231,11 +231,11 @@ public class ValueHelpers {
      */
     public static void validatePredicateOutput(IOperator predicate, IValue result) throws EvaluationException {
         if (!(result instanceof ValueTypeBoolean.ValueBoolean)) {
-            IFormattableTextComponent error = new TranslationTextComponent(
+            MutableComponent error = new TranslatableComponent(
                     L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
                     predicate.getLocalizedNameFull(),
-                    new TranslationTextComponent(result.getType().getTranslationKey()),
-                    new TranslationTextComponent(ValueTypes.BOOLEAN.getTranslationKey()));
+                    new TranslatableComponent(result.getType().getTranslationKey()),
+                    new TranslatableComponent(ValueTypes.BOOLEAN.getTranslationKey()));
             throw new EvaluationException(error);
         }
     }
@@ -245,18 +245,18 @@ public class ValueHelpers {
      * @param variable A nullable variable.
      * @return A pair of a string and color.
      */
-    public static Pair<IFormattableTextComponent, Integer> getSafeReadableValue(@Nullable IVariable variable) {
-        IFormattableTextComponent readValue = new StringTextComponent("");
+    public static Pair<MutableComponent, Integer> getSafeReadableValue(@Nullable IVariable variable) {
+        MutableComponent readValue = new TextComponent("");
         int readValueColor = 0;
         if (!NetworkHelpers.shouldWork()) {
-            readValue = new StringTextComponent("SAFE-MODE");
+            readValue = new TextComponent("SAFE-MODE");
         } else if(variable != null) {
             try {
                 IValue value = variable.getValue();
                 readValue = value.getType().toCompactString(value);
                 readValueColor = value.getType().getDisplayColor();
             } catch (EvaluationException | NullPointerException | PartStateException e) {
-                readValue = new StringTextComponent("ERROR");
+                readValue = new TextComponent("ERROR");
                 readValueColor = Helpers.RGBToInt(255, 0, 0);
             }
         }
@@ -274,7 +274,7 @@ public class ValueHelpers {
         try {
             return new ResourceLocation(value);
         } catch (ResourceLocationException e) {
-            throw new EvaluationException(new StringTextComponent(e.getMessage()));
+            throw new EvaluationException(new TextComponent(e.getMessage()));
         }
     }
 

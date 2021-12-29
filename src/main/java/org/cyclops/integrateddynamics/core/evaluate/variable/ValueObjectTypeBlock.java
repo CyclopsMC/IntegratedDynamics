@@ -1,17 +1,16 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -32,8 +31,8 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         super("block", ValueObjectTypeBlock.ValueBlock.class);
     }
 
-    public static IFormattableTextComponent getBlockkDisplayNameSafe(BlockState blockState) {
-        return new TranslationTextComponent(blockState.getBlock().getDescriptionId());
+    public static MutableComponent getBlockkDisplayNameSafe(BlockState blockState) {
+        return new TranslatableComponent(blockState.getBlock().getDescriptionId());
     }
 
     @Override
@@ -42,7 +41,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueBlock value) {
+    public MutableComponent toCompactString(ValueBlock value) {
         if (value.getRawValue().isPresent()) {
             BlockState blockState = value.getRawValue().get();
             ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockState);
@@ -51,21 +50,21 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             }
             return ValueObjectTypeBlock.getBlockkDisplayNameSafe(blockState);
         }
-        return new StringTextComponent("");
+        return new TextComponent("");
     }
 
     @Override
-    public INBT serialize(ValueBlock value) {
-        if(!value.getRawValue().isPresent()) return new CompoundNBT();
+    public Tag serialize(ValueBlock value) {
+        if(!value.getRawValue().isPresent()) return new CompoundTag();
         return BlockHelpers.serializeBlockState(value.getRawValue().get());
     }
 
     @Override
-    public ValueBlock deserialize(INBT value) {
-        if (value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty())) {
+    public ValueBlock deserialize(Tag value) {
+        if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
             return ValueBlock.of(Blocks.AIR.defaultBlockState());
         }
-        return ValueBlock.of(BlockHelpers.deserializeBlockState((CompoundNBT) value));
+        return ValueBlock.of(BlockHelpers.deserializeBlockState((CompoundTag) value));
     }
 
     @Override
@@ -87,9 +86,9 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             }
 
             @Override
-            public ITextComponent validate(ItemStack itemStack) {
+            public Component validate(ItemStack itemStack) {
                 if(!itemStack.isEmpty() && !(itemStack.getItem() instanceof BlockItem)) {
-                    return new TranslationTextComponent(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
+                    return new TranslatableComponent(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
                 }
                 return null;
             }

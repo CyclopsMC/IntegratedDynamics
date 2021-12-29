@@ -5,14 +5,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import lombok.ToString;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -39,7 +39,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     private static final String SIGNATURE_LINK = "->";
 
     public ValueTypeOperator() {
-        super("operator", Helpers.RGBToInt(43, 231, 47), TextFormatting.DARK_GREEN, ValueTypeOperator.ValueOperator.class);
+        super("operator", Helpers.RGBToInt(43, 231, 47), ChatFormatting.DARK_GREEN, ValueTypeOperator.ValueOperator.class);
     }
 
     @Override
@@ -48,17 +48,17 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueOperator value) {
+    public MutableComponent toCompactString(ValueOperator value) {
         return value.getRawValue().getLocalizedNameFull();
     }
 
     @Override
-    public INBT serialize(ValueOperator value) {
+    public Tag serialize(ValueOperator value) {
         return Operators.REGISTRY.serialize(value.getRawValue());
     }
 
     @Override
-    public ValueOperator deserialize(INBT value) {
+    public ValueOperator deserialize(Tag value) {
         IOperator operator;
         try {
             operator = Operators.REGISTRY.deserialize(value);
@@ -72,10 +72,10 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, @Nullable ValueOperator value) {
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable ValueOperator value) {
         super.loadTooltip(lines, appendOptionalInfo, value);
         if (value != null) {
-            lines.add(new TranslationTextComponent(L10NValues.VALUETYPEOPERATOR_TOOLTIP_SIGNATURE)
+            lines.add(new TranslatableComponent(L10NValues.VALUETYPEOPERATOR_TOOLTIP_SIGNATURE)
                     .append(getSignature(value.getRawValue())));
         }
     }
@@ -113,10 +113,10 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      * @param operator The operator.
      * @return The signature.
      */
-    public static IFormattableTextComponent getSignature(IOperator operator) {
+    public static MutableComponent getSignature(IOperator operator) {
         return getSignatureLines(operator, false)
                 .stream()
-                .reduce(new StringTextComponent(""), (a, b) -> a.append(" ").append(b));
+                .reduce(new TextComponent(""), (a, b) -> a.append(" ").append(b));
     }
 
     /**
@@ -125,16 +125,16 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      * @param outputType The output types.
      * @return The signature.
      */
-    public static ITextComponent getSignature(IValueType[] inputTypes, IValueType outputType) {
+    public static Component getSignature(IValueType[] inputTypes, IValueType outputType) {
         return getSignatureLines(inputTypes, outputType, false)
                 .stream()
                 .reduce((prev, next) -> prev.append(" ").append(next))
-                .orElseGet(() -> new StringTextComponent(""));
+                .orElseGet(() -> new TextComponent(""));
     }
 
-    protected static IFormattableTextComponent switchSignatureLineContext(List<IFormattableTextComponent> lines, IFormattableTextComponent sb) {
+    protected static MutableComponent switchSignatureLineContext(List<MutableComponent> lines, MutableComponent sb) {
         lines.add(sb);
-        return new StringTextComponent("");
+        return new TextComponent("");
     }
 
     /**
@@ -144,9 +144,9 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      * @param indent If the lines should be indented.
      * @return The signature.
      */
-    public static List<IFormattableTextComponent> getSignatureLines(IValueType[] inputTypes, IValueType outputType, boolean indent) {
-        List<IFormattableTextComponent> lines = Lists.newArrayList();
-        IFormattableTextComponent sb = new StringTextComponent("");
+    public static List<MutableComponent> getSignatureLines(IValueType[] inputTypes, IValueType outputType, boolean indent) {
+        List<MutableComponent> lines = Lists.newArrayList();
+        MutableComponent sb = new TextComponent("");
         boolean first = true;
         for (IValueType inputType : inputTypes) {
             if (first) {
@@ -156,15 +156,15 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
                 sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ");
             }
             sb.withStyle(inputType.getDisplayColorFormat())
-                    .append(new TranslationTextComponent(inputType.getTranslationKey()))
-                    .withStyle(TextFormatting.RESET);
+                    .append(new TranslatableComponent(inputType.getTranslationKey()))
+                    .withStyle(ChatFormatting.RESET);
         }
 
         sb = switchSignatureLineContext(lines, sb);
         sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ")
                 .withStyle(outputType.getDisplayColorFormat())
-                .append(new TranslationTextComponent(outputType.getTranslationKey()))
-                .withStyle(TextFormatting.RESET);
+                .append(new TranslatableComponent(outputType.getTranslationKey()))
+                .withStyle(ChatFormatting.RESET);
         switchSignatureLineContext(lines, sb);
         return lines;
     }
@@ -175,7 +175,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      * @param indent If the lines should be indented.
      * @return The signature.
      */
-    public static List<IFormattableTextComponent> getSignatureLines(IOperator operator, boolean indent) {
+    public static List<MutableComponent> getSignatureLines(IOperator operator, boolean indent) {
         return getSignatureLines(operator.getInputTypes(), operator.getOutputType(), indent);
     }
 

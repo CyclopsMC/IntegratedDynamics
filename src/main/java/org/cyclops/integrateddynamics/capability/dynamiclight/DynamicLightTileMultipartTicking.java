@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.capability.dynamiclight;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 
 /**
  * Default implementation of {@link IDynamicLight}.
@@ -11,10 +11,10 @@ import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
  */
 public class DynamicLightTileMultipartTicking implements IDynamicLight {
 
-    private final TileMultipartTicking tile;
+    private final BlockEntityMultipartTicking tile;
     private final Direction side;
 
-    public DynamicLightTileMultipartTicking(TileMultipartTicking tile, Direction side) {
+    public DynamicLightTileMultipartTicking(BlockEntityMultipartTicking tile, Direction side) {
         this.tile = tile;
         this.side = side;
     }

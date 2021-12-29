@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.path;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 import javax.annotation.Nullable;
 

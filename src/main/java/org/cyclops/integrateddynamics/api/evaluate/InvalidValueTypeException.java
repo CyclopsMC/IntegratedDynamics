@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate;
 
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.MutableComponent;
 
 /**
  * An exception to signal mismatching variable types.
@@ -8,7 +8,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
  */
 public class InvalidValueTypeException extends EvaluationException {
 
-    public InvalidValueTypeException(IFormattableTextComponent errorMessage) {
+    public InvalidValueTypeException(MutableComponent errorMessage) {
         super(errorMessage);
     }
 

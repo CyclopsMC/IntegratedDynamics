@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.block.cable;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Capability for cables that can form networks.

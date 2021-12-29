@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,7 +29,7 @@ public class ItemFacadeConfig extends ItemConfig {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onModLoaded(FMLLoadCompleteEvent event) {
-        Minecraft.getInstance().getItemColors().register(new ItemFacade.ItemColor(), getInstance());
+        Minecraft.getInstance().getItemColors().register(new ItemFacade.Color(), getInstance());
     }
 
 }

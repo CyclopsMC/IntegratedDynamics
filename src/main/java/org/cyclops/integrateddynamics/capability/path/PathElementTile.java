@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.path;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -9,7 +9,7 @@ import org.cyclops.integrateddynamics.api.path.IPathElement;
  * Implementation of {@link IPathElement} for a tile entity.
  * @author rubensworks
  */
-public class PathElementTile<T extends TileEntity> extends PathElementCable {
+public class PathElementTile<T extends BlockEntity> extends PathElementCable {
 
     private final T tile;
     private final ICable cable;

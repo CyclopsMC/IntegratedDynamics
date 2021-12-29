@@ -1,17 +1,17 @@
 package org.cyclops.integrateddynamics.core.helper;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
@@ -49,8 +49,8 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network carrier capability.
      */
-    public static LazyOptional<INetworkCarrier> getNetworkCarrier(IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        return TileHelpers.getCapability(world, pos, side, NetworkCarrierConfig.CAPABILITY);
+    public static LazyOptional<INetworkCarrier> getNetworkCarrier(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, NetworkCarrierConfig.CAPABILITY);
     }
 
     /**
@@ -60,8 +60,8 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network element provider capability.
      */
-    public static LazyOptional<INetworkElementProvider> getNetworkElementProvider(IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        return TileHelpers.getCapability(world, pos, side, NetworkElementProviderConfig.CAPABILITY);
+    public static LazyOptional<INetworkElementProvider> getNetworkElementProvider(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, NetworkElementProviderConfig.CAPABILITY);
     }
 
     /**
@@ -71,7 +71,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network.
      */
-    public static LazyOptional<INetwork> getNetwork(IBlockReader world, BlockPos pos, @Nullable Direction side) {
+    public static LazyOptional<INetwork> getNetwork(BlockGetter world, BlockPos pos, @Nullable Direction side) {
         LazyOptional<LazyOptional<INetwork>> networkCarried = getNetworkCarrier(world, pos, side)
                 .lazyMap(carrier -> {
                     INetwork network = carrier.getNetwork();
@@ -86,7 +86,7 @@ public class NetworkHelpers {
      * @return The optional network.
      */
     public static LazyOptional<INetwork> getNetwork(PartPos pos) {
-        return getNetwork(pos.getPos().getWorld(true), pos.getPos().getBlockPos(), pos.getSide());
+        return getNetwork(pos.getPos().getLevel(true), pos.getPos().getBlockPos(), pos.getSide());
     }
 
     /**
@@ -100,7 +100,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The network.
      */
-    public static INetwork getNetworkChecked(IBlockReader world, BlockPos pos, @Nullable Direction side) {
+    public static INetwork getNetworkChecked(BlockGetter world, BlockPos pos, @Nullable Direction side) {
         return getNetwork(world, pos, side)
                 .orElseThrow(() -> new IllegalStateException("Could not find a network container at " + pos.toString()));
     }
@@ -217,8 +217,8 @@ public class NetworkHelpers {
      * @return The optionally created part network.
      * Can be absent if the starting position did not have a {@link IPathElement} capability.
      */
-    public static Optional<INetwork> initNetwork(World world, BlockPos pos, @Nullable Direction side) {
-        return TileHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY)
+    public static Optional<INetwork> initNetwork(Level world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY)
                 .map(pathElement -> {
                     Network network = Network.initiateNetworkSetup(SidedPathElement.of(pathElement, side));
                     network.initialize();
@@ -230,17 +230,16 @@ public class NetworkHelpers {
     /**
      * This MUST be called by blocks having the {@link INetworkElementProvider} capability in
      * when a neighbouring block is updated, more specifically when
-     * {@link net.minecraft.block.Block#neighborChanged(BlockState, World, BlockPos, Block, BlockPos, boolean)},
-     * {@link Block#onNeighborChange(BlockState, IWorldReader, BlockPos, BlockPos)}}
-     * or {@link Block#observedNeighborChange(BlockState, World, BlockPos, Block, BlockPos)}
-     * or {@link Block#updateShape(BlockState, Direction, BlockState, IWorld, BlockPos, BlockPos)}is called.
+     * {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, BlockPos, boolean)},
+     * {@link Block#onNeighborChange(BlockState, LevelReader, BlockPos, BlockPos)}
+     * or {@link Block#updateShape(BlockState, Direction, BlockState, LevelAccessor, BlockPos, BlockPos)} is called.
      * @param world The world in which the neighbour was updated.
      * @param pos The position of the center block.
      * @param side The side at the center block.
      * @param neighbourBlock The block type of the neighbour that was updated.
      * @param neighbourBlockPos The position of the neighbour that was updated.
      */
-    public static void onElementProviderBlockNeighborChange(World world, BlockPos pos, Block neighbourBlock,
+    public static void onElementProviderBlockNeighborChange(Level world, BlockPos pos, Block neighbourBlock,
                                                             @Nullable Direction side, BlockPos neighbourBlockPos) {
         if (!world.isClientSide()) {
             getNetwork(world, pos, side).ifPresent(network -> {
@@ -267,7 +266,7 @@ public class NetworkHelpers {
      * @param pos The position.
      * @param tile The tile entity that is unloaded.
      */
-    public static void invalidateNetworkElements(World world, BlockPos pos, TileEntity tile) {
+    public static void invalidateNetworkElements(Level world, BlockPos pos, BlockEntity tile) {
         tile.getCapability(NetworkCarrierConfig.CAPABILITY, null).ifPresent(networkCarrier -> {
             INetwork network = networkCarrier.getNetwork();
             if (network != null) {
@@ -286,11 +285,11 @@ public class NetworkHelpers {
      * @param world The world.
      * @param pos The position.
      */
-    public static void revalidateNetworkElements(World world, BlockPos pos) {
-        INetworkCarrier networkCarrier = TileHelpers.getCapability(world, pos, NetworkCarrierConfig.CAPABILITY).orElse(null);
-        IPathElement pathElement = TileHelpers.getCapability(world, pos, PathElementConfig.CAPABILITY).orElse(null);
+    public static void revalidateNetworkElements(Level world, BlockPos pos) {
+        INetworkCarrier networkCarrier = BlockEntityHelpers.getCapability(world, pos, NetworkCarrierConfig.CAPABILITY).orElse(null);
+        IPathElement pathElement = BlockEntityHelpers.getCapability(world, pos, PathElementConfig.CAPABILITY).orElse(null);
         if (networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null) {
-            TileHelpers.getCapability(world, pos, NetworkElementProviderConfig.CAPABILITY).ifPresent(networkElementProvider -> {
+            BlockEntityHelpers.getCapability(world, pos, NetworkElementProviderConfig.CAPABILITY).ifPresent(networkElementProvider -> {
                 // Attempt to revalidate the network elements in this provider
                 for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                     if (network.containsSidedPathElement(SidedPathElement.of(pathElement, null))) {

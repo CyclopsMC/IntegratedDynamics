@@ -1,16 +1,15 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -28,7 +27,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
 
     private WidgetTextFieldExtended searchField;
 
-    public ContainerScreenLabeller(ContainerLabeller container, PlayerInventory playerInventory, ITextComponent title) {
+    public ContainerScreenLabeller(ContainerLabeller container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
         container.setGui(this);
     }
@@ -41,9 +40,9 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     @Override
     public void init() {
         super.init();
-        addButton(new ButtonText(this.leftPos + 133,  this.topPos + 8,
-                new TranslationTextComponent("item.integrateddynamics.labeller.button.write"),
-                new TranslationTextComponent("item.integrateddynamics.labeller.button.write"), button -> {
+        addRenderableWidget(new ButtonText(this.leftPos + 133,  this.topPos + 8,
+                new TranslatableComponent("item.integrateddynamics.labeller.button.write"),
+                new TranslatableComponent("item.integrateddynamics.labeller.button.write"), button -> {
             ItemStack itemStack = getMenu().getItemStack();
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             IVariableFacade variableFacade = registry.handle(itemStack);
@@ -62,7 +61,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
         int searchWidth = 87;
         int searchX = 36;
         int searchY = 11;
-        this.searchField = new WidgetTextFieldExtended(font, this.leftPos + searchX, this.topPos + searchY, searchWidth, font.lineHeight, new TranslationTextComponent("gui.cyclopscore.search"));
+        this.searchField = new WidgetTextFieldExtended(font, this.leftPos + searchX, this.topPos + searchY, searchWidth, font.lineHeight, new TranslatableComponent("gui.cyclopscore.search"));
         this.searchField.setMaxLength(64);
         this.searchField.setBordered(false);
         this.searchField.setVisible(true);
@@ -102,13 +101,13 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         this.searchField.renderButton(matrixStack, mouseX, mouseY, partialTicks);
     }
 

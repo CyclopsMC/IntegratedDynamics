@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -28,13 +28,13 @@ public interface IPartState<P extends IPartType> {
      * Write a state to NBT.
      * @param tag The tag to write to.
      */
-    public void writeToNBT(CompoundNBT tag);
+    public void writeToNBT(CompoundTag tag);
 
     /**
      * Read a state from NBT.
      * @param tag The tag to read from.
      */
-    public void readFromNBT(CompoundNBT tag);
+    public void readFromNBT(CompoundTag tag);
 
     /**
      * Generate a server-wide unique ID for this part state.

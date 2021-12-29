@@ -6,10 +6,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Direction;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -447,7 +447,7 @@ public class GuiNetworkDiagnostics extends JFrame {
                 yaw = pos.getSide().getOpposite().toYRot();
             }
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
-                    pos.getPos().getWorldKey(),
+                    pos.getPos().getLevelKey(),
                     blockPos.getX(),
                     blockPos.getY() - 1,
                     blockPos.getZ(),
@@ -461,14 +461,14 @@ public class GuiNetworkDiagnostics extends JFrame {
     private static class ObservablePartData {
         private final int networkId;
         private final int networkCables;
-        private final RegistryKey<World> dimension;
+        private final ResourceKey<Level> dimension;
         private final BlockPos pos;
         private final Direction side;
         private final String name;
         private final long last20TicksDurationNs;
 
         public PartPos toPartPos() {
-            World world = Minecraft.getInstance().level;
+            Level world = Minecraft.getInstance().level;
             if (getDimension().location().equals(world.dimension().location())) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
@@ -479,14 +479,14 @@ public class GuiNetworkDiagnostics extends JFrame {
     @Data
     private static class ObservableObserverData {
         private final int networkId;
-        private final RegistryKey<World> dimension;
+        private final ResourceKey<Level> dimension;
         private final BlockPos pos;
         private final Direction side;
         private final String name;
         private final long last20TicksDurationNs;
 
         public PartPos toPartPos() {
-            World world = Minecraft.getInstance().level;
+            Level world = Minecraft.getInstance().level;
             if (getDimension().location().equals(world.dimension().location())) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }

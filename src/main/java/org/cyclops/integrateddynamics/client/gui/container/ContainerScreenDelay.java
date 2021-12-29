@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockDelayConfig;
@@ -27,7 +26,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     private WidgetNumberField numberFieldUpdateInterval = null;
     private WidgetNumberField numberFieldCapacity = null;
 
-    public ContainerScreenDelay(ContainerDelay container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenDelay(ContainerDelay container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 
@@ -56,7 +55,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         super.init();
 
         numberFieldUpdateInterval = new WidgetNumberField(font, leftPos + 98, topPos + 102, 73, 14, true,
-                new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), true);
+                new TranslatableComponent("gui.integrateddynamics.partsettings.update_interval"), true);
         numberFieldUpdateInterval.setPositiveOnly(true);
         numberFieldUpdateInterval.setMaxLength(64);
         numberFieldUpdateInterval.setMaxLength(15);
@@ -65,7 +64,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.setCanLoseFocus(true);
 
         numberFieldCapacity = new WidgetNumberField(font, leftPos + 98, topPos + 126, 73, 14, true,
-                new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), true);
+                new TranslatableComponent("gui.integrateddynamics.delay.capacity"), true);
         numberFieldCapacity.setMinValue(1);
         numberFieldCapacity.setMaxValue(BlockDelayConfig.maxHistoryCapacity);
         numberFieldCapacity.setMaxLength(64);
@@ -114,23 +113,23 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         numberFieldUpdateInterval.renderButton(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
         numberFieldCapacity.renderButton(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
         // MCP: drawString
-        font.draw(matrixStack, new TranslationTextComponent("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0));
-        font.draw(matrixStack, new TranslationTextComponent("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, new TranslatableComponent("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, new TranslatableComponent("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0));
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
     }
 
     @Override
-    public void onUpdate(int valueId, CompoundNBT value) {
+    public void onUpdate(int valueId, CompoundTag value) {
         if (valueId == getMenu().getLastUpdateValueId()) {
             numberFieldUpdateInterval.setValue(Integer.toString(getMenu().getLastUpdateValue()));
         }

@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.IntNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
@@ -21,7 +20,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueInteger> implements IValueTypeNumber<ValueTypeInteger.ValueInteger> {
 
     public ValueTypeInteger() {
-        super("integer", Helpers.RGBToInt(243, 150, 4), TextFormatting.GOLD, ValueTypeInteger.ValueInteger.class);
+        super("integer", Helpers.RGBToInt(243, 150, 4), ChatFormatting.GOLD, ValueTypeInteger.ValueInteger.class);
     }
 
     @Override
@@ -30,19 +29,19 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueInteger value) {
-        return new StringTextComponent(Integer.toString(value.getRawValue()));
+    public MutableComponent toCompactString(ValueInteger value) {
+        return new TextComponent(Integer.toString(value.getRawValue()));
     }
 
     @Override
-    public INBT serialize(ValueInteger value) {
-        return IntNBT.valueOf(value.getRawValue());
+    public Tag serialize(ValueInteger value) {
+        return IntTag.valueOf(value.getRawValue());
     }
 
     @Override
-    public ValueInteger deserialize(INBT value) {
-        if (value.getId() == Constants.NBT.TAG_INT) {
-            return ValueInteger.of(((IntNBT) value).getAsInt());
+    public ValueInteger deserialize(Tag value) {
+        if (value.getId() == Tag.TAG_INT) {
+            return ValueInteger.of(((IntTag) value).getAsInt());
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to an integer.", value));
         }
@@ -58,8 +57,8 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
         try {
             return ValueInteger.of(Integer.parseInt(value));
         } catch (NumberFormatException e) {
-            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
-                    new TranslationTextComponent(getTranslationKey())));
+            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
+                    new TranslatableComponent(getTranslationKey())));
         }
     }
 

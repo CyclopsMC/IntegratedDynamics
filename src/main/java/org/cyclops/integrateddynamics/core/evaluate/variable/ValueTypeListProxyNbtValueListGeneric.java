@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -14,22 +14,22 @@ import java.util.Optional;
 /**
  * An abstraction for a list of NBT values of a certain type.
  */
-public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyBase<T, V> {
+public abstract class ValueTypeListProxyNbtValueListGeneric<N extends Tag, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyBase<T, V> {
 
     private final String key;
-    private final Optional<CompoundNBT> tag;
+    private final Optional<CompoundTag> tag;
 
-    public ValueTypeListProxyNbtValueListGeneric(ResourceLocation name, T valueType, String key, Optional<INBT> tag) {
+    public ValueTypeListProxyNbtValueListGeneric(ResourceLocation name, T valueType, String key, Optional<Tag> tag) {
         super(name, valueType);
         this.key = key;
-        this.tag = tag.filter(t -> t instanceof CompoundNBT).map(t -> (CompoundNBT) t);
+        this.tag = tag.filter(t -> t instanceof CompoundTag).map(t -> (CompoundTag) t);
     }
 
     public String getKey() {
         return key;
     }
 
-    public Optional<CompoundNBT> getTag() {
+    public Optional<CompoundTag> getTag() {
         return tag;
     }
 
@@ -63,7 +63,7 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T ex
     protected abstract int getLength(N tag);
     protected abstract V get(N tag, int index);
 
-    public static abstract class Factory<L extends ValueTypeListProxyNbtValueListGeneric<N, T, V>, N extends INBT, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyNBTFactorySimple<T, V, L> {
+    public static abstract class Factory<L extends ValueTypeListProxyNbtValueListGeneric<N, T, V>, N extends Tag, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyNBTFactorySimple<T, V, L> {
 
         @Override
         public ResourceLocation getName() {
@@ -71,7 +71,7 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T ex
         }
 
         @Override
-        protected void serializeNbt(L value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected void serializeNbt(L value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             tag.putString("key", value.getKey());
             if (value.getTag().isPresent()) {
                 tag.put("tag", value.getTag().get());
@@ -79,10 +79,10 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends INBT, T ex
         }
 
         @Override
-        protected L deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected L deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             return create(tag.getString("key"), Optional.ofNullable(tag.get("tag")));
         }
 
-        protected abstract L create(String key, Optional<INBT> tag);
+        protected abstract L create(String key, Optional<Tag> tag);
     }
 }

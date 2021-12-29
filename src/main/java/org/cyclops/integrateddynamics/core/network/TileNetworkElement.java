@@ -3,11 +3,11 @@ package org.cyclops.integrateddynamics.core.network;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
-import org.cyclops.integrateddynamics.core.tileentity.TileCableConnectableInventory;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectableInventory;
 
 import java.util.Optional;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public abstract class TileNetworkElement<T extends TileCableConnectableInventory> extends ConsumingNetworkElementBase
+public abstract class TileNetworkElement<T extends BlockEntityCableConnectableInventory> extends ConsumingNetworkElementBase
         implements IPositionedNetworkElement {
 
     private final DimPos pos;
@@ -25,7 +25,7 @@ public abstract class TileNetworkElement<T extends TileCableConnectableInventory
     protected abstract Class<T> getTileClass();
 
     protected Optional<T> getTile() {
-        return TileHelpers.getSafeTile(getPos(), getTileClass());
+        return BlockEntityHelpers.get(getPos(), getTileClass());
     }
 
     @Override

@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.nbt.DoubleNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
@@ -20,7 +19,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> implements IValueTypeNumber<ValueTypeDouble.ValueDouble> {
 
     public ValueTypeDouble() {
-        super("double", Helpers.RGBToInt(235, 234, 23), TextFormatting.YELLOW, ValueTypeDouble.ValueDouble.class);
+        super("double", Helpers.RGBToInt(235, 234, 23), ChatFormatting.YELLOW, ValueTypeDouble.ValueDouble.class);
     }
 
     @Override
@@ -29,19 +28,19 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueDouble value) {
-        return new StringTextComponent(Double.toString(value.getRawValue()));
+    public MutableComponent toCompactString(ValueDouble value) {
+        return new TextComponent(Double.toString(value.getRawValue()));
     }
 
     @Override
-    public INBT serialize(ValueDouble value) {
-        return DoubleNBT.valueOf(value.getRawValue());
+    public Tag serialize(ValueDouble value) {
+        return DoubleTag.valueOf(value.getRawValue());
     }
 
     @Override
-    public ValueDouble deserialize(INBT value) {
-        if (value.getId() == Constants.NBT.TAG_DOUBLE) {
-            return ValueDouble.of(((DoubleNBT) value).getAsDouble());
+    public ValueDouble deserialize(Tag value) {
+        if (value.getId() == Tag.TAG_DOUBLE) {
+            return ValueDouble.of(((DoubleTag) value).getAsDouble());
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a double.", value));
         }
@@ -57,8 +56,8 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
         try {
             return ValueDouble.of(Double.parseDouble(value));
         } catch (NumberFormatException e) {
-            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
-                    new TranslationTextComponent(getTranslationKey())));
+            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
+                    new TranslatableComponent(getTranslationKey())));
         }
     }
 

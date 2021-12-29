@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.api.item;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 import javax.annotation.Nullable;
@@ -34,7 +34,7 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @param tagCompound The tag containing information that can be read and used to form a variable facade.
      * @return The variable facade handled by the appropriate handler.
      */
-    public IVariableFacade handle(CompoundNBT tagCompound);
+    public IVariableFacade handle(CompoundTag tagCompound);
 
     /**
      * Find a handler by name.
@@ -56,7 +56,7 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @param handler The handler for writing the facade.
      * @param <F> The type of variable facade.
      */
-    public <F extends IVariableFacade> void write(CompoundNBT tagCompound, F variableFacade, IVariableFacadeHandler<F> handler);
+    public <F extends IVariableFacade> void write(CompoundTag tagCompound, F variableFacade, IVariableFacadeHandler<F> handler);
 
     /**
      * Write the given variable facade to the given itemstack.
@@ -80,7 +80,7 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @param blockState The block state in which the facade was created.
      * @return A copy of the given itemstack with the written variable facade.
      */
-    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable PlayerEntity player, @Nullable BlockState blockState);
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable Player player, @Nullable BlockState blockState);
 
     /**
      * Create a new variable facade..

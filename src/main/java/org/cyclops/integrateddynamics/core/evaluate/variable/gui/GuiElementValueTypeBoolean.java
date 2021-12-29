@@ -2,10 +2,10 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
 import lombok.Data;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -23,7 +23,7 @@ import java.util.function.Predicate;
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeBoolean<G extends AbstractGui, C extends Container> implements IGuiInputElementValueType<GuiElementValueTypeBooleanRenderPattern, G, C> {
+public class GuiElementValueTypeBoolean<G extends GuiComponent, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeBooleanRenderPattern, G, C> {
 
     private final ValueTypeBoolean valueType;
     private Predicate<IValue> validator;
@@ -69,12 +69,12 @@ public class GuiElementValueTypeBoolean<G extends AbstractGui, C extends Contain
     }
 
     @Override
-    public ITextComponent getName() {
-        return new TranslationTextComponent(getValueType().getTranslationKey());
+    public Component getName() {
+        return new TranslatableComponent(getValueType().getTranslationKey());
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines) {
+    public void loadTooltip(List<Component> lines) {
         getValueType().loadTooltip(lines, true, null);
     }
 
@@ -94,9 +94,9 @@ public class GuiElementValueTypeBoolean<G extends AbstractGui, C extends Contain
     }
 
     @Override
-    public ITextComponent validate() {
+    public Component validate() {
         if (!this.validator.test(ValueTypeBoolean.ValueBoolean.of(inputBoolean))) {
-            return new TranslationTextComponent(L10NValues.VALUE_ERROR);
+            return new TranslatableComponent(L10NValues.VALUE_ERROR);
         }
         return null;
     }

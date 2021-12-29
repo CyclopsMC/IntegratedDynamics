@@ -25,13 +25,13 @@ public class VariableModelProviderRegistry implements IVariableModelProviderRegi
     }
 
     @Override
-    public <E extends IVariableModelProvider<B>, B extends IVariableModelProvider.IBakedModelProvider> E addProvider(E provider) {
+    public <E extends IVariableModelProvider<B>, B extends IVariableModelProvider.BakedModelProvider> E addProvider(E provider) {
         providers.add(provider);
         return provider;
     }
 
     @Override
-    public List<IVariableModelProvider<? extends IVariableModelProvider.IBakedModelProvider>> getProviders() {
+    public List<IVariableModelProvider<? extends IVariableModelProvider.BakedModelProvider>> getProviders() {
         return Collections.unmodifiableList(providers);
     }
 }

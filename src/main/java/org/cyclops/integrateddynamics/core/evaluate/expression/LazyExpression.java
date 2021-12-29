@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.expression;
 
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.IExpression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.ILazyExpressionValueCache;
@@ -71,10 +71,10 @@ public class LazyExpression<V extends IValue> extends VariableAdapter<V> impleme
             return (V) value;
         } catch (ClassCastException e) {
             errored = true;
-            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGTYPEOUTPUT,
+            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGTYPEOUTPUT,
                     op,
-                    new TranslationTextComponent(value.getType().getTranslationKey()),
-                    new TranslationTextComponent(op.getOutputType().getTranslationKey())));
+                    new TranslatableComponent(value.getType().getTranslationKey()),
+                    new TranslatableComponent(op.getOutputType().getTranslationKey())));
         }
     }
 

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MatrixHelpers;
 import org.cyclops.integrateddynamics.client.model.CableModel;
@@ -49,7 +49,7 @@ public class PartRenderPosition {
         sidedCableCollisionBoxes = EnumFacingMap.newMap();
         for (Direction side : Direction.values()) {
             float[] b = sidedCableCollisionBoxesRaw[side.ordinal()];
-            sidedCableCollisionBoxes.put(side, VoxelShapes.create(new AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5])));
+            sidedCableCollisionBoxes.put(side, Shapes.create(new AABB(b[0], b[1], b[2], b[3], b[4], b[5])));
         }
 
         float min = (1 - widthFactor) / 2 + 0.0025F;
@@ -66,7 +66,7 @@ public class PartRenderPosition {
 
             // Transform bounds
             MatrixHelpers.transform(bounds, side);
-            collisionBoxes.put(side, VoxelShapes.create(new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1])));
+            collisionBoxes.put(side, Shapes.create(new AABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1])));
         }
     }
 

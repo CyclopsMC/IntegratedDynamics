@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.network;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityMaterializer;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
-import org.cyclops.integrateddynamics.GeneralConfig;
-import org.cyclops.integrateddynamics.tileentity.TileMaterializer;
 
 import java.util.Optional;
 
@@ -14,20 +14,20 @@ import java.util.Optional;
  * Network element for materializers.
  * @author rubensworks
  */
-public class MaterializerNetworkElement extends TileNetworkElement<TileMaterializer> implements IEventListenableNetworkElement<TileMaterializer> {
+public class MaterializerNetworkElement extends TileNetworkElement<BlockEntityMaterializer> implements IEventListenableNetworkElement<BlockEntityMaterializer> {
 
     public MaterializerNetworkElement(DimPos pos) {
         super(pos);
     }
 
     @Override
-    public Optional<TileMaterializer> getNetworkEventListener() {
+    public Optional<BlockEntityMaterializer> getNetworkEventListener() {
         return getTile();
     }
 
     @Override
-    protected Class<TileMaterializer> getTileClass() {
-        return TileMaterializer.class;
+    protected Class<BlockEntityMaterializer> getTileClass() {
+        return BlockEntityMaterializer.class;
     }
 
     @Override

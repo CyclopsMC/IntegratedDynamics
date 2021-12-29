@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -66,10 +66,10 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         }
 
         @Override
-        public INBT serialize(PredicateOperator<IValueType<IValue>, IValue> operator) {
-            CompoundNBT tag = new CompoundNBT();
+        public Tag serialize(PredicateOperator<IValueType<IValue>, IValue> operator) {
+            CompoundTag tag = new CompoundTag();
             tag.putString("valueType", operator.inputType.getTranslationKey());
-            ListNBT list = new ListNBT();
+            ListTag list = new ListTag();
             for (IValue rawValue : operator.rawValues) {
                 list.add(operator.inputType.serialize(rawValue));
             }
@@ -78,19 +78,19 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         }
 
         @Override
-        public PredicateOperator<IValueType<IValue>, IValue> deserialize(INBT value) throws EvaluationException {
+        public PredicateOperator<IValueType<IValue>, IValue> deserialize(Tag value) throws EvaluationException {
             try {
-                CompoundNBT tag = (CompoundNBT) value;
+                CompoundTag tag = (CompoundTag) value;
                 IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
-                ListNBT list = (ListNBT) tag.get("values");
+                ListTag list = (ListTag) tag.get("values");
                 List<IValue> values = Lists.newArrayList();
-                for (INBT subTag : list) {
+                for (Tag subTag : list) {
                     values.add(ValueHelpers.deserializeRaw(valueType, subTag));
                 }
                 return new PredicateOperator<>(valueType, values);
             } catch (ClassCastException e) {
                 e.printStackTrace();
-                throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                throw new EvaluationException(new TranslatableComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
                         value, e.getMessage()));
             }
         }

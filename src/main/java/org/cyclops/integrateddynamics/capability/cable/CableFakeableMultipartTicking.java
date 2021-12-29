@@ -1,17 +1,17 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 
 /**
- * Implementation of {@link ICableFakeable} for {@link TileMultipartTicking}.
+ * Implementation of {@link ICableFakeable} for {@link BlockEntityMultipartTicking}.
  * @author rubensworks
  */
 public class CableFakeableMultipartTicking extends CableFakeableDefault {
 
-    private final TileMultipartTicking tile;
+    private final BlockEntityMultipartTicking tile;
 
-    public CableFakeableMultipartTicking(TileMultipartTicking tile) {
+    public CableFakeableMultipartTicking(BlockEntityMultipartTicking tile) {
         this.tile = tile;
     }
 

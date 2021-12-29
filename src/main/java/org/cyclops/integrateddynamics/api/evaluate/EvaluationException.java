@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate;
 
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.MutableComponent;
 
 /**
  * Exception to indicate a failed evaluation.
@@ -8,14 +8,14 @@ import net.minecraft.util.text.IFormattableTextComponent;
  */
 public class EvaluationException extends Exception {
 
-    private final IFormattableTextComponent errorMessage;
+    private final MutableComponent errorMessage;
 
-    public EvaluationException(IFormattableTextComponent errorMessage) {
+    public EvaluationException(MutableComponent errorMessage) {
         super(errorMessage.toString());
         this.errorMessage = errorMessage;
     }
 
-    public IFormattableTextComponent getErrorMessage() {
+    public MutableComponent getErrorMessage() {
         return errorMessage;
     }
 }

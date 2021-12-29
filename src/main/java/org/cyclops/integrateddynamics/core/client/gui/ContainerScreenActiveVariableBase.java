@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.core.client.gui.container.DisplayErrorsComponent;
@@ -17,7 +16,7 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
 
     protected final DisplayErrorsComponent displayErrors = new DisplayErrorsComponent();
 
-    public ContainerScreenActiveVariableBase(C container, PlayerInventory playerInventory, ITextComponent title) {
+    public ContainerScreenActiveVariableBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
     }
 
@@ -33,10 +32,10 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float f, int x, int y) {
-        // super.renderBg(matrixStack, f, x, y); // TODO: restore
+    protected void renderBg(PoseStack matrixStack, float f, int x, int y) {
+        super.renderBg(matrixStack, f, x, y);
 
-        ITextComponent readValue = getMenu().getReadValue();
+        Component readValue = getMenu().getReadValue();
         int readValueColor = getMenu().getReadValueColor();
         boolean ok = false;
         if (readValue != null) {
@@ -45,13 +44,12 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
                     getGuiLeftTotal() + getValueX(), getGuiTopTotal() + getValueY(), 70, readValueColor);
         }
 
-        RenderSystem.color3f(1, 1, 1);
         displayErrors.drawBackground(matrixStack, getMenu().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
                 this.leftPos, this.topPos, ok);
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
         displayErrors.drawForeground(matrixStack, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);

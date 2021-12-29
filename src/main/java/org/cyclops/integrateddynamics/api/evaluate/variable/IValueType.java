@@ -1,19 +1,18 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -67,13 +66,13 @@ public interface IValueType<V extends IValue> {
      * @param appendOptionalInfo If shift-to-show info should be added.
      * @param value The value to show the tooltip for.
      */
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, @Nullable V value);
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable V value);
 
     /**
      * @param value The value
      * @return A short string representation used in guis to show the value.
      */
-    public IFormattableTextComponent toCompactString(V value);
+    public MutableComponent toCompactString(V value);
 
     /**
      * @return The color that is used to identify this value type.
@@ -83,7 +82,7 @@ public interface IValueType<V extends IValue> {
     /**
      * @return The color that is used to identify this value type using MC formatting codes.
      */
-    public TextFormatting getDisplayColorFormat();
+    public ChatFormatting getDisplayColorFormat();
 
     /**
      * Check if the given type corresponds with this type.
@@ -98,7 +97,7 @@ public interface IValueType<V extends IValue> {
      * @param value The value to serialize.
      * @return The serialized value.
      */
-    public INBT serialize(V value);
+    public Tag serialize(V value);
 
     /**
      * Check if the given value can be deserialized.
@@ -106,14 +105,14 @@ public interface IValueType<V extends IValue> {
      * @return An error or null.
      */
     @Nullable
-    public ITextComponent canDeserialize(INBT value);
+    public Component canDeserialize(Tag value);
 
     /**
      * Deserialize the given value.
      * @param value The value to deserialize.
      * @return The deserialized value.
      */
-    public V deserialize(INBT value);
+    public V deserialize(Tag value);
 
     /**
      * Materialize the given value so that it can exist without any external references.
@@ -179,7 +178,7 @@ public interface IValueType<V extends IValue> {
      */
     @Nullable
     @OnlyIn(Dist.CLIENT)
-    public default IBakedModel getVariableItemOverrideModel(V value, IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+    public default BakedModel getVariableItemOverrideModel(V value, BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
         return null;
     }
 
@@ -194,7 +193,7 @@ public interface IValueType<V extends IValue> {
      * @param combinedOverlay Overlay.
      */
     @OnlyIn(Dist.CLIENT)
-    public default void renderISTER(V value, ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+    public default void renderISTER(V value, ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 
     }
 

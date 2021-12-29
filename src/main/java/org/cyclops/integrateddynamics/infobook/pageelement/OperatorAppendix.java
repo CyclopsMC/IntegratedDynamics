@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -49,7 +49,7 @@ public class OperatorAppendix extends SectionAppendix {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void drawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void drawElement(ScreenInfoBook gui, PoseStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
         int yOffset = 5;
         gui.drawOuterBorder(matrixStack, x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
         gui.drawTextBanner(matrixStack, x + width / 2, y - 2 - yOffset);
@@ -58,36 +58,36 @@ public class OperatorAppendix extends SectionAppendix {
         // Base information
         String operatorName = L10NHelpers.localize(operator.getTranslationKey());
         gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(operatorName) + " (" + operator.getSymbol() + ")", x, y + 8, width, 1f, gui.getBannerWidth(), 0);
-        //gui.getFontRenderer().setBidiFlag(true);
+        //gui.getFont().setBidiFlag(true);
 
         // Input/output types
         IValueType[] inputTypes = operator.getInputTypes();
         int offsetY = 14;
         for(int i = 0; i < inputTypes.length; i++) {
-            gui.getFontRenderer().draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
+            gui.getFont().draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
                     + inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())), x, y + offsetY, 0);
             offsetY += 8;
         }
         String outputTypeName = L10NHelpers.localize(operator.getOutputType().getTranslationKey());
-        gui.getFontRenderer().draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_OUTPUT,
+        gui.getFont().draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_OUTPUT,
                 operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, 0);
 
-        //gui.getFontRenderer().setBidiFlag(wasUnicode);
+        //gui.getFont().setBidiFlag(wasUnicode);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void postDrawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
-        GlStateManager._pushMatrix();
-        if(mx >= x && my >= y && mx <= x + getWidth() && my <= y + gui.getFontRenderer().lineHeight ) {
-            List<ITextComponent> lines = Lists.newArrayList();
+    protected void postDrawElement(ScreenInfoBook gui, PoseStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
+        matrixStack.pushPose();
+        if(mx >= x && my >= y && mx <= x + getWidth() && my <= y + gui.getFont().lineHeight ) {
+            List<Component> lines = Lists.newArrayList();
             operator.loadTooltip(lines, true);
             // MCP: renderTooltip
             gui.renderComponentTooltip(matrixStack, lines, mx, my);
         }
-        GlStateManager._popMatrix();
+        matrixStack.popPose();
 
-        GlStateManager._disableLighting();
+        //GlStateManager._disableLighting();
 
         GlStateManager._enableBlend();
         GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

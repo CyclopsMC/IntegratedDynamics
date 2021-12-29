@@ -1,19 +1,19 @@
 package org.cyclops.integrateddynamics.item;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.block.BlockCable;
@@ -42,7 +42,7 @@ public class ItemBlockCable extends BlockItem {
         USE_ACTIONS.add(useAction);
     }
 
-    protected boolean checkCableAt(World world, BlockPos pos, @Nullable Direction side) {
+    protected boolean checkCableAt(Level world, BlockPos pos, @Nullable Direction side) {
         if (!CableHelpers.isNoFakeCable(world, pos, side) && CableHelpers.getCable(world, pos, side) != null) {
             return true;
         }
@@ -55,8 +55,8 @@ public class ItemBlockCable extends BlockItem {
     }
 
     @Override
-    protected boolean canPlace(BlockItemUseContext context, BlockState blockState) {
-        World world = context.getLevel();
+    protected boolean canPlace(BlockPlaceContext context, BlockState blockState) {
+        Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Direction side = context.getClickedFace();
         BlockPos target = pos.relative(side);
@@ -68,10 +68,9 @@ public class ItemBlockCable extends BlockItem {
         return (!this.mustSurvive() || blockState.canSurvive(context.getLevel(), target));
     }
 
-    protected boolean attempItemUseTarget(ItemUseContext context, BlockPos pos, Direction side, BlockCable blockCable, boolean offsetAdded) {
+    protected boolean attempItemUseTarget(UseOnContext context, BlockPos pos, Direction side, BlockCable blockCable, boolean offsetAdded) {
         BlockState blockState = context.getLevel().getBlockState(pos);
-        Block block = blockState.getBlock();
-        if(!block.isAir(blockState, context.getLevel(), pos)) {
+        if(!context.getLevel().isEmptyBlock(pos)) {
             ICableFakeable cable = CableHelpers.getCableFakeable(context.getLevel(), pos, side).orElse(null);
             if (cable != null && !cable.isRealCable()) {
                 if (!context.getLevel().isClientSide()) {
@@ -93,7 +92,7 @@ public class ItemBlockCable extends BlockItem {
         return false;
     }
 
-    protected void afterItemUse(ItemUseContext context, BlockPos pos, BlockCable blockCable, boolean calledSuper) {
+    protected void afterItemUse(UseOnContext context, BlockPos pos, BlockCable blockCable, boolean calledSuper) {
         if(!calledSuper) {
             playPlaceSound(context.getLevel(), pos);
             context.getItemInHand().shrink(1);
@@ -102,19 +101,19 @@ public class ItemBlockCable extends BlockItem {
     }
 
     @SuppressWarnings("deprecation")
-    public static void playPlaceSound(World world, BlockPos pos) {
+    public static void playPlaceSound(Level world, BlockPos pos) {
         Block block = RegistryEntries.BLOCK_CABLE;
         SoundType soundType = block.getSoundType(block.defaultBlockState());
         world.playLocalSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
-                soundType.getPlaceSound(), SoundCategory.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F, false);
+                soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F, false);
     }
 
-    public static void playBreakSound(World world, BlockPos pos, BlockState blockState) {
+    public static void playBreakSound(Level world, BlockPos pos, BlockState blockState) {
         world.globalLevelEvent(2001, pos, Block.getId(blockState));
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         ItemStack itemStack = context.getItemInHand();
         // Skips server-side entity collision detection for placing cables.
         // We temporary disable the collision box of the cable so that it can be placed even if an entity is in the way.
@@ -124,7 +123,7 @@ public class ItemBlockCable extends BlockItem {
         // Avoid regular block placement when the target is an unreal cable.
         if(attempItemUseTarget(context, context.getClickedPos(), context.getClickedFace(), blockCable, false)) {
             afterItemUse(context, context.getClickedPos(), blockCable, false);
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         // Change pos and side when we are targeting a block that is blocked by an unreal cable, so we want to target
@@ -132,10 +131,10 @@ public class ItemBlockCable extends BlockItem {
         BlockPos posOffset = context.getClickedPos().relative(context.getClickedFace());
         if(attempItemUseTarget(context, posOffset, context.getClickedFace().getOpposite(), blockCable, true)) {
             afterItemUse(context, posOffset, blockCable, false);
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
-        ActionResultType ret = super.useOn(context);
+        InteractionResult ret = super.useOn(context);
         afterItemUse(context, context.getClickedPos(), blockCable, true);
         return ret;
     }
@@ -150,7 +149,7 @@ public class ItemBlockCable extends BlockItem {
          * @param blockCable The cable block instance.
          * @return If the use action was applied.
          */
-        public boolean attempItemUseTarget(ItemStack itemStack, World world, BlockPos pos, BlockCable blockCable);
+        public boolean attempItemUseTarget(ItemStack itemStack, Level world, BlockPos pos, BlockCable blockCable);
 
         /**
          * If the block can be placed at the given position.
@@ -158,7 +157,7 @@ public class ItemBlockCable extends BlockItem {
          * @param pos The position.
          * @return If the block can be placed.
          */
-        public boolean canPlaceAt(World world, BlockPos pos);
+        public boolean canPlaceAt(Level world, BlockPos pos);
 
     }
 

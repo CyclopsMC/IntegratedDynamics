@@ -3,17 +3,16 @@ package org.cyclops.integrateddynamics.core.network;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.util.LazyOptional;
-import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.AttachCapabilitiesEventNetwork;
@@ -63,7 +62,7 @@ public class Network implements INetwork {
     private final CapabilityDispatcher capabilityDispatcher;
     private IFullNetworkListener[] fullNetworkListeners;
 
-    private CompoundNBT toRead = null;
+    private CompoundTag toRead = null;
     private volatile boolean changed = false;
     private volatile boolean killed = false;
 
@@ -136,10 +135,10 @@ public class Network implements INetwork {
     private void deriveNetworkElements(Cluster pathElements) {
         if(!killIfEmpty()) {
             for (ISidedPathElement sidedPathElement : pathElements) {
-                World world = sidedPathElement.getPathElement().getPosition().getWorld(true);
+                Level world = sidedPathElement.getPathElement().getPosition().getLevel(true);
                 BlockPos pos = sidedPathElement.getPathElement().getPosition().getBlockPos();
                 Direction side = sidedPathElement.getSide();
-                TileHelpers.getCapability(world, pos, side, NetworkCarrierConfig.CAPABILITY).ifPresent(networkCarrier -> {
+                BlockEntityHelpers.getCapability(world, pos, side, NetworkCarrierConfig.CAPABILITY).ifPresent(networkCarrier -> {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
                     INetwork network = networkCarrier.getNetwork();
@@ -149,7 +148,7 @@ public class Network implements INetwork {
                     networkCarrier.setNetwork(null);
                     networkCarrier.setNetwork(this);
                 });
-                TileHelpers.getCapability(world, pos, side, NetworkElementProviderConfig.CAPABILITY).ifPresent(networkElementProvider -> {
+                BlockEntityHelpers.getCapability(world, pos, side, NetworkElementProviderConfig.CAPABILITY).ifPresent(networkElementProvider -> {
                     for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
                     }
@@ -182,8 +181,8 @@ public class Network implements INetwork {
     }
 
     @Override
-    public CompoundNBT toNBT() {
-        CompoundNBT tag = new CompoundNBT();
+    public CompoundTag toNBT() {
+        CompoundTag tag = new CompoundTag();
         tag.put("baseCluster", this.baseCluster.toNBT());
         tag.putBoolean("crashed", this.crashed);
         if (this.capabilityDispatcher != null) {
@@ -193,14 +192,14 @@ public class Network implements INetwork {
     }
 
     @Override
-    public void fromNBT(CompoundNBT tag) {
+    public void fromNBT(CompoundTag tag) {
         // NBT reading is postponed until the first network tick, to ensure that the game is properly initialized.
         // Because other mods may register things such as dimensions at the same time when networks
         // are being constructed (as was the case in #349)
         this.toRead = tag;
     }
 
-    public void fromNBTEffective(CompoundNBT tag) {
+    public void fromNBTEffective(CompoundTag tag) {
         this.baseCluster.fromNBT(tag.getCompound("baseCluster"));
         this.crashed = tag.getBoolean("crashed");
         if (this.capabilityDispatcher != null && tag.contains("ForgeCaps")) {
@@ -426,7 +425,7 @@ public class Network implements INetwork {
                         }
                     }
                 } catch (PartStateException e) {
-                    IntegratedDynamics.clog(Level.WARN, "Attempted to tick a part that was not properly unloaded. " +
+                    IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, "Attempted to tick a part that was not properly unloaded. " +
                             "Report this to the Integrated Dynamics issue tracker with details on what you did " +
                             "leading up to this stacktrace. The part was forcefully unloaded");
                     e.printStackTrace();
@@ -451,11 +450,11 @@ public class Network implements INetwork {
         }
         if(baseCluster.remove(SidedPathElement.of(pathElement, null))) {
             DimPos position = pathElement.getPosition();
-            INetworkElementProvider networkElementProvider = TileHelpers.getCapability(
+            INetworkElementProvider networkElementProvider = BlockEntityHelpers.getCapability(
                     position, side, NetworkElementProviderConfig.CAPABILITY).orElse(null);
             if (networkElementProvider != null) {
                 Collection<INetworkElement> networkElements = networkElementProvider.
-                        createNetworkElements(position.getWorld(true), position.getBlockPos());
+                        createNetworkElements(position.getLevel(true), position.getBlockPos());
                 for (INetworkElement networkElement : networkElements) {
                     if(!removeNetworkElementPre(networkElement)) {
                         return false;
@@ -469,7 +468,7 @@ public class Network implements INetwork {
             }
         } else {
             Thread.dumpStack();
-            IntegratedDynamics.clog(Level.WARN, "Tried to remove a path element from a network it was not present in.");
+            IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, "Tried to remove a path element from a network it was not present in.");
             System.out.println("Cluster: " + baseCluster);
             System.out.println("Tried removing element: " + pathElement);
         }

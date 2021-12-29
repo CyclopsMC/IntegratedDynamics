@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.capability.network;
 
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import org.cyclops.commoncapabilities.CommonCapabilities;
 import org.cyclops.cyclopscore.config.extendedconfig.CapabilityConfig;
-import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityStorage;
-import org.cyclops.integrateddynamics.api.ingredient.capability.DefaultPositionedAddonsNetworkIngredientsHandler;
 import org.cyclops.integrateddynamics.api.ingredient.capability.IPositionedAddonsNetworkIngredientsHandler;
 
 /**
@@ -14,16 +13,13 @@ import org.cyclops.integrateddynamics.api.ingredient.capability.IPositionedAddon
  */
 public class PositionedAddonsNetworkIngredientsHandlerConfig extends CapabilityConfig<IPositionedAddonsNetworkIngredientsHandler> {
 
-    @CapabilityInject(IPositionedAddonsNetworkIngredientsHandler.class)
-    public static Capability<IPositionedAddonsNetworkIngredientsHandler> CAPABILITY = null;
+    public static Capability<IPositionedAddonsNetworkIngredientsHandler> CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
     public PositionedAddonsNetworkIngredientsHandlerConfig() {
         super(
                 CommonCapabilities._instance,
                 "positioned_addons_network_ingredients_handler",
-                IPositionedAddonsNetworkIngredientsHandler.class,
-                new DefaultCapabilityStorage<IPositionedAddonsNetworkIngredientsHandler>(),
-                () -> new DefaultPositionedAddonsNetworkIngredientsHandler(null)
+                IPositionedAddonsNetworkIngredientsHandler.class
         );
     }
 

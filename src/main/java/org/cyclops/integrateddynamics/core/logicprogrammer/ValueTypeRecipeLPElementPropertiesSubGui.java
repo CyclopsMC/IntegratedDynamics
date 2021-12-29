@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Sets;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonCheckbox;
@@ -20,14 +20,12 @@ import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.GuiHelpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.ingredient.ItemMatchProperties;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
-import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -58,7 +56,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         super.init(guiLeft, guiTop);
 
         this.inputNbt = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 2, 110, 10,
-                new TranslationTextComponent(L10NValues.GUI_RECIPE_STRICTNBT), (entry) ->  {
+                new TranslatableComponent(L10NValues.GUI_RECIPE_STRICTNBT), (entry) ->  {
             // Only allow one checkbox to be true at the same time
             if (this.inputNbt.isChecked()) {
                 this.inputTags.setChecked(false);
@@ -67,7 +65,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             loadStateToGui();
         });
         this.inputTags = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 12, 110, 10,
-                new TranslationTextComponent(L10NValues.GUI_RECIPE_TAGVARIANTS), (entry) -> {
+                new TranslatableComponent(L10NValues.GUI_RECIPE_TAGVARIANTS), (entry) -> {
             // Only allow one checkbox to be true at the same time
             if (this.inputTags.isChecked()) {
                 this.inputNbt.setChecked(false);
@@ -81,7 +79,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         this.inputTagsDropdown = new WidgetTextFieldDropdown<>(Minecraft.getInstance().font,
                 guiLeft + getX() + 2, guiTop + getY() + 23,
                 134, 14,
-                new TranslationTextComponent("gui.cyclopscore.search"), true,
+                new TranslatableComponent("gui.cyclopscore.search"), true,
                 Sets.newHashSet());
         this.inputTagsDropdown.setDropdownEntryListener((entry) -> saveGuiToState());
         this.inputTagsDropdown.setMaxLength(64);
@@ -90,7 +88,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         this.inputTagsDropdown.setTextColor(16777215);
         this.inputTagsDropdown.setCanLoseFocus(true);
         this.inputSave = new ButtonImage(guiLeft + getX() + 116, guiTop + getY() + 72,
-                new TranslationTextComponent("gui.integrateddynamics.button.save"),
+                new TranslatableComponent("gui.integrateddynamics.button.save"),
                 (button) -> {
             // If tag checkbox is checked, only allow exiting if a valid tag has been set
             if (!this.inputTags.isChecked() || this.inputTagsDropdown.getSelectedDropdownPossibility() != null) {
@@ -153,7 +151,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
                 }
             }
         } else {
-            this.inputTagsDropdown.setText("");
+            this.inputTagsDropdown.setValue("");
             this.inputTagsDropdown.setPossibilities(Collections.emptySet());
         }
     }
@@ -172,8 +170,8 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         drawSlot(matrixStack, getX() + guiLeft + 116, getY() + guiTop + 2);
 
@@ -186,26 +184,26 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
         if (this.inputTagsDropdown.isFocused()) {
             int i = this.inputTagsDropdown.getHoveredVisiblePossibility(mouseX, mouseY);
             if (i >= 0) {
                 IDropdownEntry<ResourceLocation> hoveredPossibility = this.inputTagsDropdown.getVisiblePossibility(i);
-                drawTagsTooltip(hoveredPossibility, guiLeft, guiTop, mouseX + 10, mouseY - 20, 6, GuiHelpers.SLOT_SIZE);
+                drawTagsTooltip(matrixStack, hoveredPossibility, guiLeft, guiTop, mouseX + 10, mouseY - 20, 6, GuiHelpers.SLOT_SIZE);
             }
         }
     }
 
-    protected void drawTagsTooltip(IDropdownEntry<ResourceLocation> hoveredPossibility, int guiLeft, int guiTop,
+    protected void drawTagsTooltip(PoseStack poseStack, IDropdownEntry<ResourceLocation> hoveredPossibility, int guiLeft, int guiTop,
                                    int mouseX, int mouseY, int columns, int offset) {
         int x = mouseX - guiLeft;
         int y = mouseY - guiTop;
         List<Item> items = ItemTags.getAllTags().getTag(hoveredPossibility.getValue()).getValues();
 
         // Draw background
-        GuiHelpers.drawTooltipBackground(x, y, Math.min(items.size(), columns) * offset,
+        GuiHelpers.drawTooltipBackground(poseStack, x, y, Math.min(items.size(), columns) * offset,
                 ((items.size() % columns == 0 ? 0 : 1) + (items.size() / columns)) * offset);
 
         // Draw item grid
@@ -264,12 +262,12 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         }
 
         @Override
-        public IFormattableTextComponent getDisplayString() {
-            return new StringTextComponent(this.tag.toString());
+        public MutableComponent getDisplayString() {
+            return new TextComponent(this.tag.toString());
         }
 
         @Override
-        public List<IFormattableTextComponent> getTooltip() {
+        public List<MutableComponent> getTooltip() {
             return Collections.emptyList();
         }
 

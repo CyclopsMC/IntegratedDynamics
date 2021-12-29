@@ -1,15 +1,14 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
-import net.minecraft.world.DimensionType;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 
@@ -37,7 +36,7 @@ public class PlayerTeleportPacket extends PacketCodec {
 
     }
 
-    public PlayerTeleportPacket(RegistryKey<World> dimension, double x, double y, double z, float yaw, float pitch) {
+    public PlayerTeleportPacket(ResourceKey<Level> dimension, double x, double y, double z, float yaw, float pitch) {
 		this.dimension = dimension.location().toString();
 		this.x = x;
 		this.y = y;
@@ -53,13 +52,13 @@ public class PlayerTeleportPacket extends PacketCodec {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void actionClient(World world, PlayerEntity player) {
+	public void actionClient(Level world, Player player) {
 
 	}
 
 	@Override
-	public void actionServer(World world, ServerPlayerEntity player) {
-		RegistryKey<World> dimensionType = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(this.dimension));
+	public void actionServer(Level world, ServerPlayer player) {
+		ResourceKey<Level> dimensionType = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(this.dimension));
 		if (!dimensionType.location().equals(player.getLevel().dimension().location())) {
 			player.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType));
 		}

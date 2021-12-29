@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
 import com.google.common.collect.Maps;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
@@ -47,12 +47,12 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
     private final PartTarget target;
     private final IPartContainer partContainer;
     private final P partType;
-    private final World world;
+    private final Level world;
     private final Map<IAspect, String> aspectPropertyButtons = Maps.newHashMap();
 
-    protected final IInventory inputSlots;
+    protected final Container inputSlots;
 
-    public ContainerMultipartAspects(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory, IInventory inventory,
+    public ContainerMultipartAspects(@Nullable MenuType<?> type, int id, Inventory playerInventory, Container inventory,
                                      PartTarget target, Optional<IPartContainer> partContainer, P partType,
                                      List<A> items) {
         super(type, id, playerInventory, inventory, items, (item, pattern) -> {
@@ -69,7 +69,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
 
         putButtonAction(ContainerMultipartAspects.BUTTON_SETTINGS, (s, containerExtended) -> {
             if (!world.isClientSide()) {
-                PartHelpers.openContainerPartSettings((ServerPlayerEntity) player, target.getCenter(), partType);
+                PartHelpers.openContainerPartSettings((ServerPlayer) player, target.getCenter(), partType);
             }
         });
 
@@ -79,7 +79,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
                 aspectPropertyButtons.put(aspect, buttonId);
                 putButtonAction(buttonId, (s, containerExtended) -> {
                     if (!world.isClientSide()) {
-                        PartHelpers.openContainerAspectSettings((ServerPlayerEntity) player, target.getCenter(), aspect);
+                        PartHelpers.openContainerAspectSettings((ServerPlayer) player, target.getCenter(), aspect);
                     }
                 });
             }
@@ -108,14 +108,14 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
 
     public abstract int getAspectBoxHeight();
 
-    protected IInventory constructInputSlotsInventory() {
+    protected Container constructInputSlotsInventory() {
         SimpleInventory inventory = new SimpleInventory(getUnfilteredItemCount(), 1);
         inventory.addDirtyMarkListener(this);
         return inventory;
     }
 
     @Override
-    public void removed(PlayerEntity player) {
+    public void removed(Player player) {
         if (inputSlots instanceof SimpleInventory) {
             ((SimpleInventory) inputSlots).removeDirtyMarkListener(this);
         }
@@ -151,7 +151,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return PartHelpers.canInteractWith(getTarget(), player, this.partContainer);
     }
 

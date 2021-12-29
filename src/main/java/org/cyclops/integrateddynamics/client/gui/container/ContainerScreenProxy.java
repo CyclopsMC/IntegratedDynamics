@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.gui.ContainerScreenActiveVariableBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerProxy;
@@ -16,7 +16,7 @@ public class ContainerScreenProxy extends ContainerScreenActiveVariableBase<Cont
     private static final int ERROR_X = 110;
     private static final int ERROR_Y = 26;
 
-    public ContainerScreenProxy(ContainerProxy container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenProxy(ContainerProxy container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 

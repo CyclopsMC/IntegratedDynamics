@@ -1,17 +1,15 @@
 package org.cyclops.integrateddynamics.capability.variablecontainer;
 
 import com.google.common.collect.Maps;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
-import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.Map;
 
@@ -29,7 +27,7 @@ public class VariableContainerDefault implements IVariableContainer {
     }
 
     @Override
-    public void refreshVariables(INetwork network, IInventory inventory, boolean sendVariablesUpdateEvent){
+    public void refreshVariables(INetwork network, Container inventory, boolean sendVariablesUpdateEvent){
         // Invalidate variables
         NetworkHelpers.getPartNetwork(network).ifPresent(partNetwork -> {
             for (IVariableFacade variableFacade : getVariableCache().values()) {

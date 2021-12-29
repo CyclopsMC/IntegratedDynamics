@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -49,9 +49,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     private ButtonText buttonLeft = null;
     private ButtonText buttonRight = null;
     private ButtonText buttonExit = null;
-    private ITextComponent lastError;
+    private Component lastError;
 
-    public ContainerScreenAspectSettings(ContainerAspectSettings container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenAspectSettings(ContainerAspectSettings container, Inventory inventory, Component title) {
         super(container, inventory, title);
 
         //noinspection deprecation
@@ -87,17 +87,17 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     public void init() {
         super.init();
         subGuiHolder.init(this.leftPos, this.topPos);
-        addButton(buttonExit = new ButtonText(leftPos + 7, topPos + 5, 12, 10, new TranslationTextComponent("gui.cyclopscore.up"), new StringTextComponent("<<"), createServerPressable(ContainerAspectSettings.BUTTON_EXIT, (button) -> {
+        addRenderableWidget(buttonExit = new ButtonText(leftPos + 7, topPos + 5, 12, 10, new TranslatableComponent("gui.cyclopscore.up"), new TextComponent("<<"), createServerPressable(ContainerAspectSettings.BUTTON_EXIT, (button) -> {
             saveSetting();
         }), true));
-        addButton(buttonLeft = new ButtonText(leftPos + 21, topPos + 5, 10, 10, new TranslationTextComponent("gui.cyclopscore.left"), new StringTextComponent("<"), (button) -> {
+        addRenderableWidget(buttonLeft = new ButtonText(leftPos + 21, topPos + 5, 10, 10, new TranslatableComponent("gui.cyclopscore.left"), new TextComponent("<"), (button) -> {
             saveSetting();
             if(getActivePropertyIndex() > 0) {
                 setActiveProperty(getActivePropertyIndex() - 1);
                 refreshButtonEnabled();
             }
         }, true));
-        addButton(buttonRight = new ButtonText(leftPos + 159, topPos + 5, 10, 10, new TranslationTextComponent("gui.cyclopscore.right"), new StringTextComponent(">"), (button) -> {
+        addRenderableWidget(buttonRight = new ButtonText(leftPos + 159, topPos + 5, 10, 10, new TranslatableComponent("gui.cyclopscore.right"), new TextComponent(">"), (button) -> {
             saveSetting();
             if(getActivePropertyIndex() < propertyTypes.size()) {
                 setActiveProperty(getActivePropertyIndex() + 1);
@@ -110,13 +110,13 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
-        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+        subGuiHolder.renderBg(matrixStack, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
 
@@ -128,8 +128,8 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
             if (RenderHelpers.isPointInRegion(this.leftPos + 40, this.topPos, 110, 20, mouseX, mouseY)) {
                 String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
                 if (I18n.exists(unlocalizedInfo)) {
-                    drawTooltip(Lists.newArrayList(new TranslationTextComponent(unlocalizedInfo)
-                            .withStyle(TextFormatting.GRAY)), mouseX - this.leftPos, mouseY - this.topPos + 20);
+                    drawTooltip(Lists.newArrayList(new TranslatableComponent(unlocalizedInfo)
+                            .withStyle(ChatFormatting.GRAY)), matrixStack, mouseX - this.leftPos, mouseY - this.topPos + 20);
                 }
             }
         }
@@ -223,7 +223,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
 
     @Override
-    public void onUpdate(int valueId, CompoundNBT value) {
+    public void onUpdate(int valueId, CompoundTag value) {
         super.onUpdate(valueId, value);
         IAspectPropertyTypeInstance property = container.getPropertyIds().get(valueId);
         if(property != null && getActiveProperty() == property) {
@@ -243,7 +243,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
         }
 
         @Override
-        protected ITextComponent getLastError() {
+        protected Component getLastError() {
             return lastError;
         }
 

@@ -2,10 +2,9 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraftforge.common.util.Constants;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.List;
 
@@ -26,19 +25,19 @@ public class RawNetworkData implements IRawData {
         return String.format("Network %s (cables: %s; elements: %s)", id, cables, parts.size());
     }
 
-    public CompoundNBT toNbt() {
-        CompoundNBT tag = new CompoundNBT();
+    public CompoundTag toNbt() {
+        CompoundTag tag = new CompoundTag();
         tag.putBoolean("killed", killed);
         tag.putInt("id", id);
         tag.putLong("cables", cables);
 
-        ListNBT listParts = new ListNBT();
+        ListTag listParts = new ListTag();
         for (RawPartData part : parts) {
             listParts.add(part.toNbt());
         }
         tag.put("parts", listParts);
 
-        ListNBT listObservers = new ListNBT();
+        ListTag listObservers = new ListTag();
         for (RawObserverData observer : observers) {
             listObservers.add(observer.toNbt());
         }
@@ -47,18 +46,18 @@ public class RawNetworkData implements IRawData {
         return tag;
     }
 
-    public static RawNetworkData fromNbt(CompoundNBT tag) {
+    public static RawNetworkData fromNbt(CompoundTag tag) {
         List<RawPartData> parts = Lists.newArrayList();
-        ListNBT listParts = tag.getList("parts", Constants.NBT.TAG_COMPOUND);
+        ListTag listParts = tag.getList("parts", Tag.TAG_COMPOUND);
         for (int i = 0; i < listParts.size(); i++) {
-            CompoundNBT partTag = listParts.getCompound(i);
+            CompoundTag partTag = listParts.getCompound(i);
             parts.add(RawPartData.fromNbt(partTag));
         }
 
         List<RawObserverData> observers = Lists.newArrayList();
-        ListNBT listObservers = tag.getList("observers", Constants.NBT.TAG_COMPOUND);
+        ListTag listObservers = tag.getList("observers", Tag.TAG_COMPOUND);
         for (int i = 0; i < listObservers.size(); i++) {
-            CompoundNBT observerTag = listObservers.getCompound(i);
+            CompoundTag observerTag = listObservers.getCompound(i);
             observers.add(RawObserverData.fromNbt(observerTag));
         }
 

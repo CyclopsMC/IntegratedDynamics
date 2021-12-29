@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.api.client.gui.subgui;
 
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -16,17 +16,17 @@ import java.util.List;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface IGuiInputElement<S extends ISubGuiBox, G extends AbstractGui, C extends Container> {
+public interface IGuiInputElement<S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu> {
 
     /**
      * @return Name used for rendering.
      */
-    public ITextComponent getName();
+    public Component getName();
 
     /**
      * @param lines The list to add tooltip lines to.
      */
-    public void loadTooltip(List<ITextComponent> lines);
+    public void loadTooltip(List<Component> lines);
 
     /**
      * @return The render pattern.
@@ -47,7 +47,7 @@ public interface IGuiInputElement<S extends ISubGuiBox, G extends AbstractGui, C
      * Validates the current state of the element.
      * @return An error or null.
      */
-    public ITextComponent validate();
+    public Component validate();
 
     /**
      * @return The color used to identify this element.

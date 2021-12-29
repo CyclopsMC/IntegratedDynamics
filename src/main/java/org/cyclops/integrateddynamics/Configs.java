@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.integrateddynamics.block.*;
+import org.cyclops.integrateddynamics.blockentity.*;
 import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
@@ -18,10 +19,10 @@ import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTickingConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettingsConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettingsConfig;
 import org.cyclops.integrateddynamics.core.recipe.type.*;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTickingConfig;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
 import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
@@ -29,7 +30,6 @@ import org.cyclops.integrateddynamics.inventory.container.*;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipeConfig;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipeConfig;
-import org.cyclops.integrateddynamics.tileentity.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenrilConfig;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenrilConfig;
@@ -65,17 +65,17 @@ public class Configs {
         configHandler.addConfigurable(new FluidLiquidChorusConfig());
 
         // Tile entities
-        configHandler.addConfigurable(new TileCoalGeneratorConfig());
-        configHandler.addConfigurable(new TileDelayConfig());
-        configHandler.addConfigurable(new TileDryingBasinConfig());
-        configHandler.addConfigurable(new TileEnergyBatteryConfig());
-        configHandler.addConfigurable(new TileMaterializerConfig());
-        configHandler.addConfigurable(new TileMechanicalDryingBasinConfig());
-        configHandler.addConfigurable(new TileMechanicalSqueezerConfig());
-        configHandler.addConfigurable(new TileMultipartTickingConfig());
-        configHandler.addConfigurable(new TileProxyConfig());
-        configHandler.addConfigurable(new TileSqueezerConfig());
-        configHandler.addConfigurable(new TileVariableStoreConfig());
+        configHandler.addConfigurable(new BlockEntityCoalGeneratorConfig());
+        configHandler.addConfigurable(new BlockEntityDelayConfig());
+        configHandler.addConfigurable(new BlockEntityDryingBasinConfig());
+        configHandler.addConfigurable(new BlockEntityEnergyBatteryConfig());
+        configHandler.addConfigurable(new BlockEntityMaterializerConfig());
+        configHandler.addConfigurable(new BlockEntityMechanicalDryingBasinConfig());
+        configHandler.addConfigurable(new BlockEntityMechanicalSqueezerConfig());
+        configHandler.addConfigurable(new BlockEntityMultipartTickingConfig());
+        configHandler.addConfigurable(new BlockEntityProxyConfig());
+        configHandler.addConfigurable(new BlockEntitySqueezerConfig());
+        configHandler.addConfigurable(new BlockEntityVariableStoreConfig());
 
         // Blocks
         configHandler.addConfigurable(new BlockCableConfig());

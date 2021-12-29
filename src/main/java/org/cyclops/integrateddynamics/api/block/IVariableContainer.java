@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.block;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.world.Container;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 
@@ -23,6 +23,6 @@ public interface IVariableContainer {
      * @param inventory IInventory to re-populate the cache from
      * @param sendVariablesUpdateEvent if true post a VariableContentsUpdatedEvent to the network when done
      */
-    public void refreshVariables(INetwork network, IInventory inventory, boolean sendVariablesUpdateEvent);
+    public void refreshVariables(INetwork network, Container inventory, boolean sendVariablesUpdateEvent);
 
 }

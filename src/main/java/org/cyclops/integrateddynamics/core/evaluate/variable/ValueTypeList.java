@@ -5,14 +5,13 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.ToString;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.GsonHelper;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -37,7 +36,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     public static final int MAX_RENDER_LINES = 20;
 
     public ValueTypeList() {
-        super("list", Helpers.RGBToInt(175, 3, 1), TextFormatting.DARK_RED, ValueTypeList.ValueList.class);
+        super("list", Helpers.RGBToInt(175, 3, 1), ChatFormatting.DARK_RED, ValueTypeList.ValueList.class);
     }
 
     @Override
@@ -46,33 +45,33 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueList value) {
+    public MutableComponent toCompactString(ValueList value) {
         return value.getRawValue().toCompactString();
     }
 
     @Override
-    public INBT serialize(ValueList value) {
+    public Tag serialize(ValueList value) {
         try {
             return ValueTypeListProxyFactories.REGISTRY.serialize(value.getRawValue());
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
             e.printStackTrace();
         }
-        return new CompoundNBT();
+        return new CompoundTag();
     }
 
     @Override
-    public ITextComponent canDeserialize(INBT value) {
+    public Component canDeserialize(Tag value) {
         try {
             IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
             return null;
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
-            return new TranslationTextComponent(e.getMessage());
+            return new TranslatableComponent(e.getMessage());
         }
     }
 
     @Override
-    public ValueList deserialize(INBT value) {
-        if (!(value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty()))) {
+    public ValueList deserialize(Tag value) {
+        if (!(value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty()))) {
             try {
                 IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
                 return ValueList.ofFactory(proxy);
@@ -103,7 +102,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         JsonElement jsonElement = element.get("infinite_list");
         Boolean infinite = null;
         if (jsonElement != null && !jsonElement.isJsonNull()) {
-            infinite = JSONUtils.convertToBoolean(jsonElement, "infinite_list");
+            infinite = GsonHelper.convertToBoolean(jsonElement, "infinite_list");
         }
         return new ValueListPredicate(this, value, infinite);
     }

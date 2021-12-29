@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.Maps;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.common.util.LazyOptional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -52,12 +52,12 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     private final int valueId, colorId, enabledId, activeAspectId;
     private final Map<IAspectWrite, Integer> aspectErrorIds;
 
-    public ContainerPartWriter(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
+    public ContainerPartWriter(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
         this(id, playerInventory, new SimpleInventory(packetBuffer.readInt(), 1),
                 PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
-    public ContainerPartWriter(int id, PlayerInventory playerInventory, IInventory inventory,
+    public ContainerPartWriter(int id, Inventory playerInventory, Container inventory,
                                PartTarget target, Optional<IPartContainer> partContainer, P partType) {
         super(RegistryEntries.CONTAINER_PART_WRITER, id, playerInventory, inventory, target, partContainer, partType,
                 partType.getWriteAspects());
@@ -66,7 +66,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
             disableSlot(i);
         }
 
-        addPlayerInventory(player.inventory, 9, 140);
+        addPlayerInventory(player.getInventory(), 9, 140);
 
         this.valueId = getNextValueId();
         this.colorId = getNextValueId();
@@ -96,7 +96,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     }
 
     @Override
-    protected IInventory constructInputSlotsInventory() {
+    protected Container constructInputSlotsInventory() {
         if (!player.level.isClientSide()) {
             SimpleInventory inventory = getPartState().getInventory();
             inventory.addDirtyMarkListener(this);
@@ -120,23 +120,23 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         try {
             if (!player.level.isClientSide()) {
                 // Update write value
-                Pair<IFormattableTextComponent, Integer> readValue;
+                Pair<MutableComponent, Integer> readValue;
                 S partState = getPartState();
                 if (!partState.isEnabled()) {
-                    readValue = Pair.of(new StringTextComponent("NO POWER"), 0);
+                    readValue = Pair.of(new TextComponent("NO POWER"), 0);
                 } else if (partState.hasVariable()) {
                     IPartContainer partContainer = getPartContainer();
-                    LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(partContainer.getPosition().getWorld(true),
+                    LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(partContainer.getPosition().getLevel(true),
                             partContainer.getPosition().getBlockPos(), getTarget().getCenter().getSide());
                     IPartNetwork partNetwork = optionalNetwork.map(NetworkHelpers::getPartNetworkChecked).orElse(null);
                     if (partNetwork != null) {
                         IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        readValue = Pair.of(new StringTextComponent("NETWORK CORRUPTED!"), Helpers.RGBToInt(255, 100, 0));
+                        readValue = Pair.of(new TextComponent("NETWORK CORRUPTED!"), Helpers.RGBToInt(255, 100, 0));
                     }
                 } else {
-                    readValue = Pair.of(new StringTextComponent(""), 0);
+                    readValue = Pair.of(new TextComponent(""), 0);
                 }
                 setWriteValue(readValue.getLeft(), readValue.getRight());
 
@@ -154,15 +154,15 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         }
     }
 
-    public void setWriteValue(IFormattableTextComponent writeValue, int writeColor) {
+    public void setWriteValue(MutableComponent writeValue, int writeColor) {
         ValueNotifierHelpers.setValue(this, valueId, writeValue);
         ValueNotifierHelpers.setValue(this, colorId, writeColor);
     }
 
-    public ITextComponent getWriteValue() {
-        ITextComponent value = ValueNotifierHelpers.getValueTextComponent(this, valueId);
+    public Component getWriteValue() {
+        Component value = ValueNotifierHelpers.getValueTextComponent(this, valueId);
         if(value == null) {
-            value = new StringTextComponent("");
+            value = new TextComponent("");
         }
         return value;
     }
@@ -171,7 +171,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         return ValueNotifierHelpers.getValueInt(this, colorId);
     }
 
-    public List<IFormattableTextComponent> getAspectErrors(IAspectWrite aspectWrite) {
+    public List<MutableComponent> getAspectErrors(IAspectWrite aspectWrite) {
         return ValueNotifierHelpers.getValueTextComponentList(this, aspectErrorIds.get(aspectWrite));
     }
 

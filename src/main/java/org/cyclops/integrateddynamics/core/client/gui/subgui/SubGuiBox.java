@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.core.client.gui.subgui;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -25,7 +25,7 @@ import java.util.List;
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
+public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID,
             IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "sub_gui.png");
@@ -45,15 +45,15 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
         subGuiHolder.init(guiLeft, guiTop);
     }
 
-    public void drawScreen(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         for (int i = 0; i < this.buttonList.size(); ++i) {
             this.buttonList.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        textureManager.bind(TEXTURE);
+    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        RenderHelpers.bindTexture(TEXTURE);
 
         int textureWidth = 19;
         int textureHeight = textureWidth;
@@ -106,11 +106,11 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
         // Draw buttons
         drawScreen(matrixStack, mouseX, mouseY, partialTicks);
 
-        subGuiHolder.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        subGuiHolder.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
     }
 
@@ -164,8 +164,6 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
 
     }
 
-    @EqualsAndHashCode(callSuper = false)
-    @Data
     public static class Base extends SubGuiBox {
 
         private final int x, y, width, height;
@@ -176,6 +174,26 @@ public abstract class SubGuiBox extends AbstractGui implements ISubGuiBox {
             this.y = y;
             this.width = width;
             this.height = height;
+        }
+
+        @Override
+        public int getX() {
+            return x;
+        }
+
+        @Override
+        public int getY() {
+            return y;
+        }
+
+        @Override
+        public int getWidth() {
+            return width;
+        }
+
+        @Override
+        public int getHeight() {
+            return height;
         }
 
         @Override

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.capability.networkelementprovider;
 
 import com.google.common.collect.Sets;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
@@ -27,7 +27,7 @@ public class NetworkElementProviderPartContainer implements INetworkElementProvi
     }
 
     @Override
-    public Collection<INetworkElement> createNetworkElements(World world, BlockPos blockPos) {
+    public Collection<INetworkElement> createNetworkElements(Level world, BlockPos blockPos) {
         Set<INetworkElement> sidedElements = Sets.newHashSet();
         for(Map.Entry<Direction, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
             sidedElements.add(entry.getValue().createNetworkElement(partContainer, DimPos.of(world, blockPos), entry.getKey()));

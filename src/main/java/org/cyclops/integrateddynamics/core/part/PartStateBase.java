@@ -1,16 +1,14 @@
 package org.cyclops.integrateddynamics.core.part;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -51,7 +49,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private IdentityHashMap<Capability<?>, LazyOptional<Object>> volatileCapabilities = new IdentityHashMap<>();
 
     @Override
-    public void writeToNBT(CompoundNBT tag) {
+    public void writeToNBT(CompoundTag tag) {
         tag.putInt("updateInterval", this.updateInterval);
         tag.putInt("priority", this.priority);
         tag.putInt("channel", this.channel);
@@ -67,11 +65,11 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tag) {
+    public void readFromNBT(CompoundTag tag) {
         this.updateInterval = tag.getInt("updateInterval");
         this.priority = tag.getInt("priority");
         this.channel = tag.getInt("channel");
-        if (tag.contains("targetSide", Constants.NBT.TAG_INT)) {
+        if (tag.contains("targetSide", Tag.TAG_INT)) {
             this.targetSide = Direction.values()[tag.getInt("targetSide")];
         }
         this.id = tag.getInt("id");
@@ -83,11 +81,11 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         }
     }
 
-    protected void writeAspectProperties(String name, CompoundNBT tag) {
-        CompoundNBT mapTag = new CompoundNBT();
-        ListNBT list = new ListNBT();
+    protected void writeAspectProperties(String name, CompoundTag tag) {
+        CompoundTag mapTag = new CompoundTag();
+        ListTag list = new ListTag();
         for(Map.Entry<IAspect, IAspectProperties> entry : aspectProperties.entrySet()) {
-            CompoundNBT entryTag = new CompoundNBT();
+            CompoundTag entryTag = new CompoundTag();
             entryTag.putString("key", entry.getKey().getUniqueName().toString());
             if(entry.getValue() != null) {
                 entryTag.put("value", entry.getValue().toNBT());
@@ -98,12 +96,12 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         tag.put(name, mapTag);
     }
 
-    public void readAspectProperties(String name, CompoundNBT tag) {
-        CompoundNBT mapTag = tag.getCompound(name);
-        ListNBT list = mapTag.getList("map", Constants.NBT.TAG_COMPOUND);
+    public void readAspectProperties(String name, CompoundTag tag) {
+        CompoundTag mapTag = tag.getCompound(name);
+        ListTag list = mapTag.getList("map", Tag.TAG_COMPOUND);
         if(list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
-                CompoundNBT entryTag = list.getCompound(i);
+                CompoundTag entryTag = list.getCompound(i);
                 IAspect key = Aspects.REGISTRY.getAspect(new ResourceLocation(entryTag.getString("key")));
                 IAspectProperties value = null;
                 if (entryTag.contains("value")) {

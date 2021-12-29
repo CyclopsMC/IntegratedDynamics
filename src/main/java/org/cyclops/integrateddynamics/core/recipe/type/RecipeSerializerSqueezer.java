@@ -4,13 +4,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
@@ -22,12 +22,12 @@ import javax.annotation.Nullable;
  * Recipe serializer for squeezer recipes
  * @author rubensworks
  */
-public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializer<?>>
-        implements IRecipeSerializer<RecipeSqueezer> {
+public class RecipeSerializerSqueezer extends ForgeRegistryEntry<RecipeSerializer<?>>
+        implements RecipeSerializer<RecipeSqueezer> {
 
     protected static RecipeSqueezer.ItemStackChance getJsonItemStackChance(JsonObject json) {
         ItemStack itemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(json, true, GeneralConfig.recipeTagOutputModPriorities);
-        float chance = JSONUtils.getAsFloat(json, "chance", 1.0F);
+        float chance = GsonHelper.getAsFloat(json, "chance", 1.0F);
         return new RecipeSqueezer.ItemStackChance(itemStack, chance);
     }
 
@@ -49,7 +49,7 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
 
     @Override
     public RecipeSqueezer fromJson(ResourceLocation recipeId, JsonObject json) {
-        JsonObject result = JSONUtils.getAsJsonObject(json, "result");
+        JsonObject result = GsonHelper.getAsJsonObject(json, "result");
 
         // Input
         Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", true);
@@ -71,7 +71,7 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
 
     @Nullable
     @Override
-    public RecipeSqueezer fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+    public RecipeSqueezer fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         // Input
         Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
 
@@ -90,7 +90,7 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<IRecipeSerializ
     }
 
     @Override
-    public void toNetwork(PacketBuffer buffer, RecipeSqueezer recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, RecipeSqueezer recipe) {
         // Input
         recipe.getInputIngredient().toNetwork(buffer);
 

@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import lombok.Data;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 
 /**
  * @author rubensworks
@@ -16,7 +15,7 @@ import net.minecraft.world.World;
 @Data
 public class RawObserverData implements IRawData {
 
-    private final RegistryKey<World> dimension;
+    private final ResourceKey<Level> dimension;
     private final BlockPos pos;
     private final Direction side;
     private final String name;
@@ -27,8 +26,8 @@ public class RawObserverData implements IRawData {
         return String.format("%s: %s,%s,%s,%s (%s)", name, pos.getX(), pos.getY(), pos.getZ(), side, dimension.location());
     }
 
-    public CompoundNBT toNbt() {
-        CompoundNBT tag = new CompoundNBT();
+    public CompoundTag toNbt() {
+        CompoundTag tag = new CompoundTag();
         tag.putString("dimension", dimension.location().toString());
         tag.putLong("pos", pos.asLong());
         if (side != null) {
@@ -39,8 +38,8 @@ public class RawObserverData implements IRawData {
         return tag;
     }
 
-    public static RawObserverData fromNbt(CompoundNBT tag) {
-        return new RawObserverData(RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
+    public static RawObserverData fromNbt(CompoundTag tag) {
+        return new RawObserverData(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
                 tag.contains("side") ? Direction.values()[tag.getInt("side")] : null, tag.getString("name"), tag.getLong("last20TicksDurationNs"));
     }
 

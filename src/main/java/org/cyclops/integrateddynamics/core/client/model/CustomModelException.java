@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Exception that can occur while loading custom models.

@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -23,7 +23,7 @@ import java.awt.*;
 public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extends IPartStateReader<P>>
         extends ContainerScreenMultipartAspects<P, S, IAspectRead, ContainerPartReader<P, S>> {
 
-    public ContainerScreenPartReader(ContainerPartReader<P, S> container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenPartReader(ContainerPartReader<P, S> container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 
@@ -33,14 +33,14 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    protected void drawAdditionalElementInfoForeground(MatrixStack matrixStack, ContainerPartReader<P, S> container, int index, IAspectRead aspect, int mouseX, int mouseY) {
+    protected void drawAdditionalElementInfoForeground(PoseStack matrixStack, ContainerPartReader<P, S> container, int index, IAspectRead aspect, int mouseX, int mouseY) {
 
     }
 
     @Override
-    protected void drawAdditionalElementInfo(MatrixStack matrixStack, ContainerPartReader<P, S> container, int index, IAspectRead aspect) {
+    protected void drawAdditionalElementInfo(PoseStack matrixStack, ContainerPartReader<P, S> container, int index, IAspectRead aspect) {
         // Get current aspect value
-        Pair<ITextComponent, Integer> readValues = container.getReadValue(aspect);
+        Pair<Component, Integer> readValues = container.getReadValue(aspect);
         if(readValues != null && readValues.getLeft() != null) {
             RenderHelpers.drawScaledCenteredString(matrixStack, font, readValues.getLeft().getString(), this.leftPos + offsetX + 16,
                     this.topPos + offsetY + 39 + container.getAspectBoxHeight() * index,
@@ -52,7 +52,7 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), aspect);
         Rectangle pos = getElementPosition(container, index, true);
 
-        RenderHelper.turnBackOn();
+        Lighting.setupForFlatItems();
         itemRenderer.renderAndDecorateItem(itemStack, pos.x, pos.y);
     }
 

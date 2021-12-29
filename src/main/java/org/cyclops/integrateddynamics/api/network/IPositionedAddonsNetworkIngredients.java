@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.api.network;
 
 import com.google.common.collect.Iterators;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageWrapperHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
@@ -80,8 +80,8 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
     @Nullable
     public default IIngredientComponentStorage<T, M> getPositionedStorageUnsafe(PartPos pos) {
         DimPos dimPos = pos.getPos();
-        World world = dimPos.getWorld(true);
-        Optional<TileEntity> tile = TileHelpers.getSafeTile(world, dimPos.getBlockPos(), TileEntity.class);
+        Level world = dimPos.getLevel(true);
+        Optional<BlockEntity> tile = BlockEntityHelpers.get(world, dimPos.getBlockPos(), BlockEntity.class);
         return tile
                 .map(tileEntity -> getComponent().getStorage(tileEntity, pos.getSide()))
                 .orElse(null);

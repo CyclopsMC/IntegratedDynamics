@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -73,15 +72,15 @@ public class CurriedOperator implements IOperator {
     }
 
     @Override
-    public IFormattableTextComponent getLocalizedNameFull() {
-        return new TranslationTextComponent(L10NValues.OPERATOR_APPLIED_OPERATORNAME,
+    public MutableComponent getLocalizedNameFull() {
+        return new TranslatableComponent(L10NValues.OPERATOR_APPLIED_OPERATORNAME,
                 baseOperator.getLocalizedNameFull(), getAppliedSymbol());
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
         baseOperator.loadTooltip(lines, appendOptionalInfo);
-        lines.add(new TranslationTextComponent(L10NValues.OPERATOR_APPLIED_TYPE, getAppliedSymbol()));
+        lines.add(new TranslatableComponent(L10NValues.OPERATOR_APPLIED_TYPE, getAppliedSymbol()));
     }
 
     @Override
@@ -129,7 +128,7 @@ public class CurriedOperator implements IOperator {
     }
 
     @Override
-    public IFormattableTextComponent validateTypes(IValueType[] input) {
+    public MutableComponent validateTypes(IValueType[] input) {
         return baseOperator.validateTypes(deriveFullInputTypes(input));
     }
 
@@ -181,8 +180,8 @@ public class CurriedOperator implements IOperator {
         }
 
         @Override
-        public INBT serialize(CurriedOperator operator) {
-            ListNBT list = new ListNBT();
+        public Tag serialize(CurriedOperator operator) {
+            ListTag list = new ListTag();
             for (int i = 0; i < operator.appliedVariables.length; i++) {
                 IVariable appliedVariable = operator.appliedVariables[i];
                 IValue value;
@@ -191,33 +190,33 @@ public class CurriedOperator implements IOperator {
                 } catch (EvaluationException e) {
                     value = appliedVariable.getType().getDefault();
                 }
-                CompoundNBT valueTag = new CompoundNBT();
+                CompoundTag valueTag = new CompoundTag();
                 IValueType valueType = value.getType();
                 valueTag.putString("valueType", valueType.getUniqueName().toString());
                 valueTag.put("value", ValueHelpers.serializeRaw(value));
                 list.add(valueTag);
             }
 
-            CompoundNBT tag = new CompoundNBT();
+            CompoundTag tag = new CompoundTag();
             tag.put("values", list);
             tag.put("baseOperator", Operators.REGISTRY.serialize(operator.baseOperator));
             return tag;
         }
 
         @Override
-        public CurriedOperator deserialize(INBT valueOperator) throws EvaluationException {
-            CompoundNBT tag;
+        public CurriedOperator deserialize(Tag valueOperator) throws EvaluationException {
+            CompoundTag tag;
             try {
-                tag = (CompoundNBT) valueOperator;
+                tag = (CompoundTag) valueOperator;
             } catch (ClassCastException e) {
                 e.printStackTrace();
-                throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                throw new EvaluationException(new TranslatableComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
                         valueOperator, e.getMessage()));
             }
-            ListNBT list = tag.getList("values", Constants.NBT.TAG_COMPOUND);
+            ListTag list = tag.getList("values", Tag.TAG_COMPOUND);
             IVariable[] variables = new IVariable[list.size()];
             for (int i = 0; i < list.size(); i++) {
-                CompoundNBT valuetag = list.getCompound(i);
+                CompoundTag valuetag = list.getCompound(i);
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valuetag.getString("valueType")));
                 IValue value = ValueHelpers.deserializeRaw(valueType, valuetag.get("value"));
                 variables[i] = new Variable(valueType, value);

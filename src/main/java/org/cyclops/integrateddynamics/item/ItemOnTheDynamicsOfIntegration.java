@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,8 +19,6 @@ import org.cyclops.integrateddynamics.entity.item.EntityItemTargetted;
 import org.cyclops.integrateddynamics.inventory.container.ContainerOnTheDynamicsOfIntegration;
 
 import javax.annotation.Nullable;
-
-import net.minecraft.item.Item.Properties;
 
 /**
  * On the Dynamics of Integration book.
@@ -37,13 +35,13 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
 
     @Nullable
     @Override
-    public INamedContainerProvider getContainer(World world, PlayerEntity playerEntity, int itemIndex, Hand hand, ItemStack itemStack) {
+    public MenuProvider getContainer(Level world, Player playerEntity, int itemIndex, InteractionHand hand, ItemStack itemStack) {
         return new NamedContainerProviderItem(itemIndex, hand,
-                new TranslationTextComponent("gui.cyclopscore.infobook"), ContainerOnTheDynamicsOfIntegration::new);
+                new TranslatableComponent("gui.cyclopscore.infobook"), ContainerOnTheDynamicsOfIntegration::new);
     }
 
     @Override
-    public Class<? extends Container> getContainerClass(World world, PlayerEntity playerEntity, ItemStack itemStack) {
+    public Class<? extends AbstractContainerMenu> getContainerClass(Level world, Player playerEntity, ItemStack itemStack) {
         return ContainerOnTheDynamicsOfIntegration.class;
     }
 
@@ -51,16 +49,16 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (ItemOnTheDynamicsOfIntegrationConfig.obtainOnSpawn) {
-            CompoundNBT tag = event.getPlayer().getPersistentData();
-            if (!tag.contains(PlayerEntity.PERSISTED_NBT_TAG)) {
-                tag.put(PlayerEntity.PERSISTED_NBT_TAG, new CompoundNBT());
+            CompoundTag tag = event.getPlayer().getPersistentData();
+            if (!tag.contains(Player.PERSISTED_NBT_TAG)) {
+                tag.put(Player.PERSISTED_NBT_TAG, new CompoundTag());
             }
-            CompoundNBT playerTag = tag.getCompound(PlayerEntity.PERSISTED_NBT_TAG);
+            CompoundTag playerTag = tag.getCompound(Player.PERSISTED_NBT_TAG);
             if (!playerTag.contains(NBT_INFOBOOK_SPAWNED)) {
                 playerTag.putBoolean(NBT_INFOBOOK_SPAWNED, true);
 
-                World world = event.getPlayer().getCommandSenderWorld();
-                PlayerEntity player = event.getPlayer();
+                Level world = event.getPlayer().getCommandSenderWorld();
+                Player player = event.getPlayer();
                 ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_ON_THE_DYNAMICS_OF_INTEGRATION);
                 EntityItemTargetted entity = new EntityItemTargetted(world,
                         player.blockPosition().getX() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.random.nextFloat(),

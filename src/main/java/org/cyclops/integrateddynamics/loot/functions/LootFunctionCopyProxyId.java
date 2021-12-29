@@ -3,41 +3,41 @@ package org.cyclops.integrateddynamics.loot.functions;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootFunction;
-import net.minecraft.loot.LootFunctionType;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.cyclops.cyclopscore.helper.LootHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockProxy;
-import org.cyclops.integrateddynamics.tileentity.TileProxy;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityProxy;
 
 /**
  * Copies a proxy id to the item.
  * @author rubensworks
  */
-public class LootFunctionCopyProxyId extends LootFunction {
-    public static final LootFunctionType TYPE = LootHelpers.registerFunction(new ResourceLocation(Reference.MOD_ID, "copy_proxy_id"), new LootFunctionCopyProxyId.Serializer());
+public class LootFunctionCopyProxyId extends LootItemConditionalFunction {
+    public static final LootItemFunctionType TYPE = LootHelpers.registerFunction(new ResourceLocation(Reference.MOD_ID, "copy_proxy_id"), new LootFunctionCopyProxyId.Serializer());
 
-    protected LootFunctionCopyProxyId(ILootCondition[] conditionsIn) {
+    protected LootFunctionCopyProxyId(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
     }
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        TileEntity tile = lootContext.getParamOrNull(LootParameters.BLOCK_ENTITY);
-        if (tile instanceof TileProxy) {
-            itemStack.getOrCreateTag().putInt(BlockProxy.NBT_ID, ((TileProxy) tile).getProxyId());
+        BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        if (tile instanceof BlockEntityProxy) {
+            itemStack.getOrCreateTag().putInt(BlockProxy.NBT_ID, ((BlockEntityProxy) tile).getProxyId());
         }
         return itemStack;
     }
 
     @Override
-    public LootFunctionType getType() {
+    public LootItemFunctionType getType() {
         return TYPE;
     }
 
@@ -45,14 +45,14 @@ public class LootFunctionCopyProxyId extends LootFunction {
         // Dummy call, to enforce class loading
     }
 
-    public static class Serializer extends LootFunction.Serializer<LootFunctionCopyProxyId> {
+    public static class Serializer extends LootItemConditionalFunction.Serializer<LootFunctionCopyProxyId> {
         @Override
         public void serialize(JsonObject jsonObject, LootFunctionCopyProxyId lootFunctionCopyId, JsonSerializationContext jsonSerializationContext) {
 
         }
 
         @Override
-        public LootFunctionCopyProxyId deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext, ILootCondition[] conditionsIn) {
+        public LootFunctionCopyProxyId deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext, LootItemCondition[] conditionsIn) {
             return new LootFunctionCopyProxyId(conditionsIn);
         }
     }

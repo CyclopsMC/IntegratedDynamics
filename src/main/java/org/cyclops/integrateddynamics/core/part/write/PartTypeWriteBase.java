@@ -1,19 +1,19 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
@@ -48,8 +48,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.cyclops.integrateddynamics.core.part.PartTypeBase.IEventAction;
 
 /**
  * An abstract {@link IPartTypeWriter}.
@@ -100,7 +98,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
                 itemStacks.add(itemStack);
             }
         }
-        // state.getInventory().clearContent(); // TODO: restore
+        state.getInventory().clearContent();
         state.triggerAspectInfoUpdate((P) this, target, null);
         super.addDrops(target, state, itemStacks, dropMainElement, saveState);
     }
@@ -141,7 +139,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void updateActivation(PartTarget target, S partState, @Nullable PlayerEntity player) {
+    public void updateActivation(PartTarget target, S partState, @Nullable Player player) {
         // Check inside the inventory for a variable item and determine everything with that.
         int activeIndex = -1;
         for(int i = 0 ; i < partState.getInventory().getContainerSize(); i++) {
@@ -192,39 +190,39 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void loadTooltip(S state, List<ITextComponent> lines) {
+    public void loadTooltip(S state, List<Component> lines) {
         super.loadTooltip(state, lines);
         IAspectWrite aspectWrite = state.getActiveAspect();
         if (aspectWrite != null) {
             if (state.hasVariable() && state.isEnabled()) {
-                lines.add(new TranslationTextComponent(
+                lines.add(new TranslatableComponent(
                         L10NValues.PART_TOOLTIP_WRITER_ACTIVEASPECT,
-                        new TranslationTextComponent(aspectWrite.getTranslationKey()),
-                        new TranslationTextComponent(aspectWrite.getValueType().getTranslationKey())
+                        new TranslatableComponent(aspectWrite.getTranslationKey()),
+                        new TranslatableComponent(aspectWrite.getValueType().getTranslationKey())
                                 .withStyle(aspectWrite.getValueType().getDisplayColorFormat())));
             } else {
-                lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS)
-                        .withStyle(TextFormatting.RED));
-                for (IFormattableTextComponent error : state.getErrors(aspectWrite)) {
-                    lines.add(error.withStyle(TextFormatting.RED));
+                lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_ERRORS)
+                        .withStyle(ChatFormatting.RED));
+                for (MutableComponent error : state.getErrors(aspectWrite)) {
+                    lines.add(error.withStyle(ChatFormatting.RED));
                 }
             }
         } else {
-            lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_INACTIVE));
+            lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_INACTIVE));
         }
     }
 
     @Override
-    public Optional<INamedContainerProvider> getContainerProvider(PartPos pos) {
-        return Optional.of(new INamedContainerProvider() {
+    public Optional<MenuProvider> getContainerProvider(PartPos pos) {
+        return Optional.of(new MenuProvider() {
             @Override
-            public ITextComponent getDisplayName() {
-                return new TranslationTextComponent(getTranslationKey());
+            public Component getDisplayName() {
+                return new TranslatableComponent(getTranslationKey());
             }
 
             @Nullable
             @Override
-            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+            public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
                 Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
                 S partState = (S) data.getLeft().getPartState(data.getRight().getCenter().getSide());
                 return new ContainerPartWriter<>(id, playerInventory, partState.getInventory(),
@@ -234,7 +232,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+    public void writeExtraGuiData(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
         // Write inventory size
         packetBuffer.writeInt(getWriteAspects().size());
         // Write part position

@@ -2,25 +2,24 @@ package org.cyclops.integrateddynamics.core.item;
 
 import com.google.common.collect.Lists;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
-import org.apache.logging.log4j.Level;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -75,15 +74,15 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     }
 
     @Override
-    public ITextComponent getName(ItemStack p_200295_1_) {
-        return new TranslationTextComponent(getDescriptionId());
+    public Component getName(ItemStack p_200295_1_) {
+        return new TranslatableComponent(getDescriptionId());
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
-        World world = context.getLevel();
-        PlayerEntity player = context.getPlayer();
-        Hand hand = context.getHand();
+    public InteractionResult useOn(UseOnContext context) {
+        Level world = context.getLevel();
+        Player player = context.getPlayer();
+        InteractionHand hand = context.getHand();
         BlockPos pos = context.getClickedPos();
         Direction side = context.getClickedFace();
 
@@ -99,21 +98,21 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     itemStack.shrink(1);
                 }
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else {
             // Place part at a new position with an unreal cable
             BlockPos target = pos.relative(side);
             Direction targetSide = side.getOpposite();
-            BlockRayTraceResult targetRayTrace = new BlockRayTraceResult(new Vector3d(
+            BlockHitResult targetRayTrace = new BlockHitResult(new Vec3(
                     (double) target.getX() + 0.5D + (double) targetSide.getStepX() * 0.5D,
                     (double) target.getY() + 0.5D + (double) targetSide.getStepY() * 0.5D,
                     (double) target.getZ() + 0.5D + (double) targetSide.getStepZ() * 0.5D),
                     targetSide, target, false);
             if(world.getBlockState(target).getBlock().canBeReplaced(world.getBlockState(target),
-                    new BlockItemUseContext(world, player, hand, itemStack, targetRayTrace))) {
+                    new BlockPlaceContext(world, player, hand, itemStack, targetRayTrace))) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.byBlock(RegistryEntries.BLOCK_CABLE);
                 itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
-                if (itemBlockCable.useOn(new ItemUseContext(player, hand, targetRayTrace)).consumesAction()) {
+                if (itemBlockCable.useOn(new UseOnContext(player, hand, targetRayTrace)).consumesAction()) {
                     IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide).orElse(null);
                     if (partContainer != null) {
                         ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target, targetSide).orElse(null);
@@ -124,13 +123,13 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                                 cableFakeable.setRealCable(false);
                                 CableHelpers.onCableRemoved(world, target, CableHelpers.ALL_SIDES);
                             } else {
-                                IntegratedDynamics.clog(Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable at %s", target));
+                                IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable at %s", target));
                             }
                         } else {
                             cableFakeable.setRealCable(false);
                         }
                         itemStack.shrink(1);
-                        return ActionResultType.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
                 }
                 itemStack.shrink(1); // Shrink manually if failed
@@ -152,14 +151,14 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                             itemStack.shrink(1);
                         }
                     }
-                    return ActionResultType.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             }
 
             // Check third party actions if all else fails
             for (IUseAction useAction : USE_ACTIONS) {
                 if (useAction.attempItemUseTarget(this, itemStack, world, pos, side)) {
-                    return ActionResultType.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
@@ -168,11 +167,11 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
         if(itemStack.getTag() != null
-                && itemStack.getTag().contains("id", Constants.NBT.TAG_INT)) {
+                && itemStack.getTag().contains("id", Tag.TAG_INT)) {
             int id = itemStack.getTag().getInt("id");
-            list.add(new TranslationTextComponent(L10NValues.GENERAL_ITEM_ID, id));
+            list.add(new TranslatableComponent(L10NValues.GENERAL_ITEM_ID, id));
         }
         getPart().loadTooltip(itemStack, list);
         super.appendHoverText(itemStack, world, list, flag);
@@ -189,7 +188,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
          * @param sideHit The side that is being hit.
          * @return If the use action was applied.
          */
-        public boolean attempItemUseTarget(ItemPart itemPart, ItemStack itemStack, World world, BlockPos pos, Direction sideHit);
+        public boolean attempItemUseTarget(ItemPart itemPart, ItemStack itemStack, Level world, BlockPos pos, Direction sideHit);
 
     }
 

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 
 /**
@@ -10,7 +10,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class ContainerScreenLogicProgrammer extends ContainerScreenLogicProgrammerBase<ContainerLogicProgrammer> {
 
-    public ContainerScreenLogicProgrammer(ContainerLogicProgrammer container, PlayerInventory playerInventory, ITextComponent title) {
+    public ContainerScreenLogicProgrammer(ContainerLogicProgrammer container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
     }
 

@@ -1,17 +1,17 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.TorchBlock;
-import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.item.Item;
-import net.minecraft.item.WallOrFloorItem;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.StandingAndWallBlockItem;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.TorchBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -40,11 +40,11 @@ public class BlockMenrilTorchConfig extends BlockConfig {
                         .sound(SoundType.WOOD), ParticleTypes.FLAME) {
                     @Override
                     @OnlyIn(Dist.CLIENT)
-                    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+                    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
                         // No particles
                     }
                 },
-                (eConfig, block) -> new WallOrFloorItem(block,
+                (eConfig, block) -> new StandingAndWallBlockItem(block,
                         RegistryEntries.BLOCK_MENRIL_TORCH_WALL,
                         new Item.Properties().tab(IntegratedDynamics._instance.getDefaultItemGroup()))
         );
@@ -52,7 +52,7 @@ public class BlockMenrilTorchConfig extends BlockConfig {
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
-        RenderTypeLookup.setRenderLayer(getInstance(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(getInstance(), RenderType.cutout());
     }
 
 }

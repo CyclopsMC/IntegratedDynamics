@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.resources.model.BakedModel;
 
 /**
  * A model for variable items.
  * @author rubensworks
  */
-public interface IVariableModelBaked extends IBakedModel {
+public interface IVariableModelBaked extends BakedModel {
 
     /**
      * Set the baked submodels for the given provider.
@@ -14,7 +14,7 @@ public interface IVariableModelBaked extends IBakedModel {
      * @param subModels The baked sub model holder.
      * @param <B> The baked sub model type.
      */
-    public <B extends IVariableModelProvider.IBakedModelProvider> void setSubModels(IVariableModelProvider<B> provider, B subModels);
+    public <B extends IVariableModelProvider.BakedModelProvider> void setSubModels(IVariableModelProvider<B> provider, B subModels);
 
     /**
      * Get the baked submodels for the given provider.
@@ -22,6 +22,6 @@ public interface IVariableModelBaked extends IBakedModel {
      * @param <B> The baked sub model type.
      * @return The baked model provider.
      */
-    public <B extends IVariableModelProvider.IBakedModelProvider> B getSubModels(IVariableModelProvider<B> provider);
+    public <B extends IVariableModelProvider.BakedModelProvider> B getSubModels(IVariableModelProvider<B> provider);
 
 }

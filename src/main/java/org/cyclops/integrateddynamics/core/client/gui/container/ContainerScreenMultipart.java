@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
-import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -28,18 +27,18 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
 
     protected final DisplayErrorsComponent displayErrors = new DisplayErrorsComponent();
 
-    public ContainerScreenMultipart(C container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenMultipart(C container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 
     @Override
     public void init() {
-        buttons.clear();
+        clearWidgets();
         super.init();
         P partType = getMenu().getPartType();
         if(partType instanceof PartTypeConfigurable && partType.getContainerProviderSettings(null).isPresent()) {
-            addButton(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
-                    new TranslationTextComponent("gui.integrateddynamics.part_settings"),
+            addRenderableWidget(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
+                    new TranslatableComponent("gui.integrateddynamics.part_settings"),
                     createServerPressable(ContainerMultipart.BUTTON_SETTINGS, (button) -> {}), true,
                     Images.CONFIG_BOARD, -2, -3));
         }
@@ -57,8 +56,8 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         // Draw part name
         // MCP: drawString
@@ -66,7 +65,7 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(PoseStack matrixStack, int x, int y) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
     }
 }

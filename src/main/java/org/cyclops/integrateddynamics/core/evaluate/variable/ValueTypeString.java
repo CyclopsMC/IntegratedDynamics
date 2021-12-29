@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -18,7 +18,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
         implements IValueTypeNamed<ValueTypeString.ValueString> {
 
     public ValueTypeString() {
-        super("string", Helpers.RGBToInt(250, 10, 13), TextFormatting.RED, ValueTypeString.ValueString.class);
+        super("string", Helpers.RGBToInt(250, 10, 13), ChatFormatting.RED, ValueTypeString.ValueString.class);
     }
 
     @Override
@@ -27,17 +27,17 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueString value) {
-        return new StringTextComponent(value.getRawValue());
+    public MutableComponent toCompactString(ValueString value) {
+        return new TextComponent(value.getRawValue());
     }
 
     @Override
-    public INBT serialize(ValueString value) {
-        return StringNBT.valueOf(value.getRawValue());
+    public Tag serialize(ValueString value) {
+        return StringTag.valueOf(value.getRawValue());
     }
 
     @Override
-    public ValueString deserialize(INBT value) {
+    public ValueString deserialize(Tag value) {
         return ValueString.of(value.getAsString());
     }
 

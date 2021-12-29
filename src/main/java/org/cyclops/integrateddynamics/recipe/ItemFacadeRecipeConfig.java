@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -13,7 +13,7 @@ public class ItemFacadeRecipeConfig extends RecipeConfig<ItemFacadeRecipe> {
     public ItemFacadeRecipeConfig() {
         super(IntegratedDynamics._instance,
                 "crafting_special_facade",
-                eConfig -> new SpecialRecipeSerializer<>(ItemFacadeRecipe::new));
+                eConfig -> new SimpleRecipeSerializer<>(ItemFacadeRecipe::new));
     }
 
 }

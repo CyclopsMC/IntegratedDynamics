@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.block.ComposterBlock;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.ComposterBlock;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -29,13 +29,13 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
         );
     }
 
-    protected static Food createFood() {
-        Food.Builder builder = new Food.Builder()
+    protected static FoodProperties createFood() {
+        FoodProperties.Builder builder = new FoodProperties.Builder()
                 .nutrition(4)
                 .saturationMod(0.3F)
                 .fast();
         if (nightVision) {
-            builder = builder.effect(new EffectInstance(Effects.NIGHT_VISION, 20, 1), 1);
+            builder = builder.effect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20, 1), 1);
         }
         return builder.build();
     }

@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.part.aspect.property;
 
 import com.google.common.collect.Maps;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
-import org.apache.logging.log4j.Level;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -70,11 +69,11 @@ public class AspectProperties implements IAspectProperties {
     }
 
     @Override
-    public CompoundNBT toNBT() {
-        CompoundNBT tag = new CompoundNBT();
-        ListNBT map = new ListNBT();
+    public CompoundTag toNBT() {
+        CompoundTag tag = new CompoundTag();
+        ListTag map = new ListTag();
         for(Map.Entry<IAspectPropertyTypeInstance, IValue> entry : values.entrySet()) {
-            CompoundNBT nbtEntry = new CompoundNBT();
+            CompoundTag nbtEntry = new CompoundTag();
             nbtEntry.putString("key", entry.getKey().getType().getUniqueName().toString());
             nbtEntry.putString("label", entry.getKey().getTranslationKey());
             nbtEntry.put("value", ValueHelpers.serializeRaw(entry.getValue()));
@@ -85,20 +84,20 @@ public class AspectProperties implements IAspectProperties {
     }
 
     @Override
-    public void fromNBT(CompoundNBT tag) {
+    public void fromNBT(CompoundTag tag) {
         values.clear();
-        ListNBT map = tag.getList("map", Constants.NBT.TAG_COMPOUND);
+        ListTag map = tag.getList("map", Tag.TAG_COMPOUND);
         for(int i = 0; i < map.size(); i++) {
-            CompoundNBT nbtEntry = map.getCompound(i);
+            CompoundTag nbtEntry = map.getCompound(i);
             String valueTypeName = nbtEntry.getString("key");
             IValueType type = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valueTypeName));
             if(type == null) {
-                IntegratedDynamics.clog(Level.ERROR, String.format("Could not find value type with name %s, skipping loading.", valueTypeName));
+                IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, String.format("Could not find value type with name %s, skipping loading.", valueTypeName));
             } else {
                 IValue value = ValueHelpers.deserializeRaw(type, nbtEntry.get("value"));
                 String label = nbtEntry.getString("label");
                 if(value == null) {
-                    IntegratedDynamics.clog(Level.ERROR, String.format("The value type %s could not load its value, using default.", valueTypeName));
+                    IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, String.format("The value type %s could not load its value, using default.", valueTypeName));
                     value = type.getDefault();
                 }
                 values.put(new AspectPropertyTypeInstance(type, label), value);

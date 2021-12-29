@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -33,7 +33,7 @@ public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
      * @param matrixStack The matrix stack.
      * @param direction The direction to orient the OpenGL matrix to.
      */
-    protected void setMatrixOrientation(MatrixStack matrixStack, Direction direction) {
+    protected void setMatrixOrientation(PoseStack matrixStack, Direction direction) {
         short rotationY = 0;
         short rotationX = 0;
         if (direction == Direction.SOUTH) {

@@ -2,8 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;

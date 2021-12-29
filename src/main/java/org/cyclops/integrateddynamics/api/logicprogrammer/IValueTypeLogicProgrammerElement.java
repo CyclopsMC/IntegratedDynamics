@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.inventory.container.Container;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends ILogicProgrammerElement<S, G, C> {
+public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu> extends ILogicProgrammerElement<S, G, C> {
 
     /**
      * @return The value type of this element.
@@ -41,6 +41,6 @@ public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extend
      * @param <C2> The type of container.
      */
     @Nullable
-    public <G2 extends AbstractGui, C2 extends Container> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement();
+    public <G2 extends GuiComponent, C2 extends AbstractContainerMenu> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement();
 
 }

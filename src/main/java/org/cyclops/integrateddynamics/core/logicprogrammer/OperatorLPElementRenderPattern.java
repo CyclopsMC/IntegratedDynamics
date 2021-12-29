@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.FontRenderer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.world.Container;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,7 +28,7 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Co
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();
         IOperator operator = element.getOperator();
@@ -37,18 +37,18 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Co
         IValueType[] valueTypes = operator.getInputTypes();
         for (int i = 0; i < valueTypes.length; i++) {
             IValueType valueType = valueTypes[i];
-            IInventory temporaryInputSlots = container.getTemporaryInputSlots();
+            Container temporaryInputSlots = container.getTemporaryInputSlots();
             if (temporaryInputSlots.getItem(i).isEmpty()) {
                 Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
-                if (gui.isPointInRegion(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
+                if (gui.isHovering(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
                         ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
-                    gui.drawTooltip(getValueTypeTooltip(valueType), mouseX - guiLeft, mouseY - guiTop);
+                    gui.drawTooltip(getValueTypeTooltip(valueType), matrixStack, mouseX - guiLeft, mouseY - guiTop);
                 }
             }
         }
 
         // Output type tooltip
-        this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, operator.getOutputType());
+        this.drawTooltipForeground(gui, matrixStack, container, guiLeft, guiTop, mouseX, mouseY, operator.getOutputType());
     }
 
     @Override

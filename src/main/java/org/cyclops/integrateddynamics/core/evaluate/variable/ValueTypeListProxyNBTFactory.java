@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -45,17 +45,17 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
     }
 
     @Override
-    public INBT serialize(P values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        CompoundNBT tag = new CompoundNBT();
+    public Tag serialize(P values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        CompoundTag tag = new CompoundTag();
         values.writeGeneratedFieldsToNBT(tag);
         return tag;
     }
 
     @Override
-    public P deserialize(INBT value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public P deserialize(Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         try {
             P proxy = this.proxyClassConstructor.newInstance();
-            proxy.readGeneratedFieldsFromNBT((CompoundNBT) value);
+            proxy.readGeneratedFieldsFromNBT((CompoundTag) value);
             return proxy;
         } catch (InvocationTargetException | InstantiationException | ClassCastException | IllegalAccessException e) {
             e.printStackTrace();

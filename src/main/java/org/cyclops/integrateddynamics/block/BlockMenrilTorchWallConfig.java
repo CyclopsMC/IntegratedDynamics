@@ -1,22 +1,22 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.WallTorchBlock;
-import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.WallTorchBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -43,11 +43,11 @@ public class BlockMenrilTorchWallConfig extends BlockConfig {
                             .sound(SoundType.WOOD), ParticleTypes.FLAME) {
                         @Override
                         @OnlyIn(Dist.CLIENT)
-                        public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+                        public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
                             // No particles
                         }
                     };
-                    ObfuscationReflectionHelper.setPrivateValue(AbstractBlock.class, block,
+                    ObfuscationReflectionHelper.setPrivateValue(BlockBehaviour.class, block,
                             (Supplier<ResourceLocation>) () -> RegistryEntries.BLOCK_MENRIL_TORCH.getLootTable(), "lootTableSupplier");
                     return block;
                 },
@@ -57,7 +57,7 @@ public class BlockMenrilTorchWallConfig extends BlockConfig {
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
-        RenderTypeLookup.setRenderLayer(getInstance(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(getInstance(), RenderType.cutout());
     }
 
 }

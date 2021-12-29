@@ -3,27 +3,27 @@ package org.cyclops.integrateddynamics.core.block;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.AxisRotation;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapePart;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.AxisCycle;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
@@ -34,8 +34,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import net.minecraft.util.math.shapes.VoxelShapePart.ILineConsumer;
 
 /**
  * A {@link VoxelShape} that contains one or more {@link VoxelShapeComponents.IComponent}.
@@ -55,14 +53,14 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         this.entries = entries;
     }
 
-    protected static VoxelShapePart createInnerPart(Collection<Pair<VoxelShape, IComponent>> entries) {
+    protected static DiscreteVoxelShape createInnerPart(Collection<Pair<VoxelShape, IComponent>> entries) {
         return new Part(entries.stream()
                 .map(pair -> pair.getLeft().shape)
                 .collect(Collectors.toList()));
     }
 
-    public static VoxelShapeComponents create(BlockState blockState, IBlockReader world, BlockPos blockPos,
-                                              ISelectionContext selectionContext, List<IComponent> components) {
+    public static VoxelShapeComponents create(BlockState blockState, BlockGetter world, BlockPos blockPos,
+                                              CollisionContext selectionContext, List<IComponent> components) {
         List<Pair<VoxelShape, IComponent>> entries = Lists.newArrayList();
         for (VoxelShapeComponents.IComponent component : components) {
             VoxelShape shape = component.getShape(blockState, world, blockPos, selectionContext);
@@ -133,14 +131,14 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
     }
 
     @Override
-    public void forAllEdges(VoxelShapes.ILineConsumer consumer) {
+    public void forAllEdges(Shapes.DoubleLineConsumer consumer) {
         for (VoxelShape shape : this) {
             shape.forAllEdges(consumer);
         }
     }
 
     @Override
-    public void forAllBoxes(VoxelShapes.ILineConsumer consumer) {
+    public void forAllBoxes(Shapes.DoubleLineConsumer consumer) {
         for (VoxelShape shape : this) {
             shape.forAllBoxes(consumer);
         }
@@ -160,27 +158,17 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         return valueMax;
     }
 
-    @Override
-    public boolean isFullWide(double x, double y, double z) {
-        for (VoxelShape shape : this) {
-            if (shape.isFullWide(x, y, z)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Nullable
     @Override
-    public BlockRayTraceResultComponent clip(Vector3d startVec, Vector3d endVec, BlockPos pos) {
+    public BlockRayTraceResultComponent clip(Vec3 startVec, Vec3 endVec, BlockPos pos) {
         // Find component with shape that is closest to the startVec
         double distanceMin = Double.POSITIVE_INFINITY;
         VoxelShapeComponents.IComponent componentMin = null;
-        BlockRayTraceResult resultMin = null;
+        BlockHitResult resultMin = null;
 
         for (Pair<VoxelShape, IComponent> entry : entries) {
             VoxelShape shape = entry.getLeft();
-            BlockRayTraceResult result = shape.clip(startVec, endVec, pos);
+            BlockHitResult result = shape.clip(startVec, endVec, pos);
             if (result != null) {
                 double distance = result.getLocation().distanceToSqr(startVec);
                 if (distance < distanceMin) {
@@ -210,19 +198,19 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         if(entity == null) {
             return null;
         }
-        ModifiableAttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(ForgeMod.REACH_DISTANCE.get()) : null;
+        AttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(ForgeMod.REACH_DISTANCE.get()) : null;
         double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
         double eyeHeight = entity.getCommandSenderWorld().isClientSide() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
-        Vector3d lookVec = entity.getLookAngle();
-        Vector3d origin = new Vector3d(entity.getX(), entity.getY() + eyeHeight, entity.getZ());
-        Vector3d direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
+        Vec3 lookVec = entity.getLookAngle();
+        Vec3 origin = new Vec3(entity.getX(), entity.getY() + eyeHeight, entity.getZ());
+        Vec3 direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
         return clip(origin, direction, pos);
     }
 
     @Override
-    public double collideX(AxisRotation rotation, AxisAlignedBB axisAlignedBB, double range) {
+    public double collideX(AxisCycle rotation, AABB axisAlignedBB, double range) {
         boolean first = true;
         double valueBest = 0D;
         for (VoxelShape shape : this) {
@@ -242,23 +230,23 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         return valueBest;
     }
 
-    public static class Part extends VoxelShapePart implements Iterable<VoxelShapePart> {
+    public static class Part extends DiscreteVoxelShape implements Iterable<DiscreteVoxelShape> {
 
-        private final Collection<VoxelShapePart> entries;
+        private final Collection<DiscreteVoxelShape> entries;
 
-        public Part(Collection<VoxelShapePart> entries) {
+        public Part(Collection<DiscreteVoxelShape> entries) {
             super(0, 0, 0);
             this.entries = entries;
         }
 
         @Override
-        public Iterator<VoxelShapePart> iterator() {
+        public Iterator<DiscreteVoxelShape> iterator() {
             return entries.iterator();
         }
 
         @Override
         public boolean isFullWide(int x, int y, int z) {
-            for (VoxelShapePart part : this) {
+            for (DiscreteVoxelShape part : this) {
                 if (part.isFullWide(x, y, z)) {
                     return true;
                 }
@@ -268,7 +256,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
 
         @Override
         public boolean isFull(int x, int y, int z) {
-            for (VoxelShapePart part : this) {
+            for (DiscreteVoxelShape part : this) {
                 if (part.isFull(x, y, z)) {
                     return true;
                 }
@@ -277,9 +265,9 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         }
 
         @Override
-        public void setFull(int x, int y, int z, boolean b, boolean b1) {
-            for (VoxelShapePart part : this) {
-                part.setFull(x, y, z, b, b1);
+        public void fill(int x, int y, int z) {
+            for (DiscreteVoxelShape part : this) {
+                part.fill(x, y, z);
             }
         }
 
@@ -287,7 +275,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         public int firstFull(Direction.Axis axis) {
             boolean first = true;
             int startMin = 0;
-            for (VoxelShapePart part : this) {
+            for (DiscreteVoxelShape part : this) {
                 int start = part.firstFull(axis);
                 if (first || start < startMin) {
                     startMin = start;
@@ -301,7 +289,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         public int lastFull(Direction.Axis axis) {
             boolean first = true;
             int endMax = 0;
-            for (VoxelShapePart part : this) {
+            for (DiscreteVoxelShape part : this) {
                 int end = part.lastFull(axis);
                 if (first || end > endMax) {
                     endMax = end;
@@ -315,7 +303,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         public int getSize(Direction.Axis axis) {
             boolean first = true;
             int sizeMax = 0;
-            for (VoxelShapePart part : this) {
+            for (DiscreteVoxelShape part : this) {
                 int size = part.getSize(axis);
                 if (first || size > sizeMax) {
                     sizeMax = size;
@@ -326,8 +314,8 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         }
 
         @Override
-        public void forAllBoxes(ILineConsumer consumer, boolean p_197831_2_) {
-            for (VoxelShapePart part : this) {
+        public void forAllBoxes(IntLineConsumer consumer, boolean p_197831_2_) {
+            for (DiscreteVoxelShape part : this) {
                 part.forAllBoxes(consumer, p_197831_2_);
             }
         }
@@ -343,7 +331,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
          * @param selectionContext The selection context.
          * @return The shape.
          */
-        public VoxelShape getShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext);
+        public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext);
 
         /**
          * Get the pick block item.
@@ -351,7 +339,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
          * @param pos The position
          * @return The item.
          */
-        public ItemStack getPickBlock(World world, BlockPos pos);
+        public ItemStack getCloneItemStack(Level world, BlockPos pos);
 
         /**
          * Destroy this component
@@ -361,7 +349,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
          * @param saveState If the component state should be saved in the dropped item.
          * @return If the complete block was destroyed
          */
-        public boolean destroy(World world, BlockPos pos, PlayerEntity player, boolean saveState);
+        public boolean destroy(Level world, BlockPos pos, Player player, boolean saveState);
 
         /**
          * @param world The world
@@ -370,7 +358,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
          */
         @OnlyIn(Dist.CLIENT)
         @Nullable
-        public IBakedModel getBreakingBaseModel(World world, BlockPos pos);
+        public BakedModel getBreakingBaseModel(Level world, BlockPos pos);
 
         /**
          * When this component has been activated.
@@ -382,8 +370,8 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
          * @param hit The ray trace result.
          * @return Action result.
          */
-        public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player,
-                                                 Hand hand, BlockRayTraceResultComponent hit);
+        public InteractionResult onBlockActivated(BlockState state, Level world, BlockPos blockPos, Player player,
+                                                 InteractionHand hand, BlockRayTraceResultComponent hit);
 
     }
 

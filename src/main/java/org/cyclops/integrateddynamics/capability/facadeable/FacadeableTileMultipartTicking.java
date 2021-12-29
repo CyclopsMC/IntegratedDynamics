@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.capability.facadeable;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 
 import javax.annotation.Nullable;
 
@@ -13,9 +13,9 @@ import javax.annotation.Nullable;
  */
 public class FacadeableTileMultipartTicking implements IFacadeable {
 
-    private final TileMultipartTicking tile;
+    private final BlockEntityMultipartTicking tile;
 
-    public FacadeableTileMultipartTicking(TileMultipartTicking tile) {
+    public FacadeableTileMultipartTicking(BlockEntityMultipartTicking tile) {
         this.tile = tile;
     }
 

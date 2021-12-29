@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.FontRenderer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -62,9 +62,9 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     }
 
     @Override
-    public ITextComponent validate() {
+    public Component validate() {
         if(!this.itemStackToValue.isNullable() && this.itemStack.isEmpty()) {
-            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
+            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
         return itemStackToValue.validate(itemStack);
     }
@@ -104,9 +104,9 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+        public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-            this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
+            this.drawTooltipForeground(gui, matrixStack, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
         }
 
         @Override
@@ -124,7 +124,7 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     public static interface IItemStackToValue<V extends IValue> {
 
         public boolean isNullable();
-        public ITextComponent validate(ItemStack itemStack);
+        public Component validate(ItemStack itemStack);
         public V getValue(ItemStack itemStack);
 
     }

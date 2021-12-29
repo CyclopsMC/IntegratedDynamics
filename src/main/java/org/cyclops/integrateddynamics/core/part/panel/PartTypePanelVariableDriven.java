@@ -3,31 +3,29 @@ package org.cyclops.integrateddynamics.core.part.panel;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -63,8 +61,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.cyclops.integrateddynamics.core.part.PartTypeBase.IEventAction;
-
 /**
  * A panel part that is driven by a contained variable.
  * @author rubensworks
@@ -98,7 +94,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 itemStacks.add(itemStack);
             }
         }
-        // state.getInventory().clearContent(); // TODO: restore
+        state.getInventory().clearContent();
         state.onVariableContentsUpdated((P) this, target);
         super.addDrops(target, state, itemStacks, dropMainElement, saveState);
     }
@@ -152,7 +148,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             // tick-1: Part tick: update the value again, the old value has still not been sent here!
             // tick-1: -- send all block updates to client --- This will contain the value that was set in tick-1.
             state.onDirty();
-            BlockHelpers.markForUpdate(target.getCenter().getPos().getWorld(true), target.getCenter().getPos().getBlockPos());
+            BlockHelpers.markForUpdate(target.getCenter().getPos().getLevel(true), target.getCenter().getPos().getBlockPos());
         }
     }
 
@@ -192,16 +188,16 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public Optional<INamedContainerProvider> getContainerProvider(PartPos pos) {
-        return Optional.of(new INamedContainerProvider() {
+    public Optional<MenuProvider> getContainerProvider(PartPos pos) {
+        return Optional.of(new MenuProvider() {
             @Override
-            public ITextComponent getDisplayName() {
-                return new TranslationTextComponent(getTranslationKey());
+            public Component getDisplayName() {
+                return new TranslatableComponent(getTranslationKey());
             }
 
             @Nullable
             @Override
-            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+            public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
                 Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
                 PartTypePanelVariableDriven.State partState = (PartTypePanelVariableDriven.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
                 return new ContainerPartPanelVariableDriven(id, playerInventory, partState.getInventory(),
@@ -211,11 +207,11 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void writeExtraGuiData(PacketBuffer packetBuffer, PartPos pos, ServerPlayerEntity player) {
+    public void writeExtraGuiData(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
         // Write inventory size
         IPartContainer partContainer = PartHelpers.getPartContainerChecked(pos);
         PartTypePanelVariableDriven.State partState = (PartTypePanelVariableDriven.State) partContainer.getPartState(pos.getSide());
-        packetBuffer.writeInt(partState.getInventory().getSizeInventory());
+        packetBuffer.writeInt(partState.getInventory().getContainerSize());
 
         super.writeExtraGuiData(packetBuffer, pos, player);
     }
@@ -247,36 +243,36 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public ActionResultType onPartActivated(final S partState, BlockPos pos, World world, PlayerEntity player, Hand hand,
-                                            ItemStack heldItem, BlockRayTraceResult hit) {
+    public InteractionResult onPartActivated(final S partState, BlockPos pos, Level world, Player player, InteractionHand hand,
+                                             ItemStack heldItem, BlockHitResult hit) {
         if(WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getDirection())) {
             WrenchHelpers.wrench(player, heldItem, world, pos, hit.getDirection(),
                     (player1, pos1, parameter) -> partState.setFacingRotation(partState.getFacingRotation().getClockWise()));
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         return super.onPartActivated(partState, pos, world, player, hand, heldItem, hit);
     }
 
     @Override
-    public void loadTooltip(S state, List<ITextComponent> lines) {
+    public void loadTooltip(S state, List<Component> lines) {
         if (!state.getInventory().isEmpty()) {
             if (state.hasVariable() && state.isEnabled()) {
                 IValue value = state.getDisplayValue();
                 if(value != null) {
                     IValueType valueType = value.getType();
-                    lines.add(new TranslationTextComponent(
+                    lines.add(new TranslatableComponent(
                             L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
                             valueType.toCompactString(value).withStyle(valueType.getDisplayColorFormat()),
-                            new TranslationTextComponent(valueType.getTranslationKey())));
+                            new TranslatableComponent(valueType.getTranslationKey())));
                 }
             } else {
-                lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_ERRORS).withStyle(TextFormatting.RED));
-                for (IFormattableTextComponent error : state.getGlobalErrors()) {
-                    lines.add(error.withStyle(TextFormatting.RED));
+                lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_ERRORS).withStyle(ChatFormatting.RED));
+                for (MutableComponent error : state.getGlobalErrors()) {
+                    lines.add(error.withStyle(ChatFormatting.RED));
                 }
             }
         } else {
-            lines.add(new TranslationTextComponent(L10NValues.PART_TOOLTIP_INACTIVE));
+            lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_INACTIVE));
         }
         super.loadTooltip(state, lines);
     }
@@ -301,7 +297,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
 
         @Override
-        public void writeToNBT(CompoundNBT tag) {
+        public void writeToNBT(CompoundTag tag) {
             super.writeToNBT(tag);
             IValue value = getDisplayValue();
             if(value != null) {
@@ -312,21 +308,21 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
 
         @Override
-        public void readFromNBT(CompoundNBT tag) {
+        public void readFromNBT(CompoundTag tag) {
             super.readFromNBT(tag);
-            if(tag.contains("displayValueType", Constants.NBT.TAG_STRING)
+            if(tag.contains("displayValueType", Tag.TAG_STRING)
                     && tag.contains("displayValue")) {
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("displayValueType")));
                 if(valueType != null) {
-                    INBT serializedValue = tag.get("displayValue");
-                    ITextComponent deserializationError = valueType.canDeserialize(serializedValue);
+                    Tag serializedValue = tag.get("displayValue");
+                    Component deserializationError = valueType.canDeserialize(serializedValue);
                     if(deserializationError == null) {
                         setDisplayValue(ValueHelpers.deserializeRaw(valueType, serializedValue));
                     } else {
-                        IntegratedDynamics.clog(Level.ERROR, deserializationError.getString());
+                        IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, deserializationError.getString());
                     }
                 } else {
-                    IntegratedDynamics.clog(Level.ERROR,
+                    IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR,
                             String.format("Tried to deserialize the value \"%s\" for type \"%s\" which could not be found.",
                                     tag.getString("displayValueType"), tag.getString("value")));
                 }

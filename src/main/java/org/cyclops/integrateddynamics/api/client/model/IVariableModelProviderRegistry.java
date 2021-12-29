@@ -17,11 +17,11 @@ public interface IVariableModelProviderRegistry extends IRegistry {
      * @param <B> The type of the baked model provider.
      * @return The registered provider
      */
-    public <E extends IVariableModelProvider<B>, B extends IVariableModelProvider.IBakedModelProvider> E addProvider(E provider);
+    public <E extends IVariableModelProvider<B>, B extends IVariableModelProvider.BakedModelProvider> E addProvider(E provider);
 
     /**
      * @return All registered provider.
      */
-    public List<IVariableModelProvider<? extends IVariableModelProvider.IBakedModelProvider>> getProviders();
+    public List<IVariableModelProvider<? extends IVariableModelProvider.BakedModelProvider>> getProviders();
 
 }

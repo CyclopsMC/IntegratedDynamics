@@ -2,20 +2,20 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -59,8 +59,8 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional cable capability.
      */
-    public static LazyOptional<ICable> getCable(IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        return TileHelpers.getCapability(world, pos, side, CableConfig.CAPABILITY);
+    public static LazyOptional<ICable> getCable(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, CableConfig.CAPABILITY);
     }
 
     /**
@@ -70,8 +70,8 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional fakeable cable capability.
      */
-    public static LazyOptional<ICableFakeable> getCableFakeable(IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        return TileHelpers.getCapability(world, pos, side, CableFakeableConfig.CAPABILITY);
+    public static LazyOptional<ICableFakeable> getCableFakeable(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, CableFakeableConfig.CAPABILITY);
     }
 
     /**
@@ -81,8 +81,8 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional path element capability.
      */
-    public static LazyOptional<IPathElement> getPathElement(IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        return TileHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY);
+    public static LazyOptional<IPathElement> getPathElement(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY);
     }
 
     /**
@@ -91,7 +91,7 @@ public class CableHelpers {
      * @param pos The center position.
      * @param sides The sides to update connections for.
      */
-    public static void updateConnectionsNeighbours(IBlockReader world, BlockPos pos, Collection<Direction> sides) {
+    public static void updateConnectionsNeighbours(BlockGetter world, BlockPos pos, Collection<Direction> sides) {
         for(Direction side : sides) {
             updateConnections(world, pos.relative(side), side.getOpposite());
         }
@@ -103,7 +103,7 @@ public class CableHelpers {
      * @param pos The position.
      * @param side The side.
      */
-    public static void updateConnections(IBlockReader world, BlockPos pos, @Nullable Direction side) {
+    public static void updateConnections(BlockGetter world, BlockPos pos, @Nullable Direction side) {
         getCable(world, pos, side)
                 .ifPresent(ICable::updateConnections);
     }
@@ -115,7 +115,7 @@ public class CableHelpers {
      * @param side The side to check a connection for.
      * @return If there is a cable that is connected.
      */
-    public static boolean isCableConnected(IBlockReader world, BlockPos pos, Direction side) {
+    public static boolean isCableConnected(BlockGetter world, BlockPos pos, Direction side) {
         return getCable(world, pos, side)
                 .map(cable -> cable.isConnected(side))
                 .orElse(false);
@@ -133,7 +133,7 @@ public class CableHelpers {
      * @param originCable The cable at the center position.
      * @return If it can connect.
      */
-    public static boolean canCableConnectTo(IBlockReader world, BlockPos pos, Direction side, ICable originCable) {
+    public static boolean canCableConnectTo(BlockGetter world, BlockPos pos, Direction side, ICable originCable) {
         BlockPos neighbourPos = pos.relative(side);
         return getCable(world, neighbourPos, side.getOpposite())
                 .map(neighbourCable -> originCable.canConnect(neighbourCable, side)
@@ -150,7 +150,7 @@ public class CableHelpers {
      * @param side The side.
      * @return If there is no fake cable.
      */
-    public static boolean isNoFakeCable(IBlockReader world, BlockPos pos, @Nullable Direction side) {
+    public static boolean isNoFakeCable(BlockGetter world, BlockPos pos, @Nullable Direction side) {
         return getCableFakeable(world, pos, side)
                 .map(ICableFakeable::isRealCable)
                 .orElse(true);
@@ -164,7 +164,7 @@ public class CableHelpers {
      * @param cable The cable to disconnect.
      * @param disconnectSide The side to disconnect.
      */
-    public static void disconnectCable(World world, BlockPos pos, Direction side, ICable cable, Direction disconnectSide) {
+    public static void disconnectCable(Level world, BlockPos pos, Direction side, ICable cable, Direction disconnectSide) {
         // Store the disconnection in the part entity
         cable.disconnect(disconnectSide);
 
@@ -191,16 +191,16 @@ public class CableHelpers {
      *                           this will be null if the center part of the cable is activated.
      * @return Action result.
      */
-    public static ActionResultType onCableActivated(World world, BlockPos pos, BlockState state, PlayerEntity player,
+    public static InteractionResult onCableActivated(Level world, BlockPos pos, BlockState state, Player player,
                                                     ItemStack heldItem, Direction side, @Nullable Direction cableConnectionHit) {
         ICable cable = CableHelpers.getCable(world, pos, side).orElse(null);
         if (cable == null) {
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
 
         if(WrenchHelpers.isWrench(player, heldItem, world, pos, side)) {
             if (world.isClientSide()) {
-                return ActionResultType.SUCCESS; // Don't do anything client-side
+                return InteractionResult.SUCCESS; // Don't do anything client-side
             }
             if (player.isSecondaryUseActive()) {
                 removeCable(world, pos, player);
@@ -229,9 +229,9 @@ public class CableHelpers {
                     NetworkHelpers.initNetwork(world, neighbourPos, side.getOpposite());
                 }
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
     /**
@@ -241,7 +241,7 @@ public class CableHelpers {
      * @param world The world.
      * @param pos The position.
      */
-    public static void onCableAdded(World world, BlockPos pos) {
+    public static void onCableAdded(Level world, BlockPos pos) {
         CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
         if(!world.isClientSide()) {
             NetworkHelpers.initNetwork(world, pos, null)
@@ -257,7 +257,7 @@ public class CableHelpers {
      * @param pos The position.
      * @param placer The entity who placed the cable.
      */
-    public static void onCableAddedByPlayer(World world, BlockPos pos, @Nullable LivingEntity placer) {
+    public static void onCableAddedByPlayer(Level world, BlockPos pos, @Nullable LivingEntity placer) {
         CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
         if(!world.isClientSide()) {
             NetworkHelpers.initNetwork(world, pos, null)
@@ -274,7 +274,7 @@ public class CableHelpers {
      * @param saveState If the element state should be saved in the item.
      * @return If the cable was removed from the network.
      */
-    public static boolean onCableRemoving(World world, BlockPos pos, boolean dropMainElement, boolean saveState) {
+    public static boolean onCableRemoving(Level world, BlockPos pos, boolean dropMainElement, boolean saveState) {
         if (!world.isClientSide() && CableHelpers.isNoFakeCable(world, pos, null)) {
             INetworkCarrier networkCarrier = NetworkHelpers.getNetworkCarrier(world, pos, null).orElse(null);
 
@@ -310,7 +310,7 @@ public class CableHelpers {
      * @param sides The sides to update connections for.
      * @return If the cable was removed from the network.
      */
-    public static boolean onCableRemoved(World world, BlockPos pos, Collection<Direction> sides) {
+    public static boolean onCableRemoved(Level world, BlockPos pos, Collection<Direction> sides) {
         updateConnectionsNeighbours(world, pos, sides);
         if (!world.isClientSide()) {
             // Reinit neighbouring networks.
@@ -344,7 +344,7 @@ public class CableHelpers {
      * @param pos The position.
      * @param player The player removing the cable or null.
      */
-    public static void removeCable(World world, BlockPos pos, @Nullable PlayerEntity player) {
+    public static void removeCable(Level world, BlockPos pos, @Nullable Player player) {
         removingCable = true;
         ICable cable = getCable(world, pos, null).orElse(null);
         ICableFakeable cableFakeable = getCableFakeable(world, pos, null).orElse(null);
@@ -382,8 +382,8 @@ public class CableHelpers {
      * @param pos The position.
      * @return If it has a facade.
      */
-    public static boolean hasFacade(IBlockReader world, BlockPos pos) {
-        LazyOptional<IFacadeable> ret = TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
+    public static boolean hasFacade(BlockGetter world, BlockPos pos) {
+        LazyOptional<IFacadeable> ret = BlockEntityHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY);
         ret.resolve(); // TODO: remove me (temp workaround to resolve race condition https://github.com/CyclopsMC/IntegratedDynamics/issues/986)
         return ret
                 .map(IFacadeable::hasFacade)
@@ -396,13 +396,13 @@ public class CableHelpers {
      * @param pos The position.
      * @return The optional facade.
      */
-    public static Optional<BlockState> getFacade(IBlockReader world, BlockPos pos) {
-        return TileHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY)
+    public static Optional<BlockState> getFacade(BlockGetter world, BlockPos pos) {
+        return BlockEntityHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY)
                 .resolve()
                 .flatMap(facadeable -> Optional.ofNullable(facadeable.getFacade()));
     }
 
-    public static boolean isLightTransparent(IBlockReader world, BlockPos pos, @Nullable Direction side) {
+    public static boolean isLightTransparent(BlockGetter world, BlockPos pos, @Nullable Direction side) {
         return PartHelpers.getPartContainer(world, pos, side)
                 .map(partContainer -> {
                     for (Map.Entry<Direction, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
@@ -437,7 +437,7 @@ public class CableHelpers {
      * @param pos The position.
      * @return The sides.
      */
-    public static Collection<Direction> getExternallyConnectedCables(World world, BlockPos pos) {
+    public static Collection<Direction> getExternallyConnectedCables(Level world, BlockPos pos) {
         Collection<Direction> sides = Sets.newIdentityHashSet();
         for (Direction side : Direction.values()) {
             if (CableHelpers.isCableConnected(world, pos.relative(side), side.getOpposite())) {

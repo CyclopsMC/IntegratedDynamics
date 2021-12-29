@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalDryingBasin;

@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
@@ -206,7 +206,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, IBlockReader world, Block neighbourBlock,
+    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, Block neighbourBlock,
                                       BlockPos neighbourBlockPos) {
         part.onBlockNeighborChange(network, NetworkHelpers.getPartNetworkChecked(network), target, getPartState(), world,
                 neighbourBlock, neighbourBlockPos);

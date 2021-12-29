@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
 import javax.annotation.Nullable;
@@ -26,7 +25,7 @@ public class PartTarget {
     public static PartTarget fromCenter(DimPos pos, @Nullable Direction side) {
         return PartTarget.of(
                 PartPos.of(pos, side),
-                PartPos.of(DimPos.of(pos.getWorldKey(), side == null ? pos.getBlockPos() : pos.getBlockPos().relative(side)), side == null ? null : side.getOpposite())
+                PartPos.of(DimPos.of(pos.getLevelKey(), side == null ? pos.getBlockPos() : pos.getBlockPos().relative(side)), side == null ? null : side.getOpposite())
         );
     }
 
@@ -46,7 +45,7 @@ public class PartTarget {
      * @param side The side on the central position that points to the target.
      * @return The target referral.
      */
-    public static PartTarget fromCenter(World world, BlockPos pos, Direction side) {
+    public static PartTarget fromCenter(Level world, BlockPos pos, Direction side) {
         return PartTarget.fromCenter(DimPos.of(world, pos), side);
     }
 

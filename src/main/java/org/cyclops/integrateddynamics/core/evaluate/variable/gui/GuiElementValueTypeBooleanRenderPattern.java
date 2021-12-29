@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonCheckbox;
@@ -21,7 +21,7 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeBoo
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiElementValueTypeBooleanRenderPattern<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends RenderPattern<GuiElementValueTypeBoolean<G, C>, G, C>
+public class GuiElementValueTypeBooleanRenderPattern<S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu> extends RenderPattern<GuiElementValueTypeBoolean<G, C>, G, C>
         implements IRenderPatternValueTypeTooltip {
 
     @Getter
@@ -41,15 +41,15 @@ public class GuiElementValueTypeBooleanRenderPattern<S extends ISubGuiBox, G ext
         super.init(guiLeft, guiTop);
 
         this.checkbox = new ButtonCheckbox(guiLeft + getX(), guiTop + getY(), getElement().getRenderPattern().getWidth(), getElement().getRenderPattern().getHeight(),
-                new TranslationTextComponent(this.getElement().getValueType().getTranslationKey()), (entry) -> this.onChecked(this.checkbox.isChecked()));
+                new TranslatableComponent(this.getElement().getValueType().getTranslationKey()), (entry) -> this.onChecked(this.checkbox.isChecked()));
 
         boolean value = element.getInputBoolean();
         this.checkbox.setChecked(value);
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         this.checkbox.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 

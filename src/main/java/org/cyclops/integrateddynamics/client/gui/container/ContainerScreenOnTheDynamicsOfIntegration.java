@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
 import org.cyclops.integrateddynamics.IntegratedDynamicsSoundEvents;
@@ -19,13 +18,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerOnTheDynamics
  */
 public class ContainerScreenOnTheDynamicsOfIntegration extends ScreenInfoBook<ContainerOnTheDynamicsOfIntegration> {
 
-    public ContainerScreenOnTheDynamicsOfIntegration(ContainerOnTheDynamicsOfIntegration container, PlayerInventory playerInventory, ITextComponent title) {
+    public ContainerScreenOnTheDynamicsOfIntegration(ContainerOnTheDynamicsOfIntegration container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title, OnTheDynamicsOfIntegrationBook.getInstance());
-    }
-
-    @Override
-    protected void renderBg(MatrixStack p_230450_1_, float p_230450_2_, int p_230450_3_, int p_230450_4_) {
-        // TODO: rm
     }
 
     @Override
@@ -79,13 +73,13 @@ public class ContainerScreenOnTheDynamicsOfIntegration extends ScreenInfoBook<Co
     }
 
     @Override
-    public void playPageFlipSound(SoundHandler soundHandler) {
-        soundHandler.play(SimpleSound.forUI(IntegratedDynamicsSoundEvents.effect_page_flipsingle, 1.0F));
+    public void playPageFlipSound(SoundManager soundHandler) {
+        soundHandler.play(SimpleSoundInstance.forUI(IntegratedDynamicsSoundEvents.effect_page_flipsingle, 1.0F));
     }
 
     @Override
-    public void playPagesFlipSound(SoundHandler soundHandler) {
-        soundHandler.play(SimpleSound.forUI(IntegratedDynamicsSoundEvents.effect_page_flipmultiple, 1.0F));
+    public void playPagesFlipSound(SoundManager soundHandler) {
+        soundHandler.play(SimpleSoundInstance.forUI(IntegratedDynamicsSoundEvents.effect_page_flipmultiple, 1.0F));
     }
 
     @Override

@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -43,9 +43,9 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   }
 
   @Override
-  public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
-    lines.add(new TranslationTextComponent("operator.integrateddynamics.parse.tooltip",
-            new TranslationTextComponent(to.getTranslationKey()))
+  public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
+    lines.add(new TranslatableComponent("operator.integrateddynamics.parse.tooltip",
+            new TranslatableComponent(to.getTranslationKey()))
     );
     super.loadTooltip(lines, appendOptionalInfo);
   }

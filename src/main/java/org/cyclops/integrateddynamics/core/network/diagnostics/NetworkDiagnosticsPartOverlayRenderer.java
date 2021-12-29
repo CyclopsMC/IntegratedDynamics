@@ -5,13 +5,11 @@ import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -52,10 +50,10 @@ public class NetworkDiagnosticsPartOverlayRenderer {
     }
 
     @SubscribeEvent
-    public void onRender(RenderWorldLastEvent event) {
+    public void onRender(RenderLevelLastEvent event) {
         if (!partPositions.isEmpty()) {
-            PlayerEntity player = Minecraft.getInstance().player;
-            float partialTicks = event.getPartialTicks();
+            Player player = Minecraft.getInstance().player;
+            float partialTicks = event.getPartialTick();
 
             double offsetX = player.xOld + (player.getX() - player.xOld) * (double) partialTicks;
             double offsetY = player.yOld + (player.getY() - player.yOld) * (double) partialTicks;
@@ -69,22 +67,22 @@ public class NetworkDiagnosticsPartOverlayRenderer {
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (PartPos partPos : partList) {
-                if (partPos.getPos().getWorldKey().location().equals(player.level.dimension().location()) && partPos.getPos().getBlockPos().distSqr(player.blockPosition()) < 10000) {
+                if (partPos.getPos().getLevelKey().location().equals(player.level.dimension().location()) && partPos.getPos().getBlockPos().distSqr(player.blockPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
                     final VoxelShape shape;
                     if (partStateHolder != null) {
                         shape = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide());
                     } else {
-                        shape = VoxelShapes.BLOCK;
+                        shape = Shapes.BLOCK;
                     }
 
-                    AxisAlignedBB bb = shape
+                    AABB bb = shape
                             .bounds()
                             .move(partPos.getPos().getBlockPos())
                             .move(-offsetX, -offsetY, -offsetZ)
                             .inflate(0.05, 0.05, 0.05)
                             .inflate(-0.05, -0.05, -0.05);
-                    /*WorldRenderer.renderLineBox(event.getMatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource().getBuffer(RenderType.getLines()),
+                    /*WorldRenderer.renderLineBox(event.getPoseStack(), Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource().getBuffer(RenderType.getLines()),
                             bb, 1.0F, 0.2F, 0.1F, 0.8F);*/
                 }
             }

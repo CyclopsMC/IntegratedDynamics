@@ -1,16 +1,16 @@
 package org.cyclops.integrateddynamics.client.render.model;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.world.World;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
@@ -28,21 +28,21 @@ import java.util.Random;
  */
 public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
 
-    public static IBakedModel emptyModel;
+    public static BakedModel emptyModel;
 
     public FacadeModel() {
        super(null);
     }
 
-    public FacadeModel(IBakedModel baseModel) {
+    public FacadeModel(BakedModel baseModel) {
         super(baseModel);
     }
 
-    public FacadeModel(IBakedModel baseModel, BlockState blockState, Direction facing, Random rand, IModelData modelData) {
+    public FacadeModel(BakedModel baseModel, BlockState blockState, Direction facing, Random rand, IModelData modelData) {
         super(baseModel, blockState, facing, rand, modelData);
     }
 
-    public FacadeModel(IBakedModel baseModel, ItemStack itemStack, World world, LivingEntity entity) {
+    public FacadeModel(BakedModel baseModel, ItemStack itemStack, Level world, LivingEntity entity) {
         super(baseModel, itemStack, world, entity);
     }
 
@@ -57,20 +57,20 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
     }
 
     @Override
-    public IBakedModel handleBlockState(@Nullable BlockState blockState, @Nullable Direction direction,
+    public BakedModel handleBlockState(@Nullable BlockState blockState, @Nullable Direction direction,
                                         @Nonnull Random random, @Nonnull IModelData iModelData) {
         return null;
     }
 
     @Override
-    public IBakedModel handleItemState(ItemStack itemStack, World world, LivingEntity entity) {
+    public BakedModel handleItemState(ItemStack itemStack, Level world, LivingEntity entity) {
         BlockState blockState = RegistryEntries.ITEM_FACADE.getFacadeBlock(itemStack);
         if(blockState == null) {
             return new FacadeModel(emptyModel, itemStack, world, entity);
         }
-        IBakedModel bakedModel = RenderHelpers.getBakedModel(blockState);
+        BakedModel bakedModel = RenderHelpers.getBakedModel(blockState);
         bakedModel = bakedModel.getOverrides().resolve(bakedModel,
-                RegistryEntries.ITEM_FACADE.getFacadeBlockItem(itemStack), (ClientWorld) world, entity);
+                RegistryEntries.ITEM_FACADE.getFacadeBlockItem(itemStack), (ClientLevel) world, entity, 0);
         return new FacadeModel(bakedModel, itemStack, world, entity);
     }
 
@@ -80,22 +80,12 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
     }
 
     @Override
-    public boolean useAmbientOcclusion() {
-        return false; // TODO: rm
-    }
-
-    @Override
     public boolean usesBlockLight() {
         return true; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
     }
 
     @Override
-    public boolean isCustomRenderer() {
-        return false; // TODO: rm
-    }
-
-    @Override
-    public ItemCameraTransforms getTransforms() {
+    public ItemTransforms getTransforms() {
         return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS;
     }
 }

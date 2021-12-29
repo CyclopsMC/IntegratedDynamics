@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 import java.util.Collection;

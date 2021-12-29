@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.INBT;
-import net.minecraft.world.World;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
@@ -23,7 +23,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends PacketCodec {
 
 	@CodecField
-	private INBT value;
+	private Tag value;
 
     public LogicProgrammerValueTypeIngredientsValueChangedPacket() {
 
@@ -44,12 +44,12 @@ public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends Packe
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void actionClient(World world, PlayerEntity player) {
+	public void actionClient(Level world, Player player) {
 		
 	}
 
 	@Override
-	public void actionServer(World world, ServerPlayerEntity player) {
+	public void actionServer(Level world, ServerPlayer player) {
 		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
 			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
 			if(element instanceof ValueTypeIngredientsLPElement) {

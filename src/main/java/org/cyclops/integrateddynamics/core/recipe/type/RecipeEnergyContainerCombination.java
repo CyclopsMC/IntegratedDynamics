@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -18,7 +18,7 @@ import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageMut
  * Recipe for combining energy batteries in a shapeless manner.
  * @author rubensworks
  */
-public class RecipeEnergyContainerCombination extends SpecialRecipe {
+public class RecipeEnergyContainerCombination extends CustomRecipe {
 
 	private final Ingredient batteryItem;
 	private final int maxCapacity;
@@ -38,7 +38,7 @@ public class RecipeEnergyContainerCombination extends SpecialRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingInventory grid, World world) {
+	public boolean matches(CraftingContainer grid, Level world) {
 		return !assemble(grid).isEmpty();
 	}
 	
@@ -48,7 +48,7 @@ public class RecipeEnergyContainerCombination extends SpecialRecipe {
 	}
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inventory) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inventory) {
 		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
 
         for (int i = 0; i < aitemstack.size(); ++i) {
@@ -60,12 +60,12 @@ public class RecipeEnergyContainerCombination extends SpecialRecipe {
     }
 
 	@Override
-	public IRecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<?> getSerializer() {
 		return RegistryEntries.RECIPESERIALIZER_ENERGY_CONTAINER_COMBINATION;
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInventory grid) {
+	public ItemStack assemble(CraftingContainer grid) {
 		ItemStack output = getResultItem().copy();
 		IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(CapabilityEnergy.ENERGY).orElse(null);
 

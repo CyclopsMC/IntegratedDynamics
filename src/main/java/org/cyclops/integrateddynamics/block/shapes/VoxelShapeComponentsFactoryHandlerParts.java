@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.block.shapes;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -35,7 +35,7 @@ import java.util.Collection;
 public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeComponentsFactory.IHandler {
 
     @Override
-    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, IBlockReader world, BlockPos blockPos) {
+    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
         Collection<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
         for (Direction direction : Direction.values()) {
             IPartContainer partContainer = PartHelpers.getPartContainer(world, blockPos, direction).orElse(null);
@@ -57,17 +57,17 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         }
 
         @Override
-        public VoxelShape getShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
+        public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
             return partContainer.getPart(direction).getPartRenderPosition().getBoundingBox(direction);
         }
 
         @Override
-        public ItemStack getPickBlock(World world, BlockPos pos) {
-            return partContainer.getPart(direction).getPickBlock(world, pos, partContainer.getPartState(direction));
+        public ItemStack getCloneItemStack(Level world, BlockPos pos) {
+            return partContainer.getPart(direction).getCloneItemStack(world, pos, partContainer.getPartState(direction));
         }
 
         @Override
-        public boolean destroy(World world, BlockPos pos, PlayerEntity player, boolean saveState) {
+        public boolean destroy(Level world, BlockPos pos, Player player, boolean saveState) {
             if(!world.isClientSide()) {
                 return PartHelpers.removePart(world, pos, direction, player, true, true, saveState);
             }
@@ -77,13 +77,13 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         @Nullable
         @Override
         @OnlyIn(Dist.CLIENT)
-        public IBakedModel getBreakingBaseModel(World world, BlockPos pos) {
+        public BakedModel getBreakingBaseModel(Level world, BlockPos pos) {
             BlockState cableState = partContainer != null ? partContainer.getPart(direction).getBlockState(partContainer, direction) : null;
             return RenderHelpers.getBakedModel(cableState);
         }
 
         @Override
-        public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
+        public InteractionResult onBlockActivated(BlockState state, Level world, BlockPos blockPos, Player player, InteractionHand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getItemInHand(hand);
             if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getDirection()) && player.isSecondaryUseActive()) {
                 // Remove part from cable
@@ -91,13 +91,13 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
                     destroy(world, blockPos, player, true);
                     ItemBlockCable.playBreakSound(world, blockPos, state);
                 }
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
             } else if(CableHelpers.isNoFakeCable(world, blockPos, hit.getDirection())) {
                 // Delegate activated call to part
                 return partContainer.getPart(direction).onPartActivated(partContainer.getPartState(direction), blockPos, world,
                         player, hand, heldItem, hit.withDirection(direction));
             }
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
 
     }

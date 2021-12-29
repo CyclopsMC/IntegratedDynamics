@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 /**
  * A wrapper around {@link PartPos} that also holds a priority.

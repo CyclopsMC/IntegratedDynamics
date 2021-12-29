@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;

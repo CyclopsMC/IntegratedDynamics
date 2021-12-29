@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -40,13 +40,13 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundNBT tag) {
+    public void writeGeneratedFieldsToNBT(CompoundTag tag) {
         NBTClassType.writeNbt(DimPos.class, "pos", pos, tag);
         NBTClassType.writeNbt(Direction.class, "side", side, tag);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundNBT tag) {
+    public void readGeneratedFieldsFromNBT(CompoundTag tag) {
         this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag);
         this.side = NBTClassType.readNbt(Direction.class, "side", tag);
     }
@@ -88,22 +88,22 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
         }
 
         @Override
-        public INBT serialize(PositionedOperator operator) {
-            CompoundNBT tag = new CompoundNBT();
+        public Tag serialize(PositionedOperator operator) {
+            CompoundTag tag = new CompoundTag();
             operator.writeGeneratedFieldsToNBT(tag);
             return tag;
         }
 
         @Override
-        public PositionedOperator deserialize(INBT value) throws EvaluationException {
+        public PositionedOperator deserialize(Tag value) throws EvaluationException {
             try {
                 Constructor<? extends PositionedOperator> constructor = this.clazz.getConstructor();
                 PositionedOperator proxy = constructor.newInstance();
-                proxy.readGeneratedFieldsFromNBT((CompoundNBT) value);
+                proxy.readGeneratedFieldsFromNBT((CompoundTag) value);
                 return proxy;
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | ClassCastException | IllegalAccessException e) {
                 e.printStackTrace();
-                throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                throw new EvaluationException(new TranslatableComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
                         value, e.getMessage()));
             }
         }

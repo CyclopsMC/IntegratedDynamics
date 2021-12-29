@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.part;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
-import org.cyclops.integrateddynamics.GeneralConfig;
 
 /**
  * A part that can display variables.

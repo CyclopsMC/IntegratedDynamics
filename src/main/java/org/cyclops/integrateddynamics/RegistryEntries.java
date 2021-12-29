@@ -1,16 +1,16 @@
 package org.cyclops.integrateddynamics;
 
-import net.minecraft.block.Block;
-import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
-import net.minecraft.world.gen.trunkplacer.TrunkPlacerType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
+import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
+import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraftforge.registries.ObjectHolder;
 import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.block.BlockDryingBasin;
@@ -20,6 +20,8 @@ import org.cyclops.integrateddynamics.block.BlockFluidMenrilResin;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
+import org.cyclops.integrateddynamics.blockentity.*;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
@@ -34,8 +36,6 @@ import org.cyclops.integrateddynamics.item.ItemFacade;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipe;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipe;
-import org.cyclops.integrateddynamics.tileentity.TileCoalGenerator;
-import org.cyclops.integrateddynamics.tileentity.TileProxy;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenril;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
 
@@ -140,60 +140,60 @@ public class RegistryEntries {
     public static final Block BLOCK_MENRIL_TORCH_STONE_WALL = null;
 
     @ObjectHolder("integrateddynamics:coal_generator")
-    public static final TileEntityType<TileCoalGenerator> TILE_ENTITY_COAL_GENERATOR = null;
+    public static final BlockEntityType<BlockEntityCoalGenerator> BLOCK_ENTITY_COAL_GENERATOR = null;
     @ObjectHolder("integrateddynamics:delay")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_DELAY = null;
+    public static final BlockEntityType<BlockEntityDelay> BLOCK_ENTITY_DELAY = null;
     @ObjectHolder("integrateddynamics:drying_basin")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_DRYING_BASIN = null;
+    public static final BlockEntityType<BlockEntityDryingBasin> BLOCK_ENTITY_DRYING_BASIN = null;
     @ObjectHolder("integrateddynamics:energy_battery")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_ENERGY_BATTERY = null;
+    public static final BlockEntityType<BlockEntityEnergyBattery> BLOCK_ENTITY_ENERGY_BATTERY = null;
     @ObjectHolder("integrateddynamics:materializer")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_MATERIALIZER = null;
+    public static final BlockEntityType<BlockEntityMaterializer> BLOCK_ENTITY_MATERIALIZER = null;
     @ObjectHolder("integrateddynamics:mechanical_drying_basin")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_MECHANICAL_DRYING_BASIN = null;
+    public static final BlockEntityType<BlockEntityMechanicalDryingBasin> BLOCK_ENTITY_MECHANICAL_DRYING_BASIN = null;
     @ObjectHolder("integrateddynamics:mechanical_squeezer")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_MECHANICAL_SQUEEZER = null;
+    public static final BlockEntityType<BlockEntityMechanicalSqueezer> BLOCK_ENTITY_MECHANICAL_SQUEEZER = null;
     @ObjectHolder("integrateddynamics:multipart_ticking")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_MULTIPART_TICKING = null;
+    public static final BlockEntityType<BlockEntityMultipartTicking> BLOCK_ENTITY_MULTIPART_TICKING = null;
     @ObjectHolder("integrateddynamics:proxy")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_PROXY = null;
+    public static final BlockEntityType<BlockEntityProxy> BLOCK_ENTITY_PROXY = null;
     @ObjectHolder("integrateddynamics:squeezer")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_SQUEEZER = null;
+    public static final BlockEntityType<BlockEntitySqueezer> BLOCK_ENTITY_SQUEEZER = null;
     @ObjectHolder("integrateddynamics:variable_store")
-    public static final TileEntityType<TileProxy> TILE_ENTITY_VARIABLE_STORE = null;
+    public static final BlockEntityType<BlockEntityVariablestore> BLOCK_ENTITY_VARIABLE_STORE = null;
 
     @ObjectHolder("integrateddynamics:aspect_settings")
-    public static final ContainerType<ContainerAspectSettings> CONTAINER_ASPECT_SETTINGS = null;
+    public static final MenuType<ContainerAspectSettings> CONTAINER_ASPECT_SETTINGS = null;
     @ObjectHolder("integrateddynamics:coal_generator")
-    public static final ContainerType<ContainerCoalGenerator> CONTAINER_COAL_GENERATOR = null;
+    public static final MenuType<ContainerCoalGenerator> CONTAINER_COAL_GENERATOR = null;
     @ObjectHolder("integrateddynamics:delay")
-    public static final ContainerType<ContainerDelay> CONTAINER_DELAY = null;
+    public static final MenuType<ContainerDelay> CONTAINER_DELAY = null;
     @ObjectHolder("integrateddynamics:labeller")
-    public static final ContainerType<ContainerLabeller> CONTAINER_LABELLER = null;
+    public static final MenuType<ContainerLabeller> CONTAINER_LABELLER = null;
     @ObjectHolder("integrateddynamics:logic_programmer")
-    public static final ContainerType<ContainerLogicProgrammer> CONTAINER_LOGIC_PROGRAMMER = null;
+    public static final MenuType<ContainerLogicProgrammer> CONTAINER_LOGIC_PROGRAMMER = null;
     @ObjectHolder("integrateddynamics:logic_programmer_portable")
-    public static final ContainerType<ContainerLogicProgrammerPortable> CONTAINER_LOGIC_PROGRAMMER_PORTABLE = null;
+    public static final MenuType<ContainerLogicProgrammerPortable> CONTAINER_LOGIC_PROGRAMMER_PORTABLE = null;
     @ObjectHolder("integrateddynamics:materializer")
-    public static final ContainerType<ContainerMaterializer> CONTAINER_MATERIALIZER = null;
+    public static final MenuType<ContainerMaterializer> CONTAINER_MATERIALIZER = null;
     @ObjectHolder("integrateddynamics:mechanical_drying_basin")
-    public static final ContainerType<ContainerMaterializer> CONTAINER_MECHANICAL_DRYING_BASIN = null;
+    public static final MenuType<ContainerMaterializer> CONTAINER_MECHANICAL_DRYING_BASIN = null;
     @ObjectHolder("integrateddynamics:mechanical_squeezer")
-    public static final ContainerType<ContainerMaterializer> CONTAINER_MECHANICAL_SQUEEZER = null;
+    public static final MenuType<ContainerMaterializer> CONTAINER_MECHANICAL_SQUEEZER = null;
     @ObjectHolder("integrateddynamics:on_the_dynamics_of_integration")
-    public static final ContainerType<ContainerOnTheDynamicsOfIntegration> CONTAINER_ON_THE_DYNAMICS_OF_INTEGRATION = null;
+    public static final MenuType<ContainerOnTheDynamicsOfIntegration> CONTAINER_ON_THE_DYNAMICS_OF_INTEGRATION = null;
     @ObjectHolder("integrateddynamics:part_display")
-    public static final ContainerType<ContainerPartPanelVariableDriven> CONTAINER_PART_DISPLAY = null;
+    public static final MenuType<ContainerPartPanelVariableDriven> CONTAINER_PART_DISPLAY = null;
     @ObjectHolder("integrateddynamics:part_reader")
-    public static final ContainerType<ContainerPartReader> CONTAINER_PART_READER = null;
+    public static final MenuType<ContainerPartReader> CONTAINER_PART_READER = null;
     @ObjectHolder("integrateddynamics:part_settings")
-    public static final ContainerType<ContainerPartSettings> CONTAINER_PART_SETTINGS = null;
+    public static final MenuType<ContainerPartSettings> CONTAINER_PART_SETTINGS = null;
     @ObjectHolder("integrateddynamics:part_writer")
-    public static final ContainerType<ContainerPartReader> CONTAINER_PART_WRITER = null;
+    public static final MenuType<ContainerPartReader> CONTAINER_PART_WRITER = null;
     @ObjectHolder("integrateddynamics:proxy")
-    public static final ContainerType<ContainerProxy> CONTAINER_PROXY = null;
+    public static final MenuType<ContainerProxy> CONTAINER_PROXY = null;
     @ObjectHolder("integrateddynamics:variablestore")
-    public static final ContainerType<ContainerVariablestore> CONTAINER_VARIABLESTORE = null;
+    public static final MenuType<ContainerVariablestore> CONTAINER_VARIABLESTORE = null;
 
     @ObjectHolder("integrateddynamics:liquid_chorus")
     public static final FlowingFluid FLUID_LIQUID_CHORUS = null;
@@ -207,27 +207,27 @@ public class RegistryEntries {
     public static final Biome BIOME_MENEGLIN = null;
 
     // Recipe types are not Forge registries unfortunately...
-    public static IRecipeType<RecipeDryingBasin> RECIPETYPE_DRYING_BASIN = null;
-    public static IRecipeType<RecipeMechanicalDryingBasin> RECIPETYPE_MECHANICAL_DRYING_BASIN = null;
-    public static IRecipeType<RecipeSqueezer> RECIPETYPE_SQUEEZER = null;
-    public static IRecipeType<RecipeMechanicalSqueezer> RECIPETYPE_MECHANICAL_SQUEEZER = null;
+    public static RecipeType<RecipeDryingBasin> RECIPETYPE_DRYING_BASIN = null;
+    public static RecipeType<RecipeMechanicalDryingBasin> RECIPETYPE_MECHANICAL_DRYING_BASIN = null;
+    public static RecipeType<RecipeSqueezer> RECIPETYPE_SQUEEZER = null;
+    public static RecipeType<RecipeMechanicalSqueezer> RECIPETYPE_MECHANICAL_SQUEEZER = null;
 
     @ObjectHolder("integrateddynamics:drying_basin")
-    public static final IRecipeSerializer<RecipeDryingBasin> RECIPESERIALIZER_DRYING_BASIN = null;
+    public static final RecipeSerializer<RecipeDryingBasin> RECIPESERIALIZER_DRYING_BASIN = null;
     @ObjectHolder("integrateddynamics:mechanical_drying_basin")
-    public static final IRecipeSerializer<RecipeMechanicalDryingBasin> RECIPESERIALIZER_MECHANICAL_DRYING_BASIN = null;
+    public static final RecipeSerializer<RecipeMechanicalDryingBasin> RECIPESERIALIZER_MECHANICAL_DRYING_BASIN = null;
     @ObjectHolder("integrateddynamics:squeezer")
-    public static final IRecipeSerializer<RecipeSqueezer> RECIPESERIALIZER_SQUEEZER = null;
+    public static final RecipeSerializer<RecipeSqueezer> RECIPESERIALIZER_SQUEEZER = null;
     @ObjectHolder("integrateddynamics:mechanical_squeezer")
-    public static final IRecipeSerializer<RecipeMechanicalSqueezer> RECIPESERIALIZER_MECHANICAL_SQUEEZER = null;
+    public static final RecipeSerializer<RecipeMechanicalSqueezer> RECIPESERIALIZER_MECHANICAL_SQUEEZER = null;
     @ObjectHolder("integrateddynamics:crafting_special_nbt_clear")
-    public static final IRecipeSerializer<RecipeNbtClear> RECIPESERIALIZER_NBT_CLEAR = null;
+    public static final RecipeSerializer<RecipeNbtClear> RECIPESERIALIZER_NBT_CLEAR = null;
     @ObjectHolder("integrateddynamics:crafting_special_energycontainer_combination")
-    public static final IRecipeSerializer<RecipeEnergyContainerCombination> RECIPESERIALIZER_ENERGY_CONTAINER_COMBINATION = null;
+    public static final RecipeSerializer<RecipeEnergyContainerCombination> RECIPESERIALIZER_ENERGY_CONTAINER_COMBINATION = null;
     @ObjectHolder("integrateddynamics:crafting_special_facade")
-    public static final SpecialRecipeSerializer<ItemFacadeRecipe> RECIPESERIALIZER_FACADE = null;
+    public static final SimpleRecipeSerializer<ItemFacadeRecipe> RECIPESERIALIZER_FACADE = null;
     @ObjectHolder("integrateddynamics:crafting_special_variable_copy")
-    public static final SpecialRecipeSerializer<ItemVariableCopyRecipe> RECIPESERIALIZER_VARIABLE_COPY = null;
+    public static final SimpleRecipeSerializer<ItemVariableCopyRecipe> RECIPESERIALIZER_VARIABLE_COPY = null;
 
 
 }

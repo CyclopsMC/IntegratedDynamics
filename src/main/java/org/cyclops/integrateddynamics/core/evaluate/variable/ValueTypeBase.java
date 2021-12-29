@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -28,12 +28,12 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     private final String typeName;
     private final int color;
-    private final TextFormatting colorFormat;
+    private final ChatFormatting colorFormat;
     private final Class<V> valueClass;
 
     private String translationKey = null;
 
-    public ValueTypeBase(String typeName, int color, TextFormatting colorFormat, Class<V> valueClass) {
+    public ValueTypeBase(String typeName, int color, ChatFormatting colorFormat, Class<V> valueClass) {
         this.typeName = typeName;
         this.color = color;
         this.colorFormat = colorFormat;
@@ -82,7 +82,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public TextFormatting getDisplayColorFormat() {
+    public ChatFormatting getDisplayColorFormat() {
         return this.colorFormat;
     }
 
@@ -98,21 +98,21 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, @Nullable V value) {
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable V value) {
         String typeName = L10NHelpers.localize(getTranslationKey());
-        lines.add(new TranslationTextComponent(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
+        lines.add(new TranslatableComponent(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
     }
 
     @Override
-    public ITextComponent canDeserialize(INBT value) {
+    public Component canDeserialize(Tag value) {
         try {
             deserialize(value);
             return null;
         } catch (IllegalArgumentException e) {
-            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);
+            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);
         }
     }
 
@@ -150,9 +150,9 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         try {
             return this.valueClass.cast(value);
         } catch (ClassCastException e) {
-            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CAST_ILLEGAL,
-                    new TranslationTextComponent(value.getType().getTranslationKey()),
-                    new TranslationTextComponent(this.getTranslationKey()),
+            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_CAST_ILLEGAL,
+                    new TranslatableComponent(value.getType().getTranslationKey()),
+                    new TranslatableComponent(this.getTranslationKey()),
                     value.getType().toCompactString(value)
             ));
         }

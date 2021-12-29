@@ -1,30 +1,28 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
-
-import net.minecraft.item.Item.Properties;
 
 /**
  * An item that represents a facade of a certain type.
@@ -38,7 +36,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
 
     public BlockState getFacadeBlock(ItemStack itemStack) {
         if(!itemStack.isEmpty() && itemStack.hasTag()) {
-            CompoundNBT tag = itemStack.getTag();
+            CompoundTag tag = itemStack.getTag();
             return BlockHelpers.deserializeBlockState(tag.getCompound("block"));
         }
         return null;
@@ -53,29 +51,29 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     }
 
     public void writeFacadeBlock(ItemStack itemStack, BlockState blockState) {
-        CompoundNBT tag = itemStack.getOrCreateTag();
-        CompoundNBT serializedBlockState = BlockHelpers.serializeBlockState(blockState);
+        CompoundTag tag = itemStack.getOrCreateTag();
+        CompoundTag serializedBlockState = BlockHelpers.serializeBlockState(blockState);
         tag.put("block", serializedBlockState);
     }
 
     @Override
-    public ITextComponent getName(ItemStack itemStack) {
-        ITextComponent suffix = new TranslationTextComponent("general.integrateddynamics.info.none")
-                .withStyle(TextFormatting.ITALIC);
+    public Component getName(ItemStack itemStack) {
+        Component suffix = new TranslatableComponent("general.integrateddynamics.info.none")
+                .withStyle(ChatFormatting.ITALIC);
         ItemStack itemStackInner = getFacadeBlockItem(itemStack);
         if(itemStackInner != null) {
             suffix = getFacadeBlockItem(itemStack).getHoverName();
         }
-        return ((IFormattableTextComponent) super.getName(itemStack))
+        return ((MutableComponent) super.getName(itemStack))
                 .append(" - ")
                 .append(suffix);
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         ItemStack itemStack = context.getItemInHand();
         if(!context.getLevel().isClientSide()) {
-            IFacadeable facadeable = TileHelpers.getCapability(context.getLevel(), context.getClickedPos(), null, FacadeableConfig.CAPABILITY).orElse(null);
+            IFacadeable facadeable = BlockEntityHelpers.getCapability(context.getLevel(), context.getClickedPos(), null, FacadeableConfig.CAPABILITY).orElse(null);
             BlockState blockState = getFacadeBlock(itemStack);
             if(facadeable != null && blockState != null) {
                 // Add facade to existing cable
@@ -85,7 +83,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
                     itemStack.shrink(1);
                 }
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         return super.useOn(context);
     }
@@ -97,7 +95,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public IBakedModel createDynamicModel(ModelBakeEvent event) {
+    public BakedModel createDynamicModel(ModelBakeEvent event) {
         // Don't throw away the original model, but use if for displaying an unbound facade item.
         ModelResourceLocation location = new ModelResourceLocation(getRegistryName(), "inventory");
         FacadeModel.emptyModel = event.getModelRegistry().get(location);
@@ -105,7 +103,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class ItemColor implements IItemColor {
+    public static class Color implements ItemColor {
         @Override
         public int getColor(ItemStack itemStack, int color) {
             BlockState blockstate = ((ItemFacade) itemStack.getItem()).getFacadeBlock(itemStack);

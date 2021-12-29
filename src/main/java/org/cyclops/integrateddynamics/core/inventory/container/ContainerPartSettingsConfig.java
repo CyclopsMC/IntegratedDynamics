@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
@@ -27,10 +27,10 @@ public class ContainerPartSettingsConfig extends GuiConfig<ContainerPartSettings
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & IHasContainer<ContainerPartSettings>> ScreenManager.IScreenFactory<ContainerPartSettings, U> getScreenFactory() {
-        return new ScreenFactorySafe<>(new ScreenManager.IScreenFactory<ContainerPartSettings, ContainerScreenPartSettings<ContainerPartSettings>>() {
+    public <U extends Screen & MenuAccess<ContainerPartSettings>> MenuScreens.ScreenConstructor<ContainerPartSettings, U> getScreenFactory() {
+        return new ScreenFactorySafe<>(new MenuScreens.ScreenConstructor<ContainerPartSettings, ContainerScreenPartSettings<ContainerPartSettings>>() {
             @Override
-            public ContainerScreenPartSettings<ContainerPartSettings> create(ContainerPartSettings container, PlayerInventory playerInventory, ITextComponent title) {
+            public ContainerScreenPartSettings<ContainerPartSettings> create(ContainerPartSettings container, Inventory playerInventory, Component title) {
                 return new ContainerScreenPartSettings<ContainerPartSettings>(container, playerInventory, title);
             }
         });

@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -38,22 +38,22 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueFluidStack value) {
+    public MutableComponent toCompactString(ValueFluidStack value) {
         FluidStack fluidStack = value.getRawValue();
-        return !fluidStack.isEmpty() ? ((IFormattableTextComponent) fluidStack.getDisplayName()).append(String.format(" (%s mB)", fluidStack.getAmount())) : new StringTextComponent("");
+        return !fluidStack.isEmpty() ? ((MutableComponent) fluidStack.getDisplayName()).append(String.format(" (%s mB)", fluidStack.getAmount())) : new TextComponent("");
     }
 
     @Override
-    public INBT serialize(ValueFluidStack value) {
-        CompoundNBT tag = new CompoundNBT();
+    public Tag serialize(ValueFluidStack value) {
+        CompoundTag tag = new CompoundTag();
         value.getRawValue().writeToNBT(tag);
         return tag;
     }
 
     @Override
-    public ValueFluidStack deserialize(INBT value) {
-        if (value instanceof CompoundNBT) {
-            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT((CompoundNBT) value);
+    public ValueFluidStack deserialize(Tag value) {
+        if (value instanceof CompoundTag) {
+            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT((CompoundTag) value);
             return ValueFluidStack.of(fluidStack);
         } else {
             return null;
@@ -79,8 +79,8 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
             }
 
             @Override
-            public ITextComponent validate(ItemStack itemStack) {
-                return itemStack.isEmpty() || Helpers.getFluidStack(itemStack) != null ? null : new TranslationTextComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+            public Component validate(ItemStack itemStack) {
+                return itemStack.isEmpty() || Helpers.getFluidStack(itemStack) != null ? null : new TranslatableComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
             }
 
             @Override

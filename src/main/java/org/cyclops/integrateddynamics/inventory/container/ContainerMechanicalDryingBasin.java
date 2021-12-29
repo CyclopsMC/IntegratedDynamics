@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMechanicalMachine;
-import org.cyclops.integrateddynamics.tileentity.TileMechanicalDryingBasin;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -18,19 +18,19 @@ import java.util.function.Supplier;
  * Container for the mechanical drying basin.
  * @author rubensworks
  */
-public class ContainerMechanicalDryingBasin extends ContainerMechanicalMachine<TileMechanicalDryingBasin> {
+public class ContainerMechanicalDryingBasin extends ContainerMechanicalMachine<BlockEntityMechanicalDryingBasin> {
 
     private final Supplier<FluidStack> variableInputFluidStack;
     private final Supplier<Integer> variableInputFluidCapacity;
     private final Supplier<FluidStack> variableOutputFluidStack;
     private final Supplier<Integer> variableOutputFluidCapacity;
 
-    public ContainerMechanicalDryingBasin(int id, PlayerInventory playerInventory) {
-        this(id, playerInventory, new Inventory(TileMechanicalDryingBasin.INVENTORY_SIZE), Optional.empty());
+    public ContainerMechanicalDryingBasin(int id, Inventory playerInventory) {
+        this(id, playerInventory, new SimpleContainer(BlockEntityMechanicalDryingBasin.INVENTORY_SIZE), Optional.empty());
     }
 
-    public ContainerMechanicalDryingBasin(int id, PlayerInventory playerInventory, IInventory inventory,
-                                          Optional<TileMechanicalDryingBasin> tileSupplier) {
+    public ContainerMechanicalDryingBasin(int id, Inventory playerInventory, Container inventory,
+                                          Optional<BlockEntityMechanicalDryingBasin> tileSupplier) {
         super(RegistryEntries.CONTAINER_MECHANICAL_DRYING_BASIN, id, playerInventory, inventory, tileSupplier);
 
         this.variableInputFluidStack = registerSyncedVariable(FluidStack.class, () -> getTileSupplier().get().getTankInput().getFluid());

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.ingredient;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesItemStackTag;
@@ -21,7 +21,7 @@ public class ItemMatchProperties {
     static {
         PacketCodec.addCodedAction(ItemMatchProperties.class, new PacketCodec.ICodecAction() {
             @Override
-            public void encode(Object o, PacketBuffer packetBuffer) {
+            public void encode(Object o, FriendlyByteBuf packetBuffer) {
                 ItemMatchProperties props = ((ItemMatchProperties) o);
                 PacketCodec.getAction(ItemStack.class).encode(props.itemStack, packetBuffer);
                 packetBuffer.writeBoolean(props.nbt);
@@ -30,7 +30,7 @@ public class ItemMatchProperties {
             }
 
             @Override
-            public Object decode(PacketBuffer packetBuffer) {
+            public Object decode(FriendlyByteBuf packetBuffer) {
                 ItemStack itemStack = (ItemStack) PacketCodec.getAction(ItemStack.class).decode(packetBuffer);
                 boolean nbt = packetBuffer.readBoolean();
                 String itemTag = packetBuffer.readUtf(32767);
@@ -92,12 +92,12 @@ public class ItemMatchProperties {
 
     public IPrototypedIngredientAlternatives<ItemStack, Integer> createPrototypedIngredient() {
         if (getItemTag() == null) {
-            int flags = isNbt() ? ItemMatch.ITEM | ItemMatch.NBT : ItemMatch.ITEM;
+            int flags = isNbt() ? ItemMatch.ITEM | ItemMatch.TAG : ItemMatch.ITEM;
             return new PrototypedIngredientAlternativesList<>(
                     Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, flags)));
         } else {
             return new PrototypedIngredientAlternativesItemStackTag(Collections.singletonList(getItemTag()),
-                    ItemMatch.ITEM | ItemMatch.NBT, getTagQuantity());
+                    ItemMatch.ITEM | ItemMatch.TAG, getTagQuantity());
         }
     }
 }

@@ -4,10 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.util.JSONUtils;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.util.GsonHelper;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -49,14 +49,14 @@ public class ValuePredicate<V extends IValue> {
         IValue value = null;
         if (valueElement != null && !valueElement.isJsonNull()) {
             if (valueElement.isJsonPrimitive()) {
-                String valueString = JSONUtils.getAsString(jsonObject, "value");
+                String valueString = GsonHelper.getAsString(jsonObject, "value");
                 if (valueType == null) {
                     throw new JsonSyntaxException("A value '" + valueString + "' requires a corresponding valueType to be defined");
                 }
                 try {
-                    INBT tag = JsonToNBT.parseTag(valueString);
-                    if (((CompoundNBT) tag).contains("Primitive")) {
-                        tag = ((CompoundNBT) tag).get("Primitive");
+                    Tag tag = TagParser.parseTag(valueString);
+                    if (((CompoundTag) tag).contains("Primitive")) {
+                        tag = ((CompoundTag) tag).get("Primitive");
                     }
                     value = ValueHelpers.deserializeRaw(valueType, tag);
                 } catch (CommandSyntaxException e) {

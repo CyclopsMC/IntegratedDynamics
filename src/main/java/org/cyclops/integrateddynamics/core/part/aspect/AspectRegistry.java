@@ -7,12 +7,12 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -177,9 +177,9 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public IAspectVariableFacade getVariableFacade(int id, CompoundNBT tag) {
-        if(!tag.contains("partId", Constants.NBT.TAG_INT)
-                || !tag.contains("aspectName", Constants.NBT.TAG_STRING)) {
+    public IAspectVariableFacade getVariableFacade(int id, CompoundTag tag) {
+        if(!tag.contains("partId", Tag.TAG_INT)
+                || !tag.contains("aspectName", Tag.TAG_STRING)) {
             return INVALID_FACADE;
         }
         int partId = tag.getInt("partId");
@@ -191,7 +191,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public void setVariableFacade(CompoundNBT tag, IAspectVariableFacade variableFacade) {
+    public void setVariableFacade(CompoundTag tag, IAspectVariableFacade variableFacade) {
         tag.putInt("partId", variableFacade.getPartId());
         tag.putString("aspectName", variableFacade.getAspect().getUniqueName().toString());
     }
@@ -201,9 +201,9 @@ public final class AspectRegistry implements IAspectRegistry {
         JsonElement aspectElement = element.get("aspect");
         IAspect aspect = null;
         if (aspectElement != null && !aspectElement.isJsonNull()) {
-            aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(JSONUtils.getAsString(element, "aspect")));
+            aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(GsonHelper.getAsString(element, "aspect")));
             if (aspect == null) {
-                throw new JsonSyntaxException("Unknown aspect type '" + JSONUtils.getAsString(element, "aspect") + "', valid types are: "
+                throw new JsonSyntaxException("Unknown aspect type '" + GsonHelper.getAsString(element, "aspect") + "', valid types are: "
                         + Aspects.REGISTRY.getAspects().stream().map(IAspect::getUniqueName).collect(Collectors.toList()));
             }
         }

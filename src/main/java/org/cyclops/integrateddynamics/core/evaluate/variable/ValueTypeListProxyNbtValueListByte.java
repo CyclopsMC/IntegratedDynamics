@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.ByteArrayNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 
 import java.util.Optional;
@@ -10,23 +10,23 @@ import java.util.Optional;
 /**
  * An NBT byte array wrapper
  */
-public class ValueTypeListProxyNbtValueListByte extends ValueTypeListProxyNbtValueListGeneric<ByteArrayNBT, ValueTypeInteger, ValueTypeInteger.ValueInteger> {
+public class ValueTypeListProxyNbtValueListByte extends ValueTypeListProxyNbtValueListGeneric<ByteArrayTag, ValueTypeInteger, ValueTypeInteger.ValueInteger> {
 
-    public ValueTypeListProxyNbtValueListByte(String key, Optional<INBT> tag) {
+    public ValueTypeListProxyNbtValueListByte(String key, Optional<Tag> tag) {
         super(ValueTypeListProxyFactories.NBT_VALUE_LIST_BYTE.getName(), ValueTypes.INTEGER, key, tag);
     }
 
     @Override
-    protected int getLength(ByteArrayNBT tag) {
+    protected int getLength(ByteArrayTag tag) {
         return tag.getAsByteArray().length;
     }
 
     @Override
-    protected ValueTypeInteger.ValueInteger get(ByteArrayNBT tag, int index) {
+    protected ValueTypeInteger.ValueInteger get(ByteArrayTag tag, int index) {
         return ValueTypeInteger.ValueInteger.of(tag.getAsByteArray()[index]);
     }
 
-    public static class Factory extends ValueTypeListProxyNbtValueListGeneric.Factory<ValueTypeListProxyNbtValueListByte, ByteArrayNBT, ValueTypeInteger, ValueTypeInteger.ValueInteger> {
+    public static class Factory extends ValueTypeListProxyNbtValueListGeneric.Factory<ValueTypeListProxyNbtValueListByte, ByteArrayTag, ValueTypeInteger, ValueTypeInteger.ValueInteger> {
 
         @Override
         public ResourceLocation getName() {
@@ -34,7 +34,7 @@ public class ValueTypeListProxyNbtValueListByte extends ValueTypeListProxyNbtVal
         }
 
         @Override
-        protected ValueTypeListProxyNbtValueListByte create(String key, Optional<INBT> tag) {
+        protected ValueTypeListProxyNbtValueListByte create(String key, Optional<Tag> tag) {
             return new ValueTypeListProxyNbtValueListByte(key, tag);
         }
     }

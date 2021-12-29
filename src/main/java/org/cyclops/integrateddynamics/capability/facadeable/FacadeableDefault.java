@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.facadeable;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 
 import javax.annotation.Nullable;

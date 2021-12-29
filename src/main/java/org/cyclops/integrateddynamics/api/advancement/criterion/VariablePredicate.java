@@ -3,8 +3,8 @@ package org.cyclops.integrateddynamics.api.advancement.criterion;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -53,7 +53,7 @@ public class VariablePredicate<V extends IVariable> {
 
     public static VariablePredicate deserialize(@Nullable JsonElement element) {
         if (element != null && !element.isJsonNull()) {
-            JsonObject jsonobject = JSONUtils.convertToJsonObject(element, "variable");
+            JsonObject jsonobject = GsonHelper.convertToJsonObject(element, "variable");
             IVariableFacadeHandler handler;
 
             IValueType valueType = JsonDeserializers.deserializeValueType(jsonobject);
@@ -61,7 +61,7 @@ public class VariablePredicate<V extends IVariable> {
 
             JsonElement typeElement = jsonobject.get("type");
             if (typeElement != null && !typeElement.isJsonNull()) {
-                String type = JSONUtils.getAsString(jsonobject, "type");
+                String type = GsonHelper.getAsString(jsonobject, "type");
                 handler = VARIABLE_FACADE_HANDLER_REGISTRY.getHandler(new ResourceLocation(type));
                 if (handler == null) {
                     throw new JsonSyntaxException("Unknown variable type '" + type + "', valid types are: "

@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.helper;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -26,13 +26,13 @@ public final class WrenchHelpers {
      * @param side The side that is being wrenched.
      * @return If the wrenching can continue with the held item.
      */
-    public static boolean isWrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, @Nullable Direction side) {
+    public static boolean isWrench(Player player, ItemStack heldItem, Level world, BlockPos pos, @Nullable Direction side) {
         return heldItem.getItem().getTags().contains(WrenchHelpers.TAG_WRENCH);
     }
 
     /**
      * Wrench a given position.
-     * Requires the {@link WrenchHelpers#isWrench(PlayerEntity, ItemStack, World, BlockPos, Direction)}
+     * Requires the {@link WrenchHelpers#isWrench(Player, ItemStack, Level, BlockPos, Direction)}
      * to be passed.
      * Takes an extra parameter of any type that is forwarded to the wrench action.
      * @param player The player.
@@ -44,7 +44,7 @@ public final class WrenchHelpers {
      * @param parameter An extra parameter that is forwarded to the action.
      * @param <P> The type of parameter to pass.
      */
-    public static <P> void wrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, Direction side, IWrenchAction<P> action, P parameter) {
+    public static <P> void wrench(Player player, ItemStack heldItem, Level world, BlockPos pos, Direction side, IWrenchAction<P> action, P parameter) {
         if (isWrench(player, heldItem, world, pos, side)) {
             action.onWrench(player, pos, parameter);
         }
@@ -52,7 +52,7 @@ public final class WrenchHelpers {
 
     /**
      * Wrench a given position.
-     * Requires the {@link WrenchHelpers#isWrench(PlayerEntity, ItemStack, World, BlockPos, Direction)}
+     * Requires the {@link WrenchHelpers#isWrench(Player, ItemStack, Level, BlockPos, Direction)}
      * to be passed.
      * @param player The player.
      * @param heldItem The item the player is holding.
@@ -61,7 +61,7 @@ public final class WrenchHelpers {
      * @param side The side that is being wrenched.
      * @param action The actual wrench action.
      */
-    public static void wrench(PlayerEntity player, ItemStack heldItem, World world, BlockPos pos, Direction side, IWrenchAction<Void> action) {
+    public static void wrench(Player player, ItemStack heldItem, Level world, BlockPos pos, Direction side, IWrenchAction<Void> action) {
         wrench(player, heldItem, world, pos, side, action, null);
     }
 
@@ -77,7 +77,7 @@ public final class WrenchHelpers {
          * @param pos The position that is being wrenched.
          * @param parameter An extra parameter that is used to call this action.
          */
-        public void onWrench(PlayerEntity player, BlockPos pos, P parameter);
+        public void onWrench(Player player, BlockPos pos, P parameter);
 
     }
 
@@ -92,7 +92,7 @@ public final class WrenchHelpers {
          * @param pos The position that is being wrenched.
          * @param parameter An extra parameter that is used to call this action.
          */
-        public void onWrench(PlayerEntity player, BlockPos pos, Void parameter) {
+        public void onWrench(Player player, BlockPos pos, Void parameter) {
             onWrench(player, pos);
         }
 
@@ -101,7 +101,7 @@ public final class WrenchHelpers {
          * @param player The player.
          * @param pos The position that is being wrenched.
          */
-        public abstract void onWrench(PlayerEntity player, BlockPos pos);
+        public abstract void onWrench(Player player, BlockPos pos);
 
     }
 

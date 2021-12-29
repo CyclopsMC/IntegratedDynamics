@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -31,7 +31,7 @@ public class ValueTypeBooleanLPElement extends ValueTypeLPElementBase {
 
     @Nullable
     @Override
-    public <G2 extends AbstractGui, C2 extends Container> GuiElementValueTypeBoolean<G2, C2> createInnerGuiElement() {
+    public <G2 extends GuiComponent, C2 extends AbstractContainerMenu> GuiElementValueTypeBoolean<G2, C2> createInnerGuiElement() {
         return new GuiElementValueTypeBoolean<>((ValueTypeBoolean) getValueType(), getRenderPattern());
     }
 
@@ -51,7 +51,7 @@ public class ValueTypeBooleanLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    public ITextComponent validate() {
+    public Component validate() {
         return getInnerGuiElement().validate();
     }
 

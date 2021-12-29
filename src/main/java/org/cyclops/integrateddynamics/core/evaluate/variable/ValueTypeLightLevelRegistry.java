@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -10,8 +10,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeLightLevelRegistry.ILightLevelCalculator;
 
 /**
  * @author rubensworks
@@ -58,7 +56,7 @@ public class ValueTypeLightLevelRegistry implements IValueTypeLightLevelRegistry
                 return entry.getValue().getLightLevel(value.cast(entry.getKey()));
             }
         }
-        throw new InvalidValueTypeException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_NOLIGHTCALCULATOR, value));
+        throw new InvalidValueTypeException(new TranslatableComponent(L10NValues.VALUETYPE_ERROR_NOLIGHTCALCULATOR, value));
     }
 
 }

@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.image.Images;
@@ -31,7 +31,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     protected static final float pixel = 0.0625F;  // 0.0625 == 1/16
 
     @Override
-    protected void setMatrixOrientation(MatrixStack matrixStack, Direction direction) {
+    protected void setMatrixOrientation(PoseStack matrixStack, Direction direction) {
         super.setMatrixOrientation(matrixStack, direction);
         float translateX = -1F - direction.getStepX() + 4 * pixel;
         float translateY = 1F - direction.getStepY() - 4 * pixel;
@@ -54,9 +54,9 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     }
 
     @Override
-    public void renderPartOverlay(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
-                                  Direction direction, IPartType partType, float partialTicks, MatrixStack matrixStack,
-                                  IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay) {
+    public void renderPartOverlay(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
+                                  Direction direction, IPartType partType, float partialTicks, PoseStack matrixStack,
+                                  MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
         BlockPos pos = partContainer.getPosition().getBlockPos();
         if(!shouldRender(pos)) return;
 
@@ -75,11 +75,11 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
 
         IPartState partStateUnsafe = partContainer.getPartState(direction);
         if(!(partStateUnsafe instanceof PartTypePanelDisplay.State)) {
-            drawError(rendererDispatcher, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
+            drawError(context, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
         } else {
             PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) partStateUnsafe;
             if (partState.getFacingRotation() == null) {
-                drawError(rendererDispatcher, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
+                drawError(context, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
                 return;
             }
             int rotation = partState.getFacingRotation().ordinal() - 2;
@@ -94,17 +94,17 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
                 if (renderer == null) {
                     renderer = ValueTypeWorldRenderers.DEFAULT;
                 }
-                renderer.renderValue(rendererDispatcher, partContainer, direction, partType, value, partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
+                renderer.renderValue(context, partContainer, direction, partType, value, partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
             } else if (!partState.getInventory().isEmpty()) {
-                drawError(rendererDispatcher, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
+                drawError(context, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
             }
         }
 
         matrixStack.popPose();
     }
 
-    protected void drawError(TileEntityRendererDispatcher rendererDispatcher, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+    protected void drawError(BlockEntityRendererProvider.Context context, PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
                              int combinedLight, int combinedOverlay, float distanceAlpha) {
-        Images.ERROR.drawWorldWithAlpha(rendererDispatcher.textureManager, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, 12.5F, 12.5F, distanceAlpha);
+        Images.ERROR.drawWorldWithAlpha(Minecraft.getInstance().textureManager, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, 12.5F, 12.5F, distanceAlpha);
     }
 }

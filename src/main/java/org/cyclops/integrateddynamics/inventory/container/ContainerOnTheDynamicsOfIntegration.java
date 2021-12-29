@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.inventory.container.ItemInventoryContainer;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -13,21 +12,16 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  */
 public class ContainerOnTheDynamicsOfIntegration extends ItemInventoryContainer {
 
-    public ContainerOnTheDynamicsOfIntegration(int id, PlayerInventory inventory, PacketBuffer packetBuffer) {
+    public ContainerOnTheDynamicsOfIntegration(int id, Inventory inventory, FriendlyByteBuf packetBuffer) {
         this(id, inventory, readItemIndex(packetBuffer), readHand(packetBuffer));
     }
 
-    public ContainerOnTheDynamicsOfIntegration(int id, PlayerInventory playerInventory, int itemIndex, Hand hand) {
+    public ContainerOnTheDynamicsOfIntegration(int id, Inventory playerInventory, int itemIndex, InteractionHand hand) {
         super(RegistryEntries.CONTAINER_ON_THE_DYNAMICS_OF_INTEGRATION, id, playerInventory, itemIndex, hand);
     }
 
     @Override
     protected int getSizeInventory() {
         return 0;
-    }
-
-    @Override
-    public boolean stillValid(PlayerEntity p_75145_1_) {
-        return false; // TODO: rm
     }
 }

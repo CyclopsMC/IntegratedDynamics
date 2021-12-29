@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -53,13 +53,13 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, DummyValue value) {
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, DummyValue value) {
 
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(DummyValue value) {
-        return new StringTextComponent("dummy");
+    public MutableComponent toCompactString(DummyValue value) {
+        return new TextComponent("dummy");
     }
 
     @Override
@@ -68,8 +68,8 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public TextFormatting getDisplayColorFormat() {
-        return TextFormatting.WHITE;
+    public ChatFormatting getDisplayColorFormat() {
+        return ChatFormatting.WHITE;
     }
 
     @Override
@@ -78,17 +78,17 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public INBT serialize(DummyValue value) {
+    public Tag serialize(DummyValue value) {
         return null;
     }
 
     @Override
-    public ITextComponent canDeserialize(INBT value) {
+    public Component canDeserialize(Tag value) {
         return null;
     }
 
     @Override
-    public DummyValue deserialize(INBT value) {
+    public DummyValue deserialize(Tag value) {
         return null;
     }
 

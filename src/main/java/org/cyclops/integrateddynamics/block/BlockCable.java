@@ -1,59 +1,63 @@
 package org.cyclops.integrateddynamics.block;
 
 import lombok.Setter;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockDisplayReader;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.IBlockRenderProperties;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.data.ModelProperty;
-import org.cyclops.cyclopscore.block.BlockTile;
+import org.cyclops.cyclopscore.block.BlockWithEntity;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -71,10 +75,10 @@ import org.cyclops.integrateddynamics.client.model.IRenderState;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
-import org.cyclops.integrateddynamics.core.tileentity.TileMultipartTicking;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -82,13 +86,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * A block that is built up from different parts.
  * This block refers to a ticking part entity.
  * @author rubensworks
  */
-public class BlockCable extends BlockTile implements IDynamicModelElement, IWaterLoggable {
+public class BlockCable extends BlockWithEntity implements IDynamicModelElement, SimpleWaterloggedBlock {
 
     public static final float BLOCK_HARDNESS = 3.0F;
     public static final Material BLOCK_MATERIAL = Material.GLASS;
@@ -110,15 +115,15 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     public static final ModelProperty<IRenderState> RENDERSTATE = new ModelProperty<>();
 
     // Collision boxes
-    public final static AxisAlignedBB CABLE_CENTER_BOUNDINGBOX = new AxisAlignedBB(
+    public final static AABB CABLE_CENTER_BOUNDINGBOX = new AABB(
             CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX);
-    private final static EnumFacingMap<AxisAlignedBB> CABLE_SIDE_BOUNDINGBOXES = EnumFacingMap.forAllValues(
-            new AxisAlignedBB(CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX), // DOWN
-            new AxisAlignedBB(CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX), // UP
-            new AxisAlignedBB(CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MIN), // NORTH
-            new AxisAlignedBB(CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1), // SOUTH
-            new AxisAlignedBB(0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX), // WEST
-            new AxisAlignedBB(CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX) // EAST
+    private final static EnumFacingMap<AABB> CABLE_SIDE_BOUNDINGBOXES = EnumFacingMap.forAllValues(
+            new AABB(CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX), // DOWN
+            new AABB(CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX), // UP
+            new AABB(CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MIN), // NORTH
+            new AABB(CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1), // SOUTH
+            new AABB(0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX), // WEST
+            new AABB(CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX) // EAST
     );
 
     private final VoxelShapeComponentsFactory voxelShapeComponentsFactory = new VoxelShapeComponentsFactory(
@@ -135,7 +140,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     private boolean disableCollisionBox = false;
 
     public BlockCable(Properties properties) {
-        super(properties, TileMultipartTicking::new);
+        super(properties, BlockEntityMultipartTicking::new);
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
         if (MinecraftHelpers.isClientSide()) {
             IntegratedDynamics._instance.getIconProvider().registerIconHolderObject(this);
@@ -143,22 +148,28 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING, new BlockEntityMultipartTicking.Ticker<>());
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(WATERLOGGED);
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (stateIn.getValue(WATERLOGGED)) {
-            worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+            worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         }
-        NetworkHelpers.onElementProviderBlockNeighborChange((World) worldIn, currentPos, facingState.getBlock(), facing, facingPos);
+        NetworkHelpers.onElementProviderBlockNeighborChange((Level) worldIn, currentPos, facingState.getBlock(), facing, facingPos);
         return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
         return this.defaultBlockState().setValue(WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
     }
@@ -169,13 +180,13 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public boolean canPlaceLiquid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
+    public boolean canPlaceLiquid(BlockGetter worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
         return !state.getValue(BlockStateProperties.WATERLOGGED) && fluidIn == Fluids.WATER
                 && !CableHelpers.hasFacade(worldIn, pos);
     }
 
     @Override
-    public void onBlockExploded(BlockState state, World world, BlockPos blockPos, Explosion explosion) {
+    public void onBlockExploded(BlockState state, Level world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.setRemovingCable(true);
         CableHelpers.onCableRemoving(world, blockPos, true, false);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
@@ -185,17 +196,17 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
-        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.of(player))
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, CollisionContext.of(player))
                 .rayTrace(pos, player);
         if (rayTraceResult != null && rayTraceResult.getComponent().destroy(world, pos, player, false)) {
             return false;
         }
-        return rayTraceResult != null && super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+        return rayTraceResult != null && super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override
-    public void onRemove(BlockState state, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level world, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (newState.getBlock() != this) {
             Collection<Direction> connectedCables = null;
             if (!CableHelpers.isRemovingCable()) {
@@ -212,19 +223,19 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         /*
             Wrench: sneak + right-click anywhere on cable to remove cable
                     right-click on a cable side to disconnect on that side
                     sneak + right-click on part to remove that part
             No wrench: right-click to open GUI
          */
-        TileMultipartTicking tile = TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class).orElse(null);
+        BlockEntityMultipartTicking tile = BlockEntityHelpers.get(world, pos, BlockEntityMultipartTicking.class).orElse(null);
         if(tile != null) {
-            BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, ISelectionContext.of(player))
+            BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, CollisionContext.of(player))
                     .rayTrace(pos, player);
             if(rayTraceResult != null) {
-                ActionResultType actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, hand, rayTraceResult);
+                InteractionResult actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, hand, rayTraceResult);
                 if (actionResultType.consumesAction()) {
                     return actionResultType;
                 }
@@ -234,15 +245,15 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public void onPlace(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+    public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, world, pos, oldState, isMoving);
-        if (!world.isClientSide() && !state.hasTileEntity()) {
+        if (!world.isClientSide() && !state.hasBlockEntity()) {
             CableHelpers.onCableAdded(world, pos);
         }
     }
 
     @Override
-    public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         super.setPlacedBy(world, pos, state, placer, itemStack);
         if (!world.isClientSide()) {
             CableHelpers.onCableAddedByPlayer(world, pos, placer);
@@ -250,41 +261,35 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, net.minecraft.util.math.RayTraceResult target, IBlockReader world,
-                                  BlockPos blockPos, PlayerEntity player) {
-        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, blockPos, ISelectionContext.of(player))
+    public ItemStack getCloneItemStack(BlockState state, net.minecraft.world.phys.HitResult target, BlockGetter world,
+                                  BlockPos blockPos, Player player) {
+        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, blockPos, CollisionContext.of(player))
                 .rayTrace(blockPos, player);
         if(rayTraceResult != null) {
-            return rayTraceResult.getComponent().getPickBlock((World) world, blockPos);
+            return rayTraceResult.getComponent().getCloneItemStack((Level) world, blockPos);
         }
         return getCloneItemStack(world, blockPos, state);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(BlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, world, pos, neighborBlock, fromPos, isMoving);
         NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null, fromPos);
     }
 
     @Override
-    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
+    public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(state, world, pos, neighbor);
-        if (world instanceof World) {
-            NetworkHelpers.onElementProviderBlockNeighborChange((World) world, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
+        if (world instanceof Level) {
+            NetworkHelpers.onElementProviderBlockNeighborChange((Level) world, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
         }
     }
 
     @Override
-    public void observedNeighborChange(BlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
-        super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
-        NetworkHelpers.onElementProviderBlockNeighborChange(world, observerPos, changedBlock, null, changedBlockPos);
-    }
-
-    @Override
-    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand) {
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, Random rand) {
         super.tick(state, world, pos, rand);
-        TileHelpers.getSafeTile(world, pos, TileMultipartTicking.class)
+        BlockEntityHelpers.get(world, pos, BlockEntityMultipartTicking.class)
                 .ifPresent(tile -> {
                     for (Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : tile
                             .getPartContainer().getPartData().entrySet()) {
@@ -293,13 +298,13 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
                 });
     }
 
-    protected void updateTickPart(IPartType partType, World world, BlockPos pos, IPartState partState, Random random) {
+    protected void updateTickPart(IPartType partType, Level world, BlockPos pos, IPartState partState, Random random) {
         partType.updateTick(world, pos, partState, random);
     }
 
     /* --------------- Start shapes and rendering --------------- */
 
-    public AxisAlignedBB getCableBoundingBox(Direction side) {
+    public AABB getCableBoundingBox(Direction side) {
         if (side == null) {
             return CABLE_CENTER_BOUNDINGBOX;
         } else {
@@ -307,14 +312,14 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         }
     }
 
-    public VoxelShapeComponents getSelectedShape(BlockState blockState, IBlockReader world, BlockPos pos, ISelectionContext selectionContext) {
+    public VoxelShapeComponents getSelectedShape(BlockState blockState, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
         return voxelShapeComponentsFactory.createShape(blockState, world, pos, selectionContext);
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext selectionContext) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
         VoxelShapeComponents selectedShape = getSelectedShape(state, world, pos, selectionContext);
-        BlockRayTraceResultComponent rayTraceResult = selectedShape.rayTrace(pos, selectionContext.getEntity());
+        BlockRayTraceResultComponent rayTraceResult = selectedShape.rayTrace(pos, selectionContext instanceof EntityCollisionContext ? ((EntityCollisionContext) selectionContext).getEntity() : null);
         if (rayTraceResult != null) {
             return rayTraceResult.getComponent().getShape(state, world, pos, selectionContext);
         }
@@ -322,9 +327,9 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
+    public VoxelShape getCollisionShape(BlockState p_220071_1_, BlockGetter p_220071_2_, BlockPos p_220071_3_, CollisionContext p_220071_4_) {
         if(disableCollisionBox) {
-            return VoxelShapes.empty();
+            return Shapes.empty();
         }
 
         // Combine all VoxelShapes using IBooleanFunction.OR,
@@ -333,40 +338,45 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         VoxelShapeComponents voxelShapeComponents = (VoxelShapeComponents) super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
         Iterator<VoxelShape> it = voxelShapeComponents.iterator();
         if (!it.hasNext()) {
-            return VoxelShapes.empty();
+            return Shapes.empty();
         }
         VoxelShape shape = it.next();
         while (it.hasNext()) {
-            shape = VoxelShapes.join(shape, it.next(), IBooleanFunction.OR);
+            shape = Shapes.join(shape, it.next(), BooleanOp.OR);
         }
         return shape.optimize();
     }
 
     @Override
-    public int getLightBlock(BlockState blockState, IBlockReader world, BlockPos pos) {
+    public int getLightBlock(BlockState blockState, BlockGetter world, BlockPos pos) {
         return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos, null) ? 255 : 0;
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState blockState) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState blockState) {
+        return RenderShape.MODEL;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean addHitEffects(BlockState blockState, World world, RayTraceResult target, ParticleManager particleManager) {
-        BlockPos blockPos = ((BlockRayTraceResult) target).getBlockPos();
-        if(CableHelpers.hasFacade(world, blockPos)) {
-            CableHelpers.getFacade(world, blockPos)
-                    .ifPresent(facadeState -> RenderHelpers.addBlockHitEffects(particleManager, (ClientWorld) world, facadeState, blockPos, ((BlockRayTraceResult) target).getDirection()));
-            return true;
-        } else {
-            return super.addHitEffects(blockState, world, target, particleManager);
-        }
+    public void initializeClient(Consumer<IBlockRenderProperties> consumer) {
+        consumer.accept(new IBlockRenderProperties() {
+            @Override
+            public boolean addHitEffects(BlockState blockState, Level world, HitResult target, ParticleEngine particleManager) {
+                BlockPos blockPos = ((BlockHitResult) target).getBlockPos();
+                if(CableHelpers.hasFacade(world, blockPos)) {
+                    CableHelpers.getFacade(world, blockPos)
+                            .ifPresent(facadeState -> RenderHelpers.addBlockHitEffects(particleManager, (ClientLevel) world, facadeState, blockPos, ((BlockHitResult) target).getDirection()));
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
     }
 
     @Override
-    public boolean shouldDisplayFluidOverlay(BlockState state, IBlockDisplayReader world, BlockPos pos, FluidState fluidState) {
+    public boolean shouldDisplayFluidOverlay(BlockState state, BlockAndTintGetter world, BlockPos pos, FluidState fluidState) {
         return CableHelpers.getFacade(world, pos).isPresent();
     }
 
@@ -379,41 +389,41 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
-    public boolean canConnectRedstone(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
+    public boolean canConnectRedstone(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
         if(side == null) {
             for(Direction dummySide : Direction.values()) {
-                IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, dummySide, DynamicRedstoneConfig.CAPABILITY).orElse(null);
+                IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(world, pos, dummySide, DynamicRedstoneConfig.CAPABILITY).orElse(null);
                 if(dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput())) {
                     return true;
                 }
             }
             return false;
         }
-        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
+        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
         return dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput());
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getDirectSignal(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
-        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
+    public int getDirectSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
+        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
         return dynamicRedstone != null && dynamicRedstone.isDirect() ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getSignal(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
-        IDynamicRedstone dynamicRedstone = TileHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
+    public int getSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
+        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(world, pos, side.getOpposite(), DynamicRedstoneConfig.CAPABILITY).orElse(null);
         return dynamicRedstone != null ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
     /* --------------- Start IDynamicLight --------------- */
 
     @Override
-    public int getLightValue(BlockState blockState, IBlockReader world, BlockPos pos) {
+    public int getLightEmission(BlockState blockState, BlockGetter world, BlockPos pos) {
         int light = 0;
         for(Direction side : Direction.values()) {
-            IDynamicLight dynamicLight = TileHelpers.getCapability(world, pos, side, DynamicLightConfig.CAPABILITY).orElse(null);
+            IDynamicLight dynamicLight = BlockEntityHelpers.getCapability(world, pos, side, DynamicLightConfig.CAPABILITY).orElse(null);
             if (dynamicLight != null) {
                 light = Math.max(light, dynamicLight.getLightLevel());
             }
@@ -430,7 +440,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public IBakedModel createDynamicModel(ModelBakeEvent event) {
+    public BakedModel createDynamicModel(ModelBakeEvent event) {
         CableModel model = new CableModel();
         event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=false"), model);
         event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=true"), model);
@@ -438,16 +448,10 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         return model;
     }
 
-    @Nullable
-    @Override
-    public TileEntity newBlockEntity(IBlockReader p_196283_1_) {
-        return null; // TODO: rm
-    }
-
     @OnlyIn(Dist.CLIENT)
-    public static class BlockColor implements IBlockColor {
+    public static class BlockColor implements net.minecraft.client.color.block.BlockColor {
         @Override
-        public int getColor(BlockState blockState, @Nullable IBlockDisplayReader world, @Nullable BlockPos blockPos, int color) {
+        public int getColor(BlockState blockState, @Nullable BlockAndTintGetter world, @Nullable BlockPos blockPos, int color) {
             // Only modify color if we have a facade
             return world == null || blockPos == null ?
                 -1 : CableHelpers.getFacade(world, blockPos)

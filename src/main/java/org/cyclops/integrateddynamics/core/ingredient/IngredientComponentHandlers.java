@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.ingredient;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -120,10 +120,10 @@ public class IngredientComponentHandlers {
             }
 
             @Override
-            public ITextComponent toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
+            public Component toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
                 return getValueType().toCompactString(ingredientValue)
                         .append(" ")
-                        .append(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
+                        .append(new TranslatableComponent(L10NValues.GENERAL_ENERGY_UNIT));
             }
         });
     }

@@ -1,22 +1,20 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 
 import java.util.List;
-
-import net.minecraft.item.Item.Properties;
 
 /**
  * @author rubensworks
@@ -28,22 +26,22 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(itemStack, world, list, flag);
         L10NHelpers.addStatusInfo(list, isActivated(itemStack), getDescriptionId() + ".info.auto_supply");
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        return new ActionResult<>(ActionResultType.PASS, toggleActivation(player.getItemInHand(hand), world, player));
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+        return new InteractionResultHolder<>(InteractionResult.PASS, toggleActivation(player.getItemInHand(hand), world, player));
     }
 
-    public static void autofill(IEnergyStorage source, World world, Entity entity) {
-        if(entity instanceof PlayerEntity && !world.isClientSide()) {
+    public static void autofill(IEnergyStorage source, Level world, Entity entity) {
+        if(entity instanceof Player && !world.isClientSide()) {
             int tickAmount = source.extractEnergy(Integer.MAX_VALUE, true);
             if(tickAmount > 0) {
-                PlayerEntity player = (PlayerEntity) entity;
-                for (Hand hand : Hand.values()) {
+                Player player = (Player) entity;
+                for (InteractionHand hand : InteractionHand.values()) {
                     ItemStack held = player.getItemInHand(hand);
                     ItemStack filled = tryFillContainerForPlayer(source, held, tickAmount, player);
                     if (!filled.isEmpty()) {
@@ -54,7 +52,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
         }
     }
 
-    public static ItemStack tryFillContainerForPlayer(IEnergyStorage source, ItemStack held, int tickAmount, PlayerEntity player) {
+    public static ItemStack tryFillContainerForPlayer(IEnergyStorage source, ItemStack held, int tickAmount, Player player) {
         return held.getCapability(CapabilityEnergy.ENERGY, null)
                 .map(target -> {
                     int moved = target.receiveEnergy(source.extractEnergy(target.receiveEnergy(tickAmount, true), false), false);
@@ -66,7 +64,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, World world, Entity entity, int itemSlot, boolean par5) {
+    public void inventoryTick(ItemStack itemStack, Level world, Entity entity, int itemSlot, boolean par5) {
         if (isActivated(itemStack)) {
             itemStack.getCapability(CapabilityEnergy.ENERGY, null)
                     .ifPresent(energyStorage -> autofill(energyStorage, world, entity));
@@ -74,7 +72,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
         super.inventoryTick(itemStack, world, entity, itemSlot, par5);
     }
 
-    public ItemStack toggleActivation(ItemStack itemStack, World world, PlayerEntity player) {
+    public ItemStack toggleActivation(ItemStack itemStack, Level world, Player player) {
         if(player.isSecondaryUseActive()) {
             if(!world.isClientSide()) {
                 ItemStack activated = itemStack.copy();

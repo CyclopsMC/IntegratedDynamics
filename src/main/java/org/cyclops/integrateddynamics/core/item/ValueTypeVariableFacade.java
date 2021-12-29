@@ -1,19 +1,19 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -31,8 +31,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
-
-import org.cyclops.integrateddynamics.api.item.IVariableFacade.IValidator;
 
 /**
  * Variable facade for variables determined by a raw value.
@@ -58,13 +56,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
         this.value = value;
     }
 
-    public ValueTypeVariableFacade(boolean generateId, IValueType<V> valueType, INBT value) {
+    public ValueTypeVariableFacade(boolean generateId, IValueType<V> valueType, Tag value) {
         super(generateId);
         this.valueType = valueType;
         this.value = ValueHelpers.deserializeRaw(valueType, value);
     }
 
-    public ValueTypeVariableFacade(int id, IValueType<V> valueType, INBT value) {
+    public ValueTypeVariableFacade(int id, IValueType<V> valueType, Tag value) {
         super(id);
         this.valueType = valueType;
         this.value = ValueHelpers.deserializeRaw(valueType, value);
@@ -89,13 +87,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
-            validator.addError(new TranslationTextComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
             // Check expected aspect type and operator output type
             if (!ValueHelpers.correspondsTo(getValueType(), containingValueType)) {
-                validator.addError(new TranslationTextComponent(L10NValues.ASPECT_ERROR_INVALIDTYPE,
-                        new TranslationTextComponent(containingValueType.getTranslationKey()),
-                        new TranslationTextComponent(getValueType().getTranslationKey())));
+                validator.addError(new TranslatableComponent(L10NValues.ASPECT_ERROR_INVALIDTYPE,
+                        new TranslatableComponent(containingValueType.getTranslationKey()),
+                        new TranslatableComponent(getValueType().getTranslationKey())));
             }
         }
     }
@@ -107,11 +105,11 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<ITextComponent> list, World world) {
+    public void appendHoverText(List<Component> list, Level world) {
         if(isValid()) {
             V value = getValue();
             getValueType().loadTooltip(list, false, value);
-            list.add(new TranslationTextComponent(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
+            list.add(new TranslatableComponent(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
         }
         super.appendHoverText(list, world);
     }
@@ -120,7 +118,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     @Override
     public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData) {
         if(isValid()) {
-            IBakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(getValueType());
+            BakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(getValueType());
             if(bakedModel != null) {
                 quads.addAll(bakedModel.getQuads(null, null, random, modelData));
             }
@@ -129,7 +127,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
 
     @Nullable
     @Override
-    public IBakedModel getVariableItemOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+    public BakedModel getVariableItemOverrideModel(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
         if(isValid()) {
             return getValueType().getVariableItemOverrideModel(getValue(), model, stack, world, livingEntity);
         }
@@ -138,7 +136,7 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderISTER(ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+    public void renderISTER(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         if(isValid()) {
             getValueType().renderISTER(getValue(), stack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
         }

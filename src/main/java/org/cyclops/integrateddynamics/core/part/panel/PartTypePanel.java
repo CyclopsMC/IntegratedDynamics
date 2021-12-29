@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.panel;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;

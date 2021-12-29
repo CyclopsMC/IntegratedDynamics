@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 
@@ -13,10 +13,10 @@ import javax.annotation.Nullable;
 public abstract class ValueObjectTypeBase<V extends IValue> extends ValueTypeBase<V> {
 
     public ValueObjectTypeBase(String typeName, @Nullable Class<V> valueClass) {
-        this(typeName, Helpers.RGBToInt(243, 243, 243), TextFormatting.GRAY, valueClass);
+        this(typeName, Helpers.RGBToInt(243, 243, 243), ChatFormatting.GRAY, valueClass);
     }
 
-    public ValueObjectTypeBase(String typeName, int color, TextFormatting colorFormat, @Nullable Class<V> valueClass) {
+    public ValueObjectTypeBase(String typeName, int color, ChatFormatting colorFormat, @Nullable Class<V> valueClass) {
         super(typeName, color, colorFormat, valueClass);
     }
 

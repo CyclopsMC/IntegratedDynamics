@@ -3,9 +3,9 @@ package org.cyclops.integrateddynamics.core.recipe.handler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  */
 public class RecipeHandlerDryingBasin extends RecipeHandlerRecipeType<IInventoryFluid, RecipeDryingBasin> {
 
-    public RecipeHandlerDryingBasin(Supplier<World> worldSupplier) {
+    public RecipeHandlerDryingBasin(Supplier<Level> worldSupplier) {
         super(worldSupplier,
                 RegistryEntries.RECIPETYPE_DRYING_BASIN,
                 Sets.newHashSet(IngredientComponent.ITEMSTACK, IngredientComponent.FLUIDSTACK),

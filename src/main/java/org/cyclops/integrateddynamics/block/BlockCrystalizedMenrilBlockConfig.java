@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -20,9 +19,7 @@ public class BlockCrystalizedMenrilBlockConfig extends BlockConfig {
                 "crystalized_menril_block",
                 eConfig -> new Block(Block.Properties.of(Material.CLAY)
                         .sound(SoundType.SNOW)
-                        .strength(1.5F)
-                        .harvestLevel(0)
-                        .harvestTool(ToolType.PICKAXE)),
+                        .strength(1.5F)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

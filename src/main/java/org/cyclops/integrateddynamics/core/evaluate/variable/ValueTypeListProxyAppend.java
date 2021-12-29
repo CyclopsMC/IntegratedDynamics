@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -49,14 +49,14 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyAppend<IValueType<IValue>, IValue> value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected void serializeNbt(ValueTypeListProxyAppend<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             tag.putString("valueType", value.value.getType().getUniqueName().toString());
             tag.put("value", ValueHelpers.serializeRaw(value.value));
             tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
         }
 
         @Override
-        protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
             IValue value = ValueHelpers.deserializeRaw(valueType, tag.get("value"));
             IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.get("sublist"));

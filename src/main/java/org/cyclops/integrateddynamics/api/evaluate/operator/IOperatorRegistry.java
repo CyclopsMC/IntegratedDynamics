@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -68,7 +68,7 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
      * @param value The operator to serialize.
      * @return The serialized operator value.
      */
-    public INBT serialize(IOperator value);
+    public Tag serialize(IOperator value);
 
     /**
      * Deserialize the given operator value.
@@ -76,6 +76,6 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
      * @return The deserialized operator.
      * @throws EvaluationException If an error occurs while deserializing.
      */
-    public IOperator deserialize(INBT value) throws EvaluationException;
+    public IOperator deserialize(Tag value) throws EvaluationException;
 
 }

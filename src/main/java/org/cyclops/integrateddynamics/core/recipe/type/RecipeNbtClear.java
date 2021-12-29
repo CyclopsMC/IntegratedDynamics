@@ -1,20 +1,20 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Crafting recipe to clear item NBT data.
  * @author rubensworks
  */
-public class RecipeNbtClear extends SpecialRecipe {
+public class RecipeNbtClear extends CustomRecipe {
 
     private final Ingredient inputIngredient;
 
@@ -28,12 +28,12 @@ public class RecipeNbtClear extends SpecialRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World worldIn) {
+    public boolean matches(CraftingContainer inv, Level worldIn) {
         return !assemble(inv).isEmpty();
     }
 
     @Override
-    public ItemStack assemble(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv) {
         ItemStack ret = ItemStack.EMPTY;
         for(int j = 0; j < inv.getContainerSize(); j++) {
             ItemStack element = inv.getItem(j);
@@ -63,7 +63,7 @@ public class RecipeNbtClear extends SpecialRecipe {
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
         return NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
     }
 
@@ -78,7 +78,7 @@ public class RecipeNbtClear extends SpecialRecipe {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return RegistryEntries.RECIPESERIALIZER_NBT_CLEAR;
     }
 }

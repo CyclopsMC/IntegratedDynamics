@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
@@ -19,13 +19,13 @@ import org.cyclops.integrateddynamics.core.network.diagnostics.RawNetworkData;
 public class NetworkDiagnosticsNetworkPacket extends PacketCodec {
 
     @CodecField
-    private CompoundNBT networkData;
+    private CompoundTag networkData;
 
     public NetworkDiagnosticsNetworkPacket() {
 
     }
 
-    public NetworkDiagnosticsNetworkPacket(CompoundNBT networkData) {
+    public NetworkDiagnosticsNetworkPacket(CompoundTag networkData) {
 		this.networkData = networkData;
     }
 
@@ -36,7 +36,7 @@ public class NetworkDiagnosticsNetworkPacket extends PacketCodec {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void actionClient(World world, PlayerEntity player) {
+	public void actionClient(Level world, Player player) {
 		RawNetworkData networkData = RawNetworkData.fromNbt(this.networkData);
 		if (networkData.getParts().isEmpty()) {
 			// Force observers to be cleared when no parts are present.
@@ -46,7 +46,7 @@ public class NetworkDiagnosticsNetworkPacket extends PacketCodec {
 	}
 
 	@Override
-	public void actionServer(World world, ServerPlayerEntity player) {
+	public void actionServer(Level world, ServerPlayer player) {
 
 	}
 	

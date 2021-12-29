@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -53,8 +53,8 @@ public class ValueTypeListProxyConcat<T extends IValueType<V>, V extends IValue>
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyConcat<IValueType<IValue>, IValue> value, CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            ListNBT list = new ListNBT();
+        protected void serializeNbt(ValueTypeListProxyConcat<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            ListTag list = new ListTag();
             for (IValueTypeListProxy<IValueType<IValue>, IValue> listProxy : value.lists) {
                 list.add(ValueTypeListProxyFactories.REGISTRY.serialize(listProxy));
             }
@@ -62,8 +62,8 @@ public class ValueTypeListProxyConcat<T extends IValueType<V>, V extends IValue>
         }
 
         @Override
-        protected ValueTypeListProxyConcat<IValueType<IValue>, IValue> deserializeNbt(CompoundNBT tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            ListNBT list = (ListNBT) tag.get("sublists");
+        protected ValueTypeListProxyConcat<IValueType<IValue>, IValue> deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            ListTag list = (ListTag) tag.get("sublists");
             IValueTypeListProxy<IValueType<IValue>, IValue>[] listProxies = new IValueTypeListProxy[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 listProxies[i] = ValueTypeListProxyFactories.REGISTRY.deserialize(list.get(i));

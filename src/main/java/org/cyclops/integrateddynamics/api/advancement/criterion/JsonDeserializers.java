@@ -3,8 +3,8 @@ package org.cyclops.integrateddynamics.api.advancement.criterion;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -56,9 +56,9 @@ public class JsonDeserializers {
         JsonElement valueTypeElement = jsonobject.get("valuetype");
         IValueType valueType = null;
         if (valueTypeElement != null && !valueTypeElement.isJsonNull()) {
-            valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(JSONUtils.getAsString(jsonobject, "valuetype")));
+            valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(GsonHelper.getAsString(jsonobject, "valuetype")));
             if (valueType == null) {
-                throw new JsonSyntaxException("Unknown value type '" + JSONUtils.getAsString(jsonobject, "valuetype") + "', valid types are: "
+                throw new JsonSyntaxException("Unknown value type '" + GsonHelper.getAsString(jsonobject, "valuetype") + "', valid types are: "
                         + ValueTypes.REGISTRY.getValueTypes().stream().map(IValueType::getUniqueName).collect(Collectors.toList()));
             }
         }

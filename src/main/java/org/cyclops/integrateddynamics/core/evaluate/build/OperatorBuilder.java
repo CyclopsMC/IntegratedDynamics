@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.build;
 
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -14,8 +14,6 @@ import org.cyclops.integrateddynamics.core.helper.Helpers;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase.IFunction;
 
 /**
  * Immutable builder for operators.
@@ -284,7 +282,7 @@ public class OperatorBuilder<O> {
         }
 
         @Override
-        public IFormattableTextComponent validateTypes(IValueType[] input) {
+        public MutableComponent validateTypes(IValueType[] input) {
             return typeValidator != null
                     ? typeValidator.validateTypes(this, input)
                     : super.validateTypes(input);
@@ -305,7 +303,7 @@ public class OperatorBuilder<O> {
          * @param input The ordered input value types.
          * @return An error or null if valid.
          */
-        public IFormattableTextComponent validateTypes(OperatorBase operator, IValueType[] input);
+        public MutableComponent validateTypes(OperatorBase operator, IValueType[] input);
 
     }
 

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
@@ -20,7 +20,7 @@ public abstract class CableDefault implements ICable {
     protected abstract EnumFacingMap<Boolean> getConnected();
     protected abstract void setChanged();
     protected abstract void sendUpdate();
-    protected abstract World getLevel();
+    protected abstract Level getLevel();
     protected abstract BlockPos getPos();
 
     protected boolean isForceDisconnected(Direction side) {
@@ -36,7 +36,7 @@ public abstract class CableDefault implements ICable {
 
     @Override
     public void updateConnections() {
-        World world = getLevel();
+        Level world = getLevel();
         for (Direction side : Direction.values()) {
             boolean cableConnected = CableHelpers.canCableConnectTo(world, getPos(), side, this);
             getConnected().put(side, cableConnected);

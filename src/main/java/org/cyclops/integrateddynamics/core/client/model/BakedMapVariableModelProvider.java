@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import lombok.Data;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.resources.model.BakedModel;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Map;
@@ -12,6 +12,6 @@ import java.util.Map;
  * @author rubensworks
  */
 @Data
-public class BakedMapVariableModelProvider<T> implements IVariableModelProvider.IBakedModelProvider {
-    private final Map<T, IBakedModel> bakedModels;
+public class BakedMapVariableModelProvider<T> implements IVariableModelProvider.BakedModelProvider {
+    private final Map<T, BakedModel> bakedModels;
 }

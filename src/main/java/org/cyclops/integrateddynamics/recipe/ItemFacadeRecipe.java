@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.recipe;
 
 import lombok.Getter;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * @author rubensworks
  *
  */
-public class ItemFacadeRecipe extends SpecialRecipe {
+public class ItemFacadeRecipe extends CustomRecipe {
 
 	@Getter(lazy = true)
 	private final NonNullList<Ingredient> ingredients =
@@ -32,7 +32,7 @@ public class ItemFacadeRecipe extends SpecialRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingInventory grid, World world) {
+	public boolean matches(CraftingContainer grid, Level world) {
 		return !assemble(grid).isEmpty();
 	}
 	
@@ -42,7 +42,7 @@ public class ItemFacadeRecipe extends SpecialRecipe {
 	}
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inventory) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inventory) {
 		NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
 
         for (int i = 0; i < aitemstack.size(); ++i) {
@@ -54,7 +54,7 @@ public class ItemFacadeRecipe extends SpecialRecipe {
     }
 
     @Override
-	public ItemStack assemble(CraftingInventory grid) {
+	public ItemStack assemble(CraftingContainer grid) {
 		ItemStack output = getResultItem().copy();
 
 		int facades = 0;
@@ -92,14 +92,14 @@ public class ItemFacadeRecipe extends SpecialRecipe {
 	}
 
 	@Override
-	public IRecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<?> getSerializer() {
 		return RegistryEntries.RECIPESERIALIZER_FACADE;
 	}
 
 	public static class BlocksIngredient extends Ingredient {
 
 		protected BlocksIngredient() {
-			super(ForgeRegistries.BLOCKS.getValues().stream().map(ItemStack::new).map(Ingredient.SingleItemList::new));
+			super(ForgeRegistries.BLOCKS.getValues().stream().map(ItemStack::new).map(Ingredient.ItemValue::new));
 		}
 
 		@Override

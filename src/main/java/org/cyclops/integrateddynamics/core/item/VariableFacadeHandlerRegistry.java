@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.core.item;
 
 import com.google.common.collect.Maps;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
@@ -34,9 +34,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import org.cyclops.integrateddynamics.api.item.IVariableFacade.IValidator;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry.IVariableFacadeFactory;
 
 /**
  * The variable facade handler registry.
@@ -74,12 +71,12 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public IVariableFacade handle(CompoundNBT tagCompound) {
+    public IVariableFacade handle(CompoundTag tagCompound) {
         if(tagCompound == null) {
             return DUMMY_FACADE;
         }
-        if(!tagCompound.contains("_type", Constants.NBT.TAG_STRING)
-                || !tagCompound.contains("_id", Constants.NBT.TAG_INT)) {
+        if(!tagCompound.contains("_type", Tag.TAG_STRING)
+                || !tagCompound.contains("_id", Tag.TAG_INT)) {
             return DUMMY_FACADE;
         }
         String type = tagCompound.getString("_type");
@@ -103,7 +100,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public <F extends IVariableFacade> void write(CompoundNBT tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
+    public <F extends IVariableFacade> void write(CompoundTag tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
         tagCompound.putString("_type", handler.getUniqueName().toString());
         tagCompound.putInt("_id", variableFacade.getId());
         handler.setVariableFacade(tagCompound, variableFacade);
@@ -115,18 +112,18 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
             return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
-        CompoundNBT tag = itemStack.getOrCreateTag();
+        CompoundTag tag = itemStack.getOrCreateTag();
         this.write(tag, variableFacade, variableFacadeHandler);
         return itemStack;
     }
 
     @Override
-    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable Player player, @Nullable BlockState blockState) {
         if(itemStack.isEmpty()) {
             return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
-        CompoundNBT tag = itemStack.getOrCreateTag();
+        CompoundTag tag = itemStack.getOrCreateTag();
         F variableFacade = writeVariableFacade(generateId, itemStack, variableFacadeHandler, variableFacadeFactory);
         if (player != null) {
             MinecraftForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade, blockState));
@@ -140,7 +137,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         if(itemStack.isEmpty()) {
             return null;
         }
-        CompoundNBT tag = itemStack.getOrCreateTag();
+        CompoundTag tag = itemStack.getOrCreateTag();
         IVariableFacade previousVariableFacade = this.handle(tag);
         F variableFacade;
         if(generateId && previousVariableFacade.getId() > -1) {
@@ -196,7 +193,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         @Override
         public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
             if (!ValueHelpers.correspondsTo(containingValueType, ValueTypes.BOOLEAN)) {
-                validator.addError(new TranslationTextComponent(unlocalizedError));
+                validator.addError(new TranslatableComponent(unlocalizedError));
             }
         }
 
@@ -206,7 +203,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void appendHoverText(List<ITextComponent> list, World world) {
+        public void appendHoverText(List<Component> list, Level world) {
 
         }
 

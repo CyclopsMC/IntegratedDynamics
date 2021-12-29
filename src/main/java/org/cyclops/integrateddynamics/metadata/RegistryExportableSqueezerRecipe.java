@@ -2,10 +2,10 @@ package org.cyclops.integrateddynamics.metadata;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.NonNullList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.metadata.IRegistryExportable;
 import org.cyclops.cyclopscore.metadata.RegistryExportableRecipeAbstract;
@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 /**
  * Squeezer recipe exporter.
  */
-public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAbstract<IRecipeType<RecipeSqueezer>, RecipeSqueezer, IInventory> {
+public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAbstract<RecipeType<RecipeSqueezer>, RecipeSqueezer, Container> {
 
     protected RegistryExportableSqueezerRecipe() {
         super(() -> RegistryEntries.RECIPETYPE_SQUEEZER);

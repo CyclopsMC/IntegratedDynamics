@@ -2,12 +2,12 @@ package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -28,8 +28,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 import java.util.Random;
-
-import org.cyclops.integrateddynamics.api.item.IVariableFacade.IValidator;
 
 /**
  * Variable facade for variables determined for operators based on other variables in the network determined by their id.
@@ -105,7 +103,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     @Override
     public void validate(IPartNetwork network, final IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
-            validator.addError(new TranslationTextComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
             IValueType[] valueTypes = new IValueType[variableIds.length];
             IVariable[] variables = new IVariable[variableIds.length];
@@ -114,24 +112,24 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                 int variableId = variableIds[i];
                 // Check valid id
                 if (variableId < 0) {
-                    validator.addError(new TranslationTextComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+                    validator.addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
                     checkFurther = false;
                 } else if (!network.hasVariableFacade(variableId)) { // Check id present in network
-                    validator.addError(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_VARIABLENOTINNETWORK,
+                    validator.addError(new TranslatableComponent(L10NValues.OPERATOR_ERROR_VARIABLENOTINNETWORK,
                             Integer.toString(variableId)));
                     checkFurther = false;
                 } else {
                     // Check variable represented by this id is valid.
                     IVariableFacade variableFacade = network.getVariableFacade(variableId);
                     if(variableFacade == this) {
-                        validator.addError(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CYCLICREFERENCE,
+                        validator.addError(new TranslatableComponent(L10NValues.OPERATOR_ERROR_CYCLICREFERENCE,
                                 Integer.toString(variableId)));
                         checkFurther = false;
                     } else if (variableFacade != null) {
                         IValueType valueType = getOperator().getInputTypes()[i];
                         final Wrapper<Boolean> isValid = new Wrapper<>(true);
                         if (validatingVariables[i]) {
-                            validator.addError(new TranslationTextComponent(
+                            validator.addError(new TranslatableComponent(
                                     L10NValues.OPERATOR_ERROR_CYCLICREFERENCE, getId()));
                             checkFurther = false;
                             break;
@@ -139,7 +137,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                         validatingVariables[i] = true;
                         variableFacade.validate(network, new IValidator() {
                             @Override
-                            public void addError(IFormattableTextComponent error) {
+                            public void addError(MutableComponent error) {
                                 validator.addError(error);
                                 isValid.set(false);
                             }
@@ -160,16 +158,16 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
             if(checkFurther) {
                 // Check operator validity
                 IOperator op = getOperator();
-                IFormattableTextComponent error = op.validateTypes(valueTypes);
+                MutableComponent error = op.validateTypes(valueTypes);
                 if (error != null) {
                     validator.addError(error);
                 }
                 // Check expected aspect type and operator output type
                 IValueType outputType = op.getConditionalOutputType(variables);
                 if (!ValueHelpers.correspondsTo(outputType, containingValueType)) {
-                    validator.addError(new TranslationTextComponent(L10NValues.ASPECT_ERROR_INVALIDTYPE,
-                            new TranslationTextComponent(containingValueType.getTranslationKey()),
-                            new TranslationTextComponent(outputType.getTranslationKey())));
+                    validator.addError(new TranslatableComponent(L10NValues.ASPECT_ERROR_INVALIDTYPE,
+                            new TranslatableComponent(containingValueType.getTranslationKey()),
+                            new TranslatableComponent(outputType.getTranslationKey())));
                 }
             }
         }
@@ -184,7 +182,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<ITextComponent> list, World world) {
+    public void appendHoverText(List<Component> list, Level world) {
         if(isValid()) {
             getOperator().loadTooltip(list, false);
             StringBuilder sb = new StringBuilder();
@@ -198,7 +196,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                 first = false;
             }
             sb.append("}");
-            list.add(new TranslationTextComponent(L10NValues.OPERATOR_TOOLTIP_VARIABLEIDS, sb.toString()));
+            list.add(new TranslatableComponent(L10NValues.OPERATOR_TOOLTIP_VARIABLEIDS, sb.toString()));
         }
         super.appendHoverText(list, world);
     }
@@ -208,7 +206,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData) {
         if(isValid()) {
             IValueType valueType = getOperator().getOutputType();
-            IBakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType);
+            BakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType);
             if(bakedModel != null) {
                 quads.addAll(bakedModel.getQuads(null, null, random, modelData));
             }

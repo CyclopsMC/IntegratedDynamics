@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
@@ -20,12 +20,12 @@ public class ContainerMechanicalDryingBasinConfig extends GuiConfig<ContainerMec
     public ContainerMechanicalDryingBasinConfig() {
         super(IntegratedDynamics._instance,
                 "mechanical_drying_basin",
-                eConfig -> new ContainerType<>(ContainerMechanicalDryingBasin::new));
+                eConfig -> new MenuType<>(ContainerMechanicalDryingBasin::new));
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & IHasContainer<ContainerMechanicalDryingBasin>> ScreenManager.IScreenFactory<ContainerMechanicalDryingBasin, U> getScreenFactory() {
+    public <U extends Screen & MenuAccess<ContainerMechanicalDryingBasin>> MenuScreens.ScreenConstructor<ContainerMechanicalDryingBasin, U> getScreenFactory() {
         return new ScreenFactorySafe<>(ContainerScreenMechanicalDryingBasin::new);
     }
 

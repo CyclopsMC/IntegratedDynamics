@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
@@ -22,7 +22,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends IGuiInputElement<S, G, C> {
+public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu> extends IGuiInputElement<S, G, C> {
 
     /**
      * @return The element type.
@@ -58,11 +58,11 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Abstrac
      * @param y The Y position for this slot.
      * @return The created slot.
      */
-    default Slot createSlot(IInventory temporaryInputSlots, int slotId, int x, int y) {
+    default Slot createSlot(Container temporaryInputSlots, int slotId, int x, int y) {
         return createSlotDefault(this, temporaryInputSlots, slotId, x, y);
     }
 
-    public static Slot createSlotDefault(ILogicProgrammerElement logicProgrammerElement, IInventory temporaryInputSlots, int slotId, int x, int y) {
+    public static Slot createSlotDefault(ILogicProgrammerElement logicProgrammerElement, Container temporaryInputSlots, int slotId, int x, int y) {
         SlotExtended slot = new SlotExtended(temporaryInputSlots, slotId, x, y) {
             @Override
             public boolean mayPlace(ItemStack itemStack) {
@@ -91,7 +91,7 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Abstrac
      * @param itemStack The stack to write to.
      * @return The resulting itemstack.
      */
-    public ItemStack writeElement(PlayerEntity player, ItemStack itemStack);
+    public ItemStack writeElement(Player player, ItemStack itemStack);
 
     /**
      * If this element in its current state can be deactivated because of another item being inserted into the
@@ -123,7 +123,7 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Abstrac
      * @param player The clicking player.
      * @return If further processing of the clicking should stop.
      */
-    boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player);
+    boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, Player player);
 
     /**
      * @return The max stacksize.

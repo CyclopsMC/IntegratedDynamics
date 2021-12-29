@@ -2,20 +2,21 @@ package org.cyclops.integrateddynamics.network;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.TileHelpers;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
-import org.cyclops.integrateddynamics.tileentity.TileEnergyBattery;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +30,8 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     private final DimPos pos;
 
-    protected Optional<TileEnergyBattery> getTile() {
-        return TileHelpers.getSafeTile(getPos(), TileEnergyBattery.class);
+    protected Optional<BlockEntityEnergyBattery> getTile() {
+        return BlockEntityHelpers.get(getPos(), BlockEntityEnergyBattery.class);
     }
 
     @Override
@@ -89,7 +90,8 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void onNeighborBlockChange(INetwork network, IBlockReader world, Block neighbourBlock, BlockPos neighbourPos) {
+    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, Block neighbourBlock,
+                                      BlockPos neighbourBlockPos) {
 
     }
 

@@ -1,23 +1,22 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Sets;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Setter;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -26,7 +25,6 @@ import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicP
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeDropdownList;
@@ -69,9 +67,9 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     }
 
     @Override
-    public ITextComponent validate() {
+    public Component validate() {
         if (selectedOperator == null) {
-            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, getInnerGuiElement().getInputString());
+            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, getInnerGuiElement().getInputString());
         }
         return null;
     }
@@ -113,7 +111,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         return new RenderPatternOperator(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
-    public static class RenderPatternOperator<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends ValueTypeOperatorLPElementRenderPattern {
+    public static class RenderPatternOperator<S extends ISubGuiBox, G extends AbstractContainerScreen, C extends AbstractContainerMenu> extends ValueTypeOperatorLPElementRenderPattern {
 
         private final ValueTypeOperatorLPElement element;
 
@@ -123,12 +121,12 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         }
 
         @Override
-        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             IOperator operator = element.selectedOperator;
             if (operator != null) {
                 int offsetY = 0;
-                for (ITextComponent line : ValueTypeOperator.getSignatureLines(operator, true)) {
+                for (Component line : ValueTypeOperator.getSignatureLines(operator, true)) {
                     // MCP: drawString
                     fontRenderer.drawShadow(matrixStack, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
                     offsetY += fontRenderer.lineHeight;
@@ -151,12 +149,12 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         }
 
         @Override
-        public IFormattableTextComponent getDisplayString() {
-            return new StringTextComponent(getMatchString());
+        public MutableComponent getDisplayString() {
+            return new TextComponent(getMatchString());
         }
 
         @Override
-        public List<IFormattableTextComponent> getTooltip() {
+        public List<MutableComponent> getTooltip() {
             return ValueTypeOperator.getSignatureLines(operator, true);
         }
 

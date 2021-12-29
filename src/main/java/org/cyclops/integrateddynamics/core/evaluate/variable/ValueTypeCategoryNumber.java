@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -27,7 +27,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
     private static final Map<IValueTypeNumber, Integer> INVERTED_ELEMENTS = Collections.unmodifiableMap(constructInvertedArray(ELEMENTS));
 
     public ValueTypeCategoryNumber() {
-        super("number", Helpers.RGBToInt(243, 245, 4), TextFormatting.GOLD,
+        super("number", Helpers.RGBToInt(243, 245, 4), ChatFormatting.GOLD,
                 Sets.<IValueType<?>>newHashSet(ELEMENTS), IValue.class);
     }
 
@@ -122,7 +122,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
         IValueTypeNumber type = getLowestType(getType(a), getType(b));
         IValue bv = castValue(type, b.getValue());
         if (type.isZero(bv)) { // You can not divide by zero
-            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
+            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
         } else if (type.isOne(bv)) { // If b is neutral element for division
             return a.getValue();
         } else {

@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.entity.item;
 
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.extendedconfig.EntityConfig;
@@ -21,7 +21,7 @@ public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted>
         super(
                 IntegratedDynamics._instance,
                 "entityItemTargetted",
-                eConfig -> EntityType.Builder.<EntityItemTargetted>of(EntityItemTargetted::new, EntityClassification.MISC)
+                eConfig -> EntityType.Builder.<EntityItemTargetted>of(EntityItemTargetted::new, MobCategory.MISC)
                         .fireImmune()
                         .setShouldReceiveVelocityUpdates(true)
                         .sized(0.25F, 0.25F)
@@ -30,7 +30,7 @@ public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted>
 
     @OnlyIn(Dist.CLIENT)
 	@Override
-	public EntityRenderer<EntityItemTargetted> getRender(EntityRendererManager renderManager, ItemRenderer renderItem) {
-        return (EntityRenderer) new net.minecraft.client.renderer.entity.ItemRenderer(renderManager, renderItem);
+	public EntityRenderer<EntityItemTargetted> getRender(EntityRendererProvider.Context renderContext, ItemRenderer renderItem) {
+        return (EntityRenderer) new net.minecraft.client.renderer.entity.ItemEntityRenderer(renderContext);
 	}
 }

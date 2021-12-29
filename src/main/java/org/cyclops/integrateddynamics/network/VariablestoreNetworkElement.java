@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.network;
 
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.TileNetworkElement;
-import org.cyclops.integrateddynamics.GeneralConfig;
-import org.cyclops.integrateddynamics.tileentity.TileVariablestore;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -16,8 +16,8 @@ import java.util.Optional;
  * Network element for variable stores.
  * @author rubensworks
  */
-public class VariablestoreNetworkElement extends TileNetworkElement<TileVariablestore>
-        implements IEventListenableNetworkElement<TileVariablestore> {
+public class VariablestoreNetworkElement extends TileNetworkElement<BlockEntityVariablestore>
+        implements IEventListenableNetworkElement<BlockEntityVariablestore> {
 
     public VariablestoreNetworkElement(DimPos pos) {
         super(pos);
@@ -57,13 +57,13 @@ public class VariablestoreNetworkElement extends TileNetworkElement<TileVariable
     }
 
     @Override
-    protected Class<TileVariablestore> getTileClass() {
-        return TileVariablestore.class;
+    protected Class<BlockEntityVariablestore> getTileClass() {
+        return BlockEntityVariablestore.class;
     }
 
     @Nullable
     @Override
-    public Optional<TileVariablestore> getNetworkEventListener() {
+    public Optional<BlockEntityVariablestore> getNetworkEventListener() {
         return getTile();
     }
 }

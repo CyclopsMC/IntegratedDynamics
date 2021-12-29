@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.Reference;
@@ -332,9 +331,9 @@ public class CombinedOperator extends OperatorBase {
             IValueType[] originalInputTypes = operator.getInputTypes();
             IValueType[] flippedInputTypes = new IValueType[originalInputTypes.length];
             if (originalInputTypes.length < 2) {
-                throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
-                        new TranslationTextComponent(Operators.OPERATOR_FLIP.getTranslationKey()),
-                        new TranslationTextComponent(operator.getTranslationKey()),
+                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
+                        new TranslatableComponent(Operators.OPERATOR_FLIP.getTranslationKey()),
+                        new TranslatableComponent(operator.getTranslationKey()),
                         originalInputTypes.length, 2));
             }
             for (int i = 0; i < flippedInputTypes.length; i++) {
@@ -346,7 +345,7 @@ public class CombinedOperator extends OperatorBase {
                 combinedOperator = new CombinedOperator(":flip:", "flipped", flip, flippedInputTypes,
                         operator.getOutputType(), null);
             } catch (IllegalArgumentException e) {
-                throw new EvaluationException(new TranslationTextComponent(e.getMessage()));
+                throw new EvaluationException(new TranslatableComponent(e.getMessage()));
             }
             return combinedOperator;
         }
@@ -386,13 +385,13 @@ public class CombinedOperator extends OperatorBase {
         }
 
         @Override
-        public INBT serialize(CombinedOperator operator) {
+        public Tag serialize(CombinedOperator operator) {
             OperatorsFunction function = (OperatorsFunction) operator.getFunction();
             IOperator[] operators = function.getOperators();
-            CompoundNBT tag = new CompoundNBT();
-            ListNBT list = new ListNBT();
+            CompoundTag tag = new CompoundTag();
+            ListTag list = new ListTag();
             for (IOperator functionOperator : operators) {
-                CompoundNBT elementTag = new CompoundNBT();
+                CompoundTag elementTag = new CompoundTag();
                 elementTag.put("v", Operators.REGISTRY.serialize(functionOperator));
                 list.add(elementTag);
             }
@@ -401,14 +400,14 @@ public class CombinedOperator extends OperatorBase {
         }
 
         @Override
-        public CombinedOperator deserialize(INBT valueOperator) throws EvaluationException {
-            ListNBT list;
+        public CombinedOperator deserialize(Tag valueOperator) throws EvaluationException {
+            ListTag list;
             try {
-                CompoundNBT tag = (CompoundNBT) valueOperator;
-                list = (ListNBT) tag.get("operators");
+                CompoundTag tag = (CompoundTag) valueOperator;
+                list = (ListTag) tag.get("operators");
             } catch (ClassCastException e) {
                 e.printStackTrace();
-                throw new EvaluationException(new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                throw new EvaluationException(new TranslatableComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
                         valueOperator, e.getMessage()));
             }
             IOperator[] operators = new IOperator[list.size()];

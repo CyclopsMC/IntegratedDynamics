@@ -3,14 +3,14 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.ToString;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -39,19 +39,19 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         super("itemstack", ValueObjectTypeItemStack.ValueItemStack.class);
     }
 
-    public static IFormattableTextComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
+    public static MutableComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
         return !itemStack.isEmpty()
-                ? (((IFormattableTextComponent) itemStack.getHoverName()).append((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
-                : new StringTextComponent("");
+                ? (((MutableComponent) itemStack.getHoverName()).append((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
+                : new TextComponent("");
     }
 
-    public static IFormattableTextComponent getItemStackDisplayNameSafe(ItemStack itemStack) {
+    public static MutableComponent getItemStackDisplayNameSafe(ItemStack itemStack) {
         // Certain mods may call client-side only methods,
         // so call a server-side-safe fallback method if that fails.
         try {
             return getItemStackDisplayNameUsSafe(itemStack);
         } catch (NoSuchMethodException e) {
-            return new TranslationTextComponent(itemStack.getDescriptionId());
+            return new TranslatableComponent(itemStack.getDescriptionId());
         }
     }
 
@@ -61,13 +61,13 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueItemStack value) {
+    public MutableComponent toCompactString(ValueItemStack value) {
         return ValueObjectTypeItemStack.getItemStackDisplayNameSafe(value.getRawValue());
     }
 
     @Override
-    public INBT serialize(ValueItemStack value) {
-        CompoundNBT tag = new CompoundNBT();
+    public Tag serialize(ValueItemStack value) {
+        CompoundTag tag = new CompoundTag();
         ItemStack itemStack = value.getRawValue();
         if(!itemStack.isEmpty()) {
             itemStack.save(tag);
@@ -77,9 +77,9 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     @Override
-    public ValueItemStack deserialize(INBT value) {
-        if (value instanceof CompoundNBT) {
-            CompoundNBT tag = (CompoundNBT) value;
+    public ValueItemStack deserialize(Tag value) {
+        if (value instanceof CompoundTag) {
+            CompoundTag tag = (CompoundTag) value;
             // Forge returns air for tags with negative count,
             // so we set it to 1 for deserialization and fix it afterwards.
             int realCount = tag.getInt("Count");
@@ -115,7 +115,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             }
 
             @Override
-            public ITextComponent validate(ItemStack itemStack) {
+            public Component validate(ItemStack itemStack) {
                 return null;
             }
 

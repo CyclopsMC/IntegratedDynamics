@@ -9,8 +9,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.ingredient.collection.diff.IngredientCollectionDiff;
 import org.cyclops.cyclopscore.ingredient.collection.diff.IngredientCollectionDiffManager;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -42,7 +42,7 @@ public class IngredientObserver<T, M> {
 
     private static final ExecutorService WORKER_POOL = Executors.newFixedThreadPool(GeneralConfig.ingredientNetworkObserverThreads);
     static {
-        MinecraftForge.EVENT_BUS.addListener((Consumer<FMLServerStoppingEvent>) event -> {
+        MinecraftForge.EVENT_BUS.addListener((Consumer<ServerStoppingEvent>) event -> {
             if (event.getServer().isDedicatedServer()) {
                 WORKER_POOL.shutdown();
             }

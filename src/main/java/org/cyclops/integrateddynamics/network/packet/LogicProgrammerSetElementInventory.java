@@ -1,12 +1,11 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -48,12 +47,12 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void actionClient(World world, PlayerEntity player) {
+	public void actionClient(Level world, Player player) {
 		
 	}
 
 	@Override
-	public void actionServer(World world, ServerPlayerEntity player) {
+	public void actionServer(Level world, ServerPlayer player) {
 		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
 			ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.containerMenu;
 			ILogicProgrammerElement element = container.getActiveElement();
@@ -63,7 +62,7 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
 					((ContainerLogicProgrammerBase) player.containerMenu).setElementInventory(
 							valueType.createLogicProgrammerElement(), baseX, baseY);
 				} else {
-					IntegratedDynamics.clog(Level.WARN,
+					IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN,
 							"Got an invalid LogicProgrammerSetElementInventory packet: " + this.listValueType);
 				}
 			}

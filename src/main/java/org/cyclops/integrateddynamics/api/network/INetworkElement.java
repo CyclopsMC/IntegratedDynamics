@@ -1,12 +1,10 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -99,7 +97,7 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * @param neighbourBlock block type of the neighbour that was updated.
      * @param neighbourBlockPos The position of the neighbour that was updated.
      */
-    public void onNeighborBlockChange(@Nullable INetwork network, IBlockReader world, Block neighbourBlock,
+    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, Block neighbourBlock,
                                       BlockPos neighbourBlockPos);
 
     /**

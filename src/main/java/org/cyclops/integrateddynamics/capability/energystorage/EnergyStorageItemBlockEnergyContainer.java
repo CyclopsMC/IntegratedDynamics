@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.capability.energystorage;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.block.IEnergyContainerBlock;
@@ -42,7 +42,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     protected int getEnergyStoredSingular() {
         if(isCreative()) return Integer.MAX_VALUE;
-        CompoundNBT tag = itemStack.getOrCreateTag();
+        CompoundTag tag = itemStack.getOrCreateTag();
         return tag.getInt(itemBlockEnergyContainer.get().getEneryContainerNBTName());
     }
 
@@ -53,7 +53,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     public int getMaxEnergyStoredSingular() {
         if(isCreative()) return Integer.MAX_VALUE;
-        CompoundNBT tag = itemStack.getOrCreateTag();
+        CompoundTag tag = itemStack.getOrCreateTag();
         if (!tag.contains(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName())) {
             return BlockEnergyBatteryConfig.capacity;
         }
@@ -107,13 +107,13 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     protected void setItemStackEnergy(ItemStack itemStack, int energy) {
         if(isCreative()) return;
-        CompoundNBT tag = itemStack.getOrCreateTag();
+        CompoundTag tag = itemStack.getOrCreateTag();
         tag.putInt(itemBlockEnergyContainer.get().getEneryContainerNBTName(), energy);
     }
 
     @Override
     public void setCapacity(int capacity) {
-        CompoundNBT tag = itemStack.getOrCreateTag();
+        CompoundTag tag = itemStack.getOrCreateTag();
         if (capacity == BlockEnergyBatteryConfig.capacity) {
             tag.remove(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
         } else {

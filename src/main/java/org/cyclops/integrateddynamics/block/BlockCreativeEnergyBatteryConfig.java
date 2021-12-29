@@ -1,13 +1,19 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.Item;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.IItemRenderProperties;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.client.render.tileentity.ItemStackTileEntityEnergyBatteryRender;
+import org.cyclops.integrateddynamics.client.render.blockentity.ItemStackBlockEntityEnergyBatteryRender;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainerAutoSupply;
+
+import java.util.function.Consumer;
 
 /**
  * Config for {@link BlockCreativeEnergyBattery}.
@@ -23,9 +29,18 @@ public class BlockCreativeEnergyBatteryConfig extends BlockConfig {
                         .sound(SoundType.METAL)
                         .strength(5.0F)),
                 (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block,
-                        new Item.Properties()
-                                .tab(IntegratedDynamics._instance.getDefaultItemGroup())
-                                .setISTER(() -> ItemStackTileEntityEnergyBatteryRender::new))
+                        new Item.Properties().tab(IntegratedDynamics._instance.getDefaultItemGroup())) {
+                    @Override
+                    @OnlyIn(Dist.CLIENT)
+                    public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+                        consumer.accept(new IItemRenderProperties() {
+                            @Override
+                            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+                                return new ItemStackBlockEntityEnergyBatteryRender();
+                            }
+                        });
+                    }
+                }
         );
     }
 

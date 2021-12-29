@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.metadata;
 
 import com.google.gson.JsonObject;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.cyclops.cyclopscore.metadata.RegistryExportableRecipeAbstract;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
@@ -10,7 +10,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
 /**
  * Mechanical squeezer recipe exporter.
  */
-public class RegistryExportableMechanicalSqueezerRecipe extends RegistryExportableRecipeAbstract<IRecipeType<RecipeMechanicalSqueezer>, RecipeMechanicalSqueezer, IInventory> {
+public class RegistryExportableMechanicalSqueezerRecipe extends RegistryExportableRecipeAbstract<RecipeType<RecipeMechanicalSqueezer>, RecipeMechanicalSqueezer, Container> {
 
     protected RegistryExportableMechanicalSqueezerRecipe() {
         super(() -> RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER);

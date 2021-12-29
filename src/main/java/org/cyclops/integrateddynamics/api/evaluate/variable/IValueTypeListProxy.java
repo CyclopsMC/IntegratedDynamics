@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 
 /**
@@ -39,7 +39,7 @@ public interface IValueTypeListProxy<T extends IValueType<V>, V extends IValue> 
     /**
      * @return A short string representation used in guis to show the value.
      */
-    public IFormattableTextComponent toCompactString();
+    public MutableComponent toCompactString();
 
     /**
      * @return If this is an infinite list.

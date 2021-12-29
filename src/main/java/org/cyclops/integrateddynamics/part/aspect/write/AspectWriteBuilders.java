@@ -2,13 +2,13 @@ package org.cyclops.integrateddynamics.part.aspect.write;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBT;
-import net.minecraft.state.properties.NoteBlockInstrument;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -87,7 +87,7 @@ public class AspectWriteBuilders {
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeFluidStack.ValueFluidStack>, Triple<PartTarget, IAspectProperties, FluidStack>>
             PROP_GET_FLUIDSTACK = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
-    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>, Triple<PartTarget, IAspectProperties, Optional<INBT>>>
+    public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueTypeNbt.ValueNbt>, Triple<PartTarget, IAspectProperties, Optional<Tag>>>
             PROP_GET_NBT = input -> Triple.of(input.getLeft(), input.getMiddle(), input.getRight().getRawValue());
 
     public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, ValueObjectTypeRecipe.ValueRecipe>, Triple<PartTarget, IAspectProperties, IRecipeDefinition>>
@@ -125,13 +125,13 @@ public class AspectWriteBuilders {
             NoteBlockInstrument instrument = input.getRight().getLeft();
             int eventParam = input.getRight().getRight();
             if(eventParam >= 0 && eventParam <= 24) {
-                World world = input.getLeft().getTarget().getPos().getWorld(false);
+                Level world = input.getLeft().getTarget().getPos().getLevel(false);
                 if (world != null) { // If a block falls in a world when there's no one around, does it make any sound?
                     NoteBlockEvent.Play e = new NoteBlockEvent.Play(world, pos, world.getBlockState(pos), eventParam, instrument);
                     if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
                         float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
                         float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                        world.playSound(null, pos, instrument.getSoundEvent(), SoundCategory.RECORDS, volume, f);
+                        world.playSound(null, pos, instrument.getSoundEvent(), SoundSource.RECORDS, volume, f);
                     }
                 }
             }

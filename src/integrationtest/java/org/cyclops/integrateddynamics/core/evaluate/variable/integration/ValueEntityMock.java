@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeEntity;
 
 import javax.annotation.Nullable;

@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import net.minecraft.nbt.EndNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.EndTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -55,13 +55,13 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo, @Nullable DummyValue value) {
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable DummyValue value) {
 
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(DummyValue value) {
-        return new StringTextComponent("dummy");
+    public MutableComponent toCompactString(DummyValue value) {
+        return new TextComponent("dummy");
     }
 
     @Override
@@ -70,8 +70,8 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public TextFormatting getDisplayColorFormat() {
-        return TextFormatting.WHITE;
+    public ChatFormatting getDisplayColorFormat() {
+        return ChatFormatting.WHITE;
     }
 
     @Override
@@ -80,17 +80,17 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public INBT serialize(DummyValue value) {
-        return EndNBT.INSTANCE;
+    public Tag serialize(DummyValue value) {
+        return EndTag.INSTANCE;
     }
 
     @Override
-    public ITextComponent canDeserialize(INBT value) {
+    public Component canDeserialize(Tag value) {
         return null;
     }
 
     @Override
-    public DummyValue deserialize(INBT value) {
+    public DummyValue deserialize(Tag value) {
         return DummyValue.of();
     }
 

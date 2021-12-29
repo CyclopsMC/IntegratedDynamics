@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
@@ -40,7 +40,7 @@ public class ContainerPartSettings extends InventoryContainer {
     private final PartTarget target;
     private final Optional<IPartContainer> partContainer;
     private final IPartType partType;
-    private final World world;
+    private final Level world;
 
     private final int lastUpdateValueId;
     private final int lastPriorityValueId;
@@ -48,17 +48,17 @@ public class ContainerPartSettings extends InventoryContainer {
     private final int lastSideValueId;
     private final int lastMinUpdateValueId;
 
-    public ContainerPartSettings(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
-        this(id, playerInventory, new Inventory(0),
+    public ContainerPartSettings(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+        this(id, playerInventory, new SimpleContainer(0),
                 PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
-    public ContainerPartSettings(int id, PlayerInventory playerInventory, IInventory inventory,
+    public ContainerPartSettings(int id, Inventory playerInventory, Container inventory,
                                  PartTarget target, Optional<IPartContainer> partContainer, IPartType partType) {
       this(RegistryEntries.CONTAINER_PART_SETTINGS, id, playerInventory, inventory, target, partContainer, partType);
     }
 
-    public ContainerPartSettings(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory, IInventory inventory,
+    public ContainerPartSettings(@Nullable MenuType<?> type, int id, Inventory playerInventory, Container inventory,
                                  PartTarget target, Optional<IPartContainer> partContainer, IPartType partType) {
         super(type, id, playerInventory, inventory);
         this.target = target;
@@ -66,7 +66,7 @@ public class ContainerPartSettings extends InventoryContainer {
         this.partType = partType;
         this.world = player.getCommandSenderWorld();
 
-        addPlayerInventory(player.inventory, 27, getPlayerInventoryOffsetY());
+        addPlayerInventory(player.getInventory(), 27, getPlayerInventoryOffsetY());
 
         lastUpdateValueId = getNextValueId();
         lastPriorityValueId = getNextValueId();
@@ -76,7 +76,7 @@ public class ContainerPartSettings extends InventoryContainer {
 
         putButtonAction(ContainerPartSettings.BUTTON_SAVE, (s, containerExtended) -> {
             if(!world.isClientSide()) {
-                PartHelpers.openContainerPart((ServerPlayerEntity) player, target.getCenter(), getPartType());
+                PartHelpers.openContainerPart((ServerPlayer) player, target.getCenter(), getPartType());
             }
         });
     }
@@ -148,7 +148,7 @@ public class ContainerPartSettings extends InventoryContainer {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return PartHelpers.canInteractWith(getTarget(), player, this.partContainer.get());
     }
 
@@ -158,13 +158,13 @@ public class ContainerPartSettings extends InventoryContainer {
     }
 
     @Override
-    public void onUpdate(int valueId, CompoundNBT value) {
+    public void onUpdate(int valueId, CompoundTag value) {
         super.onUpdate(valueId, value);
         try {
             if(!world.isClientSide()) {
                 PartTarget target = getTarget();
                 DimPos dimPos = target.getCenter().getPos();
-                INetwork network = NetworkHelpers.getNetworkChecked(dimPos.getWorld(true), dimPos.getBlockPos(), target.getCenter().getSide());
+                INetwork network = NetworkHelpers.getNetworkChecked(dimPos.getLevel(true), dimPos.getBlockPos(), target.getCenter().getSide());
                 updatePartSettings();
                 if (getPartState().getTargetSideOverride() != null) {
                     target = target.forTargetSide(getPartState().getTargetSideOverride());

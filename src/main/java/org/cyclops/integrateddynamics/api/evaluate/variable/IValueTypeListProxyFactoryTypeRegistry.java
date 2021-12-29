@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 /**
@@ -40,7 +40,7 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
      * @return The serialized string.
      * @throws SerializationException If something goes wrong while serializing.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> INBT serialize(P proxy) throws SerializationException;
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> Tag serialize(P proxy) throws SerializationException;
 
     /**
      * Deserialize the given serialized list proxy to a list proxy instance.
@@ -51,7 +51,7 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
      * @return The deserialized list proxy.
      * @throws SerializationException If something goes wrong while serializing.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(INBT value) throws SerializationException;
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(Tag value) throws SerializationException;
 
     /**
      * Factory for a list proxy.
@@ -72,7 +72,7 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
          * @return The serialized value.
          * @throws SerializationException If something goes wrong while serializing.
          */
-        public INBT serialize(P value) throws SerializationException;
+        public Tag serialize(P value) throws SerializationException;
 
         /**
          * Deserialize the given value.
@@ -80,7 +80,7 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
          * @return The deserialized value.
          * @throws SerializationException If something goes wrong while deserializing.
          */
-        public P deserialize(INBT value) throws SerializationException;
+        public P deserialize(Tag value) throws SerializationException;
 
     }
 

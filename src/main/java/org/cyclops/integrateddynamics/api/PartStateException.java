@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.api;
 
-import net.minecraft.util.Direction;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.core.Direction;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -17,7 +16,7 @@ public class PartStateException extends IllegalArgumentException {
                         "\nWorld loaded: %s\nChunk loaded: %s\nPart container: %s\nParts: %s",
                 dimPos,
                 side,
-                dimPos.getWorld(false) != null,
+                dimPos.getLevel(false) != null,
                 dimPos.isLoaded(),
                 dimPos.isLoaded() ? PartHelpers.getPartContainer(dimPos, side) : null,
                 dimPos.isLoaded() ? PartHelpers.getPartContainer(dimPos, side).map(IPartContainer::getParts).orElse(null) : null));

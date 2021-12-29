@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
@@ -28,7 +28,7 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     private static final int OK_X = 152;
     private static final int OK_Y = 20;
 
-    public ContainerScreenPartWriter(ContainerPartWriter<P, S> container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenPartWriter(ContainerPartWriter<P, S> container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 
@@ -38,7 +38,7 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     }
 
     @Override
-    protected void drawAdditionalElementInfoForeground(MatrixStack matrixStack, ContainerPartWriter<P, S> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
+    protected void drawAdditionalElementInfoForeground(PoseStack matrixStack, ContainerPartWriter<P, S> container, int index, IAspectWrite aspect, int mouseX, int mouseY) {
         // Render error tooltip
         if(getMenu().isPartStateEnabled()) {
             displayErrors.drawForeground(matrixStack, getMenu().getAspectErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.leftPos, this.topPos);
@@ -46,14 +46,14 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     }
 
     @Override
-    protected void drawAdditionalElementInfo(MatrixStack matrixStack, ContainerPartWriter<P, S> container, int index, IAspectWrite aspect) {
+    protected void drawAdditionalElementInfo(PoseStack matrixStack, ContainerPartWriter<P, S> container, int index, IAspectWrite aspect) {
         int aspectBoxHeight = container.getAspectBoxHeight();
 
         // Render dummy target item
         // This could be cached if this would prove to be a bottleneck
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), aspect);
         Rectangle pos = getElementPosition(container, index, true);
-        RenderHelper.turnBackOn();
+        Lighting.setupForFlatItems();
         itemRenderer.renderAndDecorateItem(itemStack, pos.x, pos.y);
 
         // Render error symbol
@@ -64,7 +64,7 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         ContainerPartWriter<?, ?> container = (ContainerPartWriter<?, ?>) getMenu();
         RenderHelpers.drawScaledCenteredString(matrixStack, font, container.getWriteValue().getString(), this.leftPos + offsetX + 53,

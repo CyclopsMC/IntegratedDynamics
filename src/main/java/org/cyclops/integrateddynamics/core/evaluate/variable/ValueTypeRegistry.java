@@ -2,11 +2,11 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -101,8 +101,8 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public IValueTypeVariableFacade getVariableFacade(int id, CompoundNBT tag) {
-        if(!tag.contains("typeName", Constants.NBT.TAG_STRING)
+    public IValueTypeVariableFacade getVariableFacade(int id, CompoundTag tag) {
+        if(!tag.contains("typeName", Tag.TAG_STRING)
                 || !tag.contains("value")) {
             return INVALID_FACADE;
         }
@@ -120,7 +120,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public void setVariableFacade(CompoundNBT tag, IValueTypeVariableFacade variableFacade) {
+    public void setVariableFacade(CompoundTag tag, IValueTypeVariableFacade variableFacade) {
         tag.putString("typeName", variableFacade.getValueType().getUniqueName().toString());
         tag.put("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
     }

@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -31,9 +31,9 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
     private final Optional<PartTarget> target;
     private final Optional<IPartContainer> partContainer;
     private final P partType;
-    private final World world;
+    private final Level world;
 
-    public ContainerMultipart(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory, IInventory inventory,
+    public ContainerMultipart(@Nullable MenuType<?> type, int id, Inventory playerInventory, Container inventory,
                               Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
         super(type, id, playerInventory, inventory);
         this.target = target;
@@ -43,12 +43,12 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
 
         putButtonAction(ContainerMultipart.BUTTON_SETTINGS, (s, containerExtended) -> {
             if(!world.isClientSide()) {
-                PartHelpers.openContainerPart((ServerPlayerEntity) player, target.get().getCenter(), partType);
+                PartHelpers.openContainerPart((ServerPlayer) player, target.get().getCenter(), partType);
             }
         });
     }
 
-    public World getLevel() {
+    public Level getLevel() {
         return world;
     }
 
@@ -69,7 +69,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         return PartHelpers.canInteractWith(getTarget().get(), player, this.partContainer.get());
     }
 

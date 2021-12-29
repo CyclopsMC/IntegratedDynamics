@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.ByteNBT;
-import net.minecraft.nbt.EndNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.world.World;
+import net.minecraft.nbt.ByteTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
@@ -26,7 +25,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCodec {
 
 	@CodecField
-	private INBT operatorValue;
+	private Tag operatorValue;
 
     public LogicProgrammerValueTypeOperatorValueChangedPacket() {
 
@@ -36,7 +35,7 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 		try {
 			this.operatorValue = ValueHelpers.serializeRaw(value);
 		} catch (Exception e) {
-			this.operatorValue = ByteNBT.valueOf((byte) 0);
+			this.operatorValue = ByteTag.valueOf((byte) 0);
 		}
     }
 
@@ -47,12 +46,12 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void actionClient(World world, PlayerEntity player) {
+	public void actionClient(Level world, Player player) {
 		
 	}
 
 	@Override
-	public void actionServer(World world, ServerPlayerEntity player) {
+	public void actionServer(Level world, ServerPlayer player) {
 		if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
 			ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
 			if(element instanceof ValueTypeOperatorLPElement) {

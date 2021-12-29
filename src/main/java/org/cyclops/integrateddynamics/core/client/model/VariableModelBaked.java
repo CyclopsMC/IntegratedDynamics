@@ -3,19 +3,18 @@ package org.cyclops.integrateddynamics.core.client.model;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemOverride;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.SimpleBakedModel;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.world.World;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.SimpleBakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
@@ -35,29 +34,29 @@ import java.util.Random;
  */
 public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel implements IVariableModelBaked {
 
-    private final Map<IVariableModelProvider, IVariableModelProvider.IBakedModelProvider> subModels = Maps.newHashMap();
+    private final Map<IVariableModelProvider, IVariableModelProvider.BakedModelProvider> subModels = Maps.newHashMap();
 
-    public VariableModelBaked(IBakedModel parent) {
+    public VariableModelBaked(BakedModel parent) {
         super(parent);
     }
 
     @Override
-    public <B extends IVariableModelProvider.IBakedModelProvider> void setSubModels(IVariableModelProvider<B> provider, B subModels) {
+    public <B extends IVariableModelProvider.BakedModelProvider> void setSubModels(IVariableModelProvider<B> provider, B subModels) {
         this.subModels.put(provider, subModels);
     }
 
     @Override
-    public <B extends IVariableModelProvider.IBakedModelProvider> B getSubModels(IVariableModelProvider<B> provider) {
+    public <B extends IVariableModelProvider.BakedModelProvider> B getSubModels(IVariableModelProvider<B> provider) {
         return (B) this.subModels.get(provider);
     }
 
     @Override
-    public IBakedModel handleBlockState(BlockState state, Direction side, Random rand, IModelData modelData) {
+    public BakedModel handleBlockState(BlockState state, Direction side, Random rand, IModelData modelData) {
         return null;
     }
 
     @Override
-    public IBakedModel handleItemState(ItemStack itemStack, World world, LivingEntity entity) {
+    public BakedModel handleItemState(ItemStack itemStack, Level world, LivingEntity entity) {
         List<BakedQuad> quads = Lists.newLinkedList();
         // Add regular quads for variable
         quads.addAll(this.baseModel.getQuads(null, getRenderingSide(), this.rand, this.modelData));
@@ -71,18 +70,8 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
     }
 
     @Override
-    public boolean useAmbientOcclusion() {
-        return false; // TODO: rm
-    }
-
-    @Override
     public boolean usesBlockLight() {
         return false;
-    }
-
-    @Override
-    public boolean isCustomRenderer() {
-        return false; // TODO: rm
     }
 
     @Override
@@ -91,26 +80,26 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
     }
 
     @Override
-    public ItemCameraTransforms getTransforms() {
+    public ItemTransforms getTransforms() {
         return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS_ITEM;
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return new ItemOverrideList() {
+    public ItemOverrides getOverrides() {
+        return new ItemOverrides() {
             @Nullable
             @Override
-            public IBakedModel resolve(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+            public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity, int id) {
                 IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(stack);
-                IBakedModel overrideModel = variableFacade.getVariableItemOverrideModel(model, stack, world, livingEntity);
+                BakedModel overrideModel = variableFacade.getVariableItemOverrideModel(model, stack, world, livingEntity);
                 if (overrideModel != null) {
                     return overrideModel;
                 }
-                return VariableModelBaked.super.getOverrides().resolve(model, stack, world, livingEntity);
+                return VariableModelBaked.super.getOverrides().resolve(model, stack, world, livingEntity, id);
             }
 
             @Override
-            public ImmutableList<ItemOverride> getOverrides() {
+            public ImmutableList<BakedOverride> getOverrides() {
                 return baseModel.getOverrides().getOverrides();
             }
         };

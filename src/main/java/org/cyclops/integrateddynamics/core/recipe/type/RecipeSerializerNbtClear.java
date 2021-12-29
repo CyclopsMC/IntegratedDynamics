@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.google.gson.JsonObject;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 
@@ -14,8 +14,8 @@ import javax.annotation.Nullable;
  * Recipe serializer for NBT clear recipes.
  * @author rubensworks
  */
-public class RecipeSerializerNbtClear extends ForgeRegistryEntry<IRecipeSerializer<?>>
-        implements IRecipeSerializer<RecipeNbtClear> {
+public class RecipeSerializerNbtClear extends ForgeRegistryEntry<RecipeSerializer<?>>
+        implements RecipeSerializer<RecipeNbtClear> {
 
     @Override
     public RecipeNbtClear fromJson(ResourceLocation recipeId, JsonObject json) {
@@ -25,13 +25,13 @@ public class RecipeSerializerNbtClear extends ForgeRegistryEntry<IRecipeSerializ
 
     @Nullable
     @Override
-    public RecipeNbtClear fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+    public RecipeNbtClear fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
         return new RecipeNbtClear(recipeId, inputIngredient);
     }
 
     @Override
-    public void toNetwork(PacketBuffer buffer, RecipeNbtClear recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, RecipeNbtClear recipe) {
         recipe.getInputIngredient().toNetwork(buffer);
     }
 }

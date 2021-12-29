@@ -1,12 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -32,14 +30,14 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         return ValueIngredients.of(null);
     }
 
-    public static IFormattableTextComponent ingredientsToTextComponent(IMixedIngredients ingredients) {
-        IFormattableTextComponent sb = new StringTextComponent("");
+    public static MutableComponent ingredientsToTextComponent(IMixedIngredients ingredients) {
+        MutableComponent sb = new TextComponent("");
 
         for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
             IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
             for (Object instance : ingredients.getInstances(component)) {
                 if (sb.getSiblings().size() > 0) {
-                    sb.append(new StringTextComponent(", "));
+                    sb.append(new TextComponent(", "));
                 }
                 sb.append(handler.toCompactString(handler.toValue(instance)));
             }
@@ -49,26 +47,26 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueIngredients value) {
+    public MutableComponent toCompactString(ValueIngredients value) {
         if (value.getRawValue().isPresent()) {
             return ingredientsToTextComponent(value.getRawValue().get());
         }
-        return new StringTextComponent("");
+        return new TextComponent("");
     }
 
     @Override
-    public INBT serialize(ValueIngredients value) {
-        if(!value.getRawValue().isPresent()) return new CompoundNBT();
+    public Tag serialize(ValueIngredients value) {
+        if(!value.getRawValue().isPresent()) return new CompoundTag();
         return IMixedIngredients.serialize(value.getRawValue().get());
     }
 
     @Override
-    public ValueIngredients deserialize(INBT value) {
-        if (value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty())) {
+    public ValueIngredients deserialize(Tag value) {
+        if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
             return ValueIngredients.of(null);
         }
         try {
-            return ValueIngredients.of(IMixedIngredients.deserialize((CompoundNBT) value));
+            return ValueIngredients.of(IMixedIngredients.deserialize((CompoundTag) value));
         } catch (IllegalArgumentException e) {
             return ValueIngredients.of(null);
         }

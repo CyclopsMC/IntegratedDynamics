@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
@@ -45,11 +45,11 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
     }
 
     protected static WidgetTextFieldExtended makeTextBox(int componentId, int x, int y, String text) {
-        FontRenderer fontRenderer = Minecraft.getInstance().font;
+        Font fontRenderer = Minecraft.getInstance().font;
         int searchWidth = 35;
 
         WidgetTextFieldExtended box = new WidgetTextFieldExtended(fontRenderer, x, y,
-                searchWidth, fontRenderer.lineHeight + 3, new TranslationTextComponent("gui.cyclopscore.search"), true);
+                searchWidth, fontRenderer.lineHeight + 3, new TranslatableComponent("gui.cyclopscore.search"), true);
         box.setMaxLength(10);
         box.setBordered(false);
         box.setVisible(true);
@@ -71,11 +71,11 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
         // Output type tooltip
-        this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
+        this.drawTooltipForeground(gui, matrixStack, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
 
         // Render the info tooltip when hovering the input item slots
         for (int slotId = 0; slotId < this.container.slots.size(); ++slotId) {
@@ -85,19 +85,19 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
                 int slotY = slot.y;
 
                 // Draw tooltips
-                if (gui.isPointInRegion(slotX, slotY, 16, 16, mouseX, mouseY)) {
+                if (gui.isHovering(slotX, slotY, 16, 16, mouseX, mouseY)) {
                     gui.drawTooltip(Lists.newArrayList(
-                            new TranslationTextComponent("valuetype.integrateddynamics.ingredients.slot.info")
-                                    .withStyle(TextFormatting.ITALIC)
-                    ), mouseX - guiLeft, mouseY - guiTop - (slot.getItem().isEmpty() ? 0 : 15));
+                            new TranslatableComponent("valuetype.integrateddynamics.ingredients.slot.info")
+                                    .withStyle(ChatFormatting.ITALIC)
+                    ), matrixStack, mouseX - guiLeft, mouseY - guiTop - (slot.getItem().isEmpty() ? 0 : 15));
                 }
             }
         }
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         // Draw crafting arrow
         this.blit(matrixStack, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);

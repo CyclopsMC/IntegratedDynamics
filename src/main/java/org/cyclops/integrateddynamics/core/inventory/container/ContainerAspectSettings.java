@@ -2,16 +2,16 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -46,23 +46,23 @@ public class ContainerAspectSettings extends InventoryContainer {
     private final Optional<PartTarget> target;
     private final Optional<IPartContainer> partContainer;
     private final Optional<IPartType> partType;
-    private final World world;
+    private final Level world;
     private final IAspect<?, ?> aspect;
 
     private final BiMap<Integer, IAspectPropertyTypeInstance> propertyIds = HashBiMap.create();
 
-    public ContainerAspectSettings(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
-        this(id, playerInventory, new Inventory(0),
+    public ContainerAspectSettings(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+        this(id, playerInventory, new SimpleContainer(0),
                 Optional.empty(), Optional.empty(), Optional.empty(), readAspect(packetBuffer));
     }
 
-    protected static IAspect<?, ?> readAspect(PacketBuffer packetBuffer) {
+    protected static IAspect<?, ?> readAspect(FriendlyByteBuf packetBuffer) {
         String name = packetBuffer.readUtf();
         return Objects.requireNonNull(AspectRegistry.getInstance().getAspect(new ResourceLocation(name)),
                 String.format("Could not find an aspect by name %s", name));
     }
 
-    public ContainerAspectSettings(int id, PlayerInventory playerInventory, IInventory inventory,
+    public ContainerAspectSettings(int id, Inventory playerInventory, Container inventory,
                                    Optional<PartTarget> target, Optional<IPartContainer> partContainer,
                                    Optional<IPartType> partType, IAspect<?, ?> aspect) {
         super(RegistryEntries.CONTAINER_ASPECT_SETTINGS, id, playerInventory, inventory);
@@ -72,7 +72,7 @@ public class ContainerAspectSettings extends InventoryContainer {
         this.world = player.getCommandSenderWorld();
         this.aspect = aspect;
 
-        addPlayerInventory(player.inventory, 8, 131);
+        addPlayerInventory(player.getInventory(), 8, 131);
 
         for(IAspectPropertyTypeInstance property : aspect.getPropertyTypes()) {
             propertyIds.put(getNextValueId(), property);
@@ -80,7 +80,7 @@ public class ContainerAspectSettings extends InventoryContainer {
 
         putButtonAction(ContainerAspectSettings.BUTTON_EXIT, (s, containerExtended) -> {
             if (!world.isClientSide()) {
-                PartHelpers.openContainerPart((ServerPlayerEntity) playerInventory.player, getTarget().get().getCenter(), getPartType().get());
+                PartHelpers.openContainerPart((ServerPlayer) playerInventory.player, getTarget().get().getCenter(), getPartType().get());
             }
         });
     }
@@ -119,7 +119,7 @@ public class ContainerAspectSettings extends InventoryContainer {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
@@ -130,7 +130,7 @@ public class ContainerAspectSettings extends InventoryContainer {
 
     public <T extends IValueType<V>, V extends IValue> V getPropertyValue(IAspectPropertyTypeInstance<T, V> property) {
         if(propertyIds.containsValue(property)) {
-            INBT value = ValueNotifierHelpers.getValueNbt(this, propertyIds.inverse().get(property));
+            Tag value = ValueNotifierHelpers.getValueNbt(this, propertyIds.inverse().get(property));
             if(value != null) {
                 return ValueHelpers.deserializeRaw(property.getType(), value);
             }
@@ -139,7 +139,7 @@ public class ContainerAspectSettings extends InventoryContainer {
     }
 
     @Override
-    public void onUpdate(int valueId, CompoundNBT value) {
+    public void onUpdate(int valueId, CompoundTag value) {
         super.onUpdate(valueId, value);
         if(!world.isClientSide()) {
             IAspectPropertyTypeInstance property = propertyIds.get(valueId);

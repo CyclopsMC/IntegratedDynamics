@@ -3,13 +3,11 @@ package org.cyclops.integrateddynamics.core.part;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -44,7 +42,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     @Setter
     private boolean deactivated = false;
     private SimpleInventory inventory;
-    private List<IFormattableTextComponent> globalErrorMessages = Lists.newLinkedList();
+    private List<MutableComponent> globalErrorMessages = Lists.newLinkedList();
 
     public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
@@ -67,7 +65,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     protected void onCorruptedState() {
-        IntegratedDynamics.clog(Level.ERROR, "A corrupted part state was found at, repairing...");
+        IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, "A corrupted part state was found at, repairing...");
         Thread.dumpStack();
         this.checkedForWriteVariable = false;
         this.deactivated = true;
@@ -121,14 +119,14 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
 
         // Refresh any contained variables
         PartPos center = target.getCenter();
-        NetworkHelpers.getNetwork(center.getPos().getWorld(true), center.getPos().getBlockPos(), center.getSide())
+        NetworkHelpers.getNetwork(center.getPos().getLevel(true), center.getPos().getBlockPos(), center.getSide())
                 .ifPresent(network -> variableContainer.refreshVariables(network, inventory, false));
     }
 
     /**
      * @return All global error messages.
      */
-    public List<IFormattableTextComponent> getGlobalErrors() {
+    public List<MutableComponent> getGlobalErrors() {
         return globalErrorMessages;
     }
 
@@ -136,7 +134,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      * Add a global error message.
      * @param error The message to add.
      */
-    public void addGlobalError(IFormattableTextComponent error) {
+    public void addGlobalError(MutableComponent error) {
         if(error == null) {
             globalErrorMessages.clear();
         } else {
@@ -147,14 +145,14 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     @Override
-    public void writeToNBT(CompoundNBT tag) {
+    public void writeToNBT(CompoundTag tag) {
         super.writeToNBT(tag);
         NBTClassType.writeNbt(List.class, "globalErrorMessages", globalErrorMessages, tag);
         inventory.writeToNBT(tag, "inventory");
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tag) {
+    public void readFromNBT(CompoundTag tag) {
         super.readFromNBT(tag);
         //noinspection unchecked
         this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag);
@@ -225,7 +223,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         }
 
         @Override
-        public void addError(IFormattableTextComponent error) {
+        public void addError(MutableComponent error) {
             this.state.addGlobalError(error);
         }
 

@@ -1,18 +1,18 @@
 package org.cyclops.integrateddynamics.world.gen;
 
-import net.minecraft.block.trees.Tree;
-import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
-import net.minecraft.world.gen.blockstateprovider.WeightedBlockStateProvider;
-import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.FeatureSpread;
-import net.minecraft.world.gen.feature.TwoLayerFeature;
-import net.minecraft.world.gen.foliageplacer.MegaPineFoliagePlacer;
-import net.minecraft.world.gen.trunkplacer.GiantTrunkPlacer;
+import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.util.valueproviders.ConstantInt;
+import net.minecraft.world.level.block.grower.AbstractTreeGrower;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.SimpleStateProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogFilledConfig;
-import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenril;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
 
@@ -23,24 +23,24 @@ import java.util.Random;
  * A Menril tree.
  * @author rubensworks
  */
-public class TreeMenril extends Tree {
+public class TreeMenril extends AbstractTreeGrower {
 
-    public static BaseTreeFeatureConfig getMenrilTreeConfig() {
-        return new BaseTreeFeatureConfig.Builder(
-                new WeightedBlockStateProvider()
+    public static TreeConfiguration getMenrilTreeConfig() {
+        return new TreeConfiguration.TreeConfigurationBuilder(
+                new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
                         .add(RegistryEntries.BLOCK_MENRIL_LOG.defaultBlockState(), BlockMenrilLogFilledConfig.filledMenrilLogChance)
-                        .add(RegistryEntries.BLOCK_MENRIL_LOG_FILLED.defaultBlockState(), 1),
-                new SimpleBlockStateProvider(RegistryEntries.BLOCK_MENRIL_LEAVES.defaultBlockState()),
-                new FoliagePlacerMenril(FeatureSpread.fixed(2), FeatureSpread.fixed(0)),
+                        .add(RegistryEntries.BLOCK_MENRIL_LOG_FILLED.defaultBlockState(), 1)),
                 new TrunkPlacerMenril(5, 2, 2, 3),
-                new TwoLayerFeature(1, 0, 2))
+                BlockStateProvider.simple(RegistryEntries.BLOCK_MENRIL_LEAVES),
+                new FoliagePlacerMenril(ConstantInt.of(2), ConstantInt.of(0)),
+                new TwoLayersFeatureSize(1, 0, 2))
                 .ignoreVines()
                 .build();
     }
 
     @Nullable
     @Override
-    protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredFeature(Random random, boolean b) {
+    protected ConfiguredFeature<TreeConfiguration, ?> getConfiguredFeature(Random random, boolean b) {
         return Feature.TREE.configured(getMenrilTreeConfig());
     }
 

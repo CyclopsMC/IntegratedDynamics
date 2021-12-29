@@ -2,15 +2,15 @@ package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
@@ -49,16 +49,16 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     private static final int SLOT_OUT_X = 144;
     private static final int SLOT_OUT_Y = 27;
 
-    private final IInventory outputSlots;
+    private final Container outputSlots;
     private final BiMap<Integer, IAspectRead> readValueIds = HashBiMap.create();
     private final BiMap<Integer, IAspectRead> readColorIds = HashBiMap.create();
 
-    public ContainerPartReader(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
+    public ContainerPartReader(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
         this(id, playerInventory, new SimpleInventory(0, 1),
                 PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
-    public ContainerPartReader(int id, PlayerInventory playerInventory, IInventory inventory,
+    public ContainerPartReader(int id, Inventory playerInventory, Container inventory,
                                 PartTarget target, Optional<IPartContainer> partContainer, P partType) {
         super(RegistryEntries.CONTAINER_PART_READER, id, playerInventory, inventory, target, partContainer, partType,
                 partType.getReadAspects());
@@ -74,7 +74,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
             disableSlot(i + getUnfilteredItemCount());
         }
 
-        addPlayerInventory(player.inventory, 9, 131);
+        addPlayerInventory(player.getInventory(), 9, 131);
 
         for(IAspectRead aspectRead : getUnfilteredItems()) {
             readValueIds.put(getNextValueId(), aspectRead);
@@ -133,7 +133,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     }
 
     @Override
-    public void removed(PlayerEntity player) {
+    public void removed(Player player) {
         super.removed(player);
         if (!player.level.isClientSide()) {
             for (int i = 0; i < getUnfilteredItemCount(); ++i) {
@@ -169,12 +169,12 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         try {
             if (!player.level.isClientSide()) {
                 for (IAspectRead aspectRead : getUnfilteredItems()) {
-                    Pair<IFormattableTextComponent, Integer> readValue;
+                    Pair<MutableComponent, Integer> readValue;
                     if(getPartState().isEnabled()) {
                         IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        readValue = Pair.of(new StringTextComponent("NO POWER"), 0);
+                        readValue = Pair.of(new TextComponent("NO POWER"), 0);
                     }
 
                     setReadValue(aspectRead, readValue);
@@ -185,14 +185,14 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         }
     }
 
-    public void setReadValue(IAspectRead aspectRead, Pair<IFormattableTextComponent, Integer> readValue) {
+    public void setReadValue(IAspectRead aspectRead, Pair<MutableComponent, Integer> readValue) {
         int valueId = readValueIds.inverse().get(aspectRead);
         int colorId = readColorIds.inverse().get(aspectRead);
         ValueNotifierHelpers.setValue(this, valueId, readValue.getLeft());
         ValueNotifierHelpers.setValue(this, colorId, readValue.getRight());
     }
 
-    public Pair<ITextComponent, Integer> getReadValue(IAspectRead aspect) {
+    public Pair<Component, Integer> getReadValue(IAspectRead aspect) {
         int valueId = readValueIds.inverse().get(aspect);
         int colorId = readColorIds.inverse().get(aspect);
         try {
@@ -210,7 +210,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         }
 
         PartTarget target = getTarget();
-        INetwork network = NetworkHelpers.getNetworkChecked(target.getCenter().getPos().getWorld(true),
+        INetwork network = NetworkHelpers.getNetworkChecked(target.getCenter().getPos().getLevel(true),
                 target.getCenter().getPos().getBlockPos(), target.getCenter().getSide());
         IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
         PartReaderAspectEvent event = new PartReaderAspectEvent<>(network, partNetwork, target, getPartType(),

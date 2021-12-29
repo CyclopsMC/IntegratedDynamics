@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -20,11 +19,9 @@ public class BlockCrystalizedChorusBrickSlabConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_chorus_brick_slab",
-                eConfig -> new SlabBlock(AbstractBlock.Properties.of(Material.CLAY, MaterialColor.COLOR_PINK)
+                eConfig -> new SlabBlock(BlockBehaviour.Properties.of(Material.CLAY, MaterialColor.COLOR_PINK)
                         .sound(SoundType.SNOW)
-                        .strength(1.5F)
-                        .harvestLevel(0)
-                        .harvestTool(ToolType.PICKAXE)),
+                        .strength(1.5F)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

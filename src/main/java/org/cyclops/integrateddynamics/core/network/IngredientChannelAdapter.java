@@ -356,7 +356,7 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
             }
             // Quick heuristic check to see if 'storage' did not lie during its simulation
             if (toExtract != 0) {
-                /*IntegratedDynamics.clog(Level.WARN, String.format(
+                /*IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format(
                         "A storage resulted in inconsistent simulated and non-simulated output. Storages: %s", value.getRight()));*/
                 // This is not such a huge problem actually, so just make sure our output is correct.
                 extractedCount -= toExtract;

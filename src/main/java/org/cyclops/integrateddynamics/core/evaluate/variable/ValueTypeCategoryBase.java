@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -28,7 +28,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
      * @param elements The elements inside this category.
      * @param valueClass The value type class.
      */
-    public ValueTypeCategoryBase(String typeName, int color, TextFormatting colorFormat, Set<IValueType<?>> elements, Class<V> valueClass) {
+    public ValueTypeCategoryBase(String typeName, int color, ChatFormatting colorFormat, Set<IValueType<?>> elements, Class<V> valueClass) {
         super(typeName, color, colorFormat, valueClass);
         this.elements = Collections.unmodifiableSet(elements);
     }
@@ -40,7 +40,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
      * @param colorFormat The color format.
      * @param valueClass The value type class.
      */
-    public ValueTypeCategoryBase(String typeName, int color, TextFormatting colorFormat, Class<V> valueClass) {
+    public ValueTypeCategoryBase(String typeName, int color, ChatFormatting colorFormat, Class<V> valueClass) {
         super(typeName, color, colorFormat, valueClass);
         this.elements = null;
     }
@@ -62,7 +62,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(V value) {
+    public MutableComponent toCompactString(V value) {
         return null;
     }
 
@@ -72,12 +72,12 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public INBT serialize(V value) {
+    public Tag serialize(V value) {
         throw new UnsupportedOperationException("This operation is not allowed");
     }
 
     @Override
-    public V deserialize(INBT value) {
+    public V deserialize(Tag value) {
         throw new UnsupportedOperationException("This operation is not allowed");
     }
 

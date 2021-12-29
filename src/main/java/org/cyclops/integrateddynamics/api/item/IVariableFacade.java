@@ -1,17 +1,16 @@
 package org.cyclops.integrateddynamics.api.item;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -73,7 +72,7 @@ public interface IVariableFacade {
      * @param world The world.
      */
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(List<ITextComponent> list, World world);
+    public void appendHoverText(List<Component> list, Level world);
 
     /**
      * Handle the quads for the given baked model.
@@ -95,7 +94,7 @@ public interface IVariableFacade {
      */
     @Nullable
     @OnlyIn(Dist.CLIENT)
-    public default IBakedModel getVariableItemOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+    public default BakedModel getVariableItemOverrideModel(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
         return null;
     }
 
@@ -109,7 +108,7 @@ public interface IVariableFacade {
      * @param combinedOverlay Overlay.
      */
     @OnlyIn(Dist.CLIENT)
-    public default void renderISTER(ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+    public default void renderISTER(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 
     }
 
@@ -119,7 +118,7 @@ public interface IVariableFacade {
          * Set the current error for the given aspect.
          * @param error The error to set, or null to clear.
          */
-        public void addError(IFormattableTextComponent error);
+        public void addError(MutableComponent error);
 
     }
 

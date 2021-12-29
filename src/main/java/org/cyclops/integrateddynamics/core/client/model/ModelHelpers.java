@@ -2,11 +2,10 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.base.Charsets;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.BlockModel;
-import net.minecraft.client.renderer.model.FaceBakery;
-import net.minecraft.client.renderer.model.ItemModelGenerator;
-import net.minecraft.resources.IResource;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +27,7 @@ public final class ModelHelpers {
      * @throws IOException If the model file was invalid.
      */
     public static BlockModel loadModelBlock(ResourceLocation modelLocation) throws IOException {
-        IResource resource = Minecraft.getInstance().getResourceManager().getResource(
+        Resource resource = Minecraft.getInstance().getResourceManager().getResource(
                 new ResourceLocation(modelLocation.getNamespace(), "models/" + modelLocation.getPath() + ".json"));
         Reader reader = new InputStreamReader(resource.getInputStream(), Charsets.UTF_8);
 

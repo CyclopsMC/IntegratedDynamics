@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.item.ItemStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
@@ -16,9 +16,6 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix.FluidButton;
-import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix.ItemButton;
 
 /**
  * Squeezer recipes.
@@ -70,7 +67,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<RecipeSqueezer> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawElementInner(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
+    public void drawElementInner(ScreenInfoBook gui, PoseStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
         int middle = (width - SLOT_SIZE) / 2;
         gui.drawArrowRight(matrixStack, x + middle - 3, y + 2);
 

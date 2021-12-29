@@ -4,18 +4,16 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.ILootSerializer;
-import net.minecraft.loot.LootConditionType;
-import net.minecraft.loot.LootFunctionType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameter;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.cyclops.cyclopscore.helper.LootHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
@@ -26,26 +24,26 @@ import java.util.Set;
  * A loot condition testing if a wrench is used.
  * @author rubensworks
  */
-public class LootConditionMatchWrench implements ILootCondition {
-    public static final LootConditionType TYPE = LootHelpers.registerCondition(new ResourceLocation(Reference.MOD_ID, "match_wrench"), new LootConditionMatchWrench.Serializer());
+public class LootConditionMatchWrench implements LootItemCondition {
+    public static final LootItemConditionType TYPE = LootHelpers.registerCondition(new ResourceLocation(Reference.MOD_ID, "match_wrench"), new LootConditionMatchWrench.Serializer());
 
     @Override
     public boolean test(LootContext lootContext) {
-        ItemStack itemStack = lootContext.getParamOrNull(LootParameters.TOOL);
-        Entity entity = lootContext.getParamOrNull(LootParameters.THIS_ENTITY);
-        BlockPos blockPos = new BlockPos(lootContext.getParamOrNull(LootParameters.ORIGIN));
+        ItemStack itemStack = lootContext.getParamOrNull(LootContextParams.TOOL);
+        Entity entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);
+        BlockPos blockPos = new BlockPos(lootContext.getParamOrNull(LootContextParams.ORIGIN));
         return itemStack != null
-                && entity instanceof PlayerEntity
-                && WrenchHelpers.isWrench((PlayerEntity) entity, itemStack, entity.getCommandSenderWorld(), blockPos, null);
+                && entity instanceof Player
+                && WrenchHelpers.isWrench((Player) entity, itemStack, entity.getCommandSenderWorld(), blockPos, null);
     }
 
     @Override
-    public Set<LootParameter<?>> getReferencedContextParams() {
-        return ImmutableSet.of(LootParameters.TOOL, LootParameters.THIS_ENTITY, LootParameters.ORIGIN);
+    public Set<LootContextParam<?>> getReferencedContextParams() {
+        return ImmutableSet.of(LootContextParams.TOOL, LootContextParams.THIS_ENTITY, LootContextParams.ORIGIN);
     }
 
     @Override
-    public LootConditionType getType() {
+    public LootItemConditionType getType() {
         return TYPE;
     }
 
@@ -53,7 +51,7 @@ public class LootConditionMatchWrench implements ILootCondition {
         // Dummy call, to enforce class loading
     }
 
-    public static class Serializer implements ILootSerializer<LootConditionMatchWrench> {
+    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<LootConditionMatchWrench> {
 
         @Override
         public void serialize(JsonObject jsonObject, LootConditionMatchWrench lootConditionMatchWrench, JsonSerializationContext jsonSerializationContext) {

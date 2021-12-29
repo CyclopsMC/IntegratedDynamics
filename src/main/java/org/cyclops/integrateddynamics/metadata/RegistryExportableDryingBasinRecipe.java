@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.metadata;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.metadata.IRegistryExportable;
 import org.cyclops.cyclopscore.metadata.RegistryExportableRecipeAbstract;
@@ -14,7 +14,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
 /**
  * Drying basin recipe exporter.
  */
-public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecipeAbstract<IRecipeType<RecipeDryingBasin>, RecipeDryingBasin, IInventoryFluid> {
+public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecipeAbstract<RecipeType<RecipeDryingBasin>, RecipeDryingBasin, IInventoryFluid> {
 
     protected RegistryExportableDryingBasinRecipe() {
         super(() -> RegistryEntries.RECIPETYPE_DRYING_BASIN);

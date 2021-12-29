@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -62,13 +62,13 @@ public class AspectAppendix extends SectionAppendix {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void drawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void drawElement(ScreenInfoBook gui, PoseStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
         int yOffset = 5;
         gui.drawOuterBorder(matrixStack, x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
         gui.drawTextBanner(matrixStack, x + width / 2, y - 2 - yOffset);
         gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
-        RenderHelper.turnBackOn();
+        Lighting.setupForFlatItems();
         Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(itemStack, x, y);
 
         // Base information
@@ -76,34 +76,33 @@ public class AspectAppendix extends SectionAppendix {
         String valueTypeName = L10NHelpers.localize(aspect.getValueType().getTranslationKey());
         gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
         String valueString = L10NHelpers.localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
-        //gui.getFontRenderer().setBidiFlag(true);
-        gui.getFontRenderer().draw(matrixStack, L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0);
+        //gui.getFont().setBidiFlag(true);
+        gui.getFont().draw(matrixStack, L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0);
 
         // Settings
         if (aspect.hasProperties()) {
             int offsetY = 26;
-            gui.getFontRenderer().draw(matrixStack, TextFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
+            gui.getFont().draw(matrixStack, ChatFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
             for (IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                 offsetY += 10;
-                gui.getFontRenderer().draw(matrixStack, TextFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
+                gui.getFont().draw(matrixStack, ChatFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
             }
         }
-        //gui.getFontRenderer().setBidiFlag(wasUnicode);
+        //gui.getFont().setBidiFlag(wasUnicode);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void postDrawElement(ScreenInfoBook gui, MatrixStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
-        GlStateManager._pushMatrix();
+    protected void postDrawElement(ScreenInfoBook gui, PoseStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
+        matrixStack.pushPose();
         if(mx >= x && my >= y && mx <= x + SLOT_SIZE && my <= y + SLOT_SIZE ) {
-            List<ITextComponent> lines = Lists.newArrayList();
+            List<Component> lines = Lists.newArrayList();
             aspect.loadTooltip(lines, true);
-            // MCP: renderTooltip
             gui.renderComponentTooltip(matrixStack, lines, mx, my);
         }
-        GlStateManager._popMatrix();
+        matrixStack.popPose();
 
-        GlStateManager._disableLighting();
+        //GlStateManager._disableLighting();
 
         GlStateManager._enableBlend();
         GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -25,9 +25,9 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFlui
 public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
-    public void renderValue(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+    public void renderValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                             Direction direction, IPartType partType, IValue value, float partialTicks,
-                            MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                            PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
                             int combinedLight, int combinedOverlay, float alpha) {
         FluidStack fluidStack = ((ValueObjectTypeFluidStack.ValueFluidStack) value).getRawValue();
         if (!fluidStack.isEmpty()) {
@@ -38,9 +38,9 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             // Fluid
             matrixStack.pushPose();
             TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStack, Direction.UP);
-            Triple<Float, Float, Float> color = Helpers.intToRGB(fluidStack.getFluid().getAttributes().getColor(rendererDispatcher.level, rendererDispatcher.camera.getBlockPosition()));
+            Triple<Float, Float, Float> color = Helpers.intToRGB(fluidStack.getFluid().getAttributes().getColor(context.getBlockEntityRenderDispatcher().level, context.getBlockEntityRenderDispatcher().camera.getBlockPosition()));
 
-            IVertexBuilder vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+            VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
             Matrix4f matrix = matrixStack.last().pose();
 
             float min = 0F;
@@ -57,9 +57,9 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             // Stack size
             matrixStack.translate(7F, 8.5F, 0.1F);
             String string = String.valueOf(fluidStack.getAmount());
-            float scale = ((float) 5) / (float) rendererDispatcher.getFont().width(string);
+            float scale = ((float) 5) / (float) context.getFont().width(string);
             matrixStack.scale(scale, scale, 1F);
-            rendererDispatcher.getFont().drawInBatch(string,
+            context.getFont().drawInBatch(string,
                     0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)),
                     false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
             matrixStack.popPose();

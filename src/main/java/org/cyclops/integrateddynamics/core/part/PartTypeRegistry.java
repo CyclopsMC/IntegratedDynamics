@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Maps;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;

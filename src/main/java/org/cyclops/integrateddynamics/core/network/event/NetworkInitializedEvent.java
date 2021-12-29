@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.core.network.event;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 
@@ -16,11 +15,11 @@ import javax.annotation.Nullable;
 public class NetworkInitializedEvent extends Event {
 
     private final INetwork network;
-    private final World world;
+    private final Level world;
     private final BlockPos pos;
     private final LivingEntity placer;
 
-    public NetworkInitializedEvent(INetwork network, World world, BlockPos pos, @Nullable LivingEntity placer) {
+    public NetworkInitializedEvent(INetwork network, Level world, BlockPos pos, @Nullable LivingEntity placer) {
         this.network = network;
         this.world = world;
         this.pos = pos;
@@ -31,7 +30,7 @@ public class NetworkInitializedEvent extends Event {
         return network;
     }
 
-    public World getLevel() {
+    public Level getLevel() {
         return world;
     }
 

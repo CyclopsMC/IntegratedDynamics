@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.MenuProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -42,7 +42,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * @param lines The list to add lines to.
      * @param appendOptionalInfo If shift-to-show info should be added.
      */
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo);
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo);
 
     /**
      * @return The type of value this aspect can handle.
@@ -109,7 +109,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
      * @return The container type for the screen to configure the properties.
      * @param pos The part position.
      */
-    public INamedContainerProvider getPropertiesContainerProvider(PartPos pos);
+    public MenuProvider getPropertiesContainerProvider(PartPos pos);
 
     /**
      * Use this comparator for any comparisons with aspects.

@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
@@ -26,11 +26,11 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBakery modelBakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter,
-                                                              IModelTransform transform, ResourceLocation location) {
-        IBakedModel bakedModel = null;
+    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter,
+                                                              ModelState transform, ResourceLocation location) {
+        BakedModel bakedModel = null;
         try {
-            bakedModel = modelBakery.getBakedModel(this.model, transform, spriteGetter);
+            bakedModel = modelBakery.bake(this.model, transform, spriteGetter);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,7 +43,7 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public void loadModels(ModelLoader modelLoader) {
+    public void loadModels(ForgeModelBakery modelLoader) {
         modelLoader.getSpecialModels().add(model);
     }
 

@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.block.LeavesBlock;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.Rarity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
@@ -74,7 +74,7 @@ public class TestItemStackOperators {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
         iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 2)));
         ItemStack appleStack = new ItemStack(Items.APPLE);
-        appleStack.setTag(new CompoundNBT());
+        appleStack.setTag(new CompoundTag());
         appleStack.getTag().putString("a", "b");
         iAppleTag = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(appleStack));
         iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.RED_BED)));
@@ -1208,7 +1208,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().isPresent(), false, "nbt(apple:1) is null");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), new CompoundNBT(), "nbt(battery) is non null");
+        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), new CompoundTag(), "nbt(battery) is non null");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

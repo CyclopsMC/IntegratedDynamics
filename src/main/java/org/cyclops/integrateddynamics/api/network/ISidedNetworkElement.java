@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 /**
  * A network element that exists at a certain side.

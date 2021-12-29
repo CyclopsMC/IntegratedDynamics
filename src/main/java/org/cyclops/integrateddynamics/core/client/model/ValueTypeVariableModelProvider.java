@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.Maps;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -22,13 +22,13 @@ import java.util.function.Function;
  */
 public class ValueTypeVariableModelProvider implements IVariableModelProvider<BakedMapVariableModelProvider<IValueType>> {
     @Override
-    public BakedMapVariableModelProvider<IValueType> bakeOverlayModels(ModelBakery modelBakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform transform, ResourceLocation location) {
-        Map<IValueType, IBakedModel> bakedModels = Maps.newHashMap();
+    public BakedMapVariableModelProvider<IValueType> bakeOverlayModels(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location) {
+        Map<IValueType, BakedModel> bakedModels = Maps.newHashMap();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             try {
                 ResourceLocation resourceLocation = ValueTypes.REGISTRY.getValueTypeModel(valueType);
                 if(resourceLocation != null) {
-                    IBakedModel bakedModel = modelBakery.getBakedModel(resourceLocation, transform, spriteGetter);
+                    BakedModel bakedModel = modelBakery.bake(resourceLocation, transform, spriteGetter);
                     bakedModels.put(valueType, bakedModel);
                 }
             } catch (Exception e) {
@@ -44,7 +44,7 @@ public class ValueTypeVariableModelProvider implements IVariableModelProvider<Ba
     }
 
     @Override
-    public void loadModels(ModelLoader modelLoader) {
+    public void loadModels(ForgeModelBakery modelLoader) {
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             modelLoader.getSpecialModels().add(ValueTypes.REGISTRY.getValueTypeModel(valueType));
         }

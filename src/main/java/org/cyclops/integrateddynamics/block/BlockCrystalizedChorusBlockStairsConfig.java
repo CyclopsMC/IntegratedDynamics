@@ -1,10 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.material.Material;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.material.Material;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -20,11 +19,9 @@ public class BlockCrystalizedChorusBlockStairsConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_chorus_block_stairs",
-                eConfig -> new StairsBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_CHORUS_BLOCK.defaultBlockState(), Block.Properties.of(Material.CLAY)
+                eConfig -> new StairBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_CHORUS_BLOCK.defaultBlockState(), Block.Properties.of(Material.CLAY)
                         .sound(SoundType.SNOW)
-                        .strength(1.5F)
-                        .harvestLevel(0)
-                        .harvestTool(ToolType.PICKAXE)),
+                        .strength(1.5F)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

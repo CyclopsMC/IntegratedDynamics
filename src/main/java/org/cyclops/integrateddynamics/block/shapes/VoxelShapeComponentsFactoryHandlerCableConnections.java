@@ -1,19 +1,19 @@
 package org.cyclops.integrateddynamics.block.shapes;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -34,16 +34,16 @@ import java.util.Collection;
 public class VoxelShapeComponentsFactoryHandlerCableConnections implements VoxelShapeComponentsFactory.IHandler {
 
     private final static EnumFacingMap<VoxelShape> BOUNDS = EnumFacingMap.forAllValues(
-            VoxelShapes.create(new AxisAlignedBB(CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX)), // DOWN
-            VoxelShapes.create(new AxisAlignedBB(CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX)), // UP
-            VoxelShapes.create(new AxisAlignedBB(CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MIN)), // NORTH
-            VoxelShapes.create(new AxisAlignedBB(CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1)), // SOUTH
-            VoxelShapes.create(new AxisAlignedBB(0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX)), // WEST
-            VoxelShapes.create(new AxisAlignedBB(CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX)) // EAST
+            Shapes.create(new AABB(CableModel.MIN, 0, CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX)), // DOWN
+            Shapes.create(new AABB(CableModel.MIN, CableModel.MAX, CableModel.MIN, CableModel.MAX, 1, CableModel.MAX)), // UP
+            Shapes.create(new AABB(CableModel.MIN, CableModel.MIN, 0, CableModel.MAX, CableModel.MAX, CableModel.MIN)), // NORTH
+            Shapes.create(new AABB(CableModel.MIN, CableModel.MAX, CableModel.MAX, CableModel.MAX, CableModel.MIN, 1)), // SOUTH
+            Shapes.create(new AABB(0, CableModel.MIN, CableModel.MIN, CableModel.MIN, CableModel.MAX, CableModel.MAX)), // WEST
+            Shapes.create(new AABB(CableModel.MAX, CableModel.MIN, CableModel.MIN, 1, CableModel.MAX, CableModel.MAX)) // EAST
     );
 
     @Override
-    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, IBlockReader world, BlockPos blockPos) {
+    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
         Collection<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
         if (CableHelpers.isNoFakeCable(world, blockPos, null)) {
             for (Direction direction : Direction.values()) {
@@ -70,7 +70,7 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
         }
 
         @Override
-        public VoxelShape getShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
+        public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
             if (partContainer == null) { // equivalent to: CableHelpers.isCableConnected(world, blockPos, direction)
                 return BOUNDS.get(direction);
             }
@@ -83,13 +83,13 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
         }
 
         @Override
-        public ActionResultType onBlockActivated(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResultComponent hit) {
+        public InteractionResult onBlockActivated(BlockState state, Level world, BlockPos blockPos, Player player, InteractionHand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getItemInHand(hand);
-            ActionResultType actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getDirection(), direction);
+            InteractionResult actionResult = CableHelpers.onCableActivated(world, blockPos, state, player, heldItem, hit.getDirection(), direction);
             if(actionResult.consumesAction()) {
                 return actionResult;
             }
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
 
     }

@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.part.aspect;
 
 import lombok.Getter;
 import lombok.NonNull;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
@@ -51,8 +51,8 @@ public abstract class LazyAspectVariable<V extends IValue> extends VariableAdapt
     public V getValue() throws EvaluationException {
         if(value == null) {
             if(this.isGettingValue) {
-                throw new EvaluationException(new TranslationTextComponent(L10NValues.VARIABLE_ERROR_RECURSION,
-                        new TranslationTextComponent(getAspect().getTranslationKey())));
+                throw new EvaluationException(new TranslatableComponent(L10NValues.VARIABLE_ERROR_RECURSION,
+                        new TranslatableComponent(getAspect().getTranslationKey())));
             }
             this.isGettingValue = true;
             try {

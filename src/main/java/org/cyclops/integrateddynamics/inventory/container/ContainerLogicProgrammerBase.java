@@ -1,16 +1,16 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,8 +33,6 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer.IItemPredicate;
-
 /**
  * Base container for the logic programmer.
  * @author rubensworks
@@ -53,7 +51,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     private ILogicProgrammerElement activeElement = null;
     private ILogicProgrammerElement temporarySlotsElement = null;
     private SimpleInventory temporaryInputSlots = null;
-    private ITextComponent lastError;
+    private Component lastError;
     private LoadConfigListener loadConfigListener;
 
     private IValueType filterIn1 = null;
@@ -65,8 +63,8 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     private String lastLabel = "";
 
-    public ContainerLogicProgrammerBase(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory) {
-        super(type, id, playerInventory, new Inventory(0), getElements(), FILTERER);
+    public ContainerLogicProgrammerBase(@Nullable MenuType<?> type, int id, Inventory playerInventory) {
+        super(type, id, playerInventory, new SimpleContainer(0), getElements(), FILTERER);
         this.writeSlot = new SimpleInventory(1, 1);
         this.filterSlots = new SimpleInventory(3, 1);
         this.filterSlots.addDirtyMarkListener(new FilterSlotListener());
@@ -109,7 +107,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     protected void initializeSlotsPost() {
-        addPlayerInventory((PlayerInventory) getPlayerIInventory(), 88, 131);
+        addPlayerInventory((Inventory) getPlayerIInventory(), 88, 131);
     }
 
     @Override
@@ -211,7 +209,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
-    public void removed(PlayerEntity player) {
+    public void removed(Player player) {
         super.removed(player);
         if (!player.level.isClientSide()) {
             ItemStack itemStack = writeSlot.getItem(0);
@@ -262,7 +260,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
             ItemStack outputStack = writeElementInfo();
             writeSlot.removeDirtyMarkListener(this);
             writeSlot.setItem(0, outputStack);
-            if(!StringUtils.isNullOrEmpty(this.lastLabel)) {
+            if(!StringUtil.isNullOrEmpty(this.lastLabel)) {
                 labelCurrent();
             }
             writeSlot.addDirtyMarkListener(this);
@@ -282,11 +280,11 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         }
     }
 
-    public ITextComponent getLastError() {
+    public Component getLastError() {
         return this.lastError;
     }
 
-    public IInventory getTemporaryInputSlots() {
+    public Container getTemporaryInputSlots() {
         return this.temporaryInputSlots;
     }
 
@@ -302,14 +300,14 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
-    public ItemStack clicked(int slotId, int mouseButton, ClickType clickType, PlayerEntity player) {
+    public void clicked(int slotId, int mouseButton, ClickType clickType, Player player) {
         // Handle cases where the client may have more (phantom) slots than the server.
         if (slotId >= this.slots.size() || (this.activeElement != null
                 && this.slots.size() > slotId && slotId >= 0
                 && this.activeElement.slotClick(slotId, this.getSlot(slotId), mouseButton, clickType, player))) {
-            return ItemStack.EMPTY;
+            return;
         }
-        return super.clicked(slotId, mouseButton, clickType, player);
+        super.clicked(slotId, mouseButton, clickType, player);
     }
 
     /**
@@ -337,7 +335,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
      */
     protected class FilterSlotListener implements IDirtyMarkListener {
 
-        protected IValueType getValueType(IInventory inventory, int slot) {
+        protected IValueType getValueType(Container inventory, int slot) {
             IVariableFacadeHandlerRegistry handler = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             if(inventory.getItem(slot) != null) {
                 IVariableFacade variableFacade = handler.handle(inventory.getItem(slot));

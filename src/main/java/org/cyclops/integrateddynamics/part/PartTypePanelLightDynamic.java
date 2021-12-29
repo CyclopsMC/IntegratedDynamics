@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.part;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
@@ -74,8 +74,8 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         try {
             return ValueTypeLightLevels.REGISTRY.getLightLevel(value);
         } catch (InvalidValueTypeException e) {
-            state.addGlobalError(new TranslationTextComponent(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
-                    new TranslationTextComponent(value.getType().getTranslationKey())));
+            state.addGlobalError(new TranslatableComponent(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
+                    new TranslatableComponent(value.getType().getTranslationKey())));
         }
         return 0;
     }
@@ -94,7 +94,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, State state,
-                                      IBlockReader world, Block neighbourBlock, BlockPos neighbourPos) {
+                                      BlockGetter world, Block neighbourBlock, BlockPos neighbourPos) {
         super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourPos);
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }
@@ -111,7 +111,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
 
     public static void setLightLevel(PartTarget target, int lightLevel) {
         if (BlockInvisibleLightConfig.invisibleLightBlock) {
-            World world = target.getTarget().getPos().getWorld(true);
+            Level world = target.getTarget().getPos().getLevel(true);
             BlockPos pos = target.getTarget().getPos().getBlockPos();
             if(world.isEmptyBlock(pos)) {
                 if(lightLevel > 0) {
@@ -122,7 +122,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
                 }
             }
         } else {
-            TileHelpers.getCapability(target.getCenter().getPos(), target.getCenter().getSide(), DynamicLightConfig.CAPABILITY)
+            BlockEntityHelpers.getCapability(target.getCenter().getPos(), target.getCenter().getSide(), DynamicLightConfig.CAPABILITY)
                     .ifPresent(dynamicLight -> dynamicLight.setLightLevel(lightLevel));
         }
     }

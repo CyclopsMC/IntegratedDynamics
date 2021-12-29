@@ -3,43 +3,43 @@ package org.cyclops.integrateddynamics.loot.functions;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootFunction;
-import net.minecraft.loot.LootFunctionType;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.cyclops.cyclopscore.helper.LootHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
-import org.cyclops.integrateddynamics.tileentity.TileMechanicalDryingBasin;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalDryingBasin;
 
 /**
  * Copies the mechanical drying basin tanks.
  * @author rubensworks
  */
-public class LootFunctionCopyMechanicalDryingBasinTanks extends LootFunction {
-    public static final LootFunctionType TYPE = LootHelpers.registerFunction(new ResourceLocation(Reference.MOD_ID, "copy_mechanical_drying_basin_tanks"), new LootFunctionCopyMechanicalDryingBasinTanks.Serializer());
+public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditionalFunction {
+    public static final LootItemFunctionType TYPE = LootHelpers.registerFunction(new ResourceLocation(Reference.MOD_ID, "copy_mechanical_drying_basin_tanks"), new LootFunctionCopyMechanicalDryingBasinTanks.Serializer());
 
-    protected LootFunctionCopyMechanicalDryingBasinTanks(ILootCondition[] conditionsIn) {
+    protected LootFunctionCopyMechanicalDryingBasinTanks(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
     }
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        TileEntity tile = lootContext.getParamOrNull(LootParameters.BLOCK_ENTITY);
-        if (tile instanceof TileMechanicalDryingBasin) {
-            itemStack.getOrCreateTag().put(BlockMechanicalDryingBasin.NBT_TANK_IN, ((TileMechanicalDryingBasin) tile).getTankInput().writeToNBT(new CompoundNBT()));
-            itemStack.getOrCreateTag().put(BlockMechanicalDryingBasin.NBT_TANK_OUT, ((TileMechanicalDryingBasin) tile).getTankOutput().writeToNBT(new CompoundNBT()));
+        BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        if (tile instanceof BlockEntityMechanicalDryingBasin) {
+            itemStack.getOrCreateTag().put(BlockMechanicalDryingBasin.NBT_TANK_IN, ((BlockEntityMechanicalDryingBasin) tile).getTankInput().writeToNBT(new CompoundTag()));
+            itemStack.getOrCreateTag().put(BlockMechanicalDryingBasin.NBT_TANK_OUT, ((BlockEntityMechanicalDryingBasin) tile).getTankOutput().writeToNBT(new CompoundTag()));
         }
         return itemStack;
     }
 
     @Override
-    public LootFunctionType getType() {
+    public LootItemFunctionType getType() {
         return TYPE;
     }
 
@@ -47,14 +47,14 @@ public class LootFunctionCopyMechanicalDryingBasinTanks extends LootFunction {
         // Dummy call, to enforce class loading
     }
 
-    public static class Serializer extends LootFunction.Serializer<LootFunctionCopyMechanicalDryingBasinTanks> {
+    public static class Serializer extends LootItemConditionalFunction.Serializer<LootFunctionCopyMechanicalDryingBasinTanks> {
         @Override
         public void serialize(JsonObject jsonObject, LootFunctionCopyMechanicalDryingBasinTanks lootFunctionCopyId, JsonSerializationContext jsonSerializationContext) {
 
         }
 
         @Override
-        public LootFunctionCopyMechanicalDryingBasinTanks deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext, ILootCondition[] conditionsIn) {
+        public LootFunctionCopyMechanicalDryingBasinTanks deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext, LootItemCondition[] conditionsIn) {
             return new LootFunctionCopyMechanicalDryingBasinTanks(conditionsIn);
         }
     }

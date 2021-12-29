@@ -4,8 +4,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 
-import javax.annotation.Nullable;
-
 /**
  * A capability that retrieves the {@link IPositionedAddonsNetworkIngredients}
  * of an {@link org.cyclops.commoncapabilities.api.ingredient.IngredientComponent} in a network.

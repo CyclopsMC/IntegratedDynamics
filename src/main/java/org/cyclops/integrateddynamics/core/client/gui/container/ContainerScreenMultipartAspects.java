@@ -2,16 +2,15 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
@@ -44,7 +43,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
     private Map<IAspect, ButtonText> aspectPropertyButtons = Maps.newHashMap();
 
-    public ContainerScreenMultipartAspects(C container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenMultipartAspects(C container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
 
@@ -55,20 +54,20 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
     @Override
     public void init() {
-        buttons.clear();
+        clearWidgets();
         super.init();
         if(getMenu().getPartType().getContainerProviderSettings(null).isPresent()) {
-            addButton(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
-                    new TranslationTextComponent("gui.integrateddynamics.partsettings"),
+            addRenderableWidget(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
+                    new TranslatableComponent("gui.integrateddynamics.partsettings"),
                     createServerPressable(ContainerMultipartAspects.BUTTON_SETTINGS, b -> {}), true,
                     Images.CONFIG_BOARD, -2, -3));
         }
         for(Map.Entry<IAspect, String> entry : getMenu().getAspectPropertyButtons().entrySet()) {
             ButtonText button = new ButtonText(-20, -20, 10, 10,
-                    new TranslationTextComponent("gui.integrateddynamics.aspect_settings"), new StringTextComponent("+"),
+                    new TranslatableComponent("gui.integrateddynamics.aspect_settings"), new TextComponent("+"),
                     createServerPressable(entry.getValue(), b -> {}), true);
             aspectPropertyButtons.put(entry.getKey(), button);
-            addButton(button);
+            addRenderableWidget(button);
         }
     }
 
@@ -85,8 +84,8 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         // Reset button positions
         for(Map.Entry<IAspect, ButtonText> entry : this.aspectPropertyButtons.entrySet()) {
@@ -105,9 +104,9 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
             if(container.isElementVisible(i)) {
                 A aspect = container.getVisibleElement(i);
 
-                GlStateManager._disableAlphaTest();
+                //GlStateManager._disableAlphaTest();
                 Triple<Float, Float, Float> rgb = Helpers.intToRGB(aspect.getValueType().getDisplayColor());
-                GlStateManager._color4f(colorSmoothener(rgb.getLeft()), colorSmoothener(rgb.getMiddle()),
+                RenderSystem.setShaderColor(colorSmoothener(rgb.getLeft()), colorSmoothener(rgb.getMiddle()),
                         colorSmoothener(rgb.getRight()), 1);
 
                 // Background
@@ -133,7 +132,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         }
     }
 
-    protected abstract void drawAdditionalElementInfo(MatrixStack matrixStack, C container, int index, A aspect);
+    protected abstract void drawAdditionalElementInfo(PoseStack matrixStack, C container, int index, A aspect);
 
     protected Rectangle getElementPosition(C container, int i, boolean absolute) {
         return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.leftPos : 0),
@@ -143,16 +142,16 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         C container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
                 // Item icon tooltip
                 if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
-                    List<ITextComponent> lines = Lists.newLinkedList();
+                    List<Component> lines = Lists.newLinkedList();
                     container.getVisibleElement(i).loadTooltip(lines, true);
-                    drawTooltip(lines, mouseX - this.leftPos, mouseY - this.topPos);
+                    drawTooltip(lines, matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
                 }
                 drawAdditionalElementInfoForeground(matrixStack, container, i, container.getVisibleElement(i), mouseX, mouseY);
 
@@ -163,22 +162,22 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                     int x = button.x - leftPos;
                     int y = button.y - topPos;
                     if(isHovering(x, y, button.getWidth(), button.getHeight(), mouseX, mouseY)) {
-                        List<ITextComponent> lines = Lists.newLinkedList();
-                        lines.add(new TranslationTextComponent("gui.integrateddynamics.part.properties")
-                                .withStyle(TextFormatting.WHITE));
+                        List<Component> lines = Lists.newLinkedList();
+                        lines.add(new TranslatableComponent("gui.integrateddynamics.part.properties")
+                                .withStyle(ChatFormatting.WHITE));
                         for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
-                            lines.add(new StringTextComponent("-")
-                                    .withStyle(TextFormatting.YELLOW)
-                                    .append(new TranslationTextComponent(property.getTranslationKey())));
+                            lines.add(new TextComponent("-")
+                                    .withStyle(ChatFormatting.YELLOW)
+                                    .append(new TranslatableComponent(property.getTranslationKey())));
                         }
-                        drawTooltip(lines, mouseX - this.leftPos, mouseY - this.topPos);
+                        drawTooltip(lines, matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
                     }
                 }
             }
         }
     }
 
-    protected abstract void drawAdditionalElementInfoForeground(MatrixStack matrixStack, C container, int index,
+    protected abstract void drawAdditionalElementInfoForeground(PoseStack matrixStack, C container, int index,
                                                                 A aspect, int mouseX, int mouseY);
 
     public int getMaxLabelWidth() {

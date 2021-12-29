@@ -3,10 +3,10 @@ package org.cyclops.integrateddynamics.core.recipe.handler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 /**
  * @author rubensworks
  */
-public class RecipeHandlerSqueezer extends RecipeHandlerRecipeType<IInventory, RecipeSqueezer> {
+public class RecipeHandlerSqueezer extends RecipeHandlerRecipeType<Container, RecipeSqueezer> {
 
-    public RecipeHandlerSqueezer(Supplier<World> worldSupplier) {
+    public RecipeHandlerSqueezer(Supplier<Level> worldSupplier) {
         super(worldSupplier,
                 RegistryEntries.RECIPETYPE_SQUEEZER,
                 Sets.newHashSet(IngredientComponent.ITEMSTACK),
@@ -36,8 +36,8 @@ public class RecipeHandlerSqueezer extends RecipeHandlerRecipeType<IInventory, R
 
     @Nullable
     @Override
-    protected IInventory getRecipeInputContainer(IMixedIngredients input) {
-        IInventory inventory = new Inventory(1);
+    protected Container getRecipeInputContainer(IMixedIngredients input) {
+        Container inventory = new SimpleContainer(1);
         inventory.setItem(0, input.getInstances(IngredientComponent.ITEMSTACK).get(0));
         return inventory;
     }

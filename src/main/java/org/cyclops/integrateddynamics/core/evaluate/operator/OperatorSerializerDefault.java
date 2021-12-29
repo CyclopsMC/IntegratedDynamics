@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 
@@ -23,12 +23,12 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
     }
 
     @Override
-    public INBT serialize(IOperator operator) {
-        return StringNBT.valueOf(operator.getUniqueName().toString());
+    public Tag serialize(IOperator operator) {
+        return StringTag.valueOf(operator.getUniqueName().toString());
     }
 
     @Override
-    public IOperator deserialize(INBT value) {
+    public IOperator deserialize(Tag value) {
         return Operators.REGISTRY.getOperator(new ResourceLocation(value.getAsString()));
     }
 }

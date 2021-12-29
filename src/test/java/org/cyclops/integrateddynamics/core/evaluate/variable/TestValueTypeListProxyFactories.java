@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -61,7 +61,7 @@ public class TestValueTypeListProxyFactories {
     @Test
     public void testNbtKeys() throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         testFactoryType(new ValueTypeListProxyNbtKeys(
-                Optional.of(new CompoundNBT())
+                Optional.of(new CompoundTag())
         ));
     }
 
@@ -69,7 +69,7 @@ public class TestValueTypeListProxyFactories {
     public void testNbtValueListByte() throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         testFactoryType(new ValueTypeListProxyNbtValueListByte(
                 "a",
-                Optional.of(new CompoundNBT())
+                Optional.of(new CompoundTag())
         ));
     }
 
@@ -77,7 +77,7 @@ public class TestValueTypeListProxyFactories {
     public void testNbtValueListInt() throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         testFactoryType(new ValueTypeListProxyNbtValueListInt(
                 "a",
-                Optional.of(new CompoundNBT())
+                Optional.of(new CompoundTag())
         ));
     }
 
@@ -85,7 +85,7 @@ public class TestValueTypeListProxyFactories {
     public void testNbtValueListTag() throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         testFactoryType(new ValueTypeListProxyNbtValueListTag(
                 "a",
-                Optional.of(new CompoundNBT())
+                Optional.of(new CompoundTag())
         ));
     }
 
@@ -98,7 +98,7 @@ public class TestValueTypeListProxyFactories {
     }
 
     protected void testFactoryType(IValueTypeListProxy<?, ?> proxy) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        INBT serialized = ValueTypeListProxyFactories.REGISTRY.serialize(proxy);
+        Tag serialized = ValueTypeListProxyFactories.REGISTRY.serialize(proxy);
         IValueTypeListProxy<?, ?> proxyNew = ValueTypeListProxyFactories.REGISTRY.deserialize(serialized);
         if (!(proxy.isInfinite() && proxy.isInfinite())) {
             assertThat(proxyNew, equalTo(proxy));

@@ -1,21 +1,20 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.MenuType;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
-import org.cyclops.integrateddynamics.core.tileentity.TileMechanicalMachine;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMechanicalMachine;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * A base container for {@link TileMechanicalMachine}.
+ * A base container for {@link BlockEntityMechanicalMachine}.
  * @author rubensworks
  */
-public class ContainerMechanicalMachine<T extends TileMechanicalMachine<?, ?>> extends InventoryContainer {
+public class ContainerMechanicalMachine<T extends BlockEntityMechanicalMachine<?, ?>> extends InventoryContainer {
 
     private final Optional<T> tileSupplier;
     private final Supplier<Integer> variableMaxProgress;
@@ -23,8 +22,8 @@ public class ContainerMechanicalMachine<T extends TileMechanicalMachine<?, ?>> e
     private final Supplier<Integer> variableMaxEnergy;
     private final Supplier<Integer> variableEnergy;
 
-    public ContainerMechanicalMachine(@Nullable ContainerType<?> type, int id, PlayerInventory playerInventory,
-                                      IInventory inventory, Optional<T> tileSupplier) {
+    public ContainerMechanicalMachine(@Nullable MenuType<?> type, int id, Inventory playerInventory,
+                                      Container inventory, Optional<T> tileSupplier) {
         super(type, id, playerInventory, inventory);
         this.tileSupplier = tileSupplier;
         this.variableMaxProgress = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getMaxProgress());
@@ -51,10 +50,5 @@ public class ContainerMechanicalMachine<T extends TileMechanicalMachine<?, ?>> e
 
     public int getEnergy() {
         return variableEnergy.get();
-    }
-
-    @Override
-    public boolean stillValid(PlayerEntity p_75145_1_) {
-        return false; // TODO: rm
     }
 }

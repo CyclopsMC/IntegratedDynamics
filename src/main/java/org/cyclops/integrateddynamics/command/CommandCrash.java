@@ -4,9 +4,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import org.apache.logging.log4j.Level;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.TickHandler;
 
@@ -15,16 +14,16 @@ import org.cyclops.integrateddynamics.core.TickHandler;
  * @author rubensworks
  *
  */
-public class CommandCrash implements Command<CommandSource> {
+public class CommandCrash implements Command<CommandSourceStack> {
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        IntegratedDynamics.clog(Level.WARN, context.getSource().getTextName() + " initialized a server crash.");
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, context.getSource().getTextName() + " initialized a server crash.");
         TickHandler.getInstance().setShouldCrash();
         return 0;
     }
 
-    public static LiteralArgumentBuilder<CommandSource> make() {
+    public static LiteralArgumentBuilder<CommandSourceStack> make() {
         return Commands.literal("crash")
                 .requires((commandSource) -> commandSource.hasPermission(2))
                         .executes(new CommandCrash());

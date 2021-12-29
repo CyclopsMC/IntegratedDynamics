@@ -4,8 +4,6 @@ import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.network.PacketHandler;
 import org.cyclops.cyclopscore.proxy.CommonProxyComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.network.packet.ActionLabelPacket;
-import org.cyclops.integrateddynamics.network.packet.AllLabelsPacket;
 import org.cyclops.integrateddynamics.network.packet.*;
 
 /**

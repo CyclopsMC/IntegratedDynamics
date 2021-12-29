@@ -1,38 +1,44 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import org.cyclops.cyclopscore.block.BlockTile;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.cyclops.cyclopscore.block.BlockWithEntity;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
-import org.cyclops.integrateddynamics.tileentity.TileSqueezer;
+import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.blockentity.BlockEntitySqueezer;
+
+import javax.annotation.Nullable;
 
 /**
  * A block for squeezing stuff.
  * @author rubensworks
  */
-public class BlockSqueezer extends BlockTile {
+public class BlockSqueezer extends BlockWithEntity {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
     public static final IntegerProperty HEIGHT = IntegerProperty.create("height", 1, 7); // 1 is heighest, 7 is lowest
@@ -55,17 +61,17 @@ public class BlockSqueezer extends BlockTile {
     };
     private static final VoxelShape[] SHAPES = {
             null,
-            VoxelShapes.or(SHAPES_BLOCK[1], SHAPES_STICKS),
-            VoxelShapes.or(SHAPES_BLOCK[2], SHAPES_STICKS),
-            VoxelShapes.or(SHAPES_BLOCK[3], SHAPES_STICKS),
-            VoxelShapes.or(SHAPES_BLOCK[4], SHAPES_STICKS),
-            VoxelShapes.or(SHAPES_BLOCK[5], SHAPES_STICKS),
-            VoxelShapes.or(SHAPES_BLOCK[6], SHAPES_STICKS),
-            VoxelShapes.or(SHAPES_BLOCK[7], SHAPES_STICKS),
+            Shapes.or(SHAPES_BLOCK[1], SHAPES_STICKS),
+            Shapes.or(SHAPES_BLOCK[2], SHAPES_STICKS),
+            Shapes.or(SHAPES_BLOCK[3], SHAPES_STICKS),
+            Shapes.or(SHAPES_BLOCK[4], SHAPES_STICKS),
+            Shapes.or(SHAPES_BLOCK[5], SHAPES_STICKS),
+            Shapes.or(SHAPES_BLOCK[6], SHAPES_STICKS),
+            Shapes.or(SHAPES_BLOCK[7], SHAPES_STICKS),
     };
 
     public BlockSqueezer(Properties properties) {
-        super(properties, TileSqueezer::new);
+        super(properties, BlockEntitySqueezer::new);
 
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(AXIS, Direction.Axis.X)
@@ -73,67 +79,73 @@ public class BlockSqueezer extends BlockTile {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_SQUEEZER, new BlockEntitySqueezer.Ticker());
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AXIS, HEIGHT);
     }
 
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(AXIS, context.getHorizontalDirection().getAxis());
     }
 
     @Override
-    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+    public InteractionResult use(BlockState blockState, Level world, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult blockRayTraceResult) {
         if (world.isClientSide()) {
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else if(world.getBlockState(blockPos).getValue(BlockSqueezer.HEIGHT) == 1) {
-            return TileHelpers.getSafeTile(world, blockPos, TileSqueezer.class)
+            return BlockEntityHelpers.get(world, blockPos, BlockEntitySqueezer.class)
                     .map(tile -> {
-                        ItemStack itemStack = player.inventory.getSelected();
+                        ItemStack itemStack = player.getInventory().getSelected();
                         ItemStack tileStack = tile.getInventory().getItem(0);
 
                         if (itemStack.isEmpty() && !tileStack.isEmpty()) {
-                            player.inventory.setItem(player.inventory.selected, tileStack);
+                            player.getInventory().setItem(player.getInventory().selected, tileStack);
                             tile.getInventory().setItem(0, ItemStack.EMPTY);
                             tile.sendUpdate();
-                            return ActionResultType.SUCCESS;
-                        } else if(player.inventory.add(tileStack)){
+                            return InteractionResult.SUCCESS;
+                        } else if(player.getInventory().add(tileStack)){
                             tile.getInventory().setItem(0, ItemStack.EMPTY);
                             tile.sendUpdate();
-                            return ActionResultType.SUCCESS;
+                            return InteractionResult.SUCCESS;
                         } else if (!itemStack.isEmpty() && tile.getInventory().getItem(0).isEmpty()) {
                             tile.getInventory().setItem(0, itemStack.split(1));
                             if (itemStack.getCount() <= 0)
-                                player.inventory.setItem(player.inventory.selected, ItemStack.EMPTY);
+                                player.getInventory().setItem(player.getInventory().selected, ItemStack.EMPTY);
                             tile.sendUpdate();
-                            return ActionResultType.SUCCESS;
+                            return InteractionResult.SUCCESS;
                         }
-                        return ActionResultType.PASS;
+                        return InteractionResult.PASS;
                     })
-                    .orElse(ActionResultType.PASS);
+                    .orElse(InteractionResult.PASS);
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
-    public void updateEntityAfterFallOn(IBlockReader worldIn, Entity entityIn) {
+    public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entityIn) {
         double motionY = entityIn.getDeltaMovement().y;
         super.updateEntityAfterFallOn(worldIn, entityIn);
-        if(!entityIn.getCommandSenderWorld().isClientSide() && motionY <= -0.37D && entityIn instanceof LivingEntity) {
+        if(!entityIn.getLevel().isClientSide() && motionY <= -0.37D && entityIn instanceof LivingEntity) {
             // Same way of deriving blockPos as is done in Entity#moveEntity
-            int i = MathHelper.floor(entityIn.getX());
-            int j = MathHelper.floor(entityIn.getY() - 0.2D);
-            int k = MathHelper.floor(entityIn.getZ());
+            int i = Mth.floor(entityIn.getX());
+            int j = Mth.floor(entityIn.getY() - 0.2D);
+            int k = Mth.floor(entityIn.getZ());
             BlockPos blockPos = new BlockPos(i, j, k);
             BlockState blockState = worldIn.getBlockState(blockPos);
 
             // The faster the entity is falling, the more steps to advance by
-            int steps = 1 + MathHelper.floor((-motionY - 0.37D) * 5);
+            int steps = 1 + Mth.floor((-motionY - 0.37D) * 5);
 
             if((entityIn.getY() - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
                 if (blockState.getBlock() == this) { // Just to be sure...
                     int newHeight = Math.min(7, blockState.getValue(HEIGHT) + steps);
-                    entityIn.getCommandSenderWorld().setBlockAndUpdate(blockPos, blockState.setValue(HEIGHT, newHeight));
-                    TileHelpers.getSafeTile(worldIn, blockPos, TileSqueezer.class)
+                    entityIn.getLevel().setBlockAndUpdate(blockPos, blockState.setValue(HEIGHT, newHeight));
+                    BlockEntityHelpers.get(worldIn, blockPos, BlockEntitySqueezer.class)
                             .ifPresent(tile -> tile.setItemHeight(Math.max(newHeight, tile.getItemHeight())));
                 }
             }
@@ -142,13 +154,13 @@ public class BlockSqueezer extends BlockTile {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, worldIn, pos, neighborBlock, fromPos, isMoving);
         if(!worldIn.isClientSide) {
             for (Direction enumfacing : Direction.values()) {
                 if (worldIn.hasSignal(pos.relative(enumfacing), enumfacing)) {
                     worldIn.setBlockAndUpdate(pos, state.setValue(HEIGHT, 1));
-                    for(Entity entity : worldIn.getEntitiesOfClass(Entity.class, new AxisAlignedBB(pos, pos.offset(1, 1, 1)))) {
+                    for(Entity entity : worldIn.getEntitiesOfClass(Entity.class, new AABB(pos, pos.offset(1, 1, 1)))) {
                         entity.getDeltaMovement().add(0, 0.25F, 0);
                         entity.setDeltaMovement(0, 1, 0);
                     }
@@ -158,22 +170,22 @@ public class BlockSqueezer extends BlockTile {
         }
     }
 
-    public float getRelativeTopPositionTop(IBlockReader world, BlockPos blockPos, BlockState blockState) {
+    public float getRelativeTopPositionTop(BlockGetter world, BlockPos blockPos, BlockState blockState) {
         return (9 - blockState.getValue(HEIGHT)) * 0.125F;
     }
 
     @Override
-    public VoxelShape getShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
+    public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
         return SHAPES[blockState.getValue(HEIGHT)];
     }
 
     @Override
-    public VoxelShape getInteractionShape(BlockState blockState, IBlockReader world, BlockPos blockPos) {
+    public VoxelShape getInteractionShape(BlockState blockState, BlockGetter world, BlockPos blockPos) {
         return SHAPES_BLOCK[blockState.getValue(HEIGHT)];
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
+    public VoxelShape getCollisionShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
         return SHAPES_BLOCK[blockState.getValue(HEIGHT)];
     }
 
@@ -185,14 +197,14 @@ public class BlockSqueezer extends BlockTile {
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getAnalogOutputSignal(BlockState blockState, World world, BlockPos blockPos) {
+    public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos blockPos) {
         return (int) (((double) blockState.getValue(HEIGHT) - 1) / 6D * 15D);
     }
 
     @Override
-    public void onPlace(BlockState oldState, World world, BlockPos blockPos, BlockState newState, boolean isMoving) {
+    public void onPlace(BlockState oldState, Level world, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (oldState.getBlock() != newState.getBlock()) {
-            TileHelpers.getSafeTile(world, blockPos, TileSqueezer.class)
+            BlockEntityHelpers.get(world, blockPos, BlockEntitySqueezer.class)
                     .ifPresent(tile -> {
                         InventoryHelpers.dropItems(world, tile.getInventory(), blockPos);
                         world.updateNeighbourForOutputSignal(blockPos, oldState.getBlock());

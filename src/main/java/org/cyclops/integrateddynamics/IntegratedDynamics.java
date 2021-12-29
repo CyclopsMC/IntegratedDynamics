@@ -1,16 +1,16 @@
 package org.cyclops.integrateddynamics;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -146,8 +146,8 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
     }
 
     @Override
-    protected LiteralArgumentBuilder<CommandSource> constructBaseCommand() {
-        LiteralArgumentBuilder<CommandSource> root = super.constructBaseCommand();
+    protected LiteralArgumentBuilder<CommandSourceStack> constructBaseCommand() {
+        LiteralArgumentBuilder<CommandSourceStack> root = super.constructBaseCommand();
 
         root.then(CommandCrash.make());
         root.then(CommandNetworkDiagnostics.make());
@@ -191,7 +191,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         MinecraftForge.EVENT_BUS.register(new NetworkCapabilityConstructors());
     }
 
-    protected void onServerStartedLoadedGroups(FMLServerStartedEvent event) {
+    protected void onServerStartedLoadedGroups(ServerStartedEvent event) {
         PartTypeConnectorOmniDirectional.LOADED_GROUPS.onStartedEvent(event);
     }
 
@@ -207,7 +207,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
     }
 
     @Override
-    public ItemGroup constructDefaultItemGroup() {
+    public CreativeModeTab constructDefaultCreativeModeTab() {
         return new ItemGroupMod(this, () -> RegistryEntries.ITEM_CABLE);
     }
 

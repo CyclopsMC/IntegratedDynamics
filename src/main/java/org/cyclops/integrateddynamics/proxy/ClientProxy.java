@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.proxy;
 
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.client.key.IKeyRegistry;
 import org.cyclops.cyclopscore.init.ModBase;
@@ -26,13 +26,13 @@ public class ClientProxy extends ClientProxyComponent {
 
     private static final String KEYBINDING_CATEGORY_NAME = "key.categories." + Reference.MOD_ID;
 
-    public static final KeyBinding FOCUS_LP_SEARCH = new KeyBinding(
+    public static final KeyMapping FOCUS_LP_SEARCH = new KeyMapping(
             "key." + Reference.MOD_ID + ".logic_programmer_focus_search",
-            KeyConflictContext.GUI, KeyModifier.ALT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_F,
+            KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F,
             KEYBINDING_CATEGORY_NAME);
-    public static final KeyBinding FOCUS_LP_RENAME = new KeyBinding(
+    public static final KeyMapping FOCUS_LP_RENAME = new KeyMapping(
             "key." + Reference.MOD_ID + ".logic_programmer_open_rename",
-            KeyConflictContext.GUI, KeyModifier.ALT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_R,
+            KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R,
             KEYBINDING_CATEGORY_NAME);
 
     public ClientProxy() {
@@ -61,14 +61,14 @@ public class ClientProxy extends ClientProxyComponent {
     }
 
     public void onPreTextureStitch(TextureStitchEvent.Pre event) {
-        if (event.getMap().location().equals(AtlasTexture.LOCATION_BLOCKS)) {
+        if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
             event.addSprite(SlotVariable.VARIABLE_EMPTY);
         }
     }
 
     public void onPostTextureStitch(TextureStitchEvent.Post event) {
-        if (event.getMap().location().equals(AtlasTexture.LOCATION_BLOCKS)) {
-            event.getMap().getSprite(SlotVariable.VARIABLE_EMPTY);
+        if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
+            event.getAtlas().getSprite(SlotVariable.VARIABLE_EMPTY);
         }
     }
 }

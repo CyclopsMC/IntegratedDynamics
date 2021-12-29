@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -40,14 +40,14 @@ public interface IOperator {
     /**
      * @return The localized full name for this operator, includes category name
      */
-    public IFormattableTextComponent getLocalizedNameFull();
+    public MutableComponent getLocalizedNameFull();
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
      * @param lines The list to add lines to.
      * @param appendOptionalInfo If shift-to-show info should be added.
      */
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo);
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo);
 
     /**
      * @return The ordered types of values that are used as input for this operator.
@@ -84,7 +84,7 @@ public interface IOperator {
      * @param input The ordered input value types.
      * @return An error or null if valid.
      */
-    public IFormattableTextComponent validateTypes(IValueType[] input);
+    public MutableComponent validateTypes(IValueType[] input);
 
     /**
      * @return The render pattern for this operator inside the logic programmer.

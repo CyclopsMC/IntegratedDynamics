@@ -2,15 +2,14 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.block.Blocks;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.IntNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.LongNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.LongTag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
@@ -47,8 +46,8 @@ public class TestVariables {
                 .of(ingredients1));
         TestHelpers.assertEqual(i0.getValue().getRawValue().get(), ingredients1, "ingredient value is ingredient");
 
-        CompoundNBT tag = new CompoundNBT();
-        ListNBT itemStacks = new ListNBT();
+        CompoundTag tag = new CompoundTag();
+        ListTag itemStacks = new ListTag();
         itemStacks.add(ItemStack.EMPTY.serializeNBT());
         itemStacks.add(new ItemStack(Items.OAK_BOAT).serializeNBT());
         itemStacks.add(new ItemStack(Blocks.STONE).serializeNBT());
@@ -84,46 +83,46 @@ public class TestVariables {
         DummyVariableRecipe r0 = new DummyVariableRecipe(ValueObjectTypeRecipe.ValueRecipe.of(rawRecipe));
         TestHelpers.assertEqual(r0.getValue().getRawValue().get(), rawRecipe, "recipe value is recipe");
 
-        CompoundNBT tag = new CompoundNBT();
+        CompoundTag tag = new CompoundTag();
 
-        CompoundNBT output = new CompoundNBT();
-        ListNBT energies = new ListNBT();
-        energies.add(LongNBT.valueOf(777L));
+        CompoundTag output = new CompoundTag();
+        ListTag energies = new ListTag();
+        energies.add(LongTag.valueOf(777L));
         output.put("minecraft:energy", energies);
-        ListNBT itemStacks = new ListNBT();
+        ListTag itemStacks = new ListTag();
         itemStacks.add(new ItemStack(Items.OAK_BOAT).serializeNBT());
         itemStacks.add(new ItemStack(Blocks.STONE).serializeNBT());
         output.put("minecraft:itemstack", itemStacks);
-        ListNBT fluidStacks = new ListNBT();
-        fluidStacks.add(new FluidStack(Fluids.WATER, 123).writeToNBT(new CompoundNBT()));
+        ListTag fluidStacks = new ListTag();
+        fluidStacks.add(new FluidStack(Fluids.WATER, 123).writeToNBT(new CompoundTag()));
         output.put("minecraft:fluidstack", fluidStacks);
 
-        CompoundNBT input = new CompoundNBT();
-        ListNBT itemStacksIn = new ListNBT();
-        itemStacksIn.add(new CompoundNBT());
-        itemStacksIn.add(new CompoundNBT());
-        itemStacksIn.add(new CompoundNBT());
-        itemStacksIn.add(new CompoundNBT());
+        CompoundTag input = new CompoundTag();
+        ListTag itemStacksIn = new ListTag();
+        itemStacksIn.add(new CompoundTag());
+        itemStacksIn.add(new CompoundTag());
+        itemStacksIn.add(new CompoundTag());
+        itemStacksIn.add(new CompoundTag());
 
-        ListNBT val0 = new ListNBT();
+        ListTag val0 = new ListTag();
         val0.add(IPrototypedIngredient.serialize(ingredientsIn.get(0).get(0)));
         val0.getCompound(0).remove("ingredientComponent");
         itemStacksIn.getCompound(0).put("val", val0);
         itemStacksIn.getCompound(0).putByte("type", (byte) 0);
 
-        ListNBT val1 = new ListNBT();
+        ListTag val1 = new ListTag();
         val1.add(IPrototypedIngredient.serialize(ingredientsIn.get(1).get(0)));
         val1.getCompound(0).remove("ingredientComponent");
         itemStacksIn.getCompound(1).put("val", val1);
         itemStacksIn.getCompound(1).putByte("type", (byte) 0);
 
-        ListNBT val2 = new ListNBT();
+        ListTag val2 = new ListTag();
         val2.add(IPrototypedIngredient.serialize(ingredientsIn.get(2).get(0)));
         val2.getCompound(0).remove("ingredientComponent");
         itemStacksIn.getCompound(2).put("val", val2);
         itemStacksIn.getCompound(2).putByte("type", (byte) 0);
 
-        ListNBT val3 = new ListNBT();
+        ListTag val3 = new ListTag();
         val3.add(IPrototypedIngredient.serialize(ingredientsIn.get(3).get(0)));
         val3.getCompound(0).remove("ingredientComponent");
         itemStacksIn.getCompound(3).put("val", val3);

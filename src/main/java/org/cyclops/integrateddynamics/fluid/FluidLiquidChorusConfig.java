@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.fluid;
 
-import net.minecraft.item.Rarity;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.minecraft.world.item.Rarity;
 import org.cyclops.cyclopscore.config.extendedconfig.FluidConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;

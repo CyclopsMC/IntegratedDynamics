@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.image.IImage;
 import org.cyclops.cyclopscore.client.gui.image.Image;
@@ -27,7 +27,7 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
     private final IImage imageArrowDownDisabled;
     private ButtonImage buttonToggleFluidEject;
 
-    public ContainerScreenMechanicalSqueezer(ContainerMechanicalSqueezer container, PlayerInventory inventory, ITextComponent title) {
+    public ContainerScreenMechanicalSqueezer(ContainerMechanicalSqueezer container, Inventory inventory, Component title) {
         super(container, inventory, title);
         imageArrowDownEnabled = new Image(texture, 176, 138, 20, 10);
         imageArrowDownDisabled = new Image(texture, 176, 148, 20, 10);
@@ -42,13 +42,13 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
     public void init() {
         super.init();
 
-        addButton(buttonToggleFluidEject = new ButtonImage(getGuiLeftTotal() + 149, getGuiTopTotal() + 71,
-                new TranslationTextComponent("gui.integrateddynamics.mechanical_squeezer.fluidautoeject"),
+        addRenderableWidget(buttonToggleFluidEject = new ButtonImage(getGuiLeftTotal() + 149, getGuiTopTotal() + 71,
+                new TranslatableComponent("gui.integrateddynamics.mechanical_squeezer.fluidautoeject"),
                 createServerPressable(ContainerMechanicalSqueezer.BUTTON_TOGGLE_FLUID_EJECT, (button) -> {}),imageArrowDownDisabled));
     }
 
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        // super.renderBg(matrixStack, partialTicks, mouseX, mouseY); // TODO: restore
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         // Update the image in the fluid eject toggle button
         buttonToggleFluidEject.setImage(getMenu().isAutoEjectFluids()
@@ -71,17 +71,17 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         super.renderLabels(matrixStack, mouseX, mouseY);
 
-        drawEnergyBarTooltip(8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
+        drawEnergyBarTooltip(matrixStack, 8, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(matrixStack, getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
 
         // Draw fluid auto-eject toggle
-        GuiHelpers.renderTooltip(this, 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
-                new TranslationTextComponent(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT,
-                        TextFormatting.AQUA + L10NHelpers.localize(getMenu().isAutoEjectFluids() ?
+        GuiHelpers.renderTooltip(this, matrixStack, 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
+                new TranslatableComponent(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT,
+                        ChatFormatting.AQUA + L10NHelpers.localize(getMenu().isAutoEjectFluids() ?
                                 L10NValues.GENERAL_TRUE : L10NValues.GENERAL_FALSE)),
-                new TranslationTextComponent(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT + ".info")));
+                new TranslatableComponent(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT + ".info")));
     }
 }

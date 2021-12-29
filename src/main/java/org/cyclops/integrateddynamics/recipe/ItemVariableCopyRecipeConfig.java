@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -13,7 +13,7 @@ public class ItemVariableCopyRecipeConfig extends RecipeConfig<ItemVariableCopyR
     public ItemVariableCopyRecipeConfig() {
         super(IntegratedDynamics._instance,
                 "crafting_special_variable_copy",
-                eConfig -> new SpecialRecipeSerializer<>(ItemVariableCopyRecipe::new));
+                eConfig -> new SimpleRecipeSerializer<>(ItemVariableCopyRecipe::new));
     }
 
 }

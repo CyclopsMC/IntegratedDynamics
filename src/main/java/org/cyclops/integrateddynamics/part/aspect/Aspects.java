@@ -3,39 +3,39 @@ package org.cyclops.integrateddynamics.part.aspect;
 import com.google.common.collect.Lists;
 import com.google.common.math.DoubleMath;
 import com.google.common.math.Stats;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.particles.IParticleData;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.state.properties.NoteBlockInstrument;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.StringUtils;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.IServerWorldInfo;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.LocationHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -144,7 +144,7 @@ public class Aspects {
         public static final class Block {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_BLOCK =
                     AspectReadBuilders.Block.BUILDER_BOOLEAN.handle(
-                        dimPos -> dimPos.getWorld(true).getBlockState(dimPos.getBlockPos()).getBlock() != Blocks.AIR
+                        dimPos -> dimPos.getLevel(true).getBlockState(dimPos.getBlockPos()).getBlock() != Blocks.AIR
                     ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> INTEGER_DIMENSION =
@@ -170,29 +170,29 @@ public class Aspects {
             public static final IAspectRead<ValueObjectTypeBlock.ValueBlock, ValueObjectTypeBlock> BLOCK =
                     AspectReadBuilders.Block.BUILDER_BLOCK
                             .handle(
-                        dimPos -> dimPos.getWorld(true).getBlockState(dimPos.getBlockPos())
+                        dimPos -> dimPos.getLevel(true).getBlockState(dimPos.getBlockPos())
                     ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_BLOCK).buildRead();
             public static final IAspectRead<ValueTypeNbt.ValueNbt, ValueTypeNbt> NBT =
                     AspectReadBuilders.Block.BUILDER_NBT.handle(dimPos -> {
-                        TileEntity tile = dimPos.getWorld(true).getBlockEntity(dimPos.getBlockPos());
+                        BlockEntity tile = dimPos.getLevel(true).getBlockEntity(dimPos.getBlockPos());
                         try {
                             if (tile != null) {
-                                return Optional.<INBT>of(tile.save(new CompoundNBT()));
+                                return Optional.<Tag>of(tile.save(new CompoundTag()));
                             }
                         } catch (Exception e) {
                             // Catch possible errors
                         }
-                        return Optional.<INBT>empty();
+                        return Optional.<Tag>empty();
                     }).handle(AspectReadBuilders.PROP_GET_NBT, "tile").buildRead();
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_BIOME =
                     AspectReadBuilders.Block.BUILDER_STRING
                             .handle(
-                                    dimPos -> dimPos.getWorld(true).getBiome(dimPos.getBlockPos()).getRegistryName().toString()
+                                    dimPos -> dimPos.getLevel(true).getBiome(dimPos.getBlockPos()).getRegistryName().toString()
                             ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHT =
-                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(dimPos -> dimPos.getWorld(true).getMaxLocalRawBrightness(dimPos.getBlockPos()))
+                    AspectReadBuilders.Block.BUILDER_INTEGER.handle(dimPos -> dimPos.getLevel(true).getMaxLocalRawBrightness(dimPos.getBlockPos()))
                             .handle(AspectReadBuilders.PROP_GET_INTEGER, "light").buildRead();
         }
 
@@ -204,16 +204,16 @@ public class Aspects {
                             .handle(AspectReadBuilders.PROP_GET_INTEGER, "itemframerotation").buildRead();
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ENTITIES =
                     AspectReadBuilders.Entity.BUILDER_LIST.handle(dimPos -> {
-                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntities((net.minecraft.entity.Entity) null,
-                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), EntityPredicates.NO_SPECTATORS);
+                        List<net.minecraft.world.entity.Entity> entities = dimPos.getLevel(true).getEntities((net.minecraft.world.entity.Entity) null,
+                                new AABB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), EntitySelector.NO_SPECTATORS);
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities,
                             ValueObjectTypeEntity.ValueEntity::of
                         ));
                     }).appendKind("entities").buildRead();
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
                     AspectReadBuilders.Entity.BUILDER_LIST.handle(dimPos -> {
-                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntities((net.minecraft.entity.Entity) null,
-                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), Helpers.SELECTOR_IS_PLAYER);
+                        List<net.minecraft.world.entity.Entity> entities = dimPos.getLevel(true).getEntities((net.minecraft.world.entity.Entity) null,
+                                new AABB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), Helpers.SELECTOR_IS_PLAYER);
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities,
                             ValueObjectTypeEntity.ValueEntity::of
                         ));
@@ -223,8 +223,8 @@ public class Aspects {
                     AspectReadBuilders.Entity.BUILDER_ENTITY.withProperties(AspectReadBuilders.LIST_PROPERTIES).handle(input -> {
                         int i = input.getRight().getValue(AspectReadBuilders.PROPERTY_LISTINDEX).getRawValue();
                         DimPos dimPos = input.getLeft().getTarget().getPos();
-                        List<net.minecraft.entity.Entity> entities = dimPos.getWorld(true).getEntities((net.minecraft.entity.Entity) null,
-                                new AxisAlignedBB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), EntityPredicates.NO_SPECTATORS);
+                        List<net.minecraft.world.entity.Entity> entities = dimPos.getLevel(true).getEntities((net.minecraft.world.entity.Entity) null,
+                                new AABB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), EntitySelector.NO_SPECTATORS);
                         return ValueObjectTypeEntity.ValueEntity.of(i < entities.size() ? entities.get(i) : null);
                     }).buildRead();
 
@@ -355,10 +355,10 @@ public class Aspects {
                     AspectReadBuilders.BUILDER_OBJECT_FLUIDSTACK
                             .handle(AspectReadBuilders.Block.PROP_GET, "block")
                             .handle(dimPos -> {
-                                BlockState blockState = dimPos.getWorld(true).getBlockState(dimPos.getBlockPos());
-                                net.minecraft.block.Block block = blockState.getBlock();
-                                if (block instanceof FlowingFluidBlock) {
-                                    return new FluidStack(((FlowingFluidBlock) block).getFluid(), FluidHelpers.BUCKET_VOLUME);
+                                BlockState blockState = dimPos.getLevel(true).getBlockState(dimPos.getBlockPos());
+                                net.minecraft.world.level.block.Block block = blockState.getBlock();
+                                if (block instanceof LiquidBlock) {
+                                    return new FluidStack(((LiquidBlock) block).getFluid(), FluidHelpers.BUCKET_VOLUME);
                                 }
                                 return FluidStack.EMPTY;
                             })
@@ -668,12 +668,12 @@ public class Aspects {
                     AspectReadBuilders.BUILDER_ANY.appendKind("network").handle(
                             data -> {
                                 PartPos target = data.getLeft().getTarget();
-                                IValueInterface valueInterface = TileHelpers
+                                IValueInterface valueInterface = BlockEntityHelpers
                                         .getCapability(target.getPos(), target.getSide(), ValueInterfaceConfig.CAPABILITY)
-                                        .orElseThrow(() -> new EvaluationException(new TranslationTextComponent(
+                                        .orElseThrow(() -> new EvaluationException(new TranslatableComponent(
                                                 L10NValues.ASPECT_ERROR_NOVALUEINTERFACE)));
                                 return valueInterface.getValue()
-                                        .orElseThrow(() -> new EvaluationException(new TranslationTextComponent(
+                                        .orElseThrow(() -> new EvaluationException(new TranslatableComponent(
                                                 L10NValues.ASPECT_ERROR_NOVALUEINTERFACEVALUE)));
                             }
                     ).appendKind("value").buildRead();
@@ -717,15 +717,15 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("clear").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_RAINING =
                     AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        net.minecraft.world.World::isRaining
+                        net.minecraft.world.level.Level::isRaining
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("raining").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_WEATHER_THUNDER =
                     AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        net.minecraft.world.World::isThundering
+                        net.minecraft.world.level.Level::isThundering
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("thunder").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISDAY =
                     AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            net.minecraft.world.World::isDay
+                            net.minecraft.world.level.Level::isDay
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isday").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISNIGHT =
                     AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
@@ -734,7 +734,7 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RAINCOUNTDOWN =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> ((IServerWorldInfo) world.getLevelData()).getRainTime()
+                        world -> ((ServerLevelData) world.getLevelData()).getRainTime()
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "raincountdown").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
@@ -746,7 +746,7 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "daytime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHTLEVEL =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(
-                        dimPos -> dimPos.getWorld(true).getMaxLocalRawBrightness(dimPos.getBlockPos())
+                        dimPos -> dimPos.getLevel(true).getMaxLocalRawBrightness(dimPos.getBlockPos())
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "lightlevel").buildRead();
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TPS =
@@ -756,21 +756,21 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
                     AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        net.minecraft.world.World::getDayTime
+                        net.minecraft.world.level.Level::getDayTime
                     ).handle(AspectReadBuilders.PROP_GET_LONG, "time").buildRead();
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TOTALTIME =
                     AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        net.minecraft.world.World::getGameTime
+                        net.minecraft.world.level.Level::getGameTime
                     ).handle(AspectReadBuilders.PROP_GET_LONG, "totaltime").buildRead();
 
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_NAME =
                     AspectReadBuilders.World.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> ((IServerWorldInfo) world.getLevelData()).getLevelName()
+                        world -> ((ServerLevelData) world.getLevelData()).getLevelName()
                     ).handle(AspectReadBuilders.PROP_GET_STRING, "worldname").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
                     AspectReadBuilders.World.BUILDER_LIST.handle(dimPos ->
-                            ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(dimPos.getWorld(true).players(),
+                            ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(dimPos.getLevel(true).players(),
                                 ValueObjectTypeEntity.ValueEntity::of))
                     ).appendKind("players").buildRead();
 
@@ -852,18 +852,18 @@ public class Aspects {
                             .handle(input -> {
                                 IAspectProperties properties = input.getMiddle();
                                 BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
-                                if(!StringUtils.isNullOrEmpty(input.getRight())) {
+                                if(!StringUtil.isNullOrEmpty(input.getRight())) {
                                     float f = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_FREQUENCY).getRawValue();
                                     float volume = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_VOLUME).getRawValue();
                                     SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(ValueHelpers
                                             .createResourceLocationInEvaluation(input.getRight()));
 
                                     if (soundEvent != null) {
-                                        World world = input.getLeft().getTarget().getPos().getWorld(false);
+                                        Level world = input.getLeft().getTarget().getPos().getLevel(false);
                                         if (world != null) {
                                             world.playSound(null,
                                                     (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                                                    soundEvent, SoundCategory.RECORDS, volume, f);
+                                                    soundEvent, SoundSource.RECORDS, volume, f);
                                         }
                                     }
                                 }
@@ -874,9 +874,9 @@ public class Aspects {
                     AspectWriteBuilders.Audio.BUILDER_STRING.withProperties(AspectWriteBuilders.Audio.PROPERTIES_TEXT)
                             .handle(input -> {
                                 IAspectProperties properties = input.getMiddle();
-                                World world = input.getLeft().getTarget().getPos().getWorld(true);
+                                Level world = input.getLeft().getTarget().getPos().getLevel(true);
                                 BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
-                                if(!StringUtils.isNullOrEmpty(input.getRight())) {
+                                if(!StringUtil.isNullOrEmpty(input.getRight())) {
                                     int range = properties.getValue(AspectWriteBuilders.Audio.PROP_RANGE).getRawValue();
                                     IntegratedDynamics._instance.getPacketHandler().sendToAllAround(
                                             new SpeakTextPacket(input.getRight()),
@@ -889,7 +889,7 @@ public class Aspects {
 
         public static final class Effect {
 
-            public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticle(final IParticleData particle) {
+            public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticle(final ParticleOptions particle) {
                 return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(particle
                         .getType().getRegistryName().toString().toLowerCase(Locale.ROOT).replaceAll(":", "_"))
                         .handle(input -> {
@@ -910,7 +910,7 @@ public class Aspects {
                             double yDir = properties.getValue(AspectWriteBuilders.Effect.PROP_SPREAD_Y).getRawValue();
                             double zDir = properties.getValue(AspectWriteBuilders.Effect.PROP_SPREAD_Z).getRawValue();
 
-                            ServerWorld world = ((ServerWorld) pos.getPos().getWorld(false));
+                            ServerLevel world = ((ServerLevel) pos.getPos().getLevel(false));
                             if (world != null) {
                                 world.sendParticles(particle, x, y, z, numberOfParticles, xDir, yDir, zDir, velocity);
                             }

@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
@@ -65,11 +65,11 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     protected abstract String getUnlocalizedType();
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines, boolean appendOptionalInfo) {
-        ITextComponent aspectName = new TranslationTextComponent(getTranslationKey());
-        ITextComponent valueTypeName = new TranslationTextComponent(getValueType().getTranslationKey());
-        lines.add(new TranslationTextComponent(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
-        lines.add(new TranslationTextComponent(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
+    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
+        Component aspectName = new TranslatableComponent(getTranslationKey());
+        Component valueTypeName = new TranslatableComponent(getValueType().getTranslationKey());
+        lines.add(new TranslatableComponent(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
+        lines.add(new TranslatableComponent(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
                 .withStyle(getValueType().getDisplayColorFormat()));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
@@ -108,18 +108,18 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     }
 
     @Override
-    public INamedContainerProvider getPropertiesContainerProvider(PartPos pos) {
-        return new INamedContainerProvider() {
+    public MenuProvider getPropertiesContainerProvider(PartPos pos) {
+        return new MenuProvider() {
             @Override
-            public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("gui.integrateddynamics.aspect_settings");
+            public Component getDisplayName() {
+                return new TranslatableComponent("gui.integrateddynamics.aspect_settings");
             }
 
             @Nullable
             @Override
-            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+            public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
                 Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
-                return new ContainerAspectSettings(id, playerInventory, new Inventory(0),
+                return new ContainerAspectSettings(id, playerInventory, new SimpleContainer(0),
                         Optional.of(data.getRight()), Optional.of(data.getLeft()), Optional.of(data.getMiddle()), AspectBase.this);
             }
         };

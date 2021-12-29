@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
 import com.google.common.collect.Lists;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -30,14 +29,14 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
 
     private final IVariableFacadeHandlerRegistry handler = IntegratedDynamics._instance.getRegistryManager()
             .getRegistry(IVariableFacadeHandlerRegistry.class);
-    private final IInventory inventory;
+    private final Container inventory;
     private final int slot;
     private final IValueType containingValueType;
 
     private IVariableFacade variableStored = null;
-    private List<IFormattableTextComponent> errors = Lists.newLinkedList();
+    private List<MutableComponent> errors = Lists.newLinkedList();
 
-    public InventoryVariableEvaluator(IInventory inventory, int slot, IValueType<V> containingValueType) {
+    public InventoryVariableEvaluator(Container inventory, int slot, IValueType<V> containingValueType) {
         this.inventory = inventory;
         this.slot = slot;
         this.containingValueType = containingValueType;
@@ -75,13 +74,13 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
 
         clearErrors();
         if (partNetwork == null) {
-            addError(new TranslationTextComponent(L10NValues.GENERAL_ERROR_NONETWORK));
+            addError(new TranslatableComponent(L10NValues.GENERAL_ERROR_NONETWORK));
         } else if (this.variableStored != null) {
             preValidate();
             try {
                 variableStored.validate(partNetwork, this, containingValueType);
             } catch (IllegalArgumentException e) {
-                addError(new TranslationTextComponent(e.getMessage()));
+                addError(new TranslatableComponent(e.getMessage()));
             }
         }
         if(sendVariablesUpdateEvent && partNetwork != null && lastVariabledId != variableId) {
@@ -101,7 +100,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         try {
             return getVariableFacade().getVariable(network);
         } catch (IllegalArgumentException e) {
-            addError(new TranslationTextComponent(e.getMessage()));
+            addError(new TranslatableComponent(e.getMessage()));
             return null;
         }
     }
@@ -119,17 +118,17 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         onErrorsChanged();
     }
 
-    public void setErrors(List<IFormattableTextComponent> errors) {
+    public void setErrors(List<MutableComponent> errors) {
         this.errors = errors;
         onErrorsChanged();
     }
 
-    public List<IFormattableTextComponent> getErrors() {
+    public List<MutableComponent> getErrors() {
         return errors;
     }
 
     @Override
-    public void addError(IFormattableTextComponent error) {
+    public void addError(MutableComponent error) {
         errors.add(error);
     }
 

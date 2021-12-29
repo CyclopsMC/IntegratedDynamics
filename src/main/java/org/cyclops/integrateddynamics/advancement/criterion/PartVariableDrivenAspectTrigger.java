@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.google.gson.JsonObject;
-import net.minecraft.advancements.criterion.AbstractCriterionTrigger;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
@@ -20,7 +20,7 @@ import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariable
  * Triggers when a variable-driven part aspect is changed.
  * @author rubensworks
  */
-public class PartVariableDrivenAspectTrigger extends AbstractCriterionTrigger<PartVariableDrivenAspectTrigger.Instance> {
+public class PartVariableDrivenAspectTrigger extends SimpleCriterionTrigger<PartVariableDrivenAspectTrigger.Instance> {
     private final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "part_variable_driven");
 
     public PartVariableDrivenAspectTrigger() {
@@ -33,34 +33,34 @@ public class PartVariableDrivenAspectTrigger extends AbstractCriterionTrigger<Pa
     }
 
     @Override
-    public Instance createInstance(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
+    public Instance createInstance(JsonObject json, EntityPredicate.Composite entityPredicate, DeserializationContext conditionsParser) {
         return new Instance(getId(), entityPredicate,
                 JsonDeserializers.deserializePartType(json), VariablePredicate.deserialize(json.get("variable")));
     }
 
-    public void test(ServerPlayerEntity player, PartVariableDrivenVariableContentsUpdatedEvent event) {
+    public void test(ServerPlayer player, PartVariableDrivenVariableContentsUpdatedEvent event) {
         this.trigger(player, (instance) -> instance.test(player, event));
     }
 
     @SubscribeEvent
     public void onEvent(PartVariableDrivenVariableContentsUpdatedEvent event) {
-        if (event.getEntityPlayer() != null && event.getEntityPlayer() instanceof ServerPlayerEntity) {
-            this.test((ServerPlayerEntity) event.getEntityPlayer(), event);
+        if (event.getEntityPlayer() != null && event.getEntityPlayer() instanceof ServerPlayer) {
+            this.test((ServerPlayer) event.getEntityPlayer(), event);
         }
     }
 
-    public static class Instance extends CriterionInstance implements ICriterionInstanceTestable<PartVariableDrivenVariableContentsUpdatedEvent> {
+    public static class Instance extends AbstractCriterionTriggerInstance implements ICriterionInstanceTestable<PartVariableDrivenVariableContentsUpdatedEvent> {
         private final IPartType partType;
         private final VariablePredicate variablePredicate;
 
-        public Instance(ResourceLocation criterionIn, EntityPredicate.AndPredicate player,
+        public Instance(ResourceLocation criterionIn, EntityPredicate.Composite player,
                         IPartType partType, VariablePredicate variablePredicate) {
             super(criterionIn, player);
             this.partType = partType;
             this.variablePredicate = variablePredicate;
         }
 
-        public boolean test(ServerPlayerEntity player, PartVariableDrivenVariableContentsUpdatedEvent event) {
+        public boolean test(ServerPlayer player, PartVariableDrivenVariableContentsUpdatedEvent event) {
             return (partType == null || event.getPartType() == partType) && variablePredicate.test(event.getVariable());
         }
     }

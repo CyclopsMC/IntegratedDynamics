@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
@@ -27,13 +27,13 @@ public class ContainerPartWriterConfig extends GuiConfig<ContainerPartWriter> {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & IHasContainer<ContainerPartWriter>> ScreenManager.IScreenFactory<ContainerPartWriter, U> getScreenFactory() {
+    public <U extends Screen & MenuAccess<ContainerPartWriter>> MenuScreens.ScreenConstructor<ContainerPartWriter, U> getScreenFactory() {
         // Due to our use of generics, we have to delegate to a separate function.
-        return new ScreenFactorySafe<>((ScreenManager.IScreenFactory) createScreenFactory());
+        return new ScreenFactorySafe<>((MenuScreens.ScreenConstructor) createScreenFactory());
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected static <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> ScreenManager.IScreenFactory<ContainerPartWriter<P, S>, ContainerScreenPartWriter<P, S>> createScreenFactory() {
+    protected static <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> MenuScreens.ScreenConstructor<ContainerPartWriter<P, S>, ContainerScreenPartWriter<P, S>> createScreenFactory() {
         return ContainerScreenPartWriter::new;
     }
 

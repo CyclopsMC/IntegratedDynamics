@@ -1,16 +1,14 @@
 package org.cyclops.integrateddynamics.client.model;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -30,7 +28,7 @@ public class CableModel extends CableModelBase {
         super(state, facing, rand, modelData);
     }
 
-    public CableModel(ItemStack itemStack, World world, LivingEntity entity) {
+    public CableModel(ItemStack itemStack, Level world, LivingEntity entity) {
         super(itemStack, world, entity);
     }
 
@@ -70,12 +68,12 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
-    protected IBakedModel getPartModel(IModelData modelData, Direction side) {
+    protected BakedModel getPartModel(IModelData modelData, Direction side) {
         IPartContainer partContainer = ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null);
         BlockState blockState = partContainer != null && partContainer.hasPart(side) ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
         Minecraft mc = Minecraft.getInstance();
-        BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRenderer();
-        BlockModelShapes blockModelShapes = blockRendererDispatcher.getBlockModelShaper();
+        BlockRenderDispatcher blockRendererDispatcher = mc.getBlockRenderer();
+        BlockModelShaper blockModelShapes = blockRendererDispatcher.getBlockModelShaper();
         return blockModelShapes.getBlockModel(blockState);
     }
 
@@ -85,22 +83,12 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
-    public IBakedModel handleBlockState(BlockState state, Direction side, Random rand, IModelData modelData) {
+    public BakedModel handleBlockState(BlockState state, Direction side, Random rand, IModelData modelData) {
         return new CableModel(state, side, rand, modelData);
     }
 
     @Override
-    public IBakedModel handleItemState(ItemStack stack, World world, LivingEntity entity) {
+    public BakedModel handleItemState(ItemStack stack, Level world, LivingEntity entity) {
         return new CableModel(stack, world, entity);
-    }
-
-    @Override
-    public boolean useAmbientOcclusion() {
-        return false; // TODO: rm
-    }
-
-    @Override
-    public boolean isCustomRenderer() {
-        return false; // TODO: rm
     }
 }

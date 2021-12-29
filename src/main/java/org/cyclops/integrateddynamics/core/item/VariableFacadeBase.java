@@ -2,9 +2,9 @@ package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -50,8 +50,8 @@ public abstract class VariableFacadeBase implements IVariableFacade {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<ITextComponent> list, World world) {
-        list.add(new TranslationTextComponent("item.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
+    public void appendHoverText(List<Component> list, Level world) {
+        list.add(new TranslatableComponent("item.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
     }
 
 }

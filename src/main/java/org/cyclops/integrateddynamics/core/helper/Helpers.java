@@ -3,28 +3,28 @@ package org.cyclops.integrateddynamics.core.helper;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.TileHelpers;
 
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  */
 public final class Helpers {
 
-    public static final Predicate<Entity> SELECTOR_IS_PLAYER = entity -> entity instanceof PlayerEntity;
+    public static final Predicate<Entity> SELECTOR_IS_PLAYER = entity -> entity instanceof Player;
 
     /**
      * Get the fluidstack from the given itemstack.
@@ -76,7 +76,7 @@ public final class Helpers {
      * @return A Stream containing ItemStacks registered for this ore
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
-        ITag<Item> tag = ItemTags.getAllTags().getTag(new ResourceLocation(name));
+        Tag<Item> tag = ItemTags.getAllTags().getTag(new ResourceLocation(name));
         if (tag == null) {
             return Stream.empty();
         }
@@ -119,7 +119,7 @@ public final class Helpers {
 
     private static final List<IInterfaceRetriever> INTERFACE_RETRIEVERS = Lists.newArrayList();
     static {
-        addInterfaceRetriever(TileHelpers::getSafeTile);
+        addInterfaceRetriever(BlockEntityHelpers::get);
     }
 
     /**
@@ -130,7 +130,7 @@ public final class Helpers {
      * @param <C> The class type.
      * @return The optional instance.
      */
-    private static <C> Optional<C> getInterface(IBlockReader world, BlockPos pos, Class<C> clazz) {
+    private static <C> Optional<C> getInterface(BlockGetter world, BlockPos pos, Class<C> clazz) {
         for(IInterfaceRetriever interfaceRetriever : INTERFACE_RETRIEVERS) {
             Optional<C> optionalInstance = interfaceRetriever.getInterface(world, pos, clazz);
             if(optionalInstance.isPresent()) {
@@ -149,7 +149,7 @@ public final class Helpers {
      * @return The optional instance.
      */
     public static <C> Optional<C> getInterface(DimPos dimPos, Class<C> clazz, boolean forceLoad) {
-        World world = dimPos.getWorld(forceLoad);
+        Level world = dimPos.getLevel(forceLoad);
         return world != null ? getInterface(world, dimPos.getBlockPos(), clazz) : Optional.empty();
     }
 
@@ -159,12 +159,12 @@ public final class Helpers {
      * @param capacity The capacity of the energy container.
      * @return The localized string.
      */
-    public static ITextComponent getLocalizedEnergyLevel(int stored, int capacity) {
-        return new StringTextComponent(String.format(Locale.ROOT, "%,d", stored))
+    public static Component getLocalizedEnergyLevel(int stored, int capacity) {
+        return new TextComponent(String.format(Locale.ROOT, "%,d", stored))
                 .append(" / ")
                 .append(String.format(Locale.ROOT, "%,d", capacity))
                 .append(" ")
-                .append(new TranslationTextComponent(L10NValues.GENERAL_ENERGY_UNIT));
+                .append(new TranslatableComponent(L10NValues.GENERAL_ENERGY_UNIT));
     }
 
     public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {
@@ -181,7 +181,7 @@ public final class Helpers {
          * @param <C> The class type.
          * @return The optional instance.
          */
-        public <C> Optional<C> getInterface(IBlockReader world, BlockPos pos, Class<C> clazz);
+        public <C> Optional<C> getInterface(BlockGetter world, BlockPos pos, Class<C> clazz);
 
     }
 

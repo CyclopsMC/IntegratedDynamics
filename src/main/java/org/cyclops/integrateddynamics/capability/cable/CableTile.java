@@ -1,16 +1,16 @@
 package org.cyclops.integrateddynamics.capability.cable;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import org.cyclops.cyclopscore.tileentity.CyclopsTileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 
 /**
  * Default implementation of {@link ICable}.
  * @author rubensworks
  */
-public abstract class CableTile<T extends CyclopsTileEntity> extends CableDefault {
+public abstract class CableTile<T extends CyclopsBlockEntity> extends CableDefault {
 
     protected final T tile;
 
@@ -29,7 +29,7 @@ public abstract class CableTile<T extends CyclopsTileEntity> extends CableDefaul
     }
 
     @Override
-    protected World getLevel() {
+    protected Level getLevel() {
         return tile.getLevel();
     }
 

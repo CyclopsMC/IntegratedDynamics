@@ -1,29 +1,27 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.ToString;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.client.RenderProperties;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -52,13 +50,13 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueRecipe value) {
+    public MutableComponent toCompactString(ValueRecipe value) {
         if (value.getRawValue().isPresent()) {
             IRecipeDefinition recipe = value.getRawValue().get();
-            IFormattableTextComponent sb = new StringTextComponent("");
+            MutableComponent sb = new TextComponent("");
 
             sb.append(ValueObjectTypeIngredients.ingredientsToTextComponent(recipe.getOutput()));
-            sb.append(new StringTextComponent(" <- "));
+            sb.append(new TextComponent(" <- "));
             boolean first = true;
 
             for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
@@ -72,7 +70,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
                         v = handler.toValue(prototypedIngredient.getPrototype());
                     }
                     if (!first) {
-                        sb.append(new StringTextComponent(", "));
+                        sb.append(new TextComponent(", "));
                     } else {
                         first = false;
                     }
@@ -81,22 +79,22 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
             }
             return sb;
         }
-        return new StringTextComponent("");
+        return new TextComponent("");
     }
 
     @Override
-    public INBT serialize(ValueRecipe value) {
-        if(!value.getRawValue().isPresent()) return new CompoundNBT();
+    public Tag serialize(ValueRecipe value) {
+        if(!value.getRawValue().isPresent()) return new CompoundTag();
         return IRecipeDefinition.serialize(value.getRawValue().get());
     }
 
     @Override
-    public ValueRecipe deserialize(INBT value) {
-        if (value.getId() == Constants.NBT.TAG_END || (value.getId() == Constants.NBT.TAG_COMPOUND && ((CompoundNBT) value).isEmpty())) {
+    public ValueRecipe deserialize(Tag value) {
+        if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
             return ValueRecipe.of(null);
         }
         try {
-            return ValueRecipe.of(IRecipeDefinition.deserialize((CompoundNBT) value));
+            return ValueRecipe.of(IRecipeDefinition.deserialize((CompoundTag) value));
         } catch (IllegalArgumentException e) {
             return ValueRecipe.of(null);
         }
@@ -120,7 +118,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     @Nullable
     @Override
     @OnlyIn(Dist.CLIENT)
-    public IBakedModel getVariableItemOverrideModel(ValueRecipe value, IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+    public BakedModel getVariableItemOverrideModel(ValueRecipe value, BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
         if (!MinecraftHelpers.isShifted()) {
             return null;
         }
@@ -128,7 +126,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
                 .map((recipe) -> {
                     List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
                     if (!itemStacks.isEmpty()) {
-                        return Minecraft.getInstance().getItemRenderer().getModel(itemStacks.get(0), world, livingEntity);
+                        return Minecraft.getInstance().getItemRenderer().getModel(itemStacks.get(0), world, livingEntity, 0);
                     }
                     return null;
                 })
@@ -137,14 +135,15 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderISTER(ValueRecipe value, ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+    public void renderISTER(ValueRecipe value, ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         if (MinecraftHelpers.isShifted()) {
             value.getRawValue()
                     .ifPresent((recipe) -> {
                         List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
                         if (!itemStacks.isEmpty()) {
                             ItemStack actualStack = itemStacks.get(0);
-                            actualStack.getItem().getItemStackTileEntityRenderer().renderByItem(actualStack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
+                            RenderProperties.get(actualStack.getItem()).getItemStackRenderer()
+                                    .renderByItem(actualStack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
                         }
                     });
         }

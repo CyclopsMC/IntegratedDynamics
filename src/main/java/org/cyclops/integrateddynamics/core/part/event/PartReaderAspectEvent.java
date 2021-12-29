@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.part.event;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -21,7 +21,7 @@ public class PartReaderAspectEvent<P extends IPartTypeReader<P, S>, S extends IP
     private ItemStack itemStack;
 
     public PartReaderAspectEvent(INetwork network, IPartNetwork partNetwork, PartTarget target, P partType, S partState,
-                                 @Nullable PlayerEntity entityPlayer, A aspect, ItemStack itemStack) {
+                                 @Nullable Player entityPlayer, A aspect, ItemStack itemStack) {
         super(network, partNetwork, target, partType, partState, entityPlayer, aspect);
         this.itemStack = itemStack;
     }

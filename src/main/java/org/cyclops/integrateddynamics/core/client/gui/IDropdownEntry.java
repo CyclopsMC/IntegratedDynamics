@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IDropdownEntry<V> {
     public String getMatchString();
-    public IFormattableTextComponent getDisplayString();
-    public List<IFormattableTextComponent> getTooltip();
+    public MutableComponent getDisplayString();
+    public List<MutableComponent> getTooltip();
     public V getValue();
 }

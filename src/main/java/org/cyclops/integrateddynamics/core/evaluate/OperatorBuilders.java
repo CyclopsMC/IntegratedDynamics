@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.SoundType;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -59,8 +59,8 @@ public class OperatorBuilders {
     public static final IOperatorValuePropagator<Boolean, IValue> PROPAGATOR_BOOLEAN_VALUE = ValueTypeBoolean.ValueBoolean::of;
     public static final IOperatorValuePropagator<Double, IValue> PROPAGATOR_DOUBLE_VALUE = ValueTypeDouble.ValueDouble::of;
     public static final IOperatorValuePropagator<String, IValue> PROPAGATOR_STRING_VALUE = ValueTypeString.ValueString::of;
-    public static final IOperatorValuePropagator<Optional<INBT>, IValue> PROPAGATOR_NBT_VALUE = ValueTypeNbt.ValueNbt::of;
-    public static final IOperatorValuePropagator<Optional<CompoundNBT>, IValue> PROPAGATOR_NBT_COMPOUND_VALUE = opt -> ValueTypeNbt.ValueNbt.of(opt.map(t -> (INBT) t));
+    public static final IOperatorValuePropagator<Optional<Tag>, IValue> PROPAGATOR_NBT_VALUE = ValueTypeNbt.ValueNbt::of;
+    public static final IOperatorValuePropagator<Optional<CompoundTag>, IValue> PROPAGATOR_NBT_COMPOUND_VALUE = opt -> ValueTypeNbt.ValueNbt.of(opt.map(t -> (Tag) t));
     public static final IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString> PROPAGATOR_RESOURCELOCATION_MODNAME = resourceLocation -> {
         String modId = resourceLocation.getNamespace();
         Optional<? extends ModContainer> mod = ModList.get().getModContainerById(modId);
@@ -199,17 +199,17 @@ public class OperatorBuilders {
                 IOperator innerOperator = input.getValue(0, ValueTypes.OPERATOR).getRawValue();
                 if (innerOperator.getRequiredInputLength() == 1) {
                     IValue applyingValue = input.getValue(1);
-                    IFormattableTextComponent error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
+                    MutableComponent error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
                     if (error != null) {
                         throw new EvaluationException(error);
                     }
                 } else {
                     if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
-                        IFormattableTextComponent error = new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
-                                new TranslationTextComponent(innerOperator.getTranslationKey()),
-                                new TranslationTextComponent(input.getVariables()[0].getType().getTranslationKey()),
+                        MutableComponent error = new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
+                                new TranslatableComponent(innerOperator.getTranslationKey()),
+                                new TranslatableComponent(input.getVariables()[0].getType().getTranslationKey()),
                                 0,
-                                new TranslationTextComponent(innerOperator.getInputTypes()[0].getTranslationKey())
+                                new TranslatableComponent(innerOperator.getInputTypes()[0].getTranslationKey())
                                 );
                         throw new EvaluationException(error);
                     }
@@ -226,7 +226,7 @@ public class OperatorBuilders {
                 IOperator second = getSafeOperator(input.getValue(1, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY);
                 IValueType[] secondInputs = second.getInputTypes();
                 if(secondInputs.length < 1) {
-                    throw new EvaluationException(new TranslationTextComponent(
+                    throw new EvaluationException(new TranslatableComponent(
                             L10NValues.OPERATOR_ERROR_OPERATORPARAMWRONGINPUTLENGTH,
                             1, second.getLocalizedNameFull(), secondInputs.length));
                 }
@@ -248,7 +248,7 @@ public class OperatorBuilders {
                 IOperator third = getSafeOperator(input.getValue(2, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY);
                 IValueType<?>[] types = third.getInputTypes();
                 if(types.length < 2) {
-                    throw new EvaluationException(new TranslationTextComponent(
+                    throw new EvaluationException(new TranslatableComponent(
                             L10NValues.OPERATOR_ERROR_OPERATORPARAMWRONGINPUTLENGTH,
                             2, third.getLocalizedNameFull(), types.length));
                 }
@@ -287,7 +287,7 @@ public class OperatorBuilders {
             IVariable[] variables = ArrayUtils.subarray(variablesAll, 1, variablesAll.length);
             int requiredLength = innerOperator.getRequiredInputLength();
             if (requiredLength == variables.length) {
-                ITextComponent error = innerOperator.validateTypes(ValueHelpers.from(variables));
+                Component error = innerOperator.validateTypes(ValueHelpers.from(variables));
                 if (error != null) {
                     return innerOperator.getOutputType();
                 }
@@ -302,16 +302,16 @@ public class OperatorBuilders {
 
                     // Error if the result is NOT an operator
                     if (result.getType() != ValueTypes.OPERATOR) {
-                        throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
-                                new TranslationTextComponent(innerOperator.getTranslationKey()),
+                        throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
+                                new TranslatableComponent(innerOperator.getTranslationKey()),
                                 requiredLength,
                                 variables.length,
-                                new TranslationTextComponent(result.getType().getTranslationKey())));
+                                new TranslatableComponent(result.getType().getTranslationKey())));
                     }
 
                     // Pass all remaining variables to the resulting operator
                     IOperator nextOperator = ((ValueTypeOperator.ValueOperator) result).getRawValue();
-                    ITextComponent error = nextOperator.validateTypes(ValueHelpers.from(remainingVariables));
+                    Component error = nextOperator.validateTypes(ValueHelpers.from(remainingVariables));
                     if (error != null) {
                         return nextOperator.getOutputType();
                     }
@@ -353,9 +353,9 @@ public class OperatorBuilders {
     public static IOperator getSafeOperator(ValueTypeOperator.ValueOperator value, IValueType expectedOutput) throws EvaluationException {
         IOperator operator = value.getRawValue();
         if (!ValueHelpers.correspondsTo(operator.getOutputType(), expectedOutput)) {
-            IFormattableTextComponent error = new TranslationTextComponent(L10NValues.OPERATOR_ERROR_ILLEGALPROPERY,
-                    new TranslationTextComponent(expectedOutput.getTranslationKey()),
-                    new TranslationTextComponent(operator.getOutputType().getTranslationKey()),
+            MutableComponent error = new TranslatableComponent(L10NValues.OPERATOR_ERROR_ILLEGALPROPERY,
+                    new TranslatableComponent(expectedOutput.getTranslationKey()),
+                    new TranslatableComponent(operator.getOutputType().getTranslationKey()),
                     operator.getLocalizedNameFull());
             throw new EvaluationException(error);
         }
@@ -381,19 +381,19 @@ public class OperatorBuilders {
      */
     public static OperatorBuilder.ITypeValidator createOperatorTypeValidator(final IValueType<?>... expectedSubTypes) {
         final int subOperatorLength = expectedSubTypes.length;
-        final ITextComponent expected = new TranslationTextComponent(
+        final Component expected = new TranslatableComponent(
                 org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(subOperatorLength), (Object[]) ValueHelpers.from(expectedSubTypes));
         return (operator, input) -> {
             if (input.length == 0 || !ValueHelpers.correspondsTo(input[0], ValueTypes.OPERATOR)) {
                 String givenName = input.length == 0 ? "null" : input[0].getTranslationKey();
-                return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDOPERATOROPERATOR,
+                return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDOPERATOROPERATOR,
                         0, givenName);
             }
             if (input.length != subOperatorLength + 1) {
                 IValueType<?>[] operatorInputs = Arrays.copyOfRange(input, 1, input.length);
-                ITextComponent given = new TranslationTextComponent(
+                Component given = new TranslatableComponent(
                         org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(operatorInputs.length), (Object[]) ValueHelpers.from(operatorInputs));
-                return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE,
+                return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE,
                         expected, given);
             }
             return null;
@@ -408,68 +408,68 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_2_NBT = NBT.inputTypes(ValueTypes.NBT, ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NBT_3 = NBT.inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING).output(ValueTypes.NBT).renderPattern(IConfigRenderPattern.INFIX_2_LONG);
 
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, IValue> FUNCTION_NBT = IterativeFunction.PrePostBuilder.begin()
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, IValue> FUNCTION_NBT = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueTypeNbt.ValueNbt value = input.getValue(0, ValueTypes.NBT);
                 return value.getRawValue();
             });
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, IValue> FUNCTION_NBT_COMPOUND_ENTRY = IterativeFunction.PrePostBuilder.begin()
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, IValue> FUNCTION_NBT_COMPOUND_ENTRY = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueTypeNbt.ValueNbt valueNbt = input.getValue(0, ValueTypes.NBT);
                 ValueTypeString.ValueString valueString = input.getValue(1, ValueTypes.STRING);
                 return valueNbt.getRawValue()
-                        .filter(tag -> tag instanceof CompoundNBT)
-                        .map(tag -> ((CompoundNBT) tag).get(valueString.getRawValue()));
+                        .filter(tag -> tag instanceof CompoundTag)
+                        .map(tag -> ((CompoundTag) tag).get(valueString.getRawValue()));
             });
-    public static final IterativeFunction.PrePostBuilder<Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_NBT_COPY_FOR_VALUE = IterativeFunction.PrePostBuilder.begin()
+    public static final IterativeFunction.PrePostBuilder<Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_NBT_COPY_FOR_VALUE = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueTypeNbt.ValueNbt valueNbt = input.getValue(0, ValueTypes.NBT);
                 ValueTypeString.ValueString valueString = input.getValue(1, ValueTypes.STRING);
                 return Triple.of(valueNbt.getRawValue()
-                                .filter(t -> t instanceof CompoundNBT)
-                                .map(t -> (CompoundNBT) t)
-                                .map(CompoundNBT::copy), valueString.getRawValue(),
+                                .filter(t -> t instanceof CompoundTag)
+                                .map(t -> (CompoundTag) t)
+                                .map(CompoundTag::copy), valueString.getRawValue(),
                         new OperatorBase.SafeVariablesGetter.Shifted(2, input.getVariables()));
             });
 
-    public static final IOperatorValuePropagator<Optional<INBT>, Optional<CompoundNBT>> PROPAGATOR_NBT_COMPOUND = opt -> opt
-            .filter(t -> t instanceof CompoundNBT)
-            .map(t -> (CompoundNBT) t);
+    public static final IOperatorValuePropagator<Optional<Tag>, Optional<CompoundTag>> PROPAGATOR_NBT_COMPOUND = opt -> opt
+            .filter(t -> t instanceof CompoundTag)
+            .map(t -> (CompoundTag) t);
 
-    public static final IterativeFunction.PrePostBuilder<Optional<CompoundNBT>, IValue> FUNCTION_NBT_COMPOUND = FUNCTION_NBT.appendPre(PROPAGATOR_NBT_COMPOUND);
+    public static final IterativeFunction.PrePostBuilder<Optional<CompoundTag>, IValue> FUNCTION_NBT_COMPOUND = FUNCTION_NBT.appendPre(PROPAGATOR_NBT_COMPOUND);
 
-    public static final IterativeFunction.PrePostBuilder<Optional<CompoundNBT>, Integer> FUNCTION_NBT_COMPOUND_TO_INT =
+    public static final IterativeFunction.PrePostBuilder<Optional<CompoundTag>, Integer> FUNCTION_NBT_COMPOUND_TO_INT =
             FUNCTION_NBT_COMPOUND.appendPost(PROPAGATOR_INTEGER_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<CompoundNBT>, Boolean> FUNCTION_NBT_COMPOUND_TO_BOOLEAN =
+    public static final IterativeFunction.PrePostBuilder<Optional<CompoundTag>, Boolean> FUNCTION_NBT_COMPOUND_TO_BOOLEAN =
             FUNCTION_NBT_COMPOUND.appendPost(PROPAGATOR_BOOLEAN_VALUE);
 
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Integer> FUNCTION_NBT_COMPOUND_ENTRY_TO_INT =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Integer> FUNCTION_NBT_COMPOUND_ENTRY_TO_INT =
             FUNCTION_NBT_COMPOUND_ENTRY.appendPost(PROPAGATOR_INTEGER_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Long> FUNCTION_NBT_COMPOUND_ENTRY_TO_LONG =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Long> FUNCTION_NBT_COMPOUND_ENTRY_TO_LONG =
             FUNCTION_NBT_COMPOUND_ENTRY.appendPost(PROPAGATOR_LONG_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Double> FUNCTION_NBT_COMPOUND_ENTRY_TO_DOUBLE =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Double> FUNCTION_NBT_COMPOUND_ENTRY_TO_DOUBLE =
             FUNCTION_NBT_COMPOUND_ENTRY.appendPost(PROPAGATOR_DOUBLE_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Boolean> FUNCTION_NBT_COMPOUND_ENTRY_TO_BOOLEAN =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Boolean> FUNCTION_NBT_COMPOUND_ENTRY_TO_BOOLEAN =
             FUNCTION_NBT_COMPOUND_ENTRY.appendPost(PROPAGATOR_BOOLEAN_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, String> FUNCTION_NBT_COMPOUND_ENTRY_TO_STRING =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, String> FUNCTION_NBT_COMPOUND_ENTRY_TO_STRING =
             FUNCTION_NBT_COMPOUND_ENTRY.appendPost(PROPAGATOR_STRING_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Optional<INBT>> FUNCTION_NBT_COMPOUND_ENTRY_TO_NBT =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Optional<Tag>> FUNCTION_NBT_COMPOUND_ENTRY_TO_NBT =
             FUNCTION_NBT_COMPOUND_ENTRY.appendPost(PROPAGATOR_NBT_VALUE);
 
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Integer> FUNCTION_NBT_TO_INT =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Integer> FUNCTION_NBT_TO_INT =
             FUNCTION_NBT.appendPost(PROPAGATOR_INTEGER_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Long> FUNCTION_NBT_TO_LONG =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Long> FUNCTION_NBT_TO_LONG =
             FUNCTION_NBT.appendPost(PROPAGATOR_LONG_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Double> FUNCTION_NBT_TO_DOUBLE =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Double> FUNCTION_NBT_TO_DOUBLE =
             FUNCTION_NBT.appendPost(PROPAGATOR_DOUBLE_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Boolean> FUNCTION_NBT_TO_BOOLEAN =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Boolean> FUNCTION_NBT_TO_BOOLEAN =
             FUNCTION_NBT.appendPost(PROPAGATOR_BOOLEAN_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, String> FUNCTION_NBT_TO_STRING =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, String> FUNCTION_NBT_TO_STRING =
             FUNCTION_NBT.appendPost(PROPAGATOR_STRING_VALUE);
-    public static final IterativeFunction.PrePostBuilder<Optional<INBT>, Optional<INBT>> FUNCTION_NBT_TO_NBT =
+    public static final IterativeFunction.PrePostBuilder<Optional<Tag>, Optional<Tag>> FUNCTION_NBT_TO_NBT =
             FUNCTION_NBT.appendPost(PROPAGATOR_NBT_VALUE);
 
-    public static final IterativeFunction.PrePostBuilder<Triple<Optional<CompoundNBT>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundNBT>>
+    public static final IterativeFunction.PrePostBuilder<Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundTag>>
             FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT = FUNCTION_NBT_COPY_FOR_VALUE.appendPost(PROPAGATOR_NBT_COMPOUND_VALUE);
 
     // --------------- Ingredients builders ---------------
@@ -513,7 +513,7 @@ public class OperatorBuilders {
             throws EvaluationException {
         IIngredientComponentHandler<VT, V, T, M> componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
         if (list.getRawValue().getValueType() != componentHandler.getValueType()) {
-            throw new EvaluationException(new TranslationTextComponent(
+            throw new EvaluationException(new TranslatableComponent(
                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                     list.getRawValue().getValueType(), componentHandler.getValueType()));
         }

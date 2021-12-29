@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
@@ -45,12 +45,12 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
     private final int readColorId;
     private final int readErrorsId;
 
-    public ContainerPartPanelVariableDriven(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
-        this(id, playerInventory, new Inventory(packetBuffer.readInt()),
+    public ContainerPartPanelVariableDriven(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+        this(id, playerInventory, new SimpleContainer(packetBuffer.readInt()),
                 Optional.empty(), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
 
-    public ContainerPartPanelVariableDriven(int id, PlayerInventory playerInventory, IInventory inventory,
+    public ContainerPartPanelVariableDriven(int id, Inventory playerInventory, Container inventory,
                                             Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
         super(RegistryEntries.CONTAINER_PART_DISPLAY, id, playerInventory, inventory, target, partContainer, partType);
 
@@ -63,11 +63,11 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         }
 
         addInventory(inventory, 0, 80, 14, 1, 1);
-        addPlayerInventory(player.inventory, 8, 46);
+        addPlayerInventory(player.getInventory(), 8, 46);
     }
 
     @Override
-    protected Slot createNewSlot(IInventory inventory, int index, int x, int y) {
+    protected Slot createNewSlot(Container inventory, int index, int x, int y) {
         if (inventory instanceof SimpleInventory) {
             return new SlotVariable(inventory, index, x, y);
         }
@@ -79,10 +79,10 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         super.broadcastChanges();
 
         if (!player.level.isClientSide()) {
-            IFormattableTextComponent readValue = new StringTextComponent("");
+            MutableComponent readValue = new TextComponent("");
             int readValueColor = 0;
             if (!NetworkHelpers.shouldWork()) {
-                readValue = new StringTextComponent("SAFE-MODE");
+                readValue = new TextComponent("SAFE-MODE");
             } else {
                 IValue value = getPartState().get().getDisplayValue();
                 if (value != null) {
@@ -121,13 +121,13 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity player) {
+    public void removed(Player player) {
         if (inventory instanceof SimpleInventory) {
             ((SimpleInventory) inventory).removeDirtyMarkListener(this);
         }
     }
 
-    public ITextComponent getReadValue() {
+    public Component getReadValue() {
         return ValueNotifierHelpers.getValueTextComponent(this, readValueId);
     }
 
@@ -135,7 +135,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         return ValueNotifierHelpers.getValueInt(this, readColorId);
     }
 
-    public List<IFormattableTextComponent> getReadErrors() {
+    public List<MutableComponent> getReadErrors() {
         return ValueNotifierHelpers.getValueTextComponentList(this, readErrorsId);
     }
 }

@@ -3,13 +3,13 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.advancements.criterion.AbstractCriterionTrigger;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -17,7 +17,6 @@ import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
-import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariableContentsUpdatedEvent;
 
 import javax.annotation.Nullable;
 
@@ -25,7 +24,7 @@ import javax.annotation.Nullable;
  * Triggers when a variable is created.
  * @author rubensworks
  */
-public class VariableCreatedTrigger extends AbstractCriterionTrigger<VariableCreatedTrigger.Instance> {
+public class VariableCreatedTrigger extends SimpleCriterionTrigger<VariableCreatedTrigger.Instance> {
     private final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "variable_created");
 
     public VariableCreatedTrigger() {
@@ -38,7 +37,7 @@ public class VariableCreatedTrigger extends AbstractCriterionTrigger<VariableCre
     }
 
     @Override
-    public Instance createInstance(JsonObject json, EntityPredicate.AndPredicate entityPredicate, ConditionArrayParser conditionsParser) {
+    public Instance createInstance(JsonObject json, EntityPredicate.Composite entityPredicate, DeserializationContext conditionsParser) {
         JsonElement blockElement = json.get("block");
         Block block = null;
         if (blockElement != null && !blockElement.isJsonNull()) {
@@ -50,29 +49,29 @@ public class VariableCreatedTrigger extends AbstractCriterionTrigger<VariableCre
         return new Instance(getId(), entityPredicate, block, VariableFacadePredicate.deserialize(json.get("variable_facade")));
     }
 
-    public void test(ServerPlayerEntity player, LogicProgrammerVariableFacadeCreatedEvent event) {
+    public void test(ServerPlayer player, LogicProgrammerVariableFacadeCreatedEvent event) {
         this.trigger(player, (instance) -> instance.test(player, event));
     }
 
     @SubscribeEvent
     public void onEvent(LogicProgrammerVariableFacadeCreatedEvent event) {
-        if (event.getPlayer() != null && event.getPlayer() instanceof ServerPlayerEntity) {
-            this.test((ServerPlayerEntity) event.getPlayer(), event);
+        if (event.getPlayer() != null && event.getPlayer() instanceof ServerPlayer) {
+            this.test((ServerPlayer) event.getPlayer(), event);
         }
     }
 
-    public static class Instance extends CriterionInstance implements ICriterionInstanceTestable<LogicProgrammerVariableFacadeCreatedEvent> {
+    public static class Instance extends AbstractCriterionTriggerInstance implements ICriterionInstanceTestable<LogicProgrammerVariableFacadeCreatedEvent> {
         private final Block block;
         private final VariableFacadePredicate variableFacadePredicate;
 
-        public Instance(ResourceLocation criterionIn, EntityPredicate.AndPredicate player,
+        public Instance(ResourceLocation criterionIn, EntityPredicate.Composite player,
                         @Nullable Block block, VariableFacadePredicate variableFacadePredicate) {
             super(criterionIn, player);
             this.block = block;
             this.variableFacadePredicate = variableFacadePredicate;
         }
 
-        public boolean test(ServerPlayerEntity player, LogicProgrammerVariableFacadeCreatedEvent event) {
+        public boolean test(ServerPlayer player, LogicProgrammerVariableFacadeCreatedEvent event) {
             return (block == null || event.getBlockState().getBlock() == block) && variableFacadePredicate.test(event.getVariableFacade());
         }
     }

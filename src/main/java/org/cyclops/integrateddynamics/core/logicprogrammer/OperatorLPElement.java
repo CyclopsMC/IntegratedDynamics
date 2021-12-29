@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Data;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -65,12 +64,12 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public ITextComponent getName() {
+    public Component getName() {
         return getOperator().getLocalizedNameFull();
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines) {
+    public void loadTooltip(List<Component> lines) {
         getOperator().loadTooltip(lines, true);
     }
 
@@ -108,7 +107,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public ItemStack writeElement(PlayerEntity player, ItemStack itemStack) {
+    public ItemStack writeElement(Player player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         int[] variableIds = getVariableIds(inputVariables);
         return registry.writeVariableFacadeItem(!player.level.isClientSide(), itemStack, Operators.REGISTRY,
@@ -131,7 +130,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public ITextComponent validate() {
+    public Component validate() {
         return getOperator().validateTypes(ValueHelpers.from(inputVariables));
     }
 
@@ -162,7 +161,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player) {
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, Player player) {
         return false;
     }
 

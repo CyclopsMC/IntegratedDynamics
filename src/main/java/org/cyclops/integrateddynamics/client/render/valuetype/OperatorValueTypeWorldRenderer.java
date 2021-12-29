@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -31,19 +30,19 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     private static final float MARGIN_FACTOR = 1.1F;
 
     @Override
-    public void renderValue(TileEntityRendererDispatcher rendererDispatcher, IPartContainer partContainer,
+    public void renderValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                             Direction direction, IPartType partType, IValue value, float partialTicks,
-                            MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer,
+                            PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
                             int combinedLight, int combinedOverlay, float alpha) {
-        FontRenderer fontRenderer = rendererDispatcher.getFont();
+        Font fontRenderer = context.getFont();
         float maxWidth = 0;
 
         ValueTypeOperator.ValueOperator valueOperator = ((ValueTypeOperator.ValueOperator) value);
         IOperator operator = valueOperator.getRawValue();
-        List<ITextComponent> lines = Lists.newLinkedList();
-        lines.add(new StringTextComponent(ValueTypes.OPERATOR.getName(valueOperator) + " ::"));
+        List<Component> lines = Lists.newLinkedList();
+        lines.add(new TextComponent(ValueTypes.OPERATOR.getName(valueOperator) + " ::"));
         lines.addAll(ValueTypeOperator.getSignatureLines(operator, true));
-        for (ITextComponent line : lines) {
+        for (Component line : lines) {
             float width = fontRenderer.width(line.getString()) - 1;
             maxWidth = Math.max(maxWidth, width);
         }
@@ -62,9 +61,9 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         matrixStack.scale(scale, scale, 1F);
 
         int offset = 0;
-        for(ITextComponent line : lines) {
+        for(Component line : lines) {
             int color = Helpers.addAlphaToColor(ValueTypes.OPERATOR.getDisplayColor(), alpha);
-            rendererDispatcher.getFont().drawInBatch(line.getString(), 0, offset, color,
+            context.getFont().drawInBatch(line.getString(), 0, offset, color,
                     false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
             offset += singleHeight;
         }

@@ -1,16 +1,15 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -27,7 +26,7 @@ import java.util.Set;
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBox, G extends AbstractGui, C extends Container>
+public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu>
         extends RenderPattern<GuiElementValueTypeDropdownList<T, G, C>, G, C> implements IDropdownEntryListener<T> {
 
     @Getter
@@ -44,12 +43,12 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
 
     @Override
     public void init(int guiLeft, int guiTop) {
-        FontRenderer fontRenderer = Minecraft.getInstance().font;
+        Font fontRenderer = Minecraft.getInstance().font;
         int searchWidth = getElement().getRenderPattern().getWidth() - 28;
         int searchX = getX() + 14;
         int searchY = getY() + 6;
         this.searchField = new WidgetTextFieldDropdown<>(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.lineHeight + 3, new TranslationTextComponent("gui.cyclopscore.search"), true, getDropdownPossibilities());
+                fontRenderer.lineHeight + 3, new TranslatableComponent("gui.cyclopscore.search"), true, getDropdownPossibilities());
         this.searchField.setDropdownEntryListener(this);
         this.searchField.setMaxLength(64);
         this.searchField.setBordered(false);
@@ -60,7 +59,7 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
         if (value == null) {
             value = "";
         }
-        this.searchField.setText(value);
+        this.searchField.setValue(value);
         element.setInputString(searchField.getValue());
         this.searchField.setWidth(searchWidth);
         this.searchField.x = guiLeft + (searchX + searchWidth) - this.searchField.getWidth();
@@ -71,8 +70,8 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         // Textbox
         searchField.render(matrixStack, mouseX, mouseY, partialTicks);
     }

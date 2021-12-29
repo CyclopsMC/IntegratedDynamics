@@ -1,17 +1,16 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -23,7 +22,7 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeStr
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G extends AbstractGui, C extends Container> extends RenderPattern<GuiElementValueTypeString<G, C>, G, C> {
+public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu> extends RenderPattern<GuiElementValueTypeString<G, C>, G, C> {
 
     @Getter
     protected final GuiElementValueTypeString<G, C> element;
@@ -38,12 +37,12 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
 
     @Override
     public void init(int guiLeft, int guiTop) {
-        FontRenderer fontRenderer = Minecraft.getInstance().font;
+        Font fontRenderer = Minecraft.getInstance().font;
         int searchWidth = getElement().getRenderPattern().getWidth() - 28;
         int searchX = getX() + 14;
         int searchY = getY() + 6;
         this.textField = new WidgetTextFieldExtended(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.lineHeight + 3, new TranslationTextComponent(this.getElement().getValueType().getTranslationKey()), true);
+                fontRenderer.lineHeight + 3, new TranslatableComponent(this.getElement().getValueType().getTranslationKey()), true);
         this.textField.setMaxLength(512);
         this.textField.setBordered(false);
         this.textField.setVisible(true);
@@ -53,7 +52,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         if (value == null) {
             value = element.getDefaultInputString();
         }
-        this.textField.setText(value);
+        this.textField.setValue(value);
         element.setInputString(textField.getValue());
         this.textField.setWidth(searchWidth);
         this.textField.x = guiLeft + (searchX + searchWidth) - this.textField.getWidth();
@@ -66,8 +65,8 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         // Textbox
         textField.render(matrixStack, mouseX, mouseY, partialTicks);
     }

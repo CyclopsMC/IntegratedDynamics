@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.item.Item;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,7 +30,7 @@ public class BlockCableConfig extends BlockConfig {
                         .sound(SoundType.METAL)
                         .isRedstoneConductor((blockState, world, pos) -> false)),
                 (eConfig, block) -> new ItemBlockCable(block, new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .tab(IntegratedDynamics._instance.getDefaultCreativeTab()))
                 );
         if (MinecraftHelpers.isClientSide()) {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
@@ -41,7 +41,7 @@ public class BlockCableConfig extends BlockConfig {
     @OnlyIn(Dist.CLIENT)
     public void onClientSetup(FMLClientSetupEvent event) {
         // Render the cable in all layers, and handle layer checking inside the model
-        RenderTypeLookup.setRenderLayer(getInstance(), (type) -> true);
+        ItemBlockRenderTypes.setRenderLayer(getInstance(), (type) -> true);
     }
 
     @OnlyIn(Dist.CLIENT)

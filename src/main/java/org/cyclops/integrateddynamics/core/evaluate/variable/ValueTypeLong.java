@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.LongNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.LongTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
@@ -20,7 +19,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implements IValueTypeNumber<ValueTypeLong.ValueLong> {
 
     public ValueTypeLong() {
-        super("long", Helpers.RGBToInt(215, 254, 23), TextFormatting.YELLOW, ValueTypeLong.ValueLong.class);
+        super("long", Helpers.RGBToInt(215, 254, 23), ChatFormatting.YELLOW, ValueTypeLong.ValueLong.class);
     }
 
     @Override
@@ -29,19 +28,19 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     }
 
     @Override
-    public IFormattableTextComponent toCompactString(ValueLong value) {
-        return new StringTextComponent(Long.toString(value.getRawValue()));
+    public MutableComponent toCompactString(ValueLong value) {
+        return new TextComponent(Long.toString(value.getRawValue()));
     }
 
     @Override
-    public INBT serialize(ValueLong value) {
-        return LongNBT.valueOf(value.getRawValue());
+    public Tag serialize(ValueLong value) {
+        return LongTag.valueOf(value.getRawValue());
     }
 
     @Override
-    public ValueLong deserialize(INBT value) {
-        if (value.getId() == Constants.NBT.TAG_LONG) {
-            return ValueLong.of(((LongNBT) value).getAsLong());
+    public ValueLong deserialize(Tag value) {
+        if (value.getId() == Tag.TAG_LONG) {
+            return ValueLong.of(((LongTag) value).getAsLong());
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a long.", value));
         }
@@ -57,8 +56,8 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
         try {
             return ValueLong.of(Long.parseLong(value));
         } catch (NumberFormatException e) {
-            throw new EvaluationException(new TranslationTextComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
-                    new TranslationTextComponent(getTranslationKey())));
+            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
+                    new TranslatableComponent(getTranslationKey())));
         }
     }
 

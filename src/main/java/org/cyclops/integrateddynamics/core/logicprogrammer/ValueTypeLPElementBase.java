@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Getter;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -48,7 +48,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Nullable
     @Override
-    public <G2 extends AbstractGui, C2 extends Container> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement() {
+    public <G2 extends GuiComponent, C2 extends AbstractContainerMenu> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement() {
         return null;
     }
 
@@ -58,7 +58,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public void loadTooltip(List<ITextComponent> lines) {
+    public void loadTooltip(List<Component> lines) {
         getValueType().loadTooltip(lines, true, null);
     }
 
@@ -83,8 +83,8 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public ITextComponent getName() {
-        return new TranslationTextComponent(valueType.getTranslationKey());
+    public Component getName() {
+        return new TranslatableComponent(valueType.getTranslationKey());
     }
 
     @Override
@@ -114,7 +114,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public ItemStack writeElement(PlayerEntity player, ItemStack itemStack) {
+    public ItemStack writeElement(Player player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         return registry.writeVariableFacadeItem(!player.level.isClientSide(), itemStack, ValueTypes.REGISTRY,
                 new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
@@ -151,7 +151,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, PlayerEntity player) {
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, Player player) {
         return false;
     }
 

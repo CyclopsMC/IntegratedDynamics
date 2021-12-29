@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
@@ -26,13 +26,13 @@ public class ContainerPartDisplayConfig extends GuiConfig<ContainerPartPanelVari
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & IHasContainer<ContainerPartPanelVariableDriven>> ScreenManager.IScreenFactory<ContainerPartPanelVariableDriven, U> getScreenFactory() {
+    public <U extends Screen & MenuAccess<ContainerPartPanelVariableDriven>> MenuScreens.ScreenConstructor<ContainerPartPanelVariableDriven, U> getScreenFactory() {
         // Due to our use of generics, we have to delegate to a separate function.
-        return new ScreenFactorySafe<>((ScreenManager.IScreenFactory) createScreenFactory());
+        return new ScreenFactorySafe<>((MenuScreens.ScreenConstructor) createScreenFactory());
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected static <P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> ScreenManager.IScreenFactory<ContainerPartPanelVariableDriven<P, S>, ContainerScreenPartDisplay<P, S>> createScreenFactory() {
+    protected static <P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> MenuScreens.ScreenConstructor<ContainerPartPanelVariableDriven<P, S>, ContainerScreenPartDisplay<P, S>> createScreenFactory() {
         return ContainerScreenPartDisplay::new;
     }
 

@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalSqueezer;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMechanicalMachine;
-import org.cyclops.integrateddynamics.tileentity.TileMechanicalSqueezer;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * Container for the mechanical squeezer.
  * @author rubensworks
  */
-public class ContainerMechanicalSqueezer extends ContainerMechanicalMachine<TileMechanicalSqueezer> {
+public class ContainerMechanicalSqueezer extends ContainerMechanicalMachine<BlockEntityMechanicalSqueezer> {
 
     public static final String BUTTON_TOGGLE_FLUID_EJECT = "button_eject";
 
@@ -26,12 +26,12 @@ public class ContainerMechanicalSqueezer extends ContainerMechanicalMachine<Tile
     private final Supplier<Integer> variableFluidCapacity;
     private final Supplier<Boolean> variableAutoEject;
 
-    public ContainerMechanicalSqueezer(int id, PlayerInventory playerInventory) {
-        this(id, playerInventory, new Inventory(TileMechanicalSqueezer.INVENTORY_SIZE), Optional.empty());
+    public ContainerMechanicalSqueezer(int id, Inventory playerInventory) {
+        this(id, playerInventory, new SimpleContainer(BlockEntityMechanicalSqueezer.INVENTORY_SIZE), Optional.empty());
     }
 
-    public ContainerMechanicalSqueezer(int id, PlayerInventory playerInventory, IInventory inventory,
-                                          Optional<TileMechanicalSqueezer> tileSupplier) {
+    public ContainerMechanicalSqueezer(int id, Inventory playerInventory, Container inventory,
+                                          Optional<BlockEntityMechanicalSqueezer> tileSupplier) {
         super(RegistryEntries.CONTAINER_MECHANICAL_SQUEEZER, id, playerInventory, inventory, tileSupplier);
 
         this.variableFluidStack = registerSyncedVariable(FluidStack.class, () -> getTileSupplier().get().getTank().getFluid());

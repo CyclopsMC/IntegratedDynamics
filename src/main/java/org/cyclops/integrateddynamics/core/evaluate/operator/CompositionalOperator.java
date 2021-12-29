@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -56,7 +56,7 @@ public class CompositionalOperator extends OperatorBase {
                 IOperator operator = builders[i].base;
                 valueTypes[i] = operator.getOutputType();
             }
-            ITextComponent error = this.base.validateTypes(valueTypes);
+            Component error = this.base.validateTypes(valueTypes);
             if(error != null) {
                 throw new IllegalArgumentException(error.getString());
             }
@@ -123,19 +123,19 @@ public class CompositionalOperator extends OperatorBase {
             }
         }
 
-        protected IFormattableTextComponent validateTypes(String unlocalizedOperatorName, IValueType[] input) {
+        protected MutableComponent validateTypes(String unlocalizedOperatorName, IValueType[] input) {
             if(this.builders == null) {
                 return this.base.validateTypes(input);
             } else {
                 if(input.length != getRequiredInputLength()) {
-                    return new TranslationTextComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
-                            new TranslationTextComponent(unlocalizedOperatorName),
+                    return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+                            new TranslatableComponent(unlocalizedOperatorName),
                             input.length, getRequiredInputLength());
                 }
                 IValueType[] subValueTypesOut = new IValueType[builders.length];
                 for(int i = 0; i < builders.length; i++) {
                     AppliedOperatorBuilder builder = builders[i];
-                    IFormattableTextComponent subError;
+                    MutableComponent subError;
                     if((subError = builder.validateTypes(unlocalizedOperatorName, input)) != null) {
                         return subError;
                     }
@@ -161,7 +161,7 @@ public class CompositionalOperator extends OperatorBase {
                 }
             }, renderPattern, unlocalizedType) {
                 @Override
-                public IFormattableTextComponent validateTypes(IValueType[] input) {
+                public MutableComponent validateTypes(IValueType[] input) {
                     return AppliedOperatorBuilder.this.validateTypes(getTranslationKey(), input);
                 }
             };

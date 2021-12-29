@@ -2,15 +2,15 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonArrow;
@@ -149,21 +149,21 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    public ITextComponent validate() {
+    public Component validate() {
         if(!MinecraftHelpers.isClientSideThread()) {
-            return serverValue == null ? new StringTextComponent("") : null;
+            return serverValue == null ? new TextComponent("") : null;
         }
         if(MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeListValueChangedPacket(
                     listValueType == null ? ValueTypes.LIST.getDefault() : ValueTypeList.ValueList.ofList(listValueType, constructValues())));
         }
         if(this.listValueType == null) {
-            return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
+            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
         for(Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : subElements.entrySet()) {
-            ITextComponent error = entry.getValue().validate();
+            Component error = entry.getValue().validate();
             if(error != null) {
-                return new TranslationTextComponent(L10NValues.VALUETYPE_ERROR_INVALIDLISTELEMENT, entry.getKey(), error);
+                return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDLISTELEMENT, entry.getKey(), error);
             }
         }
         return null;
@@ -233,11 +233,11 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, int mouseX, int mouseY) {
+        public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             // Output type tooltip
-            this.drawTooltipForeground(gui, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
+            this.drawTooltipForeground(gui, matrixStack, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
         }
 
         @Override
@@ -282,7 +282,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             super.init(guiLeft, guiTop);
             valueTypeSelector = new WidgetArrowedListField<IValueType<?>>(Minecraft.getInstance().font,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true,
-                    new TranslationTextComponent("valuetype.integrateddynamics.value_type"), true, getValueTypes());
+                    new TranslatableComponent("valuetype.integrateddynamics.value_type"), true, getValueTypes());
             valueTypeSelector.setListener(this);
             if (element.activeElement == -1) {
                 onChanged();
@@ -290,7 +290,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             int x = guiLeft + getX();
             int y = guiTop + getY();
             buttonList.add(arrowAdd = new ButtonText(x + getWidth() - 13, y + getHeight() - 13, 12, 12,
-                    new TranslationTextComponent("gui.integrateddynamics.button.add"), new StringTextComponent("+"), b -> {}, true));
+                    new TranslatableComponent("gui.integrateddynamics.button.add"), new TextComponent("+"), b -> {}, true));
         }
 
         @Override
@@ -307,8 +307,8 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             valueTypeSelector.render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
@@ -368,11 +368,11 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             super.init(guiLeft, guiTop);
             int x = guiLeft + getX();
             int y = guiTop + getY();
-            buttonList.add(arrowLeft = new ButtonArrow(x, y, new TranslationTextComponent("gui.cyclopscore.left"),
+            buttonList.add(arrowLeft = new ButtonArrow(x, y, new TranslatableComponent("gui.cyclopscore.left"),
                     b -> element.setActiveElement(element.activeElement - 1), ButtonArrow.Direction.WEST));
-            buttonList.add(arrowRight = new ButtonArrow(x + getWidth() - arrowLeft.getWidth() - 1, y, new TranslationTextComponent("gui.cyclopscore.right"),
+            buttonList.add(arrowRight = new ButtonArrow(x + getWidth() - arrowLeft.getWidth() - 1, y, new TranslatableComponent("gui.cyclopscore.right"),
                     b -> element.setActiveElement(element.activeElement + 1), ButtonArrow.Direction.EAST));
-            buttonList.add(arrowRemove = new ButtonText(x + (getWidth() / 2) - (arrowLeft.getWidth() / 2), y + getHeight() - 13, 12, 12, new TranslationTextComponent("gui.integrateddynamics.button.remove"), new StringTextComponent("-"),
+            buttonList.add(arrowRemove = new ButtonText(x + (getWidth() / 2) - (arrowLeft.getWidth() / 2), y + getHeight() - 13, 12, 12, new TranslatableComponent("gui.integrateddynamics.button.remove"), new TextComponent("-"),
                     b -> element.removeElement(element.activeElement), true));
             arrowLeft.active = element.activeElement > 0;
             arrowRight.active = element.activeElement < element.length - 1;
@@ -380,8 +380,8 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, FontRenderer fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.drawGuiContainerBackgroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             int x = guiLeft + getX() + (getWidth() / 2);
             int y = guiTop + getY() + 4;
             RenderHelpers.drawScaledCenteredString(matrixStack, fontRenderer, String.valueOf(element.activeElement), x - 4, y + 2, 10, Helpers.RGBToInt(20, 20, 20));

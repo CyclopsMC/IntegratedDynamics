@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
 /**
@@ -12,7 +12,7 @@ import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
  */
 public class ValueTypeListProxyEntityInventory extends ValueTypeListProxyEntityBase<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
 
-    public ValueTypeListProxyEntityInventory(World world, Entity entity) {
+    public ValueTypeListProxyEntityInventory(Level world, Entity entity) {
         super(ValueTypeListProxyFactories.ENTITY_INVENTORY.getName(), ValueTypes.OBJECT_ITEMSTACK, world, entity);
     }
 
@@ -22,8 +22,8 @@ public class ValueTypeListProxyEntityInventory extends ValueTypeListProxyEntityB
 
     protected NonNullList<ItemStack> getInventory() {
         Entity e = getEntity();
-        if(e != null && e instanceof PlayerEntity) {
-            return ((PlayerEntity) e).inventory.items;
+        if(e != null && e instanceof Player) {
+            return ((Player) e).getInventory().items;
         }
         return NonNullList.create();
     }
