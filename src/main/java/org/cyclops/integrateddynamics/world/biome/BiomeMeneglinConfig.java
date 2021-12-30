@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.world.biome;
 
-import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
@@ -17,6 +15,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
@@ -46,10 +45,9 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     @ConfigurableProperty(category = "worldgeneration", comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0, requiresMcRestart = true, configLocation = ModConfig.Type.SERVER)
     public static int wildMenrilTreeChance = 100;
 
-    public static ConfiguredFeature<?, ?> CONFIGURED_FEATURE_GENERAL;
-    public static ConfiguredFeature<?, ?> CONFIGURED_FEATURE_MENEGLIN;
-    public static PlacedFeature PLACED_FEATURE_GENERAL;
+    public static ConfiguredFeature<TreeConfiguration, ?> CONFIGURED_FEATURE_TREE;
     public static PlacedFeature PLACED_FEATURE_MENEGLIN;
+    public static PlacedFeature PLACED_FEATURE_GENERAL;
 
     public BiomeMeneglinConfig() {
         super(
@@ -128,23 +126,12 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     }
 
     public void onModSetup(FMLCommonSetupEvent event) {
-        CONFIGURED_FEATURE_MENEGLIN = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE,
-                new ResourceLocation(getMod().getModId(), "tree_menril_meneglin"),
-                Feature.TREE
-                        .configured(TreeMenril.getMenrilTreeConfig()));
-        CONFIGURED_FEATURE_GENERAL = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE,
-                new ResourceLocation(getMod().getModId(), "tree_menril_general"),
-                Feature.TREE
-                        .configured(TreeMenril.getMenrilTreeConfig()));
+        CONFIGURED_FEATURE_TREE = WorldFeatures.registerConfigured("tree_menril", Feature.TREE.configured(TreeMenril.getMenrilTreeConfig()));
 
-        PLACED_FEATURE_MENEGLIN = Registry.register(BuiltinRegistries.PLACED_FEATURE,
-                new ResourceLocation(getMod().getModId(), "tree_menril_meneglin"),
-                CONFIGURED_FEATURE_MENEGLIN
-                        .placed(VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.05F, 1))));
-        PLACED_FEATURE_GENERAL = Registry.register(BuiltinRegistries.PLACED_FEATURE,
-                new ResourceLocation(getMod().getModId(), "tree_menril_general"),
-                CONFIGURED_FEATURE_GENERAL
-                        .placed(VegetationPlacements.treePlacement(PlacementUtils.countExtra(0, 1F / wildMenrilTreeChance, 1))));
+        PLACED_FEATURE_MENEGLIN = WorldFeatures.registerPlaced("tree_menril_meneglin", CONFIGURED_FEATURE_TREE
+                .placed(VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.05F, 1))));
+        PLACED_FEATURE_GENERAL = WorldFeatures.registerPlaced("tree_menril_general", CONFIGURED_FEATURE_TREE
+                .placed(VegetationPlacements.treePlacement(PlacementUtils.countExtra(0, 1F / wildMenrilTreeChance, 1))));
     }
 
     public void onBiomeLoadingEvent(BiomeLoadingEvent event) {

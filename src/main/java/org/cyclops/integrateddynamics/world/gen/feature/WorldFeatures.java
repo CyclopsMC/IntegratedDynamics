@@ -56,11 +56,11 @@ public class WorldFeatures {
             VegetationPlacements.treePlacement(PlacementUtils.countExtra(6, 0.1F, 1))
     ));
 
-    private static <FC extends FeatureConfiguration> ConfiguredFeature<FC, ?> registerConfigured(String key, ConfiguredFeature<FC, ?> feature) {
+    public static <FC extends FeatureConfiguration> ConfiguredFeature<FC, ?> registerConfigured(String key, ConfiguredFeature<FC, ?> feature) {
         return Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Reference.MOD_ID, key), feature);
     }
 
-    private static PlacedFeature registerPlaced(String key, PlacedFeature feature) {
+    public static PlacedFeature registerPlaced(String key, PlacedFeature feature) {
         return Registry.register(BuiltinRegistries.PLACED_FEATURE, new ResourceLocation(Reference.MOD_ID, key), feature);
     }
 

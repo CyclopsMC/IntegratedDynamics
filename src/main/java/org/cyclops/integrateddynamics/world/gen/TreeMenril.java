@@ -12,6 +12,7 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMenrilLogFilledConfig;
+import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenril;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
 
@@ -40,7 +41,7 @@ public class TreeMenril extends AbstractTreeGrower {
     @Nullable
     @Override
     protected ConfiguredFeature<TreeConfiguration, ?> getConfiguredFeature(Random random, boolean b) {
-        return Feature.TREE.configured(getMenrilTreeConfig());
+        return BiomeMeneglinConfig.CONFIGURED_FEATURE_TREE;
     }
 
 }

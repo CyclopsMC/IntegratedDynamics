@@ -55,9 +55,9 @@ public class BlockSqueezer extends BlockWithEntity {
     };
     private static final VoxelShape[] SHAPES_STICKS = {
             box(0.0F, 0.0F, 0.0F, 2F, 16.0F, 2F),
-            box(16.0F, 0.0F, 0.0F, 14F, 16.0F, 2F),
-            box(0.0F, 0.0F, 16.0F, 2F, 16.0F, 14F),
-            box(16.0F, 0.0F, 16.0F, 14F, 16.0F, 14F),
+            box(14.0F, 0.0F, 0.0F, 16F, 16.0F, 2F),
+            box(0.0F, 0.0F, 14.0F, 2F, 16.0F, 16F),
+            box(14.0F, 0.0F, 14.0F, 16F, 16.0F, 16F),
     };
     private static final VoxelShape[] SHAPES = {
             null,
