@@ -66,9 +66,13 @@ sourceSets {
 
 configurations {
     shadow.setTransitive(true);
+
 	integrationtestImplementation.extendsFrom(implementation)
 	integrationtestRuntimeOnly.extendsFrom(runtimeOnly)
 	javadoc.classpath += sourceSets.integrationtest.output
+
+    modLib
+    implementation.extendsFrom modLib
 }
 
 test {
@@ -119,7 +123,7 @@ dependencies {
         }
     }
 	
-    implementation "com.google.re2j:re2j:1.1"
+    modLib "com.google.re2j:re2j:1.1"
     shadow "com.google.re2j:re2j:1.1"
 
     // Project lombok
@@ -147,6 +151,10 @@ minecraft {
                     source sourceSets.integrationtest
                 }
             }
+
+            lazyToken('minecraft_classpath') {
+                configurations.modLib.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+            }
         }
 
         server {
@@ -158,6 +166,10 @@ minecraft {
                     source sourceSets.integrationtest
                 }
             }
+
+            lazyToken('minecraft_classpath') {
+                configurations.modLib.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+            }
         }
 
         data {
@@ -168,6 +180,10 @@ minecraft {
                 integrateddynamics {
                     source sourceSets.main
                 }
+            }
+
+            lazyToken('minecraft_classpath') {
+                configurations.modLib.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
             }
         }
     }
