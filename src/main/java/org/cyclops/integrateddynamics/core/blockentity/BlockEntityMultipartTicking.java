@@ -108,11 +108,10 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
-        tag = super.save(tag);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         tag.put("partContainer", partContainer.serializeNBT());
         tag.putBoolean("realCable", cableFakeable.isRealCable());
-        return tag;
     }
 
     @Override

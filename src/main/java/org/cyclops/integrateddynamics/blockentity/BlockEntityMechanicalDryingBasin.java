@@ -129,10 +129,10 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         tag.put("tankIn", getTankInput().writeToNBT(new CompoundTag()));
         tag.put("tankOut", getTankOutput().writeToNBT(new CompoundTag()));
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     @Override

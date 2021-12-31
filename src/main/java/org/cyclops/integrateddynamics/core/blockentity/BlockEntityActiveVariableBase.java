@@ -62,10 +62,10 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         List<MutableComponent> errors = evaluator.getErrors();
         NBTClassType.writeNbt(List.class, "errors", errors, tag);
-        return super.save(tag);
     }
 
     @Override

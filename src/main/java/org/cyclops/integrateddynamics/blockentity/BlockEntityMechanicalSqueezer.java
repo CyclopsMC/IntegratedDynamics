@@ -119,9 +119,9 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         tag.put("tank", getTank().writeToNBT(new CompoundTag()));
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     @Override

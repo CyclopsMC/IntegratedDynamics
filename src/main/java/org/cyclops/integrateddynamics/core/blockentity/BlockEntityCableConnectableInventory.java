@@ -89,9 +89,9 @@ public class BlockEntityCableConnectableInventory extends CyclopsBlockEntity {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         inventory.writeToNBT(tag, "inventory");
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     /**

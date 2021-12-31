@@ -114,10 +114,10 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         inventory.writeToNBT(tag, "inventory");
         tank.writeToNBT(tag, "tank");
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     protected RecipeType<RecipeSqueezer> getRegistry() {

@@ -129,14 +129,13 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
-        tag = super.save(tag);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         ListTag valueList = new ListTag();
         for (IValue value : getValues()) {
             valueList.add(ValueHelpers.serialize(value));
         }
         tag.put("values", valueList);
-        return tag;
     }
 
     @Override
