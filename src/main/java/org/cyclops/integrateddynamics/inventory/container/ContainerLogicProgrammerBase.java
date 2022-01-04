@@ -173,6 +173,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         // (We can do this because they are all ghost slots)
         lastSlots.clear();
         slots.clear();
+        remoteSlots.clear();
         initializeSlotsPre();
         this.temporaryInputSlots.removeDirtyMarkListener(this);
         this.temporaryInputSlots = new SimpleInventory(element == null ? 0 : element.getRenderPattern().getSlotPositions().length, element == null ? 0 : element.getItemStackSizeLimit());
