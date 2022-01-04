@@ -86,7 +86,7 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
     }
 
     @Override
-    public int getUpdateBackoff() {
+    public int getUpdateBackoffTicks() {
         return 20;
     }
 
