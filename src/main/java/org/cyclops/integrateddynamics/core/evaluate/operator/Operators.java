@@ -789,11 +789,11 @@ public final class Operators {
             ).build());
 
     /**
-     * ----------------------------------- DOUBLE OPERATORS -----------------------------------
+     * ----------------------------------- NUMBER OPERATORS -----------------------------------
      */
 
     /**
-     * Double round operator with one input double and one output integers.
+     * Number round operator with one input double and one output integers.
      */
     public static final IOperator NUMBER_ROUND = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("|| ||").operatorName("round")
@@ -802,18 +802,18 @@ public final class Operators {
             ).build());
 
     /**
-     * Double ceil operator with one input double and one output integers.
+     * Number ceil operator with one input double and one output integers.
      */
-    public static final IOperator NUMBER_CEIL = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX // TODO: BREAKING: use NUMBER as prefix instead of DOUBLE
+    public static final IOperator NUMBER_CEIL = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.ceil(variables.getVariables()[0])
             ).build());
 
     /**
-     * Double floor operator with one input double and one output integers.
+     * Number floor operator with one input double and one output integers.
      */
-    public static final IOperator NUMBER_FLOOR = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX // TODO: BREAKING: use NUMBER as prefix instead of DOUBLE
+    public static final IOperator NUMBER_FLOOR = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.floor(variables.getVariables()[0])
@@ -1908,7 +1908,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_animal").operatorName("isanimal")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
-                entity -> entity instanceof Animal && !(entity instanceof Enemy) // TODO: AnimalEntity was IAnimal
+                entity -> entity instanceof Animal && !(entity instanceof Enemy)
             )).build());
 
     /**
@@ -3599,19 +3599,18 @@ public final class Operators {
     /**
      * Set an ingredient energy
      */
-    public static final IOperator INGREDIENTS_WITH_ENERGY = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_INTEGER
+    public static final IOperator INGREDIENTS_WITH_ENERGY = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LONG
             .operatorName("with_energy").symbol("Ingr.with_energy")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
-                // TODO: in next breaking update, make this a long-based operation
                 ValueTypeInteger.ValueInteger index = variables.getValue(1, ValueTypes.INTEGER);
-                ValueTypeInteger.ValueInteger energy = variables.getValue(2, ValueTypes.INTEGER);
+                ValueTypeLong.ValueLong energy = variables.getValue(2, ValueTypes.LONG);
                 if (!value.getRawValue().isPresent()) {
                     return value;
                 }
                 IMixedIngredients baseIngredients = value.getRawValue().get();
                 return ValueObjectTypeIngredients.ValueIngredients.of(new ExtendedIngredientsSingle<>(baseIngredients,
-                        index.getRawValue(), IngredientComponent.ENERGY, (long) energy.getRawValue()));
+                        index.getRawValue(), IngredientComponent.ENERGY, energy.getRawValue()));
             }).build());
 
     /**

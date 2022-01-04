@@ -112,8 +112,7 @@ public class OperatorBuilders {
 
     // --------------- Number builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER = OperatorBuilder.forType(ValueTypes.CATEGORY_NUMBER).appendKind("number");
-    // TODO: BREAKING: use NUMBER as prefix instead of DOUBLE
-    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER_1_PREFIX = DOUBLE.inputTypes(1, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.PREFIX_1);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER_1_PREFIX = NUMBER.inputTypes(1, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.PREFIX_1);
 
     // --------------- Nullable builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NULLABLE = OperatorBuilder.forType(ValueTypes.CATEGORY_NULLABLE).appendKind("general");
@@ -482,8 +481,8 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_FLUIDSTACK = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.OBJECT_FLUIDSTACK)
             .renderPattern(IConfigRenderPattern.INFIX_2_LONG).output(ValueTypes.OBJECT_INGREDIENTS);
-    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_INTEGER = INGREDIENTS
-            .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.INTEGER)
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_3_LONG = INGREDIENTS
+            .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.INTEGER, ValueTypes.LONG)
             .renderPattern(IConfigRenderPattern.INFIX_2_LONG).output(ValueTypes.OBJECT_INGREDIENTS);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> INGREDIENTS_2_LIST = INGREDIENTS
             .inputTypes(ValueTypes.OBJECT_INGREDIENTS, ValueTypes.LIST)

@@ -7,14 +7,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLong;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
@@ -96,11 +95,11 @@ public class IngredientComponentHandlers {
                 return value.getRawValue();
             }
         });
-        REGISTRY.register(new IIngredientComponentHandler<ValueTypeInteger, ValueTypeInteger.ValueInteger, Long, Boolean>() {
-            // TODO: in next breaking change, change this to be a ValueLong
+        REGISTRY.register(new IIngredientComponentHandler<ValueTypeLong, ValueTypeLong.ValueLong, Long, Boolean>() {
+
             @Override
-            public ValueTypeInteger getValueType() {
-                return ValueTypes.INTEGER;
+            public ValueTypeLong getValueType() {
+                return ValueTypes.LONG;
             }
 
             @Override
@@ -109,18 +108,18 @@ public class IngredientComponentHandlers {
             }
 
             @Override
-            public ValueTypeInteger.ValueInteger toValue(@Nullable Long instance) {
-                return ValueTypeInteger.ValueInteger.of(Helpers.castSafe(instance));
+            public ValueTypeLong.ValueLong toValue(@Nullable Long instance) {
+                return ValueTypeLong.ValueLong.of(instance);
             }
 
             @Nullable
             @Override
-            public Long toInstance(ValueTypeInteger.ValueInteger value) {
-                return (long) value.getRawValue();
+            public Long toInstance(ValueTypeLong.ValueLong value) {
+                return value.getRawValue();
             }
 
             @Override
-            public Component toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
+            public Component toCompactString(ValueTypeLong.ValueLong ingredientValue) {
                 return getValueType().toCompactString(ingredientValue)
                         .append(" ")
                         .append(new TranslatableComponent(L10NValues.GENERAL_ENERGY_UNIT));

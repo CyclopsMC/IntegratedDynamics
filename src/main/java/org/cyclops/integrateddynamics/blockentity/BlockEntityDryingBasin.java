@@ -222,7 +222,6 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                     BlockState blockStateFluid = blockEntity.getTank().getFluid().getFluid().getAttributes().getBlock(level, pos,
                             blockEntity.getTank().getFluid().getFluid().defaultFluidState());
                     if(blockStateFluid != null) {
-                        // TODO: send via packet to client
                         level.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, blockStateFluid),
                                 pos.getX() + Math.random() * 0.8D + 0.1D, pos.getY() + Math.random() * 0.1D + 0.9D,
                                 pos.getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0);
@@ -230,7 +229,6 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 }
                 if(!blockEntity.getInventory().getItem(0).isEmpty()) {
                     ItemStack itemStack = blockEntity.getInventory().getItem(0);
-                    // TODO: send via packet to client
                     level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, itemStack),
                             pos.getX() + Math.random() * 0.8D + 0.1D, pos.getY() + Math.random() * 0.1D + 0.9D,
                             pos.getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0);

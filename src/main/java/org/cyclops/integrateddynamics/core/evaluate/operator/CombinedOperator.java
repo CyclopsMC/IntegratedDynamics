@@ -412,12 +412,7 @@ public class CombinedOperator extends OperatorBase {
             }
             IOperator[] operators = new IOperator[list.size()];
             for (int i = 0; i < list.size(); i++) {
-                try {
-                    operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.getCompound(i).get("v")));
-                } catch (Throwable e) {
-                    // TODO: remove this in next major version (and try-catch block), as we just needed it for backwards-compat.
-                    operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.get(i)));
-                }
+                operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.getCompound(i).get("v")));
             }
             return newFunction(operators);
         }

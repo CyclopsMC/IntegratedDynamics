@@ -1023,12 +1023,12 @@
 
     "operator.integrateddynamics.number": "Number",
     "operator.integrateddynamics.number.basename": "Number %s",
-    "operator.integrateddynamics.double.round": "Round",
-    "operator.integrateddynamics.double.round.info": "Round to the nearest Integer",
-    "operator.integrateddynamics.double.ceil": "Ceil",
-    "operator.integrateddynamics.double.ceil.info": "Round up to the nearest Integer",
-    "operator.integrateddynamics.double.floor": "Floor",
-    "operator.integrateddynamics.double.floor.info": "Round down to the nearest Integer",
+    "operator.integrateddynamics.number.round": "Round",
+    "operator.integrateddynamics.number.round.info": "Round to the nearest Integer",
+    "operator.integrateddynamics.number.ceil": "Ceil",
+    "operator.integrateddynamics.number.ceil.info": "Round up to the nearest Integer",
+    "operator.integrateddynamics.number.floor": "Floor",
+    "operator.integrateddynamics.number.floor.info": "Round down to the nearest Integer",
 
     "operator.integrateddynamics.list": "List",
     "operator.integrateddynamics.list.basename": "List %s",
