@@ -88,7 +88,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return Mth.hsvToRgb(Math.max(0.0F, 1 - ((float) getBarWidth(stack)) / 13) / 3.0F, 1.0F, 1.0F);
+        return Mth.hsvToRgb(Math.max(0.0F, ((float) getBarWidth(stack)) / 13) / 3.0F, 1.0F, 1.0F);
     }
 
     protected EnergyStorageItemBlockEnergyContainer createCapability(ItemStack itemStack) {
