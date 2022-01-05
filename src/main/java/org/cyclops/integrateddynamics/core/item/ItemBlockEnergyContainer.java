@@ -81,7 +81,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
                 .map(energyStorage -> {
                     double amount = energyStorage.getEnergyStored();
                     double capacity = energyStorage.getMaxEnergyStored();
-                    return (int) Math.round((capacity - amount) / capacity * 13);
+                    return (int) Math.round(amount / capacity * 13);
                 })
                 .orElse(0);
     }
