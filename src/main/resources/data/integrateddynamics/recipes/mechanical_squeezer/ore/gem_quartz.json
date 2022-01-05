@@ -1,0 +1,35 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "tag": "forge:ores/quartz"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:gems/quartz",
+        "count": 3
+      },
+      {
+        "tag": "forge:gems/quartz",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:gems/quartz"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ores/quartz"
+      }
+    }
+  ]
+}

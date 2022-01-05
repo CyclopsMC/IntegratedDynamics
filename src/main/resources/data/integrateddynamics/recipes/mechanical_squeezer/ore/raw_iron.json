@@ -1,0 +1,25 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "tag": "forge:ores/iron"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:raw_materials/iron",
+        "count": 8
+      },
+      {
+        "tag": "forge:raw_materials/iron",
+        "count": 2,
+        "chance": 0.5
+      },
+      {
+        "tag": "forge:raw_materials/iron",
+        "count": 2,
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40
+}

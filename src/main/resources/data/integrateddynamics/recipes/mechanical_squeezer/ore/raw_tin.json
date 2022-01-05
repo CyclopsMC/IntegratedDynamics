@@ -1,0 +1,41 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "tag": "forge:ores/tin"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:raw_materials/tin",
+        "count": 8
+      },
+      {
+        "tag": "forge:raw_materials/tin",
+        "count": 2,
+        "chance": 0.5
+      },
+      {
+        "tag": "forge:raw_materials/tin",
+        "count": 2,
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:raw_materials/tin"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ores/tin"
+      }
+    }
+  ]
+}

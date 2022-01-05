@@ -1,0 +1,24 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "tag": "forge:ores/gold"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:raw_materials/gold",
+        "count": 4
+      },
+      {
+        "tag": "forge:raw_materials/gold",
+        "count": 2,
+        "chance": 0.5
+      },
+      {
+        "tag": "forge:raw_materials/gold",
+        "count": 2,
+        "chance": 0.5
+      }
+    ]
+  }
+}

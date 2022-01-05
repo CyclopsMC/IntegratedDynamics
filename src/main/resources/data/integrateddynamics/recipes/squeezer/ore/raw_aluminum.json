@@ -1,0 +1,41 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "tag": "forge:ores/aluminum"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:raw_materials/aluminum",
+        "count": 4
+      },
+      {
+        "tag": "forge:raw_materials/aluminum",
+        "count": 2,
+        "chance": 0.5
+      },
+      {
+        "tag": "forge:raw_materials/aluminum",
+        "count": 2,
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:raw_materials/aluminum"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ores/aluminum"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": {
+    "tag": "forge:ores/lapis"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:gems/lapis",
+        "count": 8
+      },
+      {
+        "tag": "forge:gems/lapis",
+        "count": 2,
+        "chance": 0.5
+      },
+      {
+        "tag": "forge:gems/lapis",
+        "count": 2,
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:gems/lapis"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ores/lapis"
+      }
+    }
+  ]
+}

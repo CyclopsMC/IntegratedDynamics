@@ -1,0 +1,35 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "tag": "forge:ores/emerald"
+  },
+  "result": {
+    "items": [
+      {
+        "tag": "forge:gems/emerald",
+        "count": 2
+      },
+      {
+        "tag": "forge:gems/emerald",
+        "chance": 0.5
+      }
+    ]
+  },
+  "duration": 40,
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:gems/emerald"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:ores/emerald"
+      }
+    }
+  ]
+}
