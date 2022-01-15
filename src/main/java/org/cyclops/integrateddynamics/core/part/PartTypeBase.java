@@ -110,7 +110,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The item instance.
      */
     protected Item createItem(BlockConfig blockConfig, Block block) {
-        return new ItemPart<>(new Item.Properties().tab(blockConfig.getMod().getDefaultCreativeTab()), this);
+        return new ItemPart<>(new Item.Properties().tab(blockConfig.getMod().getDefaultItemGroup()), this);
     }
 
     @Override
