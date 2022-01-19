@@ -381,6 +381,9 @@ public class IngredientObserver<T, M> {
     }
 
     public void resetTickInterval(int channel, PartPos targetPos) {
+        // Reset the world proxy
+        this.worldProxy.setRead(targetPos);
+
         // Reset the channel ticks
         Map<PartPos, Integer> channelTicks = this.observeTargetTicks.get(channel);
         if (channelTicks == null) {

@@ -48,9 +48,13 @@ public class ConcurrentWorldIngredientsProxy<T, M> {
         return value;
     }
 
+    public void setRead(PartPos pos) {
+        this.readInstances.add(pos);
+    }
+
     public Collection<T> getInstances(PartPos pos) {
         Collection<T> value = instances.getOrDefault(pos, Collections.emptyList());
-        this.readInstances.add(pos);
+        this.setRead(pos);
         return value;
     }
 
