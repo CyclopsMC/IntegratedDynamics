@@ -85,8 +85,6 @@ public class BiomeMeneglinConfig extends BiomeConfig {
                     return (new Biome.BiomeBuilder())
                             .precipitation(Biome.Precipitation.RAIN)
                             .biomeCategory(Biome.BiomeCategory.FOREST)
-                            //.depth(0.4F)
-                            //.scale(0.4F)
                             .temperature(0.7F)
                             .downfall(0.25F)
                             .specialEffects((new BiomeSpecialEffects.Builder())

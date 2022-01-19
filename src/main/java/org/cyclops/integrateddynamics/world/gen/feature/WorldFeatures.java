@@ -8,8 +8,6 @@ import net.minecraft.data.worldgen.placement.TreePlacements;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
-import net.minecraft.util.valueproviders.ClampedInt;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -46,12 +44,11 @@ public class WorldFeatures {
                     new WeightedPlacedFeature(TreePlacements.FANCY_OAK_BEES_002, 0.1F)
             ), TreePlacements.OAK_BEES_002)));
     public static final PlacedFeature PLACED_FLOWERS_MENEGLIN = registerPlaced("flowers_meneglin", CONFIGURED_FLOWERS_MENEGLIN.placed(
-            RarityFilter.onAverageOnceEvery(7),
+            CountPlacement.of(3),
+            RarityFilter.onAverageOnceEvery(2),
             InSquarePlacement.spread(),
             PlacementUtils.HEIGHTMAP,
-            CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)),
-            BiomeFilter.biome()
-    ));
+            BiomeFilter.biome()));
     public static final PlacedFeature PLACED_TREES_MENEGLIN = registerPlaced("trees_meneglin", CONFIGURED_TREES_MENEGLIN.placed(
             VegetationPlacements.treePlacement(PlacementUtils.countExtra(6, 0.1F, 1))
     ));
