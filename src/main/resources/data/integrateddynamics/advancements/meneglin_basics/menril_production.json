@@ -32,7 +32,9 @@
       "conditions": {
         "items": [
           {
-            "item": "integrateddynamics:crystalized_menril_block"
+            "items": [
+              "integrateddynamics:crystalized_menril_block"
+            ]
           }
         ]
       }
