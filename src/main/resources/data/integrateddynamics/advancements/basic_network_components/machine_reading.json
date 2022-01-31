@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "integrateddynamics:part_machine_reader"
+            "items": [
+              "integrateddynamics:part_machine_reader"
+            ]
           }
         ]
       }

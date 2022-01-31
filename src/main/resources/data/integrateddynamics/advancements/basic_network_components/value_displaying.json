@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "integrateddynamics:part_display_panel"
+            "items": [
+              "integrateddynamics:part_display_panel"
+            ]
           }
         ]
       }
