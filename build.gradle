@@ -115,8 +115,8 @@ dependencies {
         }
     }
 
-    if(project.hasProperty("commoncapabilities_version_local")) {
-        implementation "org.cyclops.commoncapabilities:commoncapabilities:${project.commoncapabilities_version_local}:deobf"
+    if(secrets.commoncapabilities_version_local) {
+        implementation "org.cyclops.commoncapabilities:commoncapabilities:${secrets.commoncapabilities_version_local}:deobf"
     } else {
         implementation fg.deobf("org.cyclops.commoncapabilities:commoncapabilities:${project.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
             transitive = false
