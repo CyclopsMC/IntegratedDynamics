@@ -142,7 +142,7 @@ public class CurriedOperator implements IOperator {
         IVariable[] variables = new IVariable[appliedVariables.length];
         for (int i = 0; i < appliedVariables.length; i++) {
             IVariable appliedVariable = appliedVariables[i];
-            variables[i] = new Variable<>(appliedVariable.getType(), appliedVariable.getValue());
+            variables[i] = new Variable<>(appliedVariable.getType(), appliedVariable.getType().materialize(appliedVariable.getValue()));
         }
         return new CurriedOperator(baseOperator, variables);
     }

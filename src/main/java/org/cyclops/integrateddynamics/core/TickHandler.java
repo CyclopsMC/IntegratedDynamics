@@ -20,6 +20,7 @@ public final class TickHandler {
     private static TickHandler INSTANCE;
     private int tick = 0;
     private boolean shouldCrash = false;
+    public boolean ticked = false;
 
     private TickHandler() {
 
@@ -77,6 +78,8 @@ public final class TickHandler {
                     }
                 }
             }
+
+            ticked = true;
         }
     }
 

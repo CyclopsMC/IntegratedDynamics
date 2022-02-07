@@ -5,6 +5,7 @@ import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.core.TickHandler;
 
 import java.util.Collections;
 import java.util.Set;
@@ -67,6 +68,7 @@ public class NetworkWorldStorage extends WorldStorage {
 
     @Override
     public void afterLoad() {
+        TickHandler.getInstance().ticked = false;
         for(INetwork network : networks) {
             network.afterServerLoad();
         }
