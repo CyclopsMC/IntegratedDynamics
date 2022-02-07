@@ -127,6 +127,9 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "machine", comment = "Priority list of mod id's when determining tag-based recipe outputs.", isCommandable = true, configLocation = ModConfig.Type.SERVER)
     public static List<String> recipeTagOutputModPriorities = Lists.newArrayList();
 
+    @ConfigurableProperty(category = "core", comment = "If corrupted networks should automatically be restored on first tick.", isCommandable = true, configLocation = ModConfig.Type.SERVER)
+    public static boolean recreateCorruptedNetworks = true;
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }

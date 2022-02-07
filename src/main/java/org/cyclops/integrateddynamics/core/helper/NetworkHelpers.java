@@ -10,10 +10,12 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
+import org.apache.logging.log4j.Level;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.helper.TileHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
@@ -23,6 +25,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
@@ -30,6 +33,7 @@ import org.cyclops.integrateddynamics.capability.network.PositionedAddonsNetwork
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
+import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
@@ -289,17 +293,28 @@ public class NetworkHelpers {
     public static void revalidateNetworkElements(World world, BlockPos pos) {
         INetworkCarrier networkCarrier = TileHelpers.getCapability(world, pos, NetworkCarrierConfig.CAPABILITY).orElse(null);
         IPathElement pathElement = TileHelpers.getCapability(world, pos, PathElementConfig.CAPABILITY).orElse(null);
-        if (networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null) {
+        if (TickHandler.getInstance().ticked
+                && networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null
+                && TileHelpers.getCapability(world, pos, CableFakeableConfig.CAPABILITY).map(ICableFakeable::isRealCable).orElse(false)) {
             TileHelpers.getCapability(world, pos, NetworkElementProviderConfig.CAPABILITY).ifPresent(networkElementProvider -> {
                 // Attempt to revalidate the network elements in this provider
+                boolean foundNetwork = false;
                 for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                     if (network.containsSidedPathElement(SidedPathElement.of(pathElement, null))) {
                         // Revalidate all network elements
                         for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                             networkElement.revalidate(network);
                         }
+                        foundNetwork = true;
                         break; // No need to check the other networks anymore
                     }
+                }
+
+                // If no existing network was found, create a new network
+                if (!foundNetwork && GeneralConfig.recreateCorruptedNetworks) {
+                    IntegratedDynamics.clog(Level.WARN, String.format("Detected network position at " +
+                            "position %s in world %s with corrupted network, recreating network...", pos, world.getDimensionKey().getLocation()));
+                    NetworkHelpers.initNetwork(world, pos, null);
                 }
             });
         }
