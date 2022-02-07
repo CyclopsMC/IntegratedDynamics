@@ -1,0 +1,15 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Changes:
+* Automatically recreate corrupted networks, Closes #1121
+  This could occur on chunk or server data corruptions,
+  and will now be restored on first world tick.
+  This can be disabled with `recreateCorruptedNetworks`.
+
+Fixes:
+* Fix applied vars in curried operators not being materialized, Closes #1123
+* Fix small delay on ingredient detection when inserting into network
+  This was observable in Integrated Terminals where the inserted
+  ingredient would not immediately show up in the storage.
+* Fix crash when filling/draining empty battery items, Closes #1116
