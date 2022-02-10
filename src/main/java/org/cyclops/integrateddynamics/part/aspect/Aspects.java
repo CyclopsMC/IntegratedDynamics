@@ -178,7 +178,7 @@ public class Aspects {
                         BlockEntity tile = dimPos.getLevel(true).getBlockEntity(dimPos.getBlockPos());
                         try {
                             if (tile != null) {
-                                return Optional.<Tag>of(tile.save(new CompoundTag()));
+                                return Optional.<Tag>of(tile.saveWithFullMetadata());
                             }
                         } catch (Exception e) {
                             // Catch possible errors
