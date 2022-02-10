@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.13.0 or higher.
+
+Fixes:
+* Fix crash when using block reader since Forge 39.0.45, Closes #1133
+
