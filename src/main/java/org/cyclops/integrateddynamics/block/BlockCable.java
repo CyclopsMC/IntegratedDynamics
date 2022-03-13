@@ -343,8 +343,18 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     }
 
     @Override
+    public boolean isVariableOpacity() {
+        return true;
+    }
+
+    @Override
     public int getOpacity(BlockState blockState, IBlockReader world, BlockPos pos) {
-        return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos, null) ? 255 : 0;
+        if (CableHelpers.isLightTransparent(world, pos, null)) {
+            return 0;
+        }
+        return CableHelpers.getFacade(world, pos)
+                .map(facade -> facade.getOpacity(world, pos))
+                .orElse(0);
     }
 
     @Override

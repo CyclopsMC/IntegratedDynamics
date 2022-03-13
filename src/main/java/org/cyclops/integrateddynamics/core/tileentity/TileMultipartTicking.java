@@ -86,6 +86,9 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     private final INetworkCarrier networkCarrier;
     @Getter
     private final ICableFakeable cableFakeable;
+    @NBTPersist
+    @Setter
+    private boolean forceLightCheckAtClient;
 
     private IModelData cachedState = null;
 
@@ -111,6 +114,7 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         tag = super.write(tag);
+        forceLightCheckAtClient = false;
         tag.put("partContainer", partContainer.serializeNBT());
         tag.putBoolean("realCable", cableFakeable.isRealCable());
         return tag;
@@ -141,6 +145,10 @@ public class TileMultipartTicking extends CyclopsTileEntity implements CyclopsTi
         }
         cachedState = null;
         BlockHelpers.markForUpdate(getWorld(), getPos());
+
+        if (forceLightCheckAtClient) {
+            getWorld().getLightManager().checkBlock(getPos());
+        }
     }
 
     public IModelData getConnectionState() {
