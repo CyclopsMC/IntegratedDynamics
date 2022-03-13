@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import lombok.Getter;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -23,12 +22,22 @@ import javax.annotation.Nullable;
  */
 public class ItemFacadeRecipe extends SpecialRecipe {
 
-	@Getter(lazy = true)
-	private final NonNullList<Ingredient> ingredients =
-			NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()), new BlocksIngredient());
+	private NonNullList<Ingredient> ingredients;
 
 	public ItemFacadeRecipe(ResourceLocation id) {
 		super(id);
+	}
+
+	public NonNullList<Ingredient> getIngredients() {
+		if (ingredients == null) {
+			// Catch runtime errors if other mods call this method before items have been registered
+			try {
+				ingredients = NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(getRecipeOutput()), new BlocksIngredient());
+			} catch (RuntimeException e) {
+				return NonNullList.create();
+			}
+		}
+		return ingredients;
 	}
 
 	@Override
