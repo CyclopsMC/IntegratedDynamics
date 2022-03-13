@@ -8,6 +8,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.GeneralConfig;
+
+import java.util.Date;
 
 /**
  * Packet for speaking text.
@@ -15,6 +18,8 @@ import org.cyclops.cyclopscore.network.PacketCodec;
  *
  */
 public class SpeakTextPacket extends PacketCodec {
+
+	public static long lastSay = 0;
 
     @CodecField
     private String text;
@@ -35,7 +40,11 @@ public class SpeakTextPacket extends PacketCodec {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void actionClient(World world, PlayerEntity player) {
-		Narrator.getNarrator().say(this.text, false);
+		if (new Date().getTime() >= lastSay + GeneralConfig.speachMaxFrequency) {
+			Narrator.getNarrator().clear();
+			Narrator.getNarrator().say(this.text, false);
+			lastSay = new Date().getTime();
+		}
 	}
 
 	@Override
