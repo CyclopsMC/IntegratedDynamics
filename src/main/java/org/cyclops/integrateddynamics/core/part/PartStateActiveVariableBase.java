@@ -45,6 +45,9 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     private boolean deactivated = false;
     private SimpleInventory inventory;
     private List<IFormattableTextComponent> globalErrorMessages = Lists.newLinkedList();
+    @Getter
+    @Setter
+    private boolean retryEvaluation = false;
 
     public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);
@@ -77,7 +80,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      * @return If there is an active variable present for this state.
      */
     public boolean hasVariable() {
-        return getGlobalErrors().isEmpty() && !getInventory().isEmpty();
+        return (getGlobalErrors().isEmpty() || isRetryEvaluation()) && !getInventory().isEmpty();
     }
 
     /**
@@ -137,6 +140,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      * @param error The message to add.
      */
     public void addGlobalError(IFormattableTextComponent error) {
+        setRetryEvaluation(false);
         if(error == null) {
             globalErrorMessages.clear();
         } else {
