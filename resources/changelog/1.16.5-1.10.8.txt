@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.11.6 or higher.
+
+Fixes:
+* Retry reads from external networks externally on error, Closes #1145
+* Fix crash when other mods call the facade recipe too early, Closes #1143
+* Fix text to speech being too frequent and not stopping, Closes #1138
+* Fix opaque facades not blocking facades, Closes #1137
