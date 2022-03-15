@@ -96,8 +96,8 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public IPartType getPart(Direction side) {
-        if(!partData.containsKey(side)) return null;
-        return partData.get(side).getPart();
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = partData.get(side);
+        return partStateHolder != null ? partStateHolder.getPart() : null;
     }
 
     @Override

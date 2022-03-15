@@ -347,9 +347,21 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         return shape.optimize();
     }
 
+    // While this worked fine in MC 1.16 (for dynamic opacity), this is causing some major performance issues in 1.18.
+    // TODO: Let's re-evaluate this in the next MC update
+    /*@Override
+    public boolean hasDynamicShape() {
+        return true;
+    }*/
+
     @Override
     public int getLightBlock(BlockState blockState, BlockGetter world, BlockPos pos) {
-        return CableHelpers.hasFacade(world, pos) && !CableHelpers.isLightTransparent(world, pos, null) ? 255 : 0;
+        if (CableHelpers.isLightTransparent(world, pos, null)) {
+            return 0;
+        }
+        return CableHelpers.getFacade(world, pos)
+                .map(facade -> facade.getLightBlock(world, pos))
+                .orElse(0);
     }
 
     @Override

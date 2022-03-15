@@ -669,8 +669,12 @@ public class Aspects {
                                 PartPos target = data.getLeft().getTarget();
                                 IValueInterface valueInterface = BlockEntityHelpers
                                         .getCapability(target.getPos(), target.getSide(), ValueInterfaceConfig.CAPABILITY)
-                                        .orElseThrow(() -> new EvaluationException(new TranslatableComponent(
-                                                L10NValues.ASPECT_ERROR_NOVALUEINTERFACE)));
+                                        .orElseThrow(() -> {
+                                            EvaluationException error = new EvaluationException(new TranslatableComponent(
+                                                    L10NValues.ASPECT_ERROR_NOVALUEINTERFACE));
+                                            error.setRetryEvaluation(true);
+                                            return error;
+                                        });
                                 return valueInterface.getValue()
                                         .orElseThrow(() -> new EvaluationException(new TranslatableComponent(
                                                 L10NValues.ASPECT_ERROR_NOVALUEINTERFACEVALUE)));

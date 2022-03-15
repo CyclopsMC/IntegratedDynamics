@@ -23,12 +23,23 @@ import javax.annotation.Nullable;
  */
 public class ItemFacadeRecipe extends CustomRecipe {
 
-    @Getter(lazy = true)
-    private final NonNullList<Ingredient> ingredients =
-            NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()), new BlocksIngredient());
+    private NonNullList<Ingredient> ingredients;
 
     public ItemFacadeRecipe(ResourceLocation id) {
         super(id);
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        if (ingredients == null) {
+            // Catch runtime errors if other mods call this method before items have been registered
+            try {
+                ingredients = NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()), new BlocksIngredient());
+            } catch (RuntimeException e) {
+                return NonNullList.create();
+            }
+        }
+        return ingredients;
     }
 
     @Override

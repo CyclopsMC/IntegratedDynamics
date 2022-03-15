@@ -85,6 +85,9 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     private final INetworkCarrier networkCarrier;
     @Getter
     private final ICableFakeable cableFakeable;
+    @NBTPersist
+    @Setter
+    private boolean forceLightCheckAtClient;
 
     private IModelData cachedState = null;
 
@@ -110,6 +113,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
+        forceLightCheckAtClient = false;
         tag.put("partContainer", partContainer.serializeNBT());
         tag.putBoolean("realCable", cableFakeable.isRealCable());
     }
@@ -139,6 +143,9 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         }
         cachedState = null;
         BlockHelpers.markForUpdate(getLevel(), getBlockPos());
+        if (forceLightCheckAtClient) {
+            getLevel().getLightEngine().checkBlock(getBlockPos());
+        }
     }
 
     public IModelData getConnectionState() {
