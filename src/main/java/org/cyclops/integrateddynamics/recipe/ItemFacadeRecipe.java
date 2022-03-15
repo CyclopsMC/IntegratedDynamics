@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import lombok.Getter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
