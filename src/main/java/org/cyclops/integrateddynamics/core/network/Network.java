@@ -61,7 +61,7 @@ public class Network implements INetwork {
     private Map<INetworkElement, Long> lastSecondDurations = Maps.newHashMap();
 
     private final CapabilityDispatcher capabilityDispatcher;
-    private IFullNetworkListener[] fullNetworkListeners;
+    private List<IFullNetworkListener> fullNetworkListeners;
 
     private CompoundNBT toRead = null;
     private volatile boolean changed = false;
@@ -118,8 +118,7 @@ public class Network implements INetwork {
     protected CapabilityDispatcher gatherCapabilities() {
         AttachCapabilitiesEventNetwork event = new AttachCapabilitiesEventNetwork(this);
         MinecraftForge.EVENT_BUS.post(event);
-        List<IFullNetworkListener> listeners = event.getFullNetworkListeners();
-        this.fullNetworkListeners = listeners.toArray(new IFullNetworkListener[listeners.size()]);
+        this.fullNetworkListeners = event.getFullNetworkListeners();
         return event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners()) : null;
     }
 
@@ -437,9 +436,7 @@ public class Network implements INetwork {
     }
 
     protected void onUpdate() {
-        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
-            fullNetworkListener.update();
-        }
+        this.fullNetworkListeners.parallelStream().forEach(fullNetworkListener -> fullNetworkListener.update());
     }
 
     @Override

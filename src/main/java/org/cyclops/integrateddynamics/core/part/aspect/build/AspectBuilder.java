@@ -415,9 +415,9 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
 
         @Override
         public <P extends IPartType<P, S>, S extends IPartState<P>> void update(INetwork network, IPartNetwork partNetwork, P partType, PartTarget target, S state) {
-            this.beforeUpdateListeners.forEach(l -> l.onUpdate(network, partNetwork, partType, target, state));
+            this.beforeUpdateListeners.parallelStream().forEach(l -> l.onUpdate(network, partNetwork, partType, target, state));
             super.update(network, partNetwork, partType, target, state);
-            this.afterUpdateListeners.forEach(l -> l.onUpdate(network, partNetwork, partType, target, state));
+            this.afterUpdateListeners.parallelStream().forEach(l -> l.onUpdate(network, partNetwork, partType, target, state));
         }
     }
 
