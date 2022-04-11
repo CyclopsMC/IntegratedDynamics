@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -78,7 +77,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (!world.isRemote()) {
             TileHelpers.getSafeTile(world, blockPos, TileEnergyBattery.class)
-                    .ifPresent(tile -> itemStackToTile(itemStack, tile));
+                    .ifPresent(tile -> itemStackToTile(itemStack.copy().split(1), tile));
         }
         super.onBlockPlacedBy(world, blockPos, state, placer, itemStack);
     }
