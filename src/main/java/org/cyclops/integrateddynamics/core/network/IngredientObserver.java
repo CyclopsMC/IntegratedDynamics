@@ -118,8 +118,8 @@ public class IngredientObserver<T, M> {
         return ServerLifecycleHooks.getCurrentServer().getTickCounter();
     }
 
-    protected void emitEvent(IIngredientComponentStorageObservable.StorageChangeEvent<T, M> event) {
-        if (GeneralConfig.ingredientNetworkObserverEnableMultithreading) {
+    protected void emitEvent(IIngredientComponentStorageObservable.StorageChangeEvent<T, M> event, boolean forceSync) {
+        if (GeneralConfig.ingredientNetworkObserverEnableMultithreading && !forceSync) {
             // Make sure we are running on the main server thread to avoid concurrency exceptions
             ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
                 for (IIngredientComponentStorageObservable.IIndexChangeObserver<T, M> observer : getObserversCopy()) {
@@ -183,7 +183,7 @@ public class IngredientObserver<T, M> {
                 // Schedule the observation job
                 this.lastObserverBarrier = WORKER_POOL.submit(() -> {
                     for (int channel : getChannels()) {
-                        observe(channel);
+                        observe(channel, false);
                     }
                 });
             } else {
@@ -197,7 +197,7 @@ public class IngredientObserver<T, M> {
 
                 this.runningObserverSync = true;
                 for (int channel : getChannels()) {
-                    observe(channel);
+                    observe(channel, true);
                 }
                 this.runningObserverSync = false;
             }
@@ -209,7 +209,7 @@ public class IngredientObserver<T, M> {
         return Sets.newHashSet(getNetwork().getPrioritizedPositions(channel));
     }
 
-    protected void observe(int channel) {
+    protected void observe(int channel, boolean forceSync) {
         int currentTick = getCurrentTick();
 
         // Prepare ticking collections
@@ -296,12 +296,12 @@ public class IngredientObserver<T, M> {
                     if (diff.hasAdditions()) {
                         hasChanges = true;
                         this.emitEvent(new IIngredientComponentStorageObservable.StorageChangeEvent<>(channel, partPos,
-                                IIngredientComponentStorageObservable.Change.ADDITION, false, diff.getAdditions()));
+                                IIngredientComponentStorageObservable.Change.ADDITION, false, diff.getAdditions()), forceSync);
                     }
                     if (diff.hasDeletions()) {
                         hasChanges = true;
                         this.emitEvent(new IIngredientComponentStorageObservable.StorageChangeEvent<>(channel, partPos,
-                                IIngredientComponentStorageObservable.Change.DELETION, diff.isCompletelyEmpty(), diff.getDeletions()));
+                                IIngredientComponentStorageObservable.Change.DELETION, diff.isCompletelyEmpty(), diff.getDeletions()), forceSync);
                     }
 
                     // Update the next tick value
@@ -364,7 +364,7 @@ public class IngredientObserver<T, M> {
                     // No additions are possible
                     if (diff.hasDeletions()) {
                         this.emitEvent(new IIngredientComponentStorageObservable.StorageChangeEvent<>(channel, partPos,
-                                IIngredientComponentStorageObservable.Change.DELETION, diff.isCompletelyEmpty(), diff.getDeletions()));
+                                IIngredientComponentStorageObservable.Change.DELETION, diff.isCompletelyEmpty(), diff.getDeletions()), forceSync);
                     }
                 }
             }
