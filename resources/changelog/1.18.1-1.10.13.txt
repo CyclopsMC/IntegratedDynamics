@@ -1,0 +1,18 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.13.0 or higher.
+
+Additions:
+* Add config option to disable dynamic cable shapes
+
+Changes:
+
+Fixes:
+* Fix opaque facades not blocking facades, Closes #1137
+* Cache cable collision shapes to improve client performance, Closes #1155
+* Emit ingredient change events synchronously on sync observations
+  Required for CyclopsMC/IntegratedCrafting#81
+* Fix first recipe output slots in JEI not showing chances
+  Closes CyclopsMC/IntegratedDynamics#1146
+* Fix battery capacity being too high after placing from stack, Closes #1150
+* Allow particle offsets to be negative, Closes #1148
+
