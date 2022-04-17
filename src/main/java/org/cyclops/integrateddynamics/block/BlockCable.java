@@ -358,7 +358,7 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
 
     @Override
     public boolean isVariableOpacity() {
-        return true;
+        return BlockCableConfig.dynamicShape;
     }
 
     @Override

@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -20,6 +21,9 @@ import org.cyclops.integrateddynamics.item.ItemBlockCable;
  * @author rubensworks
  */
 public class BlockCableConfig extends BlockConfig {
+
+    @ConfigurableProperty(category = "machine", comment = "If cable shapes should be determined dynamically. Disable this if FPS issues would occur.", minimalValue = 0)
+    public static boolean dynamicShape = true;
 
     public BlockCableConfig() {
         super(
