@@ -57,6 +57,11 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         }
 
         @Override
+        public String getStateId(BlockState blockState, BlockGetter world, BlockPos blockPos) {
+            return "part(" + partContainer.getPart(direction).getPartRenderPosition().toCompactString() + ")";
+        }
+
+        @Override
         public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
             return partContainer.getPart(direction).getPartRenderPosition().getBoundingBox(direction);
         }

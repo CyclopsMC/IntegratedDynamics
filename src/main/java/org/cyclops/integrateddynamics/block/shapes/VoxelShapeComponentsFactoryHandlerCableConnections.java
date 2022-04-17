@@ -70,6 +70,11 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
         }
 
         @Override
+        public String getStateId(BlockState blockState, BlockGetter world, BlockPos blockPos) {
+            return "conn(" + direction.ordinal() + ")";
+        }
+
+        @Override
         public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
             if (partContainer == null) { // equivalent to: CableHelpers.isCableConnected(world, blockPos, direction)
                 return BOUNDS.get(direction);

@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
@@ -86,6 +89,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -323,28 +327,38 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         if (rayTraceResult != null) {
             return rayTraceResult.getComponent().getShape(state, world, pos, selectionContext);
         }
-        return getSelectedShape(state, world, pos, selectionContext);
+        return selectedShape;
     }
 
+    private final Cache<String, VoxelShape> CACHE_COLLISION_SHAPES = CacheBuilder.newBuilder()
+            .expireAfterAccess(1, TimeUnit.MINUTES)
+            .build();
+
+    @SneakyThrows
     @Override
-    public VoxelShape getCollisionShape(BlockState p_220071_1_, BlockGetter p_220071_2_, BlockPos p_220071_3_, CollisionContext p_220071_4_) {
+    public VoxelShape getCollisionShape(BlockState blockState, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
         if(disableCollisionBox) {
             return Shapes.empty();
         }
 
-        // Combine all VoxelShapes using IBooleanFunction.OR,
-        // because for some reason our VoxelShapeComponents aggregator does not handle collisions properly.
-        // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
-        VoxelShapeComponents voxelShapeComponents = (VoxelShapeComponents) super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
-        Iterator<VoxelShape> it = voxelShapeComponents.iterator();
-        if (!it.hasNext()) {
-            return Shapes.empty();
-        }
-        VoxelShape shape = it.next();
-        while (it.hasNext()) {
-            shape = Shapes.join(shape, it.next(), BooleanOp.OR);
-        }
-        return shape.optimize();
+        VoxelShapeComponents voxelShapeComponents = (VoxelShapeComponents) super.getCollisionShape(blockState, world, pos, selectionContext);
+        String cableState = voxelShapeComponents.getStateId();
+
+        // Cache the operations below, as they are too expensive to execute each render tick
+        return CACHE_COLLISION_SHAPES.get(cableState, () -> {
+            // Combine all VoxelShapes using IBooleanFunction.OR,
+            // because for some reason our VoxelShapeComponents aggregator does not handle collisions properly.
+            // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
+            Iterator<VoxelShape> it = voxelShapeComponents.iterator();
+            if (!it.hasNext()) {
+                return Shapes.empty();
+            }
+            VoxelShape shape = it.next();
+            while (it.hasNext()) {
+                shape = Shapes.join(shape, it.next(), BooleanOp.OR);
+            }
+            return shape.optimize();
+        });
     }
 
     // While this worked fine in MC 1.16 (for dynamic opacity), this is causing some major performance issues in 1.18.

@@ -48,6 +48,10 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
 
     public static class Component implements VoxelShapeComponents.IComponent {
 
+        public String getStateId(BlockState blockState, BlockGetter world, BlockPos blockPos) {
+            return "cent";
+        }
+
         @Override
         public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
             return BOUNDS;

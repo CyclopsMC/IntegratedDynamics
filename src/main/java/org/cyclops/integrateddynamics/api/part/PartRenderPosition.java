@@ -97,4 +97,23 @@ public class PartRenderPosition {
     public float getHeightFactorSide() {
         return heightFactorSide;
     }
+
+    @Override
+    public String toString() {
+        return "PartRenderPosition{" +
+                "depthFactor=" + depthFactor +
+                ", widthFactor=" + widthFactor +
+                ", heightFactor=" + heightFactor +
+                ", widthFactorSide=" + widthFactorSide +
+                ", heightFactorSide=" + heightFactorSide +
+                '}';
+    }
+
+    public String toCompactString() {
+        return "df=" + depthFactor +
+                ",wf=" + widthFactor +
+                ",hf=" + heightFactor +
+                ",wfs=" + widthFactorSide +
+                ",hfs=" + heightFactorSide;
+    }
 }

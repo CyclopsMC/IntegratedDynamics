@@ -29,6 +29,7 @@ import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Shape handler for facades.
@@ -50,6 +51,16 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
     }
 
     public static class Component implements VoxelShapeComponents.IComponent {
+
+        @Override
+        public String getStateId(BlockState blockState, BlockGetter world, BlockPos blockPos) {
+            String id = "fac";
+            Optional<BlockState> optionalFacade = CableHelpers.getFacade(world, blockPos);
+            if (optionalFacade.isPresent()) {
+                id += "(" + optionalFacade.get().toString() + ")";
+            }
+            return id;
+        }
 
         @Override
         public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {

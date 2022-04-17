@@ -89,7 +89,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     public void setPlacedBy(Level world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (!world.isClientSide()) {
             BlockEntityHelpers.get(world, blockPos, BlockEntityEnergyBattery.class)
-                    .ifPresent(tile -> itemStackToTile(itemStack, tile));
+                    .ifPresent(tile -> itemStackToTile(itemStack.copy().split(1), tile));
         }
         super.setPlacedBy(world, blockPos, state, placer, itemStack);
     }
