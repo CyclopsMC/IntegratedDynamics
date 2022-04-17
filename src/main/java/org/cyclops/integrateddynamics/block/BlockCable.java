@@ -363,7 +363,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     @Override
     public boolean hasDynamicShape() {
-        return false;
+        return BlockCableConfig.dynamicShape;
     }
 
     @Override
