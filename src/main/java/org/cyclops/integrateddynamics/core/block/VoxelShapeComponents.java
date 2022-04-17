@@ -47,10 +47,12 @@ import java.util.stream.Collectors;
 public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelShape> {
 
     private final Collection<Pair<VoxelShape, IComponent>> entries;
+    private final String stateId;
 
-    protected VoxelShapeComponents(Collection<Pair<VoxelShape, IComponent>> entries) {
+    protected VoxelShapeComponents(Collection<Pair<VoxelShape, IComponent>> entries, String stateId) {
         super(createInnerPart(entries));
         this.entries = entries;
+        this.stateId = stateId;
     }
 
     protected static VoxelShapePart createInnerPart(Collection<Pair<VoxelShape, IComponent>> entries) {
@@ -66,7 +68,18 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
             VoxelShape shape = component.getShape(blockState, world, blockPos, selectionContext);
             entries.add(Pair.of(shape, component));
         }
-        return new VoxelShapeComponents(entries);
+
+        StringBuilder stateIdBuilder = new StringBuilder();
+        for (IComponent component : components) {
+            stateIdBuilder.append(component.getStateId(blockState, world, blockPos));
+            stateIdBuilder.append(";");
+        }
+
+        return new VoxelShapeComponents(entries, stateIdBuilder.toString());
+    }
+
+    public String getStateId() {
+        return this.stateId;
     }
 
     @Override
@@ -127,7 +140,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         for (Pair<VoxelShape, IComponent> entry : this.entries) {
             entries.add(Pair.of(entry.getLeft().withOffset(x, y, z), entry.getRight()));
         }
-        return new VoxelShapeComponents(entries);
+        return new VoxelShapeComponents(entries, this.stateId);
     }
 
     @Override
@@ -332,6 +345,14 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
     }
 
     public static interface IComponent {
+
+        /**
+         * @param blockState The block state.
+         * @param world The world.
+         * @param blockPos The position.
+         * @return Unique identifier for the component's state.
+         */
+        public String getStateId(BlockState blockState, IBlockReader world, BlockPos blockPos);
 
         /**
          * Get the shape of this component.

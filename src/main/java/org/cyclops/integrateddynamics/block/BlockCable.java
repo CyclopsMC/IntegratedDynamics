@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -81,6 +84,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -318,28 +322,38 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
         if (rayTraceResult != null) {
             return rayTraceResult.getComponent().getShape(state, world, pos, selectionContext);
         }
-        return getSelectedShape(state, world, pos, selectionContext);
+        return selectedShape;
     }
 
+    private final Cache<String, VoxelShape> CACHE_COLLISION_SHAPES = CacheBuilder.newBuilder()
+            .expireAfterAccess(1, TimeUnit.MINUTES)
+            .build();
+
+    @SneakyThrows
     @Override
-    public VoxelShape getCollisionShape(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
+    public VoxelShape getCollisionShape(BlockState blockState, IBlockReader world, BlockPos pos, ISelectionContext selectionContext) {
         if(disableCollisionBox) {
             return VoxelShapes.empty();
         }
 
-        // Combine all VoxelShapes using IBooleanFunction.OR,
-        // because for some reason our VoxelShapeComponents aggregator does not handle collisions properly.
-        // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
-        VoxelShapeComponents voxelShapeComponents = (VoxelShapeComponents) super.getCollisionShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
-        Iterator<VoxelShape> it = voxelShapeComponents.iterator();
-        if (!it.hasNext()) {
-            return VoxelShapes.empty();
-        }
-        VoxelShape shape = it.next();
-        while (it.hasNext()) {
-            shape = VoxelShapes.combine(shape, it.next(), IBooleanFunction.OR);
-        }
-        return shape.simplify();
+        VoxelShapeComponents voxelShapeComponents = (VoxelShapeComponents) super.getCollisionShape(blockState, world, pos, selectionContext);
+        String cableState = voxelShapeComponents.getStateId();
+
+        // Cache the operations below, as they are too expensive to execute each render tick
+        return CACHE_COLLISION_SHAPES.get(cableState, () -> {
+            // Combine all VoxelShapes using IBooleanFunction.OR,
+            // because for some reason our VoxelShapeComponents aggregator does not handle collisions properly.
+            // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
+            Iterator<VoxelShape> it = voxelShapeComponents.iterator();
+            if (!it.hasNext()) {
+                return VoxelShapes.empty();
+            }
+            VoxelShape shape = it.next();
+            while (it.hasNext()) {
+                shape = VoxelShapes.combine(shape, it.next(), IBooleanFunction.OR);
+            }
+            return shape.simplify();
+        });
     }
 
     @Override
