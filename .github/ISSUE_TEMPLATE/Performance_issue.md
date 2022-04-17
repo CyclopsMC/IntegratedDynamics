@@ -34,5 +34,5 @@ ____
 
 #### Profiler output:
 
-<!--Information on how to profile your game: https://github.com/CyclopsMC/CyclopsCore/blob/master-1.12/.github/CONTRIBUTING.md#performance-issues-snail-->
+<!--Information on how to profile your game: https://github.com/CyclopsMC/CyclopsCore/blob/master-1.18/.github/CONTRIBUTING.md#performance-issues-snail-->
 
