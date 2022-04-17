@@ -361,12 +361,10 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         });
     }
 
-    // While this worked fine in MC 1.16 (for dynamic opacity), this is causing some major performance issues in 1.18.
-    // TODO: Let's re-evaluate this in the next MC update
-    /*@Override
+    @Override
     public boolean hasDynamicShape() {
-        return true;
-    }*/
+        return false;
+    }
 
     @Override
     public int getLightBlock(BlockState blockState, BlockGetter world, BlockPos pos) {

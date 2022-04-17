@@ -12,11 +12,13 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
@@ -27,6 +29,7 @@ import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Shape handler for parts.
@@ -56,19 +59,29 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
             this.partContainer = partContainer;
         }
 
+        protected Optional<IPartType> getPart() {
+            return Optional.ofNullable(partContainer.getPart(direction));
+        }
+
         @Override
         public String getStateId(BlockState blockState, BlockGetter world, BlockPos blockPos) {
-            return "part(" + partContainer.getPart(direction).getPartRenderPosition().toCompactString() + ")";
+            return getPart()
+                    .map(part -> "part(" + part.getPartRenderPosition().toCompactString() + ")")
+                    .orElse("part");
         }
 
         @Override
         public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
-            return partContainer.getPart(direction).getPartRenderPosition().getBoundingBox(direction);
+            return getPart()
+                    .map(part -> part.getPartRenderPosition().getBoundingBox(direction))
+                    .orElse(Shapes.empty());
         }
 
         @Override
         public ItemStack getCloneItemStack(Level world, BlockPos pos) {
-            return partContainer.getPart(direction).getCloneItemStack(world, pos, partContainer.getPartState(direction));
+            return getPart()
+                    .map(part -> part.getCloneItemStack(world, pos, partContainer.getPartState(direction)))
+                    .orElse(ItemStack.EMPTY);
         }
 
         @Override
@@ -83,8 +96,9 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         @Override
         @OnlyIn(Dist.CLIENT)
         public BakedModel getBreakingBaseModel(Level world, BlockPos pos) {
-            BlockState cableState = partContainer != null ? partContainer.getPart(direction).getBlockState(partContainer, direction) : null;
-            return RenderHelpers.getBakedModel(cableState);
+            return RenderHelpers.getBakedModel(getPart()
+                    .map(part -> part.getBlockState(partContainer, direction))
+                    .orElse(null));
         }
 
         @Override
@@ -99,8 +113,10 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
                 return InteractionResult.SUCCESS;
             } else if(CableHelpers.isNoFakeCable(world, blockPos, hit.getDirection())) {
                 // Delegate activated call to part
-                return partContainer.getPart(direction).onPartActivated(partContainer.getPartState(direction), blockPos, world,
-                        player, hand, heldItem, hit.withDirection(direction));
+                return getPart()
+                        .map(part -> part.onPartActivated(partContainer.getPartState(direction), blockPos, world,
+                                player, hand, heldItem, hit.withDirection(direction)))
+                        .orElse(InteractionResult.FAIL);
             }
             return InteractionResult.PASS;
         }
