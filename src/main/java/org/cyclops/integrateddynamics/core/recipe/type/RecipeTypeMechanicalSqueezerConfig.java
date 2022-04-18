@@ -16,7 +16,12 @@ public class RecipeTypeMechanicalSqueezerConfig extends RecipeTypeConfig<RecipeM
                 IntegratedDynamics._instance,
                 "mechanical_squeezer"
         );
-        RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER = getInstance();
     }
 
+    @Override
+    public void onRegistered() {
+        super.onRegistered();
+
+        RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER = getInstance();
+    }
 }

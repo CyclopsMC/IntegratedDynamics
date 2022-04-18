@@ -6,12 +6,12 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.NewRegistryEvent;
 import org.apache.logging.log4j.Level;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.config.ConfigHandler;
@@ -141,7 +141,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         MinecraftForge.EVENT_BUS.addListener(this::onServerStartedLoadedGroups);
     }
 
-    public void onRegistriesCreate(RegistryEvent.NewRegistry event) {
+    public void onRegistriesCreate(NewRegistryEvent event) {
         IngredientComponentCapabilities.load();
     }
 

@@ -35,7 +35,7 @@ public class BlockMenrilLogStrippedConfig extends BlockConfig {
         BlockHelpers.setFireInfo(getInstance(), 5, 20);
     }
 
-    public static void toolActionEvent(BlockEvent.BlockToolInteractEvent event) {
+    public static void toolActionEvent(BlockEvent.BlockToolModificationEvent event) {
         if (event.getToolAction() == ToolActions.AXE_STRIP && event.getState().getBlock() == RegistryEntries.BLOCK_MENRIL_LOG) {
             BlockState blockStateNew = RegistryEntries.BLOCK_MENRIL_LOG_STRIPPED.defaultBlockState();
             for (Property property : event.getState().getProperties()) {

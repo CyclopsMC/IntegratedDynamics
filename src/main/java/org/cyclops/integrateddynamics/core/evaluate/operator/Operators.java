@@ -14,7 +14,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
@@ -53,6 +52,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.IReverseTag;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
@@ -1649,9 +1649,11 @@ public final class Operators {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
                 if(!a.getRawValue().isEmpty()) {
-                    for (ResourceLocation owningTag : ItemTags.getAllTags().getMatchingTags(a.getRawValue().getItem())) {
-                        builder.add(ValueTypeString.ValueString.of(owningTag.toString()));
-                    }
+                    Optional<IReverseTag<Item>> optionalReverseTag = ForgeRegistries.ITEMS.tags().getReverseTag(a.getRawValue().getItem());
+                    optionalReverseTag
+                            .ifPresent(reverseTag -> reverseTag.getTagKeys()
+                                    .forEach(owningTag -> builder.add(ValueTypeString.ValueString
+                                            .of(owningTag.location().toString()))));
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING, builder.build());
             }).build());

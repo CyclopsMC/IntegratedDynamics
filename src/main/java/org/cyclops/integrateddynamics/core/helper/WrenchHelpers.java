@@ -2,10 +2,14 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -15,7 +19,7 @@ import javax.annotation.Nullable;
  */
 public final class WrenchHelpers {
 
-    public static final ResourceLocation TAG_WRENCH = new ResourceLocation("forge", "tools/wrench");
+    public static final TagKey<Item> TAG_WRENCH = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("forge", "tools/wrench"));
 
     /**
      * Checks if the given player can wrench something.
@@ -27,7 +31,9 @@ public final class WrenchHelpers {
      * @return If the wrenching can continue with the held item.
      */
     public static boolean isWrench(Player player, ItemStack heldItem, Level world, BlockPos pos, @Nullable Direction side) {
-        return heldItem.getItem().getTags().contains(WrenchHelpers.TAG_WRENCH);
+        return ForgeRegistries.ITEMS.tags().getReverseTag(heldItem.getItem())
+                .map(reverseTag -> reverseTag.containsTag(WrenchHelpers.TAG_WRENCH))
+                .orElse(false);
     }
 
     /**

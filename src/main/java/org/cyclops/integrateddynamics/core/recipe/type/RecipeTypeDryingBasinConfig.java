@@ -16,7 +16,12 @@ public class RecipeTypeDryingBasinConfig extends RecipeTypeConfig<RecipeDryingBa
                 IntegratedDynamics._instance,
                 "drying_basin"
         );
-        RegistryEntries.RECIPETYPE_DRYING_BASIN = getInstance();
     }
 
+    @Override
+    public void onRegistered() {
+        super.onRegistered();
+
+        RegistryEntries.RECIPETYPE_DRYING_BASIN = getInstance();
+    }
 }

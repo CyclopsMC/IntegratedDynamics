@@ -16,7 +16,12 @@ public class RecipeTypeSqueezerConfig extends RecipeTypeConfig<RecipeSqueezer> {
                 IntegratedDynamics._instance,
                 "squeezer"
         );
-        RegistryEntries.RECIPETYPE_SQUEEZER = getInstance();
     }
 
+    @Override
+    public void onRegistered() {
+        super.onRegistered();
+
+        RegistryEntries.RECIPETYPE_SQUEEZER = getInstance();
+    }
 }

@@ -16,7 +16,12 @@ public class RecipeTypeMechanicalDryingBasinConfig extends RecipeTypeConfig<Reci
                 IntegratedDynamics._instance,
                 "mechanical_drying_basin"
         );
-        RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN = getInstance();
     }
 
+    @Override
+    public void onRegistered() {
+        super.onRegistered();
+
+        RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN = getInstance();
+    }
 }

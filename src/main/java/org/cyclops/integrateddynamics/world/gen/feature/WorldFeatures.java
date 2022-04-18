@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.world.gen.feature;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.features.FeatureUtils;
@@ -31,34 +32,34 @@ import java.util.List;
  */
 public class WorldFeatures {
 
-    public static final ConfiguredFeature<?, ?> CONFIGURED_FLOWERS_MENEGLIN = registerConfigured("flowers_meneglin", Feature.FLOWER
-            .configured(FeatureUtils.simpleRandomPatchConfiguration(64, Feature.SIMPLE_BLOCK
-                    .configured(new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+    public static final Holder<ConfiguredFeature<?, ?>> CONFIGURED_FLOWERS_MENEGLIN = registerConfigured("flowers_meneglin", new ConfiguredFeature<>(Feature.FLOWER,
+            FeatureUtils.simpleRandomPatchConfiguration(64, PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
+                    new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
                             .add(Blocks.BLUE_ORCHID.defaultBlockState(), 200)
                             .add(Blocks.OXEYE_DAISY.defaultBlockState(), 70)
                             .add(Blocks.WHITE_TULIP.defaultBlockState(), 70)
                             .add(Blocks.LILY_OF_THE_VALLEY.defaultBlockState(), 70)
-                    ))).onlyWhenEmpty())));
-    public static final ConfiguredFeature<?, ?> CONFIGURED_TREES_MENEGLIN = registerConfigured("trees_meneglin", Feature.RANDOM_SELECTOR
-            .configured(new RandomFeatureConfiguration(List.of(
+                    ))))));
+    public static final Holder<ConfiguredFeature<?, ?>> CONFIGURED_TREES_MENEGLIN = registerConfigured("trees_meneglin", new ConfiguredFeature<>(Feature.RANDOM_SELECTOR,
+            new RandomFeatureConfiguration(List.of(
                     new WeightedPlacedFeature(TreePlacements.FANCY_OAK_BEES_002, 0.1F)
             ), TreePlacements.OAK_BEES_002)));
-    public static final PlacedFeature PLACED_FLOWERS_MENEGLIN = registerPlaced("flowers_meneglin", CONFIGURED_FLOWERS_MENEGLIN.placed(
-            CountPlacement.of(3),
-            RarityFilter.onAverageOnceEvery(2),
-            InSquarePlacement.spread(),
-            PlacementUtils.HEIGHTMAP,
-            BiomeFilter.biome()));
-    public static final PlacedFeature PLACED_TREES_MENEGLIN = registerPlaced("trees_meneglin", CONFIGURED_TREES_MENEGLIN.placed(
+    public static final Holder<PlacedFeature> PLACED_FLOWERS_MENEGLIN = registerPlaced("flowers_meneglin", new PlacedFeature(CONFIGURED_FLOWERS_MENEGLIN,
+            List.of(CountPlacement.of(3),
+                    RarityFilter.onAverageOnceEvery(2),
+                    InSquarePlacement.spread(),
+                    PlacementUtils.HEIGHTMAP,
+                    BiomeFilter.biome())));
+    public static final Holder<PlacedFeature> PLACED_TREES_MENEGLIN = registerPlaced("trees_meneglin", new PlacedFeature(CONFIGURED_TREES_MENEGLIN,
             VegetationPlacements.treePlacement(PlacementUtils.countExtra(6, 0.1F, 1))
     ));
 
-    public static <FC extends FeatureConfiguration> ConfiguredFeature<FC, ?> registerConfigured(String key, ConfiguredFeature<FC, ?> feature) {
-        return Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Reference.MOD_ID, key), feature);
+    public static <FC extends FeatureConfiguration> Holder<ConfiguredFeature<?, ?>> registerConfigured(String key, ConfiguredFeature<FC, ?> feature) {
+        return BuiltinRegistries.register((Registry) BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Reference.MOD_ID, key), feature);
     }
 
-    public static PlacedFeature registerPlaced(String key, PlacedFeature feature) {
-        return Registry.register(BuiltinRegistries.PLACED_FEATURE, new ResourceLocation(Reference.MOD_ID, key), feature);
+    public static Holder<PlacedFeature> registerPlaced(String key, PlacedFeature feature) {
+        return BuiltinRegistries.register((Registry) BuiltinRegistries.PLACED_FEATURE, new ResourceLocation(Reference.MOD_ID, key), feature);
     }
 
     public static void load() {

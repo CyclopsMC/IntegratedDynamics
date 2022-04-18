@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.world.gen;
 
+import net.minecraft.core.Holder;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.block.grower.AbstractTreeGrower;
@@ -39,7 +40,7 @@ public class TreeMenril extends AbstractTreeGrower {
 
     @Nullable
     @Override
-    protected ConfiguredFeature<TreeConfiguration, ?> getConfiguredFeature(Random random, boolean b) {
+    protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredFeature(Random random, boolean b) {
         return BiomeMeneglinConfig.CONFIGURED_FEATURE_TREE;
     }
 

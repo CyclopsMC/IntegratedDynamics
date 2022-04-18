@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.world.biome;
 
+import net.minecraft.core.Holder;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
@@ -45,9 +45,9 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     @ConfigurableProperty(category = "worldgeneration", comment = "The chance at which a Menril Tree will spawn in the wild, the higher this value, the lower the chance.", minimalValue = 0, requiresMcRestart = true, configLocation = ModConfig.Type.SERVER)
     public static int wildMenrilTreeChance = 100;
 
-    public static ConfiguredFeature<TreeConfiguration, ?> CONFIGURED_FEATURE_TREE;
-    public static PlacedFeature PLACED_FEATURE_MENEGLIN;
-    public static PlacedFeature PLACED_FEATURE_GENERAL;
+    public static Holder<ConfiguredFeature<?, ?>> CONFIGURED_FEATURE_TREE;
+    public static Holder<PlacedFeature> PLACED_FEATURE_MENEGLIN;
+    public static Holder<PlacedFeature> PLACED_FEATURE_GENERAL;
 
     public BiomeMeneglinConfig() {
         super(
@@ -124,22 +124,22 @@ public class BiomeMeneglinConfig extends BiomeConfig {
     }
 
     public void onModSetup(FMLCommonSetupEvent event) {
-        CONFIGURED_FEATURE_TREE = WorldFeatures.registerConfigured("tree_menril", Feature.TREE.configured(TreeMenril.getMenrilTreeConfig()));
+        CONFIGURED_FEATURE_TREE = WorldFeatures.registerConfigured("tree_menril", new ConfiguredFeature<>(Feature.TREE, TreeMenril.getMenrilTreeConfig()));
 
-        PLACED_FEATURE_MENEGLIN = WorldFeatures.registerPlaced("tree_menril_meneglin", CONFIGURED_FEATURE_TREE
-                .placed(VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.05F, 1))));
-        PLACED_FEATURE_GENERAL = WorldFeatures.registerPlaced("tree_menril_general", CONFIGURED_FEATURE_TREE
-                .placed(VegetationPlacements.treePlacement(PlacementUtils.countExtra(0, 1F / wildMenrilTreeChance, 1))));
+        PLACED_FEATURE_MENEGLIN = WorldFeatures.registerPlaced("tree_menril_meneglin", new PlacedFeature(CONFIGURED_FEATURE_TREE,
+                VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.05F, 1))));
+        PLACED_FEATURE_GENERAL = WorldFeatures.registerPlaced("tree_menril_general", new PlacedFeature(CONFIGURED_FEATURE_TREE,
+                VegetationPlacements.treePlacement(PlacementUtils.countExtra(0, 1F / wildMenrilTreeChance, 1))));
     }
 
     public void onBiomeLoadingEvent(BiomeLoadingEvent event) {
         if (event.getName().equals(new ResourceLocation("integrateddynamics:meneglin"))) {
             event.getGeneration().getFeatures(GenerationStep.Decoration.VEGETAL_DECORATION)
-                    .add(() -> PLACED_FEATURE_MENEGLIN);
+                    .add(PLACED_FEATURE_MENEGLIN);
         } else if (BiomeDictionary.getTypes(ResourceKey.create(ResourceKey.createRegistryKey(getRegistry().getRegistryName()), event.getName()))
                 .contains(BiomeDictionary.Type.OVERWORLD)) {
             event.getGeneration().getFeatures(GenerationStep.Decoration.VEGETAL_DECORATION)
-                    .add(() -> PLACED_FEATURE_GENERAL);
+                    .add(PLACED_FEATURE_GENERAL);
         }
     }
 

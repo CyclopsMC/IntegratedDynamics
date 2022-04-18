@@ -6,11 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
@@ -24,6 +24,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITag;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
@@ -370,13 +372,11 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     ItemMatchProperties props = getInputStacks().get(slotId);
                     String tagName = props.getItemTag();
                     if (tagName != null) {
-                        Tag<Item> tag = ItemTags.getAllTags().getTag(new ResourceLocation(tagName));
-                        if (tag != null) {
-                            List<Item> items = tag.getValues();
-                            int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;
-                            Item item = items.get(tick % items.size());
-                            return new ItemStack(item, props.getTagQuantity());
-                        }
+                        ITag<Item> tag = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(tagName)));
+                        List<Item> items = tag.stream().toList();
+                        int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;
+                        Item item = items.get(tick % items.size());
+                        return new ItemStack(item, props.getTagQuantity());
                     }
                 }
                 return super.getItem();
