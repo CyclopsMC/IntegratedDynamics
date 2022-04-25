@@ -1,0 +1,4 @@
+As always, don't forget to backup your world before updating!
+
+Initial 1.18.2 release.
+
