@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
+import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 import java.util.Objects;
@@ -22,11 +24,11 @@ public class RecipeSqueezer implements Recipe<Container> {
 
     private final ResourceLocation id;
     private final Ingredient inputIngredient;
-    private final NonNullList<ItemStackChance> outputItems;
+    private final NonNullList<IngredientChance> outputItems;
     private final FluidStack outputFluid;
 
     public RecipeSqueezer(ResourceLocation id, Ingredient inputIngredient,
-                          NonNullList<ItemStackChance> outputItems, FluidStack outputFluid) {
+                          NonNullList<IngredientChance> outputItems, FluidStack outputFluid) {
         this.id = id;
         this.inputIngredient = inputIngredient;
         this.outputItems = outputItems;
@@ -37,7 +39,7 @@ public class RecipeSqueezer implements Recipe<Container> {
         return inputIngredient;
     }
 
-    public NonNullList<ItemStackChance> getOutputItems() {
+    public NonNullList<IngredientChance> getOutputItems() {
         return outputItems;
     }
 
@@ -52,11 +54,11 @@ public class RecipeSqueezer implements Recipe<Container> {
 
     @Override
     public ItemStack assemble(Container inv) {
-        // Should not be called, but lets provide a good fallback
+        // Should not be called, but let's provide a good fallback
         if (this.outputItems.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        return this.outputItems.get(0).getItemStack().copy();
+        return this.outputItems.get(0).getIngredientFirst().copy();
     }
 
     @Override
@@ -70,7 +72,7 @@ public class RecipeSqueezer implements Recipe<Container> {
         if (this.outputItems.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        return this.outputItems.get(0).getItemStack().copy();
+        return this.outputItems.get(0).getIngredientFirst().copy();
     }
 
     @Override
@@ -88,18 +90,21 @@ public class RecipeSqueezer implements Recipe<Container> {
         return RegistryEntries.RECIPETYPE_SQUEEZER;
     }
 
-    public static class ItemStackChance {
-
-        private final ItemStack itemStack;
+    public static class IngredientChance {
+        private final Either<ItemStack, ItemStackFromIngredient> ingredient;
         private final float chance;
 
-        public ItemStackChance(ItemStack itemStack, float chance) {
-            this.itemStack = Objects.requireNonNull(itemStack);
+        public IngredientChance(Either<ItemStack, ItemStackFromIngredient> ingredient, float chance) {
+            this.ingredient = Objects.requireNonNull(ingredient);
             this.chance = chance;
         }
 
-        public ItemStack getItemStack() {
-            return itemStack;
+        public Either<ItemStack, ItemStackFromIngredient> getIngredient() {
+            return ingredient;
+        }
+
+        public ItemStack getIngredientFirst() {
+            return getIngredient().map(l -> l, ItemStackFromIngredient::getFirstItemStack);
         }
 
         public float getChance() {

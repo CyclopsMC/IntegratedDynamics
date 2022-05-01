@@ -66,7 +66,7 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
         int tick = getTick(gui);
         ItemStack inputItem = prepareItemStacks(recipe.getInputIngredient().getItems(), tick);
         FluidStack inputFluid = recipe.getInputFluid();
-        ItemStack resultItem = prepareItemStack(recipe.getOutputItem(), tick);
+        ItemStack resultItem = prepareItemStack(recipe.getOutputItemFirst(), tick);
         FluidStack resultFluid = recipe.getOutputFluid();
 
         // Items

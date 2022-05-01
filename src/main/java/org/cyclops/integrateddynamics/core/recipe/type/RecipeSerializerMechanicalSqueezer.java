@@ -29,7 +29,7 @@ public class RecipeSerializerMechanicalSqueezer extends ForgeRegistryEntry<Recip
         Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", true);
 
         // Output
-        NonNullList<RecipeSqueezer.ItemStackChance> outputItemStacks = RecipeSerializerSqueezer.getJsonItemStackChances(result, "items");
+        NonNullList<RecipeSqueezer.IngredientChance> outputItemStacks = RecipeSerializerSqueezer.getJsonItemStackChances(result, "items");
         FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
 
         // Other stuff
@@ -56,11 +56,11 @@ public class RecipeSerializerMechanicalSqueezer extends ForgeRegistryEntry<Recip
         Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
 
         // Output
-        NonNullList<RecipeSqueezer.ItemStackChance> outputItemStacks = NonNullList.create();
+        NonNullList<RecipeSqueezer.IngredientChance> outputItemStacks = NonNullList.create();
         int outputItemStacksCount = buffer.readInt();
         for (int i = 0; i < outputItemStacksCount; i++) {
-            outputItemStacks.add(new RecipeSqueezer.ItemStackChance(
-                    buffer.readItem(),
+            outputItemStacks.add(new RecipeSqueezer.IngredientChance(
+                    RecipeSerializerHelpers.readItemStackOrItemStackIngredient(buffer),
                     buffer.readFloat()
             ));
         }
@@ -79,8 +79,8 @@ public class RecipeSerializerMechanicalSqueezer extends ForgeRegistryEntry<Recip
 
         // Output
         buffer.writeInt(recipe.getOutputItems().size());
-        for (RecipeSqueezer.ItemStackChance outputItem : recipe.getOutputItems()) {
-            buffer.writeItem(outputItem.getItemStack());
+        for (RecipeSqueezer.IngredientChance outputItem : recipe.getOutputItems()) {
+            RecipeSerializerHelpers.writeItemStackOrItemStackIngredient(buffer, outputItem.getIngredient());
             buffer.writeFloat(outputItem.getChance());
         }
         recipe.getOutputFluid().writeToPacket(buffer);

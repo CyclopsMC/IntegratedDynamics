@@ -46,7 +46,7 @@ public class RegistryExportableDryingBasinRecipe extends RegistryExportableRecip
         if (fluidOutput != null) {
             outputObject.add("fluid", IRegistryExportable.serializeFluidStack(fluidOutput));
         }
-        ItemStack itemOutput = recipe.getOutputItem();
+        ItemStack itemOutput = recipe.getOutputItemFirst();
         outputObject.add("item", IRegistryExportable.serializeItemStack(itemOutput));
 
         // Recipe object

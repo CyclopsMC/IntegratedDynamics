@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -11,6 +12,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
+import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.integrateddynamics.GeneralConfig;
 
 import javax.annotation.Nullable;
@@ -31,7 +33,7 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<RecipeSerial
         FluidStack inputFluid = RecipeSerializerHelpers.getJsonFluidStack(json, "fluid", false);
 
         // Output
-        ItemStack outputItemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(result, false, GeneralConfig.recipeTagOutputModPriorities);
+        Either<ItemStack, ItemStackFromIngredient> outputItemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(result, false, GeneralConfig.recipeTagOutputModPriorities);
         FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
 
         // Other stuff
@@ -41,7 +43,7 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<RecipeSerial
         if (inputIngredient.isEmpty() && inputFluid.isEmpty()) {
             throw new JsonSyntaxException("An input item or fluid is required");
         }
-        if (outputItemStack.isEmpty() && outputFluid.isEmpty()) {
+        if ((outputItemStack.left().isPresent() && outputItemStack.left().isEmpty()) && outputFluid.isEmpty()) {
             throw new JsonSyntaxException("An output item or fluid is required");
         }
         if (!inputFluid.isEmpty() && !outputFluid.isEmpty()) {
@@ -62,13 +64,13 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<RecipeSerial
         FluidStack inputFluid = FluidStack.readFromPacket(buffer);
 
         // Output
-        ItemStack outputItemStack = buffer.readItem();
+        Either<ItemStack, ItemStackFromIngredient> outputItem = RecipeSerializerHelpers.readItemStackOrItemStackIngredient(buffer);
         FluidStack outputFluid = FluidStack.readFromPacket(buffer);
 
         // Other stuff
         int duration = buffer.readVarInt();
 
-        return new RecipeDryingBasin(recipeId, inputIngredient, inputFluid, outputItemStack, outputFluid, duration);
+        return new RecipeDryingBasin(recipeId, inputIngredient, inputFluid, outputItem, outputFluid, duration);
     }
 
     @Override
@@ -78,7 +80,7 @@ public class RecipeSerializerDryingBasin extends ForgeRegistryEntry<RecipeSerial
         recipe.getInputFluid().writeToPacket(buffer);
 
         // Output
-        buffer.writeItem(recipe.getOutputItem());
+        RecipeSerializerHelpers.writeItemStackOrItemStackIngredient(buffer, recipe.getOutputItem());
         recipe.getOutputFluid().writeToPacket(buffer);
 
         // Other stuff

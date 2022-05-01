@@ -56,7 +56,7 @@ public class RecipeHandlerSqueezer extends RecipeHandlerRecipeType<Container, Re
         Map<IngredientComponent<?, ?>, List<?>> outputIngredients = Maps.newIdentityHashMap();
         List<ItemStack> outputItems = recipe.getOutputItems().stream()
                 .filter(i -> i.getChance() == 1.0F)
-                .map(RecipeSqueezer.ItemStackChance::getItemStack)
+                .map(RecipeSqueezer.IngredientChance::getIngredientFirst)
                 .collect(Collectors.toList());
         if (!outputItems.isEmpty()) {
             outputIngredients.put(IngredientComponent.ITEMSTACK, outputItems);

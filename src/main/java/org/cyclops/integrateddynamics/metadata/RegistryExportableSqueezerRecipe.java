@@ -37,11 +37,11 @@ public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAb
         if (fluidOutput != null) {
             outputObject.add("fluid", IRegistryExportable.serializeFluidStack(fluidOutput));
         }
-        NonNullList<RecipeSqueezer.ItemStackChance> itemOutputs = recipe.getOutputItems();
+        NonNullList<RecipeSqueezer.IngredientChance> itemOutputs = recipe.getOutputItems();
         JsonArray arrayItemOutputs = new JsonArray();
         int i = 0;
-        for (RecipeSqueezer.ItemStackChance itemOutput : itemOutputs) {
-            JsonObject itemOutputObject = IRegistryExportable.serializeItemStack(itemOutput.getItemStack());
+        for (RecipeSqueezer.IngredientChance itemOutput : itemOutputs) {
+            JsonObject itemOutputObject = IRegistryExportable.serializeItemStack(itemOutput.getIngredientFirst());
             float chance = itemOutput.getChance();
             if (chance > 0) {
                 itemOutputObject.addProperty("chance", chance);

@@ -17,7 +17,7 @@ public class RecipeMechanicalSqueezer extends RecipeSqueezer {
     private final int duration;
 
     public RecipeMechanicalSqueezer(ResourceLocation id, Ingredient inputIngredient,
-                                    NonNullList<ItemStackChance> outputItems, FluidStack outputFluid, int duration) {
+                                    NonNullList<IngredientChance> outputItems, FluidStack outputFluid, int duration) {
         super(id, inputIngredient, outputItems, outputFluid);
         this.duration = duration;
     }

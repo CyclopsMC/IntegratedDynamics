@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -8,6 +9,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
+import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -20,16 +22,16 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
     private final ResourceLocation id;
     private final Ingredient inputIngredient;
     private final FluidStack inputFluid;
-    private final ItemStack outputItem;
+    private final Either<ItemStack, ItemStackFromIngredient> outputItem;
     private final FluidStack outputFluid;
     private final int duration;
 
     public RecipeDryingBasin(ResourceLocation id, Ingredient inputIngredient, FluidStack inputFluid,
-                             ItemStack outputItem, FluidStack outputFluid, int duration) {
+                             Either<ItemStack, ItemStackFromIngredient> outputIngredient, FluidStack outputFluid, int duration) {
         this.id = id;
         this.inputIngredient = inputIngredient;
         this.inputFluid = inputFluid;
-        this.outputItem = outputItem;
+        this.outputItem = outputIngredient;
         this.outputFluid = outputFluid;
         this.duration = duration;
     }
@@ -42,8 +44,12 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
         return inputFluid;
     }
 
-    public ItemStack getOutputItem() {
+    public Either<ItemStack, ItemStackFromIngredient> getOutputItem() {
         return outputItem;
+    }
+
+    public ItemStack getOutputItemFirst() {
+        return getOutputItem().map(l -> l, ItemStackFromIngredient::getFirstItemStack);
     }
 
     public FluidStack getOutputFluid() {
@@ -63,7 +69,7 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
 
     @Override
     public ItemStack assemble(IInventoryFluid inv) {
-        return this.outputItem.copy();
+        return this.getOutputItemFirst().copy();
     }
 
     @Override
@@ -73,7 +79,7 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
 
     @Override
     public ItemStack getResultItem() {
-        return this.outputItem;
+        return this.getOutputItemFirst().copy();
     }
 
     @Override

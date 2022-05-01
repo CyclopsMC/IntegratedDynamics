@@ -75,7 +75,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<RecipeSqueezer> {
         int tick = getTick(gui);
         ItemStack inputItem = recipe.getInputIngredient() == null ? null : prepareItemStacks(recipe.getInputIngredient().getItems(), tick);
         List<ItemStack> outputItems = recipe.getOutputItems().stream()
-                .map(RecipeSqueezer.ItemStackChance::getItemStack)
+                .map(RecipeSqueezer.IngredientChance::getIngredientFirst)
                 .collect(Collectors.toList());
         FluidStack outputFluid = recipe.getOutputFluid();
 

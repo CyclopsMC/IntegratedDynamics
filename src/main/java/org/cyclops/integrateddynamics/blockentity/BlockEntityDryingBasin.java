@@ -183,7 +183,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                     blockEntity.getTank().drain(amount, IFluidHandler.FluidAction.EXECUTE);
 
                     // Produce output item
-                    ItemStack output = recipe.getOutputItem();
+                    ItemStack output = recipe.getOutputItemFirst();
                     if (!output.isEmpty()) {
                         output = output.copy();
                         blockEntity.getInventory().setItem(0, output);
