@@ -100,8 +100,6 @@ public class RecipeSerializerSqueezer extends ForgeRegistryEntry<RecipeSerialize
         buffer.writeInt(recipe.getOutputItems().size());
         for (RecipeSqueezer.IngredientChance outputItem : recipe.getOutputItems()) {
             RecipeSerializerHelpers.writeItemStackOrItemStackIngredient(buffer, outputItem.getIngredient());
-            recipe.getOutputFluid().writeToPacket(buffer);
-
             buffer.writeFloat(outputItem.getChance());
         }
         recipe.getOutputFluid().writeToPacket(buffer);
