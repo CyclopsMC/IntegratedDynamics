@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.13.5 or higher.
+
+Fixes:
+* Fix invalid packet serialization of items from ingredients
+  This fixes errors when connecting to servers.
+  Closes CyclopsMC/IntegratedDynamics#1161
+
