@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -87,6 +88,17 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
                 return actionResult;
             }
             return ActionResultType.PASS;
+        }
+
+        @Nullable
+        @Override
+        public Direction getRaytraceDirection() {
+            return null;
+        }
+
+        @Override
+        public boolean isRaytraceLastForFace() {
+            return false;
         }
 
     }

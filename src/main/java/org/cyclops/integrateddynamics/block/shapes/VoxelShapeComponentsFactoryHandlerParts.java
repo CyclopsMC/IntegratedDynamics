@@ -105,6 +105,17 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
             return ActionResultType.PASS;
         }
 
+        @Nullable
+        @Override
+        public Direction getRaytraceDirection() {
+            return direction;
+        }
+
+        @Override
+        public boolean isRaytraceLastForFace() {
+            return false;
+        }
+
     }
 
 }

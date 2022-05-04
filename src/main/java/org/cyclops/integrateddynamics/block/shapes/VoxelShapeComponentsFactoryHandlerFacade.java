@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -38,8 +39,8 @@ import java.util.Optional;
 public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeComponentsFactory.IHandler {
 
     private static final VoxelShape BOUNDS = VoxelShapes.create(new AxisAlignedBB(
-            0.01, 0.01, 0.01,
-            0.99, 0.99, 0.99));
+            0, 0, 0,
+            1, 1, 1));
     private static final VoxelShapeComponentsFactoryHandlerFacade.Component COMPONENT = new Component();
 
     @Override
@@ -113,6 +114,17 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
                 return ActionResultType.SUCCESS;
             }
             return ActionResultType.PASS;
+        }
+
+        @Nullable
+        @Override
+        public Direction getRaytraceDirection() {
+            return null;
+        }
+
+        @Override
+        public boolean isRaytraceLastForFace() {
+            return true;
         }
 
     }

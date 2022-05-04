@@ -128,8 +128,8 @@ public class BlockCable extends BlockTile implements IDynamicModelElement, IWate
     private final VoxelShapeComponentsFactory voxelShapeComponentsFactory = new VoxelShapeComponentsFactory(
             new VoxelShapeComponentsFactoryHandlerCableCenter(),
             new VoxelShapeComponentsFactoryHandlerCableConnections(),
-            new VoxelShapeComponentsFactoryHandlerFacade(),
-            new VoxelShapeComponentsFactoryHandlerParts()
+            new VoxelShapeComponentsFactoryHandlerParts(),
+            new VoxelShapeComponentsFactoryHandlerFacade()
     );
 
     @OnlyIn(Dist.CLIENT)
