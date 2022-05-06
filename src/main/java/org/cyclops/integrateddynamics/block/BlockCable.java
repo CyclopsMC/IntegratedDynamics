@@ -133,8 +133,8 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     private final VoxelShapeComponentsFactory voxelShapeComponentsFactory = new VoxelShapeComponentsFactory(
             new VoxelShapeComponentsFactoryHandlerCableCenter(),
             new VoxelShapeComponentsFactoryHandlerCableConnections(),
-            new VoxelShapeComponentsFactoryHandlerFacade(),
-            new VoxelShapeComponentsFactoryHandlerParts()
+            new VoxelShapeComponentsFactoryHandlerParts(),
+            new VoxelShapeComponentsFactoryHandlerFacade()
     );
 
     @OnlyIn(Dist.CLIENT)

@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.block.shapes;
 
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -38,8 +39,8 @@ import java.util.Optional;
 public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeComponentsFactory.IHandler {
 
     private static final VoxelShape BOUNDS = Shapes.create(new AABB(
-            0.01, 0.01, 0.01,
-            0.99, 0.99, 0.99));
+            0, 0, 0,
+            1, 1, 1));
     private static final VoxelShapeComponentsFactoryHandlerFacade.Component COMPONENT = new Component();
 
     @Override
@@ -113,6 +114,17 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.PASS;
+        }
+
+        @Nullable
+        @Override
+        public Direction getRaytraceDirection() {
+            return null;
+        }
+
+        @Override
+        public boolean isRaytraceLastForFace() {
+            return true;
         }
 
     }

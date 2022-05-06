@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.block.shapes;
 
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -86,6 +87,17 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
                 return actionResult;
             }
             return InteractionResult.PASS;
+        }
+
+        @Nullable
+        @Override
+        public Direction getRaytraceDirection() {
+            return null;
+        }
+
+        @Override
+        public boolean isRaytraceLastForFace() {
+            return false;
         }
 
     }

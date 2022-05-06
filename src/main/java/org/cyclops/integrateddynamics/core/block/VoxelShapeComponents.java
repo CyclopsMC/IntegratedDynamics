@@ -185,9 +185,15 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
             if (result != null) {
                 double distance = result.getLocation().distanceToSqr(startVec);
                 if (distance < distanceMin) {
-                    distanceMin = distance;
-                    componentMin = entry.getRight();
-                    resultMin = result;
+                    // If the previous match was a part and the current one is a facade,
+                    // check if the direction of that part matches with the matched face of the facade,
+                    // and if so, don't match the facade,
+                    // because we want the user to be able to select parts within facades.
+                    if (resultMin == null || !(entry.getRight().isRaytraceLastForFace() && componentMin.getRaytraceDirection() == result.getDirection())) {
+                        distanceMin = distance;
+                        componentMin = entry.getRight();
+                        resultMin = result;
+                    }
                 }
             }
         }
@@ -393,6 +399,17 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
          */
         public InteractionResult onBlockActivated(BlockState state, Level world, BlockPos blockPos, Player player,
                                                  InteractionHand hand, BlockRayTraceResultComponent hit);
+
+        /**
+         * @return The direction this component points at.
+         */
+        @Nullable
+        public Direction getRaytraceDirection();
+
+        /**
+         * @return If this component should only be raytraced if no other components matched for this face.
+         */
+        public boolean isRaytraceLastForFace();
 
     }
 
