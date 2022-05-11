@@ -1125,7 +1125,7 @@
     "operator.integrateddynamics.itemstack.maxdamage.info": "최대 아이템 손상",
     "operator.integrateddynamics.itemstack.enchanted": "마법부여 여부",
     "operator.integrateddynamics.itemstack.enchanted.info": "아이템에 마법이 부여되어있는가",
-    "operator.integrateddynamics.itemstack.enchantable": "마법부여 가능 여분",
+    "operator.integrateddynamics.itemstack.enchantable": "마법부여 가능 여부",
     "operator.integrateddynamics.itemstack.enchantable.info": "아이템에 마법을 부여할 수 있는가",
     "operator.integrateddynamics.itemstack.repaircost": "수리 비용",
     "operator.integrateddynamics.itemstack.repaircost.info": "아이템의 수리 비용",
