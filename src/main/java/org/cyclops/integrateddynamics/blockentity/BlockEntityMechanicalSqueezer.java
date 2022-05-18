@@ -144,7 +144,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         // Output items
         NonNullList<ItemStack> outputStacks = NonNullList.create();
         for (RecipeSqueezer.IngredientChance itemStackChance : recipe.getOutputItems()) {
-            ItemStack outputStack = itemStackChance.getIngredientFirst();
+            ItemStack outputStack = itemStackChance.getIngredientFirst().copy();
             if (!outputStack.isEmpty() && (simulate || itemStackChance.getChance() == 1.0F
                     || itemStackChance.getChance() >= getLevel().random.nextFloat())) {
                 InventoryHelpers.addStackToList(outputStacks, outputStack);
