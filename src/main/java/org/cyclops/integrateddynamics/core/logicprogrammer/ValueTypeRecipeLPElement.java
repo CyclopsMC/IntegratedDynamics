@@ -373,10 +373,12 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     String tagName = props.getItemTag();
                     if (tagName != null) {
                         ITag<Item> tag = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(tagName)));
-                        List<Item> items = tag.stream().toList();
-                        int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;
-                        Item item = items.get(tick % items.size());
-                        return new ItemStack(item, props.getTagQuantity());
+                        if (!tag.isEmpty()) {
+                            List<Item> items = tag.stream().toList();
+                            int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;
+                            Item item = items.get(tick % items.size());
+                            return new ItemStack(item, props.getTagQuantity());
+                        }
                     }
                 }
                 return super.getItem();
