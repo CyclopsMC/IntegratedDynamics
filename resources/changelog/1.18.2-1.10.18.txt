@@ -1,0 +1,12 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.13.5 or higher.
+
+Additions:
+* Add Korean Localization
+
+Changes:
+* Improve performance of network ticks
+
+Fixes:
+* Fix crash when creating recipe values with empty tags, Closes #1168
+* Fix squeezer breaking recipes after usage, Closes #1166
