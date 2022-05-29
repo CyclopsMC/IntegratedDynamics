@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.core.network;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.Object2IntAVLTreeMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -40,7 +42,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -54,8 +55,7 @@ public class Network implements INetwork {
 
     private final INetworkEventBus eventBus = new NetworkEventBus();
     private final TreeSet<INetworkElement> elements = Sets.newTreeSet();
-    private TreeSet<INetworkElement> updateableElements = null;
-    private TreeMap<INetworkElement, Integer> updateableElementsTicks = null;
+    private Object2IntMap<INetworkElement> updateableElementsTicks = null;
     private TreeSet<INetworkElement> invalidatedElements = Sets.newTreeSet();
     private Map<INetworkElement, Long> lastSecondDurations = Maps.newHashMap();
 
@@ -160,7 +160,7 @@ public class Network implements INetwork {
 
     @Override
     public boolean isInitialized() {
-        return updateableElements != null;
+        return updateableElementsTicks != null;
     }
 
     @Override
@@ -246,7 +246,6 @@ public class Network implements INetwork {
     @Override
     public void addNetworkElementUpdateable(INetworkElement element) {
         if(element.isUpdate()) {
-            updateableElements.add(element);
             updateableElementsTicks.put(element, 0);
         }
     }
@@ -264,10 +263,9 @@ public class Network implements INetwork {
     @Override
     public synchronized void setPriorityAndChannel(INetworkElement element, int priority, int channel) {
         elements.remove(element);
-        Integer oldTickValue = null;
+        int oldTickValue = updateableElementsTicks.defaultReturnValue();
         if (element.isUpdate()) {
-            updateableElements.remove(element);
-            oldTickValue = updateableElementsTicks.remove(element);
+            oldTickValue = updateableElementsTicks.removeInt(element);
         }
 
         //noinspection deprecation
@@ -275,10 +273,12 @@ public class Network implements INetwork {
 
         elements.add(element);
         if (element.isUpdate()) {
-            updateableElements.add(element);
-            if (oldTickValue != null) {
-                updateableElementsTicks.put(element, oldTickValue);
-            }
+            updateableElementsTicks.put(
+                element,
+                oldTickValue == updateableElementsTicks.defaultReturnValue()
+                    ? element.getUpdateInterval()
+                    : oldTickValue
+            );
         }
     }
 
@@ -307,8 +307,7 @@ public class Network implements INetwork {
     @Override
     public synchronized void removeNetworkElementUpdateable(INetworkElement element) {
         if (isInitialized()) {
-            updateableElements.remove(element);
-            updateableElementsTicks.remove(element);
+            updateableElementsTicks.removeInt(element);
         }
     }
 
@@ -317,8 +316,8 @@ public class Network implements INetwork {
      * @param silent If the element should not be notified for the network becoming alive.
      */
     protected void initialize(boolean silent) {
-        updateableElements = Sets.newTreeSet();
-        updateableElementsTicks = Maps.newTreeMap();
+        updateableElementsTicks = new Object2IntAVLTreeMap<>();
+        updateableElementsTicks.defaultReturnValue(Integer.MIN_VALUE);
         for(INetworkElement element : elements) {
             addNetworkElementUpdateable(element);
             if(!silent) {
@@ -395,25 +394,26 @@ public class Network implements INetwork {
                 // Make sure we aren't using any unnecessary memory.
                 lastSecondDurations.clear();
             }
-            for (INetworkElement element : updateableElements) {
+            for (Object2IntMap.Entry<INetworkElement> entry : updateableElementsTicks.object2IntEntrySet()) {
+                var element = entry.getKey();
                 try {
                     if (isValid(element)) {
                         long startTime = 0;
                         if (isBeingDiagnozed) {
                             startTime = System.nanoTime();
                         }
-                        int lastElementTick = updateableElementsTicks.getOrDefault(element, 0);
+                        int lastElementTick = entry.getIntValue();
                         if (canUpdate(element)) {
                             if (lastElementTick <= 0) {
-                                updateableElementsTicks.put(element, element.getUpdateInterval() - 1);
+                                entry.setValue(element.getUpdateInterval() - 1);
                                 element.update(this);
                                 postUpdate(element);
                             } else {
-                                updateableElementsTicks.put(element, lastElementTick - 1);
+                                entry.setValue(lastElementTick - 1);
                             }
                         } else {
                             onSkipUpdate(element);
-                            updateableElementsTicks.put(element, lastElementTick - 1);
+                            entry.setValue(lastElementTick - 1);
                         }
                         if (isBeingDiagnozed) {
                             long duration = System.nanoTime() - startTime;
