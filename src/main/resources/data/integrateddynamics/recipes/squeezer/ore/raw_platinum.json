@@ -7,17 +7,11 @@
     "items": [
       {
         "tag": "forge:raw_materials/platinum",
-        "count": 4
+        "count": 2
       },
       {
         "tag": "forge:raw_materials/platinum",
-        "count": 2,
-        "chance": 0.5
-      },
-      {
-        "tag": "forge:raw_materials/platinum",
-        "count": 2,
-        "chance": 0.5
+        "chance": 0.75
       }
     ]
   },

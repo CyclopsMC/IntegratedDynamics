@@ -17,7 +17,7 @@
       {
         "tag": "forge:raw_materials/copper",
         "count": 2,
-        "chance": 0.5
+        "chance": 0.25
       }
     ]
   },

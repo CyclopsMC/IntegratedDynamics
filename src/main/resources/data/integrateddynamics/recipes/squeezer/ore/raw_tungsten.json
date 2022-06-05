@@ -1,16 +1,16 @@
 {
   "type": "integrateddynamics:squeezer",
   "item": {
-    "tag": "forge:ores/lead"
+    "tag": "forge:ores/tungsten"
   },
   "result": {
     "items": [
       {
-        "tag": "forge:raw_materials/lead",
+        "tag": "forge:raw_materials/tungsten",
         "count": 2
       },
       {
-        "tag": "forge:raw_materials/lead",
+        "tag": "forge:raw_materials/tungsten",
         "chance": 0.75
       }
     ]
@@ -21,14 +21,14 @@
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:raw_materials/lead"
+        "tag": "forge:raw_materials/tungsten"
       }
     },
     {
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:ores/lead"
+        "tag": "forge:ores/tungsten"
       }
     }
   ]
