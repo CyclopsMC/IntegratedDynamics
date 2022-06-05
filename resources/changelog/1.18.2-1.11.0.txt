@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.14.0 or higher.
+
+Changes:
+* Rebalance ore doubling recipes in (mechanical) squeezer, Closes #1129
+
+Fixes:
+* Fix energy battery overflows in toolips when stacked, Closes #1176
