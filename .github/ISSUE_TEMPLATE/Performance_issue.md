@@ -4,7 +4,9 @@ about: An issue with the performance of this mod, such as abnormal lag.
 
 ---
 
-<!--Thanks in advance for this issue, you're awesome! Please fill in the following template and make sure your title clear and concisely summarizes the issue.-->
+<!--Thanks in advance for this issue, you're awesome!-->
+<!--Before you read any further, can you double-check to make sure you're using the latest versions of all related mods?-->
+<!--Please fill in the following template and make sure your title clear and concisely summarizes the issue.-->
 
 #### Issue type:
 

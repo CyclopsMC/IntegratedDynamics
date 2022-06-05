@@ -4,7 +4,8 @@ about: Suggest an idea for this project
 
 ---
 
-<!--Thanks in advance for this issue, you're awesome! Please fill in the following template and make sure your title clear and concisely summarizes the feature.-->
+<!--Thanks in advance for this issue, you're awesome!-->
+<!--Please fill in the following template and make sure your title clear and concisely summarizes the issue.-->
 
 #### Issue type:
 

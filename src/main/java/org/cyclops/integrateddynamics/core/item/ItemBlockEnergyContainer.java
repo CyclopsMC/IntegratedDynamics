@@ -63,8 +63,8 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         super.appendHoverText(itemStack, world, list, flag);
         getEnergyBattery(itemStack)
                 .ifPresent(energyStorage -> {
-                    int amount = energyStorage.getEnergyStored();
-                    int capacity = energyStorage.getMaxEnergyStored();
+                    long amount = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getEnergyStoredLong();
+                    long capacity = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getMaxEnergyStoredLong();
                     String line = String.format(Locale.ROOT, "%,d", amount) + " / " + String.format(Locale.ROOT, "%,d", capacity) + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
                     list.add(new TextComponent(IInformationProvider.ITEM_PREFIX + line));
                 });

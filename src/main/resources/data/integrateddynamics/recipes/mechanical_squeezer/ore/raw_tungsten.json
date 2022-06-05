@@ -1,21 +1,21 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
   "item": {
-    "tag": "forge:ores/platinum"
+    "tag": "forge:ores/tungsten"
   },
   "result": {
     "items": [
       {
-        "tag": "forge:raw_materials/platinum",
+        "tag": "forge:raw_materials/tungsten",
         "count": 3
       },
       {
-        "tag": "forge:raw_materials/platinum",
+        "tag": "forge:raw_materials/tungsten",
         "count": 2,
         "chance": 0.5
       },
       {
-        "tag": "forge:raw_materials/platinum",
+        "tag": "forge:raw_materials/tungsten",
         "count": 2,
         "chance": 0.5
       }
@@ -27,14 +27,14 @@
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:raw_materials/platinum"
+        "tag": "forge:raw_materials/tungsten"
       }
     },
     {
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "tag": "forge:ores/platinum"
+        "tag": "forge:ores/tungsten"
       }
     }
   ]
