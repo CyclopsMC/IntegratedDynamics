@@ -14,6 +14,7 @@ plugins {
 	id 'com.github.kt3k.coveralls' version '2.12.0'
     id 'com.diffplug.spotless' version '5.14.3'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+	id 'com.modrinth.minotaur' version '2.+'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -312,6 +313,29 @@ curseforge {
         addArtifact deobfJar
         addArtifact sourcesJar
         addArtifact javadocJar
+    }
+}
+
+modrinth {
+    if(secrets.modrinth_key) {
+        token = secrets.modrinth_key
+    } else if(System.getenv().GITHUB_ACTIONS && System.getenv().MODRINTH_KEY_SECRET) {
+        token = System.getenv().MODRINTH_KEY_SECRET
+    } else {
+        token = "DUMMY"
+    }
+    projectId = "yYzdQHJI"
+    versionNumber = project.mod_version
+    versionType = project.release_type
+    uploadFile = jar
+    gameVersions = [ project.minecraft_version ]
+    changelog = ""
+    if (new File("resources/changelog/${project.version}.txt").exists()) {
+        changelog = new File("resources/changelog/${project.version}.txt").text
+    }
+    dependencies { // A special DSL for creating dependencies
+      required.project "Z9DM0LJ4" // Cyclops Core
+      required.project "oFXrCkDI" // Common Capabilities
     }
 }
 
