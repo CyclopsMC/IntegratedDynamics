@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -11,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.cyclops.cyclopscore.inventory.ItemLocation;
 import org.cyclops.cyclopscore.inventory.container.NamedContainerProviderItem;
 import org.cyclops.cyclopscore.item.ItemGui;
 import org.cyclops.integrateddynamics.Reference;
@@ -35,8 +35,8 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
 
     @Nullable
     @Override
-    public MenuProvider getContainer(Level world, Player playerEntity, int itemIndex, InteractionHand hand, ItemStack itemStack) {
-        return new NamedContainerProviderItem(itemIndex, hand,
+    public MenuProvider getContainer(Level world, Player playerEntity, ItemLocation itemLocation) {
+        return new NamedContainerProviderItem(itemLocation,
                 new TranslatableComponent("gui.cyclopscore.infobook"), ContainerOnTheDynamicsOfIntegration::new);
     }
 

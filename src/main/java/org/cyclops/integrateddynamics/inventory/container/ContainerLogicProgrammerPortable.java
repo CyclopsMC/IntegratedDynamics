@@ -1,12 +1,10 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.cyclops.cyclopscore.helper.InventoryHelpers;
-import org.cyclops.cyclopscore.inventory.container.ItemInventoryContainer;
+import org.cyclops.cyclopscore.inventory.ItemLocation;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.item.ItemPortableLogicProgrammer;
 
@@ -16,23 +14,19 @@ import org.cyclops.integrateddynamics.item.ItemPortableLogicProgrammer;
  */
 public class ContainerLogicProgrammerPortable extends ContainerLogicProgrammerBase {
 
-    private final int itemIndex;
-    private final InteractionHand hand;
+    private final ItemLocation itemLocation;
 
     public ContainerLogicProgrammerPortable(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
-        this(id, playerInventory, ItemInventoryContainer.readItemIndex(packetBuffer),
-                ItemInventoryContainer.readHand(packetBuffer));
+        this(id, playerInventory, ItemLocation.readFromPacketBuffer(packetBuffer));
     }
 
-    public ContainerLogicProgrammerPortable(int id, Inventory playerInventory,
-                                            int itemIndex, InteractionHand hand) {
+    public ContainerLogicProgrammerPortable(int id, Inventory playerInventory, ItemLocation itemLocation) {
         super(RegistryEntries.CONTAINER_LOGIC_PROGRAMMER_PORTABLE, id, playerInventory);
-        this.itemIndex = itemIndex;
-        this.hand = hand;
+        this.itemLocation = itemLocation;
     }
 
     public ItemStack getItemStack(Player player) {
-        return InventoryHelpers.getItemFromIndex(player, itemIndex, hand);
+        return this.itemLocation.getItemStack(player);
     }
 
     @Override
