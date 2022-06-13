@@ -325,7 +325,7 @@ modrinth {
         token = "DUMMY"
     }
     projectId = "yYzdQHJI"
-    versionNumber = project.mod_version
+    versionNumber = project.minecraft_version + '-' + project.mod_version
     versionType = project.release_type
     uploadFile = jar
     gameVersions = [ project.minecraft_version ]
