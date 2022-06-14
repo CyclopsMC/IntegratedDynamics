@@ -202,15 +202,14 @@ public class BlockSqueezer extends BlockWithEntity {
     }
 
     @Override
-    public void onPlace(BlockState oldState, Level world, BlockPos blockPos, BlockState newState, boolean isMoving) {
-        if (oldState.getBlock() != newState.getBlock()) {
-            BlockEntityHelpers.get(world, blockPos, BlockEntitySqueezer.class)
+    public void onRemove(BlockState oldState, Level level, BlockPos blockPos, BlockState newState, boolean isMoving) {
+        if (!oldState.is(newState.getBlock())) {
+            BlockEntityHelpers.get(level, blockPos, BlockEntitySqueezer.class)
                     .ifPresent(tile -> {
-                        InventoryHelpers.dropItems(world, tile.getInventory(), blockPos);
-                        world.updateNeighbourForOutputSignal(blockPos, oldState.getBlock());
+                        InventoryHelpers.dropItems(level, tile.getInventory(), blockPos);
+                        level.updateNeighbourForOutputSignal(blockPos, oldState.getBlock());
                     });
-            super.onPlace(oldState, world, blockPos, newState, isMoving);
+            super.onRemove(oldState, level, blockPos, newState, isMoving);
         }
     }
-
 }
