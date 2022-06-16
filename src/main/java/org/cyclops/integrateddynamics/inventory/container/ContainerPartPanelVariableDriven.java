@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -79,10 +78,10 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         super.broadcastChanges();
 
         if (!player.level.isClientSide()) {
-            MutableComponent readValue = new TextComponent("");
+            MutableComponent readValue = Component.literal("");
             int readValueColor = 0;
             if (!NetworkHelpers.shouldWork()) {
-                readValue = new TextComponent("SAFE-MODE");
+                readValue = Component.literal("SAFE-MODE");
             } else {
                 IValue value = getPartState().get().getDisplayValue();
                 if (value != null) {

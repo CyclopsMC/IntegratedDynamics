@@ -6,8 +6,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
@@ -87,17 +85,17 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     public void init() {
         super.init();
         subGuiHolder.init(this.leftPos, this.topPos);
-        addRenderableWidget(buttonExit = new ButtonText(leftPos + 7, topPos + 5, 12, 10, new TranslatableComponent("gui.cyclopscore.up"), new TextComponent("<<"), createServerPressable(ContainerAspectSettings.BUTTON_EXIT, (button) -> {
+        addRenderableWidget(buttonExit = new ButtonText(leftPos + 7, topPos + 5, 12, 10, Component.translatable("gui.cyclopscore.up"), Component.literal("<<"), createServerPressable(ContainerAspectSettings.BUTTON_EXIT, (button) -> {
             saveSetting();
         }), true));
-        addRenderableWidget(buttonLeft = new ButtonText(leftPos + 21, topPos + 5, 10, 10, new TranslatableComponent("gui.cyclopscore.left"), new TextComponent("<"), (button) -> {
+        addRenderableWidget(buttonLeft = new ButtonText(leftPos + 21, topPos + 5, 10, 10, Component.translatable("gui.cyclopscore.left"), Component.literal("<"), (button) -> {
             saveSetting();
             if(getActivePropertyIndex() > 0) {
                 setActiveProperty(getActivePropertyIndex() - 1);
                 refreshButtonEnabled();
             }
         }, true));
-        addRenderableWidget(buttonRight = new ButtonText(leftPos + 159, topPos + 5, 10, 10, new TranslatableComponent("gui.cyclopscore.right"), new TextComponent(">"), (button) -> {
+        addRenderableWidget(buttonRight = new ButtonText(leftPos + 159, topPos + 5, 10, 10, Component.translatable("gui.cyclopscore.right"), Component.literal(">"), (button) -> {
             saveSetting();
             if(getActivePropertyIndex() < propertyTypes.size()) {
                 setActiveProperty(getActivePropertyIndex() + 1);
@@ -128,7 +126,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
             if (RenderHelpers.isPointInRegion(this.leftPos + 40, this.topPos, 110, 20, mouseX, mouseY)) {
                 String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
                 if (I18n.exists(unlocalizedInfo)) {
-                    drawTooltip(Lists.newArrayList(new TranslatableComponent(unlocalizedInfo)
+                    drawTooltip(Lists.newArrayList(Component.translatable(unlocalizedInfo)
                             .withStyle(ChatFormatting.GRAY)), matrixStack, mouseX - this.leftPos, mouseY - this.topPos + 20);
                 }
             }

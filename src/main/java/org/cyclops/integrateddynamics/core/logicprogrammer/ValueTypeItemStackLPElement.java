@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -64,7 +63,7 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     @Override
     public Component validate() {
         if(!this.itemStackToValue.isNullable() && this.itemStack.isEmpty()) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
         return itemStackToValue.validate(itemStack);
     }

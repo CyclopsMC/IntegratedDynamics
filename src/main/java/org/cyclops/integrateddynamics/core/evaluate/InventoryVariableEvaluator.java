@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
 import com.google.common.collect.Lists;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -74,13 +74,13 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
 
         clearErrors();
         if (partNetwork == null) {
-            addError(new TranslatableComponent(L10NValues.GENERAL_ERROR_NONETWORK));
+            addError(Component.translatable(L10NValues.GENERAL_ERROR_NONETWORK));
         } else if (this.variableStored != null) {
             preValidate();
             try {
                 variableStored.validate(partNetwork, this, containingValueType);
             } catch (IllegalArgumentException e) {
-                addError(new TranslatableComponent(e.getMessage()));
+                addError(Component.translatable(e.getMessage()));
             }
         }
         if(sendVariablesUpdateEvent && partNetwork != null && lastVariabledId != variableId) {
@@ -100,7 +100,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         try {
             return getVariableFacade().getVariable(network);
         } catch (IllegalArgumentException e) {
-            addError(new TranslatableComponent(e.getMessage()));
+            addError(Component.translatable(e.getMessage()));
             return null;
         }
     }

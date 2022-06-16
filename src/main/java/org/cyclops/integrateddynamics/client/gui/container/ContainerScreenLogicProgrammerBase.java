@@ -8,8 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -131,7 +129,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         // Draw container name
         // MCP: drawString
-        font.drawShadow(matrixStack, new TranslatableComponent(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
+        font.drawShadow(matrixStack, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
                 this.leftPos + offsetX + 5, this.topPos + offsetY + 208, Helpers.RGBToInt(80, 80, 80));
 
         // Draw operators
@@ -377,13 +375,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             super(ContainerScreenLogicProgrammerBase.this, getMenu(), element, 88, 106, 139, 20);
 
             if(hasLabeller()) {
-                buttonList.add(button = new ButtonText(0, 0, 6, 10, new TranslatableComponent("gui.integrateddynamics.button.edit"), new TextComponent("E"),
+                buttonList.add(button = new ButtonText(0, 0, 6, 10, Component.translatable("gui.integrateddynamics.button.edit"), Component.literal("E"),
                         (button) -> onButtonEditClick(), true));
             }
 
             int searchWidth = 113;
             this.searchField = new WidgetTextFieldExtended(ContainerScreenLogicProgrammerBase.this.font, 0, 0, searchWidth, 11,
-                    new TranslatableComponent("gui.cyclopscore.search"));
+                    Component.translatable("gui.cyclopscore.search"));
             this.searchField.setMaxLength(64);
             this.searchField.setBordered(true);
             this.searchField.setVisible(false);

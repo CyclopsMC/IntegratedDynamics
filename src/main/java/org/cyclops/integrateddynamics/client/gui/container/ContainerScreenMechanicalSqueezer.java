@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
@@ -43,7 +42,7 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
         super.init();
 
         addRenderableWidget(buttonToggleFluidEject = new ButtonImage(getGuiLeftTotal() + 149, getGuiTopTotal() + 71,
-                new TranslatableComponent("gui.integrateddynamics.mechanical_squeezer.fluidautoeject"),
+                Component.translatable("gui.integrateddynamics.mechanical_squeezer.fluidautoeject"),
                 createServerPressable(ContainerMechanicalSqueezer.BUTTON_TOGGLE_FLUID_EJECT, (button) -> {}),imageArrowDownDisabled));
     }
 
@@ -79,9 +78,9 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
 
         // Draw fluid auto-eject toggle
         GuiHelpers.renderTooltip(this, matrixStack, 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
-                new TranslatableComponent(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT,
+                Component.translatable(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT,
                         ChatFormatting.AQUA + L10NHelpers.localize(getMenu().isAutoEjectFluids() ?
                                 L10NValues.GENERAL_TRUE : L10NValues.GENERAL_FALSE)),
-                new TranslatableComponent(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT + ".info")));
+                Component.translatable(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT + ".info")));
     }
 }

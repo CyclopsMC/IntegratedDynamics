@@ -5,8 +5,8 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -33,7 +33,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * The variable facade handler registry.
@@ -193,7 +192,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         @Override
         public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
             if (!ValueHelpers.correspondsTo(containingValueType, ValueTypes.BOOLEAN)) {
-                validator.addError(new TranslatableComponent(unlocalizedError));
+                validator.addError(Component.translatable(unlocalizedError));
             }
         }
 
@@ -208,7 +207,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData) {
+        public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
 
         }
     }

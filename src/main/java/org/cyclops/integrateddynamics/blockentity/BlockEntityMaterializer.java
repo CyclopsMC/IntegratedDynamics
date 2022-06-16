@@ -4,7 +4,6 @@ import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -125,7 +124,7 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
                 }
             }, lastPlayer, getBlockState());
         } catch (EvaluationException e) {
-            getEvaluator().addError(new TranslatableComponent(e.getMessage()));
+            getEvaluator().addError(Component.translatable(e.getMessage()));
         }
         return ItemStack.EMPTY;
     }
@@ -138,7 +137,7 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.integrateddynamics.materializer");
+        return Component.translatable("block.integrateddynamics.materializer");
     }
 
     public static class Ticker extends BlockEntityTickerDelayed<BlockEntityMaterializer> {

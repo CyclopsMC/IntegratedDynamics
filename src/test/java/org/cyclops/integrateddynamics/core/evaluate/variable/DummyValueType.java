@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -59,7 +58,7 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
 
     @Override
     public MutableComponent toCompactString(DummyValue value) {
-        return new TextComponent("dummy");
+        return Component.literal("dummy");
     }
 
     @Override

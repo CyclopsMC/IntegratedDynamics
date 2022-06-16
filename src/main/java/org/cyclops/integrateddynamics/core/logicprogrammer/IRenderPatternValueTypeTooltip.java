@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
@@ -17,7 +16,7 @@ public interface IRenderPatternValueTypeTooltip {
 
     public default List<Component> getValueTypeTooltip(IValueType<?> valueType) {
         List<Component> lines = Lists.newLinkedList();
-        lines.add(new TranslatableComponent(valueType.getTranslationKey())
+        lines.add(Component.translatable(valueType.getTranslationKey())
                 .withStyle(valueType.getDisplayColorFormat()));
         return lines;
     }

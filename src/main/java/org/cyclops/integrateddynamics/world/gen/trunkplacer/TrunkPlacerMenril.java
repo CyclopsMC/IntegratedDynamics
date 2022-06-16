@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.TreeFeature;
@@ -17,7 +18,6 @@ import org.cyclops.integrateddynamics.block.BlockMenrilLogFilled;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -42,7 +42,7 @@ public class TrunkPlacerMenril extends TrunkPlacer {
     }
 
     @Override
-    public List<FoliagePlacer.FoliageAttachment> placeTrunk(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> callback, Random rand, int height,
+    public List<FoliagePlacer.FoliageAttachment> placeTrunk(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, int height,
                                                             BlockPos pos, TreeConfiguration config) {
         // Only generate if stump is fully on ground (other checks are done in TreeFeature.place)
         BlockPos basePos = pos.below();
@@ -85,8 +85,7 @@ public class TrunkPlacerMenril extends TrunkPlacer {
         return ImmutableList.of(new FoliagePlacer.FoliageAttachment(pos.above(height + heightWider), 0 /*radius*/, false));
     }
 
-    // static override
-    protected static boolean placeLog(LevelSimulatedReader p_161887_, BiConsumer<BlockPos, BlockState> p_161888_, Random p_161889_, BlockPos p_161890_, TreeConfiguration p_161891_, Function<BlockState, BlockState> p_161892_) {
+    protected boolean placeLog(LevelSimulatedReader p_161887_, BiConsumer<BlockPos, BlockState> p_161888_, RandomSource p_161889_, BlockPos p_161890_, TreeConfiguration p_161891_, Function<BlockState, BlockState> p_161892_) {
         if (TreeFeature.validTreePos(p_161887_, p_161890_)) {
             BlockState logs = p_161892_.apply(p_161891_.trunkProvider.getState(p_161889_, p_161890_));
             logs = logs.getBlock() instanceof BlockMenrilLogFilled

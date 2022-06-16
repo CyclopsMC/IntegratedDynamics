@@ -8,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -125,14 +124,14 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     @Override
     public void loadTooltip(State state, List<Component> lines) {
         super.loadTooltip(state, lines);
-        lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP, state.getGroupId()));
+        lines.add(Component.translatable(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP, state.getGroupId()));
     }
 
     @Override
     public void loadTooltip(ItemStack itemStack, List<Component> lines) {
         super.loadTooltip(itemStack, lines);
         if (itemStack.hasTag()) {
-            lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
+            lines.add(Component.translatable(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
                     itemStack.getTag().getInt(NBT_KEY_ID)));
         }
     }
@@ -187,7 +186,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
             return InteractionResult.PASS;
         }
         if (world.isClientSide()) {
-            player.displayClientMessage(new TranslatableComponent(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
+            player.displayClientMessage(Component.translatable(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
                     partState.getGroupId()), true);
         }
 

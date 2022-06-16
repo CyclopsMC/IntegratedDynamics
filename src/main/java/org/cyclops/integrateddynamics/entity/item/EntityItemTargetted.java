@@ -5,6 +5,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -12,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
 
-import java.util.Random;
 
 /**
  * Entity item that can not despawn.
@@ -104,7 +104,7 @@ public class EntityItemTargetted extends ItemEntity {
     }
 
     protected void showEntityMoved() {
-        Random rand = level.random;
+        RandomSource rand = level.random;
         float scale = 0.10F;
         float red = rand.nextFloat() * 0.20F + 0.8F;
         float green = rand.nextFloat() * 0.20F + 0.8F;

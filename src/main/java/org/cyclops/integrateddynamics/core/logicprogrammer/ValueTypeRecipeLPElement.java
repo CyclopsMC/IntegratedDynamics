@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
@@ -283,30 +282,30 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     @Override
     public Component validate() {
         if (!inputFluid.isEmpty() && Helpers.getFluidStack(inputFluid).isEmpty()) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+            return Component.translatable(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
         }
         if (!outputFluid.isEmpty() && Helpers.getFluidStack(outputFluid).isEmpty()) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+            return Component.translatable(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
         }
         try {
             Integer.parseInt(inputFluidAmount);
         } catch (NumberFormatException e) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputFluidAmount);
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputFluidAmount);
         }
         try {
             Integer.parseInt(outputFluidAmount);
         } catch (NumberFormatException e) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputFluidAmount);
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputFluidAmount);
         }
         try {
             Long.parseLong(inputEnergy);
         } catch (NumberFormatException e) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputEnergy);
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputEnergy);
         }
         try {
             Long.parseLong(outputEnergy);
         } catch (NumberFormatException e) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputEnergy);
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputEnergy);
         }
         return null;
     }

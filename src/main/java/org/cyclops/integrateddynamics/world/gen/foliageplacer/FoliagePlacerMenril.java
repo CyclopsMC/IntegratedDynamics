@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.world.gen.foliageplacer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,7 +12,6 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
-import java.util.Random;
 import java.util.function.BiConsumer;
 
 /**
@@ -30,7 +30,7 @@ public class FoliagePlacerMenril extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> callback, Random rand, TreeConfiguration config,
+    protected void createFoliage(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, TreeConfiguration config,
                                  int mimimumHeight, FoliagePlacer.FoliageAttachment foliage, int foliageHeight, int spread, int offset) {
         BlockPos blockpos = foliage.pos();
         for(int l = offset; l >= -foliageHeight; --l) {
@@ -39,14 +39,13 @@ public class FoliagePlacerMenril extends FoliagePlacer {
         }
     }
 
-    // MCP: foliage height
     @Override
-    public int foliageHeight(Random rand, int treeHeight, TreeConfiguration config) {
+    public int foliageHeight(RandomSource rand, int treeHeight, TreeConfiguration config) {
         return 5;
     }
 
     @Override
-    protected boolean shouldSkipLocation(Random rand, int p_230373_2_, int p_230373_3_, int p_230373_4_, int p_230373_5_, boolean p_230373_6_) {
+    protected boolean shouldSkipLocation(RandomSource rand, int p_230373_2_, int p_230373_3_, int p_230373_4_, int p_230373_5_, boolean p_230373_6_) {
         return p_230373_2_ == p_230373_5_ && p_230373_4_ == p_230373_5_ && p_230373_5_ > 0; // ???
     }
 }

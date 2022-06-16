@@ -10,8 +10,6 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -75,7 +73,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable ValueOperator value) {
         super.loadTooltip(lines, appendOptionalInfo, value);
         if (value != null) {
-            lines.add(new TranslatableComponent(L10NValues.VALUETYPEOPERATOR_TOOLTIP_SIGNATURE)
+            lines.add(Component.translatable(L10NValues.VALUETYPEOPERATOR_TOOLTIP_SIGNATURE)
                     .append(getSignature(value.getRawValue())));
         }
     }
@@ -116,7 +114,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     public static MutableComponent getSignature(IOperator operator) {
         return getSignatureLines(operator, false)
                 .stream()
-                .reduce(new TextComponent(""), (a, b) -> a.append(" ").append(b));
+                .reduce(Component.literal(""), (a, b) -> a.append(" ").append(b));
     }
 
     /**
@@ -129,12 +127,12 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
         return getSignatureLines(inputTypes, outputType, false)
                 .stream()
                 .reduce((prev, next) -> prev.append(" ").append(next))
-                .orElseGet(() -> new TextComponent(""));
+                .orElseGet(() -> Component.literal(""));
     }
 
     protected static MutableComponent switchSignatureLineContext(List<MutableComponent> lines, MutableComponent sb) {
         lines.add(sb);
-        return new TextComponent("");
+        return Component.literal("");
     }
 
     /**
@@ -146,7 +144,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
      */
     public static List<MutableComponent> getSignatureLines(IValueType[] inputTypes, IValueType outputType, boolean indent) {
         List<MutableComponent> lines = Lists.newArrayList();
-        MutableComponent sb = new TextComponent("");
+        MutableComponent sb = Component.literal("");
         boolean first = true;
         for (IValueType inputType : inputTypes) {
             if (first) {
@@ -156,14 +154,14 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
                 sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ");
             }
             sb.withStyle(inputType.getDisplayColorFormat())
-                    .append(new TranslatableComponent(inputType.getTranslationKey()))
+                    .append(Component.translatable(inputType.getTranslationKey()))
                     .withStyle(ChatFormatting.RESET);
         }
 
         sb = switchSignatureLineContext(lines, sb);
         sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ")
                 .withStyle(outputType.getDisplayColorFormat())
-                .append(new TranslatableComponent(outputType.getTranslationKey()))
+                .append(Component.translatable(outputType.getTranslationKey()))
                 .withStyle(ChatFormatting.RESET);
         switchSignatureLineContext(lines, sb);
         return lines;

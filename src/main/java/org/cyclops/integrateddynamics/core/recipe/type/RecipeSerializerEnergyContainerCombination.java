@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 
 import javax.annotation.Nullable;
@@ -15,8 +14,7 @@ import javax.annotation.Nullable;
  * Recipe serializer for energy container combinations.
  * @author rubensworks
  */
-public class RecipeSerializerEnergyContainerCombination extends ForgeRegistryEntry<RecipeSerializer<?>>
-        implements RecipeSerializer<RecipeEnergyContainerCombination> {
+public class RecipeSerializerEnergyContainerCombination implements RecipeSerializer<RecipeEnergyContainerCombination> {
 
     @Override
     public RecipeEnergyContainerCombination fromJson(ResourceLocation recipeId, JsonObject json) {

@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -57,7 +57,7 @@ public class BlockLogicProgrammer extends BlockGui {
             public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
                 return new ContainerLogicProgrammer(id, playerInventory);
             }
-        }, new TranslatableComponent("block.integrateddynamics.logic_programmer"));
+        }, Component.translatable("block.integrateddynamics.logic_programmer"));
     }
 
 }

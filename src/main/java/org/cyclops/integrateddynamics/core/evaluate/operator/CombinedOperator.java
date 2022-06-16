@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -331,9 +331,9 @@ public class CombinedOperator extends OperatorBase {
             IValueType[] originalInputTypes = operator.getInputTypes();
             IValueType[] flippedInputTypes = new IValueType[originalInputTypes.length];
             if (originalInputTypes.length < 2) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
-                        new TranslatableComponent(Operators.OPERATOR_FLIP.getTranslationKey()),
-                        new TranslatableComponent(operator.getTranslationKey()),
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTHVIRTIUAL,
+                        Component.translatable(Operators.OPERATOR_FLIP.getTranslationKey()),
+                        Component.translatable(operator.getTranslationKey()),
                         originalInputTypes.length, 2));
             }
             for (int i = 0; i < flippedInputTypes.length; i++) {
@@ -345,7 +345,7 @@ public class CombinedOperator extends OperatorBase {
                 combinedOperator = new CombinedOperator(":flip:", "flipped", flip, flippedInputTypes,
                         operator.getOutputType(), null);
             } catch (IllegalArgumentException e) {
-                throw new EvaluationException(new TranslatableComponent(e.getMessage()));
+                throw new EvaluationException(Component.translatable(e.getMessage()));
             }
             return combinedOperator;
         }
@@ -407,7 +407,7 @@ public class CombinedOperator extends OperatorBase {
                 list = (ListTag) tag.get("operators");
             } catch (ClassCastException e) {
                 e.printStackTrace();
-                throw new EvaluationException(new TranslatableComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
                         valueOperator, e.getMessage()));
             }
             IOperator[] operators = new IOperator[list.size()];

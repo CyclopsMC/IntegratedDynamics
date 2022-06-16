@@ -8,8 +8,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -151,19 +149,19 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     @Override
     public Component validate() {
         if(!MinecraftHelpers.isClientSideThread()) {
-            return serverValue == null ? new TextComponent("") : null;
+            return serverValue == null ? Component.literal("") : null;
         }
         if(MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeListValueChangedPacket(
                     listValueType == null ? ValueTypes.LIST.getDefault() : ValueTypeList.ValueList.ofList(listValueType, constructValues())));
         }
         if(this.listValueType == null) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUTITEM);
         }
         for(Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : subElements.entrySet()) {
             Component error = entry.getValue().validate();
             if(error != null) {
-                return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDLISTELEMENT, entry.getKey(), error);
+                return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDLISTELEMENT, entry.getKey(), error);
             }
         }
         return null;
@@ -282,7 +280,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             super.init(guiLeft, guiTop);
             valueTypeSelector = new WidgetArrowedListField<IValueType<?>>(Minecraft.getInstance().font,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true,
-                    new TranslatableComponent("valuetype.integrateddynamics.value_type"), true, getValueTypes());
+                    Component.translatable("valuetype.integrateddynamics.value_type"), true, getValueTypes());
             valueTypeSelector.setListener(this);
             if (element.activeElement == -1) {
                 onChanged();
@@ -290,7 +288,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             int x = guiLeft + getX();
             int y = guiTop + getY();
             buttonList.add(arrowAdd = new ButtonText(x + getWidth() - 13, y + getHeight() - 13, 12, 12,
-                    new TranslatableComponent("gui.integrateddynamics.button.add"), new TextComponent("+"), b -> {}, true));
+                    Component.translatable("gui.integrateddynamics.button.add"), Component.literal("+"), b -> {}, true));
         }
 
         @Override
@@ -368,11 +366,11 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             super.init(guiLeft, guiTop);
             int x = guiLeft + getX();
             int y = guiTop + getY();
-            buttonList.add(arrowLeft = new ButtonArrow(x, y, new TranslatableComponent("gui.cyclopscore.left"),
+            buttonList.add(arrowLeft = new ButtonArrow(x, y, Component.translatable("gui.cyclopscore.left"),
                     b -> element.setActiveElement(element.activeElement - 1), ButtonArrow.Direction.WEST));
-            buttonList.add(arrowRight = new ButtonArrow(x + getWidth() - arrowLeft.getWidth() - 1, y, new TranslatableComponent("gui.cyclopscore.right"),
+            buttonList.add(arrowRight = new ButtonArrow(x + getWidth() - arrowLeft.getWidth() - 1, y, Component.translatable("gui.cyclopscore.right"),
                     b -> element.setActiveElement(element.activeElement + 1), ButtonArrow.Direction.EAST));
-            buttonList.add(arrowRemove = new ButtonText(x + (getWidth() / 2) - (arrowLeft.getWidth() / 2), y + getHeight() - 13, 12, 12, new TranslatableComponent("gui.integrateddynamics.button.remove"), new TextComponent("-"),
+            buttonList.add(arrowRemove = new ButtonText(x + (getWidth() / 2) - (arrowLeft.getWidth() / 2), y + getHeight() - 13, 12, 12, Component.translatable("gui.integrateddynamics.button.remove"), Component.literal("-"),
                     b -> element.removeElement(element.activeElement), true));
             arrowLeft.active = element.activeElement > 0;
             arrowRight.active = element.activeElement < element.length - 1;

@@ -8,8 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
@@ -95,7 +93,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         if (isFieldSideEnabled()) {
             dropdownEntries = Arrays.stream(Direction.values()).map(SideDropdownEntry::new).collect(Collectors.toList());
             dropdownFieldSide = new WidgetTextFieldDropdown(font, leftPos + 106, topPos + getFieldSideY(),
-                    70, 14, new TranslatableComponent("gui.integrateddynamics.partsettings.side"), true,
+                    70, 14, Component.translatable("gui.integrateddynamics.partsettings.side"), true,
                     Sets.newHashSet(dropdownEntries));
             setSideInDropdownField(getCurrentSide());
             dropdownFieldSide.setMaxLength(15);
@@ -106,7 +104,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldUpdateIntervalEnabled()) {
             numberFieldUpdateInterval = new WidgetNumberField(font, leftPos + 106, topPos + getFieldUpdateIntervalY(), 70, 14, true,
-                    new TranslatableComponent("gui.integrateddynamics.partsettings.update_interval"), true);
+                    Component.translatable("gui.integrateddynamics.partsettings.update_interval"), true);
             numberFieldUpdateInterval.setMaxLength(15);
             numberFieldUpdateInterval.setVisible(true);
             numberFieldUpdateInterval.setTextColor(16777215);
@@ -116,7 +114,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldPriorityEnabled()) {
             numberFieldPriority = new WidgetNumberField(font, leftPos + 106, topPos + getFieldPriorityY(), 70, 14, true,
-                    new TranslatableComponent("gui.integrateddynamics.partsettings.priority"), true);
+                    Component.translatable("gui.integrateddynamics.partsettings.priority"), true);
             numberFieldPriority.setPositiveOnly(false);
             numberFieldPriority.setMaxLength(15);
             numberFieldPriority.setVisible(true);
@@ -126,7 +124,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
         if (isFieldChannelEnabled()) {
             numberFieldChannel = new WidgetNumberField(font, leftPos + 106, topPos + getFieldChannelY(), 70, 14, true,
-                    new TranslatableComponent("gui.integrateddynamics.partsettings.channel"), true);
+                    Component.translatable("gui.integrateddynamics.partsettings.channel"), true);
             numberFieldChannel.setPositiveOnly(false);
             numberFieldChannel.setMaxLength(15);
             numberFieldChannel.setVisible(true);
@@ -135,7 +133,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
             numberFieldChannel.setEditable(isChannelEnabled());
         }
 
-        TranslatableComponent save = new TranslatableComponent("gui.integrateddynamics.button.save");
+        MutableComponent save = Component.translatable("gui.integrateddynamics.button.save");
         addRenderableWidget(new ButtonText(this.leftPos + 178, this.topPos + 8, font.width(save.getVisualOrderText()) + 6, 16, save, save,
                 createServerPressable(ContainerPartSettings.BUTTON_SAVE, b -> onSave()), true));
 
@@ -265,7 +263,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
             GuiHelpers.renderTooltip(this, matrixStack, 8, 87, 100, 20, mouseX, mouseY,
-                    () -> Lists.<Component>newArrayList(new TranslatableComponent("gui.integrateddynamics.partsettings.channel.disabledinfo")));
+                    () -> Lists.<Component>newArrayList(Component.translatable("gui.integrateddynamics.partsettings.channel.disabledinfo")));
         }
     }
 
@@ -323,9 +321,9 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         @Override
         public MutableComponent getDisplayString() {
             if (getDefaultSide() == this.side) {
-                return new TextComponent(getMatchString()).withStyle(ChatFormatting.YELLOW);
+                return Component.literal(getMatchString()).withStyle(ChatFormatting.YELLOW);
             }
-            return new TextComponent(getMatchString());
+            return Component.literal(getMatchString());
         }
 
         @Override

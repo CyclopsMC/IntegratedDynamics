@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -66,10 +65,10 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     @Override
     public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
-        Component aspectName = new TranslatableComponent(getTranslationKey());
-        Component valueTypeName = new TranslatableComponent(getValueType().getTranslationKey());
-        lines.add(new TranslatableComponent(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
-        lines.add(new TranslatableComponent(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
+        Component aspectName = Component.translatable(getTranslationKey());
+        Component valueTypeName = Component.translatable(getValueType().getTranslationKey());
+        lines.add(Component.translatable(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
+        lines.add(Component.translatable(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
                 .withStyle(getValueType().getDisplayColorFormat()));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
@@ -112,7 +111,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         return new MenuProvider() {
             @Override
             public Component getDisplayName() {
-                return new TranslatableComponent("gui.integrateddynamics.aspect_settings");
+                return Component.translatable("gui.integrateddynamics.aspect_settings");
             }
 
             @Nullable

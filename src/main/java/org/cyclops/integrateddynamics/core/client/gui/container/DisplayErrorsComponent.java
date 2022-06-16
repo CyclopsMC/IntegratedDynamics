@@ -5,13 +5,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +29,7 @@ public class DisplayErrorsComponent {
                     lines.addAll(StringHelpers.splitLines(error.getString(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
                             ChatFormatting.RED.toString())
                             .stream()
-                            .map(TextComponent::new)
+                            .map(Component::literal)
                             .collect(Collectors.toList()));
                 }
                 gui.drawTooltip(lines, matrixStack, mouseX - guiLeft, mouseY - guiTop);

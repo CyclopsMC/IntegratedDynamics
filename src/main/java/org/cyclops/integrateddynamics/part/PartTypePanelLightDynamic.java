@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -74,8 +74,8 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         try {
             return ValueTypeLightLevels.REGISTRY.getLightLevel(value);
         } catch (InvalidValueTypeException e) {
-            state.addGlobalError(new TranslatableComponent(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
-                    new TranslatableComponent(value.getType().getTranslationKey())));
+            state.addGlobalError(Component.translatable(L10NValues.PART_PANEL_ERROR_INVALIDTYPE,
+                    Component.translatable(value.getType().getTranslationKey())));
         }
         return 0;
     }

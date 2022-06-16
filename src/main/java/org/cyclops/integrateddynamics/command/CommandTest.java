@@ -7,10 +7,9 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 
@@ -39,12 +38,12 @@ public class CommandTest implements Command<CommandSourceStack> {
 
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        context.getSource().getPlayerOrException().sendMessage(new TextComponent("Running tests..."), Util.NIL_UUID);
+        context.getSource().getPlayerOrException().sendSystemMessage(Component.literal("Running tests..."));
         try {
             if(!test()) {
-                context.getSource().getPlayerOrException().sendMessage(new TextComponent("There were failing tests, see results in console."), Util.NIL_UUID);
+                context.getSource().getPlayerOrException().sendSystemMessage(Component.literal("There were failing tests, see results in console."));
             } else {
-                context.getSource().getPlayerOrException().sendMessage(new TextComponent("All tests succeeded!"), Util.NIL_UUID);
+                context.getSource().getPlayerOrException().sendSystemMessage(Component.literal("All tests succeeded!"));
             }
             return 0;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {

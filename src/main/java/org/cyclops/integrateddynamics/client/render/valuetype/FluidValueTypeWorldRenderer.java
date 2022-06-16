@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
+import net.minecraftforge.client.IFluidTypeRenderProperties;
+import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -31,14 +33,15 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
                             int combinedLight, int combinedOverlay, float alpha) {
         FluidStack fluidStack = ((ValueObjectTypeFluidStack.ValueFluidStack) value).getRawValue();
         if (!fluidStack.isEmpty()) {
-            int brightness = Math.max(combinedLight, fluidStack.getFluid().getAttributes().getLuminosity(fluidStack));
+            int brightness = Math.max(combinedLight, fluidStack.getFluid().getFluidType().getLightLevel(fluidStack));
             int l2 = brightness >> 0x10 & 0xFFFF;
             int i3 = brightness & 0xFFFF;
 
             // Fluid
             matrixStack.pushPose();
             TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStack, Direction.UP);
-            Triple<Float, Float, Float> color = Helpers.intToRGB(fluidStack.getFluid().getAttributes().getColor(context.getBlockEntityRenderDispatcher().level, context.getBlockEntityRenderDispatcher().camera.getBlockPosition()));
+            IFluidTypeRenderProperties renderProperties = RenderProperties.get(fluidStack.getFluid());
+            Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getColorTint(fluidStack));
 
             VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
             Matrix4f matrix = matrixStack.last().pose();

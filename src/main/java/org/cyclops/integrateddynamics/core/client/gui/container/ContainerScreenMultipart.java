@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
@@ -38,7 +37,7 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
         P partType = getMenu().getPartType();
         if(partType instanceof PartTypeConfigurable && partType.getContainerProviderSettings(null).isPresent()) {
             addRenderableWidget(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
-                    new TranslatableComponent("gui.integrateddynamics.part_settings"),
+                    Component.translatable("gui.integrateddynamics.part_settings"),
                     createServerPressable(ContainerMultipart.BUTTON_SETTINGS, (button) -> {}), true,
                     Images.CONFIG_BOARD, -2, -3));
         }

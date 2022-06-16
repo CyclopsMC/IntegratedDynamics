@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.capability.ingredient;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.ingredient.capability.IIngredientComponentValueHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
@@ -47,7 +46,7 @@ public class IngredientComponentValueHandlerEnergy implements IIngredientCompone
     public Component toCompactString(ValueTypeInteger.ValueInteger ingredientValue) {
         return getValueType().toCompactString(ingredientValue)
                 .append(" ")
-                .append(new TranslatableComponent(L10NValues.GENERAL_ENERGY_UNIT));
+                .append(Component.translatable(L10NValues.GENERAL_ENERGY_UNIT));
     }
 
 }

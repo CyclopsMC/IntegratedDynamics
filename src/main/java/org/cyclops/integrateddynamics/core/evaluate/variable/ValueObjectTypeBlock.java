@@ -5,12 +5,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -32,7 +31,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     }
 
     public static MutableComponent getBlockkDisplayNameSafe(BlockState blockState) {
-        return new TranslatableComponent(blockState.getBlock().getDescriptionId());
+        return Component.translatable(blockState.getBlock().getDescriptionId());
     }
 
     @Override
@@ -50,7 +49,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             }
             return ValueObjectTypeBlock.getBlockkDisplayNameSafe(blockState);
         }
-        return new TextComponent("");
+        return Component.literal("");
     }
 
     @Override
@@ -88,7 +87,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             @Override
             public Component validate(ItemStack itemStack) {
                 if(!itemStack.isEmpty() && !(itemStack.getItem() instanceof BlockItem)) {
-                    return new TranslatableComponent(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
+                    return Component.translatable(L10NValues.VALUETYPE_OBJECT_BLOCK_ERROR_NOBLOCK);
                 }
                 return null;
             }
@@ -105,7 +104,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     public String getUniqueName(ValueBlock value) {
         if (value.getRawValue().isPresent()) {
             BlockState blockState = value.getRawValue().get();
-            return blockState.getBlock().getRegistryName().toString();
+            return ForgeRegistries.BLOCKS.getKey(blockState.getBlock()).toString();
         }
         return "";
     }

@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -21,7 +22,6 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
-import java.util.Random;
 import java.util.function.Supplier;
 
 /**
@@ -43,7 +43,7 @@ public class BlockMenrilTorchStoneWallConfig extends BlockConfig {
                             .sound(SoundType.STONE), ParticleTypes.FLAME) {
                         @Override
                         @OnlyIn(Dist.CLIENT)
-                        public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
+                        public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
                             // No particles
                         }
                     };

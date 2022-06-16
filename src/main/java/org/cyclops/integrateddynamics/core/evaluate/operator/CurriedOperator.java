@@ -5,7 +5,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -73,14 +72,14 @@ public class CurriedOperator implements IOperator {
 
     @Override
     public MutableComponent getLocalizedNameFull() {
-        return new TranslatableComponent(L10NValues.OPERATOR_APPLIED_OPERATORNAME,
+        return Component.translatable(L10NValues.OPERATOR_APPLIED_OPERATORNAME,
                 baseOperator.getLocalizedNameFull(), getAppliedSymbol());
     }
 
     @Override
     public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
         baseOperator.loadTooltip(lines, appendOptionalInfo);
-        lines.add(new TranslatableComponent(L10NValues.OPERATOR_APPLIED_TYPE, getAppliedSymbol()));
+        lines.add(Component.translatable(L10NValues.OPERATOR_APPLIED_TYPE, getAppliedSymbol()));
     }
 
     @Override
@@ -210,7 +209,7 @@ public class CurriedOperator implements IOperator {
                 tag = (CompoundTag) valueOperator;
             } catch (ClassCastException e) {
                 e.printStackTrace();
-                throw new EvaluationException(new TranslatableComponent(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
+                throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
                         valueOperator, e.getMessage()));
             }
             ListTag list = tag.getList("values", Tag.TAG_COMPOUND);

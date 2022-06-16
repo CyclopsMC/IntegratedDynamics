@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.Level;
@@ -20,7 +21,6 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
-import java.util.Random;
 
 /**
  * Config for the Menril Stone Torch.
@@ -40,7 +40,7 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
                         .sound(SoundType.STONE), ParticleTypes.FLAME) {
                     @Override
                     @OnlyIn(Dist.CLIENT)
-                    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
+                    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
                         // No particles
                     }
                 },

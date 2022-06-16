@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -161,7 +160,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.integrateddynamics.delay");
+        return Component.translatable("block.integrateddynamics.delay");
     }
 
     public static class Ticker extends BlockEntityProxy.Ticker<BlockEntityDelay> {
@@ -187,7 +186,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
                     try {
                         value = variable.getValue();
                     } catch (EvaluationException e) {
-                        blockEntity.getEvaluator().addError(new TranslatableComponent(e.toString()));
+                        blockEntity.getEvaluator().addError(Component.translatable(e.toString()));
                     }
                     if (value != null) {
                         try {

@@ -5,10 +5,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -40,7 +39,7 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     @Override
     public MutableComponent toCompactString(ValueFluidStack value) {
         FluidStack fluidStack = value.getRawValue();
-        return !fluidStack.isEmpty() ? ((MutableComponent) fluidStack.getDisplayName()).append(String.format(" (%s mB)", fluidStack.getAmount())) : new TextComponent("");
+        return !fluidStack.isEmpty() ? ((MutableComponent) fluidStack.getDisplayName()).append(String.format(" (%s mB)", fluidStack.getAmount())) : Component.literal("");
     }
 
     @Override
@@ -80,7 +79,7 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
 
             @Override
             public Component validate(ItemStack itemStack) {
-                return itemStack.isEmpty() || Helpers.getFluidStack(itemStack) != null ? null : new TranslatableComponent(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+                return itemStack.isEmpty() || Helpers.getFluidStack(itemStack) != null ? null : Component.translatable(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
             }
 
             @Override
@@ -94,7 +93,7 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     public String getUniqueName(ValueFluidStack value) {
         FluidStack fluidStack = value.getRawValue();
         return !fluidStack.isEmpty() ?
-                String.format("%s %s", fluidStack.getFluid().getRegistryName(), fluidStack.getAmount()) : "";
+                String.format("%s %s", ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid()), fluidStack.getAmount()) : "";
     }
 
     @ToString

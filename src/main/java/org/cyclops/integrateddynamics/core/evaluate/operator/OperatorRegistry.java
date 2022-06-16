@@ -12,7 +12,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -132,7 +132,7 @@ public class OperatorRegistry implements IOperatorRegistry {
             IOperatorSerializer serializer = namedSerializers.get(serializerName);
             if (serializer == null) {
                 throw new EvaluationException(
-                        new TranslatableComponent(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value));
+                        Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value));
             }
             return serializer.deserialize(tag.get("value"));
         }

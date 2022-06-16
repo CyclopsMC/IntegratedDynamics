@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -37,7 +37,7 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
     @Override
     public MenuProvider getContainer(Level world, Player playerEntity, ItemLocation itemLocation) {
         return new NamedContainerProviderItem(itemLocation,
-                new TranslatableComponent("gui.cyclopscore.infobook"), ContainerOnTheDynamicsOfIntegration::new);
+                Component.translatable("gui.cyclopscore.infobook"), ContainerOnTheDynamicsOfIntegration::new);
     }
 
     @Override

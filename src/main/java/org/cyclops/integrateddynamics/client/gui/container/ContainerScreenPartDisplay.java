@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.client.gui.container;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -37,8 +36,8 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
         super.init();
 
         addRenderableWidget(new ButtonText(getGuiLeftTotal() + 128, getGuiTopTotal() + 32, 30, 12,
-                new TranslatableComponent("gui.integrateddynamics.button.copy"),
-                new TranslatableComponent("gui.integrateddynamics.button.copy"),
+                Component.translatable("gui.integrateddynamics.button.copy"),
+                Component.translatable("gui.integrateddynamics.button.copy"),
                 (button) -> valueToClipboard(), true));
     }
 
@@ -72,7 +71,7 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
 
         // Draw tooltip over copy button
         GuiHelpers.renderTooltip(this, matrixStack, 128, 32, 30, 12, mouseX, mouseY,
-                () -> Lists.newArrayList(new TranslatableComponent("gui.integrateddynamics.button.copy.info")));
+                () -> Lists.newArrayList(Component.translatable("gui.integrateddynamics.button.copy.info")));
     }
 
     @Override

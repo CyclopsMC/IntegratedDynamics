@@ -10,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -21,8 +20,7 @@ import javax.annotation.Nullable;
  * Recipe serializer for mechanical drying basin recipes
  * @author rubensworks
  */
-public class RecipeSerializerMechanicalDryingBasin extends ForgeRegistryEntry<RecipeSerializer<?>>
-        implements RecipeSerializer<RecipeMechanicalDryingBasin> {
+public class RecipeSerializerMechanicalDryingBasin implements RecipeSerializer<RecipeMechanicalDryingBasin> {
 
     @Override
     public RecipeMechanicalDryingBasin fromJson(ResourceLocation recipeId, JsonObject json) {

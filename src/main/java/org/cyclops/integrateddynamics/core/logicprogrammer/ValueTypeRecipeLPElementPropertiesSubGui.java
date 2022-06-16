@@ -7,9 +7,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -58,7 +57,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         super.init(guiLeft, guiTop);
 
         this.inputNbt = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 2, 110, 10,
-                new TranslatableComponent(L10NValues.GUI_RECIPE_STRICTNBT), (entry) ->  {
+                Component.translatable(L10NValues.GUI_RECIPE_STRICTNBT), (entry) ->  {
             // Only allow one checkbox to be true at the same time
             if (this.inputNbt.isChecked()) {
                 this.inputTags.setChecked(false);
@@ -67,7 +66,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             loadStateToGui();
         });
         this.inputTags = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 12, 110, 10,
-                new TranslatableComponent(L10NValues.GUI_RECIPE_TAGVARIANTS), (entry) -> {
+                Component.translatable(L10NValues.GUI_RECIPE_TAGVARIANTS), (entry) -> {
             // Only allow one checkbox to be true at the same time
             if (this.inputTags.isChecked()) {
                 this.inputNbt.setChecked(false);
@@ -81,7 +80,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         this.inputTagsDropdown = new WidgetTextFieldDropdown<>(Minecraft.getInstance().font,
                 guiLeft + getX() + 2, guiTop + getY() + 23,
                 134, 14,
-                new TranslatableComponent("gui.cyclopscore.search"), true,
+                Component.translatable("gui.cyclopscore.search"), true,
                 Sets.newHashSet());
         this.inputTagsDropdown.setDropdownEntryListener((entry) -> saveGuiToState());
         this.inputTagsDropdown.setMaxLength(64);
@@ -90,7 +89,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         this.inputTagsDropdown.setTextColor(16777215);
         this.inputTagsDropdown.setCanLoseFocus(true);
         this.inputSave = new ButtonImage(guiLeft + getX() + 116, guiTop + getY() + 72,
-                new TranslatableComponent("gui.integrateddynamics.button.save"),
+                Component.translatable("gui.integrateddynamics.button.save"),
                 (button) -> {
             // If tag checkbox is checked, only allow exiting if a valid tag has been set
             if (!this.inputTags.isChecked() || this.inputTagsDropdown.getSelectedDropdownPossibility() != null) {
@@ -264,7 +263,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
 
         @Override
         public MutableComponent getDisplayString() {
-            return new TextComponent(this.tag.toString());
+            return Component.literal(this.tag.toString());
         }
 
         @Override

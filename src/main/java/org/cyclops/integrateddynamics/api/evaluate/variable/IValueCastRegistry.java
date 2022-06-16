@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -59,7 +59,7 @@ public interface IValueCastRegistry extends IRegistry {
     public static class ValueCastException extends InvalidValueTypeException {
 
         public ValueCastException(IValueType from, IValueType to) {
-            super(new TranslatableComponent(L10NValues.OPERATOR_ERROR_CAST_NOMAPPING, from, to));
+            super(Component.translatable(L10NValues.OPERATOR_ERROR_CAST_NOMAPPING, from, to));
         }
     }
 

@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -26,7 +26,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 /**
  * Variable facade for variables determined by proxies.
@@ -84,27 +83,27 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     }
 
     protected MutableComponent getProxyNotInNetworkError() {
-        return new TranslatableComponent(L10NValues.PROXY_ERROR_PROXYNOTINNETWORK, Integer.toString(proxyId));
+        return Component.translatable(L10NValues.PROXY_ERROR_PROXYNOTINNETWORK, Integer.toString(proxyId));
     }
 
     protected MutableComponent getProxyInvalidError() {
-        return new TranslatableComponent(L10NValues.PROXY_ERROR_PROXYINVALID, Integer.toString(proxyId));
+        return Component.translatable(L10NValues.PROXY_ERROR_PROXYINVALID, Integer.toString(proxyId));
     }
 
     protected MutableComponent getProxyInvalidTypeError(IPartNetwork network,
                                                                      IValueType containingValueType,
                                                                      IValueType actualType) {
-        return new TranslatableComponent(L10NValues.PROXY_ERROR_PROXYINVALIDTYPE,
+        return Component.translatable(L10NValues.PROXY_ERROR_PROXYINVALIDTYPE,
                 Integer.toString(proxyId),
-                new TranslatableComponent(containingValueType.getTranslationKey()),
-                new TranslatableComponent(actualType.getTranslationKey()));
+                Component.translatable(containingValueType.getTranslationKey()),
+                Component.translatable(actualType.getTranslationKey()));
     }
 
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         Optional<IVariable> targetVariable = getTargetVariable(network);
         if (!isValid()) {
-            validator.addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else if (network.getProxy(proxyId) == null) {
             validator.addError(getProxyNotInNetworkError());
         } else if (!targetVariable.isPresent()) {
@@ -129,7 +128,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     }
 
     protected Component getProxyTooltip() {
-        return new TranslatableComponent(L10NValues.PROXY_TOOLTIP_PROXYID, proxyId);
+        return Component.translatable(L10NValues.PROXY_TOOLTIP_PROXYID, proxyId);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -143,7 +142,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
         if(isValid()) {
             quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.PROXY).getBakedModel().getQuads(null, null, random, modelData));
         }

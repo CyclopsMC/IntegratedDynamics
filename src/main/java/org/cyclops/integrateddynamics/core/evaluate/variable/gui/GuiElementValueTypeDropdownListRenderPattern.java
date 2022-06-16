@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -48,7 +48,7 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
         int searchX = getX() + 14;
         int searchY = getY() + 6;
         this.searchField = new WidgetTextFieldDropdown<>(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.lineHeight + 3, new TranslatableComponent("gui.cyclopscore.search"), true, getDropdownPossibilities());
+                fontRenderer.lineHeight + 3, Component.translatable("gui.cyclopscore.search"), true, getDropdownPossibilities());
         this.searchField.setDropdownEntryListener(this);
         this.searchField.setMaxLength(64);
         this.searchField.setBordered(false);

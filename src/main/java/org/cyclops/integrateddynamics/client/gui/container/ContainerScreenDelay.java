@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.client.gui.container;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
@@ -55,7 +54,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         super.init();
 
         numberFieldUpdateInterval = new WidgetNumberField(font, leftPos + 98, topPos + 102, 73, 14, true,
-                new TranslatableComponent("gui.integrateddynamics.partsettings.update_interval"), true);
+                Component.translatable("gui.integrateddynamics.partsettings.update_interval"), true);
         numberFieldUpdateInterval.setPositiveOnly(true);
         numberFieldUpdateInterval.setMaxLength(64);
         numberFieldUpdateInterval.setMaxLength(15);
@@ -64,7 +63,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.setCanLoseFocus(true);
 
         numberFieldCapacity = new WidgetNumberField(font, leftPos + 98, topPos + 126, 73, 14, true,
-                new TranslatableComponent("gui.integrateddynamics.delay.capacity"), true);
+                Component.translatable("gui.integrateddynamics.delay.capacity"), true);
         numberFieldCapacity.setMinValue(1);
         numberFieldCapacity.setMaxValue(BlockDelayConfig.maxHistoryCapacity);
         numberFieldCapacity.setMaxLength(64);
@@ -118,8 +117,8 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.renderButton(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
         numberFieldCapacity.renderButton(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
         // MCP: drawString
-        font.draw(matrixStack, new TranslatableComponent("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0));
-        font.draw(matrixStack, new TranslatableComponent("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0));
     }
 
     @Override

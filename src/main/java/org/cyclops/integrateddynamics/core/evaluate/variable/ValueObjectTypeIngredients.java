@@ -3,8 +3,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import lombok.ToString;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -31,13 +31,13 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     }
 
     public static MutableComponent ingredientsToTextComponent(IMixedIngredients ingredients) {
-        MutableComponent sb = new TextComponent("");
+        MutableComponent sb = Component.literal("");
 
         for (IngredientComponent<?, ?> component : ingredients.getComponents()) {
             IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
             for (Object instance : ingredients.getInstances(component)) {
                 if (sb.getSiblings().size() > 0) {
-                    sb.append(new TextComponent(", "));
+                    sb.append(Component.literal(", "));
                 }
                 sb.append(handler.toCompactString(handler.toValue(instance)));
             }
@@ -51,7 +51,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         if (value.getRawValue().isPresent()) {
             return ingredientsToTextComponent(value.getRawValue().get());
         }
-        return new TextComponent("");
+        return Component.literal("");
     }
 
     @Override

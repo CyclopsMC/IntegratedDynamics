@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.ingredient;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.RegisterEvent;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -40,91 +39,93 @@ public class IngredientComponentHandlers {
 
     }
 
-    public static void onIngredientComponentsPopulated(RegistryEvent.Register<IngredientComponent<?, ?>> event) {
-        // Components are still loading here, so grab them by name
-        IngredientComponent componentItem = IngredientComponent.REGISTRY.getValue(
-                new ResourceLocation("minecraft:itemstack"));
-        IngredientComponent componentFluid = IngredientComponent.REGISTRY.getValue(
-                new ResourceLocation("minecraft:fluidstack"));
-        IngredientComponent componentEnergy = IngredientComponent.REGISTRY.getValue(
-                new ResourceLocation("minecraft:energy"));
+    public static void onIngredientComponentsPopulated(RegisterEvent event) {
+        if (event.getRegistryKey().equals(IngredientComponent.REGISTRY.getRegistryKey())) {
+            // Components are still loading here, so grab them by name
+            IngredientComponent componentItem = IngredientComponent.REGISTRY.getValue(
+                    new ResourceLocation("minecraft:itemstack"));
+            IngredientComponent componentFluid = IngredientComponent.REGISTRY.getValue(
+                    new ResourceLocation("minecraft:fluidstack"));
+            IngredientComponent componentEnergy = IngredientComponent.REGISTRY.getValue(
+                    new ResourceLocation("minecraft:energy"));
 
-        REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeItemStack,
-                ValueObjectTypeItemStack.ValueItemStack, ItemStack, Integer>() {
-            @Override
-            public ValueObjectTypeItemStack getValueType() {
-                return ValueTypes.OBJECT_ITEMSTACK;
-            }
+            REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeItemStack,
+                    ValueObjectTypeItemStack.ValueItemStack, ItemStack, Integer>() {
+                @Override
+                public ValueObjectTypeItemStack getValueType() {
+                    return ValueTypes.OBJECT_ITEMSTACK;
+                }
 
-            @Override
-            public IngredientComponent<ItemStack, Integer> getComponent() {
-                return componentItem;
-            }
+                @Override
+                public IngredientComponent<ItemStack, Integer> getComponent() {
+                    return componentItem;
+                }
 
-            @Override
-            public ValueObjectTypeItemStack.ValueItemStack toValue(ItemStack instance) {
-                return ValueObjectTypeItemStack.ValueItemStack.of(instance);
-            }
+                @Override
+                public ValueObjectTypeItemStack.ValueItemStack toValue(ItemStack instance) {
+                    return ValueObjectTypeItemStack.ValueItemStack.of(instance);
+                }
 
-            @Override
-            public ItemStack toInstance(ValueObjectTypeItemStack.ValueItemStack value) {
-                return value.getRawValue();
-            }
-        });
-        REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeFluidStack,
-                ValueObjectTypeFluidStack.ValueFluidStack, FluidStack, Integer>() {
+                @Override
+                public ItemStack toInstance(ValueObjectTypeItemStack.ValueItemStack value) {
+                    return value.getRawValue();
+                }
+            });
+            REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeFluidStack,
+                    ValueObjectTypeFluidStack.ValueFluidStack, FluidStack, Integer>() {
 
-            @Override
-            public ValueObjectTypeFluidStack getValueType() {
-                return ValueTypes.OBJECT_FLUIDSTACK;
-            }
+                @Override
+                public ValueObjectTypeFluidStack getValueType() {
+                    return ValueTypes.OBJECT_FLUIDSTACK;
+                }
 
-            @Override
-            public IngredientComponent<FluidStack, Integer> getComponent() {
-                return componentFluid;
-            }
+                @Override
+                public IngredientComponent<FluidStack, Integer> getComponent() {
+                    return componentFluid;
+                }
 
-            @Override
-            public ValueObjectTypeFluidStack.ValueFluidStack toValue(@Nullable FluidStack instance) {
-                return ValueObjectTypeFluidStack.ValueFluidStack.of(instance);
-            }
+                @Override
+                public ValueObjectTypeFluidStack.ValueFluidStack toValue(@Nullable FluidStack instance) {
+                    return ValueObjectTypeFluidStack.ValueFluidStack.of(instance);
+                }
 
-            @Override
-            @Nullable
-            public FluidStack toInstance(ValueObjectTypeFluidStack.ValueFluidStack value) {
-                return value.getRawValue();
-            }
-        });
-        REGISTRY.register(new IIngredientComponentHandler<ValueTypeLong, ValueTypeLong.ValueLong, Long, Boolean>() {
+                @Override
+                @Nullable
+                public FluidStack toInstance(ValueObjectTypeFluidStack.ValueFluidStack value) {
+                    return value.getRawValue();
+                }
+            });
+            REGISTRY.register(new IIngredientComponentHandler<ValueTypeLong, ValueTypeLong.ValueLong, Long, Boolean>() {
 
-            @Override
-            public ValueTypeLong getValueType() {
-                return ValueTypes.LONG;
-            }
+                @Override
+                public ValueTypeLong getValueType() {
+                    return ValueTypes.LONG;
+                }
 
-            @Override
-            public IngredientComponent<Long, Boolean> getComponent() {
-                return componentEnergy;
-            }
+                @Override
+                public IngredientComponent<Long, Boolean> getComponent() {
+                    return componentEnergy;
+                }
 
-            @Override
-            public ValueTypeLong.ValueLong toValue(@Nullable Long instance) {
-                return ValueTypeLong.ValueLong.of(instance);
-            }
+                @Override
+                public ValueTypeLong.ValueLong toValue(@Nullable Long instance) {
+                    return ValueTypeLong.ValueLong.of(instance);
+                }
 
-            @Nullable
-            @Override
-            public Long toInstance(ValueTypeLong.ValueLong value) {
-                return value.getRawValue();
-            }
+                @Nullable
+                @Override
+                public Long toInstance(ValueTypeLong.ValueLong value) {
+                    return value.getRawValue();
+                }
 
-            @Override
-            public Component toCompactString(ValueTypeLong.ValueLong ingredientValue) {
-                return getValueType().toCompactString(ingredientValue)
-                        .append(" ")
-                        .append(new TranslatableComponent(L10NValues.GENERAL_ENERGY_UNIT));
-            }
-        });
+                @Override
+                public Component toCompactString(ValueTypeLong.ValueLong ingredientValue) {
+                    return getValueType().toCompactString(ingredientValue)
+                            .append(" ")
+                            .append(Component.translatable(L10NValues.GENERAL_ENERGY_UNIT));
+                }
+            });
+        }
     }
 
 }

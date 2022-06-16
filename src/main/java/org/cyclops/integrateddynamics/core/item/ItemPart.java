@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -75,7 +74,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
 
     @Override
     public Component getName(ItemStack p_200295_1_) {
-        return new TranslatableComponent(getDescriptionId());
+        return Component.translatable(getDescriptionId());
     }
 
     @Override
@@ -171,7 +170,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         if(itemStack.getTag() != null
                 && itemStack.getTag().contains("id", Tag.TAG_INT)) {
             int id = itemStack.getTag().getInt("id");
-            list.add(new TranslatableComponent(L10NValues.GENERAL_ITEM_ID, id));
+            list.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
         }
         getPart().loadTooltip(itemStack, list);
         super.appendHoverText(itemStack, world, list, flag);

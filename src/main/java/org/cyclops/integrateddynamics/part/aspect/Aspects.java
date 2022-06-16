@@ -6,7 +6,7 @@ import com.google.common.math.Stats;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -187,7 +187,7 @@ public class Aspects {
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_BIOME =
                     AspectReadBuilders.Block.BUILDER_STRING
                             .handle(
-                                    dimPos -> dimPos.getLevel(true).getBiome(dimPos.getBlockPos()).value().getRegistryName().toString()
+                                    dimPos -> ForgeRegistries.BIOMES.getKey(dimPos.getLevel(true).getBiome(dimPos.getBlockPos()).value()).toString()
                             ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHT =
@@ -670,13 +670,13 @@ public class Aspects {
                                 IValueInterface valueInterface = BlockEntityHelpers
                                         .getCapability(target.getPos(), target.getSide(), ValueInterfaceConfig.CAPABILITY)
                                         .orElseThrow(() -> {
-                                            EvaluationException error = new EvaluationException(new TranslatableComponent(
+                                            EvaluationException error = new EvaluationException(Component.translatable(
                                                     L10NValues.ASPECT_ERROR_NOVALUEINTERFACE));
                                             error.setRetryEvaluation(true);
                                             return error;
                                         });
                                 return valueInterface.getValue()
-                                        .orElseThrow(() -> new EvaluationException(new TranslatableComponent(
+                                        .orElseThrow(() -> new EvaluationException(Component.translatable(
                                                 L10NValues.ASPECT_ERROR_NOVALUEINTERFACEVALUE)));
                             }
                     ).appendKind("value").buildRead();
@@ -893,8 +893,8 @@ public class Aspects {
         public static final class Effect {
 
             public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticle(final ParticleOptions particle) {
-                return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(particle
-                        .getType().getRegistryName().toString().toLowerCase(Locale.ROOT).replaceAll(":", "_"))
+                return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(ForgeRegistries
+                                .PARTICLE_TYPES.getKey(particle.getType()).toString().toLowerCase(Locale.ROOT).replaceAll(":", "_"))
                         .handle(input -> {
                             double velocity = input.getRight();
                             if (velocity < 0) {

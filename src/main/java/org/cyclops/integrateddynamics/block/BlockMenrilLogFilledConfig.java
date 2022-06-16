@@ -6,9 +6,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Config for the Menril Wood.
@@ -29,11 +27,6 @@ public class BlockMenrilLogFilledConfig extends BlockConfig {
                         .sound(SoundType.WOOD)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-    }
-
-    @Override
-    public void onRegistered() {
-        BlockHelpers.setFireInfo(RegistryEntries.BLOCK_MENRIL_LOG, 5, 20);
     }
 
 }

@@ -7,8 +7,6 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -160,11 +158,11 @@ public final class Helpers {
      * @return The localized string.
      */
     public static Component getLocalizedEnergyLevel(int stored, int capacity) {
-        return new TextComponent(String.format(Locale.ROOT, "%,d", stored))
+        return Component.literal(String.format(Locale.ROOT, "%,d", stored))
                 .append(" / ")
                 .append(String.format(Locale.ROOT, "%,d", capacity))
                 .append(" ")
-                .append(new TranslatableComponent(L10NValues.GENERAL_ENERGY_UNIT));
+                .append(Component.translatable(L10NValues.GENERAL_ENERGY_UNIT));
     }
 
     public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {

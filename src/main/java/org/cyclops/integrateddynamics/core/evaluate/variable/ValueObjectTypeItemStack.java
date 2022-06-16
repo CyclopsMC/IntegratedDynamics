@@ -8,9 +8,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -42,7 +41,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     public static MutableComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
         return !itemStack.isEmpty()
                 ? (((MutableComponent) itemStack.getHoverName()).append((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
-                : new TextComponent("");
+                : Component.literal("");
     }
 
     public static MutableComponent getItemStackDisplayNameSafe(ItemStack itemStack) {
@@ -51,7 +50,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         try {
             return getItemStackDisplayNameUsSafe(itemStack);
         } catch (NoSuchMethodException e) {
-            return new TranslatableComponent(itemStack.getDescriptionId());
+            return Component.translatable(itemStack.getDescriptionId());
         }
     }
 
@@ -144,7 +143,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     @Override
     public String getUniqueName(ValueItemStack value) {
         ItemStack itemStack = value.getRawValue();
-        return !itemStack.isEmpty() ? itemStack.getItem().getRegistryName().toString() : "";
+        return !itemStack.isEmpty() ? ForgeRegistries.ITEMS.getKey(itemStack.getItem()).toString() : "";
     }
 
     @ToString

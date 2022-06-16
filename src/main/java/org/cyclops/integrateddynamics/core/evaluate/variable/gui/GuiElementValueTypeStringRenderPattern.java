@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -42,7 +42,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         int searchX = getX() + 14;
         int searchY = getY() + 6;
         this.textField = new WidgetTextFieldExtended(fontRenderer, guiLeft + searchX, guiTop + searchY, searchWidth,
-                fontRenderer.lineHeight + 3, new TranslatableComponent(this.getElement().getValueType().getTranslationKey()), true);
+                fontRenderer.lineHeight + 3, Component.translatable(this.getElement().getValueType().getTranslationKey()), true);
         this.textField.setMaxLength(512);
         this.textField.setBordered(false);
         this.textField.setVisible(true);

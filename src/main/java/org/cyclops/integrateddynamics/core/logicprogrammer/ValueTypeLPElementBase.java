@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -84,7 +83,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public Component getName() {
-        return new TranslatableComponent(valueType.getTranslationKey());
+        return Component.translatable(valueType.getTranslationKey());
     }
 
     @Override

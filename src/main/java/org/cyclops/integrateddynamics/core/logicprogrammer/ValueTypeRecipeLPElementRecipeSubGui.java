@@ -8,7 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -49,7 +49,7 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
         int searchWidth = 35;
 
         WidgetTextFieldExtended box = new WidgetTextFieldExtended(fontRenderer, x, y,
-                searchWidth, fontRenderer.lineHeight + 3, new TranslatableComponent("gui.cyclopscore.search"), true);
+                searchWidth, fontRenderer.lineHeight + 3, Component.translatable("gui.cyclopscore.search"), true);
         box.setMaxLength(10);
         box.setBordered(false);
         box.setVisible(true);
@@ -87,7 +87,7 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
                 // Draw tooltips
                 if (gui.isHovering(slotX, slotY, 16, 16, mouseX, mouseY)) {
                     gui.drawTooltip(Lists.newArrayList(
-                            new TranslatableComponent("valuetype.integrateddynamics.ingredients.slot.info")
+                            Component.translatable("valuetype.integrateddynamics.ingredients.slot.info")
                                     .withStyle(ChatFormatting.ITALIC)
                     ), matrixStack, mouseX - guiLeft, mouseY - guiTop - (slot.getItem().isEmpty() ? 0 : 15));
                 }

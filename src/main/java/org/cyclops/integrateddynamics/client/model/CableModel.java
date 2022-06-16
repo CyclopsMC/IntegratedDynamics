@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -16,7 +17,6 @@ import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
 
 import java.util.Optional;
-import java.util.Random;
 
 /**
  * A dynamic model for cables.
@@ -24,7 +24,7 @@ import java.util.Random;
  */
 public class CableModel extends CableModelBase {
 
-    public CableModel(BlockState state, Direction facing, Random rand, IModelData modelData) {
+    public CableModel(BlockState state, Direction facing, RandomSource rand, IModelData modelData) {
         super(state, facing, rand, modelData);
     }
 
@@ -83,7 +83,7 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
-    public BakedModel handleBlockState(BlockState state, Direction side, Random rand, IModelData modelData) {
+    public BakedModel handleBlockState(BlockState state, Direction side, RandomSource rand, IModelData modelData) {
         return new CableModel(state, side, rand, modelData);
     }
 

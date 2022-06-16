@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -161,9 +160,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @Override
     public void loadTooltip(S state, List<Component> lines) {
         if(!state.isEnabled()) {
-            lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_DISABLED));
+            lines.add(Component.translatable(L10NValues.PART_TOOLTIP_DISABLED));
         }
-        lines.add(new TranslatableComponent(L10NValues.GENERAL_ITEM_ID, state.getId()));
+        lines.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, state.getId()));
     }
     /**
      * Override this to register your network event actions.

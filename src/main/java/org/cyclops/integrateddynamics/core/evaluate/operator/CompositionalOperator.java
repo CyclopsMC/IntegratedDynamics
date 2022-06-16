@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -128,8 +127,8 @@ public class CompositionalOperator extends OperatorBase {
                 return this.base.validateTypes(input);
             } else {
                 if(input.length != getRequiredInputLength()) {
-                    return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
-                            new TranslatableComponent(unlocalizedOperatorName),
+                    return Component.translatable(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+                            Component.translatable(unlocalizedOperatorName),
                             input.length, getRequiredInputLength());
                 }
                 IValueType[] subValueTypesOut = new IValueType[builders.length];

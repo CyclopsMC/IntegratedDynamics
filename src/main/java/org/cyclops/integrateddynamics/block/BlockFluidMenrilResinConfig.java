@@ -21,8 +21,7 @@ public class BlockFluidMenrilResinConfig extends BlockConfig {
                 "block_menril_resin",
                 eConfig -> new BlockFluidMenrilResin(Block.Properties.of(Material.WATER)
                         .noCollission()
-                        .strength(100.0F)
-                        .noDrops()),
+                        .strength(100.0F)),
                 (eConfig, block) -> new BlockItem(block, new Item.Properties())
         );
     }

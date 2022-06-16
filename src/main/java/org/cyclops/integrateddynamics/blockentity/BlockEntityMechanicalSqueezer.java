@@ -5,7 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -197,7 +196,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.integrateddynamics.mechanical_squeezer");
+        return Component.translatable("block.integrateddynamics.mechanical_squeezer");
     }
 
     public static class Ticker extends BlockEntityMechanicalMachine.Ticker<ItemStack, RecipeMechanicalSqueezer, BlockEntityMechanicalSqueezer> {

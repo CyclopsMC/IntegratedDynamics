@@ -5,7 +5,6 @@ import com.google.common.collect.HashBiMap;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -174,7 +173,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
                         IVariable variable = getPartType().getVariable(getTarget(), getPartState(), aspectRead);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        readValue = Pair.of(new TextComponent("NO POWER"), 0);
+                        readValue = Pair.of(Component.literal("NO POWER"), 0);
                     }
 
                     setReadValue(aspectRead, readValue);

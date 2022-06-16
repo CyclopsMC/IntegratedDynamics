@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "integrateddynamics:meneglin",
+  "features": "integrateddynamics:tree_menril_meneglin",
+  "step": "vegetal_decoration"
+}

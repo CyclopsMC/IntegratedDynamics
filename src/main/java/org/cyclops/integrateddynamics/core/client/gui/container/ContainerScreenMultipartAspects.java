@@ -6,8 +6,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.apache.commons.lang3.tuple.Triple;
@@ -57,13 +55,13 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         super.init();
         if(getMenu().getPartType().getContainerProviderSettings(null).isPresent()) {
             addRenderableWidget(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
-                    new TranslatableComponent("gui.integrateddynamics.partsettings"),
+                    Component.translatable("gui.integrateddynamics.partsettings"),
                     createServerPressable(ContainerMultipartAspects.BUTTON_SETTINGS, b -> {}), true,
                     Images.CONFIG_BOARD, -2, -3));
         }
         for(Map.Entry<IAspect, String> entry : getMenu().getAspectPropertyButtons().entrySet()) {
             ButtonText button = new ButtonText(-20, -20, 10, 10,
-                    new TranslatableComponent("gui.integrateddynamics.aspect_settings"), new TextComponent("+"),
+                    Component.translatable("gui.integrateddynamics.aspect_settings"), Component.literal("+"),
                     createServerPressable(entry.getValue(), b -> {}), true);
             aspectPropertyButtons.put(entry.getKey(), button);
             addRenderableWidget(button);
@@ -162,12 +160,12 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                     int y = button.y - topPos;
                     if(isHovering(x, y, button.getWidth(), button.getHeight(), mouseX, mouseY)) {
                         List<Component> lines = Lists.newLinkedList();
-                        lines.add(new TranslatableComponent("gui.integrateddynamics.part.properties")
+                        lines.add(Component.translatable("gui.integrateddynamics.part.properties")
                                 .withStyle(ChatFormatting.WHITE));
                         for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
-                            lines.add(new TextComponent("-")
+                            lines.add(Component.literal("-")
                                     .withStyle(ChatFormatting.YELLOW)
-                                    .append(new TranslatableComponent(property.getTranslationKey())));
+                                    .append(Component.translatable(property.getTranslationKey())));
                         }
                         drawTooltip(lines, matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
                     }

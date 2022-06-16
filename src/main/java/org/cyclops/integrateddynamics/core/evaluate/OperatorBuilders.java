@@ -5,7 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -204,11 +203,11 @@ public class OperatorBuilders {
                     }
                 } else {
                     if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
-                        MutableComponent error = new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
-                                new TranslatableComponent(innerOperator.getTranslationKey()),
-                                new TranslatableComponent(input.getVariables()[0].getType().getTranslationKey()),
+                        MutableComponent error = Component.translatable(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
+                                Component.translatable(innerOperator.getTranslationKey()),
+                                Component.translatable(input.getVariables()[0].getType().getTranslationKey()),
                                 0,
-                                new TranslatableComponent(innerOperator.getInputTypes()[0].getTranslationKey())
+                                Component.translatable(innerOperator.getInputTypes()[0].getTranslationKey())
                                 );
                         throw new EvaluationException(error);
                     }
@@ -225,7 +224,7 @@ public class OperatorBuilders {
                 IOperator second = getSafeOperator(input.getValue(1, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY);
                 IValueType[] secondInputs = second.getInputTypes();
                 if(secondInputs.length < 1) {
-                    throw new EvaluationException(new TranslatableComponent(
+                    throw new EvaluationException(Component.translatable(
                             L10NValues.OPERATOR_ERROR_OPERATORPARAMWRONGINPUTLENGTH,
                             1, second.getLocalizedNameFull(), secondInputs.length));
                 }
@@ -247,7 +246,7 @@ public class OperatorBuilders {
                 IOperator third = getSafeOperator(input.getValue(2, ValueTypes.OPERATOR), ValueTypes.CATEGORY_ANY);
                 IValueType<?>[] types = third.getInputTypes();
                 if(types.length < 2) {
-                    throw new EvaluationException(new TranslatableComponent(
+                    throw new EvaluationException(Component.translatable(
                             L10NValues.OPERATOR_ERROR_OPERATORPARAMWRONGINPUTLENGTH,
                             2, third.getLocalizedNameFull(), types.length));
                 }
@@ -301,11 +300,11 @@ public class OperatorBuilders {
 
                     // Error if the result is NOT an operator
                     if (result.getType() != ValueTypes.OPERATOR) {
-                        throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
-                                new TranslatableComponent(innerOperator.getTranslationKey()),
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
+                                Component.translatable(innerOperator.getTranslationKey()),
                                 requiredLength,
                                 variables.length,
-                                new TranslatableComponent(result.getType().getTranslationKey())));
+                                Component.translatable(result.getType().getTranslationKey())));
                     }
 
                     // Pass all remaining variables to the resulting operator
@@ -352,9 +351,9 @@ public class OperatorBuilders {
     public static IOperator getSafeOperator(ValueTypeOperator.ValueOperator value, IValueType expectedOutput) throws EvaluationException {
         IOperator operator = value.getRawValue();
         if (!ValueHelpers.correspondsTo(operator.getOutputType(), expectedOutput)) {
-            MutableComponent error = new TranslatableComponent(L10NValues.OPERATOR_ERROR_ILLEGALPROPERY,
-                    new TranslatableComponent(expectedOutput.getTranslationKey()),
-                    new TranslatableComponent(operator.getOutputType().getTranslationKey()),
+            MutableComponent error = Component.translatable(L10NValues.OPERATOR_ERROR_ILLEGALPROPERY,
+                    Component.translatable(expectedOutput.getTranslationKey()),
+                    Component.translatable(operator.getOutputType().getTranslationKey()),
                     operator.getLocalizedNameFull());
             throw new EvaluationException(error);
         }
@@ -380,19 +379,19 @@ public class OperatorBuilders {
      */
     public static OperatorBuilder.ITypeValidator createOperatorTypeValidator(final IValueType<?>... expectedSubTypes) {
         final int subOperatorLength = expectedSubTypes.length;
-        final Component expected = new TranslatableComponent(
+        final Component expected = Component.translatable(
                 org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(subOperatorLength), (Object[]) ValueHelpers.from(expectedSubTypes));
         return (operator, input) -> {
             if (input.length == 0 || !ValueHelpers.correspondsTo(input[0], ValueTypes.OPERATOR)) {
                 String givenName = input.length == 0 ? "null" : input[0].getTranslationKey();
-                return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDOPERATOROPERATOR,
+                return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDOPERATOROPERATOR,
                         0, givenName);
             }
             if (input.length != subOperatorLength + 1) {
                 IValueType<?>[] operatorInputs = Arrays.copyOfRange(input, 1, input.length);
-                Component given = new TranslatableComponent(
+                Component given = Component.translatable(
                         org.cyclops.integrateddynamics.core.helper.Helpers.createPatternOfLength(operatorInputs.length), (Object[]) ValueHelpers.from(operatorInputs));
-                return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE,
+                return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDOPERATORSIGNATURE,
                         expected, given);
             }
             return null;
@@ -512,7 +511,7 @@ public class OperatorBuilders {
             throws EvaluationException {
         IIngredientComponentHandler<VT, V, T, M> componentHandler = IngredientComponentHandlers.REGISTRY.getComponentHandler(component);
         if (list.getRawValue().getValueType() != componentHandler.getValueType()) {
-            throw new EvaluationException(new TranslatableComponent(
+            throw new EvaluationException(Component.translatable(
                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
                     list.getRawValue().getValueType(), componentHandler.getValueType()));
         }

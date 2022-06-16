@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -100,7 +99,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     @Override
     public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable V value) {
         String typeName = L10NHelpers.localize(getTranslationKey());
-        lines.add(new TranslatableComponent(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
+        lines.add(Component.translatable(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
@@ -112,7 +111,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
             deserialize(value);
             return null;
         } catch (IllegalArgumentException e) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);
         }
     }
 
@@ -150,9 +149,9 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         try {
             return this.valueClass.cast(value);
         } catch (ClassCastException e) {
-            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_CAST_ILLEGAL,
-                    new TranslatableComponent(value.getType().getTranslationKey()),
-                    new TranslatableComponent(this.getTranslationKey()),
+            throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_CAST_ILLEGAL,
+                    Component.translatable(value.getType().getTranslationKey()),
+                    Component.translatable(this.getTranslationKey()),
                     value.getType().toCompactString(value)
             ));
         }

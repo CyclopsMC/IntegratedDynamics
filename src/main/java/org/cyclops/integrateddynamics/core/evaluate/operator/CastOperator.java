@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -29,8 +28,8 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 IValue value = variables.getValue(0);
                 if(value.getType() != from) {
-                    throw new EvaluationException(new TranslatableComponent(
-                            L10NValues.OPERATOR_ERROR_CAST_UNEXPECTED, new TranslatableComponent(value.getType().getTranslationKey()), new TranslatableComponent(from.getTranslationKey()), new TranslatableComponent(to.getTranslationKey())));
+                    throw new EvaluationException(Component.translatable(
+                            L10NValues.OPERATOR_ERROR_CAST_UNEXPECTED, Component.translatable(value.getType().getTranslationKey()), Component.translatable(from.getTranslationKey()), Component.translatable(to.getTranslationKey())));
                 }
                 return mapping.cast((V1) value);
             }
@@ -59,9 +58,9 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
 
     @Override
     public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
-        lines.add(new TranslatableComponent("operator.integrateddynamics.cast.tooltip",
-                new TranslatableComponent(from.getTranslationKey()),
-                new TranslatableComponent(to.getTranslationKey())));
+        lines.add(Component.translatable("operator.integrateddynamics.cast.tooltip",
+                Component.translatable(from.getTranslationKey()),
+                Component.translatable(to.getTranslationKey())));
         super.loadTooltip(lines, appendOptionalInfo);
     }
 

@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -122,7 +122,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
         IValueTypeNumber type = getLowestType(getType(a), getType(b));
         IValue bv = castValue(type, b.getValue());
         if (type.isZero(bv)) { // You can not divide by zero
-            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
+            throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
         } else if (type.isOne(bv)) { // If b is neutral element for division
             return a.getValue();
         } else {

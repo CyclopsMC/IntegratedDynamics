@@ -22,6 +22,7 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -46,7 +47,6 @@ import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicki
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -84,7 +84,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                     new Vector3f(0.4F, 0.4F, 0.4F))
     ));
 
-    public CableModelBase(BlockState blockState, Direction facing, Random rand, IModelData modelData) {
+    public CableModelBase(BlockState blockState, Direction facing, RandomSource rand, IModelData modelData) {
         super(blockState, facing, rand, modelData);
     }
 
@@ -138,7 +138,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     public List<BakedQuad> getFacadeQuads(BlockState blockState, Direction side, PartRenderPosition partRenderPosition) {
-        Random rand = new Random();
+        RandomSource rand = RandomSource.create();
         BakedModel model = RenderHelpers.getBakedModel(blockState);
         List<BakedQuad> originalQuads = model.getQuads(blockState, side, rand);
         return originalQuads.stream()

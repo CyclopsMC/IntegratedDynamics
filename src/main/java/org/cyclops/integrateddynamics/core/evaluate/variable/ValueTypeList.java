@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.GsonHelper;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -65,7 +64,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
             IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
             return null;
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
-            return new TranslatableComponent(e.getMessage());
+            return Component.translatable(e.getMessage());
         }
     }
 

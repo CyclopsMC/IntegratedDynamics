@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "integrateddynamics:tree_menril_general",
+  "step": "vegetal_decoration"
+}

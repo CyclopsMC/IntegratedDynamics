@@ -8,8 +8,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
@@ -75,7 +73,7 @@ public class GuiElementValueTypeDropdownList<T, G extends GuiComponent, C extend
 
     @Override
     public Component getName() {
-        return new TranslatableComponent(getValueType().getTranslationKey());
+        return Component.translatable(getValueType().getTranslationKey());
     }
 
     @Override
@@ -103,7 +101,7 @@ public class GuiElementValueTypeDropdownList<T, G extends GuiComponent, C extend
         try {
             IValue value = getValueType().parseString(inputString);
             if (!this.validator.test(value)) {
-                return new TranslatableComponent(L10NValues.VALUE_ERROR);
+                return Component.translatable(L10NValues.VALUE_ERROR);
             }
         } catch (EvaluationException e) {
             return e.getErrorMessage();
@@ -194,7 +192,7 @@ public class GuiElementValueTypeDropdownList<T, G extends GuiComponent, C extend
                     List<Component> lines = StringHelpers.splitLines(lastError.getString(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
                             ChatFormatting.RED.toString())
                             .stream()
-                            .map(TextComponent::new)
+                            .map(Component::literal)
                             .collect(Collectors.toList());
                     gui.drawTooltip(lines, matrixStack, mouseX - guiLeft, mouseY - guiTop);
                 }

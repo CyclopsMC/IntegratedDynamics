@@ -10,8 +10,8 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -53,10 +53,10 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     public MutableComponent toCompactString(ValueRecipe value) {
         if (value.getRawValue().isPresent()) {
             IRecipeDefinition recipe = value.getRawValue().get();
-            MutableComponent sb = new TextComponent("");
+            MutableComponent sb = Component.literal("");
 
             sb.append(ValueObjectTypeIngredients.ingredientsToTextComponent(recipe.getOutput()));
-            sb.append(new TextComponent(" <- "));
+            sb.append(Component.literal(" <- "));
             boolean first = true;
 
             for (IngredientComponent<?, ?> component : recipe.getInputComponents()) {
@@ -70,7 +70,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
                         v = handler.toValue(prototypedIngredient.getPrototype());
                     }
                     if (!first) {
-                        sb.append(new TextComponent(", "));
+                        sb.append(Component.literal(", "));
                     } else {
                         first = false;
                     }
@@ -79,7 +79,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
             }
             return sb;
         }
-        return new TextComponent("");
+        return Component.literal("");
     }
 
     @Override

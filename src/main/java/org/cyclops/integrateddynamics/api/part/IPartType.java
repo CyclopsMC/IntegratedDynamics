@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -30,7 +31,6 @@ import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 /**
  * A type of part that can be inserted into a {@link IPartContainer}.
@@ -301,7 +301,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param partState The part state.
      * @param random A random instance.
      */
-    public void updateTick(Level world, BlockPos pos, S partState, Random random);
+    public void updateTick(Level world, BlockPos pos, S partState, RandomSource random);
 
     /**
      * Called when this element is about to be removed.

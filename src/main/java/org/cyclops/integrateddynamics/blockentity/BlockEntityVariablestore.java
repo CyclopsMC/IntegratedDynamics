@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -131,7 +130,7 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.integrateddynamics.variablestore");
+        return Component.translatable("block.integrateddynamics.variablestore");
     }
 
     public static class Ticker extends BlockEntityCableConnectableInventory.Ticker<BlockEntityVariablestore> {

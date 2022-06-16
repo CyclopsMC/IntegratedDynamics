@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -24,8 +23,7 @@ import javax.annotation.Nullable;
  * Recipe serializer for squeezer recipes
  * @author rubensworks
  */
-public class RecipeSerializerSqueezer extends ForgeRegistryEntry<RecipeSerializer<?>>
-        implements RecipeSerializer<RecipeSqueezer> {
+public class RecipeSerializerSqueezer implements RecipeSerializer<RecipeSqueezer> {
 
     protected static RecipeSqueezer.IngredientChance getJsonItemStackChance(JsonObject json) {
         Either<ItemStack, ItemStackFromIngredient> itemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(json, true, GeneralConfig.recipeTagOutputModPriorities);

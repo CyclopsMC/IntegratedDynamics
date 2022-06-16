@@ -4,8 +4,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.AmbientMoodSettings;
@@ -17,10 +15,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -84,7 +79,6 @@ public class BiomeMeneglinConfig extends BiomeConfig {
 
                     return (new Biome.BiomeBuilder())
                             .precipitation(Biome.Precipitation.RAIN)
-                            .biomeCategory(Biome.BiomeCategory.FOREST)
                             .temperature(0.7F)
                             .downfall(0.25F)
                             .specialEffects((new BiomeSpecialEffects.Builder())
@@ -102,7 +96,6 @@ public class BiomeMeneglinConfig extends BiomeConfig {
                             .build();
                 }
         );
-        MinecraftForge.EVENT_BUS.addListener(this::onBiomeLoadingEvent);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModSetup);
     }
 
@@ -111,14 +104,6 @@ public class BiomeMeneglinConfig extends BiomeConfig {
         if (!reload) {
             if (configProperty.getName().equals("meneglin.spawnWeight") && spawnWeight > 0) {
                 BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(getResourceKey(), spawnWeight));
-                BiomeDictionary.addTypes(getResourceKey(), BiomeDictionary.Type.OVERWORLD);
-                BiomeDictionary.addTypes(getResourceKey(),
-                        BiomeDictionary.Type.COLD,
-                        BiomeDictionary.Type.DENSE,
-                        BiomeDictionary.Type.WET,
-                        BiomeDictionary.Type.CONIFEROUS,
-                        BiomeDictionary.Type.MAGICAL,
-                        BiomeDictionary.Type.FOREST);
             }
         }
     }
@@ -131,16 +116,4 @@ public class BiomeMeneglinConfig extends BiomeConfig {
         PLACED_FEATURE_GENERAL = WorldFeatures.registerPlaced("tree_menril_general", new PlacedFeature(CONFIGURED_FEATURE_TREE,
                 VegetationPlacements.treePlacement(PlacementUtils.countExtra(0, 1F / wildMenrilTreeChance, 1))));
     }
-
-    public void onBiomeLoadingEvent(BiomeLoadingEvent event) {
-        if (event.getName().equals(new ResourceLocation("integrateddynamics:meneglin"))) {
-            event.getGeneration().getFeatures(GenerationStep.Decoration.VEGETAL_DECORATION)
-                    .add(PLACED_FEATURE_MENEGLIN);
-        } else if (BiomeDictionary.getTypes(ResourceKey.create(ResourceKey.createRegistryKey(getRegistry().getRegistryName()), event.getName()))
-                .contains(BiomeDictionary.Type.OVERWORLD)) {
-            event.getGeneration().getFeatures(GenerationStep.Decoration.VEGETAL_DECORATION)
-                    .add(PLACED_FEATURE_GENERAL);
-        }
-    }
-
 }

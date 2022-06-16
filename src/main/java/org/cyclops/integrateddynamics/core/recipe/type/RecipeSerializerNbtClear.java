@@ -5,7 +5,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 
 import javax.annotation.Nullable;
@@ -14,8 +13,7 @@ import javax.annotation.Nullable;
  * Recipe serializer for NBT clear recipes.
  * @author rubensworks
  */
-public class RecipeSerializerNbtClear extends ForgeRegistryEntry<RecipeSerializer<?>>
-        implements RecipeSerializer<RecipeNbtClear> {
+public class RecipeSerializerNbtClear implements RecipeSerializer<RecipeNbtClear> {
 
     @Override
     public RecipeNbtClear fromJson(ResourceLocation recipeId, JsonObject json) {

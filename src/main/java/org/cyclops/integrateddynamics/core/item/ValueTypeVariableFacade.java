@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -30,7 +30,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Variable facade for variables determined by a raw value.
@@ -87,13 +86,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
-            validator.addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
             // Check expected aspect type and operator output type
             if (!ValueHelpers.correspondsTo(getValueType(), containingValueType)) {
-                validator.addError(new TranslatableComponent(L10NValues.ASPECT_ERROR_INVALIDTYPE,
-                        new TranslatableComponent(containingValueType.getTranslationKey()),
-                        new TranslatableComponent(getValueType().getTranslationKey())));
+                validator.addError(Component.translatable(L10NValues.ASPECT_ERROR_INVALIDTYPE,
+                        Component.translatable(containingValueType.getTranslationKey()),
+                        Component.translatable(getValueType().getTranslationKey())));
             }
         }
     }
@@ -109,14 +108,14 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
         if(isValid()) {
             V value = getValue();
             getValueType().loadTooltip(list, false, value);
-            list.add(new TranslatableComponent(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
+            list.add(Component.translatable(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
         }
         super.appendHoverText(list, world);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
         if(isValid()) {
             BakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(getValueType());
             if(bakedModel != null) {

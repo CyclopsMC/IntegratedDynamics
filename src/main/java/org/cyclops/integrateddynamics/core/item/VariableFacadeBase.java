@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -51,7 +50,7 @@ public abstract class VariableFacadeBase implements IVariableFacade {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(List<Component> list, Level world) {
-        list.add(new TranslatableComponent("item.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
+        list.add(Component.translatable("item.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
     }
 
 }

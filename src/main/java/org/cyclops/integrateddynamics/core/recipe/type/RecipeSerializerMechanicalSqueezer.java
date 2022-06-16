@@ -9,7 +9,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 
 import javax.annotation.Nullable;
@@ -18,8 +17,7 @@ import javax.annotation.Nullable;
  * Recipe serializer for mechanical squeezer recipes
  * @author rubensworks
  */
-public class RecipeSerializerMechanicalSqueezer extends ForgeRegistryEntry<RecipeSerializer<?>>
-        implements RecipeSerializer<RecipeMechanicalSqueezer> {
+public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<RecipeMechanicalSqueezer> {
 
     @Override
     public RecipeMechanicalSqueezer fromJson(ResourceLocation recipeId, JsonObject json) {

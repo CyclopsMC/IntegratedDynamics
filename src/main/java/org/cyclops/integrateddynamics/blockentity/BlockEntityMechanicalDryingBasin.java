@@ -5,7 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -206,6 +205,6 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.integrateddynamics.mechanical_drying_basin");
+        return Component.translatable("block.integrateddynamics.mechanical_drying_basin");
     }
 }

@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -123,7 +122,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                 Pair<MutableComponent, Integer> readValue;
                 S partState = getPartState();
                 if (!partState.isEnabled()) {
-                    readValue = Pair.of(new TextComponent("NO POWER"), 0);
+                    readValue = Pair.of(Component.literal("NO POWER"), 0);
                 } else if (partState.hasVariable()) {
                     IPartContainer partContainer = getPartContainer();
                     LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(partContainer.getPosition().getLevel(true),
@@ -133,10 +132,10 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                         IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork);
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        readValue = Pair.of(new TextComponent("NETWORK CORRUPTED!"), Helpers.RGBToInt(255, 100, 0));
+                        readValue = Pair.of(Component.literal("NETWORK CORRUPTED!"), Helpers.RGBToInt(255, 100, 0));
                     }
                 } else {
-                    readValue = Pair.of(new TextComponent(""), 0);
+                    readValue = Pair.of(Component.literal(""), 0);
                 }
                 setWriteValue(readValue.getLeft(), readValue.getRight());
 
@@ -162,7 +161,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     public Component getWriteValue() {
         Component value = ValueNotifierHelpers.getValueTextComponent(this, valueId);
         if(value == null) {
-            value = new TextComponent("");
+            value = Component.literal("");
         }
         return value;
     }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -93,7 +93,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
             if (StringUtils.isBlank(name)) {
                 itemStack.resetHoverName();
             } else {
-                itemStack.setHoverName(new TextComponent(name));
+                itemStack.setHoverName(Component.literal(name));
             }
         }
     }

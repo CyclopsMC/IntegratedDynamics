@@ -10,7 +10,6 @@ import net.minecraft.nbt.LongArrayTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
@@ -159,12 +158,12 @@ public class NbtHelpers {
         ListTag list = new ListTag();
         for (IValue valueNbt : value.getRawValue()) {
             if (value.getRawValue().getValueType() != ValueTypes.NBT) {
-                MutableComponent error = new TranslatableComponent(
+                MutableComponent error = Component.translatable(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        new TranslatableComponent(value.getType().getTranslationKey()),
+                        Component.translatable(value.getType().getTranslationKey()),
                         1,
-                        new TranslatableComponent(ValueTypes.NBT.getTranslationKey()));
+                        Component.translatable(ValueTypes.NBT.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
             ((ValueTypeNbt.ValueNbt) valueNbt).getRawValue().ifPresent(list::add);
@@ -182,12 +181,12 @@ public class NbtHelpers {
         List<Byte> list = Lists.newLinkedList();
         for (IValue valueNbt : value.getRawValue()) {
             if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
-                MutableComponent error = new TranslatableComponent(
+                MutableComponent error = Component.translatable(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        new TranslatableComponent(value.getType().getTranslationKey()),
+                        Component.translatable(value.getType().getTranslationKey()),
                         1,
-                        new TranslatableComponent(ValueTypes.INTEGER.getTranslationKey()));
+                        Component.translatable(ValueTypes.INTEGER.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
             list.add((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue());
@@ -205,12 +204,12 @@ public class NbtHelpers {
         List<Integer> list = Lists.newLinkedList();
         for (IValue valueNbt : value.getRawValue()) {
             if (value.getRawValue().getValueType() != ValueTypes.INTEGER) {
-                MutableComponent error = new TranslatableComponent(
+                MutableComponent error = Component.translatable(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        new TranslatableComponent(value.getType().getTranslationKey()),
+                        Component.translatable(value.getType().getTranslationKey()),
                         1,
-                        new TranslatableComponent(ValueTypes.INTEGER.getTranslationKey()));
+                        Component.translatable(ValueTypes.INTEGER.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
             list.add(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue());
@@ -228,12 +227,12 @@ public class NbtHelpers {
         List<Long> list = Lists.newLinkedList();
         for (IValue valueNbt : value.getRawValue()) {
             if (value.getRawValue().getValueType() != ValueTypes.LONG) {
-                MutableComponent error = new TranslatableComponent(
+                MutableComponent error = Component.translatable(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        new TranslatableComponent(value.getType().getTranslationKey()),
+                        Component.translatable(value.getType().getTranslationKey()),
                         1,
-                        new TranslatableComponent(ValueTypes.LONG.getTranslationKey()));
+                        Component.translatable(ValueTypes.LONG.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
             list.add(((ValueTypeLong.ValueLong) valueNbt).getRawValue());

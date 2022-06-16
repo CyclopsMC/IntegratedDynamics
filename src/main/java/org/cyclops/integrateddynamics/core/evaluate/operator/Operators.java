@@ -11,8 +11,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Lombok;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.damagesource.DamageSource;
@@ -241,7 +241,7 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
                 if (b.getRawValue() == 0) { // You can not divide by zero
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
                 } else if (b.getRawValue() == 1) { // If b is neutral element for division
                     return ZERO;
                 } else {
@@ -285,7 +285,7 @@ public final class Operators {
                 // Input size checking
                 int requiredInputLength = operator.getRequiredInputLength();
                 if(input.length != requiredInputLength) {
-                    return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+                    return Component.translatable(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                             operator.getOperatorName(), input.length, requiredInputLength);
                 }
                 // Input types checking
@@ -296,15 +296,15 @@ public final class Operators {
                         inputType = ValueTypes.CATEGORY_NUMBER;
                     }
                     if(inputType == null) {
-                        return new TranslatableComponent(L10NValues.OPERATOR_ERROR_NULLTYPE, operator.getOperatorName(), Integer.toString(i));
+                        return Component.translatable(L10NValues.OPERATOR_ERROR_NULLTYPE, operator.getOperatorName(), Integer.toString(i));
                     }
                     if(i == 0) {
                         temporarySecondInputType = inputType;
                     } else if(i == 1) {
                         if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
-                            return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                                    operator.getOperatorName(), new TranslatableComponent(inputType.getTranslationKey()),
-                                    Integer.toString(i), new TranslatableComponent(temporarySecondInputType.getTranslationKey()));
+                            return Component.translatable(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                                    operator.getOperatorName(), Component.translatable(inputType.getTranslationKey()),
+                                    Integer.toString(i), Component.translatable(temporarySecondInputType.getTranslationKey()));
                         }
                     }
                 }
@@ -468,7 +468,7 @@ public final class Operators {
                     Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
                     return ValueTypeBoolean.ValueBoolean.of(m.find());
                 } catch (PatternSyntaxException e) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                             pattern.getRawValue()));
                 }
             }).build());
@@ -484,7 +484,7 @@ public final class Operators {
                     Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
                     return ValueTypeBoolean.ValueBoolean.of(m.matches());
                 } catch (PatternSyntaxException e) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                             pattern.getRawValue()));
                 }
             }).build());
@@ -514,7 +514,7 @@ public final class Operators {
                         return ValueTypeInteger.ValueInteger.of(-1);
                     }
                 } catch (PatternSyntaxException e) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                             pattern.getRawValue()));
                 }
             }).build());
@@ -569,7 +569,7 @@ public final class Operators {
                     }
                     return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
                 } catch (PatternSyntaxException e) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                             pattern.getRawValue()));
                 }
             }).build());
@@ -586,14 +586,14 @@ public final class Operators {
             ValueTypeInteger.ValueInteger to = variables.getValue(1, ValueTypes.INTEGER);
             ValueTypeString.ValueString str = variables.getValue(2, ValueTypes.STRING);
             if (from.getRawValue() > to.getRawValue()) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_SUBSTRING_TOGREATERTHANFROM));
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_SUBSTRING_TOGREATERTHANFROM));
             }
             if (from.getRawValue() < 0 || to.getRawValue() < 0) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_SUBSTRING_INDEXNEGATIVE));
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_SUBSTRING_INDEXNEGATIVE));
             }
             int stringLength = str.getRawValue().length();
             if (from.getRawValue() > stringLength || to.getRawValue() > stringLength) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_SUBSTRING_LONGERTHANSTRING));
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_SUBSTRING_LONGERTHANSTRING));
             }
             return ValueTypeString.ValueString.of(str.getRawValue().substring(from.getRawValue(), to.getRawValue()));
         }).build());
@@ -611,7 +611,7 @@ public final class Operators {
             ValueTypeInteger.ValueInteger group = variables.getValue(1, ValueTypes.INTEGER);
             ValueTypeString.ValueString str = variables.getValue(2, ValueTypes.STRING);
             if (group.getRawValue() < 0) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_GROUP_INDEXNEGATIVE));
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_GROUP_INDEXNEGATIVE));
             }
             try {
                 Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
@@ -619,14 +619,14 @@ public final class Operators {
                     String result = m.group(group.getRawValue());
                     return ValueTypeString.ValueString.of(result);
                 } else {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_GROUP_NOMATCH,
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_GROUP_NOMATCH,
                             str.getRawValue(), pattern.getRawValue()));
                 }
             } catch (PatternSyntaxException e) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                         pattern.getRawValue()));
             } catch (IndexOutOfBoundsException e) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_GROUP_NOMATCHGROUP,
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_GROUP_NOMATCHGROUP,
                         str.getRawValue(), pattern.getRawValue(), group.getRawValue()));
             }
         }).build()
@@ -652,7 +652,7 @@ public final class Operators {
                     return ValueTypeList.ValueList.ofList(ValueTypes.STRING, Collections.<ValueTypeString.ValueString>emptyList());
                 }
             } catch (PatternSyntaxException e) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                         pattern.getRawValue()));
             }
         }).build()
@@ -670,7 +670,7 @@ public final class Operators {
             ValueTypeInteger.ValueInteger group = variables.getValue(1, ValueTypes.INTEGER);
             ValueTypeString.ValueString str = variables.getValue(2, ValueTypes.STRING);
             if (group.getRawValue() < 0) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEXSCAN_INDEXNEGATIVE));
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEXSCAN_INDEXNEGATIVE));
             }
             try {
                 Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
@@ -680,10 +680,10 @@ public final class Operators {
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
             } catch (PatternSyntaxException e) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                         pattern.getRawValue()));
             } catch (IndexOutOfBoundsException e) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEXSCAN_NOMATCHGROUP,
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEXSCAN_NOMATCHGROUP,
                         str.getRawValue(), pattern.getRawValue(), group.getRawValue()));
             }
         }).build()
@@ -718,7 +718,7 @@ public final class Operators {
             try {
                 return ValueTypeString.ValueString.of(Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue()).replaceAll(replacement.getRawValue()));
             } catch (PatternSyntaxException e) {
-                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                         pattern.getRawValue()));
             }
         }).build()
@@ -738,15 +738,15 @@ public final class Operators {
                     ValueTypeString.ValueString delimiter = variables.getValue(0, ValueTypes.STRING);
                     ValueTypeList.ValueList<?, ?> elements = variables.getValue(1, ValueTypes.LIST);
                     if (!ValueHelpers.correspondsTo(elements.getRawValue().getValueType(), ValueTypes.STRING)) {
-                        throw new EvaluationException(new TranslatableComponent(
+                        throw new EvaluationException(Component.translatable(
                                 L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                                new TranslatableComponent(elements.getRawValue().getValueType().getTranslationKey()),
-                                new TranslatableComponent(ValueTypes.STRING.getTranslationKey())));
+                                Component.translatable(elements.getRawValue().getValueType().getTranslationKey()),
+                                Component.translatable(ValueTypes.STRING.getTranslationKey())));
                     }
 
                     // Don't allow joining on an infinite list
                     if (elements.getRawValue().isInfinite()) {
-                        throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
                                 STRING_JOIN.getLocalizedNameFull()));
                     }
 
@@ -754,10 +754,10 @@ public final class Operators {
                     StringBuilder sb = new StringBuilder();
                     for (IValue value : elements.getRawValue()) {
                         if (value.getType() != ValueTypes.STRING) {
-                            throw new EvaluationException(new TranslatableComponent(
+                            throw new EvaluationException(Component.translatable(
                                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                                    new TranslatableComponent(value.getType().getTranslationKey()),
-                                    new TranslatableComponent(ValueTypes.STRING.getTranslationKey())));
+                                    Component.translatable(value.getType().getTranslationKey()),
+                                    Component.translatable(ValueTypes.STRING.getTranslationKey())));
                         }
                         if (sb.length() > 0) {
                             sb.append(delimiter.getRawValue());
@@ -884,7 +884,7 @@ public final class Operators {
                 if (b.getRawValue() < a.getLength() && b.getRawValue() >= 0) {
                     return a.get(b.getRawValue());
                 } else {
-                    throw new EvaluationException(new TranslatableComponent(
+                    throw new EvaluationException(Component.translatable(
                             L10NValues.OPERATOR_ERROR_INDEXOUTOFBOUNDS, b.getRawValue(), a.getLength()));
                 }
             }).conditionalOutputTypeDeriver((operator, input) -> {
@@ -910,10 +910,10 @@ public final class Operators {
                     return a.get(b.getRawValue());
                 } else {
                     if (!ValueHelpers.correspondsTo(a.getValueType(), variables.getVariables()[2].getType())) {
-                        throw new EvaluationException(new TranslatableComponent(
+                        throw new EvaluationException(Component.translatable(
                                 L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                                new TranslatableComponent(a.getValueType().getTranslationKey()),
-                                new TranslatableComponent(variables.getVariables()[2].getType().getTranslationKey())));
+                                Component.translatable(a.getValueType().getTranslationKey()),
+                                Component.translatable(variables.getVariables()[2].getType().getTranslationKey())));
                     }
                     return variables.getValue(2);
                 }
@@ -974,7 +974,7 @@ public final class Operators {
                     ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                     IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
                     if (list.isInfinite()) {
-                        throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
                                 LIST_COUNT.getLocalizedNameFull()));
                     }
                     IValue value = variables.getValue(1);
@@ -1001,7 +1001,7 @@ public final class Operators {
                     ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                     IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
                     if (list.isInfinite()) {
-                        throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
                                 LIST_COUNT_PREDICATE.getLocalizedNameFull()));
                     }
                     IOperator operator = OperatorBuilders.getSafePredictate(variables.getValue(1, ValueTypes.OPERATOR));
@@ -1029,10 +1029,10 @@ public final class Operators {
                 IValueTypeListProxy a = valueList.getRawValue();
                 IValue value = variables.getValue(1);
                 if (!ValueHelpers.correspondsTo(a.getValueType(), value.getType())) {
-                    throw new EvaluationException(new TranslatableComponent(
+                    throw new EvaluationException(Component.translatable(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                            new TranslatableComponent(a.getValueType().getTranslationKey()),
-                            new TranslatableComponent(value.getType().getTranslationKey())));
+                            Component.translatable(a.getValueType().getTranslationKey()),
+                            Component.translatable(value.getType().getTranslationKey())));
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyAppend(a, value));
             }).build());
@@ -1050,10 +1050,10 @@ public final class Operators {
                 ValueTypeList.ValueList valueList1 = variables.getValue(1, ValueTypes.LIST);
                 IValueTypeListProxy b = valueList1.getRawValue();
                 if (!ValueHelpers.correspondsTo(a.getValueType(), b.getValueType())) {
-                    throw new EvaluationException(new TranslatableComponent(
+                    throw new EvaluationException(Component.translatable(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                            new TranslatableComponent(a.getValueType().getTranslationKey()),
-                            new TranslatableComponent(b.getValueType().getTranslationKey())));
+                            Component.translatable(a.getValueType().getTranslationKey()),
+                            Component.translatable(b.getValueType().getTranslationKey())));
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyConcat(a, b));
             }).build());
@@ -1083,7 +1083,7 @@ public final class Operators {
                 if (a.getLength() > 0) {
                     return a.get(0);
                 } else {
-                    throw new EvaluationException(new TranslatableComponent(
+                    throw new EvaluationException(Component.translatable(
                             L10NValues.OPERATOR_ERROR_INDEXOUTOFBOUNDS, 0, a.getLength()));
                 }
             }).conditionalOutputTypeDeriver((operator, input) -> {
@@ -1163,10 +1163,10 @@ public final class Operators {
                 ValueTypeInteger.ValueInteger from = variables.getValue(1, ValueTypes.INTEGER);
                 ValueTypeInteger.ValueInteger to = variables.getValue(2, ValueTypes.INTEGER);
                 if (from.getRawValue() >= to.getRawValue()) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_SLICE_TOGREATERTHANFROM));
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_SLICE_TOGREATERTHANFROM));
                 }
                 if (from.getRawValue() < 0 || to.getRawValue() < 0){
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_SLICE_INDEXNEGATIVE));
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_SLICE_INDEXNEGATIVE));
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxySlice<>(list, from.getRawValue(), to.getRawValue()));
             }).build());
@@ -1674,7 +1674,7 @@ public final class Operators {
                                 .map(ValueObjectTypeItemStack.ValueItemStack::of)
                                 .forEach(builder::add);
                     } catch (ResourceLocationException e) {
-                        throw new EvaluationException(new TranslatableComponent(e.getMessage()));
+                        throw new EvaluationException(Component.translatable(e.getMessage()));
                     }
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, builder.build());
@@ -1844,10 +1844,10 @@ public final class Operators {
                 ValueTypeList.ValueList<IValueType<IValue>, IValue> a = variables.getValue(0, ValueTypes.LIST);
                 ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
                 if (!ValueHelpers.correspondsTo(a.getRawValue().getValueType(), ValueTypes.OBJECT_ITEMSTACK)) {
-                    MutableComponent error = new TranslatableComponent(
+                    MutableComponent error = Component.translatable(
                             L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                            new TranslatableComponent(a.getRawValue().getValueType().getTranslationKey()),
-                            new TranslatableComponent(ValueTypes.OBJECT_ITEMSTACK.getTranslationKey()));
+                            Component.translatable(a.getRawValue().getValueType().getTranslationKey()),
+                            Component.translatable(ValueTypes.OBJECT_ITEMSTACK.getTranslationKey()));
                     throw new EvaluationException(error);
                 }
 
@@ -2055,7 +2055,7 @@ public final class Operators {
                         ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                         if(a.getRawValue().isPresent()) {
                             Entity entity = a.getRawValue().get();
-                            return entity.getType().getRegistryName();
+                            return ForgeRegistries.ENTITIES.getKey(entity.getType());
                         }
                         return new ResourceLocation("");
                     },
@@ -2355,7 +2355,7 @@ public final class Operators {
                 String entityType = "";
                 if (entity.getRawValue().isPresent()) {
                     Entity e = entity.getRawValue().get();
-                    entityType = e.getType().getRegistryName().toString();
+                    entityType = ForgeRegistries.ENTITIES.getKey(e.getType()).toString();
                 }
                 return ValueTypeString.ValueString.of(entityType);
             }).build());
@@ -2447,7 +2447,7 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
-                return ValueObjectTypeBlock.ValueBlock.of(!a.isEmpty() ? a.getFluid().getAttributes().getStateForPlacement(null, null, a).createLegacyBlock() : null);
+                return ValueObjectTypeBlock.ValueBlock.of(!a.isEmpty() ? a.getFluid().getFluidType().getStateForPlacement(null, null, a).createLegacyBlock() : null);
             }).build());
 
     /**
@@ -2456,7 +2456,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("luminosity")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
-                fluidStack -> fluidStack.getFluid().getAttributes().getLuminosity(fluidStack)
+                fluidStack -> fluidStack.getFluid().getFluidType().getLightLevel(fluidStack)
             )).build());
 
     /**
@@ -2465,7 +2465,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("density")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
-                fluidStack -> fluidStack.getFluid().getAttributes().getDensity(fluidStack)
+                fluidStack -> fluidStack.getFluid().getFluidType().getDensity(fluidStack)
             )).build());
 
     /**
@@ -2474,7 +2474,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).symbolOperator("viscosity")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
-                fluidStack -> fluidStack.getFluid().getAttributes().getViscosity(fluidStack)
+                fluidStack -> fluidStack.getFluid().getFluidType().getViscosity(fluidStack)
             )).build());
 
     /**
@@ -2483,7 +2483,7 @@ public final class Operators {
     public static final IOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).symbol("is_gaseous").operatorName("isgaseous")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_BOOLEAN.build(
-                fluidStack -> fluidStack.getFluid().getAttributes().isGaseous(fluidStack)
+                fluidStack -> fluidStack.getFluid().getFluidType().isLighterThanAir()
             )).build());
 
     /**
@@ -2494,7 +2494,7 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
-                return ValueTypeString.ValueString.of(a.getFluid().getAttributes().getRarity(a).name());
+                return ValueTypeString.ValueString.of(a.getFluid().getFluidType().getRarity(a).name());
             }).build());
 
     /**
@@ -2515,7 +2515,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
-                        return a.getRawValue().getFluid().getRegistryName();
+                        return ForgeRegistries.FLUIDS.getKey(a.getRawValue().getFluid());
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -2763,7 +2763,7 @@ public final class Operators {
                 ValueTypeList.ValueList valueList = variables.getValue(1, ValueTypes.LIST);
                 Iterator<IValue> iter = valueList.getRawValue().iterator();
                 if (!iter.hasNext()) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_REDUCE_EMPTY));
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REDUCE_EMPTY));
                 }
 
                 IValue accumulator = iter.next();
@@ -2787,7 +2787,7 @@ public final class Operators {
                 ValueTypeString.ValueString name = input.getValue(0, ValueTypes.STRING);
                 IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.tryParse(name.getRawValue()));
                 if (operator == null) {
-                    throw new EvaluationException(new TranslatableComponent(
+                    throw new EvaluationException(Component.translatable(
                             L10NValues.OPERATOR_ERROR_OPERATORNOTFOUND, name.getRawValue()));
                 }
                 return ValueTypeOperator.ValueOperator.of(operator);
@@ -3477,7 +3477,7 @@ public final class Operators {
                 try {
                     expression = NbtPath.parse(string.getRawValue());
                 } catch (NbtParseException e) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
                             string.getRawValue(),
                             e.getMessage()));
                 }
@@ -3500,7 +3500,7 @@ public final class Operators {
                 try {
                     expression = NbtPath.parse(string.getRawValue());
                 } catch (NbtParseException e) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
                             string.getRawValue(),
                             e.getMessage()));
                 }
@@ -3526,7 +3526,7 @@ public final class Operators {
                 try {
                     expression = NbtPath.parse(string.getRawValue());
                 } catch (NbtParseException e) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_NBT_PATH_EXPRESSION,
                             string.getRawValue(),
                             e.getMessage()));
                 }
@@ -3808,8 +3808,8 @@ public final class Operators {
           // Try as a long
           return ValueTypeDouble.ValueDouble.of((double) Long.decode(value.getRawValue()));
         } catch (NumberFormatException e2) {
-            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
-                    new TranslatableComponent(ValueTypes.DOUBLE.getTranslationKey())));
+            throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
+                    Component.translatable(ValueTypes.DOUBLE.getTranslationKey())));
         }
       }
     }));
@@ -3822,8 +3822,8 @@ public final class Operators {
       try{
         return ValueTypeInteger.ValueInteger.of(Integer.decode(value.getRawValue()));
       } catch (NumberFormatException e) {
-          throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
-                  new TranslatableComponent(ValueTypes.INTEGER.getTranslationKey())));
+          throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
+                  Component.translatable(ValueTypes.INTEGER.getTranslationKey())));
       }
     }));
 
@@ -3835,8 +3835,8 @@ public final class Operators {
       try {
         return ValueTypeLong.ValueLong.of(Long.decode(value.getRawValue()));
       } catch (NumberFormatException e) {
-          throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
-                  new TranslatableComponent(ValueTypes.LONG.getTranslationKey())));
+          throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
+                  Component.translatable(ValueTypes.LONG.getTranslationKey())));
       }
     }));
 
@@ -3848,8 +3848,8 @@ public final class Operators {
       try {
         return ValueTypeNbt.ValueNbt.of(TagParser.parseTag(value.getRawValue()));
       } catch (CommandSyntaxException e) {
-        throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
-                new TranslatableComponent(ValueTypes.NBT.getTranslationKey())));
+        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
+                Component.translatable(ValueTypes.NBT.getTranslationKey())));
       }
     }));
 

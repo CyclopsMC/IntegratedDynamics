@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -33,7 +33,7 @@ public class GeneralChoiceOperator extends GeneralOperator {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {
-            return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+            return Component.translatable(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                     this.getOperatorName(), input.length, requiredInputLength);
         }
         // Input types checking
@@ -41,19 +41,19 @@ public class GeneralChoiceOperator extends GeneralOperator {
         for(int i = 0; i < requiredInputLength; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
-                return new TranslatableComponent(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
+                return Component.translatable(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
             if(i == 0 && !ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
-                return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                        this.getOperatorName(), new TranslatableComponent(inputType.getTranslationKey()),
-                        Integer.toString(i), new TranslatableComponent(getInputTypes()[i].getTranslationKey()));
+                return Component.translatable(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        this.getOperatorName(), Component.translatable(inputType.getTranslationKey()),
+                        Integer.toString(i), Component.translatable(getInputTypes()[i].getTranslationKey()));
             } else if(i == 1) {
                 temporarySecondInputType = inputType;
             } else if(i == 2) {
                 if(!ValueHelpers.correspondsTo(temporarySecondInputType, inputType)) {
-                    return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                            this.getOperatorName(), new TranslatableComponent(inputType.getTranslationKey()),
-                            Integer.toString(i), new TranslatableComponent(temporarySecondInputType.getTranslationKey()));
+                    return Component.translatable(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                            this.getOperatorName(), Component.translatable(inputType.getTranslationKey()),
+                            Integer.toString(i), Component.translatable(temporarySecondInputType.getTranslationKey()));
                 }
             }
         }

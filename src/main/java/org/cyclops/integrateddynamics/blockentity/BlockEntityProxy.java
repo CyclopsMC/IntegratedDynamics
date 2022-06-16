@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -114,7 +113,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
                 // Hard check to make sure the variable is not directly referring to this proxy.
                 if(getVariableFacade() instanceof IProxyVariableFacade) {
                     if(((IProxyVariableFacade) getVariableFacade()).getProxyId() == getProxyId()) {
-                        addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_RECURSION, getVariableFacade().getId()));
+                        addError(Component.translatable(L10NValues.VARIABLE_ERROR_RECURSION, getVariableFacade().getId()));
                     }
                 }
             }
@@ -174,7 +173,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.integrateddynamics.proxy");
+        return Component.translatable("block.integrateddynamics.proxy");
     }
 
     public static class Ticker<T extends BlockEntityProxy> extends BlockEntityTickerDelayed<T> {

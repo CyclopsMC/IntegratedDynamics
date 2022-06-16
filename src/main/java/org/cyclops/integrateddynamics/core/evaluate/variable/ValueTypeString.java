@@ -4,8 +4,8 @@ import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -28,7 +28,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
 
     @Override
     public MutableComponent toCompactString(ValueString value) {
-        return new TextComponent(value.getRawValue());
+        return Component.literal(value.getRawValue());
     }
 
     @Override

@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -40,7 +39,7 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         ValueTypeOperator.ValueOperator valueOperator = ((ValueTypeOperator.ValueOperator) value);
         IOperator operator = valueOperator.getRawValue();
         List<Component> lines = Lists.newLinkedList();
-        lines.add(new TextComponent(ValueTypes.OPERATOR.getName(valueOperator) + " ::"));
+        lines.add(Component.literal(ValueTypes.OPERATOR.getName(valueOperator) + " ::"));
         lines.addAll(ValueTypeOperator.getSignatureLines(operator, true));
         for (Component line : lines) {
             float width = fontRenderer.width(line.getString()) - 1;

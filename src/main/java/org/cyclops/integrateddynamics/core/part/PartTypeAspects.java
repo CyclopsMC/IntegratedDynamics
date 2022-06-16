@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -45,7 +44,7 @@ public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPart
     public void loadTooltip(ItemStack itemStack, List<Component> lines) {
         super.loadTooltip(itemStack, lines);
         if (getAspects().isEmpty()) {
-            lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_NOASPECTS)
+            lines.add(Component.translatable(L10NValues.PART_TOOLTIP_NOASPECTS)
                     .withStyle(ChatFormatting.GOLD));
         }
     }

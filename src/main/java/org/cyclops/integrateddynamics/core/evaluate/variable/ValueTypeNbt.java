@@ -7,8 +7,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -36,7 +36,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
 
     @Override
     public MutableComponent toCompactString(ValueNbt value) {
-        return new TextComponent(toString(value));
+        return Component.literal(toString(value));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
         try {
             return ValueNbt.of(new TagParser(new StringReader(value)).readValue());
         } catch (CommandSyntaxException e) {
-            throw new EvaluationException(new TextComponent(e.getMessage()));
+            throw new EvaluationException(Component.literal(e.getMessage()));
         }
     }
 

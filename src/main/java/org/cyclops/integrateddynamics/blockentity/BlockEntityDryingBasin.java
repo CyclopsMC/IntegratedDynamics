@@ -167,7 +167,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
             super.update(level, pos, blockState, blockEntity);
 
             Optional<RecipeDryingBasin> currentRecipe = blockEntity.getCurrentRecipe();
-            if (!blockEntity.getTank().isEmpty() && blockEntity.getTank().getFluid().getFluid().getAttributes().getTemperature(blockEntity.getTank().getFluid()) >= WOOD_IGNITION_TEMPERATURE) {
+            if (!blockEntity.getTank().isEmpty() && blockEntity.getTank().getFluid().getFluid().getFluidType().getTemperature(blockEntity.getTank().getFluid()) >= WOOD_IGNITION_TEMPERATURE) {
                 blockEntity.setFire(blockEntity.getFire() + 1);
                 if (blockEntity.getFire() >= 100) {
                     level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
@@ -219,7 +219,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
         public void tick(Level level, BlockPos pos, BlockState blockState, BlockEntityDryingBasin blockEntity) {
             if(blockEntity.getProgress() > 0 && level.random.nextInt(5) == 0) {
                 if(!blockEntity.getTank().isEmpty()) {
-                    BlockState blockStateFluid = blockEntity.getTank().getFluid().getFluid().getAttributes().getBlock(level, pos,
+                    BlockState blockStateFluid = blockEntity.getTank().getFluid().getFluid().getFluidType().getBlockForFluidState(level, pos,
                             blockEntity.getTank().getFluid().getFluid().defaultFluidState());
                     if(blockStateFluid != null) {
                         level.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, blockStateFluid),

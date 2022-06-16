@@ -11,7 +11,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -201,7 +200,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         return Optional.of(new MenuProvider() {
             @Override
             public Component getDisplayName() {
-                return new TranslatableComponent(getTranslationKey());
+                return Component.translatable(getTranslationKey());
             }
 
             @Nullable
@@ -269,19 +268,19 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 IValue value = state.getDisplayValue();
                 if(value != null) {
                     IValueType valueType = value.getType();
-                    lines.add(new TranslatableComponent(
+                    lines.add(Component.translatable(
                             L10NValues.PART_TOOLTIP_DISPLAY_ACTIVEVALUE,
                             valueType.toCompactString(value).withStyle(valueType.getDisplayColorFormat()),
-                            new TranslatableComponent(valueType.getTranslationKey())));
+                            Component.translatable(valueType.getTranslationKey())));
                 }
             } else {
-                lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_ERRORS).withStyle(ChatFormatting.RED));
+                lines.add(Component.translatable(L10NValues.PART_TOOLTIP_ERRORS).withStyle(ChatFormatting.RED));
                 for (MutableComponent error : state.getGlobalErrors()) {
                     lines.add(error.withStyle(ChatFormatting.RED));
                 }
             }
         } else {
-            lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_INACTIVE));
+            lines.add(Component.translatable(L10NValues.PART_TOOLTIP_INACTIVE));
         }
         super.loadTooltip(state, lines);
     }

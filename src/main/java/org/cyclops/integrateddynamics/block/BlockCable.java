@@ -12,7 +12,9 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -52,6 +54,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IBlockRenderProperties;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.block.BlockWithEntity;
 import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
@@ -88,7 +91,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -291,7 +293,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel world, BlockPos pos, Random rand) {
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand) {
         super.tick(state, world, pos, rand);
         BlockEntityHelpers.get(world, pos, BlockEntityMultipartTicking.class)
                 .ifPresent(tile -> {
@@ -302,7 +304,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
                 });
     }
 
-    protected void updateTickPart(IPartType partType, Level world, BlockPos pos, IPartState partState, Random random) {
+    protected void updateTickPart(IPartType partType, Level world, BlockPos pos, IPartState partState, RandomSource random) {
         partType.updateTick(world, pos, partState, random);
     }
 
@@ -466,9 +468,10 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     @Override
     public BakedModel createDynamicModel(ModelBakeEvent event) {
         CableModel model = new CableModel();
-        event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=false"), model);
-        event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "waterlogged=true"), model);
-        event.getModelRegistry().put(new ModelResourceLocation(getRegistryName(), "inventory"), model);
+        ResourceLocation registryName = ForgeRegistries.BLOCKS.getKey(this);
+        event.getModelRegistry().put(new ModelResourceLocation(registryName, "waterlogged=false"), model);
+        event.getModelRegistry().put(new ModelResourceLocation(registryName, "waterlogged=true"), model);
+        event.getModelRegistry().put(new ModelResourceLocation(registryName, "inventory"), model);
         return model;
     }
 

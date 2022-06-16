@@ -6,8 +6,6 @@ import lombok.Setter;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -69,7 +67,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     @Override
     public Component validate() {
         if (selectedOperator == null) {
-            return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, getInnerGuiElement().getInputString());
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, getInnerGuiElement().getInputString());
         }
         return null;
     }
@@ -150,7 +148,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
 
         @Override
         public MutableComponent getDisplayString() {
-            return new TextComponent(getMatchString());
+            return Component.literal(getMatchString());
         }
 
         @Override

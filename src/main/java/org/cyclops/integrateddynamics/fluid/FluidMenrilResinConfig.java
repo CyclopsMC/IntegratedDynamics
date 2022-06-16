@@ -22,7 +22,7 @@ public class FluidMenrilResinConfig extends FluidConfig {
                                 .density(1500)
                                 .viscosity(3000)
                                 .rarity(Rarity.RARE)
-                                .translationKey("block.integrateddynamics.block_menril_resin"))
+                                .descriptionId("block.integrateddynamics.block_menril_resin"))
                         .bucket(() -> RegistryEntries.ITEM_BUCKET_MENRIL_RESIN)
                         .block(() -> RegistryEntries.BLOCK_FLUID_MENRIL_RESIN)
         );

@@ -5,8 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -42,7 +40,7 @@ public class ItemVariable extends Item {
         IVariableFacade variableFacade = getVariableFacade(itemStack);
         variableFacade.appendHoverText(list, world);
         if (variableFacade != VariableFacadeHandlerRegistry.DUMMY_FACADE && Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
-            list.add(new TranslatableComponent("item.integrateddynamics.variable.warning"));
+            list.add(Component.translatable("item.integrateddynamics.variable.warning"));
         }
         super.appendHoverText(itemStack, world, list, flag);
     }
@@ -52,7 +50,7 @@ public class ItemVariable extends Item {
         IVariableFacade variableFacade = getVariableFacade(itemStack);
         String label;
         if(variableFacade.isValid() && (label = variableFacade.getLabel()) != null) {
-            return new TextComponent(label)
+            return Component.literal(label)
                     .withStyle(ChatFormatting.ITALIC);
         }
         return super.getName(itemStack);

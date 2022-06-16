@@ -5,8 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -69,7 +67,7 @@ public class ValueHelpers {
         Component[] names = new Component[valueTypes.length];
         for(int i = 0; i < valueTypes.length; i++) {
             IValueType<?> valueType = valueTypes[i];
-            names[i] = new TranslatableComponent(valueType.getTranslationKey());
+            names[i] = Component.translatable(valueType.getTranslationKey());
         }
         return names;
     }
@@ -132,11 +130,11 @@ public class ValueHelpers {
 
                 // Error if the result is NOT an operator
                 if (result.getType() != ValueTypes.OPERATOR) {
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
-                            new TranslatableComponent(operator.getTranslationKey()),
+                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_CURRYINGOVERFLOW,
+                            Component.translatable(operator.getTranslationKey()),
                             requiredLength,
                             variables.length,
-                            new TranslatableComponent(result.getType().getTranslationKey())));
+                            Component.translatable(result.getType().getTranslationKey())));
                 }
 
                 // Pass all remaining variables to the resulting operator
@@ -231,11 +229,11 @@ public class ValueHelpers {
      */
     public static void validatePredicateOutput(IOperator predicate, IValue result) throws EvaluationException {
         if (!(result instanceof ValueTypeBoolean.ValueBoolean)) {
-            MutableComponent error = new TranslatableComponent(
+            MutableComponent error = Component.translatable(
                     L10NValues.OPERATOR_ERROR_WRONGPREDICATE,
                     predicate.getLocalizedNameFull(),
-                    new TranslatableComponent(result.getType().getTranslationKey()),
-                    new TranslatableComponent(ValueTypes.BOOLEAN.getTranslationKey()));
+                    Component.translatable(result.getType().getTranslationKey()),
+                    Component.translatable(ValueTypes.BOOLEAN.getTranslationKey()));
             throw new EvaluationException(error);
         }
     }
@@ -246,17 +244,17 @@ public class ValueHelpers {
      * @return A pair of a string and color.
      */
     public static Pair<MutableComponent, Integer> getSafeReadableValue(@Nullable IVariable variable) {
-        MutableComponent readValue = new TextComponent("");
+        MutableComponent readValue = Component.literal("");
         int readValueColor = 0;
         if (!NetworkHelpers.shouldWork()) {
-            readValue = new TextComponent("SAFE-MODE");
+            readValue = Component.literal("SAFE-MODE");
         } else if(variable != null) {
             try {
                 IValue value = variable.getValue();
                 readValue = value.getType().toCompactString(value);
                 readValueColor = value.getType().getDisplayColor();
             } catch (EvaluationException | NullPointerException | PartStateException e) {
-                readValue = new TextComponent("ERROR");
+                readValue = Component.literal("ERROR");
                 readValueColor = Helpers.RGBToInt(255, 0, 0);
             }
         }
@@ -274,7 +272,7 @@ public class ValueHelpers {
         try {
             return new ResourceLocation(value);
         } catch (ResourceLocationException e) {
-            throw new EvaluationException(new TextComponent(e.getMessage()));
+            throw new EvaluationException(Component.literal(e.getMessage()));
         }
     }
 

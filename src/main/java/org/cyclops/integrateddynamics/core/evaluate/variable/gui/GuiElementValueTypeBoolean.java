@@ -4,7 +4,6 @@ import com.google.common.base.Predicates;
 import lombok.Data;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -70,7 +69,7 @@ public class GuiElementValueTypeBoolean<G extends GuiComponent, C extends Abstra
 
     @Override
     public Component getName() {
-        return new TranslatableComponent(getValueType().getTranslationKey());
+        return Component.translatable(getValueType().getTranslationKey());
     }
 
     @Override
@@ -96,7 +95,7 @@ public class GuiElementValueTypeBoolean<G extends GuiComponent, C extends Abstra
     @Override
     public Component validate() {
         if (!this.validator.test(ValueTypeBoolean.ValueBoolean.of(inputBoolean))) {
-            return new TranslatableComponent(L10NValues.VALUE_ERROR);
+            return Component.translatable(L10NValues.VALUE_ERROR);
         }
         return null;
     }

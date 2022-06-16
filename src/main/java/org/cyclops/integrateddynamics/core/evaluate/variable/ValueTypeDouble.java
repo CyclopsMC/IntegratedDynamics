@@ -4,9 +4,8 @@ import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
@@ -29,7 +28,7 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
 
     @Override
     public MutableComponent toCompactString(ValueDouble value) {
-        return new TextComponent(Double.toString(value.getRawValue()));
+        return Component.literal(Double.toString(value.getRawValue()));
     }
 
     @Override
@@ -56,8 +55,8 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
         try {
             return ValueDouble.of(Double.parseDouble(value));
         } catch (NumberFormatException e) {
-            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
-                    new TranslatableComponent(getTranslationKey())));
+            throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_PARSE, value,
+                    Component.translatable(getTranslationKey())));
         }
     }
 

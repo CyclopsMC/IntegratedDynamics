@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -28,7 +27,7 @@ public class ItemBlockDelay extends ItemBlockNBT {
     public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
         if(itemStack.getTag() != null) {
             int id = itemStack.getTag().getInt("delayId");
-            list.add(new TranslatableComponent(L10NValues.GENERAL_ITEM_ID, id));
+            list.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
         }
         super.appendHoverText(itemStack, world, list, flag);
     }

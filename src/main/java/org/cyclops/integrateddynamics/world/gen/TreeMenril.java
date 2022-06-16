@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.world.gen;
 
 import net.minecraft.core.Holder;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.block.grower.AbstractTreeGrower;
@@ -17,7 +18,6 @@ import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenri
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 /**
  * A Menril tree.
@@ -40,7 +40,7 @@ public class TreeMenril extends AbstractTreeGrower {
 
     @Nullable
     @Override
-    protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredFeature(Random random, boolean b) {
+    protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource random, boolean b) {
         return BiomeMeneglinConfig.CONFIGURED_FEATURE_TREE;
     }
 

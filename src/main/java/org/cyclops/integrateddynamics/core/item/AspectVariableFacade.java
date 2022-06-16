@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,7 +22,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * Variable facade for variables determined by part aspects.
@@ -63,15 +62,15 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
     @Override
     public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
         if (!isValid()) {
-            validator.addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_INVALIDITEM));
+            validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else if (!(getAspect() instanceof IAspectRead
                 && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
-            validator.addError(new TranslatableComponent(L10NValues.VARIABLE_ERROR_PARTNOTINNETWORK,
+            validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_PARTNOTINNETWORK,
                     Integer.toString(getPartId())));
         } else if (!ValueHelpers.correspondsTo(containingValueType, getAspect().getValueType())) {
-            validator.addError(new TranslatableComponent(L10NValues.ASPECT_ERROR_INVALIDTYPE,
-                    new TranslatableComponent(containingValueType.getTranslationKey()),
-                    new TranslatableComponent(getAspect().getValueType().getTranslationKey())));
+            validator.addError(Component.translatable(L10NValues.ASPECT_ERROR_INVALIDTYPE,
+                    Component.translatable(containingValueType.getTranslationKey()),
+                    Component.translatable(getAspect().getValueType().getTranslationKey())));
         }
     }
 
@@ -87,14 +86,14 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
     public void appendHoverText(List<Component> list, Level world) {
         if(isValid()) {
             getAspect().loadTooltip(list, false);
-            list.add(new TranslatableComponent(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
+            list.add(Component.translatable(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
         }
         super.appendHoverText(list, world);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, Random random, IModelData modelData) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
         if(isValid()) {
             IAspect aspect = getAspect();
             IValueType valueType = aspect.getValueType();

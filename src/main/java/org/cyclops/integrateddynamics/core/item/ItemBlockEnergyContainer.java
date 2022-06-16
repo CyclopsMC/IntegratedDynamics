@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.item;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -66,7 +65,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
                     long amount = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getEnergyStoredLong();
                     long capacity = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getMaxEnergyStoredLong();
                     String line = String.format(Locale.ROOT, "%,d", amount) + " / " + String.format(Locale.ROOT, "%,d", capacity) + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
-                    list.add(new TextComponent(IInformationProvider.ITEM_PREFIX + line));
+                    list.add(Component.literal(IInformationProvider.ITEM_PREFIX + line));
                 });
     }
 

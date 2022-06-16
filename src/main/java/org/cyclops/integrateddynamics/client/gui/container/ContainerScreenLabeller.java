@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -41,8 +40,8 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     public void init() {
         super.init();
         addRenderableWidget(new ButtonText(this.leftPos + 133,  this.topPos + 8,
-                new TranslatableComponent("item.integrateddynamics.labeller.button.write"),
-                new TranslatableComponent("item.integrateddynamics.labeller.button.write"), button -> {
+                Component.translatable("item.integrateddynamics.labeller.button.write"),
+                Component.translatable("item.integrateddynamics.labeller.button.write"), button -> {
             ItemStack itemStack = getMenu().getItemStack();
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             IVariableFacade variableFacade = registry.handle(itemStack);
@@ -61,7 +60,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
         int searchWidth = 87;
         int searchX = 36;
         int searchY = 11;
-        this.searchField = new WidgetTextFieldExtended(font, this.leftPos + searchX, this.topPos + searchY, searchWidth, font.lineHeight, new TranslatableComponent("gui.cyclopscore.search"));
+        this.searchField = new WidgetTextFieldExtended(font, this.leftPos + searchX, this.topPos + searchY, searchWidth, font.lineHeight, Component.translatable("gui.cyclopscore.search"));
         this.searchField.setMaxLength(64);
         this.searchField.setBordered(false);
         this.searchField.setVisible(true);

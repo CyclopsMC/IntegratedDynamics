@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -81,7 +80,7 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public MutableComponent getLocalizedNameFull() {
-        return new TranslatableComponent(getUnlocalizedCategoryPrefix() + ".basename", new TranslatableComponent(getTranslationKey()));
+        return Component.translatable(getUnlocalizedCategoryPrefix() + ".basename", Component.translatable(getTranslationKey()));
     }
 
     protected String getUnlocalizedPrefix() {
@@ -103,19 +102,19 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
-        Component operatorName = new TranslatableComponent(getTranslationKey());
-        Component categoryName = new TranslatableComponent(getUnlocalizedCategoryName());
+        Component operatorName = Component.translatable(getTranslationKey());
+        Component categoryName = Component.translatable(getUnlocalizedCategoryName());
         String symbol = getSymbol();
         String outputTypeName = L10NHelpers.localize(getOutputType().getTranslationKey());
-        lines.add(new TranslatableComponent(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
-        lines.add(new TranslatableComponent(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
+        lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
+        lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
-            lines.add(new TranslatableComponent(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME, i + 1)
+            lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME, i + 1)
             .withStyle(inputTypes[i].getDisplayColorFormat())
-            .append(new TranslatableComponent(inputTypes[i].getTranslationKey())));
+            .append(Component.translatable(inputTypes[i].getTranslationKey())));
         }
-        lines.add(new TranslatableComponent(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
+        lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
@@ -140,9 +139,9 @@ public abstract class OperatorBase implements IOperator {
     public IValue evaluate(IVariable... input) throws EvaluationException {
         if (this.recursiveInvocations++ > GeneralConfig.operatorRecursionLimit) {
             this.recursiveInvocations = 0;
-            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_RECURSIONLIMIT,
+            throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_RECURSIONLIMIT,
                     GeneralConfig.operatorRecursionLimit,
-                    new TranslatableComponent(this.getTranslationKey())
+                    Component.translatable(this.getTranslationKey())
             ));
         }
         MutableComponent error = validateTypes(ValueHelpers.from(input));
@@ -165,19 +164,19 @@ public abstract class OperatorBase implements IOperator {
         // Input size checking
         int requiredInputLength = getRequiredInputLength();
         if(input.length != requiredInputLength) {
-            return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
+            return Component.translatable(L10NValues.OPERATOR_ERROR_WRONGINPUTLENGTH,
                     this.getOperatorName(), input.length, requiredInputLength);
         }
         // Input types checking
         for(int i = 0; i < requiredInputLength; i++) {
             IValueType inputType = input[i];
             if(inputType == null) {
-                return new TranslatableComponent(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
+                return Component.translatable(L10NValues.OPERATOR_ERROR_NULLTYPE, this.getOperatorName(), Integer.toString(i));
             }
             if(!ValueHelpers.correspondsTo(getInputTypes()[i], inputType)) {
-                return new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
-                        this.getOperatorName(), new TranslatableComponent(inputType.getTranslationKey()),
-                        Integer.toString(i + 1), new TranslatableComponent(getInputTypes()[i].getTranslationKey()));
+                return Component.translatable(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        this.getOperatorName(), Component.translatable(inputType.getTranslationKey()),
+                        Integer.toString(i + 1), Component.translatable(getInputTypes()[i].getTranslationKey()));
             }
         }
         return null;

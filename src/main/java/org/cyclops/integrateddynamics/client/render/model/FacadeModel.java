@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -20,7 +21,6 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Dynamic model for facade items.
@@ -38,7 +38,7 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
         super(baseModel);
     }
 
-    public FacadeModel(BakedModel baseModel, BlockState blockState, Direction facing, Random rand, IModelData modelData) {
+    public FacadeModel(BakedModel baseModel, BlockState blockState, Direction facing, RandomSource rand, IModelData modelData) {
         super(baseModel, blockState, facing, rand, modelData);
     }
 
@@ -58,7 +58,7 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
 
     @Override
     public BakedModel handleBlockState(@Nullable BlockState blockState, @Nullable Direction direction,
-                                        @Nonnull Random random, @Nonnull IModelData iModelData) {
+                                        @Nonnull RandomSource random, @Nonnull IModelData iModelData) {
         return null;
     }
 

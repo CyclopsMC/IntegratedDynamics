@@ -8,8 +8,8 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -62,9 +62,9 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
                     return (MutableComponent) e.getName();
                 }
             }
-            return new TextComponent("unknown");
+            return Component.literal("unknown");
         }
-        return new TextComponent("");
+        return Component.literal("");
     }
 
     @Override
@@ -123,7 +123,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         if (uuid.isPresent()) {
             UUID id = uuid.get();
             String entityName = value.getRawValue()
-                    .map(entity -> entity.getType().getRegistryName().toString())
+                    .map(entity -> ForgeRegistries.ENTITIES.getKey(entity.getType()).toString())
                     .orElse("unknown");
             return id.toString() + " (" + entityName + ")";
         }

@@ -4,9 +4,8 @@ import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -30,7 +29,7 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
 
     @Override
     public MutableComponent toCompactString(ValueBoolean value) {
-        return new TextComponent(Boolean.toString(value.getRawValue()));
+        return Component.literal(Boolean.toString(value.getRawValue()));
     }
 
     @Override
@@ -65,8 +64,8 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
         } else if("false".equalsIgnoreCase(value) || "0".equals(value)) {
             b = false;
         } else {
-            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_PARSE, value,
-                    new TranslatableComponent(getTranslationKey())));
+            throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_PARSE, value,
+                    Component.translatable(getTranslationKey())));
         }
         return ValueBoolean.of(b);
     }

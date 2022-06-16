@@ -5,7 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -195,20 +194,20 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         IAspectWrite aspectWrite = state.getActiveAspect();
         if (aspectWrite != null) {
             if (state.hasVariable() && state.isEnabled()) {
-                lines.add(new TranslatableComponent(
+                lines.add(Component.translatable(
                         L10NValues.PART_TOOLTIP_WRITER_ACTIVEASPECT,
-                        new TranslatableComponent(aspectWrite.getTranslationKey()),
-                        new TranslatableComponent(aspectWrite.getValueType().getTranslationKey())
+                        Component.translatable(aspectWrite.getTranslationKey()),
+                        Component.translatable(aspectWrite.getValueType().getTranslationKey())
                                 .withStyle(aspectWrite.getValueType().getDisplayColorFormat())));
             } else {
-                lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_ERRORS)
+                lines.add(Component.translatable(L10NValues.PART_TOOLTIP_ERRORS)
                         .withStyle(ChatFormatting.RED));
                 for (MutableComponent error : state.getErrors(aspectWrite)) {
                     lines.add(error.withStyle(ChatFormatting.RED));
                 }
             }
         } else {
-            lines.add(new TranslatableComponent(L10NValues.PART_TOOLTIP_INACTIVE));
+            lines.add(Component.translatable(L10NValues.PART_TOOLTIP_INACTIVE));
         }
     }
 
@@ -217,7 +216,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         return Optional.of(new MenuProvider() {
             @Override
             public Component getDisplayName() {
-                return new TranslatableComponent(getTranslationKey());
+                return Component.translatable(getTranslationKey());
             }
 
             @Nullable
