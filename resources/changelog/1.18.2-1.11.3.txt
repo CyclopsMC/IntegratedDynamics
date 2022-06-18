@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.15.0 or higher.
+
+Fixes:
+* Fix Mechanical Drying Basin only producing recipe outputs once, Closes #1181
+
