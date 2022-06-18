@@ -155,7 +155,7 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         IFluidHandler.FluidAction fluidAction = FluidHelpers.simulateBooleanToAction(simulate);
 
         // Output items
-        ItemStack outputStack = recipe.getOutputItemFirst();
+        ItemStack outputStack = recipe.getOutputItemFirst().copy();
         if (!outputStack.isEmpty()) {
             if (!InventoryHelpers.addToInventory(getInventory(), SLOTS_OUTPUT, NonNullList.withSize(1, outputStack), simulate).isEmpty()) {
                 return false;
