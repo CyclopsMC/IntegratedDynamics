@@ -12,6 +12,7 @@ import lombok.Lombok;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
@@ -3765,10 +3766,14 @@ public final class Operators {
                                 .map(instance -> new PrototypedIngredientAlternativesList(Collections.singletonList(new PrototypedIngredient(component, instance, matcher.getExactMatchCondition()))))
                                 .collect(Collectors.toList()));
                     }
-                    return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(
-                            inputs,
-                            valueOut.getRawValue().get()
-                    ));
+                    try {
+                        return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(
+                                inputs,
+                                valueOut.getRawValue().get()
+                        ));
+                    } catch (IllegalArgumentException e) {
+                        throw new EvaluationException(new TextComponent(e.getMessage()));
+                    }
                 }
                 return ValueObjectTypeRecipe.ValueRecipe.of(null);
             }).build());
