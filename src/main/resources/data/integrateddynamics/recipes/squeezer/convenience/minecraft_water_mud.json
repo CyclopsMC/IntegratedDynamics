@@ -1,0 +1,15 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "item": "minecraft:mud",
+  "result": {
+    "items": [
+      {
+        "item": "minecraft:dirt"
+      }
+    ],
+    "fluid": {
+      "fluid": "minecraft:water",
+      "amount": 250
+    }
+  }
+}
