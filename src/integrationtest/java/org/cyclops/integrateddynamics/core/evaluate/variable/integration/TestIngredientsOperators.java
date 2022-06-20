@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngr
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLong;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
@@ -64,7 +65,7 @@ public class TestIngredientsOperators {
     private Predicate<ValueObjectTypeFluidStack.ValueFluidStack> pFluidRaw;
     private DummyVariable<ValueTypeOperator.ValueOperator> pFluid;
 
-    private DummyVariable<ValueTypeInteger.ValueInteger> iEnergy;
+    private DummyVariable<ValueTypeLong.ValueLong> iEnergy;
     private Predicate<ValueTypeInteger.ValueInteger> pEnergyRaw;
     private DummyVariable<ValueTypeOperator.ValueOperator> pEnergy;
 
@@ -103,9 +104,9 @@ public class TestIngredientsOperators {
                         666L, 777L, 0L)
                 )));
         lEnergies = new DummyVariable<>(ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
-                ValueTypeInteger.ValueInteger.of(666),
-                ValueTypeInteger.ValueInteger.of(777),
-                ValueTypeInteger.ValueInteger.of(0)
+                ValueTypeLong.ValueLong.of(666L),
+                ValueTypeLong.ValueLong.of(777L),
+                ValueTypeLong.ValueLong.of(0L)
         ));
 
         Map<IngredientComponent<?, ?>, List<?>> ingredients = Maps.newIdentityHashMap();
@@ -117,7 +118,7 @@ public class TestIngredientsOperators {
 
         iItem = new DummyVariable<>(ValueTypes.OBJECT_ITEMSTACK, ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
         iFluid = new DummyVariable<>(ValueTypes.OBJECT_FLUIDSTACK, ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 123)));
-        iEnergy = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(123));
+        iEnergy = new DummyVariable<>(ValueTypes.LONG, ValueTypeLong.ValueLong.of(123L));
     }
 
     /**
@@ -190,12 +191,12 @@ public class TestIngredientsOperators {
         IValue res1 = Operators.INGREDIENTS_ENERGIES.evaluate(new IVariable[]{iEnergies});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 3, "energys(energys, 0).size = 1");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger>) res1)
-                .getRawValue().get(0).getRawValue(), 666, "energies(energies, 0) = 666");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger>) res1)
-                .getRawValue().get(1).getRawValue(), 777, "energies(energies, 0) = 777");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger>) res1)
-                .getRawValue().get(2).getRawValue(), 0, "energies(energies, 0) = 0");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueTypeLong, ValueTypeLong.ValueLong>) res1)
+                .getRawValue().get(0).getRawValue(), 666L, "energies(energies, 0) = 666");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueTypeLong, ValueTypeLong.ValueLong>) res1)
+                .getRawValue().get(1).getRawValue(), 777L, "energies(energies, 0) = 777");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<ValueTypeLong, ValueTypeLong.ValueLong>) res1)
+                .getRawValue().get(2).getRawValue(), 0L, "energies(energies, 0) = 0");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

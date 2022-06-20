@@ -792,7 +792,7 @@ public class TestItemStackOperators {
     public void testItemStackOreDict() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iStone});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 1, "size(tag(stone)) = 1");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 2, "size(tag(stone)) = 2");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iWrench});
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 1, "size(tag(wrench)) = 1");
