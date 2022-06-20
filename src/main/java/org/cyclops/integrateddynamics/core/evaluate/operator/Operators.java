@@ -45,6 +45,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -2453,8 +2454,8 @@ public final class Operators {
     /**
      * The fluidstack luminosity
      */
-    public static final IOperator OBJECT_FLUIDSTACK_LUMINOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("luminosity")
+    public static final IOperator OBJECT_FLUIDSTACK_LIGHT_LEVEL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("light_level")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
                 fluidStack -> fluidStack.getFluid().getFluidType().getLightLevel(fluidStack)
             )).build());
@@ -2469,6 +2470,15 @@ public final class Operators {
             )).build());
 
     /**
+     * The fluidstack temperature
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_TEMPERATURE = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.INTEGER).symbolOperator("temperature")
+            .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
+                    fluidStack -> fluidStack.getFluid().getFluidType().getTemperature(fluidStack)
+            )).build());
+
+    /**
      * The fluidstack viscosity
      */
     public static final IOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
@@ -2480,8 +2490,8 @@ public final class Operators {
     /**
      * If the fluidstack is gaseous
      */
-    public static final IOperator OBJECT_FLUIDSTACK_ISGASEOUS = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_gaseous").operatorName("isgaseous")
+    public static final IOperator OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbolOperator("lighter_than_air")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_BOOLEAN.build(
                 fluidStack -> fluidStack.getFluid().getFluidType().isLighterThanAir()
             )).build());
@@ -2495,6 +2505,56 @@ public final class Operators {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
                 return ValueTypeString.ValueString.of(a.getFluid().getFluidType().getRarity(a).name());
+            }).build());
+
+    /**
+     * The bucket empty sound of the fluidstack
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("sound_bucket_empty")
+            .function(variables -> {
+                ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+                FluidStack a = valueFluidStack.getRawValue();
+                return ValueTypeString.ValueString.of(Optional.ofNullable(a.getFluid().getFluidType().getSound(a, SoundActions.BUCKET_EMPTY))
+                        .map(soundEvent -> soundEvent.getLocation().toString())
+                        .orElse(""));
+            }).build());
+
+    /**
+     * The fluid vaporize sound of the fluidstack
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("sound_fluid_vaporize")
+            .function(variables -> {
+                ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+                FluidStack a = valueFluidStack.getRawValue();
+                return ValueTypeString.ValueString.of(Optional.ofNullable(a.getFluid().getFluidType().getSound(a, SoundActions.FLUID_VAPORIZE))
+                        .map(soundEvent -> soundEvent.getLocation().toString())
+                        .orElse(""));
+            }).build());
+
+    /**
+     * The bucket fill sound of the fluidstack
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.STRING).symbolOperator("sound_bucket_fill")
+            .function(variables -> {
+                ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+                FluidStack a = valueFluidStack.getRawValue();
+                return ValueTypeString.ValueString.of(Optional.ofNullable(a.getFluid().getFluidType().getSound(a, SoundActions.BUCKET_FILL))
+                        .map(soundEvent -> soundEvent.getLocation().toString())
+                        .orElse(""));
+            }).build());
+
+    /**
+     * The bucket of the fluidstack
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_BUCKET = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("bucket")
+            .function(variables -> {
+                ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+                FluidStack a = valueFluidStack.getRawValue();
+                return ValueObjectTypeItemStack.ValueItemStack.of(a.getFluid().getFluidType().getBucket(a));
             }).build());
 
     /**
