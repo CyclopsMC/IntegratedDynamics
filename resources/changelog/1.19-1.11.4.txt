@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.16.0 or higher.
+
+Fixes:
+* Fix rare crash due to rendering null facade, Closes #1183
+* Fix checkbox render issues in recipe gui in LP
+* Fix crash when creating recipe with empty inputs, Closes #1182
