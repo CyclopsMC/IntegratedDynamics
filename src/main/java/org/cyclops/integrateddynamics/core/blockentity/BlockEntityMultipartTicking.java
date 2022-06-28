@@ -35,6 +35,7 @@ import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightTileMu
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneTileMultipartTicking;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
+import org.cyclops.integrateddynamics.capability.facadeable.FacadeableDefault;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableTileMultipartTicking;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
@@ -164,7 +165,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
                 builder.withInitial(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
                         partContainer.hasPart(side) ? partContainer.getPart(side).getPartRenderPosition() : PartRenderPosition.NONE);
             }
-            IFacadeable facadeable = getCapability(FacadeableConfig.CAPABILITY).orElse(null);
+            IFacadeable facadeable = getCapability(FacadeableConfig.CAPABILITY).orElseGet(FacadeableDefault::new);
             builder.withInitial(BlockCable.FACADE, facadeable.hasFacade() ? Optional.of(facadeable.getFacade()) : Optional.empty());
             builder.withInitial(BlockCable.PARTCONTAINER, partContainer);
             builder.withInitial(BlockCable.RENDERSTATE, new CableRenderState(

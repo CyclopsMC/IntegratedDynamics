@@ -56,7 +56,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     public void init(int guiLeft, int guiTop) {
         super.init(guiLeft, guiTop);
 
-        this.inputNbt = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 2, 110, 10,
+        this.inputNbt = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 2, 20, 10,
                 Component.translatable(L10NValues.GUI_RECIPE_STRICTNBT), (entry) ->  {
             // Only allow one checkbox to be true at the same time
             if (this.inputNbt.isChecked()) {
@@ -65,7 +65,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             saveGuiToState();
             loadStateToGui();
         });
-        this.inputTags = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 12, 110, 10,
+        this.inputTags = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 12, 20, 10,
                 Component.translatable(L10NValues.GUI_RECIPE_TAGVARIANTS), (entry) -> {
             // Only allow one checkbox to be true at the same time
             if (this.inputTags.isChecked()) {

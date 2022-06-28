@@ -90,6 +90,7 @@ import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -3825,10 +3826,14 @@ public final class Operators {
                                 .map(instance -> new PrototypedIngredientAlternativesList(Collections.singletonList(new PrototypedIngredient(component, instance, matcher.getExactMatchCondition()))))
                                 .collect(Collectors.toList()));
                     }
-                    return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(
-                            inputs,
-                            valueOut.getRawValue().get()
-                    ));
+                    try {
+                        return ValueObjectTypeRecipe.ValueRecipe.of(new RecipeDefinition(
+                                inputs,
+                                valueOut.getRawValue().get()
+                        ));
+                    } catch (IllegalArgumentException e) {
+                        throw new EvaluationException(Component.literal(e.getMessage()));
+                    }
                 }
                 return ValueObjectTypeRecipe.ValueRecipe.of(null);
             }).build());
