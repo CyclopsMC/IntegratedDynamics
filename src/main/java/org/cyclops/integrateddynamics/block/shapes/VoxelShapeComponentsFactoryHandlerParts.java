@@ -11,12 +11,14 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
@@ -27,6 +29,7 @@ import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Shape handler for parts.
@@ -56,19 +59,29 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
             this.partContainer = partContainer;
         }
 
+        protected Optional<IPartType> getPart() {
+            return Optional.ofNullable(partContainer.getPart(direction));
+        }
+
         @Override
         public String getStateId(BlockState blockState, IBlockReader world, BlockPos blockPos) {
-            return "part(" + partContainer.getPart(direction).getPartRenderPosition().toCompactString() + ")";
+            return getPart()
+                    .map(part -> "part(" + part.getPartRenderPosition().toCompactString() + ")")
+                    .orElse("part");
         }
 
         @Override
         public VoxelShape getShape(BlockState blockState, IBlockReader world, BlockPos blockPos, ISelectionContext selectionContext) {
-            return partContainer.getPart(direction).getPartRenderPosition().getBoundingBox(direction);
+            return getPart()
+                    .map(part -> part.getPartRenderPosition().getBoundingBox(direction))
+                    .orElse(VoxelShapes.empty());
         }
 
         @Override
         public ItemStack getPickBlock(World world, BlockPos pos) {
-            return partContainer.getPart(direction).getPickBlock(world, pos, partContainer.getPartState(direction));
+            return getPart()
+                    .map(part -> part.getPickBlock(world, pos, partContainer.getPartState(direction)))
+                    .orElse(ItemStack.EMPTY);
         }
 
         @Override
@@ -83,8 +96,9 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         @Override
         @OnlyIn(Dist.CLIENT)
         public IBakedModel getBreakingBaseModel(World world, BlockPos pos) {
-            BlockState cableState = partContainer != null ? partContainer.getPart(direction).getBlockState(partContainer, direction) : null;
-            return RenderHelpers.getBakedModel(cableState);
+            return RenderHelpers.getBakedModel(getPart()
+                    .map(part -> part.getBlockState(partContainer, direction))
+                    .orElse(null));
         }
 
         @Override
@@ -99,8 +113,10 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
                 return ActionResultType.SUCCESS;
             } else if(CableHelpers.isNoFakeCable(world, blockPos, hit.getFace())) {
                 // Delegate activated call to part
-                return partContainer.getPart(direction).onPartActivated(partContainer.getPartState(direction), blockPos, world,
-                        player, hand, heldItem, hit.withFace(direction));
+                return getPart()
+                        .map(part -> part.onPartActivated(partContainer.getPartState(direction), blockPos, world,
+                                player, hand, heldItem, hit.withFace(direction)))
+                        .orElse(ActionResultType.FAIL);
             }
             return ActionResultType.PASS;
         }
