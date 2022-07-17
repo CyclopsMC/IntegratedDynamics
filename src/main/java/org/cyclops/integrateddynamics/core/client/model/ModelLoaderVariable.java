@@ -3,27 +3,29 @@ package org.cyclops.integrateddynamics.core.client.model;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.IModelLoader;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.model.geometry.IGeometryLoader;
+
+import java.util.List;
 
 /**
  * Custom model loader for the variable item.
  * @author rubensworks
  */
-public class ModelLoaderVariable implements IModelLoader<VariableModel> {
+public class ModelLoaderVariable implements IGeometryLoader<VariableModel> {
 
-    @Override
-    public void onResourceManagerReload(ResourceManager resourceManager) {
+    private final List<ResourceLocation> subModels;
 
+    public ModelLoaderVariable(List<ResourceLocation> subModels) {
+        this.subModels = subModels;
     }
 
     @Override
-    public VariableModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+    public VariableModel read(JsonObject modelContents, JsonDeserializationContext deserializationContext) {
         modelContents.remove("loader");
         BlockModel modelBlock = deserializationContext.deserialize(modelContents, BlockModel.class);
         VariableModel variableModel = new VariableModel(modelBlock);
-        variableModel.loadSubModels(ForgeModelBakery.instance());
+        variableModel.loadSubModels(this.subModels);
         return variableModel;
     }
 

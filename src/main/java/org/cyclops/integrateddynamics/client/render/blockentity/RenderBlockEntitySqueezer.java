@@ -15,8 +15,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
-import net.minecraftforge.client.RenderProperties;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.DirectionHelpers;
@@ -103,8 +102,8 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
 
                     for(Direction side : DirectionHelpers.DIRECTIONS) {
                         TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluid, Direction.UP);
-                        IFluidTypeRenderProperties renderProperties = RenderProperties.get(fluid.getFluid());
-                        Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getColorTint(fluid));
+                        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
+                        Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getTintColor(fluid));
 
                         VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
                         Matrix4f matrix = matrixStack.last().pose();

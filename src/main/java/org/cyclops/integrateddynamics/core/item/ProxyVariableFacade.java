@@ -9,7 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
@@ -142,9 +142,9 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
         if(isValid()) {
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.PROXY).getBakedModel().getQuads(null, null, random, modelData));
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.PROXY).getBakedModel().getQuads(null, null, random, modelData, null));
         }
     }
 

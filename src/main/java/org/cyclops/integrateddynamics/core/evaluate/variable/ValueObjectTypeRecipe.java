@@ -16,7 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.RenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
@@ -142,7 +142,8 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
                         List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
                         if (!itemStacks.isEmpty()) {
                             ItemStack actualStack = itemStacks.get(0);
-                            RenderProperties.get(actualStack.getItem()).getItemStackRenderer()
+                            IClientItemExtensions.of(actualStack)
+                                    .getCustomRenderer()
                                     .renderByItem(actualStack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
                         }
                     });

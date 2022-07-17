@@ -7,12 +7,12 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.ForgeModelBakery;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -39,9 +39,9 @@ public class AspectVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public void loadModels(ForgeModelBakery modelLoader) {
+    public void loadModels(List<ResourceLocation> subModels) {
         for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
-            modelLoader.getSpecialModels().add(Aspects.REGISTRY.getAspectModel(aspect));
+            subModels.add(Aspects.REGISTRY.getAspectModel(aspect));
         }
     }
 

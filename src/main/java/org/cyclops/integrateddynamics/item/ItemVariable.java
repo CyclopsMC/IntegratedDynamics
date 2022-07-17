@@ -11,7 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -69,10 +69,10 @@ public class ItemVariable extends Item {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-        consumer.accept(new IItemRenderProperties() {
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
             @Override
-            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 return new ItemStackBlockEntityVariableRender();
             }
         });

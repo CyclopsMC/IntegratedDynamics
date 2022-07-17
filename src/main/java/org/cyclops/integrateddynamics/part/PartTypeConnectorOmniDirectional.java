@@ -172,7 +172,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
             }
 
             if (groupId < 0) {
-                groupId = event.getPlayer().getCommandSenderWorld().isClientSide() ? -1 : generateGroupId();
+                groupId = event.getEntity().getCommandSenderWorld().isClientSide() ? -1 : generateGroupId();
             }
             CompoundTag tag = event.getCrafting().getOrCreateTag();
             tag.putInt(NBT_KEY_ID, groupId);

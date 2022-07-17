@@ -51,8 +51,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.IBlockRenderProperties;
-import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.extensions.common.IClientBlockExtensions;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.block.BlockWithEntity;
@@ -385,8 +385,8 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void initializeClient(Consumer<IBlockRenderProperties> consumer) {
-        consumer.accept(new IBlockRenderProperties() {
+    public void initializeClient(Consumer<IClientBlockExtensions> consumer) {
+        consumer.accept(new IClientBlockExtensions() {
             @Override
             public boolean addHitEffects(BlockState blockState, Level world, HitResult target, ParticleEngine particleManager) {
                 BlockPos blockPos = ((BlockHitResult) target).getBlockPos();
@@ -466,12 +466,12 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BakedModel createDynamicModel(ModelBakeEvent event) {
+    public BakedModel createDynamicModel(ModelEvent.BakingCompleted event) {
         CableModel model = new CableModel();
         ResourceLocation registryName = ForgeRegistries.BLOCKS.getKey(this);
-        event.getModelRegistry().put(new ModelResourceLocation(registryName, "waterlogged=false"), model);
-        event.getModelRegistry().put(new ModelResourceLocation(registryName, "waterlogged=true"), model);
-        event.getModelRegistry().put(new ModelResourceLocation(registryName, "inventory"), model);
+        event.getModels().put(new ModelResourceLocation(registryName, "waterlogged=false"), model);
+        event.getModels().put(new ModelResourceLocation(registryName, "waterlogged=true"), model);
+        event.getModels().put(new ModelResourceLocation(registryName, "inventory"), model);
         return model;
     }
 

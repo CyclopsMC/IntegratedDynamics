@@ -1,14 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.world.gen.TreeMenril;
@@ -31,11 +27,6 @@ public class BlockMenrilSaplingConfig extends BlockConfig {
                         .sound(SoundType.GRASS)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
-    }
-
-    public void onClientSetup(FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(getInstance(), RenderType.cutout());
     }
 
     @Override

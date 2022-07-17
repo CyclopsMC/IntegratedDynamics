@@ -8,8 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
@@ -90,7 +89,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     @Setter
     private boolean forceLightCheckAtClient;
 
-    private IModelData cachedState = null;
+    private ModelData cachedState = null;
 
     public BlockEntityMultipartTicking(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING, blockPos, blockState);
@@ -149,26 +148,26 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         }
     }
 
-    public IModelData getConnectionState() {
+    public ModelData getConnectionState() {
         if (cachedState != null) {
             return cachedState;
         }
-        ModelDataMap.Builder builder = new ModelDataMap.Builder();
+        ModelData.Builder builder = ModelData.builder();
         if (partContainer.getPartData() != null) { // Can be null in rare cases where rendering happens before data sync
-            builder.withInitial(BlockCable.REALCABLE, cableFakeable.isRealCable());
+            builder.with(BlockCable.REALCABLE, cableFakeable.isRealCable());
             if (connected.isEmpty()) {
                 getCable().updateConnections();
             }
             for (Direction side : Direction.values()) {
-                builder.withInitial(BlockCable.CONNECTED[side.ordinal()],
+                builder.with(BlockCable.CONNECTED[side.ordinal()],
                         !cable.isForceDisconnected(side) && connected.get(side));
-                builder.withInitial(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
+                builder.with(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
                         partContainer.hasPart(side) ? partContainer.getPart(side).getPartRenderPosition() : PartRenderPosition.NONE);
             }
             IFacadeable facadeable = getCapability(FacadeableConfig.CAPABILITY).orElseGet(FacadeableDefault::new);
-            builder.withInitial(BlockCable.FACADE, facadeable.hasFacade() ? Optional.of(facadeable.getFacade()) : Optional.empty());
-            builder.withInitial(BlockCable.PARTCONTAINER, partContainer);
-            builder.withInitial(BlockCable.RENDERSTATE, new CableRenderState(
+            builder.with(BlockCable.FACADE, facadeable.hasFacade() ? Optional.of(facadeable.getFacade()) : Optional.empty());
+            builder.with(BlockCable.PARTCONTAINER, partContainer);
+            builder.with(BlockCable.RENDERSTATE, new CableRenderState(
                     this.cableFakeable.isRealCable(),
                     EnumFacingMap.newMap(this.connected),
                     EnumFacingMap.newMap(this.partContainer.getPartData()),

@@ -10,7 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.expression.IExpression;
@@ -202,12 +202,12 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
         if(isValid()) {
             IValueType valueType = getOperator().getOutputType();
             BakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType);
             if(bakedModel != null) {
-                quads.addAll(bakedModel.getQuads(null, null, random, modelData));
+                quads.addAll(bakedModel.getQuads(null, null, random, modelData, null));
             }
         }
     }

@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.proxy;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -54,10 +54,10 @@ public class ClientProxy extends ClientProxyComponent {
     }
 
     @Override
-    public void registerKeyBindings(IKeyRegistry keyRegistry) {
-        super.registerKeyBindings(keyRegistry);
-        ClientRegistry.registerKeyBinding(FOCUS_LP_SEARCH);
-        ClientRegistry.registerKeyBinding(FOCUS_LP_RENAME);
+    public void registerKeyBindings(IKeyRegistry keyRegistry, RegisterKeyMappingsEvent event) {
+        super.registerKeyBindings(keyRegistry, event);
+        event.register(FOCUS_LP_SEARCH);
+        event.register(FOCUS_LP_RENAME);
     }
 
     public void onPreTextureStitch(TextureStitchEvent.Pre event) {

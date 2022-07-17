@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -48,10 +48,10 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
                         new Item.Properties().tab(IntegratedDynamics._instance.getDefaultItemGroup())) {
                     @Override
                     @OnlyIn(Dist.CLIENT)
-                    public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-                        consumer.accept(new IItemRenderProperties() {
+                    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+                        consumer.accept(new IClientItemExtensions() {
                             @Override
-                            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+                            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                                 return new ItemStackBlockEntityEnergyBatteryRender();
                             }
                         });

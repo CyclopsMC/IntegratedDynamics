@@ -5,9 +5,9 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.ForgeModelBakery;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -35,9 +35,9 @@ public interface IVariableModelProvider<B extends IVariableModelProvider.BakedMo
 
     /**
      * Load all required models for this model provider into the given model loader.
-     * @param modelLoader A model loader.
+     * @param subModels The list of sub models that can be appended to, which will be registered afterwards.
      */
-    void loadModels(ForgeModelBakery modelLoader);
+    void loadModels(List<ResourceLocation> subModels);
 
     /**
      * Provider for baked models.

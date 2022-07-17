@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -15,8 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -53,11 +49,6 @@ public class BlockMenrilTorchStoneWallConfig extends BlockConfig {
                 },
                 null
         );
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
-    }
-
-    public void onClientSetup(FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(getInstance(), RenderType.cutout());
     }
 
 }

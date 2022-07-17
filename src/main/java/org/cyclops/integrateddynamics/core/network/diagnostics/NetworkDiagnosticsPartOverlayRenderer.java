@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -50,8 +50,8 @@ public class NetworkDiagnosticsPartOverlayRenderer {
     }
 
     @SubscribeEvent
-    public void onRender(RenderLevelLastEvent event) {
-        if (!partPositions.isEmpty()) {
+    public void onRender(RenderLevelStageEvent event) {
+        if (!partPositions.isEmpty() && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             Player player = Minecraft.getInstance().player;
             float partialTicks = event.getPartialTick();
 

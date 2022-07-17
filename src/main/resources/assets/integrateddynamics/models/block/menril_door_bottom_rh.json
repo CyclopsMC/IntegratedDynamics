@@ -1,5 +1,5 @@
 {
-  "parent": "block/door_bottom_rh",
+  "parent": "minecraft:block/door_bottom_right",
   "textures": {
     "bottom": "integrateddynamics:block/door_menril_lower",
     "top": "integrateddynamics:block/door_menril_upper"

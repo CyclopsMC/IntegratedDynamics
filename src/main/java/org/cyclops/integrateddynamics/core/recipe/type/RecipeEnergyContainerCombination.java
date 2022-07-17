@@ -53,7 +53,7 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
 
         for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getItem(i);
-            aitemstack.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
+            aitemstack.set(i, net.minecraftforge.common.ForgeHooks.getCraftingRemainingItem(itemstack));
         }
 
         return aitemstack;

@@ -1,5 +1,6 @@
 {
   "parent": "block/wall_torch",
+  "render_type": "minecraft:cutout",
   "textures": {
     "torch": "integrateddynamics:block/menril_torch"
   }

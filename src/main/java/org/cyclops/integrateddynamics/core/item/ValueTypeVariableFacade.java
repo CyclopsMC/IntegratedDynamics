@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -115,11 +115,11 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
         if(isValid()) {
             BakedModel bakedModel = variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(getValueType());
             if(bakedModel != null) {
-                quads.addAll(bakedModel.getQuads(null, null, random, modelData));
+                quads.addAll(bakedModel.getQuads(null, null, random, modelData, null));
             }
         }
     }

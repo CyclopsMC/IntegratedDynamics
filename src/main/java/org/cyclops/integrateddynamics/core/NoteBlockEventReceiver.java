@@ -4,7 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 

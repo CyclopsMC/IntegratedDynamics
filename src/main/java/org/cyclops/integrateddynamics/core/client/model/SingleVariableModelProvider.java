@@ -7,10 +7,10 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.ForgeModelBakery;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -43,8 +43,8 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public void loadModels(ForgeModelBakery modelLoader) {
-        modelLoader.getSpecialModels().add(model);
+    public void loadModels(List<ResourceLocation> subModels) {
+        subModels.add(model);
     }
 
 }

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.MinecraftForge;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -207,7 +207,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
+        public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
 
         }
     }

@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
@@ -29,11 +28,10 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.SimpleModelState;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -43,6 +41,7 @@ import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -84,8 +83,8 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                     new Vector3f(0.4F, 0.4F, 0.4F))
     ));
 
-    public CableModelBase(BlockState blockState, Direction facing, RandomSource rand, IModelData modelData) {
-        super(blockState, facing, rand, modelData);
+    public CableModelBase(BlockState blockState, Direction facing, RandomSource rand, ModelData modelData, RenderType renderType) {
+        super(blockState, facing, rand, modelData, renderType);
     }
 
     public CableModelBase(ItemStack itemStack, Level world, LivingEntity entity) {
@@ -137,10 +136,9 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         return Direction.from3DDataValue(dir);
     }
 
-    public List<BakedQuad> getFacadeQuads(BlockState blockState, Direction side, PartRenderPosition partRenderPosition) {
+    public List<BakedQuad> getFacadeQuads(BakedModel facadeModel, BlockState blockState, Direction side, PartRenderPosition partRenderPosition) {
         RandomSource rand = RandomSource.create();
-        BakedModel model = RenderHelpers.getBakedModel(blockState);
-        List<BakedQuad> originalQuads = model.getQuads(blockState, side, rand);
+        List<BakedQuad> originalQuads = facadeModel.getQuads(blockState, side, rand);
         return originalQuads.stream()
                 .flatMap(originalQuad -> {
                     List<BakedQuad> ret = Lists.newLinkedList();
@@ -213,14 +211,14 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         throw new IllegalArgumentException(String.valueOf(facing));
     }
 
-    protected abstract boolean isRealCable(IModelData modelData);
-    protected abstract Optional<BlockState> getFacade(IModelData modelData);
-    protected abstract boolean isConnected(IModelData modelData, Direction side);
-    protected abstract boolean hasPart(IModelData modelData, Direction side);
-    protected abstract PartRenderPosition getPartRenderPosition(IModelData modelData, Direction side);
-    protected abstract boolean shouldRenderParts(IModelData modelData);
-    protected abstract BakedModel getPartModel(IModelData modelData, Direction side);
-    protected abstract IRenderState getRenderState(IModelData modelData);
+    protected abstract boolean isRealCable(ModelData modelData);
+    protected abstract Optional<BlockState> getFacade(ModelData modelData);
+    protected abstract boolean isConnected(ModelData modelData, Direction side);
+    protected abstract boolean hasPart(ModelData modelData, Direction side);
+    protected abstract PartRenderPosition getPartRenderPosition(ModelData modelData, Direction side);
+    protected abstract boolean shouldRenderParts(ModelData modelData);
+    protected abstract BakedModel getPartModel(ModelData modelData, Direction side);
+    protected abstract IRenderState getRenderState(ModelData modelData);
 
     @Override
     public List<BakedQuad> getGeneralQuads() {
@@ -229,7 +227,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         if (GeneralConfig.cacheCableModels) {
             IRenderState renderState = getRenderState(modelData);
             if (renderState != null) {
-                cacheKey = Triple.of(renderState, this.facing, MinecraftForgeClient.getRenderType());
+                cacheKey = Triple.of(renderState, this.facing, this.renderType);
                 cachedQuads = CACHE_QUADS.getIfPresent(cacheKey);
             }
         }
@@ -238,14 +236,14 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             TextureAtlasSprite texture = getParticleIcon();
             Optional<BlockState> blockStateHolder = getFacade(modelData);
             boolean renderCable = isItemStack() || (isRealCable(modelData) && (
-                    (!blockStateHolder.isPresent() && MinecraftForgeClient.getRenderType() == RenderType.solid())
-                            || (blockStateHolder.isPresent() && MinecraftForgeClient.getRenderType() == RenderType.translucent())));
+                    (!blockStateHolder.isPresent() && this.renderType == RenderType.solid())
+                            || (blockStateHolder.isPresent() && this.renderType == RenderType.translucent())));
             for (Direction side : Direction.values()) {
                 boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
                 boolean hasPart = !isItemStack() && hasPart(modelData, side);
                 if (hasPart && shouldRenderParts(modelData)) {
                     try {
-                        ret.addAll(getPartModel(modelData, side).getQuads(this.blockState, this.facing, this.rand, this.modelData));
+                        ret.addAll(getPartModel(modelData, side).getQuads(this.blockState, this.facing, this.rand, this.modelData, this.renderType));
                     } catch (Exception e) {
                         // Skip rendering this part, could occur when the player is still logging in.
                     }
@@ -290,15 +288,18 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             }
 
             if (blockStateHolder.isPresent() && shouldRenderParts(modelData)
-                    && MinecraftForgeClient.getRenderType() != null
-                    && ItemBlockRenderTypes.canRenderInLayer(blockStateHolder.get(), MinecraftForgeClient.getRenderType())) {
-                for (Direction side : Direction.values()) {
-                    boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
-                    PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
-                    boolean hasPart = !isItemStack() && hasPart(modelData, side);
-                    if (hasPart)          partRenderPosition = getPartRenderPosition(modelData, side);
-                    else if (isConnected) partRenderPosition = CABLE_RENDERPOSITION;
-                    ret.addAll(getFacadeQuads(blockStateHolder.get(), side, partRenderPosition));
+                    && this.renderType != null) {
+                BakedModel facadeModel = RenderHelpers.getBakedModel(blockStateHolder.get());
+                if (facadeModel.getRenderTypes(blockStateHolder.get(), rand, ModelData.EMPTY)
+                        .contains(this.renderType)) {
+                    for (Direction side : Direction.values()) {
+                        boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
+                        PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
+                        boolean hasPart = !isItemStack() && hasPart(modelData, side);
+                        if (hasPart) partRenderPosition = getPartRenderPosition(modelData, side);
+                        else if (isConnected) partRenderPosition = CABLE_RENDERPOSITION;
+                        ret.addAll(getFacadeQuads(facadeModel, blockStateHolder.get(), side, partRenderPosition));
+                    }
                 }
             }
 
@@ -322,11 +323,11 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos,
-                                   @Nonnull BlockState state, @Nonnull IModelData tileData) {
+    public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos,
+                                   @Nonnull BlockState state, @Nonnull ModelData tileData) {
         return BlockEntityHelpers.get(world, pos, BlockEntityMultipartTicking.class)
                 .map(BlockEntityMultipartTicking::getConnectionState)
-                .orElse(EmptyModelData.INSTANCE);
+                .orElse(ModelData.EMPTY);
     }
 
     @Override
@@ -339,4 +340,8 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         return TRANSFORMS;
     }
 
+    @Override
+    public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
+        return ChunkRenderTypeSet.all();
+    }
 }

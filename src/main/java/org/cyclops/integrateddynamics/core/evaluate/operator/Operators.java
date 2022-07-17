@@ -2057,7 +2057,7 @@ public final class Operators {
                         ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                         if(a.getRawValue().isPresent()) {
                             Entity entity = a.getRawValue().get();
-                            return ForgeRegistries.ENTITIES.getKey(entity.getType());
+                            return ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
                         }
                         return new ResourceLocation("");
                     },
@@ -2357,7 +2357,7 @@ public final class Operators {
                 String entityType = "";
                 if (entity.getRawValue().isPresent()) {
                     Entity e = entity.getRawValue().get();
-                    entityType = ForgeRegistries.ENTITIES.getKey(e.getType()).toString();
+                    entityType = ForgeRegistries.ENTITY_TYPES.getKey(e.getType()).toString();
                 }
                 return ValueTypeString.ValueString.of(entityType);
             }).build());

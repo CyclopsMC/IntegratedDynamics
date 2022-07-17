@@ -106,7 +106,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         EntityType<? extends Entity> entityType = null;
         if (entityTypeName != null) {
             try {
-                entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entityTypeName));
+                entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityTypeName));
             } catch (ResourceLocationException e) {
                 throw new JsonSyntaxException("Invalid entity type name '" + entityTypeName + "'");
             }
@@ -123,7 +123,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         if (uuid.isPresent()) {
             UUID id = uuid.get();
             String entityName = value.getRawValue()
-                    .map(entity -> ForgeRegistries.ENTITIES.getKey(entity.getType()).toString())
+                    .map(entity -> ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()).toString())
                     .orElse("unknown");
             return id.toString() + " (" + entityName + ")";
         }

@@ -412,7 +412,7 @@ public class PartHelpers {
     public static InteractionResult openContainerPart(ServerPlayer player, PartPos pos, IPartType<?, ?> partType) {
         return partType.getContainerProvider(pos)
                 .map(containerProvider -> {
-                    NetworkHooks.openGui(player, containerProvider, packetBuffer -> partType.writeExtraGuiData(packetBuffer, pos, player));
+                    NetworkHooks.openScreen(player, containerProvider, packetBuffer -> partType.writeExtraGuiData(packetBuffer, pos, player));
                     return InteractionResult.SUCCESS;
                 })
                 .orElse(InteractionResult.PASS);
@@ -428,7 +428,7 @@ public class PartHelpers {
     public static boolean openContainerPartSettings(ServerPlayer player, PartPos pos, IPartType<?, ?> partType) {
         return partType.getContainerProviderSettings(pos)
                 .map(containerProvider -> {
-                    NetworkHooks.openGui(player, containerProvider, packetBuffer -> partType.writeExtraGuiDataSettings(packetBuffer, pos, player));
+                    NetworkHooks.openScreen(player, containerProvider, packetBuffer -> partType.writeExtraGuiDataSettings(packetBuffer, pos, player));
                     return true;
                 })
                 .orElse(false);
@@ -441,7 +441,7 @@ public class PartHelpers {
      * @param aspect The aspect for which to show the settings.
      */
     public static void openContainerAspectSettings(ServerPlayer player, PartPos pos, IAspect<?, ?> aspect) {
-        NetworkHooks.openGui(player, aspect.getPropertiesContainerProvider(pos),
+        NetworkHooks.openScreen(player, aspect.getPropertiesContainerProvider(pos),
                 packetBuffer -> packetBuffer.writeUtf(aspect.getUniqueName().toString()));
     }
 

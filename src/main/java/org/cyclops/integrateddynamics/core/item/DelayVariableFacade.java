@@ -8,7 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.RandomSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
@@ -59,9 +59,9 @@ public class DelayVariableFacade extends ProxyVariableFacade implements IDelayVa
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
         if(isValid()) {
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.DELAY).getBakedModel().getQuads(null, null, random, modelData));
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.DELAY).getBakedModel().getQuads(null, null, random, modelData, null));
         }
     }
 }

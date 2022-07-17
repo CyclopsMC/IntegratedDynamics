@@ -15,7 +15,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -95,10 +95,10 @@ public class ItemFacade extends Item implements IDynamicModelElement {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BakedModel createDynamicModel(ModelBakeEvent event) {
+    public BakedModel createDynamicModel(ModelEvent.BakingCompleted event) {
         // Don't throw away the original model, but use if for displaying an unbound facade item.
         ModelResourceLocation location = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(this), "inventory");
-        FacadeModel.emptyModel = event.getModelRegistry().get(location);
+        FacadeModel.emptyModel = event.getModels().get(location);
         return new FacadeModel();
     }
 

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.model;
 
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -12,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -38,8 +39,8 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
         super(baseModel);
     }
 
-    public FacadeModel(BakedModel baseModel, BlockState blockState, Direction facing, RandomSource rand, IModelData modelData) {
-        super(baseModel, blockState, facing, rand, modelData);
+    public FacadeModel(BakedModel baseModel, BlockState blockState, Direction facing, RandomSource rand, ModelData modelData, RenderType renderType) {
+        super(baseModel, blockState, facing, rand, modelData, renderType);
     }
 
     public FacadeModel(BakedModel baseModel, ItemStack itemStack, Level world, LivingEntity entity) {
@@ -58,7 +59,8 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
 
     @Override
     public BakedModel handleBlockState(@Nullable BlockState blockState, @Nullable Direction direction,
-                                        @Nonnull RandomSource random, @Nonnull IModelData iModelData) {
+                                        @Nonnull RandomSource random, @Nonnull ModelData iModelData,
+                                       @Nullable RenderType renderType) {
         return null;
     }
 

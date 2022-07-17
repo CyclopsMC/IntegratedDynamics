@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -16,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -51,7 +52,7 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
     }
 
     @Override
-    public BakedModel handleBlockState(BlockState state, Direction side, RandomSource rand, IModelData modelData) {
+    public BakedModel handleBlockState(BlockState state, Direction side, RandomSource rand, ModelData modelData, RenderType renderType) {
         return null;
     }
 
@@ -59,7 +60,7 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
     public BakedModel handleItemState(ItemStack itemStack, Level world, LivingEntity entity) {
         List<BakedQuad> quads = Lists.newLinkedList();
         // Add regular quads for variable
-        quads.addAll(this.baseModel.getQuads(null, getRenderingSide(), this.rand, this.modelData));
+        quads.addAll(this.baseModel.getQuads(null, getRenderingSide(), this.rand, this.modelData, null));
 
         // Add variable type overlay
         IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);

@@ -8,8 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
-import net.minecraftforge.client.RenderProperties;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.Helpers;
@@ -40,8 +39,8 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             // Fluid
             matrixStack.pushPose();
             TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStack, Direction.UP);
-            IFluidTypeRenderProperties renderProperties = RenderProperties.get(fluidStack.getFluid());
-            Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getColorTint(fluidStack));
+            IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluidStack.getFluid());
+            Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getTintColor(fluidStack));
 
             VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
             Matrix4f matrix = matrixStack.last().pose();

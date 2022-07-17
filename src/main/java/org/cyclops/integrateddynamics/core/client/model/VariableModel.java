@@ -16,15 +16,15 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
+import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
+import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -32,7 +32,7 @@ import java.util.function.Function;
  * Model for a variant of a variable item.
  * @author rubensworks
  */
-public class VariableModel implements UnbakedModel, IModelGeometry<VariableModel> {
+public class VariableModel implements UnbakedModel, IUnbakedGeometry<VariableModel> {
 
     private final BlockModel base;
 
@@ -40,9 +40,9 @@ public class VariableModel implements UnbakedModel, IModelGeometry<VariableModel
         this.base = base;
     }
 
-    public void loadSubModels(ForgeModelBakery modelLoader) {
+    public void loadSubModels(List<ResourceLocation> subModels) {
         for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
-            provider.loadModels(modelLoader);
+            provider.loadModels(subModels);
         }
     }
 
@@ -90,11 +90,11 @@ public class VariableModel implements UnbakedModel, IModelGeometry<VariableModel
                                  ModelState transform, ResourceLocation location) {
         Material textureName = base.getMaterial("layer0");
         BlockModel itemModel = ModelHelpers.MODEL_GENERATOR.generateBlockModel(spriteGetter, base);
-        SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(itemModel.customData, itemModel.getOverrides(bakery, itemModel, spriteGetter)));
+        SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(itemModel, itemModel.getOverrides(bakery, itemModel, spriteGetter), false));
         itemModel.textureMap.put("layer0", Either.left(textureName));
         TextureAtlasSprite textureAtlasSprite = spriteGetter.apply(textureName);
         builder.particle(textureAtlasSprite);
-        for (BakedQuad bakedQuad : ItemLayerModel.getQuadsForSprite(0, textureAtlasSprite, transform.getRotation())) {
+        for (BakedQuad bakedQuad : UnbakedGeometryHelper.bakeElements(UnbakedGeometryHelper.createUnbakedItemElements(0, textureAtlasSprite), $ -> textureAtlasSprite, transform, location)) {
             builder.addUnculledFace(bakedQuad);
         }
         BakedModel baseModel = builder.build();
@@ -108,12 +108,12 @@ public class VariableModel implements UnbakedModel, IModelGeometry<VariableModel
     }
 
     @Override
-    public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
+    public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
        return bake(bakery, spriteGetter, modelTransform, modelLocation);
     }
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+    public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         return getMaterials(modelGetter, missingTextureErrors);
     }
 }

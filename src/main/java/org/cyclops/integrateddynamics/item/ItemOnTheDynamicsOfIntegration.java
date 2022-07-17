@@ -49,7 +49,7 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (ItemOnTheDynamicsOfIntegrationConfig.obtainOnSpawn) {
-            CompoundTag tag = event.getPlayer().getPersistentData();
+            CompoundTag tag = event.getEntity().getPersistentData();
             if (!tag.contains(Player.PERSISTED_NBT_TAG)) {
                 tag.put(Player.PERSISTED_NBT_TAG, new CompoundTag());
             }
@@ -57,8 +57,8 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
             if (!playerTag.contains(NBT_INFOBOOK_SPAWNED)) {
                 playerTag.putBoolean(NBT_INFOBOOK_SPAWNED, true);
 
-                Level world = event.getPlayer().getCommandSenderWorld();
-                Player player = event.getPlayer();
+                Level world = event.getEntity().getCommandSenderWorld();
+                Player player = event.getEntity();
                 ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_ON_THE_DYNAMICS_OF_INTEGRATION);
                 EntityItemTargetted entity = new EntityItemTargetted(world,
                         player.blockPosition().getX() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.random.nextFloat(),

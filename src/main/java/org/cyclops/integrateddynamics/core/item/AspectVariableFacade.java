@@ -8,7 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -93,12 +93,12 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, IModelData modelData) {
+    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
         if(isValid()) {
             IAspect aspect = getAspect();
             IValueType valueType = aspect.getValueType();
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType).getQuads(null, null, random, modelData));
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.ASPECT).getBakedModels().get(aspect).getQuads(null, null, random, modelData));
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType).getQuads(null, null, random, modelData, null));
+            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.ASPECT).getBakedModels().get(aspect).getQuads(null, null, random, modelData, null));
         }
     }
 }

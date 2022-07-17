@@ -175,7 +175,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
                     if (getFuelTime(blockEntity.getInventory().getItem(SLOT_FUEL)) > 0
                             && !(fuel = blockEntity.getInventory().removeItem(SLOT_FUEL, 1)).isEmpty()) {
                         if(blockEntity.getInventory().getItem(SLOT_FUEL).isEmpty()) {
-                            blockEntity.getInventory().setItem(SLOT_FUEL, fuel.getItem().getContainerItem(fuel));
+                            blockEntity.getInventory().setItem(SLOT_FUEL, fuel.getItem().getCraftingRemainingItem(fuel));
                         }
                         blockEntity.currentlyBurningMax = getFuelTime(fuel);
                         blockEntity.currentlyBurning = 0;

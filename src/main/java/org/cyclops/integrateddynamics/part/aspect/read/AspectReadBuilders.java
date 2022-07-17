@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -152,7 +152,7 @@ public class AspectReadBuilders {
                     if (world != null) {
                         BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
                         int range = input.getRight().getValue(PROPERTY_RANGE).getRawValue();
-                        if (world.dimensionType() == event.getWorld().dimensionType()
+                        if (world.dimensionType() == event.getLevel().dimensionType()
                                 && pos.distSqr(event.getPos()) <= range * range) {
                             return event.getVanillaNoteId();
                         }
