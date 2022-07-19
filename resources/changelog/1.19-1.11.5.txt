@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.16.1 or higher.
+
+Changes:
+* Update to Forge 41.0.99
