@@ -618,7 +618,7 @@ public final class Operators {
                 Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
                 if (m.find()) {
                     String result = m.group(group.getRawValue());
-                    return ValueTypeString.ValueString.of(result);
+                    return ValueTypeString.ValueString.of(result == null ? "" : result);
                 } else {
                     throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_GROUP_NOMATCH,
                             str.getRawValue(), pattern.getRawValue()));
@@ -646,7 +646,8 @@ public final class Operators {
                 if (m.find()) {
                     List<ValueTypeString.ValueString> values = Lists.newArrayList();
                     for (int i = 0; i <= m.groupCount(); i++) {
-                        values.add(ValueTypeString.ValueString.of(m.group(i)));
+                        String result = m.group(i);
+                        values.add(ValueTypeString.ValueString.of(result == null ? "" : result));
                     }
                     return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
                 } else {
