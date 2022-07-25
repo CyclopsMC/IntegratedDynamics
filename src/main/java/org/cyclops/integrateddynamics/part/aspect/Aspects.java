@@ -9,6 +9,7 @@ import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.network.play.server.SPlaySoundPacket;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.state.properties.NoteBlockInstrument;
@@ -16,10 +17,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -28,7 +29,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -859,16 +859,16 @@ public class Aspects {
                                 if(!StringUtils.isNullOrEmpty(input.getRight())) {
                                     float f = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_FREQUENCY).getRawValue();
                                     float volume = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_VOLUME).getRawValue();
-                                    SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(ValueHelpers
-                                            .createResourceLocationInEvaluation(input.getRight()));
 
-                                    if (soundEvent != null) {
-                                        World world = input.getLeft().getTarget().getPos().getWorld(false);
-                                        if (world != null) {
-                                            world.playSound(null,
-                                                    (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                                                    soundEvent, SoundCategory.RECORDS, volume, f);
-                                        }
+                                    World world = input.getLeft().getTarget().getPos().getWorld(false);
+                                    if (world != null) {
+                                        ServerLifecycleHooks.getCurrentServer().getPlayerList().sendToAllNearExcept(null,
+                                                (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 64.0D,
+                                                world.getDimensionKey(),
+                                                new SPlaySoundPacket(ValueHelpers.createResourceLocationInEvaluation(input.getRight()),
+                                                        SoundCategory.RECORDS,
+                                                        new Vector3d((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D),
+                                                        volume, f));
                                     }
                                 }
                                 return null;
