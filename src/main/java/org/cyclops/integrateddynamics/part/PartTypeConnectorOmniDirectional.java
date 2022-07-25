@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
@@ -36,6 +37,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +55,6 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
 
     public PartTypeConnectorOmniDirectional(String name) {
         super(name, new PartRenderPosition(0.25F, 0.3125F, 0.625F, 0.625F));
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -151,33 +152,34 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 .with(IgnoredBlockStatus.STATUS, status);
     }
 
-    @SubscribeEvent
-    public void onCrafted(PlayerEvent.ItemCraftedEvent event) {
+    public static ItemStack transformCraftingOutput(CraftingInventory inventory, ItemStack staticOutput) {
         // When crafting the item, either copy the group id from the existing item or generate a new id.
-        if (event.getCrafting().getItem() == this.getItem()) {
-            int groupId = -1, stackCount = 0;
-            for (int i = 0; i < event.getInventory().getSizeInventory(); i++) {
-                ItemStack slotStack = event.getInventory().getStackInSlot(i);
-                if (!slotStack.isEmpty()) {
-                    ++stackCount;
-                    if(groupId == -1 && slotStack.getItem() == this.getItem() && slotStack.hasTag()) {
-                        CompoundNBT tag = slotStack.getTag();
-                        if (tag.contains(NBT_KEY_ID, Constants.NBT.TAG_INT)) {
-                            groupId = tag.getInt(NBT_KEY_ID);
-                        }
+        int groupId = -1, stackCount = 0;
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack slotStack = inventory.getStackInSlot(i);
+            if (!slotStack.isEmpty()) {
+                ++stackCount;
+                if(groupId == -1 && slotStack.getItem() == PartTypes.CONNECTOR_OMNI.getItem() && slotStack.hasTag()) {
+                    CompoundNBT tag = slotStack.getTag();
+                    if (tag.contains(NBT_KEY_ID, Constants.NBT.TAG_INT)) {
+                        groupId = tag.getInt(NBT_KEY_ID);
                     }
                 }
             }
-            if(stackCount == 1) {
-                groupId = -1; // If we're resetting a connector, give it a new ID
-            }
-
-            if (groupId < 0) {
-                groupId = event.getPlayer().getEntityWorld().isRemote() ? -1 : generateGroupId();
-            }
-            CompoundNBT tag = event.getCrafting().getOrCreateTag();
-            tag.putInt(NBT_KEY_ID, groupId);
         }
+        if(stackCount == 1) {
+            groupId = -1; // If we're resetting a connector, give it a new ID
+        }
+
+        if (groupId < 0) {
+            groupId = generateGroupId();
+        }
+
+        staticOutput = staticOutput.copy();
+        CompoundNBT tag = staticOutput.getOrCreateTag();
+        tag.putInt(NBT_KEY_ID, groupId);
+
+        return staticOutput;
     }
 
     @Override

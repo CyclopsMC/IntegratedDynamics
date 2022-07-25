@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "integrateddynamics:crafting_special_shaped_omni_directional",
   "group": "integrateddynamics:part_connector_omni_directional",
   "pattern": [
     " L ",
@@ -16,9 +16,5 @@
     "C": {
       "item": "integrateddynamics:cable"
     }
-  },
-  "result": {
-    "item": "integrateddynamics:part_connector_omni_directional",
-    "count": 2
   }
 }

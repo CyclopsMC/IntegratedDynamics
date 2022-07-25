@@ -29,6 +29,8 @@ import org.cyclops.integrateddynamics.inventory.container.*;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipeConfig;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipeConfig;
+import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapedOmniDirectionalConfig;
+import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapelessOmniDirectionalConfig;
 import org.cyclops.integrateddynamics.tileentity.*;
 import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenrilConfig;
@@ -184,6 +186,8 @@ public class Configs {
         configHandler.addConfigurable(new RecipeEnergyContainerCombinationConfig());
         configHandler.addConfigurable(new ItemVariableCopyRecipeConfig());
         configHandler.addConfigurable(new ItemFacadeRecipeConfig());
+        configHandler.addConfigurable(new RecipeSerializerCraftingSpecialShapedOmniDirectionalConfig());
+        configHandler.addConfigurable(new RecipeSerializerCraftingSpecialShapelessOmniDirectionalConfig());
     }
 
 }
