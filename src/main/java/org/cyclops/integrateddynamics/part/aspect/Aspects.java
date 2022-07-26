@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundCustomSoundPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -858,16 +860,16 @@ public class Aspects {
                                 if(!StringUtil.isNullOrEmpty(input.getRight())) {
                                     float f = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_FREQUENCY).getRawValue();
                                     float volume = (float) properties.getValue(AspectWriteBuilders.Audio.PROP_VOLUME).getRawValue();
-                                    SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(ValueHelpers
-                                            .createResourceLocationInEvaluation(input.getRight()));
 
-                                    if (soundEvent != null) {
-                                        Level world = input.getLeft().getTarget().getPos().getLevel(false);
-                                        if (world != null) {
-                                            world.playSound(null,
-                                                    (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-                                                    soundEvent, SoundSource.RECORDS, volume, f);
-                                        }
+                                    Level world = input.getLeft().getTarget().getPos().getLevel(false);
+                                    if (world != null) {
+                                        ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcast(null,
+                                                (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 64.0D,
+                                                world.dimension(),
+                                                new ClientboundCustomSoundPacket(ValueHelpers.createResourceLocationInEvaluation(input.getRight()),
+                                                        SoundSource.RECORDS,
+                                                        new Vec3((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D),
+                                                        volume, f));
                                     }
                                 }
                                 return null;
