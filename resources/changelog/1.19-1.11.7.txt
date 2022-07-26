@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.17.0 or higher.
+
+Fixes:
+* Fix audio writer not supporting sounds from custom datapacks, Closes #1191
+* Fix omni-directional connectors not always receiving id's on craft
+  This rewrites omni-directional connector crafting using custom recipe serializers.
+  Closes #1189
+
