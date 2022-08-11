@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.17.0 or higher.
+
+Update to MC 1.19.2
+
+Fixes:
+* Fix machine gui crash upon client desync on fluid data, Closes #1197
+* Fix squeezers unable to handle deepslate coal ore, Closes #1199
