@@ -1,6 +1,8 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "minecraft:coal_ore",
+  "item": {
+    "tag": "forge:ores/coal"
+  },
   "result": {
     "items": [
       {
