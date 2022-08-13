@@ -130,7 +130,7 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "core", comment = "If corrupted networks should automatically be restored on first tick.", isCommandable = true, configLocation = ModConfig.Type.SERVER)
     public static boolean recreateCorruptedNetworks = true;
 
-    @ConfigurableProperty(category = "core", comment = "The maximum frequency at which speach messages can be played in millis.", isCommandable = true, configLocation = ModConfig.Type.CLIENT)
+    @ConfigurableProperty(category = "core", comment = "The maximum frequency at which speach messages can be played in milliseconds.", isCommandable = true, configLocation = ModConfig.Type.CLIENT)
     public static int speachMaxFrequency = 1000;
 
     public GeneralConfig() {
