@@ -1881,7 +1881,8 @@ public final class Operators {
             .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
             .function(input -> {
                 ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueTypeNbt.ValueNbt.of(itemStack.getRawValue().getTag());
+                // Explicitly check for item emptiness first, because vanilla sometimes persists NBT when setting stacks to empty
+                return ValueTypeNbt.ValueNbt.of(itemStack.getRawValue().isEmpty() ? new CompoundTag() : itemStack.getRawValue().getTag());
             }).build());
 
     /**
