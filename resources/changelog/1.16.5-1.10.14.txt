@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.13.0 or higher.
+
+Fixes:
+* Fix NBT reading of empty itemstacks
+  This fixes read NBT data not updating after non-player item move.
+  When things like hoppers drain items from inventories,
+  the stack size is set to zero, but the NBT tag is still
+  present on that item.
+  Because of that, we should only allow NBT reading of non-empty items
+  Closes #1208
