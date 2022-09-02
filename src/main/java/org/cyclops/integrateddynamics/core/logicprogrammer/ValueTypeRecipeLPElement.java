@@ -2,14 +2,9 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.CheckboxButton;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ClickType;
@@ -21,9 +16,8 @@ import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,23 +32,15 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinit
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
-import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
-import org.cyclops.cyclopscore.client.gui.component.input.IInputListener;
-import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
-import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
-import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
-import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeRecipe;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
@@ -64,10 +50,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -387,12 +371,16 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     ItemMatchProperties props = getInputStacks().get(slotId);
                     String tagName = props.getItemTag();
                     if (tagName != null) {
-                        ITag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(tagName));
-                        if (tag != null) {
-                            List<Item> items = tag.getAllElements();
-                            int tick = ((int) Minecraft.getInstance().world.getGameTime()) / TICK_DELAY;
-                            Item item = items.get(tick % items.size());
-                            return new ItemStack(item, props.getTagQuantity());
+                        try {
+                            ITag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(tagName));
+                            if (tag != null) {
+                                List<Item> items = tag.getAllElements();
+                                int tick = ((int) Minecraft.getInstance().world.getGameTime()) / TICK_DELAY;
+                                Item item = items.get(tick % items.size());
+                                return new ItemStack(item, props.getTagQuantity());
+                            }
+                        } catch (ResourceLocationException e) {
+                            // Ignore invalid tags
                         }
                     }
                 }
