@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.16.0 or higher.
+
+Fixes:
+* Fix omni-dir connector recipe not listed in infobook
+* Fix machine reader crash on drying basin, Closes #1212
+* Fix writer-based advancements for items triggering too soon, Closes CyclopsMC/IntegratedTunnels#258
