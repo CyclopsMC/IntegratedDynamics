@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.ToString;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -127,10 +126,9 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     @Override
     public ValuePredicate<ValueItemStack> deserializeValuePredicate(JsonObject element, @Nullable IValue value) {
-        JsonElement jsonElement = element.get("value");
         ItemPredicate itemPredicate = null;
-        if (jsonElement != null && !jsonElement.isJsonNull()) {
-            itemPredicate = ItemPredicate.fromJson(element.get("value"));
+        if (element != null && !element.isJsonNull()) {
+            itemPredicate = ItemPredicate.fromJson(element);
         }
         return new ValueItemStackPredicate(this, value, itemPredicate);
     }

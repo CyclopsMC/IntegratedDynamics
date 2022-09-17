@@ -71,7 +71,7 @@ public class RecipeHandlerDryingBasin extends RecipeHandlerRecipeType<IInventory
     protected IMixedIngredients getRecipeOutputIngredients(RecipeDryingBasin recipe) {
         Map<IngredientComponent<?, ?>, List<?>> outputIngredients = Maps.newIdentityHashMap();
         if (!recipe.getOutputItemFirst().isEmpty()) {
-            outputIngredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(recipe.getOutputItem()));
+            outputIngredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(recipe.getOutputItemFirst()));
         }
         if (!recipe.getOutputFluid().isEmpty()) {
             outputIngredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(recipe.getOutputFluid()));
