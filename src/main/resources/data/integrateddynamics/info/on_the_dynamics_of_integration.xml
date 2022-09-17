@@ -555,9 +555,9 @@
                     <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text2</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text3</paragraph>
                     <paragraph>info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text4</paragraph>
-                    <appendix type="minecraft:crafting">integrateddynamics:crafting/part_connector_omni_directional</appendix>
-                    <appendix type="minecraft:crafting">integrateddynamics:crafting/part_connector_omni_directional_copy</appendix>
-                    <appendix type="minecraft:crafting">integrateddynamics:crafting/part_connector_omni_directional_join</appendix>
+                    <appendix type="minecraft:crafting">integrateddynamics:special/part_connector_omni_directional</appendix>
+                    <appendix type="minecraft:crafting">integrateddynamics:special/part_connector_omni_directional_copy</appendix>
+                    <appendix type="minecraft:crafting">integrateddynamics:special/part_connector_omni_directional_join</appendix>
                 </section>
             </section>
         </section>
