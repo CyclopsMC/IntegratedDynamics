@@ -23,7 +23,11 @@
           "input": {
             "0": {
               "valuetype": "integrateddynamics:itemstack",
-              "value": "{id:\"minecraft:stone_pickaxe\",Count:1b,tag:{Damage:0}}"
+              "value": {
+                "items": [
+                  "minecraft:stone_pickaxe"
+                ]
+              }
             },
             "1": {
               "valuetype": "integrateddynamics:block",
