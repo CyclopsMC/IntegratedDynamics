@@ -780,7 +780,7 @@
     "aspect.integrateddynamics.read.integer.network.energy.max": "Energy Capacity",
     "aspect.integrateddynamics.read.integer.network.energy.max.info": "The energy capacity of the network",
     "aspect.integrateddynamics.read.integer.network.energy.consumptionrate": "Energy Consumption Rate",
-    "aspect.integrateddynamics.read.integer.network.energy.consumptionrate.info": "The current energy consumption rate of the target network per tick",
+    "aspect.integrateddynamics.read.integer.network.energy.consumptionrate.info": "The current energy consumption rate of all ID parts within the target network per tick",
     "aspect.integrateddynamics.read.any.network.value": "Value",
     "aspect.integrateddynamics.read.any.network.value.info": "The value that is being exposed by the target",
 
