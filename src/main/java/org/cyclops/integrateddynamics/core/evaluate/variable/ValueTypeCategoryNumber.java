@@ -178,6 +178,11 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
         return type.floor(castValue(type, a.getValue()));
     }
 
+    public ValueTypeString.ValueString fuzzy(IVariable a) throws EvaluationException {
+        IValueTypeNumber type = getType(a);
+        return type.fuzzy(castValue(type, a.getValue()));
+    }
+
     @Override
     public String getName(IValue a) {
         return ((IValueTypeNamed) a.getType()).getName(a);

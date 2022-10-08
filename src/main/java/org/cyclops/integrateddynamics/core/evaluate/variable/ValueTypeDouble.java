@@ -11,6 +11,9 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  * Value type with values that are doubles.
  * @author rubensworks
@@ -123,6 +126,13 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     @Override
     public ValueTypeInteger.ValueInteger floor(ValueDouble a) {
         return ValueTypeInteger.ValueInteger.of((int) Math.floor(a.getRawValue()));
+    }
+
+    @Override
+    public ValueTypeString.ValueString fuzzy(ValueDouble a) {
+        NumberFormat nf = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
+        nf.setMaximumFractionDigits(2);
+        return ValueTypeString.ValueString.of(nf.format(a.getRawValue()));
     }
 
     @Override

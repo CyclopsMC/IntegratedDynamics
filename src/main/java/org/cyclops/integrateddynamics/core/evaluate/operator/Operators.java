@@ -823,6 +823,15 @@ public final class Operators {
             ).build());
 
     /**
+     * Accepts a number, and returns a string roughly representing that number
+     */
+    public static final IOperator NUMBER_FUZZY = REGISTRY.register(OperatorBuilders.NUMBER_1_LONG
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.STRING).symbolOperator("fuzzy")
+            .function(
+                variables -> ValueTypes.CATEGORY_NUMBER.fuzzy(variables.getVariables()[0])
+            ).build());
+
+    /**
      * ----------------------------------- NULLABLE OPERATORS -----------------------------------
      */
 
