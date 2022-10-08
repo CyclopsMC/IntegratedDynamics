@@ -7,9 +7,13 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Value type with values that are doubles.
@@ -123,6 +127,19 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     @Override
     public ValueTypeInteger.ValueInteger floor(ValueLong a) {
         return ValueTypeInteger.ValueInteger.of((int) a.getRawValue());
+    }
+
+    @Override
+    public ValueTypeString.ValueString compact(ValueLong a) {
+        NumberFormat nf = NumberFormat.getCompactNumberInstance(
+            Locale.US,
+            GeneralConfig.numberCompactUseLongStyle ? NumberFormat.Style.LONG : NumberFormat.Style.SHORT
+        );
+        nf.setMinimumFractionDigits(GeneralConfig.numberCompactMinimumFractionDigits);
+        nf.setMaximumFractionDigits(GeneralConfig.numberCompactMaximumFractionDigits);
+        nf.setMinimumIntegerDigits(GeneralConfig.numberCompactMinimumIntegerDigits);
+        nf.setMaximumIntegerDigits(GeneralConfig.numberCompactMaximumIntegerDigits);
+        return ValueTypeString.ValueString.of(nf.format(a.getRawValue()));
     }
 
     @Override

@@ -90,7 +90,6 @@ import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -820,6 +819,15 @@ public final class Operators {
             .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.floor(variables.getVariables()[0])
+            ).build());
+
+    /**
+     * Accepts a number, and returns a string roughly representing that number
+     */
+    public static final IOperator NUMBER_COMPACT = REGISTRY.register(OperatorBuilders.NUMBER_1_LONG
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.STRING).symbolOperator("compact")
+            .function(
+                variables -> ValueTypes.CATEGORY_NUMBER.compact(variables.getVariables()[0])
             ).build());
 
     /**

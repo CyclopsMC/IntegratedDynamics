@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 
 /**
  * A numerical value type.
@@ -17,6 +18,7 @@ public interface IValueTypeNumber<V extends IValue> extends IValueType<V>, IValu
     public V divide(V a, V b);
     public V max(V a, V b);
     public V min(V a, V b);
+    public ValueTypeString.ValueString compact(V a);
     public boolean greaterThan(V a, V b);
     public boolean lessThan(V a, V b);
     public ValueTypeInteger.ValueInteger round(V a);

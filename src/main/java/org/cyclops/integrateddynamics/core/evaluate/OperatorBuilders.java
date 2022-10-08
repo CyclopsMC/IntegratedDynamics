@@ -112,6 +112,7 @@ public class OperatorBuilders {
     // --------------- Number builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER = OperatorBuilder.forType(ValueTypes.CATEGORY_NUMBER).appendKind("number");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER_1_PREFIX = NUMBER.inputTypes(1, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.PREFIX_1);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NUMBER_1_LONG = NUMBER.inputTypes(1, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
 
     // --------------- Nullable builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NULLABLE = OperatorBuilder.forType(ValueTypes.CATEGORY_NULLABLE).appendKind("general");

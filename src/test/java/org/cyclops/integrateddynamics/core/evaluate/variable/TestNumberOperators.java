@@ -26,8 +26,9 @@ public class TestNumberOperators {
     private DummyVariableDouble d0P5;
     private DummyVariableDouble d0P1;
     private DummyVariableDouble d0P9;
-
     private DummyVariableInteger i10;
+    private DummyVariableInteger i1k;
+    private DummyVariableInteger i1m;
 
     @Before
     public void before() {
@@ -38,6 +39,8 @@ public class TestNumberOperators {
         d0P9 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.9));
 
         i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
+        i1k = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1000));
+        i1m = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1000000));
     }
 
     /**
@@ -163,4 +166,21 @@ public class TestNumberOperators {
         Operators.NUMBER_FLOOR.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- FUZZY -----------------------------------
+     */
+    @Test
+    public void testNumberCompact() throws EvaluationException {
+        IValue res1 = Operators.NUMBER_COMPACT.evaluate(new IVariable[]{d0});
+        assertThat("compact(0) = 0", ((ValueTypeString.ValueString) res1).getRawValue(), is("0"));
+
+        IValue res2 = Operators.NUMBER_COMPACT.evaluate(new IVariable[]{i10});
+        assertThat("compact(10) = 10", ((ValueTypeString.ValueString) res2).getRawValue(), is("10"));
+
+        IValue res3 = Operators.NUMBER_COMPACT.evaluate(new IVariable[]{i1k});
+        assertThat("compact(1000) = 1K", ((ValueTypeString.ValueString) res3).getRawValue(), is("1K"));
+
+        IValue res4 = Operators.NUMBER_COMPACT.evaluate(new IVariable[]{i1m});
+        assertThat("compact(1000000) = 1M", ((ValueTypeString.ValueString) res4).getRawValue(), is("1M"));
+    }
 }

@@ -7,9 +7,13 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Value type with values that are integers.
@@ -124,6 +128,19 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     @Override
     public ValueInteger floor(ValueInteger a) {
         return a;
+    }
+
+    @Override
+    public ValueTypeString.ValueString compact(ValueInteger a) {
+        NumberFormat nf = NumberFormat.getCompactNumberInstance(
+            Locale.US,
+            GeneralConfig.numberCompactUseLongStyle ? NumberFormat.Style.LONG : NumberFormat.Style.SHORT
+        );
+        nf.setMinimumFractionDigits(GeneralConfig.numberCompactMinimumFractionDigits);
+        nf.setMaximumFractionDigits(GeneralConfig.numberCompactMaximumFractionDigits);
+        nf.setMinimumIntegerDigits(GeneralConfig.numberCompactMinimumIntegerDigits);
+        nf.setMaximumIntegerDigits(GeneralConfig.numberCompactMaximumIntegerDigits);
+        return ValueTypeString.ValueString.of(nf.format(a.getRawValue()));
     }
 
     @Override
