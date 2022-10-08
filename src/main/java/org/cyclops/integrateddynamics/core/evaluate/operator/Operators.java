@@ -90,7 +90,6 @@ import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -825,10 +824,10 @@ public final class Operators {
     /**
      * Accepts a number, and returns a string roughly representing that number
      */
-    public static final IOperator NUMBER_FUZZY = REGISTRY.register(OperatorBuilders.NUMBER_1_LONG
-            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.STRING).symbolOperator("fuzzy")
+    public static final IOperator NUMBER_COMPACT = REGISTRY.register(OperatorBuilders.NUMBER_1_LONG
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.STRING).symbolOperator("compact")
             .function(
-                variables -> ValueTypes.CATEGORY_NUMBER.fuzzy(variables.getVariables()[0])
+                variables -> ValueTypes.CATEGORY_NUMBER.compact(variables.getVariables()[0])
             ).build());
 
     /**

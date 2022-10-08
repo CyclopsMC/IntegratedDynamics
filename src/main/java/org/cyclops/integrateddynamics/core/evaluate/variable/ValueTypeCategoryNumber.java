@@ -178,9 +178,9 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
         return type.floor(castValue(type, a.getValue()));
     }
 
-    public ValueTypeString.ValueString fuzzy(IVariable a) throws EvaluationException {
+    public ValueTypeString.ValueString compact(IVariable a) throws EvaluationException {
         IValueTypeNumber type = getType(a);
-        return type.fuzzy(castValue(type, a.getValue()));
+        return type.compact(castValue(type, a.getValue()));
     }
 
     @Override

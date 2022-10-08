@@ -1039,8 +1039,8 @@
     "operator.integrateddynamics.number.ceil.info": "Round up to the nearest Integer",
     "operator.integrateddynamics.number.floor": "Floor",
     "operator.integrateddynamics.number.floor.info": "Round down to the nearest Integer",
-    "operator.integrateddynamics.number.fuzzy": "Fuzzy",
-    "operator.integrateddynamics.number.fuzzy.info": "Show a shorter, less precise representation of a Number",
+    "operator.integrateddynamics.number.compact": "Compact",
+    "operator.integrateddynamics.number.compact.info": "Show a shorter, less precise representation of a Number",
 
     "operator.integrateddynamics.list": "List",
     "operator.integrateddynamics.list.basename": "List %s",

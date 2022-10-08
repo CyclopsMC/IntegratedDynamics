@@ -7,6 +7,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -129,9 +130,15 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
-    public ValueTypeString.ValueString fuzzy(ValueDouble a) {
-        NumberFormat nf = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
-        nf.setMaximumFractionDigits(2);
+    public ValueTypeString.ValueString compact(ValueDouble a) {
+        NumberFormat nf = NumberFormat.getCompactNumberInstance(
+            Locale.US,
+            GeneralConfig.numberCompactUseLongStyle ? NumberFormat.Style.LONG : NumberFormat.Style.SHORT
+        );
+        nf.setMinimumFractionDigits(GeneralConfig.numberCompactMinimumFractionDigits);
+        nf.setMaximumFractionDigits(GeneralConfig.numberCompactMaximumFractionDigits);
+        nf.setMinimumIntegerDigits(GeneralConfig.numberCompactMinimumIntegerDigits);
+        nf.setMaximumIntegerDigits(GeneralConfig.numberCompactMaximumIntegerDigits);
         return ValueTypeString.ValueString.of(nf.format(a.getRawValue()));
     }
 

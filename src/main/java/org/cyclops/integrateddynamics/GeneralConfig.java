@@ -133,6 +133,21 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "core", comment = "The maximum frequency at which speach messages can be played in milliseconds.", isCommandable = true, configLocation = ModConfig.Type.CLIENT)
     public static int speachMaxFrequency = 1000;
 
+    @ConfigurableProperty(category = "core" , comment = "When true, use the LONG number format style. Otherwise, use the SHORT style.")
+    public static boolean numberCompactUseLongStyle = false;
+
+    @ConfigurableProperty(category = "core" , comment = "The maximum number of fractional digits to include in the result of the compact operator")
+    public static int numberCompactMaximumFractionDigits = 2;
+
+    @ConfigurableProperty(category = "core" , comment = "The minimum number of fractional digits to include in the result of the compact operator")
+    public static int numberCompactMinimumFractionDigits = 0;
+
+    @ConfigurableProperty(category = "core" , comment = "The maximum number of integer digits to include in the result of the compact operator")
+    public static int numberCompactMaximumIntegerDigits = 3;
+
+    @ConfigurableProperty(category = "core" , comment = "The minimum number of integer digits to include in the result of the compact operator")
+    public static int numberCompactMinimumIntegerDigits = 1;
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }
