@@ -1078,6 +1078,8 @@
     "operator.integrateddynamics.list.uniq.info": "Deduplicate all elements in the list.",
     "operator.integrateddynamics.list.slice": "Slice",
     "operator.integrateddynamics.list.slice.info": "Take a subset of the given list from the given index (inclusive) to the given index (exclusive).",
+    "operator.integrateddynamics.list.intersection": "Intersection",
+    "operator.integrateddynamics.list.intersection.info": "Returns a list of items present in both supplied lists",
 
     "operator.integrateddynamics.block": "Block",
     "operator.integrateddynamics.block.basename": "Block %s",
