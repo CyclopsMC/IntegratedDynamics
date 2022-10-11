@@ -100,7 +100,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Collection of available operators.
@@ -1188,17 +1187,13 @@ public final class Operators {
             .renderPattern(IConfigRenderPattern.PREFIX_2_LONG).output(ValueTypes.LIST)
             .symbol("∩").operatorName("intersection")
             .function(variables -> {
-                ValueTypeList.ValueList list1 = variables.getValue(0, ValueTypes.LIST);
-                IValueTypeListProxy<IValueType<IValue>, IValue> rawList1 = list1.getRawValue();
-                ValueTypeList.ValueList list2 = variables.getValue(1, ValueTypes.LIST);
-                IValueTypeListProxy<IValueType<IValue>, IValue> rawList2 = list2.getRawValue();
-                Stream<IValue> result = new ArrayList<>(Sets.newLinkedHashSet(rawList1)).stream().filter(value1 -> {
-                    for (IValue value2: rawList2) {
-                        if (value1.equals(value2)) return true;
-                    }
-                    return false;
-                });
-                return ValueTypeList.ValueList.ofList(rawList1.getValueType(), result.toList());
+                IValueTypeListProxy<IValueType<IValue>, IValue> rawList1 = variables.getValue(0, ValueTypes.LIST).getRawValue();
+                IValueTypeListProxy<IValueType<IValue>, IValue> rawList2 = variables.getValue(1, ValueTypes.LIST).getRawValue();
+
+                LinkedHashSet<IValue> result = Sets.newLinkedHashSet(rawList1);
+                result.retainAll(Sets.newLinkedHashSet(rawList2));
+
+                return ValueTypeList.ValueList.ofList(rawList1.getValueType(), result.stream().toList());
             }).build());
 
     /**
