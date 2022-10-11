@@ -29,7 +29,12 @@ For every major Minecraft version, two branches exist:
 ### Building and setting up a development environment
 
 To get started, you will need a [Maven token](https://github.com/settings/tokens/new?scopes=read:packages&description=GPR%20for%20Gradle) so that gradle can fetch dependencies.
-Once you have this, use it by setting the environment variables `MAVEN_USERNAME` (to your github username), and `MAVEN_KEY` (to your newly acquired token).
+Once you have this, use it by editing `~/.gradle/gradle.properties` and adding the following lines;
+```
+gpr.user=<YOUR GITHUB USERNAME>
+gpr.key=<YOUR TOKEN>
+```
+Alternatively, you can use the environment variables `MAVEN_USERNAME` (your github username), and `MAVEN_KEY` (your token).
 
 Run `./gradlew test` to run the test suite, and `./gradlew build` to build the mod. The resulting jar file will be in `build/libs`.
 
