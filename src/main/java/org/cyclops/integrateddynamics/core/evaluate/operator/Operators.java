@@ -1178,14 +1178,20 @@ public final class Operators {
             .inputTypes(ValueTypes.LIST, ValueTypes.LIST)
             .renderPattern(IConfigRenderPattern.PREFIX_2_LONG).output(ValueTypes.LIST)
             .symbol("∩").operatorName("intersection")
-            .function(variables -> {
-                IValueTypeListProxy<IValueType<IValue>, IValue> rawList1 = variables.getValue(0, ValueTypes.LIST).getRawValue();
-                IValueTypeListProxy<IValueType<IValue>, IValue> rawList2 = variables.getValue(1, ValueTypes.LIST).getRawValue();
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> rawList1 = variables.getValue(0, ValueTypes.LIST).getRawValue();
+                    IValueTypeListProxy<IValueType<IValue>, IValue> rawList2 = variables.getValue(1, ValueTypes.LIST).getRawValue();
+                    if (rawList1.isInfinite() || rawList2.isInfinite()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                                LIST_INTERSECTION.getLocalizedNameFull()));
+                    }
+                    LinkedHashSet<IValue> result = Sets.newLinkedHashSet(rawList1);
+                    result.retainAll(Sets.newLinkedHashSet(rawList2));
 
-                LinkedHashSet<IValue> result = Sets.newLinkedHashSet(rawList1);
-                result.retainAll(Sets.newLinkedHashSet(rawList2));
-
-                return ValueTypeList.ValueList.ofList(rawList1.getValueType(), result.stream().toList());
+                    return ValueTypeList.ValueList.ofList(rawList1.getValueType(), result.stream().toList());
+                }
             }).build());
 
     /**
