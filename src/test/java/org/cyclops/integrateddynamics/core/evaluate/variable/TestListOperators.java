@@ -781,4 +781,38 @@ public class TestListOperators {
         Operators.LIST_SLICE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- INTERSECTION -----------------------------------
+     */
+
+    @Test
+    public void testIntersection() throws EvaluationException {
+        DummyVariableList list1 = new DummyVariableList(ValueTypeList.ValueList.ofAll(
+            ValueTypeString.ValueString.of("a"),
+            ValueTypeString.ValueString.of("b"),
+            ValueTypeString.ValueString.of("c")
+        ));
+        DummyVariableList list2 = new DummyVariableList(ValueTypeList.ValueList.ofAll(
+            ValueTypeString.ValueString.of("d"),
+            ValueTypeString.ValueString.of("c"),
+            ValueTypeString.ValueString.of("b")
+        ));
+        IValue result = Operators.LIST_INTERSECTION.evaluate(new IVariable[]{list1, list2});
+        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> resultValues = ((ValueTypeList.ValueList) result).getRawValue();
+        assertThat(
+            "len(a,b,c ∩ d,c,b) == 2",
+            resultValues.getLength(),
+            is(2)
+        );
+        assertThat(
+            "(a,b,c ∩ d,c,b)[0]",
+            resultValues.get(0).getRawValue(),
+            is("b")
+        );
+        assertThat(
+            "(a,b,c ∩ d,c,b)[1]",
+            resultValues.get(1).getRawValue(),
+            is("c")
+        );
+    }
 }

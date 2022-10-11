@@ -90,15 +90,7 @@ import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -1180,6 +1172,26 @@ public final class Operators {
                     throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_SLICE_INDEXNEGATIVE));
                 }
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxySlice<>(list, from.getRawValue(), to.getRawValue()));
+            }).build());
+
+    public static final IOperator LIST_INTERSECTION = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(ValueTypes.LIST, ValueTypes.LIST)
+            .renderPattern(IConfigRenderPattern.PREFIX_2_LONG).output(ValueTypes.LIST)
+            .symbol("∩").operatorName("intersection")
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValueTypeListProxy<IValueType<IValue>, IValue> rawList1 = variables.getValue(0, ValueTypes.LIST).getRawValue();
+                    IValueTypeListProxy<IValueType<IValue>, IValue> rawList2 = variables.getValue(1, ValueTypes.LIST).getRawValue();
+                    if (rawList1.isInfinite() || rawList2.isInfinite()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                                LIST_INTERSECTION.getLocalizedNameFull()));
+                    }
+                    LinkedHashSet<IValue> result = Sets.newLinkedHashSet(rawList1);
+                    result.retainAll(Sets.newLinkedHashSet(rawList2));
+
+                    return ValueTypeList.ValueList.ofList(rawList1.getValueType(), result.stream().toList());
+                }
             }).build());
 
     /**
