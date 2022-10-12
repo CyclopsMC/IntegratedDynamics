@@ -1176,7 +1176,7 @@ public final class Operators {
 
     public static final IOperator LIST_INTERSECTION = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(ValueTypes.LIST, ValueTypes.LIST)
-            .renderPattern(IConfigRenderPattern.PREFIX_2_LONG).output(ValueTypes.LIST)
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
             .symbol("∩").operatorName("intersection")
             .function(new OperatorBase.IFunction() {
                 @Override
