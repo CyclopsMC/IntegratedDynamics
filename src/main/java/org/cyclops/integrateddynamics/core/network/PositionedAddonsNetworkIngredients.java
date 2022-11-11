@@ -4,6 +4,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
+import it.unimi.dsi.fastutil.ints.Int2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.Direction;
@@ -46,6 +48,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     private final Int2ObjectMap<IngredientPositionsIndex<T, M>> indexes;
     private final Map<PartPos, PositionedAddonsNetworkIngredientsFilter<T>> positionFilters = Maps.newHashMap();
     private final LoadingCache<PartPos, IIngredientComponentStorage<T, M>> cacheStorage;
+    private final Int2IntMap cacheChannelSlots;
 
     private boolean observe;
     private Map<PartPos, Long> lastSecondDurations = Maps.newHashMap();
@@ -64,6 +67,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
                 return storage == null ? new IngredientComponentStorageEmpty<>(getComponent()) : storage;
             }
         });
+        this.cacheChannelSlots = new Int2IntLinkedOpenHashMap();
 
         this.observe = false;
     }
@@ -241,7 +245,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
         IIngredientComponentStorageWrapperHandler<T, M, S> wrapperHandler = getComponent()
                 .getStorageWrapperHandler(capability);
         return wrapperHandler != null ? wrapperHandler.wrapStorage(new IngredientChannelAdapterWrapperSlotted<>(
-                (IngredientChannelAdapter<T, M>) getChannel(channel))) : null;
+                (IngredientChannelAdapter<T, M>) getChannel(channel), this.cacheChannelSlots)) : null;
     }
 
     @Override
@@ -277,8 +281,9 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
             }
         }
 
-        // Clear storage cache after each tick
+        // Clear caches after each tick
         this.cacheStorage.invalidateAll();
+        this.cacheChannelSlots.clear();
     }
 
     @Override

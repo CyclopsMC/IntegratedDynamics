@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Iterators;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
@@ -26,9 +27,11 @@ import java.util.Iterator;
 public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredientComponentStorageSlotted<T, M> {
 
     private final IngredientChannelAdapter<T, M> channel;
+    private final Int2IntMap cacheChannelSlots;
 
-    public IngredientChannelAdapterWrapperSlotted(IngredientChannelAdapter<T, M> channel) {
+    public IngredientChannelAdapterWrapperSlotted(IngredientChannelAdapter<T, M> channel, Int2IntMap cacheChannelSlots) {
         this.channel = channel;
+        this.cacheChannelSlots = cacheChannelSlots;
     }
 
     protected static int getIngredientComponentStorageSize(IIngredientComponentStorage<?, ?> storage) {
@@ -41,12 +44,22 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
 
     @Override
     public int getSlots() {
-        int slots = 0;
+        int slots = this.cacheChannelSlots.getOrDefault(this.channel.getChannel(), -1);
+        if (slots != -1) {
+            return slots;
+        }
+
+        slots = 0;
         IPositionedAddonsNetworkIngredients<T, M> network = this.channel.getNetwork();
 
+        boolean hasDisabledPosition = false;
         for (PartPos pos : network.getPositions()) {
             // Skip if the position is not loaded or disabled
-            if (!pos.getPos().isLoaded() || network.isPositionDisabled(pos)) {
+            if (!pos.getPos().isLoaded()) {
+                continue;
+            }
+            if (network.isPositionDisabled(pos)) {
+                hasDisabledPosition = true;
                 continue;
             }
             network.disablePosition(pos);
@@ -55,6 +68,9 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
             network.enablePosition(pos);
         }
 
+        if (!hasDisabledPosition) {
+            this.cacheChannelSlots.put(this.channel.getChannel(), slots);
+        }
         return slots;
     }
 
