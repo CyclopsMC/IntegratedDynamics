@@ -133,6 +133,9 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "core", comment = "The maximum frequency at which speach messages can be played in millis.", isCommandable = true, configLocation = ModConfig.Type.CLIENT)
     public static int speachMaxFrequency = 1000;
 
+    @ConfigurableProperty(category = "general", comment = "The default port for running the network diagnostics HTTP server.", configLocation = ModConfig.Type.CLIENT)
+    public static int diagnosticsWebServerPort = 3000;
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }

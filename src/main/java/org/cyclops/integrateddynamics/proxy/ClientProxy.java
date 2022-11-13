@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -16,6 +17,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
+import org.cyclops.integrateddynamics.core.network.diagnostics.http.DiagnosticsWebServer;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -23,6 +25,8 @@ import org.lwjgl.glfw.GLFW;
  * @author rubensworks
  */
 public class ClientProxy extends ClientProxyComponent {
+
+    public static DiagnosticsWebServer DIAGNOSTICS_SERVER;
 
     private static final String KEYBINDING_CATEGORY_NAME = "key.categories." + Reference.MOD_ID;
 
@@ -40,6 +44,7 @@ public class ClientProxy extends ClientProxyComponent {
         MinecraftForge.EVENT_BUS.register(this);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onPreTextureStitch);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onPostTextureStitch);
+        MinecraftForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
     }
 
     @Override
@@ -69,6 +74,15 @@ public class ClientProxy extends ClientProxyComponent {
     public void onPostTextureStitch(TextureStitchEvent.Post event) {
         if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
             event.getAtlas().getSprite(SlotVariable.VARIABLE_EMPTY);
+        }
+    }
+
+    public void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+        if (DIAGNOSTICS_SERVER != null) {
+            IntegratedDynamics.clog("Stopping diagnostics server...");
+            DIAGNOSTICS_SERVER.deinitialize();
+            DIAGNOSTICS_SERVER = null;
+            IntegratedDynamics.clog("Stopped diagnostics server");
         }
     }
 }
