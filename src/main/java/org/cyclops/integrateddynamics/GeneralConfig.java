@@ -134,7 +134,7 @@ public class GeneralConfig extends DummyConfig {
     public static int speachMaxFrequency = 1000;
 
     @ConfigurableProperty(category = "general", comment = "The default port for running the network diagnostics HTTP server.", configLocation = ModConfig.Type.CLIENT)
-    public static int diagnosticsWebServerPort = 3000;
+    public static int diagnosticsWebServerPort = 3030;
 
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");

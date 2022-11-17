@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
+import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient;
 
 /**
  * A handler for HTTP requests.
@@ -35,18 +36,41 @@ public class DiagnosticsWebServerHandler extends SimpleChannelInboundHandler<Obj
                 context.write(response);
             }
 
-            HttpResponseStatus responseStatus = HttpResponseStatus.OK;
-            String responseString = "Hello world"; // TODO: server static files, and an API for continuous fetching the diagnostics data
-            // TODO: bind to /data.json (dynamically generated), and / (which serves index.html that continuously fetches data.json every second), and 404 on the rest
+            HttpResponseStatus responseStatus;
+            String responseString;
+            String contentType;
+            switch (request.uri()) {
+                case "/":
+                    responseStatus = HttpResponseStatus.OK;
+                    responseString = "<html>Hello World</html>"; // TODO
+                    contentType = "text/html; charset=UTF-8";
+                    break;
+                case "/data.json":
+                    responseStatus = HttpResponseStatus.OK;
+                    responseString = NetworkDataClient.getAsJsonString();
+                    contentType = "application/json; charset=UTF-8";
+                    break;
+                case "/teleport":
+                    responseStatus = HttpResponseStatus.OK;
+                    responseString = "Ok"; // TODO
+                    contentType = "text/plain; charset=UTF-8";
+                    break;
+                default:
+                    responseStatus = HttpResponseStatus.NOT_FOUND;
+                    responseString = "Not found";
+                    contentType = "text/plain; charset=UTF-8";
+                    break;
+            }
 
-            if (!writeResponse(request, context, responseString, responseStatus)) {
+            if (!writeResponse(request, context, responseString, contentType, responseStatus)) {
                 // If keep-alive is off, close the connection once the content is fully written.
                 context.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
             }
         }
     }
 
-    private boolean writeResponse(HttpRequest request, ChannelHandlerContext context, String responseString,
+    private boolean writeResponse(HttpRequest request, ChannelHandlerContext context,
+                                  String responseString, String contentType,
                                   HttpResponseStatus responseStatus) {
         // Decide whether to close the connection or not.
         boolean keepAlive = HttpUtil.isKeepAlive(request);
@@ -55,7 +79,7 @@ public class DiagnosticsWebServerHandler extends SimpleChannelInboundHandler<Obj
                 HttpVersion.HTTP_1_1, responseStatus,
                 Unpooled.copiedBuffer(responseString, CharsetUtil.UTF_8));
 
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
 
         if (keepAlive) {
             // Add 'Content-Length' header only for a keep-alive connection.

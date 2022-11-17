@@ -47,6 +47,7 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
     public void actionClient(Level world, Player player) {
         if (start) {
             if (ClientProxy.DIAGNOSTICS_SERVER == null) {
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.subscribe());
                 new Thread(() -> {
                     ClientProxy.DIAGNOSTICS_SERVER = new DiagnosticsWebServer(port);
                     ClientProxy.DIAGNOSTICS_SERVER.initialize();
@@ -69,11 +70,10 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                         Util.NIL_UUID
                 );
             }
-            IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.subscribe());
         } else {
             if (ClientProxy.DIAGNOSTICS_SERVER != null) {
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe());
                 new Thread(() -> {
-                    IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe());
                     NetworkDiagnosticsPartOverlayRenderer.getInstance().clearPositions();
                     ClientProxy.DIAGNOSTICS_SERVER.deinitialize();
                     ClientProxy.DIAGNOSTICS_SERVER = null;
