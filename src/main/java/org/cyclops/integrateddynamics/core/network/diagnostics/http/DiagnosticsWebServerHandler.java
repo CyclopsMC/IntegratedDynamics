@@ -13,7 +13,13 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
+import org.apache.commons.io.IOUtils;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient;
+
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A handler for HTTP requests.
@@ -42,7 +48,8 @@ public class DiagnosticsWebServerHandler extends SimpleChannelInboundHandler<Obj
             switch (request.uri()) {
                 case "/":
                     responseStatus = HttpResponseStatus.OK;
-                    responseString = "<html>Hello World</html>"; // TODO
+                    InputStream is = IntegratedDynamics.class.getResourceAsStream("/data/" + Reference.MOD_ID + "/web/diagnostics.html");
+                    responseString = IOUtils.toString(is, StandardCharsets.UTF_8);
                     contentType = "text/html; charset=UTF-8";
                     break;
                 case "/data.json":

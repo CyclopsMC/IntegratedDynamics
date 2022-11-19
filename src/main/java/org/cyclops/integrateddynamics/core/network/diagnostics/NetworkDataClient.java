@@ -147,7 +147,7 @@ public class NetworkDataClient {
             jsonPart.addProperty("ticktime", String.format("%.6f", ((double) observer.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
             jsonPart.addProperty("dimension", observer.getDimension().location().toString());
             jsonPart.addProperty("position", observer.getPos().toShortString());
-            jsonPart.addProperty("side", observer.getSide().name());
+            jsonPart.addProperty("side", observer.getSide() != null ? observer.getSide().name() : "null");
             jsonArray.add(jsonPart);
         }
         return jsonArray;

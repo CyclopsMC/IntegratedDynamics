@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <title>Integrated Dynamics - Network Diagnostics</title>
+  <style>
+    body {
+      font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+      background: #b4b4b4;
+    }
+
+    .main {
+      width: 800px;
+      min-width: 700px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 5px;
+      border: solid 2px #1b8bb7;
+      background: white;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .error-dialog-invisible {
+      display: none;
+    }
+    .error-dialog-visible {
+      display: block;
+      width: 100%;
+      background: #ff786e;
+      border: solid 2px #da1c0d;
+      font-weight: bold;
+      padding: 5px;
+    }
+    .error-dialog-visible:before {
+      content: 'Error: ';
+    }
+
+    .table-diagnostics {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .table-diagnostics thead {
+      font-weight: bold;
+      background: #b9ebff;
+    }
+    .table-diagnostics td {
+      border: 2px solid #1b8bb7;
+      padding: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <h1>Integrated Dynamics - Network Diagnostics</h1>
+
+    <div id="error-dialog" class="error-dialog-invisible"></div>
+
+    <h2>Parts</h2>
+    <table id="table-parts" class="table-diagnostics">
+      <thead>
+      <tr>
+        <td>Network</td>
+        <td>Cables</td>
+        <td>Part</td>
+        <td>Ticktime (ms)</td>
+        <td>Dimension</td>
+        <td>Position</td>
+        <td>Side</td>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Observers</h2>
+    <table id="table-observers" class="table-diagnostics">
+      <thead>
+      <tr>
+        <td>Network</td>
+        <td>Part</td>
+        <td>Ticktime (ms)</td>
+        <td>Dimension</td>
+        <td>Position</td>
+        <td>Side</td>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    function updateTable(data, table, columnNames) {
+      table.textContent = '';
+      for (const entry of data) {
+        const row = document.createElement('tr');
+        for (const columnName of columnNames) {
+          const column = document.createElement('td');
+          column.textContent = entry[columnName];
+          row.appendChild(column);
+        }
+        table.appendChild(row);
+      }
+    }
+
+    async function update() {
+      const errorDialog = document.getElementById('error-dialog');
+
+      try {
+        const data = await (await fetch('data.json')).json();
+        errorDialog.classList.remove('error-dialog-visible');
+
+        // Update parts
+        updateTable(
+                data.parts,
+                document.querySelector('#table-parts tbody'),
+                ['network', 'cables', 'part', 'ticktime', 'dimension', 'position', 'side'],
+        );
+
+        // Update observers
+        updateTable(
+                data.observers,
+                document.querySelector('#table-observers tbody'),
+                ['network', 'part', 'ticktime', 'dimension', 'position', 'side'],
+        );
+      } catch (error) {
+        errorDialog.textContent = error.message;
+        errorDialog.classList.add('error-dialog-visible');
+      }
+
+      setTimeout(update, 500);
+    }
+    addEventListener("load", (event) => update());
+  </script>
+
+</body>
+</html>
