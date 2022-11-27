@@ -12,6 +12,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.cyclops.integrateddynamics.core.network.diagnostics.http.DiagnosticsWebServer;
 import org.cyclops.integrateddynamics.proxy.ClientProxy;
@@ -75,6 +76,7 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(NetworkDiagnosticsSubscribePacket.unsubscribe());
                 new Thread(() -> {
                     NetworkDiagnosticsPartOverlayRenderer.getInstance().clearPositions();
+                    NetworkDataClient.clearNetworkData();
                     ClientProxy.DIAGNOSTICS_SERVER.deinitialize();
                     ClientProxy.DIAGNOSTICS_SERVER = null;
                     player.sendMessage(new TextComponent("Stopped diagnostics server"), Util.NIL_UUID);

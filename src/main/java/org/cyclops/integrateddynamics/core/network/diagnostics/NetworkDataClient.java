@@ -50,6 +50,11 @@ public class NetworkDataClient {
     private static final Multimap<Integer, ObservablePartData> networkDataParts = ArrayListMultimap.create();
     private static final Multimap<Integer, ObservableObserverData> networkDataObservers = ArrayListMultimap.create();
 
+    public static void clearNetworkData() {
+        networkDataParts.clear();
+        networkDataObservers.clear();
+    }
+
     public static void setNetworkData(int id, RawNetworkData rawNetworkData) {
         synchronized (networkDataParts) {
             Collection<ObservablePartData> previous = networkDataParts.removeAll(id);
@@ -155,7 +160,7 @@ public class NetworkDataClient {
                 ObservablePartData part = entry.getValue();
                 jsonPart.addProperty("network", part.getNetworkId());
                 jsonPart.addProperty("cables", part.getNetworkCables());
-                jsonPart.addProperty("part", part.getName());
+                jsonPart.addProperty("part", L10NHelpers.localize(part.getName()));
                 jsonPart.addProperty("ticktime", Float.parseFloat(String.format(Locale.ENGLISH, "%.6f", ((double) part.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000)));
                 jsonPart.addProperty("dimension", part.getDimension().location().toString());
                 jsonPart.addProperty("position", part.getPos().toShortString());

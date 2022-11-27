@@ -16,6 +16,7 @@ import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
+import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.cyclops.integrateddynamics.core.network.diagnostics.http.DiagnosticsWebServer;
 import org.lwjgl.glfw.GLFW;
@@ -80,6 +81,8 @@ public class ClientProxy extends ClientProxyComponent {
     public void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         if (DIAGNOSTICS_SERVER != null) {
             IntegratedDynamics.clog("Stopping diagnostics server...");
+            NetworkDiagnosticsPartOverlayRenderer.getInstance().clearPositions();
+            NetworkDataClient.clearNetworkData();
             DIAGNOSTICS_SERVER.deinitialize();
             DIAGNOSTICS_SERVER = null;
             IntegratedDynamics.clog("Stopped diagnostics server");
