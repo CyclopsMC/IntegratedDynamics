@@ -19,15 +19,17 @@ import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsTriggerCl
  */
 public class CommandNetworkDiagnostics implements Command<CommandSourceStack> {
 
+    private final boolean operationArg;
     private final boolean portArg;
 
-    public CommandNetworkDiagnostics(boolean portArg) {
+    public CommandNetworkDiagnostics(boolean operationArg, boolean portArg) {
+        this.operationArg = operationArg;
         this.portArg = portArg;
     }
 
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        StartStop operation = ArgumentTypeEnum.getValue(context, "operation", StartStop.class);
+        StartStop operation = this.operationArg ? ArgumentTypeEnum.getValue(context, "operation", StartStop.class) : StartStop.START;
         int port = this.portArg ? IntegerArgumentType.getInteger(context, "port") : GeneralConfig.diagnosticsWebServerPort;
         IntegratedDynamics._instance.getPacketHandler().sendToPlayer
                 (new NetworkDiagnosticsTriggerClient(operation == StartStop.START, port),
@@ -39,10 +41,11 @@ public class CommandNetworkDiagnostics implements Command<CommandSourceStack> {
     public static LiteralArgumentBuilder<CommandSourceStack> make() {
         return Commands.literal("networkdiagnostics")
                 .requires((commandSource) -> commandSource.hasPermission(2))
+                .executes(new CommandNetworkDiagnostics(false, false))
                 .then(Commands.argument("operation", new ArgumentTypeEnum(StartStop.class))
-                        .executes(new CommandNetworkDiagnostics(false))
+                        .executes(new CommandNetworkDiagnostics(true, false))
                         .then(Commands.argument("port", IntegerArgumentType.integer())
-                            .executes(new CommandNetworkDiagnostics(true))));
+                            .executes(new CommandNetworkDiagnostics(true, true))));
     }
 
     public static enum StartStop {
