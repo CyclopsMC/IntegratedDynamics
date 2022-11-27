@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.network.packet.PlayerTeleportPacket;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -155,7 +156,7 @@ public class NetworkDataClient {
                 jsonPart.addProperty("network", part.getNetworkId());
                 jsonPart.addProperty("cables", part.getNetworkCables());
                 jsonPart.addProperty("part", part.getName());
-                jsonPart.addProperty("ticktime", String.format("%.6f", ((double) part.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
+                jsonPart.addProperty("ticktime", Float.parseFloat(String.format(Locale.ENGLISH, "%.6f", ((double) part.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000)));
                 jsonPart.addProperty("dimension", part.getDimension().location().toString());
                 jsonPart.addProperty("position", part.getPos().toShortString());
                 jsonPart.addProperty("side", part.getSide().name());

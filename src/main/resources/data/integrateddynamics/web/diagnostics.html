@@ -52,6 +52,18 @@
     .table-diagnostics tr.highlighted {
       background: #21a6a6;
     }
+    .table-diagnostics tr {
+      cursor: pointer;
+    }
+    .order-ascending::before {
+      content: '\21E1 ';
+    }
+    .order-descending::before {
+      content: '\21E3 ';
+    }
+    .table-diagnostics td.sort:not(.order-ascending):hover::before {
+      content: '\21E3 ';
+    }
   </style>
 </head>
 <body>
@@ -64,13 +76,13 @@
     <table id="table-parts" class="table-diagnostics">
       <thead>
       <tr>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-network">Network</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-cables">Cables</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-part">Part</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-ticktime">Ticktime (ms)</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-dimension">Dimension</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-position">Position</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-side">Side</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-network sort sort-network">Network</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-cables sort sort-cables">Cables</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-part sort sort-part">Part</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-ticktime sort sort-ticktime">Ticktime (ms)</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-dimension sort sort-dimension">Dimension</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-position sort sort-position">Position</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-side sort sort-side">Side</td>
         <td class="localize-gui-integrateddynamics-diagnostics-table-actions">Actions</td>
       </tr>
       </thead>
@@ -81,12 +93,12 @@
     <table id="table-observers" class="table-diagnostics">
       <thead>
       <tr>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-network">Network</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-part">Part</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-ticktime">Ticktime (ms)</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-dimension">Dimension</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-position">Position</td>
-        <td class="localize-gui-integrateddynamics-diagnostics-table-side">Side</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-network sort sort-network">Network</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-part sort sort-part">Part</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-ticktime sort sort-ticktime">Ticktime (ms)</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-dimension sort sort-dimension">Dimension</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-position sort sort-position">Position</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-side sort sort-side">Side</td>
       </tr>
       </thead>
       <tbody></tbody>
@@ -94,8 +106,23 @@
   </div>
 
   <script>
-    function updateTable(data, table, columnNames, allowTeleport) {
+    let partsOrderState = { column: 'ticktime', asc: false };
+    let observersOrderState = { column: 'ticktime', asc: false };
+
+    function updateTable(data, table, columnNames, allowTeleport, orderState) {
+      // Reset table
       table.textContent = '';
+
+      // Sort rows
+      const compareStrings = orderState.column === 'part' || orderState.column === 'dimension' || orderState.column === 'position' || orderState.column === 'side';
+      data.sort((entryLeft, entryRight) => {
+        if (compareStrings) {
+          return entryLeft[orderState.column].localeCompare(entryRight[orderState.column]) * (orderState.asc ? 1 : -1);
+        } else {
+          return (entryLeft[orderState.column] - entryRight[orderState.column]) * (orderState.asc ? 1 : -1);
+        }
+      });
+
       for (const entry of data) {
         const row = document.createElement('tr');
 
@@ -172,6 +199,7 @@
                 document.querySelector('#table-parts tbody'),
                 ['network', 'cables', 'part', 'ticktime', 'dimension', 'position', 'side'],
                 true,
+                partsOrderState,
         );
 
         // Update observers
@@ -180,6 +208,7 @@
                 document.querySelector('#table-observers tbody'),
                 ['network', 'part', 'ticktime', 'dimension', 'position', 'side'],
                 false,
+                observersOrderState,
         );
       } catch (error) {
         errorDialog.textContent = error.message;
@@ -189,6 +218,47 @@
       setTimeout(update, 500);
     }
     addEventListener("load", (event) => update());
+
+    // Click on table columns to sort
+    document.querySelectorAll(".sort").forEach(element => {
+      element.addEventListener("click", () => {
+        const orderState = element.parentElement.parentElement.parentElement.id === 'table-parts' ? partsOrderState : observersOrderState;
+
+        // Check the column we're clicking on
+        let column;
+        for (const clazz of element.classList) {
+          if (clazz.startsWith('sort-')) {
+            column = clazz.substr(5);
+          }
+        }
+
+        // Change the order
+        if (column) {
+          if (orderState.column === column) {
+            // Update order state
+            orderState.asc = !orderState.asc;
+
+            // Indicate order state in table
+            element.classList.remove('order-descending');
+            element.classList.remove('order-ascending');
+            element.classList.add(orderState.asc ? 'order-ascending' : 'order-descending');
+          } else {
+            // Update order state
+            orderState.column = column;
+            orderState.asc = false;
+
+            // Remove order state from other columns
+            for (const columnHeader of element.parentElement.parentElement.parentElement.querySelectorAll('.sort')) {
+              columnHeader.classList.remove('order-descending');
+              columnHeader.classList.remove('order-ascending');
+            }
+
+            // Indicate order state in table
+            element.classList.add('order-descending');
+          }
+        }
+      });
+    });
   </script>
 
 </body>
