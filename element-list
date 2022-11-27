@@ -70,6 +70,7 @@ org.cyclops.integrateddynamics.core.logicprogrammer
 org.cyclops.integrateddynamics.core.logicprogrammer.event
 org.cyclops.integrateddynamics.core.network
 org.cyclops.integrateddynamics.core.network.diagnostics
+org.cyclops.integrateddynamics.core.network.diagnostics.http
 org.cyclops.integrateddynamics.core.network.event
 org.cyclops.integrateddynamics.core.part
 org.cyclops.integrateddynamics.core.part.aspect
