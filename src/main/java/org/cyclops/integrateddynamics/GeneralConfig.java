@@ -148,6 +148,9 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "core" , comment = "The minimum number of integer digits to include in the result of the compact operator")
     public static int numberCompactMinimumIntegerDigits = 1;
 
+    @ConfigurableProperty(category = "general", comment = "The default port for running the network diagnostics HTTP server.", configLocation = ModConfig.Type.CLIENT)
+    public static int diagnosticsWebServerPort = 3030;
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }

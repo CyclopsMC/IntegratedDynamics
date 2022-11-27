@@ -32,7 +32,7 @@ public class CommonProxy extends CommonProxyComponent {
         packetHandler.register(LogicProgrammerValueTypeOperatorValueChangedPacket.class);
         packetHandler.register(NetworkDiagnosticsSubscribePacket.class);
         packetHandler.register(NetworkDiagnosticsNetworkPacket.class);
-        packetHandler.register(NetworkDiagnosticsOpenClient.class);
+        packetHandler.register(NetworkDiagnosticsTriggerClient.class);
         packetHandler.register(PlayerTeleportPacket.class);
         packetHandler.register(LogicProgrammerValueTypeSlottedValueChangedPacket.class);
         packetHandler.register(LogicProgrammerSetElementInventory.class);

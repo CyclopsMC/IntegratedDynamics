@@ -127,6 +127,11 @@ dependencies {
     modLib "com.google.re2j:re2j:1.1"
     shadow "com.google.re2j:re2j:1.1"
 
+    modLib ("io.netty:netty-codec-http:4.1.77.Final") {
+        transitive = false
+    }
+    shadow "io.netty:netty-codec-http:4.1.77.Final"
+
     // Project lombok
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'
@@ -274,6 +279,7 @@ shadowJar {
     classifier '' // Replace the default JAR
     append 'META-INF/mods.toml'
     relocate 'com.google.re2j', 'vendors.com.google.re2j' // Because Forge blocks all com.google.* class loading...
+    relocate 'io.netty.handler.codec.http', 'vendors.io.netty.handler.codec.http' // To avoid clashes with other mods
 }
 
 reobf {

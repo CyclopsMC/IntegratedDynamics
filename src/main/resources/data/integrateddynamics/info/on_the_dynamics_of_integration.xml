@@ -629,5 +629,11 @@
             <appendix type="keybinding">key.integrateddynamics.logic_programmer_open_rename</appendix>
             <appendix_list factory="integrateddynamics:operators_output">*</appendix_list>
         </section>
+
+        <section name="info_book.integrateddynamics.manual.diagnostics">
+            <paragraph>info_book.integrateddynamics.manual.diagnostics.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.diagnostics.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.diagnostics.text3</paragraph>
+        </section>
     </section>
 </section>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <title>Integrated Dynamics - Network Diagnostics</title>
+  <style>
+    body {
+      font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+      background: #b4b4b4;
+    }
+
+    .main {
+      width: 800px;
+      min-width: 700px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 5px;
+      border: solid 2px #1b8bb7;
+      background: white;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .error-dialog-invisible {
+      display: none;
+    }
+    .error-dialog-visible {
+      display: block;
+      width: 100%;
+      background: #ff786e;
+      border: solid 2px #da1c0d;
+      font-weight: bold;
+      padding: 5px;
+    }
+    .error-dialog-visible:before {
+      content: 'Error: ';
+    }
+
+    .table-diagnostics {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .table-diagnostics thead {
+      font-weight: bold;
+      background: #b9ebff;
+    }
+    .table-diagnostics td {
+      border: 2px solid #1b8bb7;
+      padding: 4px;
+    }
+    .table-diagnostics tr.highlighted {
+      background: #21a6a6;
+    }
+    .table-diagnostics tr {
+      cursor: pointer;
+    }
+    .order-ascending::before {
+      content: '\21E1 ';
+    }
+    .order-descending::before {
+      content: '\21E3 ';
+    }
+    .table-diagnostics td.sort:not(.order-ascending):hover::before {
+      content: '\21E3 ';
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <h1 class="localize-gui-integrateddynamics-diagnostics-title">Integrated Dynamics - Network Diagnostics</h1>
+
+    <div id="error-dialog" class="error-dialog-invisible"></div>
+
+    <h2 class="localize-gui-integrateddynamics-diagnostics-parts">Parts</h2>
+    <table id="table-parts" class="table-diagnostics">
+      <thead>
+      <tr>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-network sort sort-network">Network</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-cables sort sort-cables">Cables</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-part sort sort-part">Part</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-ticktime sort sort-ticktime">Ticktime (ms)</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-dimension sort sort-dimension">Dimension</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-position sort sort-position">Position</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-side sort sort-side">Side</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-actions">Actions</td>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2 class="localize-gui-integrateddynamics-diagnostics-observers">Storage Observers</h2>
+    <table id="table-observers" class="table-diagnostics">
+      <thead>
+      <tr>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-network sort sort-network">Network</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-part sort sort-part">Part</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-ticktime sort sort-ticktime">Ticktime (ms)</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-dimension sort sort-dimension">Dimension</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-position sort sort-position">Position</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-side sort sort-side">Side</td>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    let partsOrderState = { column: 'ticktime', asc: false };
+    let observersOrderState = { column: 'ticktime', asc: false };
+
+    function updateTable(data, table, columnNames, allowTeleport, orderState) {
+      // Reset table
+      table.textContent = '';
+
+      // Sort rows
+      const compareStrings = orderState.column === 'part' || orderState.column === 'dimension' || orderState.column === 'position' || orderState.column === 'side';
+      data.sort((entryLeft, entryRight) => {
+        if (compareStrings) {
+          return entryLeft[orderState.column].localeCompare(entryRight[orderState.column]) * (orderState.asc ? 1 : -1);
+        } else {
+          return (entryLeft[orderState.column] - entryRight[orderState.column]) * (orderState.asc ? 1 : -1);
+        }
+      });
+
+      for (const entry of data) {
+        const row = document.createElement('tr');
+
+        // Create columns
+        for (const columnName of columnNames) {
+          const column = document.createElement('td');
+          column.textContent = entry[columnName];
+          row.appendChild(column);
+        }
+
+        // Add action buttons
+        if (allowTeleport) {
+          const column = document.createElement('td');
+          const button = document.createElement('button');
+          button.textContent = "Teleport";
+          button.classList.add("teleport");
+          button.addEventListener("click", async(event) => {
+            await fetch('teleport', {
+              method: 'POST',
+              body: JSON.stringify(entry),
+            });
+          });
+          column.appendChild(button);
+          row.appendChild(column);
+        }
+
+        // Add highlight logic
+        if (entry.highlighted) {
+          row.classList.add('highlighted');
+          row.addEventListener("click", async(event) => {
+            if (event.target.nodeName !== 'BUTTON') {
+              await fetch('highlightDisable', {
+                method: 'POST',
+                body: JSON.stringify(entry),
+              });
+            }
+          });
+        } else {
+          row.addEventListener("click", async(event) => {
+            if (event.target.nodeName !== 'BUTTON') {
+              await fetch('highlightEnable', {
+                method: 'POST',
+                body: JSON.stringify(entry),
+              });
+            }
+          });
+        }
+
+        table.appendChild(row);
+      }
+    }
+
+    function updateLocalization(localization) {
+      for (const [ key, value ] of Object.entries(localization)) {
+        document.querySelectorAll(".localize-" + key.replaceAll('.', '-')).forEach(element => {
+          element.textContent = value;
+        });
+      }
+    }
+
+    async function update() {
+      const errorDialog = document.getElementById('error-dialog');
+
+      try {
+        const data = await (await fetch('data.json')).json();
+        errorDialog.classList.remove('error-dialog-visible');
+
+        // Update localization
+        updateLocalization(data.localization);
+
+        // Update parts
+        updateTable(
+                data.parts,
+                document.querySelector('#table-parts tbody'),
+                ['network', 'cables', 'part', 'ticktime', 'dimension', 'position', 'side'],
+                true,
+                partsOrderState,
+        );
+
+        // Update observers
+        updateTable(
+                data.observers,
+                document.querySelector('#table-observers tbody'),
+                ['network', 'part', 'ticktime', 'dimension', 'position', 'side'],
+                false,
+                observersOrderState,
+        );
+      } catch (error) {
+        errorDialog.textContent = error.message;
+        errorDialog.classList.add('error-dialog-visible');
+      }
+
+      setTimeout(update, 500);
+    }
+    addEventListener("load", (event) => update());
+
+    // Click on table columns to sort
+    document.querySelectorAll(".sort").forEach(element => {
+      element.addEventListener("click", () => {
+        const orderState = element.parentElement.parentElement.parentElement.id === 'table-parts' ? partsOrderState : observersOrderState;
+
+        // Check the column we're clicking on
+        let column;
+        for (const clazz of element.classList) {
+          if (clazz.startsWith('sort-')) {
+            column = clazz.substr(5);
+          }
+        }
+
+        // Change the order
+        if (column) {
+          if (orderState.column === column) {
+            // Update order state
+            orderState.asc = !orderState.asc;
+
+            // Indicate order state in table
+            element.classList.remove('order-descending');
+            element.classList.remove('order-ascending');
+            element.classList.add(orderState.asc ? 'order-ascending' : 'order-descending');
+          } else {
+            // Update order state
+            orderState.column = column;
+            orderState.asc = false;
+
+            // Remove order state from other columns
+            for (const columnHeader of element.parentElement.parentElement.parentElement.querySelectorAll('.sort')) {
+              columnHeader.classList.remove('order-descending');
+              columnHeader.classList.remove('order-ascending');
+            }
+
+            // Indicate order state in table
+            element.classList.add('order-descending');
+          }
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 import com.google.common.collect.Lists;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -63,7 +62,7 @@ public class NetworkDiagnostics {
                 long lastSecondDurationNs = network.getLastSecondDuration(networkElement);
                 rawParts.add(new RawPartData(pos.getPos().getLevelKey(),
                         pos.getPos().getBlockPos(), pos.getSide(),
-                        L10NHelpers.localize(partNetworkElement.getPart().getTranslationKey()),
+                        partNetworkElement.getPart().getTranslationKey(),
                         lastSecondDurationNs));
             } else {
                 // If needed, we can send the other part types later on as well

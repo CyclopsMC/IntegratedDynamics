@@ -35,20 +35,20 @@ public class EnergyNetwork extends PositionedAddonsNetworkIngredients<Long, Bool
 
     @Override
     public void onSkipUpdate(INetworkElement element) {
-        if(element instanceof IEnergyConsumingNetworkElement) {
-            ((IEnergyConsumingNetworkElement) element).postUpdate(getNetwork(), false);
+        if(element instanceof IEnergyConsumingNetworkElement consumingNetworkElement) {
+            consumingNetworkElement.postUpdate(getNetwork(), false);
         }
     }
 
     @Override
     public void postUpdate(INetworkElement element) {
-        if(element instanceof IEnergyConsumingNetworkElement) {
+        if(element instanceof IEnergyConsumingNetworkElement consumingNetworkElement) {
             int multiplier = GeneralConfig.energyConsumptionMultiplier;
             if (multiplier > 0) {
-                int consumptionRate = ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
+                int consumptionRate = consumingNetworkElement.getConsumptionRate() * multiplier;
                 getChannel(element.getChannel()).extract(consumptionRate, false);
             }
-            ((IEnergyConsumingNetworkElement) element).postUpdate(getNetwork(), true);
+            consumingNetworkElement.postUpdate(getNetwork(), true);
         }
     }
 

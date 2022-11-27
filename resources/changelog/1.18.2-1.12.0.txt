@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.16.0 or higher.
+
+Additions:
+* Add Network Diagnostics tool for server operators, Closes #863
+  This restores the pre-1.15 diagnostics, but uses a Web browser to display it instead of the deprecated AWT libraries.

@@ -8,7 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
-import org.cyclops.integrateddynamics.core.network.diagnostics.GuiNetworkDiagnostics;
+import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient;
 import org.cyclops.integrateddynamics.core.network.diagnostics.RawNetworkData;
 
 /**
@@ -42,7 +42,7 @@ public class NetworkDiagnosticsNetworkPacket extends PacketCodec {
             // Force observers to be cleared when no parts are present.
             networkData.getObservers().clear();
         }
-        GuiNetworkDiagnostics.setNetworkData(networkData.getId(), networkData.isKilled() ? null : networkData);
+        NetworkDataClient.setNetworkData(networkData.getId(), networkData.isKilled() ? null : networkData);
     }
 
     @Override
