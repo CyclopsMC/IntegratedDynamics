@@ -56,37 +56,37 @@
 </head>
 <body>
   <div class="main">
-    <h1>Integrated Dynamics - Network Diagnostics</h1>
+    <h1 class="localize-gui-integrateddynamics-diagnostics-title">Integrated Dynamics - Network Diagnostics</h1>
 
     <div id="error-dialog" class="error-dialog-invisible"></div>
 
-    <h2>Parts</h2>
+    <h2 class="localize-gui-integrateddynamics-diagnostics-parts">Parts</h2>
     <table id="table-parts" class="table-diagnostics">
       <thead>
       <tr>
-        <td>Network</td>
-        <td>Cables</td>
-        <td>Part</td>
-        <td>Ticktime (ms)</td>
-        <td>Dimension</td>
-        <td>Position</td>
-        <td>Side</td>
-        <td>Actions</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-network">Network</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-cables">Cables</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-part">Part</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-ticktime">Ticktime (ms)</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-dimension">Dimension</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-position">Position</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-side">Side</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-actions">Actions</td>
       </tr>
       </thead>
       <tbody></tbody>
     </table>
 
-    <h2>Observers</h2>
+    <h2 class="localize-gui-integrateddynamics-diagnostics-observers">Storage Observers</h2>
     <table id="table-observers" class="table-diagnostics">
       <thead>
       <tr>
-        <td>Network</td>
-        <td>Part</td>
-        <td>Ticktime (ms)</td>
-        <td>Dimension</td>
-        <td>Position</td>
-        <td>Side</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-network">Network</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-part">Part</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-ticktime">Ticktime (ms)</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-dimension">Dimension</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-position">Position</td>
+        <td class="localize-gui-integrateddynamics-diagnostics-table-side">Side</td>
       </tr>
       </thead>
       <tbody></tbody>
@@ -148,12 +148,23 @@
       }
     }
 
+    function updateLocalization(localization) {
+      for (const [ key, value ] of Object.entries(localization)) {
+        document.querySelectorAll(".localize-" + key.replaceAll('.', '-')).forEach(element => {
+          element.textContent = value;
+        });
+      }
+    }
+
     async function update() {
       const errorDialog = document.getElementById('error-dialog');
 
       try {
         const data = await (await fetch('data.json')).json();
         errorDialog.classList.remove('error-dialog-visible');
+
+        // Update localization
+        updateLocalization(data.localization);
 
         // Update parts
         updateTable(

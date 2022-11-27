@@ -16,6 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -30,6 +31,20 @@ import java.util.Set;
  * @author rubensworks
  */
 public class NetworkDataClient {
+
+    public static final String[] LOCALIZE_ENTRIES = new String[]{
+            "gui.integrateddynamics.diagnostics.title",
+            "gui.integrateddynamics.diagnostics.parts",
+            "gui.integrateddynamics.diagnostics.observers",
+            "gui.integrateddynamics.diagnostics.table.network",
+            "gui.integrateddynamics.diagnostics.table.cables",
+            "gui.integrateddynamics.diagnostics.table.part",
+            "gui.integrateddynamics.diagnostics.table.ticktime",
+            "gui.integrateddynamics.diagnostics.table.dimension",
+            "gui.integrateddynamics.diagnostics.table.position",
+            "gui.integrateddynamics.diagnostics.table.side",
+            "gui.integrateddynamics.diagnostics.table.actions"
+    };
 
     private static final Multimap<Integer, ObservablePartData> networkDataParts = ArrayListMultimap.create();
     private static final Multimap<Integer, ObservableObserverData> networkDataObservers = ArrayListMultimap.create();
@@ -116,43 +131,56 @@ public class NetworkDataClient {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonObject responseObject = new JsonObject();
 
+        responseObject.add("localization", getLocalizationJson());
         responseObject.add("parts", getPartsJson());
         responseObject.add("observers", getObserversJson());
 
         return gson.toJson(responseObject) + "\n";
     }
 
+    private static JsonElement getLocalizationJson() {
+        JsonObject jsonObject = new JsonObject();
+        for (String entry : LOCALIZE_ENTRIES) {
+            jsonObject.addProperty(entry, L10NHelpers.localize(entry));
+        }
+        return jsonObject;
+    }
+
     private static JsonElement getPartsJson() {
         JsonArray jsonArray = new JsonArray();
-        for (Map.Entry<Integer, ObservablePartData> entry : networkDataParts.entries()) {
-            JsonObject jsonPart = new JsonObject();
-            ObservablePartData part = entry.getValue();
-            jsonPart.addProperty("network", part.getNetworkId());
-            jsonPart.addProperty("cables", part.getNetworkCables());
-            jsonPart.addProperty("part", part.getName());
-            jsonPart.addProperty("ticktime", String.format("%.6f", ((double) part.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
-            jsonPart.addProperty("dimension", part.getDimension().location().toString());
-            jsonPart.addProperty("position", part.getPos().toShortString());
-            jsonPart.addProperty("side", part.getSide().name());
-            jsonPart.addProperty("highlighted", NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(part.toPartPos()));
-            jsonArray.add(jsonPart);
+        synchronized (networkDataParts) {
+            for (Map.Entry<Integer, ObservablePartData> entry : networkDataParts.entries()) {
+                JsonObject jsonPart = new JsonObject();
+                ObservablePartData part = entry.getValue();
+                jsonPart.addProperty("network", part.getNetworkId());
+                jsonPart.addProperty("cables", part.getNetworkCables());
+                jsonPart.addProperty("part", part.getName());
+                jsonPart.addProperty("ticktime", String.format("%.6f", ((double) part.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
+                jsonPart.addProperty("dimension", part.getDimension().location().toString());
+                jsonPart.addProperty("position", part.getPos().toShortString());
+                jsonPart.addProperty("side", part.getSide().name());
+                jsonPart.addProperty("highlighted", NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(part.toPartPos()));
+                jsonArray.add(jsonPart);
+            }
         }
         return jsonArray;
     }
 
     private static JsonElement getObserversJson() {
         JsonArray jsonArray = new JsonArray();
-        for (Map.Entry<Integer, ObservableObserverData> entry : networkDataObservers.entries()) {
-            JsonObject jsonPart = new JsonObject();
-            ObservableObserverData observer = entry.getValue();
-            jsonPart.addProperty("network", observer.getNetworkId());
-            jsonPart.addProperty("part", observer.getName());
-            jsonPart.addProperty("ticktime", String.format("%.6f", ((double) observer.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
-            jsonPart.addProperty("dimension", observer.getDimension().location().toString());
-            jsonPart.addProperty("position", observer.getPos().toShortString());
-            jsonPart.addProperty("side", observer.getSide() != null ? observer.getSide().name() : "null");
-            jsonPart.addProperty("highlighted", NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(observer.toPartPos()));
-            jsonArray.add(jsonPart);
+        synchronized (networkDataParts) {
+            for (Map.Entry<Integer, ObservableObserverData> entry : networkDataObservers.entries()) {
+                JsonObject jsonPart = new JsonObject();
+                ObservableObserverData observer = entry.getValue();
+                jsonPart.addProperty("network", observer.getNetworkId());
+                jsonPart.addProperty("part", observer.getName());
+                jsonPart.addProperty("ticktime", String.format("%.6f", ((double) observer.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
+                jsonPart.addProperty("dimension", observer.getDimension().location().toString());
+                jsonPart.addProperty("position", observer.getPos().toShortString());
+                jsonPart.addProperty("side", observer.getSide() != null ? observer.getSide().name() : "null");
+                jsonPart.addProperty("highlighted", NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(observer.toPartPos()));
+                jsonArray.add(jsonPart);
+            }
         }
         return jsonArray;
     }
