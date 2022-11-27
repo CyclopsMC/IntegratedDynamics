@@ -66,7 +66,7 @@ sourceSets {
 }
 
 configurations {
-    shadow.setTransitive(true);
+    shadow.setTransitive(false);
 
 	integrationtestImplementation.extendsFrom(implementation)
 	integrationtestRuntimeOnly.extendsFrom(runtimeOnly)
@@ -279,7 +279,10 @@ shadowJar {
     classifier '' // Replace the default JAR
     append 'META-INF/mods.toml'
     relocate 'com.google.re2j', 'vendors.com.google.re2j' // Because Forge blocks all com.google.* class loading...
-    relocate 'io.netty.handler.codec.http', 'vendors.io.netty.handler.codec.http' // To avoid clashes with other mods
+    // To avoid clashes with other mods
+    relocate 'io.netty.handler.codec.http', 'org.cyclops.integrateddynamics.vendors.io.netty.handler.codec.http'
+    relocate 'io.netty.handler.codec.rtsp', 'org.cyclops.integrateddynamics.vendors.io.netty.handler.codec.rtsp'
+    relocate 'io.netty.handler.codec.spdy', 'org.cyclops.integrateddynamics.vendors.io.netty.handler.codec.spdy'
 }
 
 reobf {
