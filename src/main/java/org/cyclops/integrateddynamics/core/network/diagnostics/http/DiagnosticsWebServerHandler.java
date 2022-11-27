@@ -1,17 +1,11 @@
 package org.cyclops.integrateddynamics.core.network.diagnostics.http;
 
+import com.google.gson.JsonParser;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpUtil;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.apache.commons.io.IOUtils;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -57,9 +51,34 @@ public class DiagnosticsWebServerHandler extends SimpleChannelInboundHandler<Obj
                     responseString = NetworkDataClient.getAsJsonString();
                     contentType = "application/json; charset=UTF-8";
                     break;
-                case "/teleport":
+                case "/highlightEnable":
+                    if (request.method().equals(HttpMethod.POST) && request instanceof HttpContent httpRequest) {
+                        NetworkDataClient.highlightEnable(JsonParser
+                                .parseString(httpRequest.content().toString(CharsetUtil.UTF_8))
+                                .getAsJsonObject());
+                    }
                     responseStatus = HttpResponseStatus.OK;
-                    responseString = "Ok"; // TODO
+                    responseString = "Ok";
+                    contentType = "text/plain; charset=UTF-8";
+                    break;
+                case "/highlightDisable":
+                    if (request.method().equals(HttpMethod.POST) && request instanceof HttpContent httpRequest) {
+                        NetworkDataClient.highlightDisable(JsonParser
+                                .parseString(httpRequest.content().toString(CharsetUtil.UTF_8))
+                                .getAsJsonObject());
+                    }
+                    responseStatus = HttpResponseStatus.OK;
+                    responseString = "Ok";
+                    contentType = "text/plain; charset=UTF-8";
+                    break;
+                case "/teleport":
+                    if (request.method().equals(HttpMethod.POST) && request instanceof HttpContent httpRequest) {
+                        NetworkDataClient.teleport(JsonParser
+                                .parseString(httpRequest.content().toString(CharsetUtil.UTF_8))
+                                .getAsJsonObject());
+                    }
+                    responseStatus = HttpResponseStatus.OK;
+                    responseString = "Ok";
                     contentType = "text/plain; charset=UTF-8";
                     break;
                 default:

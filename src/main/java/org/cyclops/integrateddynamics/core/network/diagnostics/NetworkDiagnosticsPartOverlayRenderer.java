@@ -5,8 +5,11 @@ import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
@@ -55,9 +58,10 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             Player player = Minecraft.getInstance().player;
             float partialTicks = event.getPartialTick();
 
-            double offsetX = player.xOld + (player.getX() - player.xOld) * (double) partialTicks;
-            double offsetY = player.yOld + (player.getY() - player.yOld) * (double) partialTicks;
-            double offsetZ = player.zOld + (player.getZ() - player.zOld) * (double) partialTicks;
+            Vec3 eyePos = player.getEyePosition(partialTicks);
+            double offsetX = eyePos.x;
+            double offsetY = eyePos.y;
+            double offsetZ = eyePos.z;
 
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -82,8 +86,8 @@ public class NetworkDiagnosticsPartOverlayRenderer {
                             .move(-offsetX, -offsetY, -offsetZ)
                             .inflate(0.05, 0.05, 0.05)
                             .inflate(-0.05, -0.05, -0.05);
-                    /*WorldRenderer.renderLineBox(event.getPoseStack(), Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource().getBuffer(RenderType.getLines()),
-                            bb, 1.0F, 0.2F, 0.1F, 0.8F);*/
+                    LevelRenderer.renderLineBox(event.getPoseStack(), Minecraft.getInstance().renderBuffers().outlineBufferSource().getBuffer(RenderType.lines()),
+                            bb, 1.0F, 0.2F, 0.1F, 0.8F);
                 }
             }
 

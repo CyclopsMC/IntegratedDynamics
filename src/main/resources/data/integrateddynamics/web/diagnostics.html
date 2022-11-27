@@ -49,6 +49,9 @@
       border: 2px solid #1b8bb7;
       padding: 4px;
     }
+    .table-diagnostics tr.highlighted {
+      background: #21a6a6;
+    }
   </style>
 </head>
 <body>
@@ -68,6 +71,7 @@
         <td>Dimension</td>
         <td>Position</td>
         <td>Side</td>
+        <td>Actions</td>
       </tr>
       </thead>
       <tbody></tbody>
@@ -90,15 +94,56 @@
   </div>
 
   <script>
-    function updateTable(data, table, columnNames) {
+    function updateTable(data, table, columnNames, allowTeleport) {
       table.textContent = '';
       for (const entry of data) {
         const row = document.createElement('tr');
+
+        // Create columns
         for (const columnName of columnNames) {
           const column = document.createElement('td');
           column.textContent = entry[columnName];
           row.appendChild(column);
         }
+
+        // Add action buttons
+        if (allowTeleport) {
+          const column = document.createElement('td');
+          const button = document.createElement('button');
+          button.textContent = "Teleport";
+          button.classList.add("teleport");
+          button.addEventListener("click", async(event) => {
+            await fetch('teleport', {
+              method: 'POST',
+              body: JSON.stringify(entry),
+            });
+          });
+          column.appendChild(button);
+          row.appendChild(column);
+        }
+
+        // Add highlight logic
+        if (entry.highlighted) {
+          row.classList.add('highlighted');
+          row.addEventListener("click", async(event) => {
+            if (event.target.nodeName !== 'BUTTON') {
+              await fetch('highlightDisable', {
+                method: 'POST',
+                body: JSON.stringify(entry),
+              });
+            }
+          });
+        } else {
+          row.addEventListener("click", async(event) => {
+            if (event.target.nodeName !== 'BUTTON') {
+              await fetch('highlightEnable', {
+                method: 'POST',
+                body: JSON.stringify(entry),
+              });
+            }
+          });
+        }
+
         table.appendChild(row);
       }
     }
@@ -115,6 +160,7 @@
                 data.parts,
                 document.querySelector('#table-parts tbody'),
                 ['network', 'cables', 'part', 'ticktime', 'dimension', 'position', 'side'],
+                true,
         );
 
         // Update observers
@@ -122,6 +168,7 @@
                 data.observers,
                 document.querySelector('#table-observers tbody'),
                 ['network', 'part', 'ticktime', 'dimension', 'position', 'side'],
+                false,
         );
       } catch (error) {
         errorDialog.textContent = error.message;

@@ -17,7 +17,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.network.packet.PlayerTeleportPacket;
 
 import java.util.Collection;
 import java.util.List;
@@ -132,6 +134,7 @@ public class NetworkDataClient {
             jsonPart.addProperty("dimension", part.getDimension().location().toString());
             jsonPart.addProperty("position", part.getPos().toShortString());
             jsonPart.addProperty("side", part.getSide().name());
+            jsonPart.addProperty("highlighted", NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(part.toPartPos()));
             jsonArray.add(jsonPart);
         }
         return jsonArray;
@@ -148,9 +151,46 @@ public class NetworkDataClient {
             jsonPart.addProperty("dimension", observer.getDimension().location().toString());
             jsonPart.addProperty("position", observer.getPos().toShortString());
             jsonPart.addProperty("side", observer.getSide() != null ? observer.getSide().name() : "null");
+            jsonPart.addProperty("highlighted", NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(observer.toPartPos()));
             jsonArray.add(jsonPart);
         }
         return jsonArray;
+    }
+
+    public static void highlightEnable(JsonObject data) {
+        PartPos pos = parsePosString(data.get("dimension").getAsString(), data.get("position").getAsString(), data.get("side").getAsString());
+        NetworkDiagnosticsPartOverlayRenderer.getInstance().addPos(pos);
+    }
+
+    public static void highlightDisable(JsonObject data) {
+        PartPos pos = parsePosString(data.get("dimension").getAsString(), data.get("position").getAsString(), data.get("side").getAsString());
+        if (NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(pos)) {
+            NetworkDiagnosticsPartOverlayRenderer.getInstance().removePos(pos);
+        }
+    }
+
+    public static void teleport(JsonObject data) {
+        PartPos pos = parsePosString(data.get("dimension").getAsString(), data.get("position").getAsString(), data.get("side").getAsString());
+        BlockPos blockPos = pos.getPos().getBlockPos();
+        float yaw = 0;
+        if (pos.getSide() != null) {
+            blockPos = blockPos.relative(pos.getSide());
+            yaw = pos.getSide().getOpposite().toYRot();
+        }
+        IntegratedDynamics._instance.getPacketHandler().sendToServer(new PlayerTeleportPacket(
+                pos.getPos().getLevelKey(),
+                blockPos.getX(),
+                blockPos.getY() - 1,
+                blockPos.getZ(),
+                yaw,
+                0
+        ));
+    }
+
+    private static PartPos parsePosString(String dimensionString, String positionString, String sideString) {
+        String[] posParts = positionString.split(", ");
+        BlockPos pos = new BlockPos(Integer.parseInt(posParts[0]), Integer.parseInt(posParts[1]), Integer.parseInt(posParts[2]));
+        return PartPos.of(DimPos.of(dimensionString, pos), Direction.byName(sideString));
     }
 
     @Data
