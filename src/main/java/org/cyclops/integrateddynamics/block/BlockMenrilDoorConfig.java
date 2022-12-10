@@ -20,7 +20,7 @@ public class BlockMenrilDoorConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "menril_door",
                 eConfig -> new DoorBlock(Block.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
-                        .strength(3.0F)
+                        .strength(2.0F, 3.0F)
                         .sound(SoundType.WOOD)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

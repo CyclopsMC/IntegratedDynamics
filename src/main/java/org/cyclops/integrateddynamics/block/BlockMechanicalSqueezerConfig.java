@@ -27,7 +27,7 @@ public class BlockMechanicalSqueezerConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "mechanical_squeezer",
                 eConfig -> new BlockMechanicalSqueezer(Block.Properties.of(Material.HEAVY_METAL)
-                        .strength(5.0F)
+                        .strength(2.0F, 5.0F)
                         .sound(SoundType.METAL)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

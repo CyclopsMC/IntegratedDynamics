@@ -17,7 +17,7 @@ public class BlockSqueezerConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "squeezer",
                 eConfig -> new BlockSqueezer(Block.Properties.of(Material.METAL)
-                        .strength(5.0F)
+                        .strength(2.0F, 5.0F)
                         .sound(SoundType.METAL)
                         .noOcclusion()
                         .isRedstoneConductor((blockState, world, pos) -> false)),

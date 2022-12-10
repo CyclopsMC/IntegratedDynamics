@@ -1,4 +1,18 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "integrateddynamics:drying_basin",
+    "integrateddynamics:menril_door",
+    "integrateddynamics:menril_fence",
+    "integrateddynamics:menril_log",
+    "integrateddynamics:menril_log_filled",
+    "integrateddynamics:menril_log_stripped",
+    "integrateddynamics:menril_planks",
+    "integrateddynamics:menril_planks_stairs",
+    "integrateddynamics:menril_sapling",
+    "integrateddynamics:menril_torch",
+    "integrateddynamics:menril_torch_wall",
+    "integrateddynamics:menril_wood",
+    "integrateddynamics:menril_wood_stripped"
+  ]
 }

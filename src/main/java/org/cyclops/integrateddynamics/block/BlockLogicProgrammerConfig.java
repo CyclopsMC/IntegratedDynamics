@@ -17,8 +17,8 @@ public class BlockLogicProgrammerConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "logic_programmer",
                 eConfig -> new BlockLogicProgrammer(Block.Properties.of(Material.GLASS)
-                .strength(3.0F)
-                .sound(SoundType.METAL)),
+                        .strength(2.0F, 5.0F)
+                        .sound(SoundType.METAL)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
