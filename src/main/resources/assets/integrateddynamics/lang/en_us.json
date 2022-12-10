@@ -148,8 +148,8 @@
     "item.integrateddynamics.proto_chorus": "Proto Chorus",
 
     "_comment": "Fluids",
-    "fluid.fluids.integrateddynamics.menrilresin": "Menril Resin",
-    "fluid.fluids.integrateddynamics.liquidchorus": "Liquid Chorus",
+    "fluid_type.integrateddynamics.menril_resin": "Menril Resin",
+    "fluid_type.integrateddynamics.liquid_chorus": "Liquid Chorus",
 
     "_comment": "Biomes",
     "biome.integrateddynamics.meneglin": "Meneglin",
