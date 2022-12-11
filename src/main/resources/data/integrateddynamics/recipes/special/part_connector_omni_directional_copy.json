@@ -1,5 +1,5 @@
 {
-  "type": "integrateddynamics:crafting_special_shaped_omni_directional",
+  "type": "integrateddynamics:crafting_special_shaped_omni_directional_3",
   "group": "integrateddynamics:part_connector_omni_directional",
   "pattern": [
     " L ",

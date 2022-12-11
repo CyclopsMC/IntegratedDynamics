@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.16.0 or higher.
+
+Changes:
+* Output 3 items when copying Omni-directional Connector, Closes #1238
+
+Fixes:
+* Fix some blocks being slow to break, Closes #1232
+

@@ -17,7 +17,7 @@ public class BlockMaterializerConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "materializer",
                 eConfig -> new BlockMaterializer(Block.Properties.of(Material.HEAVY_METAL)
-                        .strength(5.0F)
+                        .strength(2.0F, 5.0F)
                         .sound(SoundType.METAL)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

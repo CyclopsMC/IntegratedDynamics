@@ -16,6 +16,7 @@ public class BlockDryingBasinConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "drying_basin",
                 eConfig -> new BlockDryingBasin(Block.Properties.of(Material.WOOD)
+                        .strength(2.0F, 5.0F)
                         .noOcclusion()
                         .isRedstoneConductor((blockState, world, pos) -> false)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

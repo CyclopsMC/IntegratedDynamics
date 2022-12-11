@@ -43,7 +43,7 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
                 "energy_battery",
                 eConfig -> new BlockEnergyBattery(Block.Properties.of(Material.HEAVY_METAL)
                         .sound(SoundType.METAL)
-                        .strength(5.0F)),
+                        .strength(2.0F, 5.0F)),
                 (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block,
                         new Item.Properties().tab(IntegratedDynamics._instance.getDefaultItemGroup())) {
                     @Override

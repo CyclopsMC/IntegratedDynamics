@@ -24,7 +24,7 @@ public class BlockMechanicalDryingBasinConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "mechanical_drying_basin",
                 eConfig -> new BlockMechanicalDryingBasin(Block.Properties.of(Material.HEAVY_METAL)
-                        .strength(5.0F)
+                        .strength(2.0F, 5.0F)
                         .sound(SoundType.METAL)
                         .noOcclusion()
                         .isRedstoneConductor((blockState, world, pos) -> false)),
