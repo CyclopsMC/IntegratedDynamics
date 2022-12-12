@@ -26,6 +26,6 @@
     "integrateddynamics:menril_torch_stone_wall",
     "integrateddynamics:proxy",
     "integrateddynamics:squeezer",
-    "integrateddynamics:variable_store"
+    "integrateddynamics:variablestore"
   ]
 }
