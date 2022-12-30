@@ -25,6 +25,7 @@ import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -84,7 +85,7 @@ public class PartHelpers {
      */
     public static IPartContainer getPartContainerChecked(BlockGetter world, BlockPos pos, @Nullable Direction side) {
         return getPartContainer(world, pos, side)
-                .orElseThrow(() -> new IllegalStateException("Could not get a part container"));
+                .orElseThrow(() -> new PartStateException(DimPos.of((Level) world, pos), side));
     }
 
     /**
@@ -99,7 +100,7 @@ public class PartHelpers {
      */
     public static IPartContainer getPartContainerChecked(DimPos dimPos, @Nullable Direction side) {
        return PartHelpers.getPartContainer(dimPos, side)
-               .orElseThrow(() -> new IllegalStateException("Could not find a part container at " + dimPos.toString()));
+               .orElseThrow(() -> new PartStateException(dimPos, side));
     }
 
     /**
