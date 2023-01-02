@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.17.0 or higher.
+
+Fixes:
+* Make invalid part containers not crash
+  This makes the game not crash anymore when frame-like mods are used.
+  Closes #1198
+
