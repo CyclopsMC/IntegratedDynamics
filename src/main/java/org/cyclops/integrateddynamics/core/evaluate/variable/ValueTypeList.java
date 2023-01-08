@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeListLPElement;
 
@@ -59,9 +60,9 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public Component canDeserialize(Tag value) {
+    public Component canDeserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         try {
-            IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
+            IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, value);
             return null;
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
             return Component.translatable(e.getMessage());
@@ -69,10 +70,10 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public ValueList deserialize(Tag value) {
+    public ValueList deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (!(value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty()))) {
             try {
-                IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(value);
+                IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, value);
                 return ValueList.ofFactory(proxy);
             } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
                 e.printStackTrace();

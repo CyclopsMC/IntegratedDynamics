@@ -13,6 +13,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -203,7 +204,7 @@ public class CurriedOperator implements IOperator {
         }
 
         @Override
-        public CurriedOperator deserialize(Tag valueOperator) throws EvaluationException {
+        public CurriedOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag valueOperator) throws EvaluationException {
             CompoundTag tag;
             try {
                 tag = (CompoundTag) valueOperator;
@@ -217,10 +218,10 @@ public class CurriedOperator implements IOperator {
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag valuetag = list.getCompound(i);
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valuetag.getString("valueType")));
-                IValue value = ValueHelpers.deserializeRaw(valueType, valuetag.get("value"));
+                IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, valuetag.get("value"));
                 variables[i] = new Variable(valueType, value);
             }
-            IOperator baseOperator = Objects.requireNonNull(Operators.REGISTRY.deserialize(tag.get("baseOperator")));
+            IOperator baseOperator = Objects.requireNonNull(Operators.REGISTRY.deserialize(valueDeseralizationContext, tag.get("baseOperator")));
             return new CurriedOperator(baseOperator, variables);
         }
     }

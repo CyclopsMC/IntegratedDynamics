@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePr
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import javax.annotation.Nullable;
 
@@ -26,11 +27,13 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
 
     /**
      * Get the variable facade for the given tag.
+     *
+     * @param valueDeseralizationContext
      * @param id The id that was read and needs to be inserted into the variable facade.
      * @param tagCompound The tag containing information that can be read and used to form a variable facade.
      * @return The variable facade
      */
-    public F getVariableFacade(int id, CompoundTag tagCompound);
+    public F getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tagCompound);
 
     /**
      * Set the variable facade for the given tag.
@@ -41,21 +44,25 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
 
     /**
      * Deserialize the given JSON element to a variable predicate.
+     *
+     * @param valueDeseralizationContext
      * @param element The JSON element.
      * @param valueType The optional value type.
      * @param valuePredicate The value predicate.
      * @return The variable predicate.
      */
-    default public VariablePredicate deserializeVariablePredicate(JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
+    default public VariablePredicate deserializeVariablePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
         return new VariablePredicate<>(IVariable.class, valueType, valuePredicate);
     }
 
     /**
      * Deserialize the given JSON element to a variable facade predicate.
+     *
+     * @param valueDeseralizationContext
      * @param element The JSON element.
      * @return The variable facade predicate.
      */
-    default public VariableFacadePredicate deserializeVariableFacadePredicate(JsonObject element) {
+    default public VariableFacadePredicate deserializeVariableFacadePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element) {
         return new VariableFacadePredicate<>(IVariableFacade.class);
     }
 

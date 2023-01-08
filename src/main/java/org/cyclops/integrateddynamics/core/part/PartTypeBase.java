@@ -37,6 +37,8 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +91,11 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             public String getFullTranslationKey() {
                 return PartTypeBase.this.getTranslationKey();
             }
+
+            @Override
+            protected Collection<ItemStack> defaultCreativeTabEntries() {
+                return Collections.singleton(new ItemStack(getItemInstance()));
+            }
         };
         getMod().getConfigHandler().addConfigurable(blockConfig);
     }
@@ -109,7 +116,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @return The item instance.
      */
     protected Item createItem(BlockConfig blockConfig, Block block) {
-        return new ItemPart<>(new Item.Properties().tab(blockConfig.getMod().getDefaultItemGroup()), this);
+        return new ItemPart<>(new Item.Properties(), this);
     }
 
     @Override

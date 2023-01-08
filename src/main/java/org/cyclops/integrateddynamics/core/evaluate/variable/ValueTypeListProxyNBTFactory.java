@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -52,7 +53,7 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
     }
 
     @Override
-    public P deserialize(Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         try {
             P proxy = this.proxyClassConstructor.newInstance();
             proxy.readGeneratedFieldsFromNBT((CompoundTag) value);

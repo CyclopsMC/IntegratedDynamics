@@ -26,6 +26,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import javax.annotation.Nullable;
@@ -77,7 +78,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     }
 
     @Override
-    public ValueEntity deserialize(Tag value) {
+    public ValueEntity deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         try {
             return ValueEntity.of(UUID.fromString(value.getAsString()));
         } catch (IllegalArgumentException e) {}

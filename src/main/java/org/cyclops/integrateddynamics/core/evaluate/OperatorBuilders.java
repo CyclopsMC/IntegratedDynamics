@@ -10,7 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModContainer;
@@ -155,7 +155,7 @@ public class OperatorBuilders {
             .appendPre(input -> {
                 ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 if(!a.getRawValue().isEmpty()) {
-                    return a.getRawValue().getCapability(CapabilityEnergy.ENERGY).orElse(null);
+                    return a.getRawValue().getCapability(ForgeCapabilities.ENERGY).orElse(null);
                 }
                 return null;
             });

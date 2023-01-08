@@ -12,6 +12,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.AttachCapabilitiesEventPart;
@@ -65,7 +66,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
-    public void readFromNBT(CompoundTag tag) {
+    public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
         this.updateInterval = tag.getInt("updateInterval");
         this.priority = tag.getInt("priority");
         this.channel = tag.getInt("channel");
@@ -74,7 +75,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         }
         this.id = tag.getInt("id");
         this.aspectProperties.clear();
-        readAspectProperties("aspectProperties", tag);
+        readAspectProperties(valueDeseralizationContext, "aspectProperties", tag);
         this.enabled = tag.getBoolean("enabled");
         if (this.capabilities != null && tag.contains("ForgeCaps")) {
             this.capabilities.deserializeNBT(tag.getCompound("ForgeCaps"));
@@ -96,7 +97,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         tag.put(name, mapTag);
     }
 
-    public void readAspectProperties(String name, CompoundTag tag) {
+    public void readAspectProperties(ValueDeseralizationContext valueDeseralizationContext, String name, CompoundTag tag) {
         CompoundTag mapTag = tag.getCompound(name);
         ListTag list = mapTag.getList("map", Tag.TAG_COMPOUND);
         if(list.size() > 0) {
@@ -106,7 +107,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
                 IAspectProperties value = null;
                 if (entryTag.contains("value")) {
                     value = new AspectProperties();
-                    value.fromNBT(entryTag.getCompound("value"));
+                    value.fromNBT(valueDeseralizationContext, entryTag.getCompound("value"));
                 }
                 if (key != null && value != null) {
                     this.aspectProperties.put(key, value);

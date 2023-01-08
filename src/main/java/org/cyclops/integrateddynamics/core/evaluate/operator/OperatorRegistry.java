@@ -26,6 +26,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
@@ -125,7 +126,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public IOperator deserialize(Tag value) throws EvaluationException {
+    public IOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException {
         if (value.getId() == Tag.TAG_COMPOUND) {
             CompoundTag tag = (CompoundTag) value;
             String serializerName = tag.getString("serializer");
@@ -134,9 +135,9 @@ public class OperatorRegistry implements IOperatorRegistry {
                 throw new EvaluationException(
                         Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value));
             }
-            return serializer.deserialize(tag.get("value"));
+            return serializer.deserialize(valueDeseralizationContext, tag.get("value"));
         }
-        return DEFAULT_SERIALIZER.deserialize(value);
+        return DEFAULT_SERIALIZER.deserialize(valueDeseralizationContext, value);
     }
 
     @Override
@@ -145,14 +146,14 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public IOperatorVariableFacade getVariableFacade(int id, CompoundTag tag) {
+    public IOperatorVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
         if(!tag.contains("operatorName", Tag.TAG_STRING)
                 || !tag.contains("variableIds", Tag.TAG_INT_ARRAY)) {
             return INVALID_FACADE;
         }
         IOperator operator;
         try {
-            operator = deserialize(tag.get("operatorName"));
+            operator = deserialize(valueDeseralizationContext, tag.get("operatorName"));
         } catch (EvaluationException e) {
             return INVALID_FACADE;
         }
@@ -170,7 +171,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public VariablePredicate deserializeVariablePredicate(JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
+    public VariablePredicate deserializeVariablePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
         JsonElement operatorElement = element.get("operator");
         IOperator operator = null;
         if (operatorElement != null && !operatorElement.isJsonNull()) {
@@ -187,7 +188,7 @@ public class OperatorRegistry implements IOperatorRegistry {
             for (Map.Entry<String, JsonElement> inputEntry : inputElement.getAsJsonObject().entrySet()) {
                 try {
                     int slot = Integer.parseInt(inputEntry.getKey());
-                    inputPredicates.put(slot, VariablePredicate.deserialize(inputEntry.getValue()));
+                    inputPredicates.put(slot, VariablePredicate.deserialize(valueDeseralizationContext, inputEntry.getValue()));
                 } catch (NumberFormatException e) {
                     throw new JsonSyntaxException("All inputs must refer to an input id as key, but got '" + inputEntry.getKey() + '"');
                 }

@@ -17,12 +17,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.RenderTypeGroup;
 import net.minecraftforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 
 import javax.annotation.Nullable;
@@ -63,11 +65,11 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         quads.addAll(this.baseModel.getQuads(null, getRenderingSide(), this.rand, this.modelData, null));
 
         // Add variable type overlay
-        IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
+        IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(ValueDeseralizationContext.of(world), itemStack);
         variableFacade.addModelOverlay(this, quads, this.rand, this.modelData);
 
         return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.useAmbientOcclusion(), this.usesBlockLight(), this.isGui3d(),
-                this.getParticleIcon(), this.getTransforms(), this.getOverrides());
+                this.getParticleIcon(), this.getTransforms(), this.getOverrides(), RenderTypeGroup.EMPTY);
     }
 
     @Override
@@ -91,7 +93,7 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
             @Nullable
             @Override
             public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity, int id) {
-                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(stack);
+                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(ValueDeseralizationContext.of(world), stack);
                 BakedModel overrideModel = variableFacade.getVariableItemOverrideModel(model, stack, world, livingEntity);
                 if (overrideModel != null) {
                     return overrideModel;

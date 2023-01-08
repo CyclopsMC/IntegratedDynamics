@@ -14,6 +14,7 @@ import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -59,11 +60,11 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     }
 
     @Override
-    public ValueBlock deserialize(Tag value) {
+    public ValueBlock deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
             return ValueBlock.of(Blocks.AIR.defaultBlockState());
         }
-        return ValueBlock.of(BlockHelpers.deserializeBlockState((CompoundTag) value));
+        return ValueBlock.of(BlockHelpers.deserializeBlockState(valueDeseralizationContext.holderGetter(), (CompoundTag) value));
     }
 
     @Override

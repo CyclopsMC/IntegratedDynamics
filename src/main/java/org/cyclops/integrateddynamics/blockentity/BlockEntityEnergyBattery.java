@@ -4,8 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -40,7 +40,7 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
                 return new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
             }
         }));
-        addCapabilityInternal(CapabilityEnergy.ENERGY, LazyOptional.of(() -> this));
+        addCapabilityInternal(ForgeCapabilities.ENERGY, LazyOptional.of(() -> this));
     }
 
     public boolean isCreative() {

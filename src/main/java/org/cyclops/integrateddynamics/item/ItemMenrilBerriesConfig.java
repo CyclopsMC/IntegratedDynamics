@@ -24,8 +24,7 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
                 IntegratedDynamics._instance,
                 "menril_berries",
                 eConfig -> new Item(new Item.Properties()
-                        .food(createFood())
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .food(createFood()))
         );
     }
 

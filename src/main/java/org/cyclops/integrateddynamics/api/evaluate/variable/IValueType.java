@@ -101,18 +101,20 @@ public interface IValueType<V extends IValue> {
 
     /**
      * Check if the given value can be deserialized.
+     * @param valueDeseralizationContext Getter for blocks.
      * @param value The value to deserialize.
      * @return An error or null.
      */
     @Nullable
-    public Component canDeserialize(Tag value);
+    public Component canDeserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value);
 
     /**
      * Deserialize the given value.
+     * @param valueDeseralizationContext Deserialization context.
      * @param value The value to deserialize.
      * @return The deserialized value.
      */
-    public V deserialize(Tag value);
+    public V deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value);
 
     /**
      * Materialize the given value so that it can exist without any external references.

@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * A base class for list proxy factories that use NBT to store data.
@@ -22,9 +23,9 @@ public abstract class ValueTypeListProxyNBTFactorySimple<T extends IValueType<V>
     }
 
     @Override
-    public P deserialize(Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         try {
-            return deserializeNbt((CompoundTag) value);
+            return deserializeNbt(valueDeseralizationContext, (CompoundTag) value);
         } catch (ClassCastException | EvaluationException e) {
             e.printStackTrace();
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(e.getMessage());
@@ -32,5 +33,5 @@ public abstract class ValueTypeListProxyNBTFactorySimple<T extends IValueType<V>
     }
 
     protected abstract void serializeNbt(P value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException;
-    protected abstract P deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException;
+    protected abstract P deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException;
 }

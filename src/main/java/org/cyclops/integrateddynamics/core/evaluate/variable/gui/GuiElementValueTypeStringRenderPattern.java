@@ -55,7 +55,7 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         this.textField.setValue(value);
         element.setInputString(textField.getValue());
         this.textField.setWidth(searchWidth);
-        this.textField.x = guiLeft + (searchX + searchWidth) - this.textField.getWidth();
+        this.textField.setX(guiLeft + (searchX + searchWidth) - this.textField.getWidth());
     }
 
     @Override

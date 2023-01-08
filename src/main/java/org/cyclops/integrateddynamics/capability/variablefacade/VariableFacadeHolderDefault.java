@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.capability.variablefacade;
 
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHolder;
@@ -19,8 +20,8 @@ public class VariableFacadeHolderDefault implements IVariableFacadeHolder {
     }
 
     @Override
-    public IVariableFacade getVariableFacade() {
+    public IVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext) {
         return IntegratedDynamics._instance.getRegistryManager().
-                getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack);
+                getRegistry(IVariableFacadeHandlerRegistry.class).handle(valueDeseralizationContext, itemStack);
     }
 }

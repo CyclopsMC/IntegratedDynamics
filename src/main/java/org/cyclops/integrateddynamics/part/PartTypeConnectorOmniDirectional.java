@@ -20,6 +20,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -74,8 +75,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public State getState(ItemStack itemStack) {
-        State state = super.getState(itemStack);
+    public State getState(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
+        State state = super.getState(valueDeseralizationContext, itemStack);
         CompoundTag tag = itemStack.getTag();
         if (tag != null && tag.contains(NBT_KEY_ID, Tag.TAG_INT)) {
             state.setGroupId(tag.getInt(NBT_KEY_ID));
@@ -204,8 +205,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         }
 
         @Override
-        public void readFromNBT(CompoundTag tag) {
-            super.readFromNBT(tag);
+        public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
+            super.readFromNBT(valueDeseralizationContext, tag);
             this.groupId = tag.getInt(NBT_KEY_ID);
         }
 

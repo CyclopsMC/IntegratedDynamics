@@ -14,6 +14,7 @@ import org.cyclops.cyclopscore.inventory.container.ItemInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLabeller;
@@ -45,7 +46,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
             temporaryInputSlots.addDirtyMarkListener(() -> {
                 ItemStack itemStack = temporaryInputSlots.getItem(0);
                 IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-                IVariableFacade variableFacade = registry.handle(itemStack);
+                IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(inventory.player.level), itemStack);
                 String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
                 if(label == null && !itemStack.isEmpty() && itemStack.hasCustomHoverName()) {
                     label = itemStack.getHoverName().getString();

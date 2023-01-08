@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -41,7 +42,7 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     }
 
     @Override
-    public void onInputSlotUpdated(int slotId, ItemStack itemStack) {
+    public void onInputSlotUpdated(Player player, int slotId, ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 

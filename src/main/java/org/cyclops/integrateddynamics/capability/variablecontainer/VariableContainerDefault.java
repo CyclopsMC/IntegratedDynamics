@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -27,7 +28,7 @@ public class VariableContainerDefault implements IVariableContainer {
     }
 
     @Override
-    public void refreshVariables(INetwork network, Container inventory, boolean sendVariablesUpdateEvent){
+    public void refreshVariables(INetwork network, Container inventory, boolean sendVariablesUpdateEvent, ValueDeseralizationContext valueDeseralizationContext){
         // Invalidate variables
         NetworkHelpers.getPartNetwork(network).ifPresent(partNetwork -> {
             for (IVariableFacade variableFacade : getVariableCache().values()) {
@@ -44,7 +45,7 @@ public class VariableContainerDefault implements IVariableContainer {
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack itemStack = inventory.getItem(i);
             if (!itemStack.isEmpty()) {
-                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(itemStack);
+                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(valueDeseralizationContext, itemStack);
                 if (variableFacade != null) {
                     if (variableFacade.isValid()) {
                         getVariableCache().put(variableFacade.getId(), variableFacade);

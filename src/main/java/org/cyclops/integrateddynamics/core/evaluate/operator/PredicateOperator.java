@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
@@ -78,14 +79,14 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         }
 
         @Override
-        public PredicateOperator<IValueType<IValue>, IValue> deserialize(Tag value) throws EvaluationException {
+        public PredicateOperator<IValueType<IValue>, IValue> deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException {
             try {
                 CompoundTag tag = (CompoundTag) value;
                 IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
                 ListTag list = (ListTag) tag.get("values");
                 List<IValue> values = Lists.newArrayList();
                 for (Tag subTag : list) {
-                    values.add(ValueHelpers.deserializeRaw(valueType, subTag));
+                    values.add(ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, subTag));
                 }
                 return new PredicateOperator<>(valueType, values);
             } catch (ClassCastException e) {

@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import java.util.Collections;
@@ -77,7 +78,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public V deserialize(Tag value) {
+    public V deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         throw new UnsupportedOperationException("This operation is not allowed");
     }
 

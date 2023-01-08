@@ -6,6 +6,7 @@ import lombok.Setter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -15,6 +16,7 @@ import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -86,12 +88,13 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      * @param <V> The variable value type.
      * @param network The network.
      * @param partNetwork The part network.
+     * @param valueDeseralizationContext
      * @return The variable.
      */
-    public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
+    public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork, ValueDeseralizationContext valueDeseralizationContext) {
         if(!checkedForWriteVariable) {
             if (variableContainer.getVariableCache().isEmpty()) {
-                variableContainer.refreshVariables(network, inventory, false);
+                variableContainer.refreshVariables(network, inventory, false, valueDeseralizationContext);
             }
             for (IVariableFacade facade : variableContainer.getVariableCache().values()) {
                 if (facade != null) {
@@ -122,8 +125,9 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
 
         // Refresh any contained variables
         PartPos center = target.getCenter();
-        NetworkHelpers.getNetwork(center.getPos().getLevel(true), center.getPos().getBlockPos(), center.getSide())
-                .ifPresent(network -> variableContainer.refreshVariables(network, inventory, false));
+        Level level = center.getPos().getLevel(true);
+        NetworkHelpers.getNetwork(level, center.getPos().getBlockPos(), center.getSide())
+                .ifPresent(network -> variableContainer.refreshVariables(network, inventory, false, ValueDeseralizationContext.of(level)));
     }
 
     /**
@@ -156,8 +160,8 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     @Override
-    public void readFromNBT(CompoundTag tag) {
-        super.readFromNBT(tag);
+    public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
+        super.readFromNBT(valueDeseralizationContext, tag);
         //noinspection unchecked
         this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag);
         inventory.readFromNBT(tag, "inventory");
@@ -167,7 +171,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     public <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
         if (capability == ValueInterfaceConfig.CAPABILITY) {
             if (hasVariable()) {
-                IVariable<IValue> variable = getVariable(network, partNetwork);
+                IVariable<IValue> variable = getVariable(network, partNetwork, ValueDeseralizationContext.of(target.getCenter().getPos().getLevel(true)));
                 if (variable != null) {
                     return LazyOptional.of(() -> {
                         try {

@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -177,7 +178,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public IAspectVariableFacade getVariableFacade(int id, CompoundTag tag) {
+    public IAspectVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
         if(!tag.contains("partId", Tag.TAG_INT)
                 || !tag.contains("aspectName", Tag.TAG_STRING)) {
             return INVALID_FACADE;
@@ -197,7 +198,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public VariablePredicate deserializeVariablePredicate(JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
+    public VariablePredicate deserializeVariablePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
         JsonElement aspectElement = element.get("aspect");
         IAspect aspect = null;
         if (aspectElement != null && !aspectElement.isJsonNull()) {
@@ -211,7 +212,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public VariableFacadePredicate deserializeVariableFacadePredicate(JsonObject element) {
+    public VariableFacadePredicate deserializeVariableFacadePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element) {
         return null;
     }
 

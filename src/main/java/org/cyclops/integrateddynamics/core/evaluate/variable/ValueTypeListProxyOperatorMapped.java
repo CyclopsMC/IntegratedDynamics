@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 /**
@@ -50,9 +51,9 @@ public class ValueTypeListProxyOperatorMapped extends ValueTypeListProxyBase<IVa
         }
 
         @Override
-        protected ValueTypeListProxyOperatorMapped deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
-            IOperator operator = Operators.REGISTRY.deserialize(tag.get("operator"));
-            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(tag.get("sublist"));
+        protected ValueTypeListProxyOperatorMapped deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
+            IOperator operator = Operators.REGISTRY.deserialize(valueDeseralizationContext, tag.get("operator"));
+            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, tag.get("sublist"));
             return new ValueTypeListProxyOperatorMapped(operator, list);
         }
     }

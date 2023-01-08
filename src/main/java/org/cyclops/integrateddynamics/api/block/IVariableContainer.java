@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.block;
 
 import net.minecraft.world.Container;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 
@@ -22,7 +23,8 @@ public interface IVariableContainer {
      * @param network {@link INetwork} that the variables are in
      * @param inventory IInventory to re-populate the cache from
      * @param sendVariablesUpdateEvent if true post a VariableContentsUpdatedEvent to the network when done
+     * @param valueDeseralizationContext
      */
-    public void refreshVariables(INetwork network, Container inventory, boolean sendVariablesUpdateEvent);
+    public void refreshVariables(INetwork network, Container inventory, boolean sendVariablesUpdateEvent, ValueDeseralizationContext valueDeseralizationContext);
 
 }

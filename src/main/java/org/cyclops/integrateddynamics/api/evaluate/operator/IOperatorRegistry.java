@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 
@@ -72,10 +73,12 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
 
     /**
      * Deserialize the given operator value.
+     *
+     * @param valueDeseralizationContext
      * @param value The operator value to deserialize.
      * @return The deserialized operator.
      * @throws EvaluationException If an error occurs while deserializing.
      */
-    public IOperator deserialize(Tag value) throws EvaluationException;
+    public IOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException;
 
 }

@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -170,26 +171,29 @@ public class ValueHelpers {
 
     /**
      * Deserialize the given NBT tag to a value.
+     *
+     * @param valueDeseralizationContext The deserialization context.
      * @param tag The NBT tag containing a value.
      * @return The value.
      */
-    public static IValue deserialize(CompoundTag tag) {
+    public static IValue deserialize(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
         IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
         if (valueType == null) {
             return null;
         }
-        return deserializeRaw(valueType, tag.get("value"));
+        return deserializeRaw(valueDeseralizationContext, valueType, tag.get("value"));
     }
 
     /**
      * Deserialize the given value string to a value.
      * @param <T> The type of value.
+     * @param valueDeseralizationContext The deserialization context.
      * @param valueType The value type to deserialize for.
      * @param valueString The value tag.
      * @return The value.
      */
-    public static <T extends IValue> T deserializeRaw(IValueType<T> valueType, Tag valueString) {
-        return valueType.deserialize(valueString);
+    public static <T extends IValue> T deserializeRaw(ValueDeseralizationContext valueDeseralizationContext, IValueType<T> valueType, Tag valueString) {
+        return valueType.deserialize(valueDeseralizationContext, valueString);
     }
 
     /**

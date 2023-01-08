@@ -11,14 +11,15 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
@@ -55,7 +56,7 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
         super(RegistryEntries.BLOCK_ENTITY_VARIABLE_STORE, blockPos, blockState, BlockEntityVariablestore.INVENTORY_SIZE, 1);
         getInventory().addDirtyMarkListener(this);
 
-        addCapabilityInternal(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, LazyOptional.of(() -> getInventory().getItemHandler()));
+        addCapabilityInternal(ForgeCapabilities.ITEM_HANDLER, LazyOptional.of(() -> getInventory().getItemHandler()));
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
             @Override
             public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
@@ -84,7 +85,7 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
     }
 
     protected void refreshVariables(boolean sendVariablesUpdateEvent) {
-        variableContainer.refreshVariables(getNetwork(), getInventory(), sendVariablesUpdateEvent);
+        variableContainer.refreshVariables(getNetwork(), getInventory(), sendVariablesUpdateEvent, ValueDeseralizationContext.of(getLevel()));
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
@@ -400,7 +401,7 @@ public class CombinedOperator extends OperatorBase {
         }
 
         @Override
-        public CombinedOperator deserialize(Tag valueOperator) throws EvaluationException {
+        public CombinedOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag valueOperator) throws EvaluationException {
             ListTag list;
             try {
                 CompoundTag tag = (CompoundTag) valueOperator;
@@ -412,7 +413,7 @@ public class CombinedOperator extends OperatorBase {
             }
             IOperator[] operators = new IOperator[list.size()];
             for (int i = 0; i < list.size(); i++) {
-                operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(list.getCompound(i).get("v")));
+                operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(valueDeseralizationContext, list.getCompound(i).get("v")));
             }
             return newFunction(operators);
         }

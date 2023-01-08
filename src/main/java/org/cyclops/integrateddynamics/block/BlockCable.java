@@ -19,6 +19,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -52,17 +53,18 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.extensions.common.IClientBlockExtensions;
 import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.block.BlockWithEntity;
-import org.cyclops.cyclopscore.client.icon.Icon;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
@@ -140,7 +142,6 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     );
 
     @OnlyIn(Dist.CLIENT)
-    @Icon(location = "block/cable")
     public TextureAtlasSprite texture;
     @Setter
     private boolean disableCollisionBox = false;
@@ -149,7 +150,14 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         super(properties, BlockEntityMultipartTicking::new);
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
         if (MinecraftHelpers.isClientSide()) {
-            IntegratedDynamics._instance.getIconProvider().registerIconHolderObject(this);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::postTextureStitch);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void postTextureStitch(TextureStitchEvent.Post event) {
+        if (event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS)) {
+            texture = event.getAtlas().getSprite(new ResourceLocation(Reference.MOD_ID, "block/cable"));
         }
     }
 
@@ -466,7 +474,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BakedModel createDynamicModel(ModelEvent.BakingCompleted event) {
+    public BakedModel createDynamicModel(ModelEvent.ModifyBakingResult event) {
         CableModel model = new CableModel();
         ResourceLocation registryName = ForgeRegistries.BLOCKS.getKey(this);
         event.getModels().put(new ModelResourceLocation(registryName, "waterlogged=false"), model);

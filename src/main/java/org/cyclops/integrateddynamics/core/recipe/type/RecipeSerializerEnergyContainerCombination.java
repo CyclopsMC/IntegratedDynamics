@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
@@ -20,7 +21,7 @@ public class RecipeSerializerEnergyContainerCombination implements RecipeSeriali
     public RecipeEnergyContainerCombination fromJson(ResourceLocation recipeId, JsonObject json) {
         Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", false);
         int maxCapacity = GsonHelper.getAsInt(json, "maxCapacity");
-        return new RecipeEnergyContainerCombination(recipeId, inputIngredient, maxCapacity);
+        return new RecipeEnergyContainerCombination(recipeId, CraftingBookCategory.MISC, inputIngredient, maxCapacity);
     }
 
     @Nullable
@@ -28,7 +29,7 @@ public class RecipeSerializerEnergyContainerCombination implements RecipeSeriali
     public RecipeEnergyContainerCombination fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
         int maxCapacity = buffer.readInt();
-        return new RecipeEnergyContainerCombination(recipeId, inputIngredient, maxCapacity);
+        return new RecipeEnergyContainerCombination(recipeId, CraftingBookCategory.MISC, inputIngredient, maxCapacity);
     }
 
     @Override

@@ -21,8 +21,7 @@ public class BlockProxyConfig extends BlockConfig {
                 eConfig -> new BlockProxy(Block.Properties.of(Material.HEAVY_METAL)
                         .strength(2.0F, 5.0F)
                         .sound(SoundType.METAL)),
-                (eConfig, block) -> new ItemBlockProxy(block, new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                (eConfig, block) -> new ItemBlockProxy(block, new Item.Properties())
         );
     }
 

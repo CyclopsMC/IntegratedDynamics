@@ -5,8 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -36,7 +36,7 @@ public class EnergyHelpers {
     }
 
     public static LazyOptional<IEnergyStorage> getEnergyStorage(BlockGetter world, BlockPos pos, Direction facing) {
-        IEnergyStorage energyStorage = BlockEntityHelpers.getCapability(world, pos, facing, CapabilityEnergy.ENERGY)
+        IEnergyStorage energyStorage = BlockEntityHelpers.getCapability(world, pos, facing, ForgeCapabilities.ENERGY)
                 .orElseGet(() -> {
                     for (IEnergyStorageProxy energyStorageProxy : ENERGY_STORAGE_PROXIES) {
                         LazyOptional<IEnergyStorage> optionalEnergyStorage = energyStorageProxy.getEnergyStorageProxy(world, pos, facing);

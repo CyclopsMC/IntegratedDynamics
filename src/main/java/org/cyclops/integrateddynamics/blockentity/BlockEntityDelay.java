@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -103,7 +104,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
             public IDelayVariableFacade create(int id) {
                 return new DelayVariableFacade(id, proxyId);
             }
-        }, lastPlayer, getBlockState());
+        }, getLevel(), lastPlayer, getBlockState());
     }
 
     @Override
@@ -145,7 +146,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
 
         ListTag valueList = tag.getList("values", Tag.TAG_COMPOUND);
         for (int i = 0; i < valueList.size(); i++) {
-            IValue value = ValueHelpers.deserialize(valueList.getCompound(i));
+            IValue value = ValueHelpers.deserialize(ValueDeseralizationContext.of(getLevel()), valueList.getCompound(i));
             if (value != null) {
                 this.values.add(value);
             }

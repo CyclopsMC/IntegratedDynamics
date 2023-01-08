@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 import java.util.concurrent.TimeUnit;
@@ -73,10 +74,10 @@ public class ValueTypeListProxyLazyBuilt<T extends IValueType<V>, V extends IVal
         }
 
         @Override
-        protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
+        protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
             IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
-            IValue value = ValueHelpers.deserializeRaw(valueType, tag.get("value"));
-            IOperator operator = Operators.REGISTRY.deserialize(tag.get("operator"));
+            IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, tag.get("value"));
+            IOperator operator = Operators.REGISTRY.deserialize(valueDeseralizationContext, tag.get("operator"));
             return new ValueTypeListProxyLazyBuilt<>(value, operator);
         }
     }

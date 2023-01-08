@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.JsonDeserializers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
@@ -41,7 +42,7 @@ public class PartWriterAspectTrigger extends SimpleCriterionTrigger<PartWriterAs
         return new Instance(getId(), entityPredicate,
                 JsonDeserializers.deserializePartType(json),
                 JsonDeserializers.deserializeAspect(json),
-                VariablePredicate.deserialize(json.get("variable")));
+                VariablePredicate.deserialize(ValueDeseralizationContext.ofAllEnabled(), json.get("variable")));
     }
 
     public void test(ServerPlayer player, PartWriterAspectEvent event) {
@@ -72,7 +73,7 @@ public class PartWriterAspectTrigger extends SimpleCriterionTrigger<PartWriterAs
         public boolean test(ServerPlayer player, PartWriterAspectEvent event) {
             return (partType == null || event.getPartType() == partType)
                     && (aspect == null || event.getAspect() == aspect)
-                    && variablePredicate.test(((IPartStateWriter) event.getPartState()).getVariable(event.getNetwork(), event.getPartNetwork()));
+                    && variablePredicate.test(((IPartStateWriter) event.getPartState()).getVariable(event.getNetwork(), event.getPartNetwork(), ValueDeseralizationContext.of(player.level)));
         }
     }
 

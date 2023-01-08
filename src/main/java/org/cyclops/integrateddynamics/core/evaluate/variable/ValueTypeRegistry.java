@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
@@ -101,7 +102,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public IValueTypeVariableFacade getVariableFacade(int id, CompoundTag tag) {
+    public IValueTypeVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
         if(!tag.contains("typeName", Tag.TAG_STRING)
                 || !tag.contains("value")) {
             return INVALID_FACADE;
@@ -112,7 +113,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
         }
         IValue value;
         try {
-            value = ValueHelpers.deserializeRaw(type, tag.get("value"));
+            value = ValueHelpers.deserializeRaw(valueDeseralizationContext, type, tag.get("value"));
         } catch (IllegalArgumentException e) {
             return INVALID_FACADE;
         }
@@ -126,9 +127,9 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public VariableFacadePredicate deserializeVariableFacadePredicate(JsonObject element) {
+    public VariableFacadePredicate deserializeVariableFacadePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element) {
         IValueType valueType = JsonDeserializers.deserializeValueType(element);
-        return new AspectVariableFacadePredicate(valueType, JsonDeserializers.deserializeValue(element, valueType));
+        return new AspectVariableFacadePredicate(valueType, JsonDeserializers.deserializeValue(valueDeseralizationContext, element, valueType));
     }
 
     public static class AspectVariableFacadePredicate extends VariableFacadePredicate<IValueTypeVariableFacade> {

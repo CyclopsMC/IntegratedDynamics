@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -24,8 +25,8 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
     private NonNullList<Ingredient> ingredients;
 
-    public ItemFacadeRecipe(ResourceLocation id) {
-        super(id);
+    public ItemFacadeRecipe(ResourceLocation id, CraftingBookCategory craftingBookCategory) {
+        super(id, craftingBookCategory);
     }
 
     @Override

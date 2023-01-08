@@ -86,8 +86,8 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
         // Reset button positions
         for(Map.Entry<IAspect, ButtonText> entry : this.aspectPropertyButtons.entrySet()) {
-            entry.getValue().x = -20;
-            entry.getValue().y = -20;
+            entry.getValue().setX(-20);
+            entry.getValue().setY(-20);
         }
 
         // Draw part name
@@ -122,8 +122,8 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
                 if(aspectPropertyButtons.containsKey(aspect)) {
                     ButtonText button = aspectPropertyButtons.get(aspect);
-                    button.x = this.leftPos + offsetX + 116;
-                    button.y = this.topPos + offsetY + 20 + aspectBoxHeight * i;
+                    button.setX(this.leftPos + offsetX + 116);
+                    button.setY(this.topPos + offsetY + 20 + aspectBoxHeight * i);
                 }
             }
         }
@@ -156,8 +156,8 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                 IAspect aspect = container.getVisibleElement(i);
                 if(aspectPropertyButtons.containsKey(aspect)) {
                     ButtonText button = aspectPropertyButtons.get(aspect);
-                    int x = button.x - leftPos;
-                    int y = button.y - topPos;
+                    int x = button.getX() - leftPos;
+                    int y = button.getY() - topPos;
                     if(isHovering(x, y, button.getWidth(), button.getHeight(), mouseX, mouseY)) {
                         List<Component> lines = Lists.newLinkedList();
                         lines.add(Component.translatable("gui.integrateddynamics.part.properties")

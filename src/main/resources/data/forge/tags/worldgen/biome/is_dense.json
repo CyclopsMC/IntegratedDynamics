@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "integrateddynamics:meneglin"
+    {
+      "id": "integrateddynamics:meneglin",
+      "required": false
+    }
   ]
 }

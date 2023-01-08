@@ -1,21 +1,12 @@
 package org.cyclops.integrateddynamics.world.gen;
 
-import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.random.SimpleWeightedRandomList;
-import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.block.grower.AbstractTreeGrower;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
-import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
-import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
-import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.block.BlockMenrilLogFilledConfig;
-import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
-import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenril;
-import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenril;
+import org.cyclops.integrateddynamics.Reference;
 
 import javax.annotation.Nullable;
 
@@ -24,24 +15,9 @@ import javax.annotation.Nullable;
  * @author rubensworks
  */
 public class TreeMenril extends AbstractTreeGrower {
-
-    public static TreeConfiguration getMenrilTreeConfig() {
-        return new TreeConfiguration.TreeConfigurationBuilder(
-                new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
-                        .add(RegistryEntries.BLOCK_MENRIL_LOG.defaultBlockState(), BlockMenrilLogFilledConfig.filledMenrilLogChance)
-                        .add(RegistryEntries.BLOCK_MENRIL_LOG_FILLED.defaultBlockState(), 1)),
-                new TrunkPlacerMenril(5, 2, 2, 3),
-                BlockStateProvider.simple(RegistryEntries.BLOCK_MENRIL_LEAVES),
-                new FoliagePlacerMenril(ConstantInt.of(2), ConstantInt.of(0)),
-                new TwoLayersFeatureSize(1, 0, 2))
-                .ignoreVines()
-                .build();
-    }
-
     @Nullable
     @Override
-    protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource random, boolean b) {
-        return BiomeMeneglinConfig.CONFIGURED_FEATURE_TREE;
+    protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource random, boolean b) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Reference.MOD_ID, "tree_menril"));
     }
-
 }

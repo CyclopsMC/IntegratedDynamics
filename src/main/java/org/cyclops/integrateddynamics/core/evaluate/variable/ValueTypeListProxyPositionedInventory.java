@@ -3,8 +3,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Iterators;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -27,7 +27,7 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
     }
 
     protected LazyOptional<IItemHandler> getInventory() {
-        return BlockEntityHelpers.getCapability(getPos(), getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        return BlockEntityHelpers.getCapability(getPos(), getSide(), ForgeCapabilities.ITEM_HANDLER);
     }
 
     @Override

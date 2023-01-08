@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -84,7 +85,7 @@ public class AspectProperties implements IAspectProperties {
     }
 
     @Override
-    public void fromNBT(CompoundTag tag) {
+    public void fromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
         values.clear();
         ListTag map = tag.getList("map", Tag.TAG_COMPOUND);
         for(int i = 0; i < map.size(); i++) {
@@ -94,7 +95,7 @@ public class AspectProperties implements IAspectProperties {
             if(type == null) {
                 IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, String.format("Could not find value type with name %s, skipping loading.", valueTypeName));
             } else {
-                IValue value = ValueHelpers.deserializeRaw(type, nbtEntry.get("value"));
+                IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, type, nbtEntry.get("value"));
                 String label = nbtEntry.getString("label");
                 if(value == null) {
                     IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, String.format("The value type %s could not load its value, using default.", valueTypeName));

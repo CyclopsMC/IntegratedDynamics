@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
@@ -396,12 +395,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             super.init(guiLeft, guiTop);
             int searchX = 90;
             int searchY = 110;
-            this.searchField.x = guiLeft + searchX;
-            this.searchField.y = guiTop + searchY;
+            this.searchField.setX(guiLeft + searchX);
+            this.searchField.setY(guiTop + searchY);
 
             if (hasLabeller()) {
-                button.x = guiLeft + 220;
-                button.y = guiTop + 111;
+                button.setX(guiLeft + 220);
+                button.setY(guiTop + 111);
             }
         }
 
@@ -451,7 +450,6 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         @Override
         public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font font, float partialTicks, int mouseX, int mouseY) {
             super.renderBg(matrixStack, guiLeft, guiTop, textureManager, font, partialTicks, mouseX, mouseY);
-            Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(true);
             this.searchField.render(matrixStack, mouseX, mouseY, partialTicks);
         }
 

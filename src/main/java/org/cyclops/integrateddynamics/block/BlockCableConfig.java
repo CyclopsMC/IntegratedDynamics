@@ -31,8 +31,7 @@ public class BlockCableConfig extends BlockConfig {
                         .strength(BlockCable.BLOCK_HARDNESS)
                         .sound(SoundType.METAL)
                         .isRedstoneConductor((blockState, world, pos) -> false)),
-                (eConfig, block) -> new ItemBlockCable(block, new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultCreativeTab()))
+                (eConfig, block) -> new ItemBlockCable(block, new Item.Properties())
                 );
         if (MinecraftHelpers.isClientSide()) {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModLoaded);

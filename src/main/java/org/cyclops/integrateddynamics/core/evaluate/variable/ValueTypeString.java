@@ -9,6 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * Value type with values that are strings.
@@ -37,7 +38,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
     }
 
     @Override
-    public ValueString deserialize(Tag value) {
+    public ValueString deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         return ValueString.of(value.getAsString());
     }
 

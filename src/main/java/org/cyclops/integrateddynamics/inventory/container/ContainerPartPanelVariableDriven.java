@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -105,7 +106,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
                     NetworkHelpers.getPartNetwork(optionalNetwork).ifPresent(partNetwork -> {
                         try {
                             INetwork network = optionalNetwork.orElse(null);
-                            IVariable variable = partState.getVariable(network, partNetwork);
+                            IVariable variable = partState.getVariable(network, partNetwork, ValueDeseralizationContext.of(player.level));
                             MinecraftForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network, partNetwork, getTarget().get(),
                                     getPartType(), partState, player, variable, variable != null ? variable.getValue() : null));
                         } catch (EvaluationException e) {

@@ -15,9 +15,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
@@ -61,7 +61,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         super(RegistryEntries.BLOCK_ENTITY_MECHANICAL_SQUEEZER, blockPos, blockState, INVENTORY_SIZE);
 
         // Add fluid tank capability
-        addCapabilityInternal(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, LazyOptional.of(() -> this.tank));
+        addCapabilityInternal(ForgeCapabilities.FLUID_HANDLER, LazyOptional.of(() -> this.tank));
 
         // Add recipe handler capability
         addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getLevel)));
@@ -208,7 +208,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
             if (blockEntity.isAutoEjectFluids() && !blockEntity.getTank().isEmpty()) {
                 for (Direction side : Direction.values()) {
                     IFluidHandler handler = BlockEntityHelpers.getCapability(level, pos.relative(side),
-                            side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
+                            side.getOpposite(), ForgeCapabilities.FLUID_HANDLER).orElse(null);
                     if(handler != null) {
                         FluidStack fluidStack = blockEntity.getTank().getFluid().copy();
                         fluidStack.setAmount(Math.min(BlockMechanicalSqueezerConfig.autoEjectFluidRate, fluidStack.getAmount()));

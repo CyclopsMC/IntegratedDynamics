@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
@@ -212,7 +214,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     protected void syncInputValue() {
         IAspectPropertyTypeInstance property = getActiveProperty();
-        IValue value = container.getPropertyValue(property);
+        IValue value = container.getPropertyValue(ValueDeseralizationContext.of(Minecraft.getInstance().player.level), property);
         if(value != null) {
             guiElement.setValue(value, propertyConfigPattern);
         }

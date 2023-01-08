@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -95,7 +95,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     }
 
     public static void itemStackToTile(ItemStack itemStack, BlockEntityEnergyBattery tile) {
-        itemStack.getCapability(CapabilityEnergy.ENERGY)
+        itemStack.getCapability(ForgeCapabilities.ENERGY)
                 .ifPresent(energyStorage -> {
                     tile.setEnergyStored(energyStorage.getEnergyStored());
                     tile.setCapacity(energyStorage.getMaxEnergyStored());

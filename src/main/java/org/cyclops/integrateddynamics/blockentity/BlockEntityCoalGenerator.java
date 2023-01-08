@@ -11,8 +11,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DataSlotSupplied;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -57,7 +57,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
                 return new CoalGeneratorNetworkElement(DimPos.of(world, blockPos));
             }
         }));
-        addCapabilityInternal(CapabilityEnergy.ENERGY, LazyOptional.of(() -> this));
+        addCapabilityInternal(ForgeCapabilities.ENERGY, LazyOptional.of(() -> this));
     }
 
     public LazyOptional<IEnergyNetwork> getEnergyNetwork() {

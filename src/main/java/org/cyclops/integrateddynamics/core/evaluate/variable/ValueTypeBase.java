@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeStringLPElement;
@@ -106,9 +107,9 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public Component canDeserialize(Tag value) {
+    public Component canDeserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         try {
-            deserialize(value);
+            deserialize(valueDeseralizationContext, value);
             return null;
         } catch (IllegalArgumentException e) {
             return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);

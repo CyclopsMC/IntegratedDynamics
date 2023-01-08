@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -66,7 +67,7 @@ public class JsonDeserializers {
     }
 
     @Nullable
-    public static ValuePredicate deserializeValue(JsonObject jsonObject, @Nullable IValueType valueType) {
-        return ValuePredicate.deserialize(jsonObject, valueType);
+    public static ValuePredicate deserializeValue(ValueDeseralizationContext valueDeseralizationContext, JsonObject jsonObject, @Nullable IValueType valueType) {
+        return ValuePredicate.deserialize(valueDeseralizationContext, jsonObject, valueType);
     }
 }

@@ -172,8 +172,8 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             Font fontRenderer = Minecraft.getInstance().font;
             int yOffset = fontRenderer.lineHeight + 3;
 
-            int x = this.x;
-            int y = this.y + yOffset;
+            int x = this.getX();
+            int y = this.getY() + yOffset;
             int width = this.getWidth() + 9;
             int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
             int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
@@ -252,8 +252,8 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
         Font fontRenderer = Minecraft.getInstance().gui.getFont();
         int yOffset = fontRenderer.lineHeight + 3;
 
-        int x = this.x;
-        int y = this.y + yOffset;
+        int x = this.getX();
+        int y = this.getY() + yOffset;
         int startIndex = Math.max(0, Math.min(visiblePossibilitiesIndex, visiblePossibilities.size() - getDropdownSize()));
         int endIndex = Math.min(startIndex + getDropdownSize(), visiblePossibilities.size());
         int cy = y;

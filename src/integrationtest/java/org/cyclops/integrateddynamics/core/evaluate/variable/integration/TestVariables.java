@@ -19,6 +19,7 @@ import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeRecipe;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
@@ -55,7 +56,7 @@ public class TestVariables {
         tag.put("minecraft:itemstack", itemStacks);
 
         TestHelpers.assertEqual(i0.getType().serialize(i0.getValue()), tag, "Serialization is correct");
-        TestHelpers.assertEqual(i0.getType().deserialize(tag), i0.getValue(), "Deserialization is correct");
+        TestHelpers.assertEqual(i0.getType().deserialize(ValueDeseralizationContext.ofClient(), tag), i0.getValue(), "Deserialization is correct");
     }
 
     @IntegrationTest
@@ -134,7 +135,7 @@ public class TestVariables {
         tag.put("input", input);
 
         TestHelpers.assertEqual(r0.getType().serialize(r0.getValue()), tag, "Serialization is correct");
-        TestHelpers.assertEqual(r0.getType().deserialize(tag), r0.getValue(), "Deserialization is correct");
+        TestHelpers.assertEqual(r0.getType().deserialize(ValueDeseralizationContext.ofClient(), tag), r0.getValue(), "Deserialization is correct");
     }
 
 }

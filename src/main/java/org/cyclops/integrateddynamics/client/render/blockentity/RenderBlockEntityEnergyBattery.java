@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -12,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
+import org.joml.Matrix4f;
 
 /**
  * Renderer for rendering the energy overlay on the {@link org.cyclops.integrateddynamics.block.BlockEnergyBattery}.
@@ -101,7 +101,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
                     b = 0.60F + 0.40F * tickFactor;
                 }
 
-                VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+                VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
                 Matrix4f matrix = matrixStack.last().pose();
                 vb.vertex(matrix, c[0][0], c[0][1] * height, c[0][2]).color(r, g, b, 1).uv(icon.getU0(), replacedMaxV).uv2(combinedLight).endVertex();
                 vb.vertex(matrix, c[1][0], c[1][1] * height, c[1][2]).color(r, g, b, 1).uv(icon.getU0(), replacedMinV).uv2(combinedLight).endVertex();

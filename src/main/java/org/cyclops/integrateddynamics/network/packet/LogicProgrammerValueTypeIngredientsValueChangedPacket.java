@@ -8,6 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
@@ -33,8 +34,8 @@ public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends Packe
         this.value = value.getType().serialize(value);
     }
 
-    protected ValueObjectTypeIngredients.ValueIngredients getValue() {
-        return ValueHelpers.deserializeRaw(ValueTypes.OBJECT_INGREDIENTS, value);
+    protected ValueObjectTypeIngredients.ValueIngredients getValue(Level level) {
+        return ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(level), ValueTypes.OBJECT_INGREDIENTS, value);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends Packe
         if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
             ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
             if(element instanceof ValueTypeIngredientsLPElement) {
-                ((ValueTypeIngredientsLPElement) element).setServerValue(getValue());
+                ((ValueTypeIngredientsLPElement) element).setServerValue(getValue(world));
                 ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
             }
         }

@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
@@ -57,7 +58,7 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
             if(element instanceof ValueTypeOperatorLPElement) {
                 IOperator operator;
                 try {
-                    operator = ValueHelpers.deserializeRaw(ValueTypes.OPERATOR, operatorValue).getRawValue();
+                    operator = ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(world), ValueTypes.OPERATOR, operatorValue).getRawValue();
                 } catch (IllegalArgumentException e) {
                     operator = null;
                 }

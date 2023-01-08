@@ -16,6 +16,7 @@ import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -129,7 +130,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                             partContainer.getPosition().getBlockPos(), getTarget().getCenter().getSide());
                     IPartNetwork partNetwork = optionalNetwork.map(NetworkHelpers::getPartNetworkChecked).orElse(null);
                     if (partNetwork != null) {
-                        IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork);
+                        IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork, ValueDeseralizationContext.of(player.level));
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
                         readValue = Pair.of(Component.literal("NETWORK CORRUPTED!"), Helpers.RGBToInt(255, 100, 0));

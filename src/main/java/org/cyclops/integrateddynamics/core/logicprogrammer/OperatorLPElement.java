@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
@@ -83,8 +84,8 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public void onInputSlotUpdated(int slotId, ItemStack itemStack) {
-        IVariableFacade variableFacade = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(itemStack);
+    public void onInputSlotUpdated(Player player, int slotId, ItemStack itemStack) {
+        IVariableFacade variableFacade = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(ValueDeseralizationContext.of(player.level), itemStack);
         inputVariables[slotId] = variableFacade;
     }
 
@@ -111,7 +112,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         int[] variableIds = getVariableIds(inputVariables);
         return registry.writeVariableFacadeItem(!player.level.isClientSide(), itemStack, Operators.REGISTRY,
-                new OperatorVariableFacadeFactory(operator, variableIds), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
+                new OperatorVariableFacadeFactory(operator, variableIds), player.level, player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
     }
 
     @Override

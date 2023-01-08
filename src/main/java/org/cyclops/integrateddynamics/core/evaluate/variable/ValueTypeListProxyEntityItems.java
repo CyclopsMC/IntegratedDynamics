@@ -4,7 +4,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
@@ -17,7 +17,7 @@ public class ValueTypeListProxyEntityItems extends ValueTypeListProxyEntityCapab
 
     public ValueTypeListProxyEntityItems(Level world, Entity entity, @Nullable Direction side) {
         super(ValueTypeListProxyFactories.ENTITY_CAPABILITY_ITEMS.getName(), ValueTypes.OBJECT_ITEMSTACK,
-                world, entity, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+                world, entity, ForgeCapabilities.ITEM_HANDLER, side);
     }
 
     public ValueTypeListProxyEntityItems() {

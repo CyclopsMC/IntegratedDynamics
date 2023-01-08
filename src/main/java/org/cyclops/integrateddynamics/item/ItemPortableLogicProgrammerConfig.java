@@ -14,8 +14,7 @@ public class ItemPortableLogicProgrammerConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 "portable_logic_programmer",
-                eConfig -> new ItemPortableLogicProgrammer(new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                eConfig -> new ItemPortableLogicProgrammer(new Item.Properties())
         );
     }
 

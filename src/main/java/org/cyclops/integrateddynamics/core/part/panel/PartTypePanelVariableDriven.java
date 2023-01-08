@@ -33,6 +33,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
@@ -120,9 +121,10 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         super.update(network, partNetwork, target, state);
         IValue lastValue = state.getDisplayValue();
         IValue newValue = null;
+        Level level = target.getCenter().getPos().getLevel(true);
         if(state.hasVariable()) {
             try {
-                IVariable variable = state.getVariable(network, partNetwork);
+                IVariable variable = state.getVariable(network, partNetwork, ValueDeseralizationContext.of(level));
                 if(variable != null) {
                     newValue = variable.getValue();
 
@@ -156,7 +158,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             // tick-1: Part tick: update the value again, the old value has still not been sent here!
             // tick-1: -- send all block updates to client --- This will contain the value that was set in tick-1.
             state.onDirty();
-            BlockHelpers.markForUpdate(target.getCenter().getPos().getLevel(true), target.getCenter().getPos().getBlockPos());
+            BlockHelpers.markForUpdate(level, target.getCenter().getPos().getBlockPos());
         }
     }
 
@@ -167,7 +169,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
     @Override
     public <V extends IValue> IVariable<V> getActiveVariable(INetwork network, IPartNetwork partNetwork, PartTarget target, S partState) {
-        return partState.getVariable(network, partNetwork);
+        return partState.getVariable(network, partNetwork, ValueDeseralizationContext.of(target.getCenter().getPos().getLevel(true)));
     }
 
     protected void onValueChanged(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
@@ -316,16 +318,16 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
 
         @Override
-        public void readFromNBT(CompoundTag tag) {
-            super.readFromNBT(tag);
+        public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
+            super.readFromNBT(valueDeseralizationContext, tag);
             if(tag.contains("displayValueType", Tag.TAG_STRING)
                     && tag.contains("displayValue")) {
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("displayValueType")));
                 if(valueType != null) {
                     Tag serializedValue = tag.get("displayValue");
-                    Component deserializationError = valueType.canDeserialize(serializedValue);
+                    Component deserializationError = valueType.canDeserialize(valueDeseralizationContext, serializedValue);
                     if(deserializationError == null) {
-                        setDisplayValue(ValueHelpers.deserializeRaw(valueType, serializedValue));
+                        setDisplayValue(ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, serializedValue));
                     } else {
                         IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, deserializationError.getString());
                     }

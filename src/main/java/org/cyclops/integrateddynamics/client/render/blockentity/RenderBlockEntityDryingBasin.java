@@ -2,8 +2,7 @@ package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -22,6 +21,7 @@ import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
+import org.joml.Matrix4f;
 
 /**
  * Renderer for the item inside the {@link org.cyclops.integrateddynamics.block.BlockDryingBasin}.
@@ -57,7 +57,7 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
                 IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
                 Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getTintColor(fluid));
 
-                VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+                VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
                 Matrix4f matrix = matrixStack.last().pose();
                 vb.vertex(matrix, 0.0625F, height, 0.0625F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU0(), icon.getV1()).uv2(l2, i3).endVertex();
                 vb.vertex(matrix, 0.0625F, height, 0.9375F).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU0(), icon.getV0()).uv2(l2, i3).endVertex();
@@ -74,9 +74,9 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
             matrixStack.scale(1.2F, 1.2F, 1.2F);
         } else {
             matrixStack.translate(1F, 1.2F, 1F);
-            matrixStack.mulPose(Vector3f.XP.rotationDegrees(25F));
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(25F));
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotation));
+            matrixStack.mulPose(Axis.XP.rotationDegrees(25F));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(25F));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(rotation));
         }
 
         Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemTransforms.TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, 0);

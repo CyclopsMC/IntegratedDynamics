@@ -4,6 +4,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -32,9 +33,10 @@ public interface IPartState<P extends IPartType> {
 
     /**
      * Read a state from NBT.
+     * @param valueDeseralizationContext Getter for blocks.
      * @param tag The tag to read from.
      */
-    public void readFromNBT(CompoundTag tag);
+    public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag);
 
     /**
      * Generate a server-wide unique ID for this part state.

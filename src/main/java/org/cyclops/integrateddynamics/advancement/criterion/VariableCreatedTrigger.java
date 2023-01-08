@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
 
 import javax.annotation.Nullable;
@@ -46,7 +47,7 @@ public class VariableCreatedTrigger extends SimpleCriterionTrigger<VariableCreat
                 throw new JsonSyntaxException("No block found with name: " + json.get("block").getAsString());
             }
         }
-        return new Instance(getId(), entityPredicate, block, VariableFacadePredicate.deserialize(json.get("variable_facade")));
+        return new Instance(getId(), entityPredicate, block, VariableFacadePredicate.deserialize(ValueDeseralizationContext.ofAllEnabled(), json.get("variable_facade")));
     }
 
     public void test(ServerPlayer player, LogicProgrammerVariableFacadeCreatedEvent event) {

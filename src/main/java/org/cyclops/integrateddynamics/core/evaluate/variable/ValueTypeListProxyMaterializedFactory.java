@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * Factory for {@link ValueTypeListProxyMaterialized}.
@@ -57,7 +58,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
     }
 
     @Override
-    public ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> deserialize(Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         if (!(value instanceof CompoundTag)) {
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the materialized list value '%s' as it is not a CompoundTag.", value));
         }
@@ -92,7 +93,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
             } else {
                 valueSerialized = valueTag;
             }
-            IValue deserializedValue = ValueHelpers.deserializeRaw(elementValueType, valueSerialized);
+            IValue deserializedValue = ValueHelpers.deserializeRaw(valueDeseralizationContext, elementValueType, valueSerialized);
             builder.add(deserializedValue);
         }
 

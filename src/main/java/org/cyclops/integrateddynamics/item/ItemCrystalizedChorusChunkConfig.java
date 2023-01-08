@@ -15,8 +15,7 @@ public class ItemCrystalizedChorusChunkConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_chorus_chunk",
-                eConfig -> new Item(new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                eConfig -> new Item(new Item.Properties())
         );
     }
 

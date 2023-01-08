@@ -7,7 +7,7 @@ import lombok.Setter;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -20,8 +20,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -101,7 +101,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    public void onInputSlotUpdated(int slotId, ItemStack itemStack) {
+    public void onInputSlotUpdated(Player player, int slotId, ItemStack itemStack) {
         if (inputStacks == null) {
             return;
         }
@@ -238,7 +238,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     protected ItemStack getFluidBucket(FluidStack fluidStack) {
         ItemStack itemStack = new ItemStack(Items.BUCKET);
-        IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).orElse(null);
+        IFluidHandlerItem fluidHandler = itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).orElse(null);
         fluidHandler.fill(new FluidStack(fluidStack, FluidHelpers.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
         return fluidHandler.getContainer();
     }
@@ -373,7 +373,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     String tagName = props.getItemTag();
                     if (tagName != null) {
                         try {
-                            ITag<Item> tag = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(tagName)));
+                            ITag<Item> tag = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registries.ITEM, new ResourceLocation(tagName)));
                             if (!tag.isEmpty()) {
                                 List<Item> items = tag.stream().toList();
                                 int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;

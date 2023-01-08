@@ -88,7 +88,6 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     @Override
     public void init() {
         super.init();
-        getMinecraft().keyboardHandler.setSendRepeatsToGui(true);
 
         if (isFieldSideEnabled()) {
             dropdownEntries = Arrays.stream(Direction.values()).map(SideDropdownEntry::new).collect(Collectors.toList());

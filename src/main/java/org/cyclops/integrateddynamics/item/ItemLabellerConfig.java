@@ -14,8 +14,7 @@ public class ItemLabellerConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 "labeller",
-                eConfig -> new ItemLabeller(new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                eConfig -> new ItemLabeller(new Item.Properties())
         );
     }
 

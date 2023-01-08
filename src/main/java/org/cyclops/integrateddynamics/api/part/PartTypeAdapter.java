@@ -14,6 +14,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
@@ -50,9 +51,9 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public S fromNBT(CompoundTag tag) {
+    public S fromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
         S partState = constructDefaultState();
-        partState.readFromNBT(tag);
+        partState.readFromNBT(valueDeseralizationContext, tag);
         partState.gatherCapabilities((P) this);
         return partState;
     }
@@ -152,11 +153,11 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public S getState(ItemStack itemStack) {
+    public S getState(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
         S partState = null;
         if(!itemStack.isEmpty() && itemStack.getTag() != null
                 && itemStack.getTag().contains("id", Tag.TAG_INT)) {
-            partState = fromNBT(itemStack.getTag());
+            partState = fromNBT(valueDeseralizationContext, itemStack.getTag());
         }
         if(partState == null) {
             partState = defaultBlockState();

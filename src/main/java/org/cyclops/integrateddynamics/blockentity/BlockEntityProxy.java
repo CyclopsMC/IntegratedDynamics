@@ -13,8 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -23,6 +23,7 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -65,17 +66,17 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
     public BlockEntityProxy(BlockPos blockPos, BlockState blockState) {
         this(RegistryEntries.BLOCK_ENTITY_PROXY, blockPos, blockState, BlockEntityProxy.INVENTORY_SIZE);
 
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.NORTH,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.SOUTH,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.SOUTH,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.EAST,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.EAST,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.WEST,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.WEST,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.UP,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.UP,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_IN)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.DOWN,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_OUT)));
     }
 
@@ -106,7 +107,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
 
     @Override
     protected InventoryVariableEvaluator<IValue> createEvaluator() {
-        return new InventoryVariableEvaluator<IValue>(this.getInventory(), getSlotRead(), ValueTypes.CATEGORY_ANY) {
+        return new InventoryVariableEvaluator<IValue>(this.getInventory(), getSlotRead(), ValueDeseralizationContext.of(getLevel()), ValueTypes.CATEGORY_ANY) {
             @Override
             protected void preValidate() {
                 super.preValidate();
@@ -162,7 +163,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
             public IProxyVariableFacade create(int id) {
                 return new ProxyVariableFacade(id, proxyId);
             }
-        }, lastPlayer, getBlockState());
+        }, getLevel(), lastPlayer, getBlockState());
     }
 
     @Nullable

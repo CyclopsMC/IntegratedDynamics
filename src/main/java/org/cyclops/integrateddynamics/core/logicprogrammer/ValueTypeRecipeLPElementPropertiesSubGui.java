@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -200,7 +200,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
                                    int mouseX, int mouseY, int columns, int offset) {
         int x = mouseX - guiLeft;
         int y = mouseY - guiTop;
-        List<Item> items = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, hoveredPossibility.getValue())).stream().toList();
+        List<Item> items = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registries.ITEM, hoveredPossibility.getValue())).stream().toList();
 
         // Draw background
         GuiHelpers.drawTooltipBackground(poseStack, x, y, Math.min(items.size(), columns) * offset,

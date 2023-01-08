@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.capability.facadeable;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 
 import javax.annotation.Nullable;
@@ -29,7 +30,7 @@ public class FacadeableTileMultipartTicking implements IFacadeable {
         if(!hasFacade()) {
             return null;
         }
-        return BlockHelpers.deserializeBlockState(tile.getFacadeBlockTag());
+        return BlockHelpers.deserializeBlockState(ValueDeseralizationContext.of(tile.getLevel()).holderGetter(), tile.getFacadeBlockTag());
     }
 
     @Override

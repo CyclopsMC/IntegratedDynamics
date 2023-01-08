@@ -155,7 +155,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         return PartHelpers.canInteractWith(getTarget(), player, this.partContainer);
     }
 
-    public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
+    public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, Level level, final IAspect aspect) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         return registry.writeVariableFacadeItem(generateId, itemStack, Aspects.REGISTRY, new IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IAspectVariableFacade>() {
             @Override
@@ -167,7 +167,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
             public IAspectVariableFacade create(int id) {
                 return new AspectVariableFacade(id, getPartState().getId(), aspect);
             }
-        }, null, null);
+        }, level, null, null);
     }
 
 }

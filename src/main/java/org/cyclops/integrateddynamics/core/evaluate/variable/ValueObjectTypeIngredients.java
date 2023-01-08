@@ -9,6 +9,7 @@ import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeIngredientsLPElement;
@@ -61,7 +62,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     }
 
     @Override
-    public ValueIngredients deserialize(Tag value) {
+    public ValueIngredients deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
             return ValueIngredients.of(null);
         }

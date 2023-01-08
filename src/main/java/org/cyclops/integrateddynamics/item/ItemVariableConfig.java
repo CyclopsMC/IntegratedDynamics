@@ -26,8 +26,7 @@ public class ItemVariableConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 "variable",
-                eConfig -> new ItemVariable(new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                eConfig -> new ItemVariable(new Item.Properties())
         );
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
     }

@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.util.Map;
 
@@ -61,7 +62,7 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
     }
 
     @Override
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(Tag value) throws SerializationException {
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws SerializationException {
         if (!(value instanceof CompoundTag)) {
             throw new SerializationException(String.format("Could not deserialize the serialized list proxy value '%s' as it is not a CompoundTag.", value));
         }
@@ -78,6 +79,6 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
         if(factory == null) {
             throw new SerializationException(String.format("No deserialization factory exists for the list proxy type name '%s'.", name));
         }
-        return factory.deserialize(actualValue);
+        return factory.deserialize(valueDeseralizationContext, actualValue);
     }
 }

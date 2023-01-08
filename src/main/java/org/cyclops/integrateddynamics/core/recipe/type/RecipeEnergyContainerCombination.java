@@ -4,11 +4,12 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
@@ -23,8 +24,8 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
     private final Ingredient batteryItem;
     private final int maxCapacity;
 
-    public RecipeEnergyContainerCombination(ResourceLocation id, Ingredient batteryItem, int maxCapacity) {
-        super(id);
+    public RecipeEnergyContainerCombination(ResourceLocation id, CraftingBookCategory craftingBookCategory, Ingredient batteryItem, int maxCapacity) {
+        super(id, craftingBookCategory);
         this.batteryItem = batteryItem;
         this.maxCapacity = maxCapacity;
     }
@@ -67,7 +68,7 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
     @Override
     public ItemStack assemble(CraftingContainer grid) {
         ItemStack output = getResultItem().copy();
-        IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(CapabilityEnergy.ENERGY).orElse(null);
+        IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(ForgeCapabilities.ENERGY).orElse(null);
 
         int totalCapacity = 0;
         int totalEnergy = 0;
@@ -78,7 +79,7 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
             ItemStack element = grid.getItem(j).copy().split(1);
             if(!element.isEmpty()) {
                 if(this.batteryItem.test(element)) {
-                    IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(CapabilityEnergy.ENERGY).orElse(null);
+                    IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(ForgeCapabilities.ENERGY).orElse(null);
                     inputItems++;
                     totalEnergy = Helpers.addSafe(totalEnergy, currentEnergyStorage.getEnergyStored());
                     totalCapacity = Helpers.addSafe(totalCapacity, currentEnergyStorage.getMaxEnergyStored());

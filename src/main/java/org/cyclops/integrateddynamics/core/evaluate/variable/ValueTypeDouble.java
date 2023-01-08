@@ -10,6 +10,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.text.NumberFormat;
@@ -41,7 +42,7 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
-    public ValueDouble deserialize(Tag value) {
+    public ValueDouble deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (value.getId() == Tag.TAG_DOUBLE) {
             return ValueDouble.of(((DoubleTag) value).getAsDouble());
         } else {

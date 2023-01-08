@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -56,10 +57,10 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     }
 
     @Override
-    public ValueOperator deserialize(Tag value) {
+    public ValueOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         IOperator operator;
         try {
-            operator = Operators.REGISTRY.deserialize(value);
+            operator = Operators.REGISTRY.deserialize(valueDeseralizationContext, value);
         } catch (EvaluationException e) {
             throw new IllegalArgumentException(e.getMessage());
         }

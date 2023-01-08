@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -18,6 +17,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
+import org.joml.Matrix4f;
 
 /**
  * A value type world renderer for fluids.
@@ -42,7 +42,7 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluidStack.getFluid());
             Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getTintColor(fluidStack));
 
-            VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+            VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
             Matrix4f matrix = matrixStack.last().pose();
 
             float min = 0F;

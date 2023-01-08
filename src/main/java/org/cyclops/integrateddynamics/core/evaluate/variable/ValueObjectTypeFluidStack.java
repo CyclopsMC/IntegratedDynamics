@@ -11,6 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
@@ -50,7 +51,7 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     }
 
     @Override
-    public ValueFluidStack deserialize(Tag value) {
+    public ValueFluidStack deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (value instanceof CompoundTag) {
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT((CompoundTag) value);
             return ValueFluidStack.of(fluidStack);

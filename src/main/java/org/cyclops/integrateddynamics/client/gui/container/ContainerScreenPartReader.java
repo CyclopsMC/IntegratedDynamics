@@ -49,7 +49,7 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
 
         // Render target item
         // This could be cached if this would prove to be a bottleneck
-        ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), aspect);
+        ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), container.getPlayerIInventory().player.level, aspect);
         Rectangle pos = getElementPosition(container, index, true);
 
         Lighting.setupForFlatItems();

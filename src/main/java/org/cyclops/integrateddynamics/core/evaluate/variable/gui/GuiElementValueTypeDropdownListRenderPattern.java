@@ -62,7 +62,7 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
         this.searchField.setValue(value);
         element.setInputString(searchField.getValue());
         this.searchField.setWidth(searchWidth);
-        this.searchField.x = guiLeft + (searchX + searchWidth) - this.searchField.getWidth();
+        this.searchField.setX(guiLeft + (searchX + searchWidth) - this.searchField.getWidth());
     }
 
     protected Set<IDropdownEntry<T>> getDropdownPossibilities() {

@@ -46,11 +46,10 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.IReverseTag;
@@ -1759,7 +1758,7 @@ public final class Operators {
             .symbol("has_inventory").operatorName("hasinventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent());
+                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent());
             }).build());
 
     /**
@@ -1786,7 +1785,7 @@ public final class Operators {
             .symbol("inventory_size").operatorName("inventorysize")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueTypeInteger.ValueInteger.of(a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+                return ValueTypeInteger.ValueInteger.of(a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER)
                         .map(IItemHandler::getSlots)
                         .orElse(0));
             }).build());
@@ -1814,7 +1813,7 @@ public final class Operators {
             .output(ValueTypes.LIST).symbolOperator("inventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return a.getRawValue().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
+                return a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER, null)
                         .map(itemHandler -> {
                             List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.getSlots());
                             for (int i = 0; i < itemHandler.getSlots(); i++) {
@@ -2426,7 +2425,7 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    return ValueTypeInteger.ValueInteger.of(entity.getCapability(CapabilityEnergy.ENERGY, null)
+                    return ValueTypeInteger.ValueInteger.of(entity.getCapability(ForgeCapabilities.ENERGY, null)
                             .map(IEnergyStorage::getEnergyStored)
                             .orElse(0));
                 }
@@ -2443,7 +2442,7 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    return ValueTypeInteger.ValueInteger.of(entity.getCapability(CapabilityEnergy.ENERGY, null)
+                    return ValueTypeInteger.ValueInteger.of(entity.getCapability(ForgeCapabilities.ENERGY, null)
                             .map(IEnergyStorage::getMaxEnergyStored)
                             .orElse(0));
                 }

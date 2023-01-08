@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * A concatenated list.
@@ -62,11 +63,11 @@ public class ValueTypeListProxyConcat<T extends IValueType<V>, V extends IValue>
         }
 
         @Override
-        protected ValueTypeListProxyConcat<IValueType<IValue>, IValue> deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected ValueTypeListProxyConcat<IValueType<IValue>, IValue> deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             ListTag list = (ListTag) tag.get("sublists");
             IValueTypeListProxy<IValueType<IValue>, IValue>[] listProxies = new IValueTypeListProxy[list.size()];
             for (int i = 0; i < list.size(); i++) {
-                listProxies[i] = ValueTypeListProxyFactories.REGISTRY.deserialize(list.get(i));
+                listProxies[i] = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, list.get(i));
             }
             return new ValueTypeListProxyConcat<>(listProxies);
         }

@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
@@ -85,10 +86,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * Read the properties of this part from nbt.
      * This tag is guaranteed to only contain data for this part.
+     * @param valueDeseralizationContext
      * @param tag The tag to read from.
      * @return The state of this part.
      */
-    public S fromNBT(CompoundTag tag);
+    public S fromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag);
 
     /**
      * @return The default state of this part.
@@ -224,10 +226,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     /**
      * Get the part state from the given itemstack.
+     * @param valueDeseralizationContext
      * @param itemStack The itemstack possibly containing state information.
      * @return The state contained in the itemstack or the default part state.
      */
-    public S getState(ItemStack itemStack);
+    public S getState(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack);
 
     /**
      * Add the itemstacks to drop when this element is removed.

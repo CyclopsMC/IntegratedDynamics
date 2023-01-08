@@ -33,7 +33,6 @@ import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipeConfig;
 import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapedOmniDirectional3Config;
 import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapedOmniDirectionalConfig;
 import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapelessOmniDirectionalConfig;
-import org.cyclops.integrateddynamics.world.biome.BiomeMeneglinConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenrilConfig;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenrilConfig;
 
@@ -147,9 +146,6 @@ public class Configs {
         // World features
         configHandler.addConfigurable(new FoliagePlacerMenrilConfig());
         configHandler.addConfigurable(new TrunkPlacerMenrilConfig());
-
-        // Biomes
-        configHandler.addConfigurable(new BiomeMeneglinConfig());
 
         // Entities
         configHandler.addConfigurable(new EntityItemTargettedConfig());

@@ -17,6 +17,7 @@ import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -128,11 +129,11 @@ public class ContainerAspectSettings extends InventoryContainer {
         return 0;
     }
 
-    public <T extends IValueType<V>, V extends IValue> V getPropertyValue(IAspectPropertyTypeInstance<T, V> property) {
+    public <T extends IValueType<V>, V extends IValue> V getPropertyValue(ValueDeseralizationContext valueDeseralizationContext, IAspectPropertyTypeInstance<T, V> property) {
         if(propertyIds.containsValue(property)) {
             Tag value = ValueNotifierHelpers.getValueNbt(this, propertyIds.inverse().get(property));
             if(value != null) {
-                return ValueHelpers.deserializeRaw(property.getType(), value);
+                return ValueHelpers.deserializeRaw(valueDeseralizationContext, property.getType(), value);
             }
         }
         return null;
@@ -150,7 +151,7 @@ public class ContainerAspectSettings extends InventoryContainer {
 
                 IAspectProperties aspectProperties = aspect.getProperties(partType, target, partState);
                 aspectProperties = aspectProperties.clone();
-                IValue trueValue = ValueHelpers.deserializeRaw(property.getType(), value.get(ValueNotifierHelpers.KEY));
+                IValue trueValue = ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(world), property.getType(), value.get(ValueNotifierHelpers.KEY));
                 aspectProperties.setValue(property, trueValue);
                 aspect.setProperties(partType, target, partState, aspectProperties);
 

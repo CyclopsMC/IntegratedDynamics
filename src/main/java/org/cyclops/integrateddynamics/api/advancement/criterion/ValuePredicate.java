@@ -11,6 +11,7 @@ import net.minecraft.util.GsonHelper;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 
@@ -44,7 +45,7 @@ public class ValuePredicate<V extends IValue> {
         return true;
     }
 
-    public static ValuePredicate deserialize(JsonObject jsonObject, @Nullable IValueType valueType) {
+    public static ValuePredicate deserialize(ValueDeseralizationContext valueDeseralizationContext, JsonObject jsonObject, @Nullable IValueType valueType) {
         JsonElement valueElement = jsonObject.get("value");
         IValue value = null;
         if (valueElement != null && !valueElement.isJsonNull()) {
@@ -58,7 +59,7 @@ public class ValuePredicate<V extends IValue> {
                     if (((CompoundTag) tag).contains("Primitive")) {
                         tag = ((CompoundTag) tag).get("Primitive");
                     }
-                    value = ValueHelpers.deserializeRaw(valueType, tag);
+                    value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, tag);
                 } catch (CommandSyntaxException e) {
                     e.printStackTrace();
                 }

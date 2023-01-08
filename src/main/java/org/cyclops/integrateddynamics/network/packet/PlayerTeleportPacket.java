@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -58,7 +58,7 @@ public class PlayerTeleportPacket extends PacketCodec {
 
     @Override
     public void actionServer(Level world, ServerPlayer player) {
-        ResourceKey<Level> dimensionType = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(this.dimension));
+        ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(this.dimension));
         if (!dimensionType.location().equals(player.getLevel().dimension().location())) {
             player.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType));
         }

@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ public class ValueTypeListProxyNbtKeys extends ValueTypeListProxyBase<ValueTypeS
         }
 
         @Override
-        protected ValueTypeListProxyNbtKeys deserializeNbt(CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected ValueTypeListProxyNbtKeys deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             return new ValueTypeListProxyNbtKeys(tag.contains("tag") ? Optional.of(tag.get("tag")) : Optional.empty());
         }
     }

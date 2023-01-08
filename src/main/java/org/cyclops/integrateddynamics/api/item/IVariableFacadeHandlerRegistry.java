@@ -4,8 +4,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.init.IRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -24,17 +26,21 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
 
     /**
      * Checks the type of the given tag and uses the corresponding handler to retrieve its variable facade.
+     *
+     * @param valueDeseralizationContext
      * @param itemStack The item containing information that can be read and used to form a variable facade.
      * @return The variable facade handled by the appropriate handler.
      */
-    public IVariableFacade handle(ItemStack itemStack);
+    public IVariableFacade handle(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack);
 
     /**
      * Checks the type of the given tag and uses the corresponding handler to retrieve its variable facade.
+     *
+     * @param valueDeseralizationContext
      * @param tagCompound The tag containing information that can be read and used to form a variable facade.
      * @return The variable facade handled by the appropriate handler.
      */
-    public IVariableFacade handle(CompoundTag tagCompound);
+    public IVariableFacade handle(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tagCompound);
 
     /**
      * Find a handler by name.
@@ -76,22 +82,25 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @param itemStack The itemstack to write to.
      * @param variableFacadeHandler The variable facade handler.
      * @param variableFacadeFactory A factory for creating a variable facade.
+     * @param level
      * @param player The player crafting the item.
      * @param blockState The block state in which the facade was created.
      * @return A copy of the given itemstack with the written variable facade.
      */
-    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable Player player, @Nullable BlockState blockState);
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, Level level, @Nullable Player player, @Nullable BlockState blockState);
 
     /**
      * Create a new variable facade..
-     * @param generateId If a new id should be generated. Otherwise the previous facade id will be used or -1 if non existing.
-     * @param itemStack The itemstack to write to.
-     * @param variableFacadeHandler The variable facade handler.
-     * @param variableFacadeFactory A factory for creating a variable facade.
-     * @return The resulting variable facade.
+     *
      * @param <F> The variable facade type.
+     * @param generateId If a new id should be generated. Otherwise the previous facade id will be used or -1 if non existing.
+ * @param itemStack The itemstack to write to.
+ * @param variableFacadeHandler The variable facade handler.
+ * @param variableFacadeFactory A factory for creating a variable facade.
+ * @param valueDeseralizationContext
+     * @return The resulting variable facade.
      */
-    public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory);
+    public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, ValueDeseralizationContext valueDeseralizationContext);
 
     /**
      * Copy the given itemstack and (possibly) assign a new id.

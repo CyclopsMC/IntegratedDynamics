@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
@@ -22,13 +22,13 @@ import java.util.function.Function;
  */
 public class ValueTypeVariableModelProvider implements IVariableModelProvider<BakedMapVariableModelProvider<IValueType>> {
     @Override
-    public BakedMapVariableModelProvider<IValueType> bakeOverlayModels(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location) {
+    public BakedMapVariableModelProvider<IValueType> bakeOverlayModels(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location) {
         Map<IValueType, BakedModel> bakedModels = Maps.newHashMap();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             try {
                 ResourceLocation resourceLocation = ValueTypes.REGISTRY.getValueTypeModel(valueType);
                 if(resourceLocation != null) {
-                    BakedModel bakedModel = modelBakery.bake(resourceLocation, transform, spriteGetter);
+                    BakedModel bakedModel = modelBaker.bake(resourceLocation, transform, spriteGetter);
                     bakedModels.put(valueType, bakedModel);
                 }
             } catch (Exception e) {

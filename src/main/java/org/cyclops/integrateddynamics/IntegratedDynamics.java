@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,7 +18,6 @@ import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
 import org.cyclops.cyclopscore.infobook.InfoBookRegistry;
-import org.cyclops.cyclopscore.init.ItemGroupMod;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.init.ModBaseVersionable;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
@@ -82,7 +82,6 @@ import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.proxy.ClientProxy;
 import org.cyclops.integrateddynamics.proxy.CommonProxy;
-import org.cyclops.integrateddynamics.world.gen.feature.WorldFeatures;
 
 /**
  * The main mod class of IntegratedDynamics.
@@ -167,7 +166,6 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         PartTypes.register();
         LogicProgrammerElementTypes.load();
         RegistryExportables.load();
-        WorldFeatures.load();
         if(MinecraftHelpers.isClientSide()) {
             PartOverlayRenderers.load();
             ValueTypeWorldRenderers.load();
@@ -206,8 +204,9 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
     }
 
     @Override
-    public CreativeModeTab constructDefaultCreativeModeTab() {
-        return new ItemGroupMod(this, () -> RegistryEntries.ITEM_CABLE);
+    protected CreativeModeTab.Builder constructDefaultCreativeModeTab(CreativeModeTab.Builder builder) {
+        return super.constructDefaultCreativeModeTab(builder)
+                .icon(() -> new ItemStack(RegistryEntries.ITEM_CABLE));
     }
 
     @Override

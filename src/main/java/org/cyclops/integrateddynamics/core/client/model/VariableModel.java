@@ -1,21 +1,19 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.model.ForgeFaceData;
 import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
@@ -25,7 +23,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -64,6 +61,39 @@ public class VariableModel implements UnbakedModel, IUnbakedGeometry<VariableMod
     }
 
     @Override
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> resolver) {
+        base.resolveParents(resolver);
+    }
+
+    @Override
+    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+        return bake(baker, spriteGetter, modelState, modelLocation);
+    }
+
+    @Nullable
+    @Override
+    public BakedModel bake(ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
+        Material textureName = base.getMaterial("layer0");
+        BlockModel itemModel = ModelHelpers.MODEL_GENERATOR.generateBlockModel(spriteGetter, base);
+        SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(itemModel, itemModel.getOverrides(bakery, itemModel, spriteGetter), false));
+        itemModel.textureMap.put("layer0", Either.left(textureName));
+        TextureAtlasSprite textureAtlasSprite = spriteGetter.apply(textureName);
+        builder.particle(textureAtlasSprite);
+        for (BakedQuad bakedQuad : UnbakedGeometryHelper.bakeElements(UnbakedGeometryHelper.createUnbakedItemElements(0, textureAtlasSprite.contents(), ForgeFaceData.DEFAULT), $ -> textureAtlasSprite, modelState, modelLocation)) {
+            builder.addUnculledFace(bakedQuad);
+        }
+        BakedModel baseModel = builder.build();
+        VariableModelBaked bakedModel = new VariableModelBaked(baseModel);
+
+        for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
+            bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakery, spriteGetter, modelState, modelLocation));
+        }
+
+        return bakedModel;
+    }
+
+    /* TODO: rm
+    @Override
     public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         base.parent = ModelHelpers.MODEL_GENERATED; // To enable texture resolving
 
@@ -82,38 +112,5 @@ public class VariableModel implements UnbakedModel, IUnbakedGeometry<VariableMod
         }
 
         return textures;
-    }
-
-    @Nullable
-    @Override
-    public BakedModel bake(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter,
-                                 ModelState transform, ResourceLocation location) {
-        Material textureName = base.getMaterial("layer0");
-        BlockModel itemModel = ModelHelpers.MODEL_GENERATOR.generateBlockModel(spriteGetter, base);
-        SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(itemModel, itemModel.getOverrides(bakery, itemModel, spriteGetter), false));
-        itemModel.textureMap.put("layer0", Either.left(textureName));
-        TextureAtlasSprite textureAtlasSprite = spriteGetter.apply(textureName);
-        builder.particle(textureAtlasSprite);
-        for (BakedQuad bakedQuad : UnbakedGeometryHelper.bakeElements(UnbakedGeometryHelper.createUnbakedItemElements(0, textureAtlasSprite), $ -> textureAtlasSprite, transform, location)) {
-            builder.addUnculledFace(bakedQuad);
-        }
-        BakedModel baseModel = builder.build();
-        VariableModelBaked bakedModel = new VariableModelBaked(baseModel);
-
-        for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
-            bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakery, spriteGetter, transform, location));
-        }
-
-        return bakedModel;
-    }
-
-    @Override
-    public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
-       return bake(bakery, spriteGetter, modelTransform, modelLocation);
-    }
-
-    @Override
-    public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-        return getMaterials(modelGetter, missingTextureErrors);
-    }
+    }*/
 }

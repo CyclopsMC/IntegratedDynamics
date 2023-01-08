@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
@@ -42,7 +43,7 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
                 },
                 (eConfig, block) -> new StandingAndWallBlockItem(block,
                         RegistryEntries.BLOCK_MENRIL_TORCH_STONE_WALL,
-                        new Item.Properties().tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        new Item.Properties(), Direction.DOWN)
         );
     }
 

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -77,7 +77,7 @@ public final class Helpers {
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
         ITag<Item> tag = ForgeRegistries.ITEMS.tags()
-                .getTag(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(name)));
+                .getTag(TagKey.create(Registries.ITEM, new ResourceLocation(name)));
         return tag.stream().map(ItemStack::new);
     }
 

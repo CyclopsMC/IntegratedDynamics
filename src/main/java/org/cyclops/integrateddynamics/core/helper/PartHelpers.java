@@ -27,6 +27,7 @@ import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -214,12 +215,13 @@ public class PartHelpers {
      * @param network The network the part will be part of.
      * @param pos The position of the part, used for error reporting.
      * @param partTag The tag to read from.
+     * @param level The world.
      * @return The part data.
      */
-    public static Pair<Direction, ? extends PartStateHolder<?, ?>> readPartFromNBT(@Nullable INetwork network, BlockPos pos, CompoundTag partTag) {
+    public static Pair<Direction, ? extends PartStateHolder<?, ?>> readPartFromNBT(@Nullable INetwork network, BlockPos pos, CompoundTag partTag, Level level) {
         Pair<Direction, IPartType> partData = readPartTypeFromNBT(network, pos, partTag);
         if(partData != null) {
-            IPartState partState = partData.getValue().fromNBT(partTag);
+            IPartState partState = partData.getValue().fromNBT(ValueDeseralizationContext.of(level), partTag);
             return Pair.of(partData.getKey(), PartStateHolder.of(partData.getValue(), partState));
         }
         return null;
@@ -236,13 +238,13 @@ public class PartHelpers {
      * @param world The world.
      */
     public static void readPartsFromNBT(@Nullable INetwork network, BlockPos pos, CompoundTag tag,
-                                        Map<Direction, PartStateHolder<?, ?>> partData, @Nullable Level world) {
+                                        Map<Direction, PartStateHolder<?, ?>> partData, Level world) {
         Map<Direction, PartStateHolder<?, ?>> oldPartData = ImmutableMap.copyOf(partData);
         partData.clear();
         ListTag partList = tag.getList("parts", Tag.TAG_COMPOUND);
         for(int i = 0; i < partList.size(); i++) {
             CompoundTag partTag = partList.getCompound(i);
-            Pair<Direction, ? extends PartStateHolder<?, ?>> part = readPartFromNBT(network, pos, partTag);
+            Pair<Direction, ? extends PartStateHolder<?, ?>> part = readPartFromNBT(network, pos, partTag, world);
             if(part != null) {
                 partData.put(part.getKey(), part.getValue());
             }
@@ -309,18 +311,18 @@ public class PartHelpers {
 
     /**
      * Add a part to the given side with the part state in the given item.
-     * @param world The world.
+     * @param level The world.
      * @param pos The position of the container.
      * @param side The side.
      * @param partType The part type.
      * @param itemStack The item holding the part state.
      * @return If the part was added.
      */
-    public static boolean addPart(Level world, BlockPos pos, Direction side, IPartType partType, ItemStack itemStack) {
-        IPartContainer partContainer = getPartContainerChecked(world, pos, side);
+    public static boolean addPart(Level level, BlockPos pos, Direction side, IPartType partType, ItemStack itemStack) {
+        IPartContainer partContainer = getPartContainerChecked(level, pos, side);
         if(partContainer.canAddPart(side, partType)) {
-            if(!world.isClientSide()) {
-                partContainer.setPart(side, partType, partType.getState(itemStack));
+            if(!level.isClientSide()) {
+                partContainer.setPart(side, partType, partType.getState(ValueDeseralizationContext.of(level), itemStack));
             }
             return true;
         }

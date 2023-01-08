@@ -43,7 +43,6 @@ public class ClientProxy extends ClientProxyComponent {
     public ClientProxy() {
         super(new CommonProxy());
         MinecraftForge.EVENT_BUS.register(this);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onPreTextureStitch);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onPostTextureStitch);
         MinecraftForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
     }
@@ -64,12 +63,6 @@ public class ClientProxy extends ClientProxyComponent {
         super.registerKeyBindings(keyRegistry, event);
         event.register(FOCUS_LP_SEARCH);
         event.register(FOCUS_LP_RENAME);
-    }
-
-    public void onPreTextureStitch(TextureStitchEvent.Pre event) {
-        if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
-            event.addSprite(SlotVariable.VARIABLE_EMPTY);
-        }
     }
 
     public void onPostTextureStitch(TextureStitchEvent.Post event) {

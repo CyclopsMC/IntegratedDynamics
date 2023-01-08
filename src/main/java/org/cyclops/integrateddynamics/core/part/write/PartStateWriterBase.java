@@ -6,6 +6,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -43,13 +44,13 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public void readFromNBT(CompoundTag tag) {
+    public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
         IAspect aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(tag.getString("activeAspectName")));
         if (aspect instanceof IAspectWrite) {
             this.activeAspect = (IAspectWrite) aspect;
         }
         this.errorMessages = (Map<String, List<MutableComponent>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag);
-        super.readFromNBT(tag);
+        super.readFromNBT(valueDeseralizationContext, tag);
     }
 
     @Override

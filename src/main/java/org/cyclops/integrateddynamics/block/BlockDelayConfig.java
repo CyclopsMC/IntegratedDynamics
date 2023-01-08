@@ -25,8 +25,7 @@ public class BlockDelayConfig extends BlockConfig {
             eConfig -> new BlockDelay(Block.Properties.of(Material.HEAVY_METAL)
                     .strength(2.0F, 5.0F)
                     .sound(SoundType.METAL)),
-                (eConfig, block) -> new ItemBlockDelay(block, new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                (eConfig, block) -> new ItemBlockDelay(block, new Item.Properties())
         );
     }
 

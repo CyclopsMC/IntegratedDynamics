@@ -11,8 +11,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -56,17 +56,17 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
     public BlockEntityMaterializer(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_MATERIALIZER, blockPos, blockState, BlockEntityMaterializer.INVENTORY_SIZE);
 
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.NORTH,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.SOUTH,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.SOUTH,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.EAST,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.EAST,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.WEST,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.WEST,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.UP,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.UP,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_IN)));
-        addCapabilitySided(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN,
+        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.DOWN,
                 LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_OUT)));
 
         addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
@@ -122,7 +122,7 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
                 public IValueTypeVariableFacade create(int id) {
                     return new ValueTypeVariableFacade(id, valueType, value);
                 }
-            }, lastPlayer, getBlockState());
+            }, getLevel(), lastPlayer, getBlockState());
         } catch (EvaluationException e) {
             getEvaluator().addError(Component.translatable(e.getMessage()));
         }

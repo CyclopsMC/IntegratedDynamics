@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
     }
 
     @Override
-    public ValueNbt deserialize(Tag value) {
+    public ValueNbt deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (value instanceof CompoundTag && ((CompoundTag) value).contains("v")) {
             return ValueNbt.of(((CompoundTag) value).get("v"));
         }

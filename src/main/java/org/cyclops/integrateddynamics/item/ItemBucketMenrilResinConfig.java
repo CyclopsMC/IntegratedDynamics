@@ -19,8 +19,7 @@ public class ItemBucketMenrilResinConfig extends ItemConfig {
                 "bucket_menril_resin",
                 eConfig -> new BucketItem(() -> RegistryEntries.FLUID_MENRIL_RESIN, new Item.Properties()
                         .craftRemainder(Items.BUCKET)
-                        .stacksTo(1)
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .stacksTo(1))
         );
     }
 

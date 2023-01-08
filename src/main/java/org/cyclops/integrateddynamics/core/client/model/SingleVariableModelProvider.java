@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
@@ -26,11 +26,11 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter,
+    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter,
                                                               ModelState transform, ResourceLocation location) {
         BakedModel bakedModel = null;
         try {
-            bakedModel = modelBakery.bake(this.model, transform, spriteGetter);
+            bakedModel = modelBaker.bake(this.model, transform, spriteGetter);
         } catch (Exception e) {
             e.printStackTrace();
         }

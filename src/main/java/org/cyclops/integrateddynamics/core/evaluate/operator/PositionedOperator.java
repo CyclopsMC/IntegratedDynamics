@@ -12,6 +12,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
@@ -95,7 +96,7 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
         }
 
         @Override
-        public PositionedOperator deserialize(Tag value) throws EvaluationException {
+        public PositionedOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException {
             try {
                 Constructor<? extends PositionedOperator> constructor = this.clazz.getConstructor();
                 PositionedOperator proxy = constructor.newInstance();

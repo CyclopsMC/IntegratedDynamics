@@ -92,7 +92,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    public void onInputSlotUpdated(int slotId, ItemStack itemStack) {
+    public void onInputSlotUpdated(Player player, int slotId, ItemStack itemStack) {
 
     }
 
@@ -116,7 +116,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     public ItemStack writeElement(Player player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         return registry.writeVariableFacadeItem(!player.level.isClientSide(), itemStack, ValueTypes.REGISTRY,
-                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
+                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player.level, player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
     }
 
     @Override

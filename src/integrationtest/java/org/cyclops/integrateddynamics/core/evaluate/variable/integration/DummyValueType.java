@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
@@ -84,12 +85,12 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public Component canDeserialize(Tag value) {
+    public Component canDeserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         return null;
     }
 
     @Override
-    public DummyValue deserialize(Tag value) {
+    public DummyValue deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         return DummyValue.of();
     }
 

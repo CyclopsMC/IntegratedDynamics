@@ -12,14 +12,12 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
@@ -226,13 +224,13 @@ public class AspectReadBuilders {
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidHandler> PROP_GET = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             return BlockEntityHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+                    ForgeCapabilities.FLUID_HANDLER)
                     .orElse(EmptyFluidHandler.INSTANCE);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Pair<IFluidHandler, Integer>> PROP_GET_ACTIVATABLE = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             IFluidHandler fluidHandler = BlockEntityHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
+                    ForgeCapabilities.FLUID_HANDLER).orElse(null);
             if(fluidHandler != null) {
                 int i = input.getRight().getValue(PROP_TANKID).getRawValue();
                 if(i < fluidHandler.getTanks()) {
@@ -277,11 +275,11 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = input -> {
             PartPos target = input.getLeft().getTarget();
-            return BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+            return BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), ForgeCapabilities.ITEM_HANDLER).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = input -> {
             PartPos target = input.getLeft().getTarget();
-            IItemHandler itemHandler = BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+            IItemHandler itemHandler = BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), ForgeCapabilities.ITEM_HANDLER).orElse(null);
             int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
             if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
                 return itemHandler.getStackInSlot(slotId);
@@ -362,7 +360,7 @@ public class AspectReadBuilders {
             INetwork network = NetworkHelpers.getNetwork(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide()).orElse(null);
             int channel = input.getRight().getValue(PROPERTY_CHANNEL).getRawValue();
             return network != null ? network.getCapability(EnergyNetworkConfig.CAPABILITY)
-                    .map(energyNetwork -> energyNetwork.getChannelExternal(CapabilityEnergy.ENERGY, channel))
+                    .map(energyNetwork -> energyNetwork.getChannelExternal(ForgeCapabilities.ENERGY, channel))
                     .orElse(null) : null;
         };
 

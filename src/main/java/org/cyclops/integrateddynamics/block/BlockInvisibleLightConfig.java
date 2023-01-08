@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
@@ -7,6 +8,9 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Config for {@link BlockInvisibleLight}.
@@ -29,4 +33,8 @@ public class BlockInvisibleLightConfig extends BlockConfig {
         );
     }
 
+    @Override
+    protected Collection<ItemStack> defaultCreativeTabEntries() {
+        return Collections.emptyList();
+    }
 }

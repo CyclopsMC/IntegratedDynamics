@@ -10,6 +10,7 @@ import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.text.NumberFormat;
@@ -41,7 +42,7 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     }
 
     @Override
-    public ValueLong deserialize(Tag value) {
+    public ValueLong deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (value.getId() == Tag.TAG_LONG) {
             return ValueLong.of(((LongTag) value).getAsLong());
         } else {

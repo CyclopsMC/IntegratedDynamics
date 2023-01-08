@@ -4,13 +4,15 @@ import com.google.common.collect.Lists;
 import com.google.common.math.DoubleMath;
 import com.google.common.math.Stats;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundCustomSoundPacket;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.EntitySelector;
@@ -23,7 +25,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -865,9 +866,9 @@ public class Aspects {
                                         ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcast(null,
                                                 (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 64.0D,
                                                 world.dimension(),
-                                                new ClientboundCustomSoundPacket(ValueHelpers.createResourceLocationInEvaluation(input.getRight()),
+                                                new ClientboundSoundPacket(Holder.direct(SoundEvent.createVariableRangeEvent(ValueHelpers.createResourceLocationInEvaluation(input.getRight()))),
                                                         SoundSource.RECORDS,
-                                                        new Vec3((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D),
+                                                        (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
                                                         volume, f, world.getRandom().nextLong()));
                                     }
                                 }

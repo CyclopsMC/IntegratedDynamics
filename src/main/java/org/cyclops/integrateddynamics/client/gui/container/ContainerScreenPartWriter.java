@@ -51,7 +51,7 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
 
         // Render dummy target item
         // This could be cached if this would prove to be a bottleneck
-        ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), aspect);
+        ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), container.getPlayerIInventory().player.level, aspect);
         Rectangle pos = getElementPosition(container, index, true);
         Lighting.setupForFlatItems();
         itemRenderer.renderAndDecorateItem(itemStack, pos.x, pos.y);

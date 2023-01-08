@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 
@@ -53,7 +53,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     }
 
     public static ItemStack tryFillContainerForPlayer(IEnergyStorage source, ItemStack held, int tickAmount, Player player) {
-        return held.getCapability(CapabilityEnergy.ENERGY, null)
+        return held.getCapability(ForgeCapabilities.ENERGY, null)
                 .map(target -> {
                     int moved = target.receiveEnergy(source.extractEnergy(target.receiveEnergy(tickAmount, true), false), false);
                     if (moved > 0) {
@@ -66,7 +66,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     @Override
     public void inventoryTick(ItemStack itemStack, Level world, Entity entity, int itemSlot, boolean par5) {
         if (isActivated(itemStack)) {
-            itemStack.getCapability(CapabilityEnergy.ENERGY, null)
+            itemStack.getCapability(ForgeCapabilities.ENERGY, null)
                     .ifPresent(energyStorage -> autofill(energyStorage, world, entity));
         }
         super.inventoryTick(itemStack, world, entity, itemSlot, par5);

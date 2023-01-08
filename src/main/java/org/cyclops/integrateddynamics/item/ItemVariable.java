@@ -14,8 +14,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHolder;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderDefault;
 import org.cyclops.integrateddynamics.client.render.blockentity.ItemStackBlockEntityVariableRender;
@@ -37,7 +37,7 @@ public class ItemVariable extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
-        IVariableFacade variableFacade = getVariableFacade(itemStack);
+        IVariableFacade variableFacade = getVariableFacade(ValueDeseralizationContext.of(world), itemStack);
         variableFacade.appendHoverText(list, world);
         if (variableFacade != VariableFacadeHandlerRegistry.DUMMY_FACADE && Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
             list.add(Component.translatable("item.integrateddynamics.variable.warning"));
@@ -47,7 +47,7 @@ public class ItemVariable extends Item {
 
     @Override
     public Component getName(ItemStack itemStack) {
-        IVariableFacade variableFacade = getVariableFacade(itemStack);
+        IVariableFacade variableFacade = getVariableFacade(ValueDeseralizationContext.ofAllEnabled(), itemStack);
         String label;
         if(variableFacade.isValid() && (label = variableFacade.getLabel()) != null) {
             return Component.literal(label)
@@ -61,9 +61,9 @@ public class ItemVariable extends Item {
         return new DefaultCapabilityProvider<>(() -> VariableFacadeHolderConfig.CAPABILITY, new VariableFacadeHolderDefault(stack));
     }
 
-    public IVariableFacade getVariableFacade(ItemStack itemStack) {
+    public IVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
         return itemStack.getCapability(VariableFacadeHolderConfig.CAPABILITY)
-                .map(IVariableFacadeHolder::getVariableFacade)
+                .map(iVariableFacadeHolder -> iVariableFacadeHolder.getVariableFacade(valueDeseralizationContext))
                 .orElse(VariableFacadeHandlerRegistry.DUMMY_FACADE);
     }
 

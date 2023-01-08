@@ -15,8 +15,7 @@ public class ItemCrystalizedMenrilChunkConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_menril_chunk",
-                eConfig -> new Item(new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                eConfig -> new Item(new Item.Properties())
         );
     }
 

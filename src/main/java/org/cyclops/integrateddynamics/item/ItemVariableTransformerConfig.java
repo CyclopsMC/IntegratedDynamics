@@ -15,8 +15,7 @@ public class ItemVariableTransformerConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 "variable_transformer_" + (input ? "input" : "output"),
-                eConfig -> new Item(new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                eConfig -> new Item(new Item.Properties())
         );
     }
 

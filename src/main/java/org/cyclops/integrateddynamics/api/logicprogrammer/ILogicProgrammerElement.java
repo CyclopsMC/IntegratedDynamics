@@ -75,10 +75,11 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends GuiComp
 
     /**
      * Called when an input item slot has been updated.
+     * @param player
      * @param slotId The slot id.
      * @param itemStack The itemstack currently in the slot, can be null.
      */
-    public void onInputSlotUpdated(int slotId, ItemStack itemStack);
+    public void onInputSlotUpdated(Player player, int slotId, ItemStack itemStack);
 
     /**
      * @return If this element can be written to an item in its current state.

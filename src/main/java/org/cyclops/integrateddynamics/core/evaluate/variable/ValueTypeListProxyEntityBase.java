@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +27,7 @@ public abstract class ValueTypeListProxyEntityBase<T extends IValueType<V>, V ex
     }
 
     protected Entity getEntity() {
-        ServerLevel worldServer = ServerLifecycleHooks.getCurrentServer().getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(this.world)));
+        ServerLevel worldServer = ServerLifecycleHooks.getCurrentServer().getLevel(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(this.world)));
         if(worldServer != null) {
             return worldServer.getEntity(entity);
         }

@@ -16,9 +16,9 @@ public class IntegratedDynamicsSoundEvents {
     public static SoundEvent effect_page_flipsingle;
     public static SoundEvent effect_page_flipmultiple;
 
-    private static SoundEvent getRegisteredSoundEvent(IForgeRegistry<SoundEvent> registry,  String id) {
+    private static SoundEvent getRegisteredSoundEvent(IForgeRegistry<SoundEvent> registry, String id) {
         ResourceLocation resourceLocation = new ResourceLocation(Reference.MOD_ID, id);
-        SoundEvent soundEvent = new SoundEvent(resourceLocation);
+        SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(resourceLocation);
         registry.register(resourceLocation, soundEvent);
         return soundEvent;
     }

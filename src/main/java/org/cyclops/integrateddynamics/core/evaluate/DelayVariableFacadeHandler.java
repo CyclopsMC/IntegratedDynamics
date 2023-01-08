@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.item.DelayVariableFacade;
@@ -32,7 +33,7 @@ public class DelayVariableFacadeHandler implements IVariableFacadeHandler<IDelay
     }
 
     @Override
-    public IDelayVariableFacade getVariableFacade(int id, CompoundTag tag) {
+    public IDelayVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
         if(!tag.contains("partId", Tag.TAG_INT)) {
             return INVALID_FACADE;
         }

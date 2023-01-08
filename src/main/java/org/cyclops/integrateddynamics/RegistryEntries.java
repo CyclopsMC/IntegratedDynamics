@@ -4,7 +4,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -228,9 +228,9 @@ public class RegistryEntries {
     @ObjectHolder(registryName = "recipe_serializer", value = "integrateddynamics:crafting_special_energycontainer_combination")
     public static final RecipeSerializer<RecipeEnergyContainerCombination> RECIPESERIALIZER_ENERGY_CONTAINER_COMBINATION = null;
     @ObjectHolder(registryName = "recipe_serializer", value = "integrateddynamics:crafting_special_facade")
-    public static final SimpleRecipeSerializer<ItemFacadeRecipe> RECIPESERIALIZER_FACADE = null;
+    public static final SimpleCraftingRecipeSerializer<ItemFacadeRecipe> RECIPESERIALIZER_FACADE = null;
     @ObjectHolder(registryName = "recipe_serializer", value = "integrateddynamics:crafting_special_variable_copy")
-    public static final SimpleRecipeSerializer<ItemVariableCopyRecipe> RECIPESERIALIZER_VARIABLE_COPY = null;
+    public static final SimpleCraftingRecipeSerializer<ItemVariableCopyRecipe> RECIPESERIALIZER_VARIABLE_COPY = null;
 
 
 }

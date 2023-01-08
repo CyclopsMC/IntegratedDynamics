@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -205,8 +206,8 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         }
 
         @Override
-        public void readFromNBT(CompoundTag tag) {
-            super.readFromNBT(tag);
+        public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
+            super.readFromNBT(valueDeseralizationContext, tag);
             if (tag.contains("connect_offset")) {
                 this.offset = tag.getInt("connect_offset");
             }

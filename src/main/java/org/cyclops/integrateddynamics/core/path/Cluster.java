@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.experimental.Delegate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -72,7 +72,7 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
         for(int i = 0; i < list.size(); i++) {
             CompoundTag elementTag = list.getCompound(i);
             ResourceLocation dimensionId = new ResourceLocation(elementTag.getString("dimension"));
-            ResourceKey<Level> dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, dimensionId);
+            ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimensionId);
             Level world = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
             BlockPos pos = BlockPos.of(elementTag.getLong("pos"));
             Direction side = null;

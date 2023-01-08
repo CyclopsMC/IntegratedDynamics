@@ -11,6 +11,7 @@ import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtende
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
@@ -44,7 +45,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
                 Component.translatable("item.integrateddynamics.labeller.button.write"), button -> {
             ItemStack itemStack = getMenu().getItemStack();
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-            IVariableFacade variableFacade = registry.handle(itemStack);
+            IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(container.getPlayerIInventory().player.level), itemStack);
             if(variableFacade.isValid()) {
                 int variableId = variableFacade.getId();
                 String label = StringUtils.isBlank(searchField.getValue()) ? "" : searchField.getValue();
@@ -56,7 +57,6 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
             }
         }));
 
-        this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
         int searchWidth = 87;
         int searchX = 36;
         int searchY = 11;
@@ -68,7 +68,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
         this.searchField.setTextColor(16777215);
         this.searchField.setCanLoseFocus(false);
         this.searchField.setValue("");
-        this.searchField.x = this.leftPos + (searchX + searchWidth) - this.searchField.getWidth();
+        this.searchField.setX(this.leftPos + (searchX + searchWidth) - this.searchField.getWidth());
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,8 +49,8 @@ public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
         } else if (direction == Direction.DOWN) {
             rotationX = 90;
         }
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationY));
-        matrixStack.mulPose(Vector3f.XP.rotationDegrees(rotationX));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(rotationY));
+        matrixStack.mulPose(Axis.XP.rotationDegrees(rotationX));
     }
 
 }

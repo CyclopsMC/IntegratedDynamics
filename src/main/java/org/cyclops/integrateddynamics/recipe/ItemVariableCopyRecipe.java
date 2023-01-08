@@ -4,6 +4,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.item.ItemVariable;
@@ -21,12 +23,15 @@ import org.cyclops.integrateddynamics.item.ItemVariable;
  */
 public class ItemVariableCopyRecipe extends CustomRecipe {
 
-    public ItemVariableCopyRecipe(ResourceLocation id) {
-        super(id);
+    private ValueDeseralizationContext lastValueDeseralizationContext;
+
+    public ItemVariableCopyRecipe(ResourceLocation id, CraftingBookCategory craftingBookCategory) {
+        super(id, craftingBookCategory);
     }
 
     @Override
     public boolean matches(CraftingContainer inv, Level worldIn) {
+        lastValueDeseralizationContext = ValueDeseralizationContext.of(worldIn);
         return !assemble(inv).isEmpty();
     }
 
@@ -40,7 +45,7 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
             ItemStack element = inv.getItem(j);
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 count++;
-                facade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(element);
+                facade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(lastValueDeseralizationContext, element);
                 if(!facade.isValid() && withoutData.isEmpty()) {
                     withoutData = element;
                 }
@@ -71,7 +76,7 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
         for(int j = 0; j < inv.getContainerSize(); j++) {
             ItemStack element = inv.getItem(j);
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
-                IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(element);
+                IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(lastValueDeseralizationContext, element);
                 if(facade.isValid()) {
                     // Create a copy with a new id.
                     ret.set(j, IntegratedDynamics._instance.getRegistryManager()

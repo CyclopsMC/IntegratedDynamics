@@ -10,9 +10,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.item.IInformationProvider;
@@ -50,10 +50,10 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
     }
 
     public LazyOptional<IEnergyStorage> getEnergyBattery(ItemStack itemStack) {
-        if (CapabilityEnergy.ENERGY == null) {
+        if (ForgeCapabilities.ENERGY == null) {
             return LazyOptional.of(() -> this.createCapability(itemStack));
         }
-        return itemStack.getCapability(CapabilityEnergy.ENERGY);
+        return itemStack.getCapability(ForgeCapabilities.ENERGY);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -101,7 +101,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt) {
-        return new DefaultCapabilityProvider<>(() -> CapabilityEnergy.ENERGY,
+        return new DefaultCapabilityProvider<>(() -> ForgeCapabilities.ENERGY,
                 LazyOptional.of(() -> this.createCapability(stack)));
     }
 

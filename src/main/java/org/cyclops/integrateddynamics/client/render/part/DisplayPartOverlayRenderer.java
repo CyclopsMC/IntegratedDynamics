@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.part;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -84,7 +84,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
             }
             int rotation = partState.getFacingRotation().ordinal() - 2;
             matrixStack.translate(6, 6, 0);
-            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(rotation * 90));
+            matrixStack.mulPose(Axis.ZP.rotationDegrees(rotation * 90));
             matrixStack.translate(-6, -6, 0);
 
             IValue value = partState.getDisplayValue();

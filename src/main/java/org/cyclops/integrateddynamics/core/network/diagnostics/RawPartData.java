@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +37,7 @@ public class RawPartData implements IRawData {
     }
 
     public static RawPartData fromNbt(CompoundTag tag) {
-        return new RawPartData(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
+        return new RawPartData(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
                 Direction.values()[tag.getInt("side")], tag.getString("name"), tag.getLong("last20TicksDurationNs"));
     }
 

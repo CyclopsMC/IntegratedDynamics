@@ -10,11 +10,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
@@ -71,9 +70,9 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
             }
         };
         this.tank = new SingleUseTank(FluidHelpers.BUCKET_VOLUME);
-        addCapabilityInternal(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, LazyOptional.of(this.getInventory()::getItemHandler));
+        addCapabilityInternal(ForgeCapabilities.ITEM_HANDLER, LazyOptional.of(this.getInventory()::getItemHandler));
         addCapabilityInternal(Capabilities.INVENTORY_STATE, LazyOptional.of(() -> new SimpleInventoryState(getInventory())));
-        addCapabilityInternal(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, LazyOptional.of(this::getTank));
+        addCapabilityInternal(ForgeCapabilities.FLUID_HANDLER, LazyOptional.of(this::getTank));
 
         // Add dirty mark listeners to inventory and tank
         this.inventory.addDirtyMarkListener(this::sendUpdate);
@@ -145,7 +144,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                         .map(axisDirection -> Direction.get(axisDirection, axis))
                         .forEach(side -> {
                             if (!blockEntity.getTank().isEmpty()) {
-                                BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+                                BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), ForgeCapabilities.FLUID_HANDLER)
                                         .ifPresent(handler -> {
                                             FluidStack fluidStack = new FluidStack(blockEntity.getTank().getFluid(),
                                                     Math.min(100, blockEntity.getTank().getFluidAmount()));
@@ -167,7 +166,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                                 ItemStack resultStack = itemStackChance.getIngredientFirst().copy();
                                 for (Direction side : Direction.values()) {
                                     if (!resultStack.isEmpty() && side != Direction.UP) {
-                                        IItemHandler itemHandler = BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+                                        IItemHandler itemHandler = BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), ForgeCapabilities.ITEM_HANDLER).orElse(null);
                                         if (itemHandler != null) {
                                             resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
                                         }

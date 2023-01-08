@@ -11,7 +11,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.cyclops.cyclopscore.helper.LootHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
@@ -33,7 +33,7 @@ public class LootFunctionCopyEnergyBatteryData extends LootItemConditionalFuncti
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
         BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityEnergyBattery) {
-            itemStack.getCapability(CapabilityEnergy.ENERGY)
+            itemStack.getCapability(ForgeCapabilities.ENERGY)
                     .ifPresent(energyStorage -> {
                         ((IEnergyStorageMutable) energyStorage).setEnergy(((BlockEntityEnergyBattery) tile).getEnergyStored());
                         ((IEnergyStorageCapacity) energyStorage).setCapacity(((BlockEntityEnergyBattery) tile).getMaxEnergyStored());

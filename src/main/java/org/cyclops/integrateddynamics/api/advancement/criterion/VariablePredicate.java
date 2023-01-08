@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -51,13 +52,13 @@ public class VariablePredicate<V extends IVariable> {
         return true;
     }
 
-    public static VariablePredicate deserialize(@Nullable JsonElement element) {
+    public static VariablePredicate deserialize(ValueDeseralizationContext valueDeseralizationContext, @Nullable JsonElement element) {
         if (element != null && !element.isJsonNull()) {
             JsonObject jsonobject = GsonHelper.convertToJsonObject(element, "variable");
             IVariableFacadeHandler handler;
 
             IValueType valueType = JsonDeserializers.deserializeValueType(jsonobject);
-            ValuePredicate valuePredicate = JsonDeserializers.deserializeValue(jsonobject, valueType);
+            ValuePredicate valuePredicate = JsonDeserializers.deserializeValue(valueDeseralizationContext, jsonobject, valueType);
 
             JsonElement typeElement = jsonobject.get("type");
             if (typeElement != null && !typeElement.isJsonNull()) {
@@ -67,7 +68,7 @@ public class VariablePredicate<V extends IVariable> {
                     throw new JsonSyntaxException("Unknown variable type '" + type + "', valid types are: "
                             + VARIABLE_FACADE_HANDLER_REGISTRY.getHandlerNames());
                 }
-                return handler.deserializeVariablePredicate(jsonobject, valueType, valuePredicate);
+                return handler.deserializeVariablePredicate(valueDeseralizationContext, jsonobject, valueType, valuePredicate);
             } else {
                 return new VariablePredicate<>(IVariable.class, valueType, valuePredicate);
             }

@@ -19,8 +19,7 @@ public class ItemBucketLiquidChorusConfig extends ItemConfig {
                 "bucket_liquid_chorus",
                 eConfig -> new BucketItem(() -> RegistryEntries.FLUID_LIQUID_CHORUS, new Item.Properties()
                         .craftRemainder(Items.BUCKET)
-                        .stacksTo(1)
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                        .stacksTo(1))
         );
     }
 

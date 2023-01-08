@@ -15,8 +15,7 @@ public class ItemProtoChorusConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 "proto_chorus",
-                eConfig -> new Item(new Item.Properties()
-                        .tab(IntegratedDynamics._instance.getDefaultItemGroup()))
+                eConfig -> new Item(new Item.Properties())
         );
     }
 

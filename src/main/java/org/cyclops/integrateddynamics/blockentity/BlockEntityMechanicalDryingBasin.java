@@ -12,9 +12,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
@@ -55,12 +55,12 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         super(RegistryEntries.BLOCK_ENTITY_MECHANICAL_DRYING_BASIN, blockPos, blockState, INVENTORY_SIZE);
 
         // Add fluid tank capability
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.UP, LazyOptional.of(() -> tankIn));
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.DOWN, LazyOptional.of(() -> tankOut));
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.NORTH, LazyOptional.of(() -> tankIn));
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.SOUTH, LazyOptional.of(() -> tankIn));
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.WEST, LazyOptional.of(() -> tankIn));
-        addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.EAST, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.UP, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.DOWN, LazyOptional.of(() -> tankOut));
+        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.NORTH, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.SOUTH, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.WEST, LazyOptional.of(() -> tankIn));
+        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.EAST, LazyOptional.of(() -> tankIn));
 
         // Add recipe handler capability
         addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getLevel)));

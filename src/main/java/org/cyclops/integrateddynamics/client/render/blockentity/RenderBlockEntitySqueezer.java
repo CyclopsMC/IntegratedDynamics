@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,6 +22,7 @@ import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.blockentity.BlockEntitySqueezer;
+import org.joml.Matrix4f;
 
 /**
  * Renderer for the item inside the {@link org.cyclops.integrateddynamics.block.BlockDryingBasin}.
@@ -105,7 +105,7 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
                         IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
                         Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getTintColor(fluid));
 
-                        VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlas().location()));
+                        VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
                         Matrix4f matrix = matrixStack.last().pose();
 
                         float[][] c = coordinates[side.ordinal()];

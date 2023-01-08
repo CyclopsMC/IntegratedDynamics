@@ -11,6 +11,7 @@ import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -54,7 +55,7 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
     }
 
     protected InventoryVariableEvaluator<IValue> createEvaluator() {
-        return new InventoryVariableEvaluator<>(this.getInventory(), getSlotRead(), ValueTypes.CATEGORY_ANY);
+        return new InventoryVariableEvaluator<>(this.getInventory(), getSlotRead(), ValueDeseralizationContext.of(getLevel()), ValueTypes.CATEGORY_ANY);
     }
 
     public InventoryVariableEvaluator getEvaluator() {

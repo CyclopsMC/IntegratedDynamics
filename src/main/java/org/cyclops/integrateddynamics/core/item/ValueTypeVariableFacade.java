@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
@@ -55,16 +56,16 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
         this.value = value;
     }
 
-    public ValueTypeVariableFacade(boolean generateId, IValueType<V> valueType, Tag value) {
+    public ValueTypeVariableFacade(boolean generateId, IValueType<V> valueType, ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         super(generateId);
         this.valueType = valueType;
-        this.value = ValueHelpers.deserializeRaw(valueType, value);
+        this.value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, value);
     }
 
-    public ValueTypeVariableFacade(int id, IValueType<V> valueType, Tag value) {
+    public ValueTypeVariableFacade(int id, IValueType<V> valueType, ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         super(id);
         this.valueType = valueType;
-        this.value = ValueHelpers.deserializeRaw(valueType, value);
+        this.value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, value);
     }
 
     @Override

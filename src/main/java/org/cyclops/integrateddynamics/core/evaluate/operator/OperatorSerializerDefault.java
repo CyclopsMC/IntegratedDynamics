@@ -5,6 +5,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * The default serializer for operators.
@@ -28,7 +29,7 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
     }
 
     @Override
-    public IOperator deserialize(Tag value) {
+    public IOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         return Operators.REGISTRY.getOperator(new ResourceLocation(value.getAsString()));
     }
 }

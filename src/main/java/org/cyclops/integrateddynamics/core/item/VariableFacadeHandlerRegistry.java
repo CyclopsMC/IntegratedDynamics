@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
@@ -62,15 +63,15 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public IVariableFacade handle(ItemStack itemStack) {
+    public IVariableFacade handle(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
         if(itemStack.isEmpty() || !itemStack.hasTag()) {
             return DUMMY_FACADE;
         }
-        return handle(itemStack.getTag());
+        return handle(valueDeseralizationContext, itemStack.getTag());
     }
 
     @Override
-    public IVariableFacade handle(CompoundTag tagCompound) {
+    public IVariableFacade handle(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tagCompound) {
         if(tagCompound == null) {
             return DUMMY_FACADE;
         }
@@ -82,7 +83,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         int id = tagCompound.getInt("_id");
         IVariableFacadeHandler handler = getHandler(new ResourceLocation(type));
         if(handler != null) {
-            return handler.getVariableFacade(id, tagCompound);
+            return handler.getVariableFacade(valueDeseralizationContext, id, tagCompound);
         }
         return DUMMY_FACADE;
     }
@@ -117,13 +118,13 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, @Nullable Player player, @Nullable BlockState blockState) {
+    public <F extends IVariableFacade> ItemStack writeVariableFacadeItem(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, Level level, @Nullable Player player, @Nullable BlockState blockState) {
         if(itemStack.isEmpty()) {
             return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
         CompoundTag tag = itemStack.getOrCreateTag();
-        F variableFacade = writeVariableFacade(generateId, itemStack, variableFacadeHandler, variableFacadeFactory);
+        F variableFacade = writeVariableFacade(generateId, itemStack, variableFacadeHandler, variableFacadeFactory, ValueDeseralizationContext.of(level));
         if (player != null) {
             MinecraftForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade, blockState));
         }
@@ -132,12 +133,12 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory) {
+    public <F extends IVariableFacade> F writeVariableFacade(boolean generateId, ItemStack itemStack, IVariableFacadeHandler<F> variableFacadeHandler, IVariableFacadeFactory<F> variableFacadeFactory, ValueDeseralizationContext valueDeseralizationContext) {
         if(itemStack.isEmpty()) {
             return null;
         }
         CompoundTag tag = itemStack.getOrCreateTag();
-        IVariableFacade previousVariableFacade = this.handle(tag);
+        IVariableFacade previousVariableFacade = this.handle(valueDeseralizationContext, tag);
         F variableFacade;
         if(generateId && previousVariableFacade.getId() > -1) {
             variableFacade = variableFacadeFactory.create(previousVariableFacade.getId());

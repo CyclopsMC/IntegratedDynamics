@@ -8,6 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
@@ -33,8 +34,8 @@ public class LogicProgrammerValueTypeListValueChangedPacket extends PacketCodec 
         this.value = ValueHelpers.serializeRaw(value);
     }
 
-    protected ValueTypeList.ValueList getListValue() {
-        return ValueHelpers.deserializeRaw(ValueTypes.LIST, value);
+    protected ValueTypeList.ValueList getListValue(Level level) {
+        return ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(level), ValueTypes.LIST, value);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class LogicProgrammerValueTypeListValueChangedPacket extends PacketCodec 
         if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
             ILogicProgrammerElement element = ((ContainerLogicProgrammerBase) player.containerMenu).getActiveElement();
             if(element instanceof ValueTypeListLPElement) {
-                ((ValueTypeListLPElement) element).setServerValue(getListValue());
+                ((ValueTypeListLPElement) element).setServerValue(getListValue(world));
                 ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
             }
         }

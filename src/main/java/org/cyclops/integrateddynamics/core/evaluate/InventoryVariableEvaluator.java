@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -31,14 +32,16 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
             .getRegistry(IVariableFacadeHandlerRegistry.class);
     private final Container inventory;
     private final int slot;
+    private final ValueDeseralizationContext valueDeseralizationContext;
     private final IValueType containingValueType;
 
     private IVariableFacade variableStored = null;
     private List<MutableComponent> errors = Lists.newLinkedList();
 
-    public InventoryVariableEvaluator(Container inventory, int slot, IValueType<V> containingValueType) {
+    public InventoryVariableEvaluator(Container inventory, int slot, ValueDeseralizationContext valueDeseralizationContext, IValueType<V> containingValueType) {
         this.inventory = inventory;
         this.slot = slot;
+        this.valueDeseralizationContext = valueDeseralizationContext;
         this.containingValueType = containingValueType;
     }
 
@@ -64,7 +67,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         if (!inventory.getItem(slot).isEmpty() && NetworkHelpers.shouldWork()) {
             // Update proxy input
             ItemStack itemStack = inventory.getItem(slot);
-            this.variableStored = handler.handle(itemStack);
+            this.variableStored = handler.handle(valueDeseralizationContext, itemStack);
             if(this.variableStored != null) {
                 variableId = this.variableStored.getId();
             }

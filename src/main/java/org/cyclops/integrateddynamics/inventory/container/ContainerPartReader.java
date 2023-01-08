@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
@@ -154,7 +155,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
             ItemStack itemStack = inputSlots.getItem(i);
             if(!itemStack.isEmpty() && outputSlots.getItem(i).isEmpty()) {
-                ItemStack outputStack = writeAspectInfo(!player.level.isClientSide(), itemStack.copy(), getUnfilteredItems().get(i));
+                ItemStack outputStack = writeAspectInfo(!player.level.isClientSide(), itemStack.copy(), player.level, getUnfilteredItems().get(i));
                 outputSlots.setItem(i, outputStack);
                 inputSlots.removeItem(i, 1);
             }
@@ -202,8 +203,8 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     }
 
     @Override
-    public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, final IAspect aspect) {
-        ItemStack resultStack = super.writeAspectInfo(generateId, itemStack, aspect);
+    public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, Level level, final IAspect aspect) {
+        ItemStack resultStack = super.writeAspectInfo(generateId, itemStack, level, aspect);
         if (player.level.isClientSide()) {
             return resultStack;
         }

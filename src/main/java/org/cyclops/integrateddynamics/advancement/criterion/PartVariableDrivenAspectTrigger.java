@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.JsonDeserializers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariableContentsUpdatedEvent;
 
@@ -35,7 +36,7 @@ public class PartVariableDrivenAspectTrigger extends SimpleCriterionTrigger<Part
     @Override
     public Instance createInstance(JsonObject json, EntityPredicate.Composite entityPredicate, DeserializationContext conditionsParser) {
         return new Instance(getId(), entityPredicate,
-                JsonDeserializers.deserializePartType(json), VariablePredicate.deserialize(json.get("variable")));
+                JsonDeserializers.deserializePartType(json), VariablePredicate.deserialize(ValueDeseralizationContext.ofAllEnabled(), json.get("variable")));
     }
 
     public void test(ServerPlayer player, PartVariableDrivenVariableContentsUpdatedEvent event) {

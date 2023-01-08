@@ -131,7 +131,7 @@ public class AspectWriteBuilders {
                     if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
                         float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
                         float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                        world.playSound(null, pos, instrument.getSoundEvent(), SoundSource.RECORDS, volume, f);
+                        world.playSound(null, pos, instrument.getSoundEvent().get(), SoundSource.RECORDS, volume, f);
                     }
                 }
             }

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -23,7 +23,7 @@ public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListPr
     }
 
     protected LazyOptional<IFluidHandler> getTank() {
-        return BlockEntityHelpers.getCapability(getPos(), getSide(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+        return BlockEntityHelpers.getCapability(getPos(), getSide(), ForgeCapabilities.FLUID_HANDLER);
     }
 
     @Override

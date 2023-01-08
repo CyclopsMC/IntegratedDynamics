@@ -37,7 +37,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     public BlockState getFacadeBlock(ItemStack itemStack) {
         if(!itemStack.isEmpty() && itemStack.hasTag()) {
             CompoundTag tag = itemStack.getTag();
-            return BlockHelpers.deserializeBlockState(tag.getCompound("block"));
+            return BlockHelpers.deserializeBlockState(BlockHelpers.HOLDER_GETTER_FORGE, tag.getCompound("block"));
         }
         return null;
     }
@@ -95,7 +95,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BakedModel createDynamicModel(ModelEvent.BakingCompleted event) {
+    public BakedModel createDynamicModel(ModelEvent.ModifyBakingResult event) {
         // Don't throw away the original model, but use if for displaying an unbound facade item.
         ModelResourceLocation location = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(this), "inventory");
         FacadeModel.emptyModel = event.getModels().get(location);
