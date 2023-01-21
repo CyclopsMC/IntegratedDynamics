@@ -27,16 +27,19 @@ public class LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket extends P
     private String tag;
     @CodecField
     private int tagQuantity;
+    @CodecField
+    private boolean reusable;
 
     public LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket() {
 
     }
 
-    public LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket(int slot, boolean nbt, String tag, int tagQuantity) {
+    public LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket(int slot, boolean nbt, String tag, int tagQuantity, boolean reusable) {
         this.slot = slot;
         this.nbt = nbt;
         this.tag = tag;
         this.tagQuantity = tagQuantity;
+        this.reusable = reusable;
     }
 
     @Override
@@ -59,6 +62,7 @@ public class LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket extends P
                 props.setNbt(nbt);
                 props.setItemTag(tag.isEmpty() ? null : tag);
                 props.setTagQuantity(this.tagQuantity);
+                props.setReusable(reusable);
                 ((ContainerLogicProgrammerBase) player.containerMenu).onDirty();
             }
         }

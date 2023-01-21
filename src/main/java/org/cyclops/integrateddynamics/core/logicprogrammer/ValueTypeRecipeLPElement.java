@@ -165,7 +165,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     public void sendSlotPropertiesToServer(int slotId, ItemMatchProperties props) {
         IntegratedDynamics._instance.getPacketHandler().sendToServer(
                 new LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket(
-                        slotId, props.isNbt(), props.getItemTag() == null ? "" : props.getItemTag(), props.getTagQuantity()));
+                        slotId, props.isNbt(), props.getItemTag() == null ? "" : props.getItemTag(), props.getTagQuantity(), props.isReusable()));
     }
 
     // Used by ID-Compat for JEI recipe transfer handler
@@ -441,6 +441,19 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return inputs;
     }
 
+    protected Map<IngredientComponent<?, ?>, List<Boolean>> getInputsReusable(List<ItemMatchProperties> itemStacks) {
+        Map<IngredientComponent<?, ?>, List<Boolean>> inputs = Maps.newIdentityHashMap();
+
+        List<Boolean> items = itemStacks.stream()
+                .map(ItemMatchProperties::isReusable)
+                .collect(Collectors.toList());
+        if (!items.isEmpty()) {
+            inputs.put(IngredientComponent.ITEMSTACK, (List) items);
+        }
+
+        return inputs;
+    }
+
     protected Map<IngredientComponent<?, ?>, List<?>> getOutputs(List<ItemStack> itemStacksIn,
                                                                  ItemStack fluid, int fluidAmount,
                                                                  long energy) {
@@ -480,6 +493,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         return ValueObjectTypeRecipe.ValueRecipe.of(
                 new RecipeDefinition(getInputs(this.inputStacks, this.inputFluid,
                         Integer.parseInt(this.inputFluidAmount), Long.parseLong(this.inputEnergy)),
+                getInputsReusable(this.inputStacks),
                 new MixedIngredients(getOutputs(this.outputStacks, this.outputFluid,
                         Integer.parseInt(this.outputFluidAmount), Long.parseLong(this.outputEnergy)))));
     }
