@@ -27,6 +27,7 @@ public class ItemMatchProperties {
                 packetBuffer.writeBoolean(props.nbt);
                 packetBuffer.writeUtf(props.itemTag != null ? props.itemTag : "");
                 packetBuffer.writeInt(props.tagQuantity);
+                packetBuffer.writeBoolean(props.reusable);
             }
 
             @Override
@@ -35,7 +36,8 @@ public class ItemMatchProperties {
                 boolean nbt = packetBuffer.readBoolean();
                 String itemTag = packetBuffer.readUtf(32767);
                 int tagQuantity = packetBuffer.readInt();
-                return new ItemMatchProperties(itemStack, nbt, itemTag.isEmpty() ? null : itemTag, tagQuantity);
+                boolean reusable = packetBuffer.readBoolean();
+                return new ItemMatchProperties(itemStack, nbt, itemTag.isEmpty() ? null : itemTag, tagQuantity, reusable);
             }
         });
     }
@@ -45,16 +47,18 @@ public class ItemMatchProperties {
     @Nullable
     private String itemTag;
     private int tagQuantity;
+    private boolean reusable;
 
     public ItemMatchProperties(ItemStack itemStack) {
-        this(itemStack, false, null, 1);
+        this(itemStack, false, null, 1, false);
     }
 
-    public ItemMatchProperties(ItemStack itemStack, boolean nbt, @Nullable String itemTag, int tagQuantity) {
+    public ItemMatchProperties(ItemStack itemStack, boolean nbt, @Nullable String itemTag, int tagQuantity, boolean reusable) {
         this.itemStack = itemStack;
         this.nbt = nbt;
         this.itemTag = itemTag;
         this.tagQuantity = tagQuantity;
+        this.reusable = reusable;
     }
 
     public ItemStack getItemStack() {
@@ -84,6 +88,14 @@ public class ItemMatchProperties {
 
     public void setTagQuantity(int tagQuantity) {
         this.tagQuantity = tagQuantity;
+    }
+
+    public boolean isReusable() {
+        return reusable;
+    }
+
+    public void setReusable(boolean reusable) {
+        this.reusable = reusable;
     }
 
     public boolean isValid() {

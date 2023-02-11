@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.16.0 or higher.
+
+Fixes:
+* Fix JEI recipe modification after modifying in LP
+  Closes CyclopsMC/IntegratedCrafting#89
+

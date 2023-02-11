@@ -41,6 +41,7 @@
     "gui.integrateddynamics.output_short": "Output",
     "gui.integrateddynamics.recipe.strictnbt": "Strict NBT",
     "gui.integrateddynamics.recipe.tagvariants": "Item tag variants",
+    "gui.integrateddynamics.recipe.reusable": "Reusable",
 
     "_comment": "Diagnostics",
     "gui.integrateddynamics.diagnostics.title": "Integrated Dynamics - Network Diagnostics",
@@ -1688,6 +1689,7 @@
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text2": "Recipes can be created visually using the &lLogic Programmer&r, or they can be read from (supported) machines using the &lMachine Reader&r.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text3": "These recipes can be used for autocrafting mods such as &lIntegrated Crafting&r.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text4": "To quickly find specific recipes among existing &lVariable Cards&r inside a GUI, you can hold shift to temporarily display what the output item of the recipe is.",
+    "info_book.integrateddynamics.manual.logic.value_types.recipe.text5": "Shift-clicking on an input slot inside the &lLogic Programmer&r allows you to configure detailed properties of this input slot. For example, it allows you to indicate if NBT should be considered or not, if this item can be reused across multiple recipes (e.g. if it will not be fully consumed after the crafting job), and if tag-based alternatives should be considered for this item.",
 
     "info_book.integrateddynamics.manual.logic.variables": "Variables",
 
