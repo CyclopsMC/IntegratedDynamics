@@ -53,6 +53,10 @@ public class ItemMatchProperties {
         this(itemStack, false, null, 1, false);
     }
 
+    public ItemMatchProperties(ItemStack itemStack, boolean nbt, @Nullable String itemTag, int tagQuantity) {
+        this(itemStack, nbt, itemTag, tagQuantity, false);
+    }
+
     public ItemMatchProperties(ItemStack itemStack, boolean nbt, @Nullable String itemTag, int tagQuantity, boolean reusable) {
         this.itemStack = itemStack;
         this.nbt = nbt;
