@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.17.0 or higher.
+
+Additions:
+* Allow recipe ingredients to be marked as reusable
+  Required for CyclopsMC/IntegratedCrafting#36
+
+Fixes:
+* Fix JEI recipe modification after modifying in LP
+  Closes CyclopsMC/IntegratedCrafting#89
+
