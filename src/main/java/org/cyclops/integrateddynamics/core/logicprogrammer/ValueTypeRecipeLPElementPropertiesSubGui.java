@@ -42,6 +42,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     private final int slotId;
     private ButtonCheckbox inputNbt;
     private ButtonCheckbox inputTags;
+    private ButtonCheckbox inputReusable;
     private WidgetTextFieldDropdown<ResourceLocation> inputTagsDropdown;
     private ButtonImage inputSave;
 
@@ -65,7 +66,12 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             saveGuiToState();
             loadStateToGui();
         });
-        this.inputTags = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 12, 20, 10,
+        this.inputReusable = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 12, 20, 10,
+                Component.translatable(L10NValues.GUI_RECIPE_REUSABLE), (entry) -> {
+            saveGuiToState();
+            loadStateToGui();
+        });
+        this.inputTags = new ButtonCheckbox(guiLeft + getX() + 2, guiTop + getY() + 22, 20, 10,
                 Component.translatable(L10NValues.GUI_RECIPE_TAGVARIANTS), (entry) -> {
             // Only allow one checkbox to be true at the same time
             if (this.inputTags.isChecked()) {
@@ -78,7 +84,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             }
         });
         this.inputTagsDropdown = new WidgetTextFieldDropdown<>(Minecraft.getInstance().font,
-                guiLeft + getX() + 2, guiTop + getY() + 23,
+                guiLeft + getX() + 2, guiTop + getY() + 33,
                 134, 14,
                 Component.translatable("gui.cyclopscore.search"), true,
                 Sets.newHashSet());
@@ -133,6 +139,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         ItemMatchProperties props = getSlotProperties();
         this.inputNbt.setChecked(props.isNbt());
         this.inputTags.setChecked(props.getItemTag() != null);
+        this.inputReusable.setChecked(props.isReusable());
         this.inputTagsDropdown.setVisible(this.inputTags.isChecked());
 
         if (this.inputTags.isChecked()) {
@@ -161,6 +168,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         String tag = this.inputTags.isChecked() ? this.inputTagsDropdown.getValue() : null;
         getSlotProperties().setNbt(nbt);
         getSlotProperties().setItemTag(tag);
+        getSlotProperties().setReusable(this.inputReusable.isChecked());
         element.sendSlotPropertiesToServer(slotId, getSlotProperties());
     }
 
@@ -177,8 +185,10 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
 
         this.inputNbt.render(matrixStack, mouseX, mouseY, partialTicks);
         fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, 0);
+        this.inputReusable.render(matrixStack, mouseX, mouseY, partialTicks);
+        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_REUSABLE), guiLeft + getX() + 24, guiTop + getY() + 13, 0);
         this.inputTags.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 13, 0);
+        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 23, 0);
         this.inputSave.render(matrixStack, mouseX, mouseY, partialTicks);
         this.inputTagsDropdown.render(matrixStack, mouseX, mouseY, partialTicks);
     }
@@ -243,6 +253,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         return inputNbt.mouseClicked(mouseX, mouseY, mouseButton)
+                || inputReusable.mouseClicked(mouseX, mouseY, mouseButton)
                 || inputTags.mouseClicked(mouseX, mouseY, mouseButton)
                 || inputTagsDropdown.mouseClicked(mouseX, mouseY, mouseButton)
                 || inputSave.mouseClicked(mouseX, mouseY, mouseButton)

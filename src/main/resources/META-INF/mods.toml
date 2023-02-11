@@ -22,7 +22,7 @@ Take full and automated control of your appliances.
 [[dependencies.integrateddynamics]]
     modId="commoncapabilities"
     mandatory=true
-    versionRange="[2.8.3,)"
+    versionRange="[2.9.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
