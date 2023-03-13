@@ -12,6 +12,7 @@ import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffset;
 import org.lwjgl.glfw.GLFW;
@@ -51,6 +52,8 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         numberFieldX = new WidgetNumberField(font, leftPos + 107 - 54 - 7 - 18, topPos + 33, 46, 14, true,
                 Component.translatable("gui.integrateddynamics.partsettings.partoffset.x"), true);
         numberFieldX.setMaxLength(4);
+        numberFieldX.setMaxValue(GeneralConfig.maxPartOffset);
+        numberFieldX.setMinValue(-GeneralConfig.maxPartOffset);
         numberFieldX.setVisible(true);
         numberFieldX.setTextColor(16777215);
         numberFieldX.setCanLoseFocus(true);
@@ -58,6 +61,8 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         numberFieldY = new WidgetNumberField(font, leftPos + 107 - 54 + 36 - 7, topPos + 33, 46, 14, true,
                 Component.translatable("gui.integrateddynamics.partsettings.partoffset.x"), true);
         numberFieldY.setMaxLength(4);
+        numberFieldY.setMaxValue(GeneralConfig.maxPartOffset);
+        numberFieldY.setMinValue(-GeneralConfig.maxPartOffset);
         numberFieldY.setVisible(true);
         numberFieldY.setTextColor(16777215);
         numberFieldY.setCanLoseFocus(true);
@@ -65,6 +70,8 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         numberFieldZ = new WidgetNumberField(font, leftPos + 107 - 54 + 72 - 7 + 18, topPos + 33, 46, 14, true,
                 Component.translatable("gui.integrateddynamics.partsettings.partoffset.x"), true);
         numberFieldZ.setMaxLength(4);
+        numberFieldZ.setMaxValue(GeneralConfig.maxPartOffset);
+        numberFieldZ.setMinValue(-GeneralConfig.maxPartOffset);
         numberFieldZ.setVisible(true);
         numberFieldZ.setTextColor(16777215);
         numberFieldZ.setCanLoseFocus(true);

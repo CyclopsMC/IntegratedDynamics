@@ -151,6 +151,9 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "general", comment = "The default port for running the network diagnostics HTTP server.", configLocation = ModConfig.Type.CLIENT)
     public static int diagnosticsWebServerPort = 3030;
 
+    @ConfigurableProperty(category = "machine", comment = "The maximum offset in blocks a part can target.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
+    public static int maxPartOffset = 32;
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }
