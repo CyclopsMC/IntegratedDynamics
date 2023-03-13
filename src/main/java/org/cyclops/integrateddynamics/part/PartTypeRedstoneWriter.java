@@ -25,6 +25,11 @@ public class PartTypeRedstoneWriter extends PartTypeWriteBase<PartTypeRedstoneWr
     }
 
     @Override
+    public boolean supportsOffsets() {
+        return false;
+    }
+
+    @Override
     public PartStateWriterBase<PartTypeRedstoneWriter> constructDefaultState() {
         return new PartStateWriterBase<PartTypeRedstoneWriter>(Aspects.REGISTRY.getAspects(this).size());
     }

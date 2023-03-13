@@ -141,6 +141,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public int getChannel(S state);
 
     /**
+     * @return If this part can handle custom offsets.
+     */
+    public default boolean supportsOffsets() {
+        return true;
+    }
+
+    /**
      * @param state The state
      * @return The target position offset.
      */
@@ -469,5 +476,4 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public default void writeExtraGuiDataOffsets(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
 
     }
-
 }

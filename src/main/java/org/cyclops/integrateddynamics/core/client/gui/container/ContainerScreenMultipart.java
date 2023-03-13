@@ -45,14 +45,17 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
                             org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_SETTINGS
                     },
                     false, 0, 0));
-            addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos + 20, 18, 18,
-                    Component.translatable("gui.integrateddynamics.part_offsets"),
-                    createServerPressable(ContainerMultipart.BUTTON_OFFSETS, (button) -> {}),
-                    new IImage[]{
-                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_BACKGROUND_INACTIVE,
-                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_OFFSET
-                    },
-                    false, 0, 0));
+            if (getMenu().getPartType().supportsOffsets()) {
+                addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos + 20, 18, 18,
+                        Component.translatable("gui.integrateddynamics.part_offsets"),
+                        createServerPressable(ContainerMultipart.BUTTON_OFFSETS, (button) -> {
+                        }),
+                        new IImage[]{
+                                org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_BACKGROUND_INACTIVE,
+                                org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_OFFSET
+                        },
+                        false, 0, 0));
+            }
         }
     }
 

@@ -62,14 +62,17 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                             org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_SETTINGS
                     },
                     false, 0, 0));
-            addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos + 20, 18, 18,
-                    Component.translatable("gui.integrateddynamics.part_offsets"),
-                    createServerPressable(ContainerMultipartAspects.BUTTON_OFFSETS, (button) -> {}),
-                    new IImage[]{
-                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_BACKGROUND_INACTIVE,
-                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_OFFSET
-                    },
-                    false, 0, 0));
+            if (getMenu().getPartType().supportsOffsets()) {
+                addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos + 20, 18, 18,
+                        Component.translatable("gui.integrateddynamics.part_offsets"),
+                        createServerPressable(ContainerMultipartAspects.BUTTON_OFFSETS, (button) -> {
+                        }),
+                        new IImage[]{
+                                org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_BACKGROUND_INACTIVE,
+                                org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_OFFSET
+                        },
+                        false, 0, 0));
+            }
         }
         for(Map.Entry<IAspect, String> entry : getMenu().getAspectPropertyButtons().entrySet()) {
             ButtonText button = new ButtonText(-20, -20, 10, 10,
