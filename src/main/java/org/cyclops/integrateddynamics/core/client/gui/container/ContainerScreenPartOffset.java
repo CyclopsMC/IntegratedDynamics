@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -10,7 +11,6 @@ import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffset;
@@ -113,7 +113,9 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
-        font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partoffset.offsets"), leftPos + 34, topPos + 19, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, "X", leftPos + 45 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, "Y", leftPos + 99 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
+        font.draw(matrixStack, "Z", leftPos + 153 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
         numberFieldX.render(matrixStack, mouseX, mouseY, partialTicks);
         numberFieldY.render(matrixStack, mouseX, mouseY, partialTicks);
         numberFieldZ.render(matrixStack, mouseX, mouseY, partialTicks);
@@ -122,6 +124,10 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         this.font.draw(matrixStack, Component.translatable("gui.integrateddynamics.part_offsets"), (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
+
+        if (isHovering(0, 0, 80, 18, mouseX, mouseY)) {
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.partoffset.offsets")), matrixStack, mouseX - leftPos, mouseY - topPos);
+        }
     }
 
     @Override

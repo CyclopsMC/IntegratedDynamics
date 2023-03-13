@@ -26,7 +26,7 @@
     "gui.integrateddynamics.partsettings.channel": "Energy Channel",
     "gui.integrateddynamics.partsettings.channel.disabledinfo": "Network energy consumption is disabled on this server.",
     "gui.integrateddynamics.partsettings.side": "Target Side",
-    "gui.integrateddynamics.partoffset.offsets": "Relative offset from position",
+    "gui.integrateddynamics.partoffset.offsets": "Offset relative to the target position",
     "gui.integrateddynamics.partoffset.x": "X Offset",
     "gui.integrateddynamics.partoffset.y": "Y Offset",
     "gui.integrateddynamics.partoffset.z": "Z Offset",
