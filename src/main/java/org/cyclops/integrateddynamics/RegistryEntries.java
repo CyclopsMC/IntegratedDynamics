@@ -188,6 +188,8 @@ public class RegistryEntries {
     public static final MenuType<ContainerPartReader> CONTAINER_PART_READER = null;
     @ObjectHolder(registryName = "menu", value = "integrateddynamics:part_settings")
     public static final MenuType<ContainerPartSettings> CONTAINER_PART_SETTINGS = null;
+    @ObjectHolder(registryName = "menu", value = "integrateddynamics:part_offset")
+    public static final MenuType<ContainerPartSettings> CONTAINER_PART_OFFSET = null;
     @ObjectHolder(registryName = "menu", value = "integrateddynamics:part_writer")
     public static final MenuType<ContainerPartReader> CONTAINER_PART_WRITER = null;
     @ObjectHolder(registryName = "menu", value = "integrateddynamics:proxy")

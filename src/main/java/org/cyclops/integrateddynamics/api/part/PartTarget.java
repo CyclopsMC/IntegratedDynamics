@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 
@@ -79,6 +80,15 @@ public class PartTarget {
      */
     public PartTarget forTargetSide(Direction targetSide) {
         return new PartTarget(center, PartPos.of(target.getPos(), targetSide));
+    }
+
+    /**
+     * Create a new instance with the given target offset.
+     * @param offset The offset of the target.
+     * @return A new {@link PartTarget} instance.
+     */
+    public PartTarget forOffset(Vec3i offset) {
+        return new PartTarget(center, PartPos.of(target.getPos().withPosition(target.getPos().getBlockPos().offset(offset)), target.getSide()));
     }
 
     @Override

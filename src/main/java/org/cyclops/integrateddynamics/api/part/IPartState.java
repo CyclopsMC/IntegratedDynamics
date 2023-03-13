@@ -1,7 +1,11 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -11,6 +15,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * A value holder for an {@link IPartType}.
@@ -83,6 +88,16 @@ public interface IPartState<P extends IPartType> {
      * @return This part's channel.
      */
     public int getChannel();
+
+    /**
+     * @return The target position offset.
+     */
+    public Vec3i getTargetOffset();
+
+    /**
+     * @param offset The target position offset.
+     */
+    public void setTargetOffset(Vec3i offset);
 
     /**
      * Indicate that the given part should interact with the given side of the target.
@@ -188,5 +203,56 @@ public interface IPartState<P extends IPartType> {
      * @param capability The capability.
      */
     public void removeVolatileCapability(Capability<?> capability);
+
+    /**
+     * Load the inventory of the given name from the part state.
+     * @param name The inventory name.
+     * @param inventory The inventory object to load into.
+     */
+    public default void loadInventoryNamed(String name, Container inventory) {
+        NonNullList<ItemStack> tabItems = this.getInventoryNamed(name);
+        if (tabItems != null) {
+            for (int i = 0; i < tabItems.size(); i++) {
+                inventory.setItem(i, tabItems.get(i));
+            }
+        }
+    }
+
+    /**
+     * Save the inventory of the given name into the part state.
+     * @param name The inventory name.
+     * @param inventory The inventory object to save.
+     */
+    public default void saveInventoryNamed(String name, Container inventory) {
+        NonNullList<ItemStack> latestItems = NonNullList.create();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            latestItems.add(inventory.getItem(i));
+        }
+        this.setInventoryNamed(name, latestItems);
+    }
+
+    /**
+     * @param name The inventory name.
+     * @return Get the inventory contents of the given name.
+     */
+    @Nullable
+    public NonNullList<ItemStack> getInventoryNamed(String name);
+
+    /**
+     * Set the inventory of the given name.
+     * @param name The inventory name.
+     * @param inventory Inventory contents.
+     */
+    public void setInventoryNamed(String name, NonNullList<ItemStack> inventory);
+
+    /**
+     * @return All named inventories.
+     */
+    public Map<String, NonNullList<ItemStack>> getInventoriesNamed();
+
+    /**
+     * Clear all named inventories.
+     */
+    public void clearInventoriesNamed();
 
 }

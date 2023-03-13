@@ -447,6 +447,22 @@ public class PartHelpers {
     }
 
     /**
+     * Open a part offset gui container from the server.
+     * @param player The player opening the gui.
+     * @param pos The part position.
+     * @param partType The part type.
+     * @return If the part has a container provider for offsets.
+     */
+    public static boolean openContainerPartOffsets(ServerPlayer player, PartPos pos, IPartType<?, ?> partType) {
+        return partType.getContainerProviderOffsets(pos)
+                .map(containerProvider -> {
+                    NetworkHooks.openScreen(player, containerProvider, packetBuffer -> partType.writeExtraGuiDataOffsets(packetBuffer, pos, player));
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    /**
      * Construct a data holder for constructing a part-related container.
      * @param pos A part position.
      * @return A data holder.

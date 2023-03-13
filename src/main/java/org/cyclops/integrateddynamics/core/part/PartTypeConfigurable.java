@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffset;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
 
 import javax.annotation.Nullable;
@@ -53,6 +54,31 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
 
     @Override
     public void writeExtraGuiDataSettings(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+        PacketCodec.write(packetBuffer, pos);
+        packetBuffer.writeUtf(this.getUniqueName().toString());
+    }
+
+    @Override
+    public Optional<MenuProvider> getContainerProviderOffsets(PartPos pos) {
+        return Optional.of(new MenuProvider() {
+
+            @Override
+            public Component getDisplayName() {
+                return Component.translatable(getTranslationKey());
+            }
+
+            @Nullable
+            @Override
+            public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
+                Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
+                return new ContainerPartOffset(id, playerInventory, new SimpleContainer(0),
+                        data.getRight(), Optional.of(data.getLeft()), data.getMiddle());
+            }
+        });
+    }
+
+    @Override
+    public void writeExtraGuiDataOffsets(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
         PacketCodec.write(packetBuffer, pos);
         packetBuffer.writeUtf(this.getUniqueName().toString());
     }

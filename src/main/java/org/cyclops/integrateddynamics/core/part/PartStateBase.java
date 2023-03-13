@@ -1,10 +1,15 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import com.google.common.collect.Maps;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
@@ -40,10 +45,12 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private int updateInterval = getDefaultUpdateInterval();
     private int priority = 0;
     private int channel = 0;
+    private Vec3i targetOffset = new Vec3i(0, 0, 0);
     private Direction targetSide = null;
     private int id = -1;
     private Map<IAspect, IAspectProperties> aspectProperties = new IdentityHashMap<>();
     private boolean enabled = true;
+    private final Map<String, NonNullList<ItemStack>> inventoriesNamed = Maps.newHashMap();
 
     private CapabilityDispatcher capabilities = null;
     private IdentityHashMap<Capability<?>, LazyOptional<Object>> volatileCapabilities = new IdentityHashMap<>();
@@ -62,6 +69,20 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         if (this.capabilities != null) {
             tag.put("ForgeCaps", this.capabilities.serializeNBT());
         }
+        tag.putInt("offsetX", this.targetOffset.getX());
+        tag.putInt("offsetY", this.targetOffset.getY());
+        tag.putInt("offsetZ", this.targetOffset.getZ());
+
+        // Write inventoriesNamed
+        ListTag namedInventoriesList = new ListTag();
+        for (Map.Entry<String, NonNullList<ItemStack>> entry : this.inventoriesNamed.entrySet()) {
+            CompoundTag listEntry = new CompoundTag();
+            listEntry.putString("tabName", entry.getKey());
+            listEntry.putInt("itemCount", entry.getValue().size());
+            ContainerHelper.saveAllItems(listEntry, entry.getValue());
+            namedInventoriesList.add(listEntry);
+        }
+        tag.put("inventoriesNamed", namedInventoriesList);
     }
 
     @Override
@@ -78,6 +99,15 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         this.enabled = tag.getBoolean("enabled");
         if (this.capabilities != null && tag.contains("ForgeCaps")) {
             this.capabilities.deserializeNBT(tag.getCompound("ForgeCaps"));
+        }
+        this.targetOffset = new Vec3i(tag.getInt("offsetX"), tag.getInt("offsetY"), tag.getInt("offsetZ"));
+
+        // Read inventoriesNamed
+        for (Tag listEntry : tag.getList("inventoriesNamed", Tag.TAG_COMPOUND)) {
+            NonNullList<ItemStack> list = NonNullList.withSize(((CompoundTag) listEntry).getInt("itemCount"), ItemStack.EMPTY);
+            String tabName = ((CompoundTag) listEntry).getString("tabName");
+            ContainerHelper.loadAllItems((CompoundTag) listEntry, list);
+            this.inventoriesNamed.put(tabName, list);
         }
     }
 
@@ -156,6 +186,17 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
+    public Vec3i getTargetOffset() {
+        return targetOffset;
+    }
+
+    @Override
+    public void setTargetOffset(Vec3i targetOffset) {
+        this.targetOffset = targetOffset;
+        this.dirty = true;
+    }
+
+    @Override
     public void setTargetSideOverride(Direction targetSide) {
         this.targetSide = targetSide;
     }
@@ -228,6 +269,25 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public NonNullList<ItemStack> getInventoryNamed(String name) {
+        return this.inventoriesNamed.get(name);
+    }
+
+    public void setInventoryNamed(String name, NonNullList<ItemStack> inventory) {
+        this.inventoriesNamed.put(name, inventory);
+        onDirty();
+    }
+
+    @Override
+    public Map<String, NonNullList<ItemStack>> getInventoriesNamed() {
+        return this.inventoriesNamed;
+    }
+
+    @Override
+    public void clearInventoriesNamed() {
+        this.inventoriesNamed.clear();
     }
 
     /**

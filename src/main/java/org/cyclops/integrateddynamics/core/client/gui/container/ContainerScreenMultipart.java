@@ -1,12 +1,13 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
-import org.cyclops.cyclopscore.client.gui.image.Images;
+import org.cyclops.cyclopscore.client.gui.image.IImage;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -36,10 +37,22 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
         super.init();
         P partType = getMenu().getPartType();
         if(partType instanceof PartTypeConfigurable && partType.getContainerProviderSettings(null).isPresent()) {
-            addRenderableWidget(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
-                    Component.translatable("gui.integrateddynamics.part_settings"),
-                    createServerPressable(ContainerMultipart.BUTTON_SETTINGS, (button) -> {}), true,
-                    Images.CONFIG_BOARD, -2, -3));
+            addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos + 0, 18, 18,
+                    Component.translatable("gui.integrateddynamics.partsettings"),
+                    createServerPressable(ContainerMultipart.BUTTON_SETTINGS, (button) -> {}),
+                    new IImage[]{
+                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_BACKGROUND_INACTIVE,
+                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_SETTINGS
+                    },
+                    false, 0, 0));
+            addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos + 20, 18, 18,
+                    Component.translatable("gui.integrateddynamics.part_offsets"),
+                    createServerPressable(ContainerMultipart.BUTTON_OFFSETS, (button) -> {}),
+                    new IImage[]{
+                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_BACKGROUND_INACTIVE,
+                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_OFFSET
+                    },
+                    false, 0, 0));
         }
     }
 
@@ -64,7 +77,14 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
+
+        if (isHovering(-20, 0, 18, 18, mouseX, mouseY)) {
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), matrixStack, mouseX - leftPos, mouseY - topPos);
+        }
+        if (isHovering(-20, 20, 18, 18, mouseX, mouseY)) {
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), matrixStack, mouseX - leftPos, mouseY - topPos);
+        }
     }
 }

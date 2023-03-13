@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -22,6 +24,7 @@ import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -90,6 +93,16 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
+    public Vec3i getTargetOffset(S state) {
+        return state.getTargetOffset();
+    }
+
+    @Override
+    public void setTargetOffset(S state, Vec3i offset) {
+        state.setTargetOffset(offset);
+    }
+
+    @Override
     public void setTargetSideOverride(S state, @Nullable Direction side) {
         state.setTargetSideOverride(side);
     }
@@ -106,6 +119,10 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
         Direction sideOverride = getTargetSideOverride(state);
         if (sideOverride != null) {
             target = target.forTargetSide(sideOverride);
+        }
+        Vec3i offset = getTargetOffset(state);
+        if (offset.getX() != 0 || offset.getY() != 0 || offset.getZ() != 0) {
+            target = target.forOffset(offset);
         }
         return target;
     }
@@ -182,6 +199,16 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
         if(dropMainElement) {
             itemStacks.add(getItemStack(state, saveState));
         }
+
+        // Drop contents of named inventories
+        for (Map.Entry<String, NonNullList<ItemStack>> entry : state.getInventoriesNamed().entrySet()) {
+            for (ItemStack itemStack : entry.getValue()) {
+                if (!itemStack.isEmpty()) {
+                    itemStacks.add(itemStack);
+                }
+            }
+        }
+        state.clearInventoriesNamed();
     }
 
     @Override
