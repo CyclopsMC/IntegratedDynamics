@@ -121,7 +121,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
             target = target.forTargetSide(sideOverride);
         }
         Vec3i offset = getTargetOffset(state);
-        if (offset.getX() != 0 || offset.getY() != 0 || offset.getZ() != 0) {
+        if (offset.compareTo(Vec3i.ZERO) != 0) {
             target = target.forOffset(offset);
         }
         return target;

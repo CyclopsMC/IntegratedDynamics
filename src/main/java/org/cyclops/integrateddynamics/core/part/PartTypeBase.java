@@ -125,7 +125,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @SuppressWarnings("unchecked")
     @Override
     public INetworkElement createNetworkElement(IPartContainer partContainer, DimPos pos, Direction side) {
-        return new PartNetworkElement(this, getTarget(PartPos.of(pos, side), (S) partContainer.getPartState(side)));
+        return new PartNetworkElement(this, PartPos.of(pos, side));
     }
 
     @Override

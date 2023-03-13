@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.part.read;
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -87,6 +88,13 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
         for(IAspect aspect : getUpdateAspects(AspectUpdateType.NETWORK_TICK)) {
             aspect.update(network, partNetwork, this, target, state);
         }
+
+        // Special case: if we have an offset, also update block-update-based aspects, because we can't rely on just block updates.
+        if (this.getTargetOffset(state).compareTo(Vec3i.ZERO) != 0) {
+            for(IAspect aspect : getUpdateAspects(AspectUpdateType.BLOCK_UPDATE)) {
+                aspect.update(network, partNetwork, this, target, state);
+            }
+        }
     }
 
     @Override
@@ -119,6 +127,15 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
             partState.setVariable(aspect, variable);
         }
         return variable;
+    }
+
+    @Override
+    public void setTargetOffset(S state, Vec3i offset) {
+        Vec3i lastOffset = getTargetOffset(state);
+        super.setTargetOffset(state, offset);
+        if (!lastOffset.equals(offset)) {
+            state.resetVariables();
+        }
     }
 
     @Override

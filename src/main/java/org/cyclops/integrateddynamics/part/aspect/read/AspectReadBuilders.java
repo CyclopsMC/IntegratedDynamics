@@ -392,7 +392,7 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Integer> PROP_GET = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            int power = dimPos.getLevel(true).getSignal(dimPos.getBlockPos(), input.getLeft().getCenter().getSide());
+            int power = dimPos.getLevel(true).getSignal(dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
             if (power == 0) {
                 BlockState targetBlockState = dimPos.getLevel(true).getBlockState(dimPos.getBlockPos());
                 power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.getValue(RedStoneWireBlock.POWER) : 0;

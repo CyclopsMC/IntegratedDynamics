@@ -166,10 +166,7 @@ public class ContainerPartSettings extends InventoryContainer {
                 DimPos dimPos = target.getCenter().getPos();
                 INetwork network = NetworkHelpers.getNetworkChecked(dimPos.getLevel(true), dimPos.getBlockPos(), target.getCenter().getSide());
                 updatePartSettings();
-                if (getPartState().getTargetSideOverride() != null) {
-                    target = target.forTargetSide(getPartState().getTargetSideOverride());
-                }
-                PartNetworkElement networkElement = new PartNetworkElement<>(getPartType(), target);
+                PartNetworkElement networkElement = new PartNetworkElement<>(getPartType(), target.getCenter());
                 network.setPriorityAndChannel(networkElement, getLastPriorityValue(), getLastChannelValue());
             }
         } catch (PartStateException e) {
