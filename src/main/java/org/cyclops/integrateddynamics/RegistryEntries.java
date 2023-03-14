@@ -32,6 +32,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeNbtClear;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 import org.cyclops.integrateddynamics.inventory.container.*;
+import org.cyclops.integrateddynamics.item.ItemEnhancement;
 import org.cyclops.integrateddynamics.item.ItemFacade;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipe;
@@ -73,6 +74,8 @@ public class RegistryEntries {
     public static final Item ITEM_MENRIL_TORCH = null;
     @ObjectHolder(registryName = "item", value = "integrateddynamics:menril_torch_stone")
     public static final Item ITEM_MENRIL_TORCH_STONE = null;
+    @ObjectHolder(registryName = "item", value = "integrateddynamics:enhancement_offset")
+    public static final ItemEnhancement ITEM_ENHANCEMENT_OFFSET = null;
 
     @ObjectHolder(registryName = "block", value = "integrateddynamics:cable")
     public static final BlockCable BLOCK_CABLE = null;

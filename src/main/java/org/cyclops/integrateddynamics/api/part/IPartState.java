@@ -281,4 +281,15 @@ public interface IPartState<P extends IPartType> {
      */
     @Nullable
     public MutableComponent getOffsetVariableError(int slot);
+
+    /**
+     * @return The max offset allowed in this part.
+     */
+    public int getMaxOffset();
+
+    /**
+     * Update the max offset for this part.
+     * @param offset The new offset.
+     */
+    public void setMaxOffset(int offset);
 }

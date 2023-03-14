@@ -48,6 +48,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private int updateInterval = getDefaultUpdateInterval();
     private int priority = 0;
     private int channel = 0;
+    private int maxOffset;
     private Vec3i targetOffset = new Vec3i(0, 0, 0);
     private Direction targetSide = null;
     private int id = -1;
@@ -73,6 +74,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         if (this.capabilities != null) {
             tag.put("ForgeCaps", this.capabilities.serializeNBT());
         }
+        tag.putInt("maxOffset", this.maxOffset);
         tag.putInt("offsetX", this.targetOffset.getX());
         tag.putInt("offsetY", this.targetOffset.getY());
         tag.putInt("offsetZ", this.targetOffset.getZ());
@@ -110,6 +112,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         if (this.capabilities != null && tag.contains("ForgeCaps")) {
             this.capabilities.deserializeNBT(tag.getCompound("ForgeCaps"));
         }
+        this.maxOffset = tag.getInt("maxOffset");
         this.targetOffset = new Vec3i(tag.getInt("offsetX"), tag.getInt("offsetY"), tag.getInt("offsetZ"));
 
         // Read inventoriesNamed
@@ -359,5 +362,16 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public void markOffsetVariablesChanged() {
         this.offsetHandler.markOffsetVariablesChanged();
+    }
+
+    @Override
+    public int getMaxOffset() {
+        return maxOffset;
+    }
+
+    @Override
+    public void setMaxOffset(int maxOffset) {
+        this.maxOffset = maxOffset;
+        markDirty();
     }
 }

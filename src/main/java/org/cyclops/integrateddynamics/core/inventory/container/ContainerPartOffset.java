@@ -46,6 +46,7 @@ public class ContainerPartOffset extends InventoryContainer {
     private final int lastZValueId;
     private final List<Integer> offsetVariableSlotErrorIds;
     private final List<Integer> offsetVariableSlotFilled;
+    private final int maxOffsetId;
 
     private final SimpleInventory offsetVariablesInventory;
     private boolean dirtyInv = false;
@@ -79,6 +80,7 @@ public class ContainerPartOffset extends InventoryContainer {
             this.offsetVariableSlotErrorIds.add(getNextValueId());
             this.offsetVariableSlotFilled.add(getNextValueId());
         }
+        this.maxOffsetId = getNextValueId();
 
         putButtonAction(ContainerPartOffset.BUTTON_SAVE, (s, containerExtended) -> {
             if(!world.isClientSide()) {
@@ -116,6 +118,10 @@ public class ContainerPartOffset extends InventoryContainer {
         return lastZValueId;
     }
 
+    public int getMaxOffsetId() {
+        return maxOffsetId;
+    }
+
     protected int getPlayerInventoryOffsetY() {
         return 73;
     }
@@ -126,6 +132,7 @@ public class ContainerPartOffset extends InventoryContainer {
         ValueNotifierHelpers.setValue(this, lastXValueId, offset.getX());
         ValueNotifierHelpers.setValue(this, lastYValueId, offset.getY());
         ValueNotifierHelpers.setValue(this, lastZValueId, offset.getZ());
+        ValueNotifierHelpers.setValue(this, maxOffsetId, getPartState().getMaxOffset());
     }
 
     public int getLastXValue() {
@@ -138,6 +145,10 @@ public class ContainerPartOffset extends InventoryContainer {
 
     public int getLastZValue() {
         return ValueNotifierHelpers.getValueInt(this, lastZValueId);
+    }
+
+    public int getMaxOffset() {
+        return ValueNotifierHelpers.getValueInt(this, maxOffsetId);
     }
 
     public IPartState getPartState() {

@@ -59,7 +59,7 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
             this.partContainer = partContainer;
         }
 
-        protected Optional<IPartType> getPart() {
+        public Optional<IPartType> getPart() {
             return Optional.ofNullable(partContainer.getPart(direction));
         }
 

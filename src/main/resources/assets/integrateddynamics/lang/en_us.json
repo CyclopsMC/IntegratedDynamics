@@ -27,6 +27,8 @@
     "gui.integrateddynamics.partsettings.channel.disabledinfo": "Network energy consumption is disabled on this server.",
     "gui.integrateddynamics.partsettings.side": "Target Side",
     "gui.integrateddynamics.partoffset.offsets": "Offset relative to the target position",
+    "gui.integrateddynamics.partoffset.offsets.max": "Maximum offset: %s",
+    "gui.integrateddynamics.partoffset.offsets.max.howtoincrease": "Increase limit with Part Enhancement: Offset",
     "gui.integrateddynamics.partoffset.slot.message.noint": "Invalid integer coordinate",
     "gui.integrateddynamics.partoffset.slot.message.outofrange": "Offset exceeds the allowed range",
     "gui.integrateddynamics.partoffset.x": "X Offset",
@@ -154,6 +156,11 @@
     "item.integrateddynamics.crystalized_chorus_chunk": "Crystallized Chorus Chunk",
     "item.integrateddynamics.logic_director": "Logic Director",
     "item.integrateddynamics.proto_chorus": "Proto Chorus",
+    "item.integrateddynamics.enhancement_offset": "Part Enhancement: Offset",
+    "item.integrateddynamics.enhancement_offset.info": "Increases the max offset of a part by right-clicking",
+    "item.integrateddynamics.enhancement_offset.tooltip": "Offset increase: %s",
+    "item.integrateddynamics.enhancement_offset.increased": "Part offset increased to %s",
+    "item.integrateddynamics.enhancement_offset.limit": "Part offset is already at the limit (%s)",
 
     "_comment": "Fluids",
     "fluid_type.integrateddynamics.menril_resin": "Menril Resin",
@@ -296,6 +303,7 @@
     "parttype.integrateddynamics.tooltip.display.active_value": "Value: %s (%s)",
     "parttype.integrateddynamics.tooltip.monodirectionalconnector.group": "Group: %s",
     "parttype.integrateddynamics.tooltip.noaspects": "WARNING: No aspects available. This may become usable when other mods are installed.",
+    "parttype.integrateddynamics.tooltip.maxoffset": "Max Offset: %s",
 
     "parttype.integrateddynamics.audio_reader": "Audio Reader",
     "parttype.integrateddynamics.audio_reader.info": "Reads audio information",

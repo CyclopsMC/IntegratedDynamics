@@ -144,6 +144,7 @@ public class Configs {
         configHandler.addConfigurable(new ItemCrystalizedChorusChunkConfig());
         configHandler.addConfigurable(new ItemLogicDirectorConfig());
         configHandler.addConfigurable(new ItemProtoChorusConfig());
+        configHandler.addConfigurable(new ItemEnhancementOffsetConfig());
 
         // World features
         configHandler.addConfigurable(new FoliagePlacerMenrilConfig());

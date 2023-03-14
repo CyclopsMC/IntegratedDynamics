@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -22,6 +23,7 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffs
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -146,14 +148,27 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
                 image.draw(this, matrixStack, x, topPos + 52);
             }
         }
+
+        if (getMenu().getMaxOffset() == 0) {
+            Images.ERROR.draw(this, matrixStack, leftPos + 74, topPos + 3);
+        }
     }
 
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         this.font.draw(matrixStack, Component.translatable("gui.integrateddynamics.part_offsets"), (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
 
-        if (isHovering(0, 0, 80, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.partoffset.offsets")), matrixStack, mouseX - leftPos, mouseY - topPos);
+        if (isHovering(0, 0, 90, 18, mouseX, mouseY)) {
+            List<Component> lines = Lists.newArrayList(
+                    Component.translatable("gui.integrateddynamics.partoffset.offsets"),
+                    Component.translatable("gui.integrateddynamics.partoffset.offsets.max", getMenu().getMaxOffset())
+                            .withStyle(ChatFormatting.GRAY)
+            );
+            if (getMenu().getMaxOffset() == 0) {
+                lines.add(Component.translatable("gui.integrateddynamics.partoffset.offsets.max.howtoincrease", getMenu().getMaxOffset())
+                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+            }
+            drawTooltip(lines, matrixStack, mouseX - leftPos, mouseY - topPos);
         }
 
         for (int i = 0; i < 3; i++) {
@@ -195,6 +210,16 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         numberFieldX.setEditable(!getMenu().isOffsetVariableFilled(0));
         numberFieldY.setEditable(!getMenu().isOffsetVariableFilled(1));
         numberFieldZ.setEditable(!getMenu().isOffsetVariableFilled(2));
+
+        if (valueId == getMenu().getMaxOffsetId()) {
+            int max = getMenu().getMaxOffset();
+            numberFieldX.setMaxValue(max);
+            numberFieldX.setMinValue(-max);
+            numberFieldY.setMaxValue(max);
+            numberFieldY.setMinValue(-max);
+            numberFieldZ.setMaxValue(max);
+            numberFieldZ.setMinValue(-max);
+        }
     }
 
 }

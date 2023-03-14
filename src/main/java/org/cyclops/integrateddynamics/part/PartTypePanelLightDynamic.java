@@ -35,6 +35,11 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
+    public boolean supportsOffsets() {
+        return false;
+    }
+
+    @Override
     protected Block createBlock(BlockConfig blockConfig) {
         return new IgnoredBlockStatus();
     }

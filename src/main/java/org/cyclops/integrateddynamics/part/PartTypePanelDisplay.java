@@ -17,6 +17,11 @@ public class PartTypePanelDisplay extends PartTypePanelVariableDriven<PartTypePa
     }
 
     @Override
+    public boolean supportsOffsets() {
+        return false;
+    }
+
+    @Override
     protected Block createBlock(BlockConfig blockConfig) {
         return new IgnoredBlockStatus();
     }

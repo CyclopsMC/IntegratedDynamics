@@ -16,7 +16,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
-import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
@@ -100,8 +99,9 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public boolean setTargetOffset(S state, Vec3i offset) {
-        if (offset.getX() >= -GeneralConfig.maxPartOffset && offset.getY() >= -GeneralConfig.maxPartOffset && offset.getZ() >= -GeneralConfig.maxPartOffset
-                && offset.getX() <= GeneralConfig.maxPartOffset && offset.getY() <= GeneralConfig.maxPartOffset && offset.getZ() <= GeneralConfig.maxPartOffset) {
+        int max = state.getMaxOffset();
+        if (offset.getX() >= -max && offset.getY() >= -max && offset.getZ() >= -max
+                && offset.getX() <= max && offset.getY() <= max && offset.getZ() <= max) {
             state.setTargetOffset(offset);
             return true;
         }
