@@ -40,6 +40,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.item.ItemEnhancement;
+import org.cyclops.integrateddynamics.item.ItemWrench;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -141,8 +142,16 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         }
 
         // Consume enhancement
-        if (heldItem.getItem() instanceof ItemEnhancement) {
-            InteractionResult result = ((ItemEnhancement) heldItem.getItem()).applyEnhancement(this, partState, heldItem, player, hand);
+        if (heldItem.getItem() instanceof ItemEnhancement itemEnhancement) {
+            InteractionResult result = itemEnhancement.applyEnhancement(this, partState, heldItem, player, hand);
+            if (result.consumesAction()) {
+                return result;
+            }
+        }
+
+        // Set offset and side
+        if (heldItem.getItem() instanceof ItemWrench itemWrench) {
+            InteractionResult result = itemWrench.performPartAction(hit, this, partState, heldItem, player, hand);
             if (result.consumesAction()) {
                 return result;
             }
