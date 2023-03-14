@@ -427,6 +427,20 @@
                 <paragraph>info_book.integrateddynamics.manual.parts.introduction.text3</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.parts.introduction.text4</paragraph>
             </section>
+            <section name="info_book.integrateddynamics.manual.parts.settings">
+                <paragraph>info_book.integrateddynamics.manual.parts.settings.text1</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.settings.text2</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.settings.text3</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.settings.text4</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.settings.text5</paragraph>
+            </section>
+            <section name="info_book.integrateddynamics.manual.parts.offsets">
+                <paragraph>info_book.integrateddynamics.manual.parts.offsets.text1</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.offsets.text2</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.offsets.text3</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.parts.offsets.text4</paragraph>
+                <appendix type="minecraft:crafting">integrateddynamics:crafting/enhancement_offset</appendix>
+            </section>
             <section name="info_book.integrateddynamics.manual.parts.reader">
                 <section name="info_book.integrateddynamics.manual.parts.reader.introduction">
                     <paragraph>info_book.integrateddynamics.manual.parts.reader.introduction.text1</paragraph>

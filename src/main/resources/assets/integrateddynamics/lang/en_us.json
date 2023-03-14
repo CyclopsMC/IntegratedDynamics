@@ -1756,6 +1756,19 @@
     "info_book.integrateddynamics.manual.parts.introduction.text3": "A part's &lEnergy Channel&r determines where it can draw its energy from. -1 is the wildcard channel (it will match all channels), and 0 is the default channel (used by parts such as energy cells that don't have a channel setting). Finally, &lTarget Side&r determines which side of its target block will be interacted with. This defaults to the side that it's actually placed against.",
     "info_book.integrateddynamics.manual.parts.introduction.text4": "Some reader and writer parts only contain aspects when certain other mods are present. If no aspects are present for a certain part, a warning will be added to the item tooltip whenever you attempt to craft it.",
 
+    "info_book.integrateddynamics.manual.parts.settings": "Settings",
+    "info_book.integrateddynamics.manual.parts.settings.text1": "Most parts have a &lSettings&r screen using which basic part settings can be modified.",
+    "info_book.integrateddynamics.manual.parts.settings.text2": "The Target Side is the side that this part will interact with. It defaults to the opposite of the side this part was placed upon.",
+    "info_book.integrateddynamics.manual.parts.settings.text3": "The Ticks/Operation allows you to configure the ticking frequency of this part. The higher, the slower it operates.",
+    "info_book.integrateddynamics.manual.parts.settings.text4": "The Priority determines the order in which this part is executed within a single network tick.",
+    "info_book.integrateddynamics.manual.parts.settings.text5": "The Energy Channel indicates the channel from which energy should be consumed when this part ticks. This is only applicable if energy consumption for networks is enabled.",
+
+    "info_book.integrateddynamics.manual.parts.offsets": "Offsets",
+    "info_book.integrateddynamics.manual.parts.offsets.text1": "By default, parts will target the direct neighbouring position. However, when &lPart Enhancements&r are applied, the target position can be changed through the part's &lOffset&r screen.",
+    "info_book.integrateddynamics.manual.parts.offsets.text2": "Offsets are always relative to the part's target position, and are limited by the number of Part Enhancements that have been applied.",
+    "info_book.integrateddynamics.manual.parts.offsets.text3": "Offsets can either be set manually, or they can be set visually using the &lWrench&r. When setting the &lWrench&r to offset-mode, a position can be stored by right-clicking. This position can be saved into parts by right-clicking with that &lWrench&r.",
+    "info_book.integrateddynamics.manual.parts.offsets.text4": "Offsets can not only be statically defined, buy they can also be &odynamic&r using &lVariable Cards&r.",
+
     "info_book.integrateddynamics.manual.parts.reader": "Readers",
     "info_book.integrateddynamics.manual.parts.reader.introduction": "Introduction",
     "info_book.integrateddynamics.manual.parts.reader.introduction.text1": "The simplest method for creating a dynamic variable is done using &lReaders&r. Different types of readers exist for reading information from the world as storing it inside a &lVariable Card&r. Each &lReader&r contains one or more &lAspects&r for reading different things with different &lValue Types&r.",
