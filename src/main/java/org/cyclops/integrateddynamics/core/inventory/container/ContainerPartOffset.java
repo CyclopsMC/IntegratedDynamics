@@ -1,8 +1,10 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -23,6 +25,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -41,6 +44,8 @@ public class ContainerPartOffset extends InventoryContainer {
     private final int lastXValueId;
     private final int lastYValueId;
     private final int lastZValueId;
+    private final List<Integer> offsetVariableSlotErrorIds;
+    private final List<Integer> offsetVariableSlotFilled;
 
     private final SimpleInventory offsetVariablesInventory;
     private boolean dirtyInv = false;
@@ -68,6 +73,12 @@ public class ContainerPartOffset extends InventoryContainer {
         lastXValueId = getNextValueId();
         lastYValueId = getNextValueId();
         lastZValueId = getNextValueId();
+        this.offsetVariableSlotErrorIds = Lists.newArrayList();
+        this.offsetVariableSlotFilled = Lists.newArrayList();
+        for (int i = 0; i < 3; i++) {
+            this.offsetVariableSlotErrorIds.add(getNextValueId());
+            this.offsetVariableSlotFilled.add(getNextValueId());
+        }
 
         putButtonAction(ContainerPartOffset.BUTTON_SAVE, (s, containerExtended) -> {
             if(!world.isClientSide()) {
@@ -159,10 +170,34 @@ public class ContainerPartOffset extends InventoryContainer {
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        if (this.dirtyInv && !player.level.isClientSide) {
-            this.dirtyInv = false;
-            getPartState().saveInventoryNamed("offsetVariablesInventory", offsetVariablesInventory);
+        if (!player.level.isClientSide) {
+            IPartState partState = getPartState();
+
+            if (this.dirtyInv) {
+                this.dirtyInv = false;
+                partState.saveInventoryNamed("offsetVariablesInventory", offsetVariablesInventory);
+                partState.markOffsetVariablesChanged();
+            }
+
+            for (int i = 0; i < 3; i++) {
+                ValueNotifierHelpers.setValue(this, this.offsetVariableSlotErrorIds.get(i), partState.getOffsetVariableError(i));
+                ValueNotifierHelpers.setValue(this, this.offsetVariableSlotFilled.get(i), !offsetVariablesInventory.getItem(i).isEmpty());
+            }
+
+            Vec3i offset = getPartType().getTargetOffset(getPartState());
+            ValueNotifierHelpers.setValue(this, lastXValueId, offset.getX());
+            ValueNotifierHelpers.setValue(this, lastYValueId, offset.getY());
+            ValueNotifierHelpers.setValue(this, lastZValueId, offset.getZ());
         }
+    }
+
+    @Nullable
+    public Component getOffsetVariableError(int slot) {
+        return ValueNotifierHelpers.getValueTextComponent(this, this.offsetVariableSlotErrorIds.get(slot));
+    }
+
+    public boolean isOffsetVariableFilled(int slot) {
+        return ValueNotifierHelpers.getValueBoolean(this, this.offsetVariableSlotFilled.get(slot));
     }
 
     protected void updatePartOffset() {

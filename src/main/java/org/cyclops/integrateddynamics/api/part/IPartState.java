@@ -4,6 +4,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
@@ -111,6 +112,11 @@ public interface IPartState<P extends IPartType> {
      */
     @Nullable
     public Direction getTargetSideOverride();
+
+    /**
+     * Indicate that this state has changes that must be saved to the world.
+     */
+    public void markDirty();
 
     /**
      * Check if dirty and reset the dirty state.
@@ -255,4 +261,24 @@ public interface IPartState<P extends IPartType> {
      */
     public void clearInventoriesNamed();
 
+    /**
+     * Tick any internal offset variables.
+     * @param partType The part type.
+     * @param network The network.
+     * @param partNetwork The part network.
+     * @param target The part target.
+     */
+    public void updateOffsetVariables(P partType, INetwork network, IPartNetwork partNetwork, PartTarget target);
+
+    /**
+     * Indicate that the contents of the offset variables inventory have changed.
+     */
+    public void markOffsetVariablesChanged();
+
+    /**
+     * @param slot The offset variable slot.
+     * @return The current error, or null if no error.
+     */
+    @Nullable
+    public MutableComponent getOffsetVariableError(int slot);
 }

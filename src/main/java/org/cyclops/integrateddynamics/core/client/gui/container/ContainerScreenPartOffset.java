@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -10,12 +11,18 @@ import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
+import org.cyclops.cyclopscore.client.gui.image.IImage;
+import org.cyclops.cyclopscore.client.gui.image.Images;
+import org.cyclops.cyclopscore.helper.GuiHelpers;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffset;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Gui for part offsets.
@@ -88,6 +95,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         if (!this.numberFieldX.charTyped(typedChar, keyCode)
                 && !this.numberFieldY.charTyped(typedChar, keyCode)
                 && !this.numberFieldZ.charTyped(typedChar, keyCode)) {
+            onSave();
             return super.charTyped(typedChar, keyCode);
         }
         return true;
@@ -99,6 +107,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
             if (this.numberFieldX.keyPressed(typedChar, keyCode, modifiers)
                     || this.numberFieldY.keyPressed(typedChar, keyCode, modifiers)
                     || this.numberFieldZ.keyPressed(typedChar, keyCode, modifiers)) {
+                onSave();
                 return true;
             }
             return true;
@@ -112,6 +121,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         if (this.numberFieldX.mouseClicked(mouseX, mouseY, mouseButton)
                 || this.numberFieldY.mouseClicked(mouseX, mouseY, mouseButton)
                 || this.numberFieldZ.mouseClicked(mouseX, mouseY, mouseButton)) {
+            onSave();
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -120,12 +130,22 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+
         font.draw(matrixStack, "X", leftPos + 45 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
         font.draw(matrixStack, "Y", leftPos + 99 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
         font.draw(matrixStack, "Z", leftPos + 153 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
         numberFieldX.render(matrixStack, mouseX, mouseY, partialTicks);
         numberFieldY.render(matrixStack, mouseX, mouseY, partialTicks);
         numberFieldZ.render(matrixStack, mouseX, mouseY, partialTicks);
+
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        for (int i = 0; i < 3; i++) {
+            int x = leftPos + 64 + i * 54;
+            if (getMenu().isOffsetVariableFilled(i)) {
+                IImage image = container.getOffsetVariableError(i) == null ? Images.OK : Images.ERROR;
+                image.draw(this, matrixStack, x, topPos + 52);
+            }
+        }
     }
 
     @Override
@@ -134,6 +154,19 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
 
         if (isHovering(0, 0, 80, 18, mouseX, mouseY)) {
             drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.partoffset.offsets")), matrixStack, mouseX - leftPos, mouseY - topPos);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            int x = 64 + i * 54;
+            int slot = i;
+            GuiHelpers.renderTooltipOptional(this, matrixStack, x, 52, 14, 13, mouseX, mouseY,
+                    () -> {
+                        Component unlocalizedMessage = container.getOffsetVariableError(slot);
+                        if (unlocalizedMessage != null) {
+                            return Optional.of(Collections.singletonList(unlocalizedMessage));
+                        }
+                        return Optional.empty();
+                    });
         }
     }
 
@@ -158,6 +191,10 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         if (valueId == getMenu().getLastZValueId()) {
             numberFieldZ.setValue(Integer.toString(getMenu().getLastZValue()));
         }
+
+        numberFieldX.setEditable(!getMenu().isOffsetVariableFilled(0));
+        numberFieldY.setEditable(!getMenu().isOffsetVariableFilled(1));
+        numberFieldZ.setEditable(!getMenu().isOffsetVariableFilled(2));
     }
 
 }

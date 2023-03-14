@@ -27,6 +27,8 @@
     "gui.integrateddynamics.partsettings.channel.disabledinfo": "Network energy consumption is disabled on this server.",
     "gui.integrateddynamics.partsettings.side": "Target Side",
     "gui.integrateddynamics.partoffset.offsets": "Offset relative to the target position",
+    "gui.integrateddynamics.partoffset.slot.message.noint": "Invalid integer coordinate",
+    "gui.integrateddynamics.partoffset.slot.message.outofrange": "Offset exceeds the allowed range",
     "gui.integrateddynamics.partoffset.x": "X Offset",
     "gui.integrateddynamics.partoffset.y": "Y Offset",
     "gui.integrateddynamics.partoffset.z": "Z Offset",

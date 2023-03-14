@@ -32,7 +32,7 @@ public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public boolean isUpdate(S state) {
-        return !getAspects().isEmpty();
+        return !getAspects().isEmpty() || super.isUpdate(state);
     }
 
     @Override
