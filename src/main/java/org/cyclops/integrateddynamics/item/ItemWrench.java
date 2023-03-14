@@ -59,6 +59,30 @@ public class ItemWrench extends Item {
     }
 
     @Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        ItemStack itemStack = context.getItemInHand();
+        if (context.getPlayer() != null && context.getPlayer().isSecondaryUseActive()) {
+            switch (getMode(itemStack)) {
+                case OFFSET -> {
+                    // Save offset
+                    itemStack.getOrCreateTag().putLong("pos", context.getClickedPos().asLong());
+                    context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.saved", context.getClickedPos().toShortString()), true);
+                    return InteractionResult.SUCCESS;
+                }
+                case OFFSET_SIDE -> {
+                    // Save offset and side
+                    itemStack.getOrCreateTag().putLong("pos", context.getClickedPos().asLong());
+                    itemStack.getOrCreateTag().putLong("side", context.getClickedFace().ordinal());
+                    context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.saved", context.getClickedPos().toShortString(), context.getClickedFace().getSerializedName()), true);
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
+
+        return super.onItemUseFirst(stack, context);
+    }
+
+    @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockState blockState = context.getLevel().getBlockState(context.getClickedPos());
         if (context.getPlayer() != null && context.getPlayer().isSecondaryUseActive()) {
@@ -83,17 +107,6 @@ public class ItemWrench extends Item {
                     blockState = blockState.rotate(context.getLevel(), context.getClickedPos(), Rotation.CLOCKWISE_90);
                 }
                 context.getLevel().setBlockAndUpdate(context.getClickedPos(), blockState);
-            }
-            case OFFSET -> {
-                // Save offset
-                itemStack.getOrCreateTag().putLong("pos", context.getClickedPos().asLong());
-                context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.saved", context.getClickedPos().toShortString()), true);
-            }
-            case OFFSET_SIDE -> {
-                // Save offset and side
-                itemStack.getOrCreateTag().putLong("pos", context.getClickedPos().asLong());
-                itemStack.getOrCreateTag().putLong("side", context.getClickedFace().ordinal());
-                context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.saved", context.getClickedPos().toShortString(), context.getClickedFace().getSerializedName()), true);
             }
         }
         return InteractionResult.SUCCESS;
