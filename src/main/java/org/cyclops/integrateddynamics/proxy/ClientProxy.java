@@ -15,6 +15,7 @@ import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.client.render.level.PartOffsetsOverlayRenderer;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
@@ -57,6 +58,7 @@ public class ClientProxy extends ClientProxyComponent {
     public void registerEventHooks() {
         super.registerEventHooks();
         MinecraftForge.EVENT_BUS.register(NetworkDiagnosticsPartOverlayRenderer.getInstance());
+        MinecraftForge.EVENT_BUS.register(PartOffsetsOverlayRenderer.getInstance());
     }
 
     @Override
@@ -83,6 +85,7 @@ public class ClientProxy extends ClientProxyComponent {
             IntegratedDynamics.clog("Stopping diagnostics server...");
             NetworkDiagnosticsPartOverlayRenderer.getInstance().clearPositions();
             NetworkDataClient.clearNetworkData();
+            PartOffsetsOverlayRenderer.getInstance().clear();
             DIAGNOSTICS_SERVER.deinitialize();
             DIAGNOSTICS_SERVER = null;
             IntegratedDynamics.clog("Stopped diagnostics server");

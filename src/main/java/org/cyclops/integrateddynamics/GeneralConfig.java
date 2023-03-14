@@ -154,6 +154,9 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "machine", comment = "The maximum offset in blocks a part can target.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
     public static int maxPartOffset = 32;
 
+    @ConfigurableProperty(category = "machine", comment = "The distance from which part offsets should be shown.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
+    public static int partOffsetRenderDistance = 64;
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }
