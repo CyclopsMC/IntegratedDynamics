@@ -1,7 +1,12 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -12,6 +17,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * A value holder for an {@link IPartType}.
@@ -87,6 +93,16 @@ public interface IPartState<P extends IPartType> {
     public int getChannel();
 
     /**
+     * @return The target position offset.
+     */
+    public Vec3i getTargetOffset();
+
+    /**
+     * @param offset The target position offset.
+     */
+    public void setTargetOffset(Vec3i offset);
+
+    /**
      * Indicate that the given part should interact with the given side of the target.
      * @param side The side of the target block to interact with.
      *             Null removes the side override.
@@ -98,6 +114,11 @@ public interface IPartState<P extends IPartType> {
      */
     @Nullable
     public Direction getTargetSideOverride();
+
+    /**
+     * Indicate that this state has changes that must be saved to the world.
+     */
+    public void markDirty();
 
     /**
      * Check if dirty and reset the dirty state.
@@ -191,4 +212,86 @@ public interface IPartState<P extends IPartType> {
      */
     public void removeVolatileCapability(Capability<?> capability);
 
+    /**
+     * Load the inventory of the given name from the part state.
+     * @param name The inventory name.
+     * @param inventory The inventory object to load into.
+     */
+    public default void loadInventoryNamed(String name, Container inventory) {
+        NonNullList<ItemStack> tabItems = this.getInventoryNamed(name);
+        if (tabItems != null) {
+            for (int i = 0; i < tabItems.size(); i++) {
+                inventory.setItem(i, tabItems.get(i));
+            }
+        }
+    }
+
+    /**
+     * Save the inventory of the given name into the part state.
+     * @param name The inventory name.
+     * @param inventory The inventory object to save.
+     */
+    public default void saveInventoryNamed(String name, Container inventory) {
+        NonNullList<ItemStack> latestItems = NonNullList.create();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            latestItems.add(inventory.getItem(i));
+        }
+        this.setInventoryNamed(name, latestItems);
+    }
+
+    /**
+     * @param name The inventory name.
+     * @return Get the inventory contents of the given name.
+     */
+    @Nullable
+    public NonNullList<ItemStack> getInventoryNamed(String name);
+
+    /**
+     * Set the inventory of the given name.
+     * @param name The inventory name.
+     * @param inventory Inventory contents.
+     */
+    public void setInventoryNamed(String name, NonNullList<ItemStack> inventory);
+
+    /**
+     * @return All named inventories.
+     */
+    public Map<String, NonNullList<ItemStack>> getInventoriesNamed();
+
+    /**
+     * Clear all named inventories.
+     */
+    public void clearInventoriesNamed();
+
+    /**
+     * Tick any internal offset variables.
+     * @param partType The part type.
+     * @param network The network.
+     * @param partNetwork The part network.
+     * @param target The part target.
+     */
+    public void updateOffsetVariables(P partType, INetwork network, IPartNetwork partNetwork, PartTarget target);
+
+    /**
+     * Indicate that the contents of the offset variables inventory have changed.
+     */
+    public void markOffsetVariablesChanged();
+
+    /**
+     * @param slot The offset variable slot.
+     * @return The current error, or null if no error.
+     */
+    @Nullable
+    public MutableComponent getOffsetVariableError(int slot);
+
+    /**
+     * @return The max offset allowed in this part.
+     */
+    public int getMaxOffset();
+
+    /**
+     * Update the max offset for this part.
+     * @param offset The new offset.
+     */
+    public void setMaxOffset(int offset);
 }

@@ -28,6 +28,7 @@ public class RenderCable implements BlockEntityRenderer<BlockEntityMultipartTick
     public void render(BlockEntityMultipartTicking tile, float partialTicks, PoseStack matrixStack,
                        MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
         for (Map.Entry<Direction, IPartType<?, ?>> entry : tile.getPartContainer().getParts().entrySet()) {
+            // Draw part overlays
             for (IPartOverlayRenderer renderer : PartOverlayRenderers.REGISTRY.getRenderers(entry.getValue())) {
                 renderer.renderPartOverlay(this.context, tile.getPartContainer(), entry.getKey(), entry.getValue(),
                         partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay);

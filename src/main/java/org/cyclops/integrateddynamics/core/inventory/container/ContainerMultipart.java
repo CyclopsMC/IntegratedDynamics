@@ -25,6 +25,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
         extends InventoryContainer implements IDirtyMarkListener {
 
     public static final String BUTTON_SETTINGS = "button_settings";
+    public static final String BUTTON_OFFSETS = "button_offsets";
 
     private static final int PAGE_SIZE = 3;
 
@@ -44,6 +45,11 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
         putButtonAction(ContainerMultipart.BUTTON_SETTINGS, (s, containerExtended) -> {
             if(!world.isClientSide()) {
                 PartHelpers.openContainerPart((ServerPlayer) player, target.get().getCenter(), partType);
+            }
+        });
+        putButtonAction(ContainerMultipart.BUTTON_OFFSETS, (s, containerExtended) -> {
+            if(!world.isClientSide()) {
+                PartHelpers.openContainerPartOffsets((ServerPlayer) player, target.get().getCenter(), partType);
             }
         });
     }

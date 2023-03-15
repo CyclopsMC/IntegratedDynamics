@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -140,6 +141,26 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @return The channel of this part in the network.
      */
     public int getChannel(S state);
+
+    /**
+     * @return If this part can handle custom offsets.
+     */
+    public default boolean supportsOffsets() {
+        return true;
+    }
+
+    /**
+     * @param state The state
+     * @return The target position offset.
+     */
+    public Vec3i getTargetOffset(S state);
+
+    /**
+     * @param state The state
+     * @param offset The target position offset.
+     * @return True if the offset was valid
+     */
+    public boolean setTargetOffset(S state, Vec3i offset);
 
     /**
      * Indicate that the given part should interact with the given side of the target.
@@ -430,8 +451,17 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     };
 
     /**
+     * {@link #writeExtraGuiDataOffsets(FriendlyByteBuf, PartPos, ServerPlayer)}.
+     * @return The optional container provider for the part offsets gui.
+     * @param pos The part position. May be null when called client-side, for checking presence.
+     */
+    public default Optional<MenuProvider> getContainerProviderOffsets(PartPos pos) {
+        return Optional.empty();
+    };
+
+    /**
      * This method can be overridden for cases when additional data needs to be sent to clients
-     * when opening settingscontainers.
+     * when opening settings containers.
      * @param packetBuffer A packet buffer that can be written to.
      * @param pos A part position.
      * @param player The player opening the settings gui.
@@ -440,4 +470,14 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     }
 
+    /**
+     * This method can be overridden for cases when additional data needs to be sent to clients
+     * when opening offsets containers.
+     * @param packetBuffer A packet buffer that can be written to.
+     * @param pos A part position.
+     * @param player The player opening the offsets gui.
+     */
+    public default void writeExtraGuiDataOffsets(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+
+    }
 }

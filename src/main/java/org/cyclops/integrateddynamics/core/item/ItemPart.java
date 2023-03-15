@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import lombok.EqualsAndHashCode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -27,7 +26,6 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
-import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
@@ -167,11 +165,6 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
-        if(itemStack.getTag() != null
-                && itemStack.getTag().contains("id", Tag.TAG_INT)) {
-            int id = itemStack.getTag().getInt("id");
-            list.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
-        }
         getPart().loadTooltip(itemStack, list);
         super.appendHoverText(itemStack, world, list, flag);
     }

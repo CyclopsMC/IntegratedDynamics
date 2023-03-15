@@ -12,7 +12,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenScrolling;
-import org.cyclops.cyclopscore.client.gui.image.Images;
+import org.cyclops.cyclopscore.client.gui.image.IImage;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -54,10 +54,25 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         clearWidgets();
         super.init();
         if(getMenu().getPartType().getContainerProviderSettings(null).isPresent()) {
-            addRenderableWidget(new ButtonImage(this.leftPos + 174, this.topPos + 4, 15, 15,
+            addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos + 0, 18, 18,
                     Component.translatable("gui.integrateddynamics.partsettings"),
-                    createServerPressable(ContainerMultipartAspects.BUTTON_SETTINGS, b -> {}), true,
-                    Images.CONFIG_BOARD, -2, -3));
+                    createServerPressable(ContainerMultipartAspects.BUTTON_SETTINGS, (button) -> {}),
+                    new IImage[]{
+                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_BACKGROUND_INACTIVE,
+                            org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_SETTINGS
+                    },
+                    false, 0, 0));
+            if (getMenu().getPartType().supportsOffsets()) {
+                addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos + 20, 18, 18,
+                        Component.translatable("gui.integrateddynamics.part_offsets"),
+                        createServerPressable(ContainerMultipartAspects.BUTTON_OFFSETS, (button) -> {
+                        }),
+                        new IImage[]{
+                                org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_BACKGROUND_INACTIVE,
+                                org.cyclops.integrateddynamics.client.gui.image.Images.BUTTON_MIDDLE_OFFSET
+                        },
+                        false, 0, 0));
+            }
         }
         for(Map.Entry<IAspect, String> entry : getMenu().getAspectPropertyButtons().entrySet()) {
             ButtonText button = new ButtonText(-20, -20, 10, 10,
@@ -171,6 +186,13 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                     }
                 }
             }
+        }
+
+        if (isHovering(-20, 0, 18, 18, mouseX, mouseY)) {
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), matrixStack, mouseX - leftPos, mouseY - topPos);
+        }
+        if (isHovering(-20, 20, 18, 18, mouseX, mouseY)) {
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), matrixStack, mouseX - leftPos, mouseY - topPos);
         }
     }
 

@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.capability.variablecontainer.VariableConta
 import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTickingConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettingsConfig;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffsetConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettingsConfig;
 import org.cyclops.integrateddynamics.core.recipe.type.*;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
@@ -142,6 +143,7 @@ public class Configs {
         configHandler.addConfigurable(new ItemCrystalizedChorusChunkConfig());
         configHandler.addConfigurable(new ItemLogicDirectorConfig());
         configHandler.addConfigurable(new ItemProtoChorusConfig());
+        configHandler.addConfigurable(new ItemEnhancementOffsetConfig());
 
         // World features
         configHandler.addConfigurable(new FoliagePlacerMenrilConfig());
@@ -164,6 +166,7 @@ public class Configs {
         configHandler.addConfigurable(new ContainerPartDisplayConfig());
         configHandler.addConfigurable(new ContainerPartReaderConfig());
         configHandler.addConfigurable(new ContainerPartSettingsConfig());
+        configHandler.addConfigurable(new ContainerPartOffsetConfig());
         configHandler.addConfigurable(new ContainerPartWriterConfig());
         configHandler.addConfigurable(new ContainerProxyConfig());
         configHandler.addConfigurable(new ContainerVariablestoreConfig());

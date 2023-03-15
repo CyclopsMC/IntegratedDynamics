@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.core.part;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +22,7 @@ import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
@@ -36,6 +39,8 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.ItemPart;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
+import org.cyclops.integrateddynamics.item.ItemEnhancement;
+import org.cyclops.integrateddynamics.item.ItemWrench;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -132,7 +137,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     @SuppressWarnings("unchecked")
     @Override
     public INetworkElement createNetworkElement(IPartContainer partContainer, DimPos pos, Direction side) {
-        return new PartNetworkElement(this, getTarget(PartPos.of(pos, side), (S) partContainer.getPartState(side)));
+        return new PartNetworkElement(this, PartPos.of(pos, side));
     }
 
     @Override
@@ -143,6 +148,22 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             return InteractionResult.PASS;
         }
 
+        // Consume enhancement
+        if (heldItem.getItem() instanceof ItemEnhancement itemEnhancement) {
+            InteractionResult result = itemEnhancement.applyEnhancement(this, partState, heldItem, player, hand);
+            if (result.consumesAction()) {
+                return result;
+            }
+        }
+
+        // Set offset and side
+        if (heldItem.getItem() instanceof ItemWrench itemWrench) {
+            InteractionResult result = itemWrench.performPartAction(hit, this, partState, heldItem, player, hand);
+            if (result.consumesAction()) {
+                return result;
+            }
+        }
+
         PartPos partPos = PartPos.of(world, pos, hit.getDirection());
         if(getContainerProvider(partPos).isPresent()) {
             if (!world.isClientSide()) {
@@ -151,6 +172,18 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
+        super.addDrops(target, state, itemStacks, dropMainElement, saveState);
+
+        // Save enhancements
+        if (!saveState) {
+            ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_ENHANCEMENT_OFFSET);
+            RegistryEntries.ITEM_ENHANCEMENT_OFFSET.setEnhancementValue(itemStack, state.getMaxOffset());
+            itemStacks.add(itemStack);
+        }
     }
 
     @Override
@@ -170,7 +203,29 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             lines.add(Component.translatable(L10NValues.PART_TOOLTIP_DISABLED));
         }
         lines.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, state.getId()));
+
+        if (state.getMaxOffset() > 0) {
+            lines.add(Component.translatable(L10NValues.PART_TOOLTIP_MAXOFFSET, state.getMaxOffset()));
+        }
     }
+
+    @Override
+    public void loadTooltip(ItemStack itemStack, List<Component> lines) {
+        if(itemStack.getTag() != null) {
+            CompoundTag tag = itemStack.getTag();
+            if(tag.contains("id", Tag.TAG_INT)) {
+                int id = tag.getInt("id");
+                lines.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
+            }
+            if(tag.contains("maxOffset", Tag.TAG_INT)) {
+                int maxOffset = tag.getInt("maxOffset");
+                lines.add(Component.translatable(L10NValues.PART_TOOLTIP_MAXOFFSET, maxOffset));
+            }
+        }
+
+        super.loadTooltip(itemStack, lines);
+    }
+
     /**
      * Override this to register your network event actions.
      * @return The event actions.

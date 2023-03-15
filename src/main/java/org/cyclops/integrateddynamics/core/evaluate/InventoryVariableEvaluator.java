@@ -133,6 +133,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
     @Override
     public void addError(MutableComponent error) {
         errors.add(error);
+        onErrorsChanged();
     }
 
     public void onErrorsChanged() {

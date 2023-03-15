@@ -25,6 +25,7 @@ public class L10NValues {
     public static final String PART_TOOLTIP_DISPLAY_ACTIVEVALUE = "parttype." + NS + ".tooltip.display.active_value";
     public static final String PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP = "parttype." + NS + ".tooltip.monodirectionalconnector.group";
     public static final String PART_TOOLTIP_NOASPECTS = "parttype." + NS + ".tooltip.noaspects";
+    public static final String PART_TOOLTIP_MAXOFFSET = "parttype." + NS + ".tooltip.maxoffset";
 
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";

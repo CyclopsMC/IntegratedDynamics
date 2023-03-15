@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.network.PartOffsetsClientNotifier;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
@@ -80,6 +81,8 @@ public final class TickHandler {
             }
 
             ticked = true;
+
+            PartOffsetsClientNotifier.getInstance().tick();
         }
     }
 

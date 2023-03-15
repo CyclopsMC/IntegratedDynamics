@@ -12,6 +12,7 @@
   { "type": "minecraft:single", "resource": "integrateddynamics:item/logic_director" },
   { "type": "minecraft:single", "resource": "integrateddynamics:item/crystalized_chorus_chunk" },
   { "type": "minecraft:single", "resource": "integrateddynamics:item/door_menril" },
+  { "type": "minecraft:single", "resource": "integrateddynamics:item/enhancement_offset" },
   { "type": "minecraft:single", "resource": "integrateddynamics:item/wrench" },
   { "type": "minecraft:single", "resource": "integrateddynamics:item/proto_chorus" },
   { "type": "minecraft:single", "resource": "integrateddynamics:item/variable_transformer_output" },

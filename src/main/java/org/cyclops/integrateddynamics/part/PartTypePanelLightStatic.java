@@ -25,6 +25,11 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     }
 
     @Override
+    public boolean supportsOffsets() {
+        return false;
+    }
+
+    @Override
     protected Block createBlock(BlockConfig blockConfig) {
         return new IgnoredBlock();
     }

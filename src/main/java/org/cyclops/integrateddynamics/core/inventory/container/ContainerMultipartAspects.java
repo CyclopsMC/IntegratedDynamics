@@ -41,6 +41,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         extends ScrollingInventoryContainer<A> implements IDirtyMarkListener {
 
     public static String BUTTON_SETTINGS = "button_settings";
+    public static String BUTTON_OFFSETS = "button_offsets";
 
     private static final int PAGE_SIZE = 3;
 
@@ -70,6 +71,11 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         putButtonAction(ContainerMultipartAspects.BUTTON_SETTINGS, (s, containerExtended) -> {
             if (!world.isClientSide()) {
                 PartHelpers.openContainerPartSettings((ServerPlayer) player, target.getCenter(), partType);
+            }
+        });
+        putButtonAction(ContainerMultipartAspects.BUTTON_OFFSETS, (s, containerExtended) -> {
+            if (!world.isClientSide()) {
+                PartHelpers.openContainerPartOffsets((ServerPlayer) player, target.getCenter(), partType);
             }
         });
 
