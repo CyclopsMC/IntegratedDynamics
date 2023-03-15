@@ -41,8 +41,10 @@ org.cyclops.integrateddynamics.capability.valueinterface
 org.cyclops.integrateddynamics.capability.variablecontainer
 org.cyclops.integrateddynamics.capability.variablefacade
 org.cyclops.integrateddynamics.client.gui.container
+org.cyclops.integrateddynamics.client.gui.image
 org.cyclops.integrateddynamics.client.model
 org.cyclops.integrateddynamics.client.render.blockentity
+org.cyclops.integrateddynamics.client.render.level
 org.cyclops.integrateddynamics.client.render.model
 org.cyclops.integrateddynamics.client.render.part
 org.cyclops.integrateddynamics.client.render.valuetype
@@ -105,6 +107,8 @@ org.cyclops.integrateddynamics.part.aspect.write
 org.cyclops.integrateddynamics.part.aspect.write.redstone
 org.cyclops.integrateddynamics.proxy
 org.cyclops.integrateddynamics.recipe
+org.cyclops.integrateddynamics.world.biome
 org.cyclops.integrateddynamics.world.gen
+org.cyclops.integrateddynamics.world.gen.feature
 org.cyclops.integrateddynamics.world.gen.foliageplacer
 org.cyclops.integrateddynamics.world.gen.trunkplacer
