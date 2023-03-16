@@ -97,6 +97,7 @@ org.cyclops.integrateddynamics.item
 org.cyclops.integrateddynamics.loot.conditions
 org.cyclops.integrateddynamics.loot.functions
 org.cyclops.integrateddynamics.metadata
+org.cyclops.integrateddynamics.mixin
 org.cyclops.integrateddynamics.network
 org.cyclops.integrateddynamics.network.packet
 org.cyclops.integrateddynamics.part
@@ -107,6 +108,8 @@ org.cyclops.integrateddynamics.part.aspect.write
 org.cyclops.integrateddynamics.part.aspect.write.redstone
 org.cyclops.integrateddynamics.proxy
 org.cyclops.integrateddynamics.recipe
+org.cyclops.integrateddynamics.world.biome
 org.cyclops.integrateddynamics.world.gen
+org.cyclops.integrateddynamics.world.gen.feature
 org.cyclops.integrateddynamics.world.gen.foliageplacer
 org.cyclops.integrateddynamics.world.gen.trunkplacer
