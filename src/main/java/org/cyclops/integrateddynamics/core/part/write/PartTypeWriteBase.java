@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.part.write;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -87,6 +88,19 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         if (aspect != null) {
             aspect.update(network, partNetwork, this, target, state);
         }
+    }
+
+    @Override
+    public boolean setTargetOffset(S state, PartPos center, Vec3i offset) {
+        IAspectWrite activeAspect = state.getActiveAspect();
+        if(activeAspect != null) {
+            activeAspect.onDeactivate(this, getTarget(center, state), state);
+        }
+        boolean ret = super.setTargetOffset(state, center, offset);
+        if(activeAspect != null) {
+            activeAspect.onActivate(this, getTarget(center, state), state);
+        }
+        return ret;
     }
 
     @Override

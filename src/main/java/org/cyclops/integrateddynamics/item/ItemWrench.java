@@ -26,6 +26,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import java.util.List;
 import java.util.Map;
@@ -159,14 +160,14 @@ public class ItemWrench extends Item {
         list.add(Component.translatable(mode.getLabel() + ".info").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
     }
 
-    public <P extends IPartType<P, S>, S extends IPartState<P>> InteractionResult performPartAction(BlockHitResult hit, IPartType<P, S> partType, IPartState<P> partState, ItemStack itemStack, Player player, InteractionHand hand) {
+    public <P extends IPartType<P, S>, S extends IPartState<P>> InteractionResult performPartAction(BlockHitResult hit, IPartType<P, S> partType, IPartState<P> partState, ItemStack itemStack, Player player, InteractionHand hand, PartPos center) {
         Mode mode = getMode(itemStack);
         CompoundTag tag = itemStack.getTag();
         switch (mode) {
             case OFFSET -> {
                 if (tag.contains("pos")) {
                     Vec3i offset = determineOffset(hit, tag);
-                    if (((IPartType) partType).setTargetOffset(partState, offset)) {
+                    if (((IPartType) partType).setTargetOffset(partState, center, offset)) {
                         player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.success"), true);
                     } else {
                         player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.fail"), true);
@@ -180,7 +181,7 @@ public class ItemWrench extends Item {
                 if (tag.contains("pos") && tag.contains("side")) {
                     Vec3i offset = determineOffset(hit, tag);
                     Direction side = Direction.values()[tag.getInt("side")];
-                    if (((IPartType) partType).setTargetOffset(partState, offset)) {
+                    if (((IPartType) partType).setTargetOffset(partState, center, offset)) {
                         ((IPartType) partType).setTargetSideOverride(partState, side);
                         player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.success"), true);
                     } else {
