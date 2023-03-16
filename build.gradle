@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7.+'
     }
 }
 
@@ -21,6 +22,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
+apply plugin: 'org.spongepowered.mixin'
 
 import net.minecraftforge.gradle.common.tasks.SignJar
 
@@ -97,6 +99,7 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local CyclopsCore version.
     if(secrets.cyclopscore_version_local) {
@@ -193,6 +196,11 @@ minecraft {
             }
         }
     }
+}
+
+mixin {
+    add sourceSets.main, "mixins.integrateddynamics.refmap.json"
+    config 'mixins.integrateddynamics.json'
 }
 
 if (build_number.equals("RELEASE"))

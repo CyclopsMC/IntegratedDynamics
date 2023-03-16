@@ -157,14 +157,14 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         }
 
         // Set offset and side
+        PartPos partPos = PartPos.of(world, pos, hit.getDirection());
         if (heldItem.getItem() instanceof ItemWrench itemWrench) {
-            InteractionResult result = itemWrench.performPartAction(hit, this, partState, heldItem, player, hand);
+            InteractionResult result = itemWrench.performPartAction(hit, this, partState, heldItem, player, hand, partPos);
             if (result.consumesAction()) {
                 return result;
             }
         }
 
-        PartPos partPos = PartPos.of(world, pos, hit.getDirection());
         if(getContainerProvider(partPos).isPresent()) {
             if (!world.isClientSide()) {
                 return PartHelpers.openContainerPart((ServerPlayer) player, partPos, this);

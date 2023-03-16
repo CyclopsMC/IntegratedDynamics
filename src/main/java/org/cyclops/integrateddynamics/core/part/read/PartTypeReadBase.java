@@ -130,9 +130,9 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    public boolean setTargetOffset(S state, Vec3i offset) {
+    public boolean setTargetOffset(S state, PartPos center, Vec3i offset) {
         Vec3i lastOffset = getTargetOffset(state);
-        boolean ret = super.setTargetOffset(state, offset);
+        boolean ret = super.setTargetOffset(state, center, offset);
         if (!lastOffset.equals(offset)) {
             state.resetVariables();
         }

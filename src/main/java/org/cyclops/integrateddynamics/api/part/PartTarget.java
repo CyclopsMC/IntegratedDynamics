@@ -68,6 +68,10 @@ public class PartTarget {
         return target;
     }
 
+    public boolean isDefaultTarget() {
+        return getCenter().getPos().getBlockPos().relative(getCenter().getSide()).equals(getTarget().getPos().getBlockPos());
+    }
+
     private PartTarget(PartPos center, PartPos target) {
         this.center = center;
         this.target = target;
