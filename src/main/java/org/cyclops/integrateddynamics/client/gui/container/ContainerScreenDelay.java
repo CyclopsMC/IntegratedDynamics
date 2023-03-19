@@ -125,6 +125,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
+        displayErrors.drawForeground(matrixStack, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 
     @Override
