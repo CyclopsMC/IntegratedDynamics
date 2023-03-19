@@ -66,6 +66,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
 
     @Setter
     private Player lastPlayer = null;
+    private EvaluationException lastError = null;
 
     public BlockEntityDelay(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_DELAY, blockPos, blockState, BlockEntityDelay.INVENTORY_SIZE);
@@ -78,6 +79,9 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
 
             @Override
             public ValueTypeList.ValueList getValue() throws EvaluationException {
+                if (lastError != null) {
+                    throw lastError;
+                }
                 return list;
             }
         };
@@ -185,8 +189,10 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
                 if (variable != null) {
                     try {
                         value = variable.getValue();
+                        blockEntity.lastError = null;
                     } catch (EvaluationException e) {
-                        blockEntity.getEvaluator().addError(Component.translatable(e.toString()));
+                        blockEntity.getEvaluator().addError(e.getErrorMessage());
+                        blockEntity.lastError = e;
                     }
                     if (value != null) {
                         try {
