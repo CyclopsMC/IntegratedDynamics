@@ -187,7 +187,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
                     try {
                         value = variable.getValue();
                     } catch (EvaluationException e) {
-                        blockEntity.getEvaluator().addError(new TranslatableComponent(e.toString()));
+                        blockEntity.getEvaluator().addError(e.getErrorMessage());
                     }
                     if (value != null) {
                         try {
