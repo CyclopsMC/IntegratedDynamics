@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
@@ -56,9 +57,9 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             matrixStack.pushPose();
             matrixStack.scale(0.3F, 0.3F, 1F);
             context.getFont().drawInBatch(L10NHelpers.localize("gui.integrateddynamics.input_short"), 8, 15, Helpers.RGBToInt(255, 255, 255),
-                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             context.getFont().drawInBatch(L10NHelpers.localize("gui.integrateddynamics.output_short"), 46, 15, Helpers.RGBToInt(255, 255, 255),
-                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             matrixStack.popPose();
 
             matrixStack.translate(0, 2 * DisplayPartOverlayRenderer.MAX / 3, 0);

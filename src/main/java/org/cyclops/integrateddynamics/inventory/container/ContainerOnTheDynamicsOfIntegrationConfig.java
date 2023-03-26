@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
@@ -20,7 +21,7 @@ public class ContainerOnTheDynamicsOfIntegrationConfig extends GuiConfig<Contain
     public ContainerOnTheDynamicsOfIntegrationConfig() {
         super(IntegratedDynamics._instance,
                 "on_the_dynamics_of_integration",
-                eConfig -> new ContainerTypeData<>(ContainerOnTheDynamicsOfIntegration::new));
+                eConfig -> new ContainerTypeData<>(ContainerOnTheDynamicsOfIntegration::new, FeatureFlags.VANILLA_SET));
     }
 
     @OnlyIn(Dist.CLIENT)

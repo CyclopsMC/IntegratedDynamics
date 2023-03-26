@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.recipe;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.BlockItem;
@@ -44,10 +45,14 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingContainer grid, Level world) {
-        return !assemble(grid).isEmpty();
+        return !assemble(grid, world.registryAccess()).isEmpty();
     }
 
     @Override
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
+        return getResultItem();
+    }
+
     public ItemStack getResultItem() {
         return new ItemStack(RegistryEntries.ITEM_FACADE);
     }
@@ -65,8 +70,8 @@ public class ItemFacadeRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer grid) {
-        ItemStack output = getResultItem().copy();
+    public ItemStack assemble(CraftingContainer grid, RegistryAccess registryAccess) {
+        ItemStack output = getResultItem(registryAccess).copy();
 
         int facades = 0;
         ItemStack block = ItemStack.EMPTY;

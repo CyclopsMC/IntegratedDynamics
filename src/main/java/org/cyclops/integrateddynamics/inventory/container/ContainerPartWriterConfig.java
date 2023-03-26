@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
@@ -22,7 +23,7 @@ public class ContainerPartWriterConfig extends GuiConfig<ContainerPartWriter> {
     public ContainerPartWriterConfig() {
         super(IntegratedDynamics._instance,
                 "part_writer",
-                eConfig -> new ContainerTypeData<>(ContainerPartWriter::new));
+                eConfig -> new ContainerTypeData<>(ContainerPartWriter::new, FeatureFlags.VANILLA_SET));
     }
 
     @OnlyIn(Dist.CLIENT)

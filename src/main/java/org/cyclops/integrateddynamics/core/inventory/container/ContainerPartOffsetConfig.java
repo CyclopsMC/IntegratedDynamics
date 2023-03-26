@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
@@ -22,7 +23,7 @@ public class ContainerPartOffsetConfig extends GuiConfig<ContainerPartOffset> {
     public ContainerPartOffsetConfig() {
         super(IntegratedDynamics._instance,
                 "part_offset",
-                eConfig -> new ContainerTypeData<>(ContainerPartOffset::new));
+                eConfig -> new ContainerTypeData<>(ContainerPartOffset::new, FeatureFlags.VANILLA_SET));
     }
 
     @OnlyIn(Dist.CLIENT)

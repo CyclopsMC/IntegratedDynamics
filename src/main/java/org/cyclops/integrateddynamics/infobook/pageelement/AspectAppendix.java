@@ -69,7 +69,7 @@ public class AspectAppendix extends SectionAppendix {
         gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
         Lighting.setupForFlatItems();
-        Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(itemStack, x, y);
+        Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(matrixStack, itemStack, x, y);
 
         // Base information
         String aspectName = L10NHelpers.localize(aspect.getTranslationKey());

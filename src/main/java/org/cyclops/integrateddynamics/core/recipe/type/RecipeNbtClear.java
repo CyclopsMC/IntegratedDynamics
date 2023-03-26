@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -30,11 +31,11 @@ public class RecipeNbtClear extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingContainer inv, Level worldIn) {
-        return !assemble(inv).isEmpty();
+        return !assemble(inv, worldIn.registryAccess()).isEmpty();
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv) {
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
         ItemStack ret = ItemStack.EMPTY;
         for(int j = 0; j < inv.getContainerSize(); j++) {
             ItemStack element = inv.getItem(j);
@@ -59,6 +60,10 @@ public class RecipeNbtClear extends CustomRecipe {
     }
 
     @Override
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
+        return getResultItem();
+    }
+
     public ItemStack getResultItem() {
         return inputIngredient.getItems()[0]; // This is just a dummy item!
     }

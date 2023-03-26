@@ -54,7 +54,7 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), container.getPlayerIInventory().player.level, aspect);
         Rectangle pos = getElementPosition(container, index, true);
         Lighting.setupForFlatItems();
-        itemRenderer.renderAndDecorateItem(itemStack, pos.x, pos.y);
+        itemRenderer.renderAndDecorateItem(matrixStack, itemStack, pos.x, pos.y);
 
         // Render error symbol
         if(getMenu().isPartStateEnabled()) {

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,7 +21,7 @@ public class ContainerMechanicalDryingBasinConfig extends GuiConfig<ContainerMec
     public ContainerMechanicalDryingBasinConfig() {
         super(IntegratedDynamics._instance,
                 "mechanical_drying_basin",
-                eConfig -> new MenuType<>(ContainerMechanicalDryingBasin::new));
+                eConfig -> new MenuType<>(ContainerMechanicalDryingBasin::new, FeatureFlags.VANILLA_SET));
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -2,12 +2,12 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
@@ -26,7 +26,7 @@ public class BlockMenrilFenceGateConfig extends BlockConfig {
                 "menril_fence_gate",
                 eConfig -> new FenceGateBlock(BlockBehaviour.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
                         .strength(2.0F, 3.0F)
-                        .sound(SoundType.WOOD), SoundEvents.FENCE_GATE_CLOSE, SoundEvents.FENCE_GATE_OPEN) {
+                        .sound(SoundType.WOOD), WoodType.OAK) {
                     @Override
                     public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
                         return 5;

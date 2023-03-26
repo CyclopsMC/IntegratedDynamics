@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -63,7 +64,7 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             matrixStack.scale(scale, scale, 1F);
             context.getFont().drawInBatch(string,
                     0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)),
-                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             matrixStack.popPose();
         }
     }

@@ -6,13 +6,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.LevelSimulatedReader;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import org.cyclops.integrateddynamics.RegistryEntries;
-
-import java.util.function.BiConsumer;
 
 /**
  * @author rubensworks
@@ -30,7 +27,7 @@ public class FoliagePlacerMenril extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, TreeConfiguration config,
+    protected void createFoliage(LevelSimulatedReader world, FoliagePlacer.FoliageSetter callback, RandomSource rand, TreeConfiguration config,
                                  int mimimumHeight, FoliagePlacer.FoliageAttachment foliage, int foliageHeight, int spread, int offset) {
         BlockPos blockpos = foliage.pos();
         for(int l = offset; l >= -foliageHeight; --l) {

@@ -63,7 +63,7 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         for(Component line : lines) {
             int color = Helpers.addAlphaToColor(ValueTypes.OPERATOR.getDisplayColor(), alpha);
             context.getFont().drawInBatch(line.getString(), 0, offset, color,
-                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             offset += singleHeight;
         }
 

@@ -3,12 +3,13 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
@@ -40,7 +41,7 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             float scale = 1F / ((float) stackSize.length() + 1F);
             matrixStack.scale(scale, scale, 1F);
             context.getFont().drawInBatch(stackSize,
-                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)), false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)), false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             matrixStack.popPose();
         }
     }
@@ -63,7 +64,7 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             Lighting.setupForFlatItems();
         }
 
-        renderItem.render(itemStack, ItemTransforms.TransformType.GUI, false, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemModel);
+        renderItem.render(itemStack, ItemDisplayContext.GUI, false, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemModel);
 
         Lighting.setupFor3DItems();
 

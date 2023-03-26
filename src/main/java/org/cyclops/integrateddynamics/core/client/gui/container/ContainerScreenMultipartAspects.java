@@ -125,6 +125,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                 RenderHelpers.bindTexture(texture);
                 blit(matrixStack, leftPos + offsetX + 9,
                         topPos + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1);
+                RenderSystem.setShaderColor(1, 1, 1, 1);
 
                 // Aspect type info
                 String aspectName = L10NHelpers.localize(aspect.getTranslationKey());

@@ -66,7 +66,7 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         for(Pair<String, Integer> line : lines) {
             int color = Helpers.addAlphaToColor(line.getRight(), alpha);
             context.getFont().drawInBatch(line.getLeft(), 0, offset, color,
-                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             offset += singleHeight;
         }
 

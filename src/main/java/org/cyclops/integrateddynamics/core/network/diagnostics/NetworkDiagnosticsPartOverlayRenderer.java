@@ -66,7 +66,6 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             RenderSystem.lineWidth(6.0F);
-            RenderSystem.disableTexture();
             RenderSystem.depthMask(false);
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
@@ -92,7 +91,6 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             }
 
             RenderSystem.depthMask(true);
-            RenderSystem.enableTexture();
             RenderSystem.disableBlend();
         }
     }

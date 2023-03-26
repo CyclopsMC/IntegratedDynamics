@@ -92,10 +92,9 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             }
         }
     }
-
     @Override
-    public void setFocus(boolean isFocusedIn) {
-        super.setFocus(isFocusedIn);
+    public void setFocused(boolean isFocusedIn) {
+        super.setFocused(isFocusedIn);
         if (isFocusedIn) {
             refreshDropdownList();
         }
@@ -163,11 +162,11 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         // Display text red that is in an "invalid" state (no valid dropdrown entry selected)
         this.setTextColor(this.selectedDropdownPossibility == null ? Helpers.RGBToInt(220, 10, 10) : 14737632);
 
-        super.renderButton(matrixStack, mouseX, mouseY, partialTicks);
+        super.renderWidget(matrixStack, mouseX, mouseY, partialTicks);
         if (this.isVisible() && isFocused()) {
             Font fontRenderer = Minecraft.getInstance().font;
             int yOffset = fontRenderer.lineHeight + 3;

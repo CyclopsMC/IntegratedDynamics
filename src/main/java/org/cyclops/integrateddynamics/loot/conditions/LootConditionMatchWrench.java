@@ -31,7 +31,7 @@ public class LootConditionMatchWrench implements LootItemCondition {
     public boolean test(LootContext lootContext) {
         ItemStack itemStack = lootContext.getParamOrNull(LootContextParams.TOOL);
         Entity entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);
-        BlockPos blockPos = new BlockPos(lootContext.getParamOrNull(LootContextParams.ORIGIN));
+        BlockPos blockPos = BlockPos.containing(lootContext.getParamOrNull(LootContextParams.ORIGIN));
         return itemStack != null
                 && entity instanceof Player
                 && WrenchHelpers.isWrench((Player) entity, itemStack, entity.getCommandSenderWorld(), blockPos, null);

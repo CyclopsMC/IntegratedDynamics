@@ -51,7 +51,7 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         for(String line : lines) {
             int color = Helpers.addAlphaToColor(value.getType().getDisplayColor(), alpha);
             context.getFont().drawInBatch(polishLine(line), 0, offset, color,
-                    false, matrixStack.last().pose(), renderTypeBuffer, false, 0, combinedLight);
+                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             offset += singleHeight;
         }
 

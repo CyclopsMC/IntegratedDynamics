@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -2242,7 +2241,7 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 String hurtSound = "";
                 if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
-                    String sound = ((LivingEntity) a.getRawValue().get()).getHurtSound(DamageSource.GENERIC).location.toString();
+                    String sound = ((LivingEntity) a.getRawValue().get()).getHurtSound(a.getRawValue().get().damageSources().generic()).location.toString();
                     if (sound != null) {
                         hurtSound = sound;
                     }

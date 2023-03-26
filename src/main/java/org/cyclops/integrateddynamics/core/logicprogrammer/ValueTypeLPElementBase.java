@@ -172,7 +172,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     @OnlyIn(Dist.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
         if (subGui instanceof ValueTypeStringLPElementRenderPattern) {
-            ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().changeFocus(focused);
+            ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().setFocused(focused);
         }
     }
 

@@ -80,7 +80,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             saveGuiToState();
             loadStateToGui();
             if (this.inputTags.isChecked()) {
-                this.inputTagsDropdown.setFocus(true);
+                this.inputTagsDropdown.setFocused(true);
             }
         });
         this.inputTagsDropdown = new WidgetTextFieldDropdown<>(Minecraft.getInstance().font,
@@ -101,7 +101,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             if (!this.inputTags.isChecked() || this.inputTagsDropdown.getSelectedDropdownPossibility() != null) {
                 element.lastGui.setRecipeSubGui();
             } else {
-                this.inputTagsDropdown.changeFocus(true);
+                this.inputTagsDropdown.setFocused(true);
             }
                 }, Images.OK);
 
@@ -109,7 +109,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         loadStateToGui();
         // Show dropdown if a tag was already set
         if (this.inputTags.isChecked()) {
-            this.inputTagsDropdown.changeFocus(true);
+            this.inputTagsDropdown.setFocused(true);
         }
     }
 
@@ -219,16 +219,14 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         // Draw item grid
         int passed = 0;
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        itemRenderer.blitOffset = 300F;
         for (Item item : items) {
-            itemRenderer.renderGuiItem(new ItemStack(item), x, y);
+            itemRenderer.renderGuiItem(poseStack, new ItemStack(item), x, y);
             x += offset;
             if (passed++ % columns == columns - 1) {
                 y += offset;
                 x = mouseX - guiLeft;
             }
         }
-        itemRenderer.blitOffset = 0F;
     }
 
     @Override

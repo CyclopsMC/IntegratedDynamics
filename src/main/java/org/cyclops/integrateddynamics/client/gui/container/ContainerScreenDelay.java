@@ -114,8 +114,8 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
-        numberFieldUpdateInterval.renderButton(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
-        numberFieldCapacity.renderButton(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
+        numberFieldUpdateInterval.render(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
+        numberFieldCapacity.render(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
         // MCP: drawString
         font.draw(matrixStack, Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0));
         font.draw(matrixStack, Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0));

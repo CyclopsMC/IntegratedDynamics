@@ -229,7 +229,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     protected void setSearchFieldFocussed(boolean focused) {
-        getSearchField().changeFocus(focused);
+        getSearchField().setFocused(focused);
     }
 
     protected boolean isSearchFieldFocussed() {
@@ -456,7 +456,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         public void onButtonEditClick() {
             this.searchField.setVisible(!this.searchField.isVisible());
             if(this.searchField.isVisible()) {
-                this.searchField.changeFocus(true);
+                this.searchField.setFocused(true);
                 label(this.searchField.getValue());
             } else {
                 label("");

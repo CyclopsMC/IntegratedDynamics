@@ -6,14 +6,15 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
@@ -42,7 +43,7 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
             if(!tile.getInventory().getItem(0).isEmpty()) {
                 matrixStack.pushPose();
                 matrixStack.translate(-0.5F, -0.5F, -0.5F);
-                renderItem(matrixStack, renderTypeBuffer, tile.getInventory().getItem(0), tile.getRandomRotation());
+                renderItem(matrixStack, renderTypeBuffer, tile.getInventory().getItem(0), tile.getRandomRotation(), tile.getLevel());
                 matrixStack.popPose();
             }
 
@@ -67,7 +68,7 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
         }
     }
 
-    private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, float rotation) {
+    private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, float rotation, Level level) {
         BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(itemStack, null, null, 0);
         if (model.isGui3d()) {
             matrixStack.translate(1F, 1.2F, 1F);
@@ -79,7 +80,7 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
             matrixStack.mulPose(Axis.YP.rotationDegrees(rotation));
         }
 
-        Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemTransforms.TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, 0);
+        Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemDisplayContext.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, level, 0);
     }
 
 }

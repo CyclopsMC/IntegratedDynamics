@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,7 +21,7 @@ public class ContainerLogicProgrammerConfig extends GuiConfig<ContainerLogicProg
     public ContainerLogicProgrammerConfig() {
         super(IntegratedDynamics._instance,
                 "logic_programmer",
-                eConfig -> new MenuType<>(ContainerLogicProgrammer::new));
+                eConfig -> new MenuType<>(ContainerLogicProgrammer::new, FeatureFlags.VANILLA_SET));
     }
 
     @OnlyIn(Dist.CLIENT)

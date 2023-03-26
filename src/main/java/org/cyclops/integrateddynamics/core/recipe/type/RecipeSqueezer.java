@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -53,7 +54,7 @@ public class RecipeSqueezer implements Recipe<Container> {
     }
 
     @Override
-    public ItemStack assemble(Container inv) {
+    public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
         // Should not be called, but let's provide a good fallback
         if (this.outputItems.isEmpty()) {
             return ItemStack.EMPTY;
@@ -67,7 +68,7 @@ public class RecipeSqueezer implements Recipe<Container> {
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
         // Should not be called, but lets provide a good fallback
         if (this.outputItems.isEmpty()) {
             return ItemStack.EMPTY;

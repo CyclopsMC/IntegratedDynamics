@@ -22,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
@@ -73,11 +74,11 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     private final float[][][] quadVertexes = makeQuadVertexes(MIN, MAX, 1.00F);
 
     protected static final ItemTransforms TRANSFORMS = ModelHelpers.modifyDefaultTransforms(ImmutableMap.of(
-            ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, new ItemTransform(
+            ItemDisplayContext.FIRST_PERSON_LEFT_HAND, new ItemTransform(
                     new Vector3f(0, 45, 0),
                     new Vector3f(0, 1f / 32, 0),
                     new Vector3f(0.4F, 0.4F, 0.4F)),
-            ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, new ItemTransform(
+            ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, new ItemTransform(
                     new Vector3f(0, 225, 0),
                     new Vector3f(0, 1f / 32, 0),
                     new Vector3f(0.4F, 0.4F, 0.4F))

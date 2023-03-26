@@ -320,7 +320,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         @Override
         public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-            valueTypeSelector.renderButton(matrixStack, mouseX, mouseY, partialTicks);
+            valueTypeSelector.renderWidget(matrixStack, mouseX, mouseY, partialTicks);
         }
 
         @Override

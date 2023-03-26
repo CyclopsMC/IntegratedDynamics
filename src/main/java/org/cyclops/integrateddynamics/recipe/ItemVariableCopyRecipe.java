@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.recipe;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -32,11 +33,11 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
     @Override
     public boolean matches(CraftingContainer inv, Level worldIn) {
         lastValueDeseralizationContext = ValueDeseralizationContext.of(worldIn);
-        return !assemble(inv).isEmpty();
+        return !assemble(inv, worldIn.registryAccess()).isEmpty();
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv) {
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
         ItemStack withData = ItemStack.EMPTY;
         ItemStack withoutData = ItemStack.EMPTY;
         IVariableFacade facade;
@@ -66,6 +67,10 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
     }
 
     @Override
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
+        return getResultItem();
+    }
+
     public ItemStack getResultItem() {
         return new ItemStack(RegistryEntries.ITEM_VARIABLE, 1);
     }

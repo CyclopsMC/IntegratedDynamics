@@ -64,7 +64,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
         this.searchField.setMaxLength(64);
         this.searchField.setBordered(false);
         this.searchField.setVisible(true);
-        this.searchField.changeFocus(true);
+        this.searchField.setFocused(true);
         this.searchField.setTextColor(16777215);
         this.searchField.setCanLoseFocus(false);
         this.searchField.setValue("");
@@ -107,7 +107,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
-        this.searchField.renderButton(matrixStack, mouseX, mouseY, partialTicks);
+        this.searchField.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     public void setText(String text) {

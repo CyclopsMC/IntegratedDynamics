@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.mojang.datafixers.util.Either;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -68,7 +69,7 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
     }
 
     @Override
-    public ItemStack assemble(IInventoryFluid inv) {
+    public ItemStack assemble(IInventoryFluid inv, RegistryAccess registryAccess) {
         return this.getOutputItemFirst().copy();
     }
 
@@ -78,7 +79,7 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
         return this.getOutputItemFirst().copy();
     }
 

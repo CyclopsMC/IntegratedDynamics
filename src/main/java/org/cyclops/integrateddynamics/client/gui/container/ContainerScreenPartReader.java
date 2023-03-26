@@ -53,7 +53,7 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
         Rectangle pos = getElementPosition(container, index, true);
 
         Lighting.setupForFlatItems();
-        itemRenderer.renderAndDecorateItem(itemStack, pos.x, pos.y);
+        itemRenderer.renderAndDecorateItem(matrixStack, itemStack, pos.x, pos.y);
     }
 
     @Override
