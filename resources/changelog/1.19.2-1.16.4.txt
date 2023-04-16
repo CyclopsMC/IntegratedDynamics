@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Changes:
+* Set default part offset render distance to 16
+  This resolves performance issues due to too high render distances.
+  Existing worlds will have to manually change their configs for this change to apply (partOffsetRenderDistance).
+  Closes #1261
+
