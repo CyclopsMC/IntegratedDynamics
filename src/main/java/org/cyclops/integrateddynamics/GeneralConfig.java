@@ -155,7 +155,7 @@ public class GeneralConfig extends DummyConfig {
     public static int maxPartOffset = 32;
 
     @ConfigurableProperty(category = "machine", comment = "The distance from which part offsets should be shown.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
-    public static int partOffsetRenderDistance = 64;
+    public static int partOffsetRenderDistance = 16;
 
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
