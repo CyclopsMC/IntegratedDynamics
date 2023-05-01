@@ -28,7 +28,7 @@ Take full and automated control of your appliances.
 [[dependencies.integrateddynamics]]
     modId="forge"
     mandatory=true
-    versionRange="[45.0.20,)"
+    versionRange="[45.0.50,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
