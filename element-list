@@ -63,6 +63,7 @@ org.cyclops.integrateddynamics.core.evaluate.expression
 org.cyclops.integrateddynamics.core.evaluate.operator
 org.cyclops.integrateddynamics.core.evaluate.variable
 org.cyclops.integrateddynamics.core.evaluate.variable.gui
+org.cyclops.integrateddynamics.core.event
 org.cyclops.integrateddynamics.core.helper
 org.cyclops.integrateddynamics.core.ingredient
 org.cyclops.integrateddynamics.core.inventory.container
