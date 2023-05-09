@@ -9,9 +9,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.NewRegistryEvent;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.ConfigHandler;
@@ -62,6 +64,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyF
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.event.IntegratedDynamicsSetupEvent;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlerRegistry;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
@@ -186,6 +189,13 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         MinecraftForge.EVENT_BUS.register(TickHandler.getInstance());
         MinecraftForge.EVENT_BUS.register(NoteBlockEventReceiver.getInstance());
         MinecraftForge.EVENT_BUS.register(new NetworkCapabilityConstructors());
+
+        IntegratedDynamicsSetupEvent integratedDynamicsSetupEvent = new IntegratedDynamicsSetupEvent(this.getContainer());
+        ModList.get().forEachModContainer((name, container) -> {
+            if (container instanceof FMLModContainer fmlModContainer) {
+                fmlModContainer.getEventBus().post(integratedDynamicsSetupEvent);
+            }
+        });
     }
 
     protected void onServerStartedLoadedGroups(ServerStartedEvent event) {
