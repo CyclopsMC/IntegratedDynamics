@@ -56,9 +56,8 @@ public class NetworkDiagnosticsPartOverlayRenderer {
     public void onRender(RenderLevelStageEvent event) {
         if (!partPositions.isEmpty() && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             Player player = Minecraft.getInstance().player;
-            float partialTicks = event.getPartialTick();
 
-            Vec3 eyePos = player.getEyePosition(partialTicks);
+            Vec3 eyePos = event.getCamera().getPosition();
             double offsetX = eyePos.x;
             double offsetY = eyePos.y;
             double offsetZ = eyePos.z;

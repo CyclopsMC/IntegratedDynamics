@@ -84,8 +84,7 @@ public class PartOffsetsOverlayRenderer {
                     this.subscribeToServerChanges();
                 }
 
-                float partialTicks = event.getPartialTick();
-                Vec3 eyePos = player.getEyePosition(partialTicks);
+                Vec3 eyePos = event.getCamera().getPosition();
                 for (PartOffsetsClientNotifier.Entry entry : this.data) {
                     this.renderOffset(event.getPoseStack(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), entry, eyePos);
                 }
