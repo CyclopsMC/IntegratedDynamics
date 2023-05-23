@@ -60,7 +60,8 @@ public interface IConfigRenderPattern {
     }
 
     public static final IConfigRenderPattern NONE = new IConfigRenderPattern.Base(100, 22, new Pair[0], null);
-    public static final IConfigRenderPattern NONE_CANVAS = new IConfigRenderPattern.Base(150, 80, new Pair[0], null);
+    public static final IConfigRenderPattern NONE_CANVAS_WIDE = new IConfigRenderPattern.Base(158, 89, new Pair[0], null);
+    public static final IConfigRenderPattern NONE_CANVAS = new IConfigRenderPattern.Base(136, 89, new Pair[0], null);
     public static final IConfigRenderPattern SINGLE_SLOT = new IConfigRenderPattern.Base(22, 22, new Pair[]{Pair.of(2, 2)}, null);
     public static final IConfigRenderPattern RECIPE = new IConfigRenderPattern.Base(136, 89, new Pair[]{
             // Items in

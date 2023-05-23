@@ -114,5 +114,8 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
     @Override
     public void onSetDropdownPossiblity(IDropdownEntry dropdownEntry) {
         element.onSetDropdownPossiblity(dropdownEntry);
+        if (container instanceof IDirtyMarkListener) {
+            ((IDirtyMarkListener) container).onDirty();
+        }
     }
 }
