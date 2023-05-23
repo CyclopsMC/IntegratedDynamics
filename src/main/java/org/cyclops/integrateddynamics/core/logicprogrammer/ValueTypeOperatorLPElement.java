@@ -125,8 +125,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
             if (operator != null) {
                 int offsetY = 0;
                 for (Component line : ValueTypeOperator.getSignatureLines(operator, true)) {
-                    // MCP: drawString
-                    fontRenderer.drawShadow(matrixStack, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
+                    fontRenderer.draw(matrixStack, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
                     offsetY += fontRenderer.lineHeight;
                 }
             }
