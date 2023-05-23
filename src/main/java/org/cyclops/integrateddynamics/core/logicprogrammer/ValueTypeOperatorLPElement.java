@@ -6,10 +6,10 @@ import lombok.Setter;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -127,8 +127,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
             if (operator != null) {
                 int offsetY = 0;
                 for (Component line : ValueTypeOperator.getSignatureLines(operator, true)) {
-                    // MCP: drawString
-                    fontRenderer.drawShadow(matrixStack, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
+                    fontRenderer.draw(matrixStack, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
                     offsetY += fontRenderer.lineHeight;
                 }
             }

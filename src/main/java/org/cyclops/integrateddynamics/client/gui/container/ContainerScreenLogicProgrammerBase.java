@@ -130,8 +130,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         subGuiHolder.renderBg(matrixStack, this.leftPos, this.topPos, getMinecraft().textureManager, font, partialTicks, mouseX, mouseY);
 
         // Draw container name
-        // MCP: drawString
-        font.drawShadow(matrixStack, new TranslatableComponent(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
+        font.draw(matrixStack, new TranslatableComponent(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
                 this.leftPos + offsetX + 5, this.topPos + offsetY + 208, Helpers.RGBToInt(80, 80, 80));
 
         // Draw operators
