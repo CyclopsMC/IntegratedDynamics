@@ -67,7 +67,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IConfigRenderPattern getRenderPattern() {
-        return IConfigRenderPattern.NONE_CANVAS;
+        return IConfigRenderPattern.NONE_CANVAS_WIDE;
     }
 
     @Override
@@ -203,7 +203,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         public MasterSubGuiRenderPattern(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                          ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-            subGuiHolder.addSubGui(new SelectionSubGui(element, baseX, baseY, maxWidth, maxHeight, gui, container));
+            subGuiHolder.addSubGui(new SelectionSubGui(element, baseX, baseY - getHeight() / 4, maxWidth, maxHeight, gui, container));
             this.baseX = baseX;
             this.baseY = baseY;
             this.maxWidth = maxWidth;
@@ -217,7 +217,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
                 subGuiHolder.removeSubGui(elementSubGui);
             }
             if(index >= 0) {
-                subGuiHolder.addSubGui(elementSubGui = new ListElementSubGui(element, baseX, baseY + (getHeight() / 4),
+                subGuiHolder.addSubGui(elementSubGui = new ListElementSubGui(element, baseX, baseY,
                         maxWidth, maxHeight, gui, container));
                 elementSubGui.init(lastGuiLeft, lastGuiTop);
             }
@@ -279,7 +279,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         public void init(int guiLeft, int guiTop) {
             super.init(guiLeft, guiTop);
             valueTypeSelector = new WidgetArrowedListField<IValueType<?>>(Minecraft.getInstance().font,
-                    getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true,
+                    getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 9, 100, 15, true,
                     Component.translatable("valuetype.integrateddynamics.value_type"), true, getValueTypes());
             valueTypeSelector.setListener(this);
             if (element.activeElement == -1) {
@@ -287,7 +287,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             }
             int x = guiLeft + getX();
             int y = guiTop + getY();
-            buttonList.add(arrowAdd = new ButtonText(x + getWidth() - 13, y + getHeight() - 13, 12, 12,
+            buttonList.add(arrowAdd = new ButtonText(x + getWidth() - 13, y + 10, 12, 12,
                     Component.translatable("gui.integrateddynamics.button.add"), Component.literal("+"), b -> {}, true));
         }
 
@@ -305,9 +305,21 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
+        protected boolean isDrawBackground() {
+            return false;
+        }
+
+        @Override
         public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+
             valueTypeSelector.render(matrixStack, mouseX, mouseY, partialTicks);
+
+            if (element.activeElement >= 0) {
+                int x = guiLeft + getX() + 10;
+                int y = guiTop + getY() + 4;
+                RenderHelpers.drawScaledCenteredString(matrixStack, fontRenderer, String.valueOf(element.activeElement), x - 6, y + 12, 10, Helpers.RGBToInt(20, 20, 20));
+            }
         }
 
         @Override
@@ -337,13 +349,13 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             IValueTypeLogicProgrammerElement subElement = element.subElements.get(element.activeElement);
             if(subGui == null) {
                 subGui = (RenderPattern) subElement.createSubGui(baseX, baseY, maxWidth,
-                        maxHeight / 3 * 2, gui, container);
+                        maxHeight, gui, container);
                 element.subElementGuis.put(
                         element.activeElement,
                         subGui);
             }
-            int x = getX() + baseX - 24;
-            int y = getY() + baseY - 23;
+            int x = RenderPattern.calculateX(baseX, maxWidth, subElement.getRenderPattern());
+            int y = RenderPattern.calculateY(baseY, maxHeight, subElement.getRenderPattern());
             gui.getMenu().setElementInventory(subElement, x, y);
             subElement.setValueInGui(subGui);
             subGuiHolder.addSubGui(subGui);
@@ -357,11 +369,6 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public int getHeight() {
-            return (super.getHeight() / 4) * 3;
-        }
-
-        @Override
         public void init(int guiLeft, int guiTop) {
             super.init(guiLeft, guiTop);
             int x = guiLeft + getX();
@@ -370,19 +377,11 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
                     b -> element.setActiveElement(element.activeElement - 1), ButtonArrow.Direction.WEST));
             buttonList.add(arrowRight = new ButtonArrow(x + getWidth() - arrowLeft.getWidth() - 1, y, Component.translatable("gui.cyclopscore.right"),
                     b -> element.setActiveElement(element.activeElement + 1), ButtonArrow.Direction.EAST));
-            buttonList.add(arrowRemove = new ButtonText(x + (getWidth() / 2) - (arrowLeft.getWidth() / 2), y + getHeight() - 13, 12, 12, Component.translatable("gui.integrateddynamics.button.remove"), Component.literal("-"),
+            buttonList.add(arrowRemove = new ButtonText(x + getWidth() - arrowLeft.getWidth() - 1, y + getHeight() - 13, 10, 12, Component.translatable("gui.integrateddynamics.button.remove"), Component.literal("-"),
                     b -> element.removeElement(element.activeElement), true));
             arrowLeft.active = element.activeElement > 0;
             arrowRight.active = element.activeElement < element.length - 1;
             arrowRemove.active = element.length > 0;
-        }
-
-        @Override
-        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-            int x = guiLeft + getX() + (getWidth() / 2);
-            int y = guiTop + getY() + 4;
-            RenderHelpers.drawScaledCenteredString(matrixStack, fontRenderer, String.valueOf(element.activeElement), x - 4, y + 2, 10, Helpers.RGBToInt(20, 20, 20));
         }
     }
 

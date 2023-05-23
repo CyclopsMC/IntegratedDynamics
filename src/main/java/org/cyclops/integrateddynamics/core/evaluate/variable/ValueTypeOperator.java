@@ -153,16 +153,14 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
                 sb = switchSignatureLineContext(lines, sb);
                 sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ");
             }
-            sb.withStyle(inputType.getDisplayColorFormat())
-                    .append(Component.translatable(inputType.getTranslationKey()))
-                    .withStyle(ChatFormatting.RESET);
+            sb = sb.append(Component.translatable(inputType.getTranslationKey())
+                    .withStyle(inputType.getDisplayColorFormat()));
         }
 
         sb = switchSignatureLineContext(lines, sb);
-        sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ")
-                .withStyle(outputType.getDisplayColorFormat())
-                .append(Component.translatable(outputType.getTranslationKey()))
-                .withStyle(ChatFormatting.RESET);
+        sb = sb.append((indent ? "  " : "") + SIGNATURE_LINK + " ")
+                .append(Component.translatable(outputType.getTranslationKey())
+                        .withStyle(outputType.getDisplayColorFormat()));
         switchSignatureLineContext(lines, sb);
         return lines;
     }

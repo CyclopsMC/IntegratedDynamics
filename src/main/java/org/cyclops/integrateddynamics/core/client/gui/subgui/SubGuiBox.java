@@ -49,56 +49,62 @@ public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
         }
     }
 
+    protected boolean isDrawBackground() {
+        return true;
+    }
+
     @Override
     public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        RenderHelpers.bindTexture(TEXTURE);
+        if (this.isDrawBackground()) {
+            RenderHelpers.bindTexture(TEXTURE);
 
-        int textureWidth = 19;
-        int textureHeight = textureWidth;
+            int textureWidth = 19;
+            int textureHeight = textureWidth;
 
-        int x = guiLeft + getX();
-        int y = guiTop + getY();
-        int width = getWidth();
-        int height = getHeight();
-        int tx = type.getX();
-        int ty = type.getY();
+            int x = guiLeft + getX();
+            int y = guiTop + getY();
+            int width = getWidth();
+            int height = getHeight();
+            int tx = type.getX();
+            int ty = type.getY();
 
-        // Corners
-        this.blit(matrixStack, x, y, tx, tx, 1, 1); // top left
-        this.blit(matrixStack, x + width - 1, y, tx + textureWidth - 1, ty, 1, 1); // top right
-        this.blit(matrixStack, x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1); // bottom left
-        this.blit(matrixStack, x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1); // bottom right
+            // Corners
+            this.blit(matrixStack, x, y, tx, tx, 1, 1); // top left
+            this.blit(matrixStack, x + width - 1, y, tx + textureWidth - 1, ty, 1, 1); // top right
+            this.blit(matrixStack, x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1); // bottom left
+            this.blit(matrixStack, x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1); // bottom right
 
-        int i, j;
+            int i, j;
 
-        // Sides
-        i = 1;
-        while(i < width - 1) {
-            int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
-            this.blit(matrixStack, x + i, y, tx + 1, ty, currentWidth, 1);
-            this.blit(matrixStack, x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1);
-            i += currentWidth;
-        }
-
-        i = 1;
-        while(i < height - 1) {
-            int currentHeight = Math.max(1, Math.min(height - i, textureHeight - 2) - 1);
-            this.blit(matrixStack, x, y + i, tx, ty + 1, 1, currentHeight);
-            this.blit(matrixStack, x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight);
-            i += currentHeight;
-        }
-
-        // Center
-        i = 1;
-        while(i < width - 1) {
-            int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
-            j = 1;
-            while (j < height - 1) {
-                int currentHeight = Math.max(1, Math.min(height - j, textureHeight - 2) - 1);
-                this.blit(matrixStack, x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight);
-                j += currentHeight;
+            // Sides
+            i = 1;
+            while (i < width - 1) {
+                int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
+                this.blit(matrixStack, x + i, y, tx + 1, ty, currentWidth, 1);
+                this.blit(matrixStack, x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1);
+                i += currentWidth;
             }
-            i += currentWidth;
+
+            i = 1;
+            while (i < height - 1) {
+                int currentHeight = Math.max(1, Math.min(height - i, textureHeight - 2) - 1);
+                this.blit(matrixStack, x, y + i, tx, ty + 1, 1, currentHeight);
+                this.blit(matrixStack, x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight);
+                i += currentHeight;
+            }
+
+            // Center
+            i = 1;
+            while (i < width - 1) {
+                int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
+                j = 1;
+                while (j < height - 1) {
+                    int currentHeight = Math.max(1, Math.min(height - j, textureHeight - 2) - 1);
+                    this.blit(matrixStack, x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight);
+                    j += currentHeight;
+                }
+                i += currentWidth;
+            }
         }
 
         // Draw buttons
