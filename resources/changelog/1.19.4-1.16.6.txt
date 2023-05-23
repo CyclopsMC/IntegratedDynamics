@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Fixes:
+* Fix double-shadow text printing in LP
+* Fix missing text colors in operator LP display
+* Fix Logic Programmer interface for lists of complex types
+  This makes it possible to makes lists of recipes, ingredients,
+  and operators.
+  Closes #641
+
