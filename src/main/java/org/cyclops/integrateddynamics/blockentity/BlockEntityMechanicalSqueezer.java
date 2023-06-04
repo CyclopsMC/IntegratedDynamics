@@ -64,7 +64,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         addCapabilityInternal(ForgeCapabilities.FLUID_HANDLER, LazyOptional.of(() -> this.tank));
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getLevel)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(this::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER)));
 
         // Add tank update listeners
         tank.addDirtyMarkListener(this::onTankChanged);
