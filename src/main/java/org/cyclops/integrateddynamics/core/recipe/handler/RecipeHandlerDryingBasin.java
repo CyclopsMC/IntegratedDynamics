@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -19,7 +20,6 @@ import org.cyclops.cyclopscore.ingredient.recipe.IngredientRecipeHelpers;
 import org.cyclops.cyclopscore.ingredient.recipe.RecipeHandlerRecipeType;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.cyclopscore.recipe.type.InventoryFluid;
-import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
 
 import javax.annotation.Nullable;
@@ -30,11 +30,11 @@ import java.util.function.Supplier;
 /**
  * @author rubensworks
  */
-public class RecipeHandlerDryingBasin extends RecipeHandlerRecipeType<IInventoryFluid, RecipeDryingBasin> {
+public class RecipeHandlerDryingBasin<T extends RecipeDryingBasin> extends RecipeHandlerRecipeType<IInventoryFluid, T> {
 
-    public RecipeHandlerDryingBasin(Supplier<Level> worldSupplier) {
+    public RecipeHandlerDryingBasin(Supplier<Level> worldSupplier, RecipeType<T> recipeType) {
         super(worldSupplier,
-                RegistryEntries.RECIPETYPE_DRYING_BASIN,
+                recipeType,
                 Sets.newHashSet(IngredientComponent.ITEMSTACK, IngredientComponent.FLUIDSTACK),
                 Sets.newHashSet(IngredientComponent.ITEMSTACK, IngredientComponent.FLUIDSTACK));
     }

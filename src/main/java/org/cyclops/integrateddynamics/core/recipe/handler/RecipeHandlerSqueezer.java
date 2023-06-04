@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
@@ -13,7 +14,6 @@ import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.cyclopscore.ingredient.recipe.IngredientRecipeHelpers;
 import org.cyclops.cyclopscore.ingredient.recipe.RecipeHandlerRecipeType;
-import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 
 import javax.annotation.Nullable;
@@ -25,11 +25,11 @@ import java.util.stream.Collectors;
 /**
  * @author rubensworks
  */
-public class RecipeHandlerSqueezer extends RecipeHandlerRecipeType<Container, RecipeSqueezer> {
+public class RecipeHandlerSqueezer<T extends RecipeSqueezer> extends RecipeHandlerRecipeType<Container, T> {
 
-    public RecipeHandlerSqueezer(Supplier<Level> worldSupplier) {
+    public RecipeHandlerSqueezer(Supplier<Level> worldSupplier, RecipeType<T> recipeType) {
         super(worldSupplier,
-                RegistryEntries.RECIPETYPE_SQUEEZER,
+                recipeType,
                 Sets.newHashSet(IngredientComponent.ITEMSTACK),
                 Sets.newHashSet(IngredientComponent.ITEMSTACK, IngredientComponent.FLUIDSTACK));
     }
