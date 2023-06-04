@@ -104,7 +104,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
         });
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getLevel)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin<>(this::getLevel, RegistryEntries.RECIPETYPE_DRYING_BASIN)));
     }
 
     public int getProgress() {

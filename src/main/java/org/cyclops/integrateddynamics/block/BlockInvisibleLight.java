@@ -45,12 +45,12 @@ public class BlockInvisibleLight extends Block {
     @SuppressWarnings("deprecation")
     @Override
     public PushReaction getPistonPushReaction(BlockState blockState) {
-        return PushReaction.NORMAL;
+        return PushReaction.DESTROY;
     }
 
     @Override
     public boolean canBeReplaced(BlockState blockState, BlockPlaceContext blockItemUseContext) {
-        return false;
+        return true;
     }
 
     @Override
@@ -65,6 +65,9 @@ public class BlockInvisibleLight extends Block {
 
     @Override
     public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
-        return world.getBlockState(pos).getValue(LIGHT);
+        if (state.getBlock() == this) {
+            return world.getBlockState(pos).getValue(LIGHT);
+        }
+        return super.getLightEmission(state, world, pos);
     }
 }

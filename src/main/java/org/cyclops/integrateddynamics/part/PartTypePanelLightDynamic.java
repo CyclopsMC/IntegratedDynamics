@@ -118,7 +118,7 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         if (BlockInvisibleLightConfig.invisibleLightBlock) {
             Level world = target.getTarget().getPos().getLevel(true);
             BlockPos pos = target.getTarget().getPos().getBlockPos();
-            if(world.isEmptyBlock(pos)) {
+            if(world.isEmptyBlock(pos) || world.getBlockState(pos).getBlock() == RegistryEntries.BLOCK_INVISIBLE_LIGHT) {
                 if(lightLevel > 0) {
                     world.setBlockAndUpdate(pos, RegistryEntries.BLOCK_INVISIBLE_LIGHT.defaultBlockState()
                             .setValue(BlockInvisibleLight.LIGHT, lightLevel));

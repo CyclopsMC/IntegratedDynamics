@@ -63,7 +63,7 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         addCapabilitySided(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.EAST, LazyOptional.of(() -> tankIn));
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin(this::getLevel)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin<>(this::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN)));
 
         // Add tank update listeners
         tankIn.addDirtyMarkListener(this::onTankChanged);

@@ -95,7 +95,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                 });
 
         // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer(this::getLevel)));
+        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(this::getLevel, RegistryEntries.RECIPETYPE_SQUEEZER)));
     }
 
     public SimpleInventory getInventory() {
