@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Fixes:
+* Fix broken Dynamic Light Panels, Closes #1276
+* Fix mechanical recipes incorrectly being validated
+  This fixes Integrated Crafting crafters not working on them.
+  Closes CyclopsMC/IntegratedDynamics#1275
+
