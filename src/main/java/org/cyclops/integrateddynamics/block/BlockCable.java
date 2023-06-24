@@ -41,7 +41,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -104,7 +103,6 @@ import java.util.function.Consumer;
 public class BlockCable extends BlockWithEntity implements IDynamicModelElement, SimpleWaterloggedBlock {
 
     public static final float BLOCK_HARDNESS = 3.0F;
-    public static final Material BLOCK_MATERIAL = Material.GLASS;
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 

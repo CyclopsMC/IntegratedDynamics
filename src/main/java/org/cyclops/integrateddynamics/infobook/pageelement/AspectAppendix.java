@@ -3,9 +3,9 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -62,30 +62,33 @@ public class AspectAppendix extends SectionAppendix {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void drawElement(ScreenInfoBook gui, PoseStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void drawElement(ScreenInfoBook gui, GuiGraphics guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
         int yOffset = 5;
-        gui.drawOuterBorder(matrixStack, x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
-        gui.drawTextBanner(matrixStack, x + width / 2, y - 2 - yOffset);
-        gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
+        gui.drawOuterBorder(guiGraphics, x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
+        gui.drawTextBanner(guiGraphics, x + width / 2, y - 2 - yOffset);
+        gui.drawScaledCenteredString(guiGraphics, L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
 
         Lighting.setupForFlatItems();
-        Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(matrixStack, itemStack, x, y);
+        guiGraphics.renderItem(itemStack, x, y);
 
         // Base information
         String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
         String valueTypeName = L10NHelpers.localize(aspect.getValueType().getTranslationKey());
-        gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
+        gui.drawScaledCenteredString(guiGraphics, L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
         String valueString = L10NHelpers.localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
         //gui.getFont().setBidiFlag(true);
-        gui.getFont().draw(matrixStack, L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0);
+        gui.getFont().drawInBatch(L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
 
         // Settings
         if (aspect.hasProperties()) {
             int offsetY = 26;
-            gui.getFont().draw(matrixStack, ChatFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0);
+            gui.getFont().drawInBatch(ChatFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0, false,
+                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
             for (IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                 offsetY += 10;
-                gui.getFont().draw(matrixStack, ChatFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0);
+                gui.getFont().drawInBatch(ChatFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0, false,
+                        guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
             }
         }
         //gui.getFont().setBidiFlag(wasUnicode);
@@ -93,14 +96,12 @@ public class AspectAppendix extends SectionAppendix {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void postDrawElement(ScreenInfoBook gui, PoseStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
-        matrixStack.pushPose();
+    protected void postDrawElement(ScreenInfoBook gui, GuiGraphics guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
         if(mx >= x && my >= y && mx <= x + SLOT_SIZE && my <= y + SLOT_SIZE ) {
             List<Component> lines = Lists.newArrayList();
             aspect.loadTooltip(lines, true);
-            gui.renderComponentTooltip(matrixStack, lines, mx, my);
+            guiGraphics.renderComponentTooltip(gui.getFont(), lines, mx, my);
         }
-        matrixStack.popPose();
 
         //GlStateManager._disableLighting();
 

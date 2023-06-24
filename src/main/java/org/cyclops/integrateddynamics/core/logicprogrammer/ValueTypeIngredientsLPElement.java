@@ -2,9 +2,9 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
@@ -43,6 +43,7 @@ import java.util.Map;
 
 /**
  * Element for the ingredients value type.
+ *
  * @author rubensworks
  */
 public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
@@ -121,7 +122,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     public void setActiveElement(int index) {
         activeElement = index;
-        if(index >= 0 && !subElements.get(currentType).containsKey(index)) {
+        if (index >= 0 && !subElements.get(currentType).containsKey(index)) {
             subElements.get(currentType).put(index, IngredientComponentHandlers.REGISTRY.getComponentHandler(currentType)
                     .getValueType().createLogicProgrammerElement());
         }
@@ -134,12 +135,12 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         Map<Integer, RenderPattern> oldSubElementGuis = subElementGuis.get(currentType);
         subElements.put(currentType, Maps.newHashMap());
         subElementGuis.put(currentType, Maps.newHashMap());
-        for(Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : oldSubElements.entrySet()) {
+        for (Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : oldSubElements.entrySet()) {
             int i = entry.getKey();
-            if(i < index) {
+            if (i < index) {
                 subElements.get(currentType).put(i, entry.getValue());
                 subElementGuis.get(currentType).put(i, oldSubElementGuis.get(i));
-            } else if(i > index) {
+            } else if (i > index) {
                 subElements.get(currentType).put(i - 1, entry.getValue());
                 subElementGuis.get(currentType).put(i - 1, oldSubElementGuis.get(i));
             }
@@ -163,18 +164,18 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     @Override
     public Component validate() {
-        if(!MinecraftHelpers.isClientSideThread()) {
+        if (!MinecraftHelpers.isClientSideThread()) {
             return serverValue == null ? Component.literal("") : null;
         }
-        if(MinecraftHelpers.isClientSideThread()) {
+        if (MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeIngredientsValueChangedPacket(
                             ValueObjectTypeIngredients.ValueIngredients.of(constructValues())));
         }
         for (Map<Integer, IValueTypeLogicProgrammerElement> componentValues : subElements.values()) {
-            for(Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : componentValues.entrySet()) {
+            for (Map.Entry<Integer, IValueTypeLogicProgrammerElement> entry : componentValues.entrySet()) {
                 Component error = entry.getValue().validate();
-                if(error != null) {
+                if (error != null) {
                     return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDLISTELEMENT, entry.getKey(), error);
                 }
             }
@@ -228,10 +229,10 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         }
 
         public void setActiveElement(int index) {
-            if(elementSubGui != null) {
+            if (elementSubGui != null) {
                 subGuiHolder.removeSubGui(elementSubGui);
             }
-            if(index >= 0) {
+            if (index >= 0) {
                 subGuiHolder.addSubGui(elementSubGui = new ListElementSubGui(element, baseX, baseY + (getHeight() / 4),
                         maxWidth, maxHeight, gui, container));
                 elementSubGui.init(lastGuiLeft, lastGuiTop);
@@ -246,11 +247,11 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+        public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+            super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             // Output type tooltip
-            this.drawTooltipForeground(gui, matrixStack, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
+            this.drawTooltipForeground(gui, guiGraphics, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
         }
 
         @Override
@@ -301,7 +302,8 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
             //onChanged();
             int x = guiLeft + getX();
             int y = guiTop + getY();
-            buttonList.add(arrowAdd = new ButtonText(x + getWidth() - 13, y + getHeight() - 13, 12, 12, Component.translatable("gui.integrateddynamics.button.add"), Component.literal("+"), (b) -> {}, true));
+            buttonList.add(arrowAdd = new ButtonText(x + getWidth() - 13, y + getHeight() - 13, 12, 12, Component.translatable("gui.integrateddynamics.button.add"), Component.literal("+"), (b) -> {
+            }, true));
         }
 
         @Override
@@ -312,15 +314,15 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         @Override
         protected void actionPerformed(Button guibutton) {
             super.actionPerformed(guibutton);
-            if(guibutton == arrowAdd) {
+            if (guibutton == arrowAdd) {
                 element.setLength(element.getLength() + 1);
             }
         }
 
         @Override
-        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-            valueTypeSelector.renderWidget(matrixStack, mouseX, mouseY, partialTicks);
+        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+            valueTypeSelector.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
         }
 
         @Override
@@ -344,7 +346,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
             RenderPattern subGui = element.subElementGuis.get(element.currentType).get(element.activeElement);
             IValueTypeLogicProgrammerElement subElement = element.subElements.get(element.currentType).get(element.activeElement);
-            if(subGui == null) {
+            if (subGui == null) {
                 subGui = (RenderPattern) subElement.createSubGui(baseX, baseY, maxWidth,
                         maxHeight / 3 * 2, gui, container);
                 element.subElementGuis.get(element.currentType).put(
@@ -385,11 +387,11 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             int x = guiLeft + getX() + (getWidth() / 2);
             int y = guiTop + getY() + 4;
-            RenderHelpers.drawScaledCenteredString(matrixStack, fontRenderer, String.valueOf(element.activeElement), x - 4, y + 2, 10, Helpers.RGBToInt(20, 20, 20));
+            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), fontRenderer, String.valueOf(element.activeElement), x - 4, y + 2, 10, Helpers.RGBToInt(20, 20, 20), false, Font.DisplayMode.NORMAL);
         }
     }
 

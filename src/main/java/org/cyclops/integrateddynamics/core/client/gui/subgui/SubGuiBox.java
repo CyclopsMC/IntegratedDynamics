@@ -1,16 +1,14 @@
 package org.cyclops.integrateddynamics.core.client.gui.subgui;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -23,7 +21,7 @@ import java.util.List;
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
+public abstract class SubGuiBox implements ISubGuiBox {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID,
             IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "sub_gui.png");
@@ -43,9 +41,9 @@ public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
         subGuiHolder.init(guiLeft, guiTop);
     }
 
-    public void drawScreen(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         for (int i = 0; i < this.buttonList.size(); ++i) {
-            this.buttonList.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
+            this.buttonList.get(i).render(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -54,10 +52,8 @@ public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
     }
 
     @Override
-    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
         if (this.isDrawBackground()) {
-            RenderHelpers.bindTexture(TEXTURE);
-
             int textureWidth = 19;
             int textureHeight = textureWidth;
 
@@ -69,10 +65,10 @@ public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
             int ty = type.getY();
 
             // Corners
-            this.blit(matrixStack, x, y, tx, tx, 1, 1); // top left
-            this.blit(matrixStack, x + width - 1, y, tx + textureWidth - 1, ty, 1, 1); // top right
-            this.blit(matrixStack, x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1); // bottom left
-            this.blit(matrixStack, x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1); // bottom right
+            guiGraphics.blit(TEXTURE, x, y, tx, tx, 1, 1); // top left
+            guiGraphics.blit(TEXTURE, x + width - 1, y, tx + textureWidth - 1, ty, 1, 1); // top right
+            guiGraphics.blit(TEXTURE, x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1); // bottom left
+            guiGraphics.blit(TEXTURE, x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1); // bottom right
 
             int i, j;
 
@@ -80,16 +76,16 @@ public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
             i = 1;
             while (i < width - 1) {
                 int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
-                this.blit(matrixStack, x + i, y, tx + 1, ty, currentWidth, 1);
-                this.blit(matrixStack, x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1);
+                guiGraphics.blit(TEXTURE, x + i, y, tx + 1, ty, currentWidth, 1);
+                guiGraphics.blit(TEXTURE, x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1);
                 i += currentWidth;
             }
 
             i = 1;
             while (i < height - 1) {
                 int currentHeight = Math.max(1, Math.min(height - i, textureHeight - 2) - 1);
-                this.blit(matrixStack, x, y + i, tx, ty + 1, 1, currentHeight);
-                this.blit(matrixStack, x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight);
+                guiGraphics.blit(TEXTURE, x, y + i, tx, ty + 1, 1, currentHeight);
+                guiGraphics.blit(TEXTURE, x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight);
                 i += currentHeight;
             }
 
@@ -100,7 +96,7 @@ public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
                 j = 1;
                 while (j < height - 1) {
                     int currentHeight = Math.max(1, Math.min(height - j, textureHeight - 2) - 1);
-                    this.blit(matrixStack, x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight);
+                    guiGraphics.blit(TEXTURE, x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight);
                     j += currentHeight;
                 }
                 i += currentWidth;
@@ -108,14 +104,14 @@ public abstract class SubGuiBox extends GuiComponent implements ISubGuiBox {
         }
 
         // Draw buttons
-        drawScreen(matrixStack, mouseX, mouseY, partialTicks);
+        drawScreen(guiGraphics, mouseX, mouseY, partialTicks);
 
-        subGuiHolder.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        subGuiHolder.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
-        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+        subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
     }
 
     @Override

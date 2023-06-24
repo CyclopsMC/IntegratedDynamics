@@ -42,11 +42,11 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         addSlot(new SlotExtended(temporaryInputSlots, 0, 8, 8));
         this.addPlayerInventory(player.getInventory(), 8, 31);
 
-        if(inventory.player.level.isClientSide()) {
+        if(inventory.player.level().isClientSide()) {
             temporaryInputSlots.addDirtyMarkListener(() -> {
                 ItemStack itemStack = temporaryInputSlots.getItem(0);
                 IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-                IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(inventory.player.level), itemStack);
+                IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(inventory.player.level()), itemStack);
                 String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
                 if(label == null && !itemStack.isEmpty() && itemStack.hasCustomHoverName()) {
                     label = itemStack.getHoverName().getString();
@@ -80,7 +80,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        if (!player.level.isClientSide()) {
+        if (!player.level().isClientSide()) {
             ItemStack itemStack = temporaryInputSlots.getItem(0);
             if(!itemStack.isEmpty()) {
                 player.drop(itemStack, false);

@@ -2,8 +2,9 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -129,33 +130,37 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
-        font.draw(matrixStack, "X", leftPos + 45 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
-        font.draw(matrixStack, "Y", leftPos + 99 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
-        font.draw(matrixStack, "Z", leftPos + 153 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0));
-        numberFieldX.render(matrixStack, mouseX, mouseY, partialTicks);
-        numberFieldY.render(matrixStack, mouseX, mouseY, partialTicks);
-        numberFieldZ.render(matrixStack, mouseX, mouseY, partialTicks);
+        font.drawInBatch("X", leftPos + 45 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0), false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        font.drawInBatch("Y", leftPos + 99 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0), false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        font.drawInBatch("Z", leftPos + 153 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0), false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        numberFieldX.render(guiGraphics, mouseX, mouseY, partialTicks);
+        numberFieldY.render(guiGraphics, mouseX, mouseY, partialTicks);
+        numberFieldZ.render(guiGraphics, mouseX, mouseY, partialTicks);
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
         for (int i = 0; i < 3; i++) {
             int x = leftPos + 64 + i * 54;
             if (getMenu().isOffsetVariableFilled(i)) {
                 IImage image = container.getOffsetVariableError(i) == null ? Images.OK : Images.ERROR;
-                image.draw(this, matrixStack, x, topPos + 52);
+                image.draw(guiGraphics, x, topPos + 52);
             }
         }
 
         if (getMenu().getMaxOffset() == 0) {
-            Images.ERROR.draw(this, matrixStack, leftPos + 74, topPos + 3);
+            Images.ERROR.draw(guiGraphics, leftPos + 74, topPos + 3);
         }
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        this.font.draw(matrixStack, Component.translatable("gui.integrateddynamics.part_offsets"), (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        this.font.drawInBatch(Component.translatable("gui.integrateddynamics.part_offsets"), (float)this.titleLabelX, (float)this.titleLabelY, 4210752, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
 
         if (isHovering(0, 0, 90, 18, mouseX, mouseY)) {
             List<Component> lines = Lists.newArrayList(
@@ -167,13 +172,13 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
                 lines.add(Component.translatable("gui.integrateddynamics.partoffset.offsets.max.howtoincrease", getMenu().getMaxOffset())
                         .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
             }
-            drawTooltip(lines, matrixStack, mouseX - leftPos, mouseY - topPos);
+            drawTooltip(lines, guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
         }
 
         for (int i = 0; i < 3; i++) {
             int x = 64 + i * 54;
             int slot = i;
-            GuiHelpers.renderTooltipOptional(this, matrixStack, x, 52, 14, 13, mouseX, mouseY,
+            GuiHelpers.renderTooltipOptional(this, guiGraphics.pose(), x, 52, 14, 13, mouseX, mouseY,
                     () -> {
                         Component unlocalizedMessage = container.getOffsetVariableError(slot);
                         if (unlocalizedMessage != null) {

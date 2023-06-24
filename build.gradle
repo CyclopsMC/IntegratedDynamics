@@ -1,16 +1,11 @@
-// For those who want the bleeding edge
 buildscript {
-    repositories {
-        mavenCentral()
-        maven { url = 'https://maven.minecraftforge.net' }
-    }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7.+'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
 plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.github.kt3k.coveralls' version '2.12.0'
     id 'com.diffplug.spotless' version '5.14.3'
@@ -246,7 +241,7 @@ build.dependsOn signJar
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
-    classifier = 'deobf'
+    archiveClassifier.set('deobf')
     manifest {
         attributes([
                 "FMLAT": "accesstransformer.cfg",
@@ -267,7 +262,7 @@ task apiJar(type: Jar) {
     }
     includeEmptyDirs = false
     version = "${project.project.api_version}"
-    classifier = "api"
+    archiveClassifier.set('api')
 }
 
 task sourcesJar(type: Jar) {
@@ -284,7 +279,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 shadowJar {
     configurations = [project.configurations.shadow]
-    classifier '' // Replace the default JAR
+    archiveClassifier.set('') // Replace the default JAR
     append 'META-INF/mods.toml'
     relocate 'com.google.re2j', 'vendors.com.google.re2j' // Because Forge blocks all com.google.* class loading...
     // To avoid clashes with other mods
@@ -400,8 +395,8 @@ idea {
 
 jacocoTestReport {
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required = true
+        html.required = true
     }
 }
 

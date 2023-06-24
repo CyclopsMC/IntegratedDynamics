@@ -2,9 +2,9 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
@@ -231,11 +231,11 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+        public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+            super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             // Output type tooltip
-            this.drawTooltipForeground(gui, matrixStack, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
+            this.drawTooltipForeground(gui, guiGraphics, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
         }
 
         @Override
@@ -310,15 +310,15 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         }
 
         @Override
-        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
-            valueTypeSelector.render(matrixStack, mouseX, mouseY, partialTicks);
+            valueTypeSelector.render(guiGraphics, mouseX, mouseY, partialTicks);
 
             if (element.activeElement >= 0) {
                 int x = guiLeft + getX() + 10;
                 int y = guiTop + getY() + 4;
-                RenderHelpers.drawScaledCenteredString(matrixStack, fontRenderer, String.valueOf(element.activeElement), x - 6, y + 12, 10, Helpers.RGBToInt(20, 20, 20));
+                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), fontRenderer, String.valueOf(element.activeElement), x - 6, y + 12, 10, Helpers.RGBToInt(20, 20, 20), false, Font.DisplayMode.NORMAL);
             }
         }
 

@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
@@ -162,11 +162,11 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         // Display text red that is in an "invalid" state (no valid dropdrown entry selected)
         this.setTextColor(this.selectedDropdownPossibility == null ? Helpers.RGBToInt(220, 10, 10) : 14737632);
 
-        super.renderWidget(matrixStack, mouseX, mouseY, partialTicks);
+        super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
         if (this.isVisible() && isFocused()) {
             Font fontRenderer = Minecraft.getInstance().font;
             int yOffset = fontRenderer.lineHeight + 3;
@@ -181,10 +181,10 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             // Draw ... if we are not at the first element
             if (startIndex > 0) {
                 // Draw background
-                fill(matrixStack, x, cy - 1, x + width, cy + 11, -6250336);
-                fill(matrixStack, x - 1, cy, x + width - 1, cy + 10, -16777216);
+                guiGraphics.fill(x, cy - 1, x + width, cy + 11, -6250336);
+                guiGraphics.fill(x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                fontRenderer.drawShadow(matrixStack, "...", (float)x + 1, (float)cy + 2, disabledColor);
+                fontRenderer.drawInBatch("...", (float)x + 1, (float)cy + 2, disabledColor, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
 
                 cy += 10;
             }
@@ -207,17 +207,16 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 }
 
                 // Draw background
-                fill(matrixStack, x, cy - 1, x + width, cy + entryHeight + 1, -6250336);
-                fill(matrixStack, x - 1, cy, x + width - 1, cy + entryHeight, -16777216);
+                guiGraphics.fill(x, cy - 1, x + width, cy + entryHeight + 1, -6250336);
+                guiGraphics.fill(x - 1, cy, x + width - 1, cy + entryHeight, -16777216);
 
                 // Draw text
-                // MCP: drawStringWithShadow
-                fontRenderer.drawShadow(matrixStack, displayPossibility.get(0), (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor);
+                fontRenderer.drawInBatch(displayPossibility.get(0), (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
                 if(addTooltip) {
                     int tooltipLineOffsetY = 2;
                     for (Component tooltipLine : tooltipLines) {
                         tooltipLineOffsetY += yOffset;
-                        fontRenderer.drawShadow(matrixStack, tooltipLine.getString(), (float)x + 1, (float)cy + tooltipLineOffsetY, enabledColor);
+                        fontRenderer.drawInBatch(tooltipLine.getString(), (float)x + 1, (float)cy + tooltipLineOffsetY, enabledColor, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
                     }
                 }
 
@@ -227,10 +226,10 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             // Draw ... if we haven't reached the end of the list
             if (endIndex < visiblePossibilities.size()) {
                 // Draw background
-                fill(matrixStack, x, cy - 1, x + width, cy + 11, -6250336);
-                fill(matrixStack, x - 1, cy, x + width - 1, cy + 10, -16777216);
+                guiGraphics.fill(x, cy - 1, x + width, cy + 11, -6250336);
+                guiGraphics.fill(x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                fontRenderer.drawShadow(matrixStack, "...", (float)x + 1, (float)cy + 2, disabledColor);
+                fontRenderer.drawInBatch("...", (float)x + 1, (float)cy + 2, disabledColor, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
             }
         }
     }

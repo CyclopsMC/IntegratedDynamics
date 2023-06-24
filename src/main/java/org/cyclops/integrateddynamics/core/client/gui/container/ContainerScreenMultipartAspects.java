@@ -5,6 +5,8 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -96,8 +98,8 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
         // Reset button positions
         for(Map.Entry<IAspect, ButtonText> entry : this.aspectPropertyButtons.entrySet()) {
@@ -106,8 +108,8 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         }
 
         // Draw part name
-        RenderHelpers.drawScaledCenteredString(matrixStack, font, title.getString(),
-                this.leftPos + offsetX + 6, this.topPos + offsetY + 10, 70, 4210752);
+        RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, title.getString(),
+                this.leftPos + offsetX + 6, this.topPos + offsetY + 10, 70, 4210752, false, Font.DisplayMode.NORMAL);
 
         // Draw aspects
         C container = getMenu();
@@ -122,19 +124,18 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                         colorSmoothener(rgb.getRight()), 1);
 
                 // Background
-                RenderHelpers.bindTexture(texture);
-                blit(matrixStack, leftPos + offsetX + 9,
+                guiGraphics.blit(texture, leftPos + offsetX + 9,
                         topPos + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1);
                 RenderSystem.setShaderColor(1, 1, 1, 1);
 
                 // Aspect type info
                 String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
-                RenderHelpers.drawScaledCenteredString(matrixStack, font, aspectName,
+                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, aspectName,
                         this.leftPos + offsetX + 26,
                         this.topPos + offsetY + 25 + aspectBoxHeight * i,
-                        getMaxLabelWidth(), Helpers.RGBToInt(40, 40, 40));
+                        getMaxLabelWidth(), Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
 
-                drawAdditionalElementInfo(matrixStack, container, i, aspect);
+                drawAdditionalElementInfo(guiGraphics, container, i, aspect);
 
                 if(aspectPropertyButtons.containsKey(aspect)) {
                     ButtonText button = aspectPropertyButtons.get(aspect);
@@ -145,7 +146,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         }
     }
 
-    protected abstract void drawAdditionalElementInfo(PoseStack matrixStack, C container, int index, A aspect);
+    protected abstract void drawAdditionalElementInfo(GuiGraphics guiGraphics, C container, int index, A aspect);
 
     protected Rectangle getElementPosition(C container, int i, boolean absolute) {
         return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.leftPos : 0),
@@ -155,7 +156,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         C container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
@@ -164,9 +165,9 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                 if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
                     List<Component> lines = Lists.newLinkedList();
                     container.getVisibleElement(i).loadTooltip(lines, true);
-                    drawTooltip(lines, matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
+                    drawTooltip(lines, guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
                 }
-                drawAdditionalElementInfoForeground(matrixStack, container, i, container.getVisibleElement(i), mouseX, mouseY);
+                drawAdditionalElementInfoForeground(guiGraphics.pose(), container, i, container.getVisibleElement(i), mouseX, mouseY);
 
                 // Optional aspect properties tooltip
                 IAspect aspect = container.getVisibleElement(i);
@@ -183,17 +184,17 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                                     .withStyle(ChatFormatting.YELLOW)
                                     .append(Component.translatable(property.getTranslationKey())));
                         }
-                        drawTooltip(lines, matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
+                        drawTooltip(lines, guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
                     }
                 }
             }
         }
 
         if (isHovering(-20, 0, 18, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), matrixStack, mouseX - leftPos, mouseY - topPos);
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
         }
         if (isHovering(-20, 20, 18, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), matrixStack, mouseX - leftPos, mouseY - topPos);
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
         }
     }
 

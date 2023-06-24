@@ -7,8 +7,7 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -23,7 +22,8 @@ public class BlockMenrilSlabConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_slab",
-                eConfig -> new SlabBlock(BlockBehaviour.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
+                eConfig -> new SlabBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F, 3.0F)
                         .sound(SoundType.WOOD)) {
                     @Override

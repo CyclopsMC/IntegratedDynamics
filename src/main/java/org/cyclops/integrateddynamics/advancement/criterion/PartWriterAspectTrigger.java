@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,7 +38,7 @@ public class PartWriterAspectTrigger extends SimpleCriterionTrigger<PartWriterAs
     }
 
     @Override
-    public Instance createInstance(JsonObject json, EntityPredicate.Composite entityPredicate, DeserializationContext conditionsParser) {
+    public Instance createInstance(JsonObject json, ContextAwarePredicate entityPredicate, DeserializationContext conditionsParser) {
         return new Instance(getId(), entityPredicate,
                 JsonDeserializers.deserializePartType(json),
                 JsonDeserializers.deserializeAspect(json),
@@ -61,7 +61,7 @@ public class PartWriterAspectTrigger extends SimpleCriterionTrigger<PartWriterAs
         private final IAspect aspect;
         private final VariablePredicate variablePredicate;
 
-        public Instance(ResourceLocation criterionIn, EntityPredicate.Composite player,
+        public Instance(ResourceLocation criterionIn, ContextAwarePredicate player,
                         @Nullable IPartType partType, @Nullable IAspect aspect,
                         VariablePredicate variablePredicate) {
             super(criterionIn, player);
@@ -73,7 +73,7 @@ public class PartWriterAspectTrigger extends SimpleCriterionTrigger<PartWriterAs
         public boolean test(ServerPlayer player, PartWriterAspectEvent event) {
             return (partType == null || event.getPartType() == partType)
                     && (aspect == null || event.getAspect() == aspect)
-                    && variablePredicate.test(((IPartStateWriter) event.getPartState()).getVariable(event.getNetwork(), event.getPartNetwork(), ValueDeseralizationContext.of(player.level)));
+                    && variablePredicate.test(((IPartStateWriter) event.getPartState()).getVariable(event.getNetwork(), event.getPartNetwork(), ValueDeseralizationContext.of(player.level())));
         }
     }
 

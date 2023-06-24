@@ -85,7 +85,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     @Override
     public void onInputSlotUpdated(Player player, int slotId, ItemStack itemStack) {
-        IVariableFacade variableFacade = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(ValueDeseralizationContext.of(player.level), itemStack);
+        IVariableFacade variableFacade = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).handle(ValueDeseralizationContext.of(player.level()), itemStack);
         inputVariables[slotId] = variableFacade;
     }
 
@@ -111,8 +111,8 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     public ItemStack writeElement(Player player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         int[] variableIds = getVariableIds(inputVariables);
-        return registry.writeVariableFacadeItem(!player.level.isClientSide(), itemStack, Operators.REGISTRY,
-                new OperatorVariableFacadeFactory(operator, variableIds), player.level, player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
+        return registry.writeVariableFacadeItem(!player.level().isClientSide(), itemStack, Operators.REGISTRY,
+                new OperatorVariableFacadeFactory(operator, variableIds), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
     }
 
     @Override

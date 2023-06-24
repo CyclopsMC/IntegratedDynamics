@@ -130,7 +130,7 @@ public class BlockSqueezer extends BlockWithEntity {
     public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entityIn) {
         double motionY = entityIn.getDeltaMovement().y;
         super.updateEntityAfterFallOn(worldIn, entityIn);
-        if(!entityIn.getLevel().isClientSide() && motionY <= -0.37D && entityIn instanceof LivingEntity) {
+        if(!entityIn.level().isClientSide() && motionY <= -0.37D && entityIn instanceof LivingEntity) {
             // Same way of deriving blockPos as is done in Entity#moveEntity
             int i = Mth.floor(entityIn.getX());
             int j = Mth.floor(entityIn.getY() - 0.2D);
@@ -144,7 +144,7 @@ public class BlockSqueezer extends BlockWithEntity {
             if((entityIn.getY() - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
                 if (blockState.getBlock() == this) { // Just to be sure...
                     int newHeight = Math.min(7, blockState.getValue(HEIGHT) + steps);
-                    entityIn.getLevel().setBlockAndUpdate(blockPos, blockState.setValue(HEIGHT, newHeight));
+                    entityIn.level().setBlockAndUpdate(blockPos, blockState.setValue(HEIGHT, newHeight));
                     BlockEntityHelpers.get(worldIn, blockPos, BlockEntitySqueezer.class)
                             .ifPresent(tile -> tile.setItemHeight(Math.max(newHeight, tile.getItemHeight())));
                 }

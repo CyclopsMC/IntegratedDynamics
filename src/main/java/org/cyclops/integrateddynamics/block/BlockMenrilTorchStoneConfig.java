@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
@@ -30,7 +29,7 @@ public class BlockMenrilTorchStoneConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_torch_stone",
-                eConfig -> new TorchBlock(Block.Properties.of(Material.DECORATION)
+                eConfig -> new TorchBlock(Block.Properties.of()
                         .noCollission()
                         .strength(0)
                         .lightLevel((blockState) -> 14)

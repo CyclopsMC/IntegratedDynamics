@@ -4,7 +4,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.world.gen.TreeMenril;
@@ -20,7 +19,7 @@ public class BlockMenrilSaplingConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_sapling",
-                eConfig -> new SaplingBlock(new TreeMenril(), Block.Properties.of(Material.PLANT)
+                eConfig -> new SaplingBlock(new TreeMenril(), Block.Properties.of()
                         .noCollission()
                         .randomTicks()
                         .strength(0)

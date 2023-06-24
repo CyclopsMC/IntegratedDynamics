@@ -4,8 +4,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -20,7 +19,8 @@ public class BlockMenrilDoorConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_door",
-                eConfig -> new DoorBlock(Block.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
+                eConfig -> new DoorBlock(Block.Properties.of()
+                        .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F, 3.0F)
                         .sound(SoundType.WOOD), BlockSetType.OAK),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

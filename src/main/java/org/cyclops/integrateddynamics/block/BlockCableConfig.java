@@ -27,7 +27,7 @@ public class BlockCableConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "cable",
-                eConfig -> new BlockCable(Block.Properties.of(BlockCable.BLOCK_MATERIAL)
+                eConfig -> new BlockCable(Block.Properties.of()
                         .strength(BlockCable.BLOCK_HARDNESS)
                         .sound(SoundType.METAL)
                         .isRedstoneConductor((blockState, world, pos) -> false)),

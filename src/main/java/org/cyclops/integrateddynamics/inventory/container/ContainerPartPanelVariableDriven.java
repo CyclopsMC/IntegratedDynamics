@@ -78,7 +78,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        if (!player.level.isClientSide()) {
+        if (!player.level().isClientSide()) {
             MutableComponent readValue = Component.literal("");
             int readValueColor = 0;
             if (!NetworkHelpers.shouldWork()) {
@@ -98,7 +98,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
 
     @Override
     public void onDirty() {
-        if (!player.level.isClientSide()) {
+        if (!player.level().isClientSide()) {
             S partState = getPartState().get();
             partState.onVariableContentsUpdated(getPartType(), getTarget().get());
             LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(getTarget().get().getCenter());
@@ -106,7 +106,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
                     NetworkHelpers.getPartNetwork(optionalNetwork).ifPresent(partNetwork -> {
                         try {
                             INetwork network = optionalNetwork.orElse(null);
-                            IVariable variable = partState.getVariable(network, partNetwork, ValueDeseralizationContext.of(player.level));
+                            IVariable variable = partState.getVariable(network, partNetwork, ValueDeseralizationContext.of(player.level()));
                             MinecraftForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network, partNetwork, getTarget().get(),
                                     getPartType(), partState, player, variable, variable != null ? variable.getValue() : null));
                         } catch (EvaluationException e) {

@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,7 +38,7 @@ public class VariableCreatedTrigger extends SimpleCriterionTrigger<VariableCreat
     }
 
     @Override
-    public Instance createInstance(JsonObject json, EntityPredicate.Composite entityPredicate, DeserializationContext conditionsParser) {
+    public Instance createInstance(JsonObject json, ContextAwarePredicate entityPredicate, DeserializationContext conditionsParser) {
         JsonElement blockElement = json.get("block");
         Block block = null;
         if (blockElement != null && !blockElement.isJsonNull()) {
@@ -65,7 +65,7 @@ public class VariableCreatedTrigger extends SimpleCriterionTrigger<VariableCreat
         private final Block block;
         private final VariableFacadePredicate variableFacadePredicate;
 
-        public Instance(ResourceLocation criterionIn, EntityPredicate.Composite player,
+        public Instance(ResourceLocation criterionIn, ContextAwarePredicate player,
                         @Nullable Block block, VariableFacadePredicate variableFacadePredicate) {
             super(criterionIn, player);
             this.block = block;

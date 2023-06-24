@@ -3,8 +3,7 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -19,7 +18,8 @@ public class BlockCrystalizedMenrilBlockSlabConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_menril_block_slab",
-                eConfig -> new SlabBlock(BlockBehaviour.Properties.of(Material.CLAY, MaterialColor.COLOR_CYAN)
+                eConfig -> new SlabBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.COLOR_CYAN)
                         .sound(SoundType.SNOW)
                         .strength(1.5F)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -47,30 +48,30 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
         Component readValue = getMenu().getReadValue();
         int readValueColor = getMenu().getReadValueColor();
         boolean ok = false;
         if(readValue != null) {
             ok = true;
-            RenderHelpers.drawScaledCenteredString(matrixStack, font, readValue.getString(),
-                    getGuiLeftTotal() + 53, getGuiTopTotal() + 38, 70, readValueColor);
+            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, readValue.getString(),
+                    getGuiLeftTotal() + 53, getGuiTopTotal() + 38, 70, readValueColor, false, Font.DisplayMode.NORMAL);
         }
 
-        displayErrors.drawBackground(matrixStack, getMenu().getReadErrors(), ERROR_X, ERROR_Y, OK_X, OK_Y, this,
+        displayErrors.drawBackground(guiGraphics, getMenu().getReadErrors(), ERROR_X, ERROR_Y, OK_X, OK_Y, this,
                 this.leftPos, this.topPos, ok);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        super.renderLabels(matrixStack, mouseX, mouseY);
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        super.renderLabels(guiGraphics, mouseX, mouseY);
         // Render error tooltip
-        displayErrors.drawForeground(matrixStack, getMenu().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.leftPos, this.topPos);
+        displayErrors.drawForeground(guiGraphics.pose(), getMenu().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.leftPos, this.topPos);
 
         // Draw tooltip over copy button
-        GuiHelpers.renderTooltip(this, matrixStack, 128, 32, 30, 12, mouseX, mouseY,
+        GuiHelpers.renderTooltip(this, guiGraphics.pose(), 128, 32, 30, 12, mouseX, mouseY,
                 () -> Lists.newArrayList(Component.translatable("gui.integrateddynamics.button.copy.info")));
     }
 

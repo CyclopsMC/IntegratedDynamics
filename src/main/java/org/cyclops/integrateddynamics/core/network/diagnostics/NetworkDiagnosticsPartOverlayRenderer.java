@@ -69,7 +69,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (PartPos partPos : partList) {
-                if (partPos.getPos().getLevelKey().location().equals(player.level.dimension().location()) && partPos.getPos().getBlockPos().distSqr(player.blockPosition()) < 10000) {
+                if (partPos.getPos().getLevelKey().location().equals(player.level().dimension().location()) && partPos.getPos().getBlockPos().distSqr(player.blockPosition()) < 10000) {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
                     final VoxelShape shape;
                     if (partStateHolder != null) {

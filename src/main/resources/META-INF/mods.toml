@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[45,)"
+loaderVersion="[47,)"
 issueTrackerURL="https://github.com/CyclopsMC/IntegratedDynamics/issues"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/integrated-dynamics"
 license="MIT"
@@ -16,7 +16,7 @@ Take full and automated control of your appliances.
 [[dependencies.integrateddynamics]]
     modId="cyclopscore"
     mandatory=true
-    versionRange="[1.18.2,)"
+    versionRange="[1.18.4,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
@@ -28,12 +28,12 @@ Take full and automated control of your appliances.
 [[dependencies.integrateddynamics]]
     modId="forge"
     mandatory=true
-    versionRange="[45.0.50,)"
+    versionRange="[47.0.1,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.integrateddynamics]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.4,]"
+    versionRange="[1.20.1,]"
     ordering="NONE"
     side="BOTH"

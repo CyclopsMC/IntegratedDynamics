@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -46,38 +46,38 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
                 createServerPressable(ContainerMechanicalSqueezer.BUTTON_TOGGLE_FLUID_EJECT, (button) -> {}),imageArrowDownDisabled));
     }
 
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
         // Update the image in the fluid eject toggle button
         buttonToggleFluidEject.setImage(getMenu().isAutoEjectFluids()
                 ? imageArrowDownEnabled : imageArrowDownDisabled);
 
         // Render progress
-        GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
+        GuiHelpers.renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
                 176, 120, GuiHelpers.ProgressDirection.DOWN,
                 getMenu().getProgress(), getMenu().getMaxProgress());
 
         // Render energy level
-        GuiHelpers.renderProgressBar(this, matrixStack, getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
+        GuiHelpers.renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
                 176, 60, GuiHelpers.ProgressDirection.UP,
                 getMenu().getEnergy(), getMenu().getMaxEnergy());
 
         // Render fluid tank
-        GuiHelpers.renderOverlayedFluidTank(this, matrixStack, getMenu().getFluidStack(),
+        GuiHelpers.renderOverlayedFluidTank(guiGraphics, getMenu().getFluidStack(),
                 getMenu().getFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 10,
                 18, 60, texture, 176, 0);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        super.renderLabels(matrixStack, mouseX, mouseY);
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        super.renderLabels(guiGraphics, mouseX, mouseY);
 
-        drawEnergyBarTooltip(matrixStack, 8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(matrixStack, getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
+        drawEnergyBarTooltip(guiGraphics.pose(), 8, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(guiGraphics.pose(), getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
 
         // Draw fluid auto-eject toggle
-        GuiHelpers.renderTooltip(this, matrixStack, 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
+        GuiHelpers.renderTooltip(this, guiGraphics.pose(), 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
                 Component.translatable(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT,
                         ChatFormatting.AQUA + L10NHelpers.localize(getMenu().isAutoEjectFluids() ?
                                 L10NValues.GENERAL_TRUE : L10NValues.GENERAL_FALSE)),

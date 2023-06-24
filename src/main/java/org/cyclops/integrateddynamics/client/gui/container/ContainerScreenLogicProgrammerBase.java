@@ -3,8 +3,8 @@ package org.cyclops.integrateddynamics.client.gui.container;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -122,13 +122,14 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
-        subGuiHolder.renderBg(matrixStack, this.leftPos, this.topPos, getMinecraft().textureManager, font, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+        subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().textureManager, font, partialTicks, mouseX, mouseY);
 
         // Draw container name
-        font.draw(matrixStack, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
-                this.leftPos + offsetX + 5, this.topPos + offsetY + 208, Helpers.RGBToInt(80, 80, 80));
+        font.drawInBatch(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
+                this.leftPos + offsetX + 5, this.topPos + offsetY + 208, Helpers.RGBToInt(80, 80, 80),
+                false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
 
         // Draw operators
         ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getMenu();
@@ -144,23 +145,22 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                         colorSmoothener(rgb.getRight(), hover), 1);
 
                 // Background
-                RenderHelpers.bindTexture(texture);
-                blit(matrixStack, leftPos + offsetX + ITEM_POSITION.x,
+                guiGraphics.blit(texture, leftPos + offsetX + ITEM_POSITION.x,
                         topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
 
                 // Arrow
                 if(hover) {
-                    blit(matrixStack, leftPos + offsetX + ITEM_POSITION.x,
+                    guiGraphics.blit(texture, leftPos + offsetX + ITEM_POSITION.x,
                             topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16);
                 }
                 RenderSystem.setShaderColor(1, 1, 1, 1);
 
                 // Operator info
                 String aspectName = element.getSymbol();
-                RenderHelpers.drawScaledCenteredString(matrixStack, font, aspectName,
+                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, aspectName,
                         this.leftPos + offsetX + (hover ? 22 : 21),
                         this.topPos + offsetY + 26 + boxHeight * i,
-                        53, Helpers.RGBToInt(40, 40, 40));
+                        53, Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
             }
         }
     }
@@ -173,9 +173,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().textureManager, font, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().textureManager, font, mouseX, mouseY);
         // Draw operator tooltips
         ContainerLogicProgrammerBase container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
@@ -184,7 +184,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
                     List<Component> lines = Lists.newLinkedList();
                     element.loadTooltip(lines);
-                    drawTooltip(lines, matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
+                    drawTooltip(lines, guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
                 }
             }
         }
@@ -447,9 +447,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
 
         @Override
-        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font font, float partialTicks, int mouseX, int mouseY) {
-            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, font, partialTicks, mouseX, mouseY);
-            this.searchField.render(matrixStack, mouseX, mouseY, partialTicks);
+        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font font, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, font, partialTicks, mouseX, mouseY);
+            this.searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
 
         public void onButtonEditClick() {

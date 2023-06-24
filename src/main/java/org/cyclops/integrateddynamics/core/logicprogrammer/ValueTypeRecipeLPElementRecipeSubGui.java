@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
@@ -71,11 +71,11 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
         // Output type tooltip
-        this.drawTooltipForeground(gui, matrixStack, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
+        this.drawTooltipForeground(gui, guiGraphics, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
 
         // Render the info tooltip when hovering the input item slots
         for (int slotId = 0; slotId < this.container.slots.size(); ++slotId) {
@@ -89,25 +89,27 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
                     gui.drawTooltip(Lists.newArrayList(
                             Component.translatable("valuetype.integrateddynamics.ingredients.slot.info")
                                     .withStyle(ChatFormatting.ITALIC)
-                    ), matrixStack, mouseX - guiLeft, mouseY - guiTop - (slot.getItem().isEmpty() ? 0 : 15));
+                    ), guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop - (slot.getItem().isEmpty() ? 0 : 15));
                 }
             }
         }
     }
 
     @Override
-    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         // Draw crafting arrow
-        this.blit(matrixStack, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
+        guiGraphics.blit(this.texture, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
 
-        inputFluidAmountBox.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0);
-        inputEnergyBox.render(matrixStack, mouseX, mouseY, partialTicks);
-        outputFluidAmountBox.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0);
-        outputEnergyBox.render(matrixStack, mouseX, mouseY, partialTicks);
+        inputFluidAmountBox.render(guiGraphics, mouseX, mouseY, partialTicks);
+        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        inputEnergyBox.render(guiGraphics, mouseX, mouseY, partialTicks);
+        outputFluidAmountBox.render(guiGraphics, mouseX, mouseY, partialTicks);
+        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        outputEnergyBox.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

@@ -104,7 +104,7 @@ public class EntityItemTargetted extends ItemEntity {
     }
 
     protected void showEntityMoved() {
-        RandomSource rand = level.random;
+        RandomSource rand = level().random;
         float scale = 0.10F;
         float red = rand.nextFloat() * 0.20F + 0.8F;
         float green = rand.nextFloat() * 0.20F + 0.8F;

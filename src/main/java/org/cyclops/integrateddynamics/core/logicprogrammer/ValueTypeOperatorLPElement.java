@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Sets;
-import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Setter;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
@@ -119,13 +119,14 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         }
 
         @Override
-        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             IOperator operator = element.selectedOperator;
             if (operator != null) {
                 int offsetY = 0;
                 for (Component line : ValueTypeOperator.getSignatureLines(operator, true)) {
-                    fontRenderer.draw(matrixStack, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10));
+                    fontRenderer.drawInBatch(line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10), false,
+                            guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
                     offsetY += fontRenderer.lineHeight;
                 }
             }

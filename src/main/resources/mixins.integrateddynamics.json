@@ -5,7 +5,7 @@
   "refmap": "mixins.integrateddynamics.refmap.json",
   "package": "org.cyclops.integrateddynamics.mixin",
   "mixins": [
-    "MixinLevel"
+    "MixinBlockStateBase"
   ],
   "setSourceFile": true
 }

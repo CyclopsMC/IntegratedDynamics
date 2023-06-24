@@ -217,7 +217,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         if(entity == null) {
             return null;
         }
-        AttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(ForgeMod.REACH_DISTANCE.get()) : null;
+        AttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(ForgeMod.BLOCK_REACH.get()) : null;
         double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
         double eyeHeight = entity.getCommandSenderWorld().isClientSide() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()

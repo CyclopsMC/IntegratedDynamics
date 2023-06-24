@@ -1,10 +1,9 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Sets;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -178,49 +177,51 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     }
 
     @Override
-    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
-        drawSlot(matrixStack, getX() + guiLeft + 116, getY() + guiTop + 2);
+        drawSlot(guiGraphics, getX() + guiLeft + 116, getY() + guiTop + 2);
 
-        this.inputNbt.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, 0);
-        this.inputReusable.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_REUSABLE), guiLeft + getX() + 24, guiTop + getY() + 13, 0);
-        this.inputTags.render(matrixStack, mouseX, mouseY, partialTicks);
-        fontRenderer.draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 23, 0);
-        this.inputSave.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.inputTagsDropdown.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.inputNbt.render(guiGraphics, mouseX, mouseY, partialTicks);
+        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, 0, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        this.inputReusable.render(guiGraphics, mouseX, mouseY, partialTicks);
+        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GUI_RECIPE_REUSABLE), guiLeft + getX() + 24, guiTop + getY() + 13, 0, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        this.inputTags.render(guiGraphics, mouseX, mouseY, partialTicks);
+        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 23, 0, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        this.inputSave.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.inputTagsDropdown.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
         if (this.inputTagsDropdown.isFocused()) {
             int i = this.inputTagsDropdown.getHoveredVisiblePossibility(mouseX, mouseY);
             if (i >= 0) {
                 IDropdownEntry<ResourceLocation> hoveredPossibility = this.inputTagsDropdown.getVisiblePossibility(i);
-                drawTagsTooltip(matrixStack, hoveredPossibility, guiLeft, guiTop, mouseX + 10, mouseY - 20, 6, GuiHelpers.SLOT_SIZE);
+                drawTagsTooltip(guiGraphics, hoveredPossibility, guiLeft, guiTop, mouseX + 10, mouseY - 20, 6, GuiHelpers.SLOT_SIZE);
             }
         }
     }
 
-    protected void drawTagsTooltip(PoseStack poseStack, IDropdownEntry<ResourceLocation> hoveredPossibility, int guiLeft, int guiTop,
+    protected void drawTagsTooltip(GuiGraphics guiGraphics, IDropdownEntry<ResourceLocation> hoveredPossibility, int guiLeft, int guiTop,
                                    int mouseX, int mouseY, int columns, int offset) {
         int x = mouseX - guiLeft;
         int y = mouseY - guiTop;
         List<Item> items = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registries.ITEM, hoveredPossibility.getValue())).stream().toList();
 
         // Draw background
-        GuiHelpers.drawTooltipBackground(poseStack, x, y, Math.min(items.size(), columns) * offset,
+        GuiHelpers.drawTooltipBackground(guiGraphics.pose(), x, y, Math.min(items.size(), columns) * offset,
                 ((items.size() % columns == 0 ? 0 : 1) + (items.size() / columns)) * offset);
 
         // Draw item grid
         int passed = 0;
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         for (Item item : items) {
-            itemRenderer.renderGuiItem(poseStack, new ItemStack(item), x, y);
+            guiGraphics.renderItem(new ItemStack(item), x, y);
             x += offset;
             if (passed++ % columns == columns - 1) {
                 y += offset;

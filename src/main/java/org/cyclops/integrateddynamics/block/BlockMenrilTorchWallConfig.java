@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -32,7 +31,7 @@ public class BlockMenrilTorchWallConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "menril_torch_wall",
                 eConfig -> {
-                    WallTorchBlock block = new WallTorchBlock(Block.Properties.of(Material.DECORATION)
+                    WallTorchBlock block = new WallTorchBlock(Block.Properties.of()
                             .noCollission()
                             .strength(0)
                             .lightLevel((blockState) -> 14)

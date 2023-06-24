@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -22,7 +22,7 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeStr
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu> extends RenderPattern<GuiElementValueTypeString<G, C>, G, C> {
+public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu> extends RenderPattern<GuiElementValueTypeString<G, C>, G, C> {
 
     @Getter
     protected final GuiElementValueTypeString<G, C> element;
@@ -65,10 +65,10 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
     }
 
     @Override
-    public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         // Textbox
-        textField.render(matrixStack, mouseX, mouseY, partialTicks);
+        textField.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

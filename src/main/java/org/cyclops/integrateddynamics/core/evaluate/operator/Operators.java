@@ -1577,7 +1577,7 @@ public final class Operators {
                 ItemStack b = valueStack1.getRawValue();
                 boolean equal = false;
                 if(!a.isEmpty() && !b.isEmpty()) {
-                    equal = a.sameItem(b) && ItemMatch.areItemStacksEqual(a, b, ItemMatch.TAG);
+                    equal = ItemStack.isSameItem(a, b) && ItemMatch.areItemStacksEqual(a, b, ItemMatch.TAG);
                 } else if(a.isEmpty() && b.isEmpty()) {
                     equal = true;
                 }
@@ -1880,7 +1880,7 @@ public final class Operators {
                         if (!listValue.getRawValue().isEmpty()) {
                             ItemStack listItem = listValue.getRawValue();
                             if (!itemStack.isEmpty()) {
-                                if (itemStack.sameItem(listItem) && ItemStack.tagMatches(itemStack, listItem)) {
+                                if (ItemStack.isSameItemSameTags(itemStack, listItem)) {
                                     count += listItem.getCount();
                                 }
                             } else {
@@ -2046,7 +2046,7 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.level, entity));
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityArmorInventory(entity.level(), entity));
                 } else {
                     return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
                 }
@@ -2062,7 +2062,7 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.level, entity));
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityInventory(entity.level(), entity));
                 } else {
                     return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.<ValueObjectTypeItemStack.ValueItemStack>emptyList());
                 }
@@ -2095,7 +2095,7 @@ public final class Operators {
                 BlockState blockState = null;
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
                     LivingEntity entity = (LivingEntity) a.getRawValue().get();
-                    AttributeInstance reachDistanceAttribute = entity.getAttribute(ForgeMod.REACH_DISTANCE.get());
+                    AttributeInstance reachDistanceAttribute = entity.getAttribute(ForgeMod.BLOCK_REACH.get());
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
                     double eyeHeight = entity.getEyeHeight();
                     Vec3 lookVec = entity.getLookAngle();
@@ -2103,9 +2103,9 @@ public final class Operators {
                     Vec3 direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
                     ClipContext rayTraceContext = new ClipContext(origin, direction, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity);
-                    BlockHitResult mop = entity.level.clip(rayTraceContext);
+                    BlockHitResult mop = entity.level().clip(rayTraceContext);
                     if(mop != null && mop.getType() == HitResult.Type.BLOCK) {
-                        blockState = entity.level.getBlockState(mop.getBlockPos());
+                        blockState = entity.level().getBlockState(mop.getBlockPos());
                     }
                 }
                 return ValueObjectTypeBlock.ValueBlock.of(blockState);
@@ -2121,7 +2121,7 @@ public final class Operators {
                 Entity entityOut = null;
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
                     LivingEntity entity = (LivingEntity) a.getRawValue().get();
-                    AttributeInstance reachDistanceAttribute = entity.getAttribute(ForgeMod.REACH_DISTANCE.get());
+                    AttributeInstance reachDistanceAttribute = entity.getAttribute(ForgeMod.ENTITY_REACH.get());
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
                     // Copied and modified from GameRenderer#getMouseOver
@@ -2392,7 +2392,7 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityItems(entity.level, entity, null));
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityItems(entity.level(), entity, null));
                 } else {
                     return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, Collections.emptyList());
                 }
@@ -2408,7 +2408,7 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityFluids(entity.level, entity, null));
+                    return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyEntityFluids(entity.level(), entity, null));
                 } else {
                     return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_FLUIDSTACK, Collections.emptyList());
                 }

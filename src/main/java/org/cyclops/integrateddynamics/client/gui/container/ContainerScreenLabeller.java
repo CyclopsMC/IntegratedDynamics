@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -45,7 +45,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
                 Component.translatable("item.integrateddynamics.labeller.button.write"), button -> {
             ItemStack itemStack = getMenu().getItemStack();
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-            IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(container.getPlayerIInventory().player.level), itemStack);
+            IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(container.getPlayerIInventory().player.level()), itemStack);
             if(variableFacade.isValid()) {
                 int variableId = variableFacade.getId();
                 String label = StringUtils.isBlank(searchField.getValue()) ? "" : searchField.getValue();
@@ -100,14 +100,14 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
-        this.searchField.render(matrixStack, mouseX, mouseY, partialTicks);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+        this.searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     public void setText(String text) {

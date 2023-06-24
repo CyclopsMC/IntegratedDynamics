@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,7 +31,7 @@ public class ValueTypeBooleanLPElement extends ValueTypeLPElementBase {
 
     @Nullable
     @Override
-    public <G2 extends GuiComponent, C2 extends AbstractContainerMenu> GuiElementValueTypeBoolean<G2, C2> createInnerGuiElement() {
+    public <G2 extends Screen, C2 extends AbstractContainerMenu> GuiElementValueTypeBoolean<G2, C2> createInnerGuiElement() {
         return new GuiElementValueTypeBoolean<>((ValueTypeBoolean) getValueType(), getRenderPattern());
     }
 

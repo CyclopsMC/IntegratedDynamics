@@ -59,7 +59,7 @@ public class PlayerTeleportPacket extends PacketCodec {
     @Override
     public void actionServer(Level world, ServerPlayer player) {
         ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(this.dimension));
-        if (!dimensionType.location().equals(player.getLevel().dimension().location())) {
+        if (!dimensionType.location().equals(player.level().dimension().location())) {
             player.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType));
         }
         player.connection.teleport(x + 0.5F, y + 0.5F, z + 0.5F, yaw, pitch);

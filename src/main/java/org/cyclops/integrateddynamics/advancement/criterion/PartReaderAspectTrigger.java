@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,7 +35,7 @@ public class PartReaderAspectTrigger extends SimpleCriterionTrigger<PartReaderAs
     }
 
     @Override
-    public Instance createInstance(JsonObject json, EntityPredicate.Composite entityPredicate, DeserializationContext conditionsParser) {
+    public Instance createInstance(JsonObject json, ContextAwarePredicate entityPredicate, DeserializationContext conditionsParser) {
         return new Instance(getId(), entityPredicate, JsonDeserializers.deserializePartType(json), JsonDeserializers.deserializeAspect(json));
     }
 
@@ -54,7 +54,7 @@ public class PartReaderAspectTrigger extends SimpleCriterionTrigger<PartReaderAs
         private final IPartType partType;
         private final IAspect aspect;
 
-        public Instance(ResourceLocation criterionIn, EntityPredicate.Composite player, @Nullable IPartType partType, @Nullable IAspect aspect) {
+        public Instance(ResourceLocation criterionIn, ContextAwarePredicate player, @Nullable IPartType partType, @Nullable IAspect aspect) {
             super(criterionIn, player);
             this.partType = partType;
             this.aspect = aspect;

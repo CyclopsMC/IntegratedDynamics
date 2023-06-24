@@ -8,8 +8,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.level.BlockEvent;
@@ -28,8 +27,8 @@ public class BlockMenrilLogStrippedConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_log_stripped",
-                eConfig -> new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.WOOD,
-                                (blockState) -> MaterialColor.COLOR_CYAN)
+                eConfig -> new RotatedPillarBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F).sound(SoundType.WOOD)) {
                     @Override
                     public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {

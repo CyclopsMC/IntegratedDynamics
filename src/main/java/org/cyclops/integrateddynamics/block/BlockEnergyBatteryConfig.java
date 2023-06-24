@@ -6,7 +6,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -47,7 +46,7 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "energy_battery",
-                eConfig -> new BlockEnergyBattery(Block.Properties.of(Material.HEAVY_METAL)
+                eConfig -> new BlockEnergyBattery(Block.Properties.of()
                         .sound(SoundType.METAL)
                         .strength(2.0F, 5.0F)),
                 (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block,

@@ -115,10 +115,10 @@ public class TestBlockOperators {
         TestHelpers.assertEqual(!((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().isEmpty(), false, "itemstack(air) = null");
 
         IValue res2 = Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bCoal});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue().sameItem(new ItemStack(Blocks.COAL_BLOCK)), true, "itemstack(coalblock) = coalblock");
+        TestHelpers.assertEqual(ItemStack.isSameItem(((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue(), new ItemStack(Blocks.COAL_BLOCK)), true, "itemstack(coalblock) = coalblock");
 
         IValue res3 = Operators.OBJECT_BLOCK_ITEMSTACK.evaluate(new IVariable[]{bDarkOakLeaves});
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res3).getRawValue().sameItem(new ItemStack(Blocks.DARK_OAK_LEAVES, 1)), true, "itemstack(dark_oak_leaves) = dark_oak_leaves");
+        TestHelpers.assertEqual(ItemStack.isSameItem(((ValueObjectTypeItemStack.ValueItemStack) res3).getRawValue(), new ItemStack(Blocks.DARK_OAK_LEAVES, 1)), true, "itemstack(dark_oak_leaves) = dark_oak_leaves");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

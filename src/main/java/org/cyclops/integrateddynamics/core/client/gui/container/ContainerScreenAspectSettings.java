@@ -1,9 +1,10 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -110,26 +111,26 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
-        subGuiHolder.renderBg(matrixStack, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+        subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
 
         IAspectPropertyTypeInstance activeProperty = getActiveProperty();
         if(activeProperty != null) {
             String label = L10NHelpers.localize(activeProperty.getTranslationKey());
-            RenderHelpers.drawScaledCenteredString(matrixStack, font, label, 88, 10, 0,
-                    1.0F, 140, Helpers.RGBToInt(10, 10, 10));
+            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, label, 88, 10, 0,
+                    1.0F, 140, Helpers.RGBToInt(10, 10, 10), false, Font.DisplayMode.NORMAL);
             if (RenderHelpers.isPointInRegion(this.leftPos + 40, this.topPos, 110, 20, mouseX, mouseY)) {
                 String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
                 if (I18n.exists(unlocalizedInfo)) {
                     drawTooltip(Lists.newArrayList(Component.translatable(unlocalizedInfo)
-                            .withStyle(ChatFormatting.GRAY)), matrixStack, mouseX - this.leftPos, mouseY - this.topPos + 20);
+                            .withStyle(ChatFormatting.GRAY)), guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos + 20);
                 }
             }
         }
@@ -214,7 +215,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     protected void syncInputValue() {
         IAspectPropertyTypeInstance property = getActiveProperty();
-        IValue value = container.getPropertyValue(ValueDeseralizationContext.of(Minecraft.getInstance().player.level), property);
+        IValue value = container.getPropertyValue(ValueDeseralizationContext.of(Minecraft.getInstance().player.level()), property);
         if(value != null) {
             guiElement.setValue(value, propertyConfigPattern);
         }

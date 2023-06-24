@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -23,7 +22,8 @@ public class BlockMenrilLeavesConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_leaves",
-                eConfig -> new LeavesBlock(Block.Properties.of(Material.LEAVES)
+                eConfig -> new LeavesBlock(Block.Properties.of()
+                        .replaceable()
                         .strength(0.2F)
                         .randomTicks()
                         .sound(SoundType.GRASS)

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.world.Container;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,8 +28,8 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Co
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();
         IOperator operator = element.getOperator();
 
@@ -42,13 +42,13 @@ class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, Co
                 Pair<Integer, Integer> slotPosition = configRenderPattern.getSlotPositions()[i];
                 if (gui.isHovering(getX() + slotPosition.getLeft(), getY() + slotPosition.getRight(),
                         ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
-                    gui.drawTooltip(getValueTypeTooltip(valueType), matrixStack, mouseX - guiLeft, mouseY - guiTop);
+                    gui.drawTooltip(getValueTypeTooltip(valueType), guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
                 }
             }
         }
 
         // Output type tooltip
-        this.drawTooltipForeground(gui, matrixStack, container, guiLeft, guiTop, mouseX, mouseY, operator.getOutputType());
+        this.drawTooltipForeground(gui, guiGraphics, container, guiLeft, guiTop, mouseX, mouseY, operator.getOutputType());
     }
 
     @Override

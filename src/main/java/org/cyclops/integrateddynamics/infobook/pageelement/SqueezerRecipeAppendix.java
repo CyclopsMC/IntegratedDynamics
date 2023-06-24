@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -67,9 +67,9 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<RecipeSqueezer> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawElementInner(ScreenInfoBook gui, PoseStack matrixStack, int x, int y, int width, int height, int page, int mx, int my) {
+    public void drawElementInner(ScreenInfoBook gui, GuiGraphics guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
         int middle = (width - SLOT_SIZE) / 2;
-        gui.drawArrowRight(matrixStack, x + middle - 3, y + 2);
+        gui.drawArrowRight(guiGraphics, x + middle - 3, y + 2);
 
         // Prepare items
         int tick = getTick(gui);
@@ -80,18 +80,18 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<RecipeSqueezer> {
         FluidStack outputFluid = recipe.getOutputFluid();
 
         // Items
-        renderItem(gui, matrixStack, x + SLOT_INPUT_OFFSET_X, y, inputItem, mx, my, INPUT_ITEM);
+        renderItem(gui, guiGraphics, x + SLOT_INPUT_OFFSET_X, y, inputItem, mx, my, INPUT_ITEM);
         int slotOffset = 0;
         for (int i = 0; i < outputItems.size(); i++) {
-            renderItem(gui, matrixStack, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputItems.get(i), mx, my, resultItems.get(i),
+            renderItem(gui, guiGraphics, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputItems.get(i), mx, my, resultItems.get(i),
                     recipe.getOutputItems().get(i).getChance());
             slotOffset += SLOT_OFFSET_Y;
         }
         if (outputFluid != null) {
-            renderFluid(gui, matrixStack, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputFluid, mx, my, RESULT_FLUID);
+            renderFluid(gui, guiGraphics, x + SLOT_OUTPUT_OFFSET_X, y + slotOffset, outputFluid, mx, my, RESULT_FLUID);
         }
 
-        renderItem(gui, matrixStack, x + middle, y, getCrafter(), mx, my, false, null);
+        renderItem(gui, guiGraphics, x + middle, y, getCrafter(), mx, my, false, null);
     }
 
     protected ItemStack getCrafter()  {

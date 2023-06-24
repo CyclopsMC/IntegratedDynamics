@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -22,7 +21,7 @@ public class BlockDelayConfig extends BlockConfig {
         super(
             IntegratedDynamics._instance,
             "delay",
-            eConfig -> new BlockDelay(Block.Properties.of(Material.HEAVY_METAL)
+            eConfig -> new BlockDelay(Block.Properties.of()
                     .strength(2.0F, 5.0F)
                     .sound(SoundType.METAL)),
                 (eConfig, block) -> new ItemBlockDelay(block, new Item.Properties())

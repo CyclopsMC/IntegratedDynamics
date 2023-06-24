@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
@@ -37,12 +38,12 @@ public class DisplayErrorsComponent {
         }
     }
 
-    public void drawBackground(PoseStack matrixStack, @Nullable List<MutableComponent> errors, int errorX, int errorY, int okX, int okY, ContainerScreenExtended<?> gui, int guiLeft, int guiTop, boolean okCondition) {
+    public void drawBackground(GuiGraphics guiGraphics, @Nullable List<MutableComponent> errors, int errorX, int errorY, int okX, int okY, ContainerScreenExtended<?> gui, int guiLeft, int guiTop, boolean okCondition) {
         // Render error symbol
         if(errors != null && !errors.isEmpty()) {
-            Images.ERROR.draw(gui, matrixStack, guiLeft + errorX, guiTop + errorY);
+            Images.ERROR.draw(guiGraphics, guiLeft + errorX, guiTop + errorY);
         } else if(okCondition) {
-            Images.OK.draw(gui, matrixStack, guiLeft + okX, guiTop + okY);
+            Images.OK.draw(guiGraphics, guiLeft + okX, guiTop + okY);
         }
     }
 

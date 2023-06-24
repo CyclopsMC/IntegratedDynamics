@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.logicprogrammer;
 
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -22,7 +22,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu> extends IGuiInputElement<S, G, C> {
+public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu> extends IGuiInputElement<S, G, C> {
 
     /**
      * @return The element type.

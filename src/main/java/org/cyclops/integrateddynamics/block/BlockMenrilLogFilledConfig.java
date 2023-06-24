@@ -2,8 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -22,7 +21,8 @@ public class BlockMenrilLogFilledConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_log_filled",
-                eConfig -> new BlockMenrilLogFilled(Block.Properties.of(Material.WOOD, MaterialColor.COLOR_CYAN)
+                eConfig -> new BlockMenrilLogFilled(Block.Properties.of()
+                        .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F)
                         .sound(SoundType.WOOD)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

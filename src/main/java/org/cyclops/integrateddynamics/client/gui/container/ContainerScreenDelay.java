@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -112,20 +113,23 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
-        numberFieldUpdateInterval.render(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
-        numberFieldCapacity.render(matrixStack, mouseX - leftPos, mouseY - topPos, partialTicks);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+        numberFieldUpdateInterval.render(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
+        numberFieldCapacity.render(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
         // MCP: drawString
-        font.draw(matrixStack, Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0));
-        font.draw(matrixStack, Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0));
+        font.drawInBatch(Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0), false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        font.drawInBatch(Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0), false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
-        displayErrors.drawForeground(matrixStack, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
+        this.font.drawInBatch(this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        displayErrors.drawForeground(guiGraphics.pose(), getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 
     @Override

@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
-import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Data;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeString<G extends GuiComponent, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeStringRenderPattern, G, C> {
+public class GuiElementValueTypeString<G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeStringRenderPattern, G, C> {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
@@ -161,28 +161,27 @@ public class GuiElementValueTypeString<G extends GuiComponent, C extends Abstrac
         }
 
         @Override
-        public void renderBg(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.renderBg(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
+        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+            super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
             int x = guiLeft + getX();
             int y = guiTop + getY();
 
-            // MCP: drawString
-            fontRenderer.drawShadow(matrixStack, element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240));
+            fontRenderer.drawInBatch(element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240), true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
 
             if(showError()) {
                 Component lastError = getLastError();
                 if (lastError != null) {
-                    Images.ERROR.draw(this, matrixStack, x + getSignalX(), y + getSignalY() - 1);
+                    Images.ERROR.draw(guiGraphics, x + getSignalX(), y + getSignalY() - 1);
                 } else {
-                    Images.OK.draw(this, matrixStack, x + getSignalX(), y + getSignalY() + 1);
+                    Images.OK.draw(guiGraphics, x + getSignalX(), y + getSignalY() + 1);
                 }
             }
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(PoseStack matrixStack, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(matrixStack, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+        public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+            super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             int x = getX();
             int y = getY();
@@ -195,7 +194,7 @@ public class GuiElementValueTypeString<G extends GuiComponent, C extends Abstrac
                             .stream()
                             .map(Component::literal)
                             .collect(Collectors.toList());
-                    gui.drawTooltip(lines, matrixStack, mouseX - guiLeft, mouseY - guiTop);
+                    gui.drawTooltip(lines, guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
                 }
             }
         }

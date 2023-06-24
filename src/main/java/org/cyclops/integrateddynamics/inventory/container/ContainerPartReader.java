@@ -135,7 +135,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     @Override
     public void removed(Player player) {
         super.removed(player);
-        if (!player.level.isClientSide()) {
+        if (!player.level().isClientSide()) {
             for (int i = 0; i < getUnfilteredItemCount(); ++i) {
                 ItemStack itemStack;
                 itemStack = inputSlots.removeItemNoUpdate(i);
@@ -155,7 +155,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
             ItemStack itemStack = inputSlots.getItem(i);
             if(!itemStack.isEmpty() && outputSlots.getItem(i).isEmpty()) {
-                ItemStack outputStack = writeAspectInfo(!player.level.isClientSide(), itemStack.copy(), player.level, getUnfilteredItems().get(i));
+                ItemStack outputStack = writeAspectInfo(!player.level().isClientSide(), itemStack.copy(), player.level(), getUnfilteredItems().get(i));
                 outputSlots.setItem(i, outputStack);
                 inputSlots.removeItem(i, 1);
             }
@@ -167,7 +167,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         super.broadcastChanges();
 
         try {
-            if (!player.level.isClientSide()) {
+            if (!player.level().isClientSide()) {
                 for (IAspectRead aspectRead : getUnfilteredItems()) {
                     Pair<MutableComponent, Integer> readValue;
                     if(getPartState().isEnabled()) {
@@ -205,7 +205,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     @Override
     public ItemStack writeAspectInfo(boolean generateId, ItemStack itemStack, Level level, final IAspect aspect) {
         ItemStack resultStack = super.writeAspectInfo(generateId, itemStack, level, aspect);
-        if (player.level.isClientSide()) {
+        if (player.level().isClientSide()) {
             return resultStack;
         }
 

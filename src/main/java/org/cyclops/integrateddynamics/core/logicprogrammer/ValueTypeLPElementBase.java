@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import lombok.Getter;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -47,7 +47,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Nullable
     @Override
-    public <G2 extends GuiComponent, C2 extends AbstractContainerMenu> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement() {
+    public <G2 extends Screen, C2 extends AbstractContainerMenu> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement() {
         return null;
     }
 
@@ -115,8 +115,8 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     @Override
     public ItemStack writeElement(Player player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-        return registry.writeVariableFacadeItem(!player.level.isClientSide(), itemStack, ValueTypes.REGISTRY,
-                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player.level, player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
+        return registry.writeVariableFacadeItem(!player.level().isClientSide(), itemStack, ValueTypes.REGISTRY,
+                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
     }
 
     @Override

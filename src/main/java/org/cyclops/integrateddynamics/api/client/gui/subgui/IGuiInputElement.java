@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.client.gui.subgui;
 
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,7 +16,7 @@ import java.util.List;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface IGuiInputElement<S extends ISubGuiBox, G extends GuiComponent, C extends AbstractContainerMenu> {
+public interface IGuiInputElement<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu> {
 
     /**
      * @return Name used for rendering.

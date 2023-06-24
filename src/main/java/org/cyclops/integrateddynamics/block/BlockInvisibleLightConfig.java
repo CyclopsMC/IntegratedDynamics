@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.fml.config.ModConfig;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
@@ -25,10 +25,11 @@ public class BlockInvisibleLightConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "invisible_light",
-                eConfig -> new BlockInvisibleLight(Block.Properties.of(Material.AIR)
+                eConfig -> new BlockInvisibleLight(Block.Properties.of()
                         .strength(3.0F)
                         .sound(SoundType.METAL)
-                        .lightLevel((blockState) -> 15)),
+                        .lightLevel((blockState) -> 15)
+                        .pushReaction(PushReaction.DESTROY)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

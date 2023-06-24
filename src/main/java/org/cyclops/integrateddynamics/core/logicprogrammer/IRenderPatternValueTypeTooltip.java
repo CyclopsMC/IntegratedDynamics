@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
@@ -25,13 +25,13 @@ public interface IRenderPatternValueTypeTooltip {
 
     public abstract void setRenderTooltip(boolean renderTooltip);
 
-    public default void drawTooltipForeground(ContainerScreenLogicProgrammerBase gui, PoseStack poseStack, ContainerLogicProgrammerBase container, int guiLeft, int guiTop, int mouseX, int mouseY, IValueType valueType) {
+    public default void drawTooltipForeground(ContainerScreenLogicProgrammerBase gui, GuiGraphics guiGraphics, ContainerLogicProgrammerBase container, int guiLeft, int guiTop, int mouseX, int mouseY, IValueType valueType) {
         if (isRenderTooltip()) {
             // Output type tooltip
             if (!container.hasWriteItemInSlot()) {
                 if (gui.isHovering(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
                         ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
-                    gui.drawTooltip(getValueTypeTooltip(valueType), poseStack, mouseX - guiLeft, mouseY - guiTop);
+                    gui.drawTooltip(getValueTypeTooltip(valueType), guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
                 }
             }
         }

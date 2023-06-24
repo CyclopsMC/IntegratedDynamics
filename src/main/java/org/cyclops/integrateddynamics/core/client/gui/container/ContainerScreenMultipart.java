@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,6 +16,7 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipar
 import org.cyclops.integrateddynamics.core.part.PartTypeConfigurable;
 
 import java.awt.*;
+
 
 /**
  * Gui for parts.
@@ -71,23 +73,23 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
         // Draw part name
-        // MCP: drawString
-        font.draw(matrixStack, getTitle(), leftPos + 8, topPos + 6, 4210752);
+        font.drawInBatch(getTitle(), leftPos + 8, topPos + 6, 4210752, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 
         if (isHovering(-20, 0, 18, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), matrixStack, mouseX - leftPos, mouseY - topPos);
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
         }
         if (isHovering(-20, 20, 18, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), matrixStack, mouseX - leftPos, mouseY - topPos);
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
         }
     }
 }

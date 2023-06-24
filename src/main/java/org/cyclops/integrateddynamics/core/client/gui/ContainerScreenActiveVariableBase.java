@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
@@ -32,26 +33,27 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float f, int x, int y) {
-        super.renderBg(matrixStack, f, x, y);
+    protected void renderBg(GuiGraphics guiGraphics, float f, int x, int y) {
+        super.renderBg(guiGraphics, f, x, y);
 
         Component readValue = getMenu().getReadValue();
         int readValueColor = getMenu().getReadValueColor();
         boolean ok = false;
         if (readValue != null) {
             ok = true;
-            RenderHelpers.drawScaledCenteredString(matrixStack, font, readValue.getString(),
-                    getGuiLeftTotal() + getValueX(), getGuiTopTotal() + getValueY(), 70, readValueColor);
+            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, readValue.getString(),
+                    getGuiLeftTotal() + getValueX(), getGuiTopTotal() + getValueY(), 70, readValueColor, false, Font.DisplayMode.NORMAL);
         }
 
-        displayErrors.drawBackground(matrixStack, getMenu().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
+        displayErrors.drawBackground(guiGraphics, getMenu().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
                 this.leftPos, this.topPos, ok);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
-        displayErrors.drawForeground(matrixStack, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
+        this.font.drawInBatch(this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        displayErrors.drawForeground(guiGraphics.pose(), getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 }

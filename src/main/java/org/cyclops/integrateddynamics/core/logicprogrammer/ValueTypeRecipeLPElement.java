@@ -320,7 +320,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, Player player) {
         if (slotId >= SLOT_OFFSET && slotId < 9 + SLOT_OFFSET) {
             if (clickType == ClickType.QUICK_MOVE && mouseButton == 0) {
-                if (player.level.isClientSide()) {
+                if (player.level().isClientSide()) {
                     int id = slotId - SLOT_OFFSET;
                     lastGui.setPropertySubGui(id);
                 }

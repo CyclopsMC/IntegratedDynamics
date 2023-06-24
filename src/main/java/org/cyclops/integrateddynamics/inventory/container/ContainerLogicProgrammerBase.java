@@ -68,7 +68,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         super(type, id, playerInventory, new SimpleContainer(0), getElements(), FILTERER);
         this.writeSlot = new SimpleInventory(1, 1);
         this.filterSlots = new SimpleInventory(3, 1);
-        this.filterSlots.addDirtyMarkListener(new FilterSlotListener(ValueDeseralizationContext.of(playerInventory.player.level)));
+        this.filterSlots.addDirtyMarkListener(new FilterSlotListener(ValueDeseralizationContext.of(playerInventory.player.level())));
         this.writeSlot.addDirtyMarkListener(this);
         this.writeSlot.addDirtyMarkListener(loadConfigListener = new LoadConfigListener());
         this.temporaryInputSlots = new SimpleInventory(0, 1);
@@ -213,7 +213,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     @Override
     public void removed(Player player) {
         super.removed(player);
-        if (!player.level.isClientSide()) {
+        if (!player.level().isClientSide()) {
             ItemStack itemStack = writeSlot.getItem(0);
             if(!itemStack.isEmpty()) {
                 player.drop(itemStack, false);
@@ -229,7 +229,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     protected void labelCurrent() {
         ItemStack itemStack = writeSlot.getItem(0);
         if(!itemStack.isEmpty()) {
-            IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(ValueDeseralizationContext.of(player.level), itemStack);
+            IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(ValueDeseralizationContext.of(player.level()), itemStack);
             if(this.lastLabel != null && variableFacade.isValid()) {
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableFacade.getId(), this.lastLabel);
             }
@@ -273,7 +273,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         // Only do this client-side, a packet will be sent to do the same server-side.
         if(MinecraftHelpers.isClientSide()) {
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-            IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level), itemStack);
+            IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level()), itemStack);
             for(ILogicProgrammerElement element : getElements()) {
                 if(element.isFor(variableFacade)) {
                     getGui().handleElementActivation(element);

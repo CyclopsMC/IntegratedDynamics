@@ -2,8 +2,8 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,7 +30,7 @@ public class NetworkInitializedTrigger extends SimpleCriterionTrigger<NetworkIni
     }
 
     @Override
-    public Instance createInstance(JsonObject json, EntityPredicate.Composite entityPredicate, DeserializationContext conditionsParser) {
+    public Instance createInstance(JsonObject json, ContextAwarePredicate entityPredicate, DeserializationContext conditionsParser) {
         return new Instance(getId(), entityPredicate, json.get("min_cables").getAsInt());
     }
 
@@ -48,7 +48,7 @@ public class NetworkInitializedTrigger extends SimpleCriterionTrigger<NetworkIni
     public static class Instance extends AbstractCriterionTriggerInstance implements ICriterionInstanceTestable<NetworkInitializedEvent> {
         private final int minCablesCount;
 
-        public Instance(ResourceLocation criterionIn, EntityPredicate.Composite player, int minCablesCount) {
+        public Instance(ResourceLocation criterionIn, ContextAwarePredicate player, int minCablesCount) {
             super(criterionIn, player);
             this.minCablesCount = minCablesCount;
         }

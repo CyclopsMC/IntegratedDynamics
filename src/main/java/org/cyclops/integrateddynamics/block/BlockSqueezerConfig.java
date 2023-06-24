@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -16,7 +15,7 @@ public class BlockSqueezerConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "squeezer",
-                eConfig -> new BlockSqueezer(Block.Properties.of(Material.METAL)
+                eConfig -> new BlockSqueezer(Block.Properties.of()
                         .strength(2.0F, 5.0F)
                         .sound(SoundType.METAL)
                         .noOcclusion()

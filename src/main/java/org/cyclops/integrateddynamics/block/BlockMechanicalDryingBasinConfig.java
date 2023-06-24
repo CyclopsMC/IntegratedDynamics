@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -23,7 +22,7 @@ public class BlockMechanicalDryingBasinConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "mechanical_drying_basin",
-                eConfig -> new BlockMechanicalDryingBasin(Block.Properties.of(Material.HEAVY_METAL)
+                eConfig -> new BlockMechanicalDryingBasin(Block.Properties.of()
                         .strength(2.0F, 5.0F)
                         .sound(SoundType.METAL)
                         .noOcclusion()

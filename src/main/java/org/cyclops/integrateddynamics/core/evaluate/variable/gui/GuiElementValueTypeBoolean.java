@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
 import lombok.Data;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,7 +22,7 @@ import java.util.function.Predicate;
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeBoolean<G extends GuiComponent, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeBooleanRenderPattern, G, C> {
+public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeBooleanRenderPattern, G, C> {
 
     private final ValueTypeBoolean valueType;
     private Predicate<IValue> validator;

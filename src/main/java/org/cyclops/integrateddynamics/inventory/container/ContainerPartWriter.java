@@ -97,7 +97,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     @Override
     protected Container constructInputSlotsInventory() {
-        if (!player.level.isClientSide()) {
+        if (!player.level().isClientSide()) {
             SimpleInventory inventory = getPartState().getInventory();
             inventory.addDirtyMarkListener(this);
             return inventory;
@@ -108,7 +108,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     @Override
     public void onDirty() {
-        if (!player.level.isClientSide()) {
+        if (!player.level().isClientSide()) {
             getPartType().updateActivation(getTarget(), getPartState(), player);
         }
     }
@@ -118,7 +118,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         super.broadcastChanges();
 
         try {
-            if (!player.level.isClientSide()) {
+            if (!player.level().isClientSide()) {
                 // Update write value
                 Pair<MutableComponent, Integer> readValue;
                 S partState = getPartState();
@@ -130,7 +130,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                             partContainer.getPosition().getBlockPos(), getTarget().getCenter().getSide());
                     IPartNetwork partNetwork = optionalNetwork.map(NetworkHelpers::getPartNetworkChecked).orElse(null);
                     if (partNetwork != null) {
-                        IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork, ValueDeseralizationContext.of(player.level));
+                        IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork, ValueDeseralizationContext.of(player.level()));
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
                         readValue = Pair.of(Component.literal("NETWORK CORRUPTED!"), Helpers.RGBToInt(255, 100, 0));

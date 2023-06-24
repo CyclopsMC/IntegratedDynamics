@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -15,7 +14,7 @@ public class BlockDryingBasinConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "drying_basin",
-                eConfig -> new BlockDryingBasin(Block.Properties.of(Material.WOOD)
+                eConfig -> new BlockDryingBasin(Block.Properties.of()
                         .strength(2.0F, 5.0F)
                         .noOcclusion()
                         .isRedstoneConductor((blockState, world, pos) -> false)),

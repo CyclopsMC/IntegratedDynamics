@@ -2,8 +2,9 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -237,31 +238,35 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
         if (isFieldUpdateIntervalEnabled()) {
-            font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0));
-            numberFieldUpdateInterval.render(matrixStack, mouseX, mouseY, partialTicks);
+            font.drawInBatch(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0), false,
+                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            numberFieldUpdateInterval.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldPriorityEnabled()) {
-            font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, Helpers.RGBToInt(0, 0, 0));
-            numberFieldPriority.render(matrixStack, mouseX, mouseY, partialTicks);
+            font.drawInBatch(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, Helpers.RGBToInt(0, 0, 0), false,
+                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            numberFieldPriority.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldChannelEnabled()) {
-            font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100));
-            numberFieldChannel.render(matrixStack, mouseX, mouseY, partialTicks);
+            font.drawInBatch(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100), false,
+                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            numberFieldChannel.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldSideEnabled()) {
-            font.draw(matrixStack, L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0));
-            dropdownFieldSide.render(matrixStack, mouseX, mouseY, partialTicks);
+            font.drawInBatch(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0), false,
+                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            dropdownFieldSide.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
-            GuiHelpers.renderTooltip(this, matrixStack, 8, 87, 100, 20, mouseX, mouseY,
+            GuiHelpers.renderTooltip(this, guiGraphics.pose(), 8, 87, 100, 20, mouseX, mouseY,
                     () -> Lists.<Component>newArrayList(Component.translatable("gui.integrateddynamics.partsettings.channel.disabledinfo")));
         }
     }
