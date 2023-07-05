@@ -148,6 +148,43 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
     }
 
     @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        if (inputFluidAmountBox.keyPressed(typedChar, keyCode, modifiers)) {
+            element.setInputFluidAmount(inputFluidAmountBox.getValue());
+            container.onDirty();
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                    new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputFluidAmount(),
+                            LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_FLUID));
+            return true;
+        }
+        if (inputEnergyBox.keyPressed(typedChar, keyCode, modifiers)) {
+            element.setInputEnergy(inputEnergyBox.getValue());
+            container.onDirty();
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                    new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getInputEnergy(),
+                            LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_ENERGY));
+            return true;
+        }
+        if (outputFluidAmountBox.keyPressed(typedChar, keyCode, modifiers)) {
+            element.setOutputFluidAmount(outputFluidAmountBox.getValue());
+            container.onDirty();
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                    new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputFluidAmount(),
+                            LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_FLUID));
+            return true;
+        }
+        if (outputEnergyBox.keyPressed(typedChar, keyCode, modifiers)) {
+            element.setOutputEnergy(outputEnergyBox.getValue());
+            container.onDirty();
+            IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                    new LogicProgrammerValueTypeRecipeValueChangedPacket(element.getOutputEnergy(),
+                            LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_ENERGY));
+            return true;
+        }
+        return super.keyPressed(typedChar, keyCode, modifiers);
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         return inputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton)
                 || inputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton)
