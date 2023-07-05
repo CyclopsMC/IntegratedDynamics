@@ -895,7 +895,7 @@
     "operator.integrateddynamics.tooltip.operator_name": "§eOperator: §r%s (%s)",
     "operator.integrateddynamics.tooltip.operator_category": "§eCategory: §r%s",
     "operator.integrateddynamics.tooltip.variable_ids": "§eVariable IDs: §r§o%s",
-    "operator.integrateddynamics.tooltip.input_type_name": "§eInput Type %s: §r%s",
+    "operator.integrateddynamics.tooltip.input_type_name": "§eInput Type %s: §r",
     "operator.integrateddynamics.tooltip.output_type_name": "§eOutput Type: §r%s",
     "operator.integrateddynamics.error.wrong_input_length": "The operator %s received an input of length %s while it needs a length of %s.",
     "operator.integrateddynamics.error.operator_param_wrong_input_length": "An operator input length of %s is required, while %s only has an input length of %s.",
