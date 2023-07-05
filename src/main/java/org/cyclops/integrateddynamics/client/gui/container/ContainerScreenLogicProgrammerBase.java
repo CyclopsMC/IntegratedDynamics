@@ -326,7 +326,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton);
+        if (subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (isSearchFieldFocussed()) {
+                setSearchFieldFocussed(false);
+            }
+            return true;
+        }
+
         ContainerLogicProgrammerBase container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
             if (container.isElementVisible(i)) {
@@ -342,9 +348,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 }
             }
         }
-        if (super.mouseClicked(mouseX, mouseY, mouseButton)) {
-            return true;
-        }
+        boolean superRet = super.mouseClicked(mouseX, mouseY, mouseButton);
 
         // If the search box has been selected, de-active the current element.
         if(isSearchFieldFocussed() &&
@@ -353,7 +357,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             return true;
         }
 
-        return false;
+        return superRet;
     }
 
     protected void label(String label) {
