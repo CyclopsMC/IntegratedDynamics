@@ -141,8 +141,8 @@ public class BlockSqueezer extends BlockWithEntity {
             // The faster the entity is falling, the more steps to advance by
             int steps = 1 + Mth.floor((-motionY - 0.37D) * 5);
 
-            if((entityIn.getY() - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
-                if (blockState.getBlock() == this) { // Just to be sure...
+            if (blockState.getBlock() == this) { // Just to be sure...
+                if((entityIn.getY() - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
                     int newHeight = Math.min(7, blockState.getValue(HEIGHT) + steps);
                     entityIn.level().setBlockAndUpdate(blockPos, blockState.setValue(HEIGHT, newHeight));
                     BlockEntityHelpers.get(worldIn, blockPos, BlockEntitySqueezer.class)
