@@ -245,9 +245,9 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
                 if (compPriority == 0) {
                     int compPart = getPart().getTranslationKey().compareTo(p.getPart().getTranslationKey());
                     if (compPart == 0) {
-                        int compPos = this.center.getPos().compareTo(getCenterPos(p.getTarget()));
+                        int compPos = this.center.getPos().compareTo(p.getPosition());
                         if (compPos == 0) {
-                            return this.center.getSide().compareTo(getCenterSide(p.getTarget()));
+                            return this.center.getSide().compareTo(p.getSide());
                         }
                         return compPos;
                     }
