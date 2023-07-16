@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.17.0 or higher.
+
+Changes:
+* Give DOUBLE higher precedence than LONG for number operations, Closes #1284
+
+
