@@ -51,7 +51,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
     }
 
     protected void drawSlot(GuiGraphics guiGraphics, int x, int y) {
-        guiGraphics.blit(this.texture, x, y, 19, 0, 18, 18);
+        guiGraphics.blit(SubGuiBox.TEXTURE, x, y, 19, 0, 18, 18);
     }
 
     @Override
