@@ -51,7 +51,7 @@ public class BlockInvisibleLight extends Block {
     @Override
     public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
         if (state.getBlock() == this) {
-            return world.getBlockState(pos).getValue(LIGHT);
+            return state.getValue(LIGHT);
         }
         return super.getLightEmission(state, world, pos);
     }
