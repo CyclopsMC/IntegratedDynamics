@@ -10,7 +10,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger.ValueInteger;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
