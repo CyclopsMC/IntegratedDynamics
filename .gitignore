@@ -18,6 +18,10 @@ repo/*
 out/*
 keystore.jks
 
+# Ignore IDE specific files
+.vscode
+*.launch
+
 # Ignore mac-specific file(s)
 .DS_Store
 
