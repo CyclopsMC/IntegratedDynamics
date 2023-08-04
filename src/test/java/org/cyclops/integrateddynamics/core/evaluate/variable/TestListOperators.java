@@ -63,7 +63,7 @@ public class TestListOperators {
         sx = new DummyVariableString(ValueTypeString.ValueString.of("x"));
 
         oRelationalEquals = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
-        oIntegerIncrement = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
+        oIntegerIncrement = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_INCREMENT));
 
         labc = new DummyVariableList(ValueTypeList.ValueList.ofAll(
                 ValueTypeString.ValueString.of("a"),
@@ -84,7 +84,7 @@ public class TestListOperators {
                 ValueTypeLong.ValueLong.of(0x1234567833333333L)
         ));
         lintegers_inf = new DummyVariableList(ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyLazyBuilt<>(
-                ValueTypeInteger.ValueInteger.of(0), Operators.INTEGER_INCREMENT)));
+                ValueTypeInteger.ValueInteger.of(0), Operators.ARITHMETIC_INCREMENT)));
     }
 
     /**

@@ -74,7 +74,7 @@ public class TestOperatorOperators {
         oGeneralIdentity          = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
         oLogicalNot               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
         oLogicalAnd               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_AND));
-        oIntegerIncrement         = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.INTEGER_INCREMENT));
+        oIntegerIncrement         = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_INCREMENT));
         oRelationalEquals         = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
         oRelationalGreaterThan    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_GT));
         oRelationalLessThan       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_LT));

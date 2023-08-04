@@ -147,6 +147,31 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
         );
     }
 
+    public IValue increment(IVariable a) throws EvaluationException {
+        IValueTypeNumber type = getType(a);
+        return type.increment(castValue(type, a.getValue()));
+    }
+
+    public IValue decrement(IVariable a) throws EvaluationException {
+        IValueTypeNumber type = getType(a);
+        return type.decrement(castValue(type, a.getValue()));
+    }
+
+    public IValue modulus(IVariable a, IVariable b) throws EvaluationException {
+        IValueTypeNumber type = getLowestType(getType(a), getType(b));
+        IValue bValue = castValue(type, b.getValue());
+        if (type.isZero(bValue)) { // You can not divide by zero
+            throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
+        } else if (type.isZero(bValue)) { // If b is neutral element for division
+            return type.getDefault(); // ? maybe each type should have a 'zero' value defined, rather than just using the default value here
+        } else {
+            return type.modulus(
+                castValue(type, a.getValue()),
+                bValue
+            );
+        }
+    }
+
     public boolean greaterThan(IVariable a, IVariable b) throws EvaluationException {
         IValueTypeNumber type = getLowestType(getType(a), getType(b));
         return type.greaterThan(

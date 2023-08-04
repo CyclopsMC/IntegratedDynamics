@@ -10,6 +10,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger.ValueInteger;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
@@ -99,6 +100,21 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     @Override
     public ValueLong min(ValueLong a, ValueLong b) {
         return ValueLong.of(Math.min(a.getRawValue(), b.getRawValue()));
+    }
+
+    @Override
+    public ValueLong increment(ValueLong a) {
+        return ValueLong.of(a.getRawValue() + 1L);
+    }
+
+    @Override
+    public ValueLong decrement(ValueLong a) {
+        return ValueLong.of(a.getRawValue() - 1L);
+    }
+
+    @Override
+    public ValueLong modulus(ValueLong a, ValueLong b) {
+        return ValueLong.of(a.getRawValue() % b.getRawValue());
     }
 
     @Override

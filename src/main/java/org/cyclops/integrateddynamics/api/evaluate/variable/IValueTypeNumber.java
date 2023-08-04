@@ -17,6 +17,9 @@ public interface IValueTypeNumber<V extends IValue> extends IValueType<V>, IValu
     public V divide(V a, V b);
     public V max(V a, V b);
     public V min(V a, V b);
+    public V increment(V a);
+    public V decrement(V a);
+    public V modulus(V a, V b);
     public boolean greaterThan(V a, V b);
     public boolean lessThan(V a, V b);
     public ValueTypeInteger.ValueInteger round(V a);

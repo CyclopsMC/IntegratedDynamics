@@ -730,12 +730,12 @@
     "operator.integrateddynamics.arithmetic.maximum.info": "取两个数值中的最大值",
     "operator.integrateddynamics.arithmetic.minimum": "最小",
     "operator.integrateddynamics.arithmetic.minimum.info": "取两个数值中的最小值",
+    "operator.integrateddynamics.arithmetic.modulus": "取模",
+    "operator.integrateddynamics.arithmetic.increment": "递增",
+    "operator.integrateddynamics.arithmetic.decrement": "递减",
 
     "operator.integrateddynamics.integer": "整型",
     "operator.integrateddynamics.integer.basename": "整型%s运算",
-    "operator.integrateddynamics.integer.modulus": "取模",
-    "operator.integrateddynamics.integer.increment": "递增",
-    "operator.integrateddynamics.integer.decrement": "递减",
 
     "operator.integrateddynamics.relational": "关系运算",
     "operator.integrateddynamics.relational.basename": "关系%s运算",

@@ -180,7 +180,7 @@ public final class Operators {
      */
 
     /**
-     * Arithmetic ADD operator with two input integers and one output integer.
+     * Arithmetic ADD operator with two input numbers and one output number.
      */
     public static final IOperator ARITHMETIC_ADDITION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("+").operatorName("addition")
             .function(
@@ -188,7 +188,7 @@ public final class Operators {
             ).build());
 
     /**
-     * Arithmetic MINUS operator with two input integers and one output integer.
+     * Arithmetic MINUS operator with two input numbers and one output number.
      */
     public static final IOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("-").operatorName("subtraction")
             .function(
@@ -196,7 +196,7 @@ public final class Operators {
             ).build());
 
     /**
-     * Arithmetic MULTIPLY operator with two input integers and one output integer.
+     * Arithmetic MULTIPLY operator with two input numbers and one output number.
      */
     public static final IOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("*").operatorName("multiplication")
             .function(
@@ -204,7 +204,7 @@ public final class Operators {
             ).build());
 
     /**
-     * Arithmetic DIVIDE operator with two input integers and one output integer.
+     * Arithmetic DIVIDE operator with two input numbers and one output number.
      */
     public static final IOperator ARITHMETIC_DIVISION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("/").operatorName("division")
             .function(
@@ -212,7 +212,7 @@ public final class Operators {
             ).build());
 
     /**
-     * Arithmetic MAX operator with two input integers and one output integer.
+     * Arithmetic MAX operator with two input numbers and one output number.
      */
     public static final IOperator ARITHMETIC_MAXIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("max").operatorName("maximum")
             .function(
@@ -220,54 +220,36 @@ public final class Operators {
             ).build());
 
     /**
-     * Arithmetic MIN operator with two input integers and one output integer.
+     * Arithmetic MIN operator with two input numbers and one output number.
      */
     public static final IOperator ARITHMETIC_MINIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("min").operatorName("minimum")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.min(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
 
-
+    /**
+     * Arithmetic INCREMENT operator with one input numbers and one output number.
+     */
+    public static final IOperator ARITHMETIC_INCREMENT = REGISTRY.register(OperatorBuilders.ARITHMETIC_1_SUFFIX.symbol("++").operatorName("increment")
+            .function(
+                variables -> ValueTypes.CATEGORY_NUMBER.increment(variables.getVariables()[0])
+            ).build());
 
     /**
-     * ----------------------------------- INTEGER OPERATORS -----------------------------------
+     * Arithmetic DECREMENT operator with one input numbers and one output number.
      */
-
-    private static final ValueTypeInteger.ValueInteger ZERO = ValueTypeInteger.ValueInteger.of(0);
-
-    /**
-     * Integer MODULO operator with two input integers and one output integer.
-     */
-    public static final IOperator INTEGER_MODULUS = REGISTRY.register(OperatorBuilders.INTEGER_2.symbol("%").operatorName("modulus")
-            .function(variables -> {
-                ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
-                if (b.getRawValue() == 0) { // You can not divide by zero
-                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
-                } else if (b.getRawValue() == 1) { // If b is neutral element for division
-                    return ZERO;
-                } else {
-                    ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
-                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() % b.getRawValue());
-                }
-            }).build());
+    public static final IOperator ARITHMETIC_DECREMENT = REGISTRY.register(OperatorBuilders.ARITHMETIC_1_SUFFIX.symbol("--").operatorName("decrement")
+            .function(
+                variables -> ValueTypes.CATEGORY_NUMBER.decrement(variables.getVariables()[0])
+            ).build());
 
     /**
-     * Integer INCREMENT operator with one input integers and one output integer.
+     * Arithmetic MODULO operator with two input numbers and one output number.
      */
-    public static final IOperator INTEGER_INCREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("++").operatorName("increment")
-            .function(variables -> {
-                ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
-                return ValueTypeInteger.ValueInteger.of(a.getRawValue() + 1);
-            }).build());
-
-    /**
-     * Integer INCREMENT operator with one input integers and one output integer.
-     */
-    public static final IOperator INTEGER_DECREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("--").operatorName("decrement")
-            .function(variables -> {
-                ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
-                return ValueTypeInteger.ValueInteger.of(a.getRawValue() - 1);
-            }).build());
+    public static final IOperator ARITHMETIC_MODULUS = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("%").operatorName("modulus")
+            .function(
+                variables -> ValueTypes.CATEGORY_NUMBER.modulus(variables.getVariables()[0], variables.getVariables()[1])
+            ).build());
 
     /**
      * ----------------------------------- RELATIONAL OPERATORS -----------------------------------
