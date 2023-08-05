@@ -163,7 +163,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
         if (type.isZero(bValue)) { // You can not divide by zero
             throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
         } else if (type.isOne(bValue)) { // If b is neutral element for division
-            return type.getDefault(); // ? maybe each type should have a 'zero' value defined, rather than just using the default value here
+            return type.getDefault();
         } else {
             return type.modulus(
                 castValue(type, a.getValue()),
