@@ -479,7 +479,7 @@ public class TestArithmeticOperators {
     @Test
     public void testArithmeticMinDouble() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{d10, d10});
-        assertThat("result is an double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
+        assertThat("result is a double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
         assertThat("max(10, 10) = 10", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(10D));
 
         IValue res2 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{d0, d10});
@@ -498,7 +498,7 @@ public class TestArithmeticOperators {
     @Test
     public void testArithmeticMinIntegerDouble() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i10, d10});
-        assertThat("result is an double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
+        assertThat("result is a double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
         assertThat("max(10, 10) = 10", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(10D));
 
         IValue res2 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i0, d10});
