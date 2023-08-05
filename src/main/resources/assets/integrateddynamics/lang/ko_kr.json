@@ -950,6 +950,9 @@
     "operator.integrateddynamics.arithmetic.maximum.info": "두 값 중 가장 큰 값을 가져옵니다.",
     "operator.integrateddynamics.arithmetic.minimum": "최소",
     "operator.integrateddynamics.arithmetic.minimum.info": "두 값 중 가장 작은 값을 가져옵니다.",
+    "operator.integrateddynamics.arithmetic.modulus": "계수",
+    "operator.integrateddynamics.arithmetic.increment": "증가",
+    "operator.integrateddynamics.arithmetic.decrement": "감소",
 
     "operator.integrateddynamics.integer": "Integer",
     "operator.integrateddynamics.integer.basename": "Integer %s",

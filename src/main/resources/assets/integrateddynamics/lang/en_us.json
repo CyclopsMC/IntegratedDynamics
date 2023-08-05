@@ -951,6 +951,9 @@
     "operator.integrateddynamics.arithmetic.maximum.info": "Takes the largest of two values.",
     "operator.integrateddynamics.arithmetic.minimum": "Minimum",
     "operator.integrateddynamics.arithmetic.minimum.info": "Takes the smallest of two values.",
+    "operator.integrateddynamics.arithmetic.modulus": "Modulus",
+    "operator.integrateddynamics.arithmetic.increment": "Increment",
+    "operator.integrateddynamics.arithmetic.decrement": "Decrement",
 
     "operator.integrateddynamics.integer": "Integer",
     "operator.integrateddynamics.integer.basename": "Integer %s",
