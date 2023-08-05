@@ -106,6 +106,21 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
+    public ValueInteger increment(ValueInteger a) {
+        return ValueInteger.of(a.getRawValue() + 1);
+    }
+
+    @Override
+    public ValueInteger decrement(ValueInteger a) {
+        return ValueInteger.of(a.getRawValue() - 1);
+    }
+
+    @Override
+    public ValueInteger modulus(ValueInteger a, ValueInteger b) {
+        return ValueInteger.of(a.getRawValue() % b.getRawValue());
+    }
+
+    @Override
     public boolean greaterThan(ValueInteger a, ValueInteger b) {
         return a.getRawValue() > b.getRawValue();
     }

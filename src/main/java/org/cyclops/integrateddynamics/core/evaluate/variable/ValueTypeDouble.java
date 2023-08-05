@@ -105,6 +105,21 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
+    public ValueDouble increment(ValueDouble a) {
+        return ValueDouble.of(a.getRawValue() + 1D);
+    }
+
+    @Override
+    public ValueDouble decrement(ValueDouble a) {
+        return ValueDouble.of(a.getRawValue() - 1D);
+    }
+
+    @Override
+    public ValueDouble modulus(ValueDouble a, ValueDouble b) {
+        return ValueDouble.of(a.getRawValue() % b.getRawValue());
+    }
+
+    @Override
     public boolean greaterThan(ValueDouble a, ValueDouble b) {
         return a.getRawValue() > b.getRawValue();
     }

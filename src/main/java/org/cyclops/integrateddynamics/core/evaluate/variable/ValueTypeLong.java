@@ -105,6 +105,21 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     }
 
     @Override
+    public ValueLong increment(ValueLong a) {
+        return ValueLong.of(a.getRawValue() + 1L);
+    }
+
+    @Override
+    public ValueLong decrement(ValueLong a) {
+        return ValueLong.of(a.getRawValue() - 1L);
+    }
+
+    @Override
+    public ValueLong modulus(ValueLong a, ValueLong b) {
+        return ValueLong.of(a.getRawValue() % b.getRawValue());
+    }
+
+    @Override
     public boolean greaterThan(ValueLong a, ValueLong b) {
         return a.getRawValue() > b.getRawValue();
     }
