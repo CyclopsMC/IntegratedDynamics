@@ -82,6 +82,7 @@ public class OperatorBuilders {
         }
         return ValueTypes.CATEGORY_NUMBER.getLowestType(types);
     });
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ARITHMETIC_1_SUFFIX = ARITHMETIC.inputTypes(1, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.SUFFIX_1);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ARITHMETIC_2 = ARITHMETIC.inputTypes(2, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.INFIX);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ARITHMETIC_2_PREFIX = ARITHMETIC.inputTypes(2, ValueTypes.CATEGORY_NUMBER).renderPattern(IConfigRenderPattern.PREFIX_2);
 
@@ -206,7 +207,7 @@ public class OperatorBuilders {
                     if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
                         MutableComponent error = Component.translatable(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
                                 Component.translatable(innerOperator.getTranslationKey()),
-                                Component.translatable(input.getVariables()[0].getType().getTranslationKey()),
+                                Component.translatable(input.getVariables()[1].getType().getTranslationKey()),
                                 0,
                                 Component.translatable(innerOperator.getInputTypes()[0].getTranslationKey())
                                 );

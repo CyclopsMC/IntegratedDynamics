@@ -758,6 +758,9 @@
     "operator.integrateddynamics.arithmetic.maximum.info": "Tar det största utav två värden.",
     "operator.integrateddynamics.arithmetic.minimum": "Minimalt",
     "operator.integrateddynamics.arithmetic.minimum.info": "Tar det minsta utav två värden.",
+    "operator.integrateddynamics.arithmetic.modulus": "Modulär",
+    "operator.integrateddynamics.arithmetic.increment": "Ökning",
+    "operator.integrateddynamics.arithmetic.decrement": "Minskning",
 
     "operator.integrateddynamics.integer": "Heltal",
     "operator.integrateddynamics.integer.basename": "%s (heltal)",

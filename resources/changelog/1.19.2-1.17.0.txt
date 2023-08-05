@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Additions:
+* Add generic variants of increment, decrement, and modulus
+  These were only usable for integers, but can now be used for all numbers.
+
+Fixes:
+* Fix wrong error message for invalid applied operators, Closes #1293
+
