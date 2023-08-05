@@ -461,57 +461,57 @@ public class TestArithmeticOperators {
     public void testArithmeticMinInteger() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i10, i10});
         assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("max(10, 10) = 10", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(10));
+        assertThat("min(10, 10) = 10", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(10));
 
         IValue res2 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i0, i10});
-        assertThat("max(0, 10) = 10", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(0));
+        assertThat("min(0, 10) = 0", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(0));
 
         IValue res3 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i10, i0});
-        assertThat("max(10, 0) = 10", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(0));
+        assertThat("min(10, 0) = 0", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(0));
 
         IValue res4 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i0, im10});
-        assertThat("max(0, -10) = 0", ((ValueTypeInteger.ValueInteger) res4).getRawValue(), is(-10));
+        assertThat("min(0, -10) = -10", ((ValueTypeInteger.ValueInteger) res4).getRawValue(), is(-10));
 
         IValue res5 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{im10, i0});
-        assertThat("max(-10, 0) = 0", ((ValueTypeInteger.ValueInteger) res5).getRawValue(), is(-10));
+        assertThat("min(-10, 0) = -10", ((ValueTypeInteger.ValueInteger) res5).getRawValue(), is(-10));
     }
 
     @Test
     public void testArithmeticMinDouble() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{d10, d10});
         assertThat("result is a double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
-        assertThat("max(10, 10) = 10", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(10D));
+        assertThat("min(10, 10) = 10", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(10D));
 
         IValue res2 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{d0, d10});
-        assertThat("max(0, 10) = 10", ((ValueTypeDouble.ValueDouble) res2).getRawValue(), is(0D));
+        assertThat("min(0, 10) = 0", ((ValueTypeDouble.ValueDouble) res2).getRawValue(), is(0D));
 
         IValue res3 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{d10, d0});
-        assertThat("max(10, 0) = 10", ((ValueTypeDouble.ValueDouble) res3).getRawValue(), is(0D));
+        assertThat("min(10, 0) = 0", ((ValueTypeDouble.ValueDouble) res3).getRawValue(), is(0D));
 
         IValue res4 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{d0, dm10});
-        assertThat("max(0, -10) = 0", ((ValueTypeDouble.ValueDouble) res4).getRawValue(), is(-10D));
+        assertThat("min(0, -10) = -10", ((ValueTypeDouble.ValueDouble) res4).getRawValue(), is(-10D));
 
         IValue res5 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{dm10, d0});
-        assertThat("max(-10, 0) = 0", ((ValueTypeDouble.ValueDouble) res5).getRawValue(), is(-10D));
+        assertThat("min(-10, 0) = -10", ((ValueTypeDouble.ValueDouble) res5).getRawValue(), is(-10D));
     }
 
     @Test
     public void testArithmeticMinIntegerDouble() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i10, d10});
         assertThat("result is a double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
-        assertThat("max(10, 10) = 10", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(10D));
+        assertThat("min(10, 10) = 10", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(10D));
 
         IValue res2 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i0, d10});
-        assertThat("max(0, 10) = 10", ((ValueTypeDouble.ValueDouble) res2).getRawValue(), is(0D));
+        assertThat("min(0, 10) = 0", ((ValueTypeDouble.ValueDouble) res2).getRawValue(), is(0D));
 
         IValue res3 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i10, d0});
-        assertThat("max(10, 0) = 10", ((ValueTypeDouble.ValueDouble) res3).getRawValue(), is(0D));
+        assertThat("min(10, 0) = 0", ((ValueTypeDouble.ValueDouble) res3).getRawValue(), is(0D));
 
         IValue res4 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{i0, dm10});
-        assertThat("max(0, -10) = 0", ((ValueTypeDouble.ValueDouble) res4).getRawValue(), is(-10D));
+        assertThat("min(0, -10) = -10", ((ValueTypeDouble.ValueDouble) res4).getRawValue(), is(-10D));
 
         IValue res5 = Operators.ARITHMETIC_MINIMUM.evaluate(new IVariable[]{im10, d0});
-        assertThat("max(-10, 0) = 0", ((ValueTypeDouble.ValueDouble) res5).getRawValue(), is(-10D));
+        assertThat("min(-10, 0) = -10", ((ValueTypeDouble.ValueDouble) res5).getRawValue(), is(-10D));
     }
 
     @Test(expected = EvaluationException.class)
