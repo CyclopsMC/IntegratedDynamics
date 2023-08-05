@@ -957,6 +957,9 @@
 
     "operator.integrateddynamics.integer": "Integer",
     "operator.integrateddynamics.integer.basename": "Integer %s",
+    "operator.integrateddynamics.integer.modulus": "Modulus",
+    "operator.integrateddynamics.integer.increment": "Increment",
+    "operator.integrateddynamics.integer.decrement": "Decrement",
 
     "operator.integrateddynamics.relational": "Relational",
     "operator.integrateddynamics.relational.basename": "Relational %s",

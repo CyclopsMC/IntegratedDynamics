@@ -764,6 +764,9 @@
 
     "operator.integrateddynamics.integer": "Heltal",
     "operator.integrateddynamics.integer.basename": "%s (heltal)",
+    "operator.integrateddynamics.integer.modulus": "Modulär",
+    "operator.integrateddynamics.integer.increment": "Ökning",
+    "operator.integrateddynamics.integer.decrement": "Minskning",
 
     "operator.integrateddynamics.relational": "Relationell",
     "operator.integrateddynamics.relational.basename": "%s (relationell)",

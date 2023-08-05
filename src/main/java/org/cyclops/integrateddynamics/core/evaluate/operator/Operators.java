@@ -252,6 +252,55 @@ public final class Operators {
             ).build());
 
     /**
+     * ----------------------------------- INTEGER OPERATORS -----------------------------------
+     */
+
+     private static final ValueTypeInteger.ValueInteger ZERO = ValueTypeInteger.ValueInteger.of(0);
+
+    /**
+     * Integer MODULO operator with two input integers and one output integer.
+     *
+     * @deprecated by {@link #ARITHMETIC_MODULUS} - TODO remove in next major update
+     */
+    @Deprecated
+    public static final IOperator INTEGER_MODULUS = REGISTRY.register(OperatorBuilders.INTEGER_2.symbol("%").operatorName("modulus")
+            .function(variables -> {
+                ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
+                if (b.getRawValue() == 0) { // You can not divide by zero
+                    throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_DIVIDEBYZERO));
+                } else if (b.getRawValue() == 1) { // If b is neutral element for division
+                    return ZERO;
+                } else {
+                    ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
+                    return ValueTypeInteger.ValueInteger.of(a.getRawValue() % b.getRawValue());
+                }
+            }).build());
+
+    /**
+     * Integer INCREMENT operator with one input integer and one output integer.
+     *
+     * @deprecated by {@link #ARITHMETIC_INCREMENT} - TODO remove in next major update
+     */
+    @Deprecated
+    public static final IOperator INTEGER_INCREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("++").operatorName("increment")
+            .function(variables -> {
+                ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
+                return ValueTypeInteger.ValueInteger.of(a.getRawValue() + 1);
+            }).build());
+
+    /**
+     * Integer DECREMENT operator with one input integer and one output integer.
+     *
+     * @deprecated by {@link #ARITHMETIC_DECREMENT} - TODO remove in next major update
+     */
+    @Deprecated
+    public static final IOperator INTEGER_DECREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("--").operatorName("decrement")
+            .function(variables -> {
+                ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
+                return ValueTypeInteger.ValueInteger.of(a.getRawValue() - 1);
+            }).build());
+
+    /**
      * ----------------------------------- RELATIONAL OPERATORS -----------------------------------
      */
 

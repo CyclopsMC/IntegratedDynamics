@@ -736,6 +736,9 @@
 
     "operator.integrateddynamics.integer": "整型",
     "operator.integrateddynamics.integer.basename": "整型%s运算",
+    "operator.integrateddynamics.integer.modulus": "取模",
+    "operator.integrateddynamics.integer.increment": "递增",
+    "operator.integrateddynamics.integer.decrement": "递减",
 
     "operator.integrateddynamics.relational": "关系运算",
     "operator.integrateddynamics.relational.basename": "关系%s运算",
