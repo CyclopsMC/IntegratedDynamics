@@ -207,7 +207,7 @@ public class OperatorBuilders {
                     if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
                         MutableComponent error = new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
                                 new TranslatableComponent(innerOperator.getTranslationKey()),
-                                new TranslatableComponent(input.getVariables()[0].getType().getTranslationKey()),
+                                new TranslatableComponent(input.getVariables()[1].getType().getTranslationKey()),
                                 0,
                                 new TranslatableComponent(innerOperator.getInputTypes()[0].getTranslationKey())
                                 );
