@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Test implicit casting in arithmetic operators.
- * Expects Integer -> Long -> Double, i.e. simplest int type to most complex float type.
+ * Expects the conversions Integer -> Long -> Double, i.e. simplest int type to most complex float type.
  * @author met4000
  */
 public class TestImplicitArithmeticCasting {
@@ -40,23 +40,36 @@ public class TestImplicitArithmeticCasting {
      */
 
     /**
-     * Verifies that a binary operation with two inputs of the same type has the same output type.
-     * Assumes that the casting of all other operations will behave the same as {@link Operators#ARITHMETIC_ADDITION}.
-     * Also checks that the output type isn't considered to also be different type - should catch all outputs incorrectly being considered the correct type.
+     * Verifies that an arithmetic operation with two inputs of the same type has the same output type.
+     * Uses {@link Operators#ARITHMETIC_ADDITION} for testing - it is assumed that all other operations will behave the same.
+     * Any operators that behave differently need separate tests.
      * @throws EvaluationException
      */
     @Test
     public void testImplicitArithmeticCastSameType() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0, i0});
         assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
-        assertThat("result is not a long", res1, not(instanceOf(ValueTypeLong.ValueLong.class)));
 
         IValue res2 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{l0, l0});
         assertThat("result is a long", res2, instanceOf(ValueTypeLong.ValueLong.class));
-        assertThat("result is not a double", res2, not(instanceOf(ValueTypeDouble.ValueDouble.class)));
 
         IValue res3 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{d0, d0});
         assertThat("result is a double", res3, instanceOf(ValueTypeDouble.ValueDouble.class));
+    }
+
+    /**
+     * Fails if all type checks incorrectly always return true.
+     * @throws EvaluationException
+     */
+    @Test
+    public void testImplicitArithmeticCastSameTypeFalseNegative() throws EvaluationException {
+        IValue res1 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0, i0});
+        assertThat("result is not a long", res1, not(instanceOf(ValueTypeLong.ValueLong.class)));
+
+        IValue res2 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{l0, l0});
+        assertThat("result is not a double", res2, not(instanceOf(ValueTypeDouble.ValueDouble.class)));
+
+        IValue res3 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{d0, d0});
         assertThat("result is not an integer", res3, not(instanceOf(ValueTypeInteger.ValueInteger.class)));
     }
 
