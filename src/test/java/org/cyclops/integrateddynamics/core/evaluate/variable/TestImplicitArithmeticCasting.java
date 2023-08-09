@@ -48,13 +48,13 @@ public class TestImplicitArithmeticCasting {
     @Test
     public void testImplicitArithmeticCastSameType() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0, i0});
-        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("i0 + i0 = i0", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
 
         IValue res2 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{l0, l0});
-        assertThat("result is a long", res2, instanceOf(ValueTypeLong.ValueLong.class));
+        assertThat("l0 + l0 = l0", res2, instanceOf(ValueTypeLong.ValueLong.class));
 
         IValue res3 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{d0, d0});
-        assertThat("result is a double", res3, instanceOf(ValueTypeDouble.ValueDouble.class));
+        assertThat("d0 + d0 = d0", res3, instanceOf(ValueTypeDouble.ValueDouble.class));
     }
 
     /**
@@ -64,13 +64,13 @@ public class TestImplicitArithmeticCasting {
     @Test
     public void testImplicitArithmeticCastSameTypeFalseNegative() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0, i0});
-        assertThat("result is not a long", res1, not(instanceOf(ValueTypeLong.ValueLong.class)));
+        assertThat("i0 + i0 != l0", res1, not(instanceOf(ValueTypeLong.ValueLong.class)));
 
         IValue res2 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{l0, l0});
-        assertThat("result is not a double", res2, not(instanceOf(ValueTypeDouble.ValueDouble.class)));
+        assertThat("l0 + l0 != d0", res2, not(instanceOf(ValueTypeDouble.ValueDouble.class)));
 
         IValue res3 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{d0, d0});
-        assertThat("result is not an integer", res3, not(instanceOf(ValueTypeInteger.ValueInteger.class)));
+        assertThat("d0 + d0 != i0", res3, not(instanceOf(ValueTypeInteger.ValueInteger.class)));
     }
 
     /**
@@ -86,10 +86,10 @@ public class TestImplicitArithmeticCasting {
     @Test
     public void testImplicitArithmeticCastIntToLong() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0, l0});
-        assertThat("result is a long", res1, instanceOf(ValueTypeLong.ValueLong.class));
+        assertThat("i0 + l0 = l0", res1, instanceOf(ValueTypeLong.ValueLong.class));
 
         IValue res2 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{l0, i0});
-        assertThat("result is a long", res2, instanceOf(ValueTypeLong.ValueLong.class));
+        assertThat("l0 + i0 = l0", res2, instanceOf(ValueTypeLong.ValueLong.class));
     }
 
     /**
@@ -99,19 +99,19 @@ public class TestImplicitArithmeticCasting {
     @Test
     public void testImplicitArithmeticCastIntToDouble() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{i0, d0});
-        assertThat("result is a double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
+        assertThat("i0 + d0 = d0", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
 
         IValue res2 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{d0, i0});
-        assertThat("result is a double", res2, instanceOf(ValueTypeDouble.ValueDouble.class));
+        assertThat("d0 + i0 = d0", res2, instanceOf(ValueTypeDouble.ValueDouble.class));
     }
 
     @Test
     public void testImplicitArithmeticCastLongToDouble() throws EvaluationException {
         IValue res1 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{l0, d0});
-        assertThat("result is a double", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
+        assertThat("l0 + d0 = d0", res1, instanceOf(ValueTypeDouble.ValueDouble.class));
 
         IValue res2 = Operators.ARITHMETIC_ADDITION.evaluate(new IVariable[]{d0, l0});
-        assertThat("result is a double", res2, instanceOf(ValueTypeDouble.ValueDouble.class));
+        assertThat("d0 + l0 = d0", res2, instanceOf(ValueTypeDouble.ValueDouble.class));
     }
 
 }
