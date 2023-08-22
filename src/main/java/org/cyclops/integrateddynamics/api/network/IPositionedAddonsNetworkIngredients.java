@@ -81,6 +81,9 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
     public default IIngredientComponentStorage<T, M> getPositionedStorageUnsafe(PartPos pos) {
         DimPos dimPos = pos.getPos();
         Level world = dimPos.getLevel(true);
+        if (world == null) {
+            return null;
+        }
         Optional<BlockEntity> tile = BlockEntityHelpers.get(world, dimPos.getBlockPos(), BlockEntity.class);
         return tile
                 .map(tileEntity -> getComponent().getStorage(tileEntity, pos.getSide()))
