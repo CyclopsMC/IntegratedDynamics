@@ -167,7 +167,9 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
             int x = guiLeft + getX();
             int y = guiTop + getY();
 
-            fontRenderer.drawInBatch(element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240), true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            if (this.shouldRenderElementName()) {
+                fontRenderer.drawInBatch(element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240), true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            }
 
             if(showError()) {
                 Component lastError = getLastError();
@@ -177,6 +179,10 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
                     Images.OK.draw(guiGraphics, x + getSignalX(), y + getSignalY() + 1);
                 }
             }
+        }
+
+        public boolean shouldRenderElementName() {
+            return true;
         }
 
         @Override

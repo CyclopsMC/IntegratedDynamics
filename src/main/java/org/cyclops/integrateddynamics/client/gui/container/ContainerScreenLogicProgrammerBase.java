@@ -456,6 +456,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             this.searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
 
+        @Override
+        public boolean shouldRenderElementName() {
+            return !this.searchField.isVisible();
+        }
+
         public void onButtonEditClick() {
             this.searchField.setVisible(!this.searchField.isVisible());
             if(this.searchField.isVisible()) {
