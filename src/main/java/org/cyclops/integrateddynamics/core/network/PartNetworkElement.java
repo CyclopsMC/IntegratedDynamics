@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
@@ -82,6 +83,10 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         return PartHelpers.getPartContainerChecked(getCenterPos(getTarget()), getTarget().getCenter().getSide());
     }
 
+    public LazyOptional<IPartContainer> getPartContainerOptional() {
+        return PartHelpers.getPartContainer(getCenterPos(getTarget()), getTarget().getCenter().getSide());
+    }
+
     @Override
     public void setPriorityAndChannel(INetwork network, int priority, int channel) {
         //noinspection deprecation
@@ -116,8 +121,9 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     public boolean hasPartState() {
         if (isLoaded()) {
-            IPartContainer partContainer = getPartContainer();
-            return partContainer != null && partContainer.hasPart(getCenterSide(getTarget()));
+            return getPartContainerOptional()
+                    .map(partContainer -> partContainer.hasPart(getCenterSide(getTarget())))
+                    .orElse(false);
         }
         return false;
     }
