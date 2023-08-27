@@ -1,12 +1,15 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 /**
  * Value type category with values that have a name.
@@ -19,7 +22,19 @@ public class ValueTypeCategoryNamed extends ValueTypeCategoryBase<IValue> {
     }
 
     public String getName(IVariable a) throws EvaluationException {
-        return ((IValueTypeNamed) a.getType()).getName(a.getValue());
+        IValueType type = a.getType();
+        if (type == ValueTypes.CATEGORY_ANY) {
+            // Special case: if the variable has category type ANY, unpack the precise value type to determine the name.
+            type = a.getValue().getType();
+            if (!(type instanceof IValueTypeNamed)) {
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        Operators.NAMED_NAME.getLocalizedNameFull(),
+                        Component.translatable(type.getTranslationKey()),
+                        "0",
+                        Component.translatable(this.getTranslationKey())));
+            }
+        }
+        return ((IValueTypeNamed) type).getName(a.getValue());
     }
 
     @Override

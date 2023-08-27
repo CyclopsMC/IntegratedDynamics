@@ -61,6 +61,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.setVisible(true);
         numberFieldUpdateInterval.setTextColor(16777215);
         numberFieldUpdateInterval.setCanLoseFocus(true);
+        addWidget(numberFieldUpdateInterval);
 
         numberFieldCapacity = new WidgetNumberField(font, leftPos + 98, topPos + 126, 73, 14, true,
                 Component.translatable("gui.integrateddynamics.delay.capacity"), true);
@@ -71,6 +72,14 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldCapacity.setVisible(true);
         numberFieldCapacity.setTextColor(16777215);
         numberFieldCapacity.setCanLoseFocus(true);
+        addWidget(numberFieldCapacity);
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        this.numberFieldUpdateInterval.tick();
+        this.numberFieldCapacity.tick();
     }
 
     @Override
@@ -78,6 +87,18 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         if (!this.numberFieldUpdateInterval.charTyped(typedChar, keyCode)
                 && !this.numberFieldCapacity.charTyped(typedChar, keyCode)) {
             return super.charTyped(typedChar, keyCode);
+        } else {
+            onValueChanged();
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        if (!this.numberFieldUpdateInterval.keyPressed(typedChar, keyCode, modifiers)
+                && !this.numberFieldCapacity.keyPressed(typedChar, keyCode, modifiers)) {
+            return super.keyPressed(typedChar, keyCode, modifiers);
         } else {
             onValueChanged();
         }
@@ -100,15 +121,16 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        boolean clicked = false;
         if (this.numberFieldUpdateInterval.mouseClicked(mouseX, mouseY, mouseButton)) {
             onValueChanged();
-            return true;
+            clicked = true;
         }
         if (this.numberFieldCapacity.mouseClicked(mouseX, mouseY, mouseButton)) {
             onValueChanged();
-            return true;
+            clicked = true;
         }
-        return super.mouseClicked(mouseX, mouseY, mouseButton);
+        return clicked || super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override

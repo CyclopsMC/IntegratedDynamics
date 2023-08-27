@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
+import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageSlotted;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageWrapperHandler;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IngredientComponentStorageEmpty;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollection;
@@ -239,13 +240,18 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
         return index;
     }
 
+    @Override
+    public IIngredientComponentStorageSlotted<T, M> getChannelSlotted(int channel) {
+        return new IngredientChannelAdapterWrapperSlotted<>(
+                (IngredientChannelAdapter<T, M>) getChannel(channel), this.cacheChannelSlots);
+    }
+
     @Nullable
     @Override
     public <S> S getChannelExternal(Capability<S> capability, int channel) {
         IIngredientComponentStorageWrapperHandler<T, M, S> wrapperHandler = getComponent()
                 .getStorageWrapperHandler(capability);
-        return wrapperHandler != null ? wrapperHandler.wrapStorage(new IngredientChannelAdapterWrapperSlotted<>(
-                (IngredientChannelAdapter<T, M>) getChannel(channel), this.cacheChannelSlots)) : null;
+        return wrapperHandler != null ? wrapperHandler.wrapStorage(getChannelSlotted(channel)) : null;
     }
 
     @Override
