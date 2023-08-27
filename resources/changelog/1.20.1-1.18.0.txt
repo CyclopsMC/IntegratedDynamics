@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.4 or higher.
+
+Additions:
+* Expose getChannelSlotted in positioned addons network
+  Required for CyclopsMC/IntegratedTunnels#271
+
+Fixes:
+* Fix rare crash when getting priority of moved network parts, Closes #1299
+* Fix crash when getting name of variable with ANY type, Closes #1301
+* Fix labeling text overlap in LP, Closes #1297
+* Fix backspace not working in delayer GUI, Closes #1298
+* Fix rare crash when loading positioned storages on high server load, Closes #1302
