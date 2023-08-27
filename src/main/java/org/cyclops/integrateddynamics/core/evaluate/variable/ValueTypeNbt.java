@@ -140,6 +140,11 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
         protected boolean isEqual(Tag a, Tag b) {
             return a.equals(b);
         }
+
+        @Override
+        public String toString() {
+            return getRawValue().map(Tag::toString).orElse("none");
+        }
     }
 
 }

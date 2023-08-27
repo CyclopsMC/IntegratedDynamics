@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
+import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageSlotted;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageWrapperHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -96,6 +97,13 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
      * @return A storage.
      */
     public IIngredientComponentStorage<T, M> getChannel(int channel);
+
+    /**
+     * Get the slotted storage at the given channel.
+     * @param channel A channel id.
+     * @return A slotted storage.
+     */
+    public IIngredientComponentStorageSlotted<T, M> getChannelSlotted(int channel);
 
     /**
      * Get the external storage at the given channel.
