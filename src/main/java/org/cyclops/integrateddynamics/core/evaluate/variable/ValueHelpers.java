@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
@@ -276,6 +277,34 @@ public class ValueHelpers {
         } catch (ResourceLocationException e) {
             throw new EvaluationException(new TextComponent(e.getMessage()));
         }
+    }
+
+    /**
+     * If the given variable has type ANY, attempt to cast the type to the given category type, or throw.
+     * @param variable The variable.
+     * @param operator An operator to include in the error message.
+     * @param category The category to check.
+     * @param categoryClazz The category class.
+     * @param <V> The value type.
+     * @param <C> The category type.
+     * @return The cast value type.
+     * @throws EvaluationException If casting failed.
+     */
+    public static <V extends IValue, C extends IValueType<V>> C variableUnpackAnyType(
+            IVariable variable, IOperator operator, IValueTypeCategory<V> category, Class<? super C> categoryClazz)
+            throws EvaluationException {
+        IValueType type = variable.getType();
+        if (type == ValueTypes.CATEGORY_ANY) {
+            type = variable.getValue().getType();
+            if (!categoryClazz.isInstance(type)) {
+                throw new EvaluationException(new TranslatableComponent(L10NValues.OPERATOR_ERROR_WRONGTYPE,
+                        operator.getLocalizedNameFull(),
+                        new TranslatableComponent(type.getTranslationKey()),
+                        "0",
+                        new TranslatableComponent(category.getTranslationKey())));
+            }
+        }
+        return (C) type;
     }
 
 }
