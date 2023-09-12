@@ -93,7 +93,18 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
      * @param channel A channel id.
      * @return A storage.
      */
-    public IIngredientComponentStorage<T, M> getChannel(int channel);
+    public INetworkIngredientsChannel<T, M> getChannelInternal(int channel);
+
+    /**
+     * Get the storage at the given channel.
+     * @param channel A channel id.
+     * @return A storage.
+     * @deprecated
+     */
+    @Deprecated
+    public default IIngredientComponentStorage<T, M> getChannel(int channel) { // TODO: remove in next major update, and rename method above to getChannel
+        return this.getChannelInternal(channel);
+    }
 
     /**
      * Get the slotted storage at the given channel.

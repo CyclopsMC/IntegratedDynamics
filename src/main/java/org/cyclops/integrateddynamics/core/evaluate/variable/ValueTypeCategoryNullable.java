@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 /**
  * Value type category with values that can be null.
@@ -19,12 +20,8 @@ public class ValueTypeCategoryNullable extends ValueTypeCategoryBase<IValue> {
     }
 
     public boolean isNull(IVariable a) throws EvaluationException {
-        try {
-            return ((IValueTypeNullable) a.getType()).isNull(a.getValue());
-        } catch (ClassCastException e) {
-            // This can happen with 'any' types.
-            return false;
-        }
+        IValueTypeNullable<IValue> type = ValueHelpers.variableUnpackAnyType(a, Operators.NULLABLE_ISNULL, this, IValueTypeNullable.class);
+        return type.isNull(a.getValue());
     }
 
     @Override
