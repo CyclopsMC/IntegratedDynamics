@@ -21,6 +21,7 @@ import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorage
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientPositionsIndex;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkIngredientsChannel;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.network.PositionedAddonsNetworkIngredientsFilter;
@@ -174,7 +175,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
-    public IIngredientComponentStorage<T, M> getChannel(int channel) {
+    public INetworkIngredientsChannel<T, M> getChannelInternal(int channel) {
         return new IngredientChannelIndexed<>(this, channel, getChannelIndex(channel));
     }
 

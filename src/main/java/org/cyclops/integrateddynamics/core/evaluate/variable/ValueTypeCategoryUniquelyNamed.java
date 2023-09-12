@@ -7,6 +7,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 /**
  * Value type category with values that have a unique name.
@@ -19,7 +20,8 @@ public class ValueTypeCategoryUniquelyNamed extends ValueTypeCategoryBase<IValue
     }
 
     public String getUniqueName(IVariable a) throws EvaluationException {
-        return ((IValueTypeUniquelyNamed) a.getType()).getUniqueName(a.getValue());
+        IValueTypeUniquelyNamed<IValue> type = ValueHelpers.variableUnpackAnyType(a, Operators.UNIQUELYNAMED_UNIQUENAME, this, IValueTypeUniquelyNamed.class);
+        return type.getUniqueName(a.getValue());
     }
 
     @Override

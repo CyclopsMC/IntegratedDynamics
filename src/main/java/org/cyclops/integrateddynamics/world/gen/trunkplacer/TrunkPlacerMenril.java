@@ -56,16 +56,20 @@ public class TrunkPlacerMenril extends TrunkPlacer {
         // Ensure dirt is below tree
         BlockPos posStump = pos.below();
         setDirtAt(world, callback, rand, posStump, config);
-        setDirtAt(world, callback, rand, posStump.north(), config);
-        setDirtAt(world, callback, rand, posStump.east(), config);
-        setDirtAt(world, callback, rand, posStump.south(), config);
-        setDirtAt(world, callback, rand, posStump.west(), config);
 
         // Create stump
-        placeLog(world, callback, rand, pos.north(), config, Function.identity());
-        placeLog(world, callback, rand, pos.east(), config, Function.identity());
-        placeLog(world, callback, rand, pos.south(), config, Function.identity());
-        placeLog(world, callback, rand, pos.west(), config, Function.identity());
+        if (placeLog(world, callback, rand, pos.north(), config, Function.identity())) {
+            setDirtAt(world, callback, rand, posStump.north(), config);
+        }
+        if (placeLog(world, callback, rand, pos.east(), config, Function.identity())) {
+            setDirtAt(world, callback, rand, posStump.east(), config);
+        }
+        if (placeLog(world, callback, rand, pos.south(), config, Function.identity())) {
+            setDirtAt(world, callback, rand, posStump.south(), config);
+        }
+        if (placeLog(world, callback, rand, pos.west(), config, Function.identity())) {
+            setDirtAt(world, callback, rand, posStump.west(), config);
+        }
 
         // Create base trunk
         for(int i = 0; i < height; ++i) {
