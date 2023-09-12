@@ -1,2 +1,2 @@
 gradle.properties merge=ours
-
+src/main/resources/META-INF/mods.toml merge=ours
