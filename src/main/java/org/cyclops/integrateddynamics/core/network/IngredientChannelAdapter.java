@@ -8,6 +8,7 @@ import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponen
 import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientMapMutable;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientHashMap;
+import org.cyclops.integrateddynamics.api.network.INetworkIngredientsChannel;
 import org.cyclops.integrateddynamics.api.network.IPartPosIteratorHandler;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.network.PositionedAddonsNetworkIngredientsFilter;
@@ -25,7 +26,7 @@ import java.util.function.Supplier;
  * @param <T> The instance type.
  * @param <M> The matching condition parameter.
  */
-public abstract class IngredientChannelAdapter<T, M> implements IIngredientComponentStorage<T, M> {
+public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredientsChannel<T, M> {
 
     private final IPositionedAddonsNetworkIngredients<T, M> network;
     private final int channel;
@@ -64,6 +65,26 @@ public abstract class IngredientChannelAdapter<T, M> implements IIngredientCompo
     protected abstract Iterator<PartPos> getAllPositions();
     protected abstract Iterator<PartPos> getNonEmptyPositions();
     protected abstract Iterator<PartPos> getMatchingPositions(@Nonnull T prototype, M matchFlags);
+
+    @Override
+    public Iterable<PartPos> findNonFullPositions() {
+        return () -> getPartPosIteratorData(this::getNonFullPositions, channel).getRight();
+    }
+
+    @Override
+    public Iterable<PartPos> findAllPositions() {
+        return () -> getPartPosIteratorData(this::getAllPositions, channel).getRight();
+    }
+
+    @Override
+    public Iterable<PartPos> findNonEmptyPositions() {
+        return () -> getPartPosIteratorData(this::getNonEmptyPositions, channel).getRight();
+    }
+
+    @Override
+    public Iterable<PartPos> findMatchingPositions(@Nonnull T prototype, M matchFlags) {
+        return () -> getPartPosIteratorData(() -> this.getMatchingPositions(prototype, matchFlags), channel).getRight();
+    }
 
     @Override
     public long getMaxQuantity() {

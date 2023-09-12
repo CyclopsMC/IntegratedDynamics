@@ -93,7 +93,7 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
      * @param channel A channel id.
      * @return A storage.
      */
-    public IIngredientComponentStorage<T, M> getChannel(int channel);
+    public INetworkIngredientsChannel<T, M> getChannel(int channel);
 
     /**
      * Get the slotted storage at the given channel.
