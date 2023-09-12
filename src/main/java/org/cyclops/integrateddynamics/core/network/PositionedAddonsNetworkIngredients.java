@@ -175,7 +175,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
-    public INetworkIngredientsChannel<T, M> getChannel(int channel) {
+    public INetworkIngredientsChannel<T, M> getChannelInternal(int channel) {
         return new IngredientChannelIndexed<>(this, channel, getChannelIndex(channel));
     }
 
