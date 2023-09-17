@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.codehaus.plexus.util.StringUtils;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -20,6 +21,9 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   public ParseOperator(final T2 to, IFunction operator) {
     super("parse_" + to.getTypeName(),
             "parse_" + to.getTranslationKey(),
+            "parseAs" + StringUtils.capitalise(to.getTypeName()),
+            null,
+            false,
             constructInputVariables(1, ValueTypes.STRING),
             to,
             operator, IConfigRenderPattern.PREFIX_1_LONG);

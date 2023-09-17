@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -26,6 +27,23 @@ public interface IOperator {
      * @return The unique name for this operator, only used for internal storage.
      */
     public ResourceLocation getUniqueName();
+
+    /**
+     * @return The unique interact name for this operator, when interacting with this operator using external contexts,
+     *         such as Integrated Scripting.
+     */
+    public String getInteractName();
+
+    /**
+     * @return Override for the default global interact name prefix.
+     */
+    @Nullable
+    public String getGlobalInteractNamePrefix();
+
+    /**
+     * @return If the global interact name prefix should also be used for local scopes.
+     */
+    public boolean shouldAlsoPrefixLocalScope();
 
     /**
      * @return The unique unlocalized name for this operator.

@@ -27,6 +27,10 @@ public abstract class OperatorBase implements IOperator {
 
     private final String symbol;
     private final String operatorName;
+    private final String interactName;
+    @Nullable
+    private final String globalInteractNamePrefix;
+    private final boolean alsoPrefixLocalScope;
     private final IValueType[] inputTypes;
     private final IValueType outputType;
     private final IFunction function;
@@ -36,10 +40,13 @@ public abstract class OperatorBase implements IOperator {
     private String translationKey = null;
     private int recursiveInvocations;
 
-    protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes,
+    protected OperatorBase(String symbol, String operatorName, String interactName, String globalInteractNamePrefix, boolean alsoPrefixLocalScope, IValueType[] inputTypes,
                            IValueType outputType, IFunction function, @Nullable IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
         this.operatorName = operatorName;
+        this.interactName = interactName;
+        this.globalInteractNamePrefix = globalInteractNamePrefix;
+        this.alsoPrefixLocalScope = alsoPrefixLocalScope;
         this.inputTypes = inputTypes;
         this.outputType = outputType;
         this.function = function;
@@ -66,6 +73,22 @@ public abstract class OperatorBase implements IOperator {
     @Override
     public ResourceLocation getUniqueName() {
         return new ResourceLocation(getModId(), this.getUnlocalizedType().replaceAll("\\.", "_") + "_" + getOperatorName());
+    }
+
+    @Override
+    public String getInteractName() {
+        return this.interactName;
+    }
+
+    @Override
+    @Nullable
+    public String getGlobalInteractNamePrefix() {
+        return globalInteractNamePrefix;
+    }
+
+    @Override
+    public boolean shouldAlsoPrefixLocalScope() {
+        return this.alsoPrefixLocalScope;
     }
 
     @Override

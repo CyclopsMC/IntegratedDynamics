@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +59,22 @@ public class CurriedOperator implements IOperator {
     @Override
     public ResourceLocation getUniqueName() {
         return new ResourceLocation("curried_operator");
+    }
+
+    @Override
+    public String getInteractName() {
+        return "curried_operator";
+    }
+
+    @Nullable
+    @Override
+    public String getGlobalInteractNamePrefix() {
+        return null;
+    }
+
+    @Override
+    public boolean shouldAlsoPrefixLocalScope() {
+        return false;
     }
 
     @Override
