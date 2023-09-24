@@ -116,6 +116,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
 
     @Override
     public void removed(Player player) {
+        super.removed(player);
         if (inputSlots instanceof SimpleInventory) {
             ((SimpleInventory) inputSlots).removeDirtyMarkListener(this);
         }
