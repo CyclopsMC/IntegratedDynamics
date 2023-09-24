@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -122,6 +123,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
 
     @Override
     public void removed(Player player) {
+        super.removed(player);
         if (inventory instanceof SimpleInventory) {
             ((SimpleInventory) inventory).removeDirtyMarkListener(this);
         }
