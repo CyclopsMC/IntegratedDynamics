@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.17.0 or higher.
+
+Additions:
+* Add initialChange flag to storage change events
+  This is required to fix CyclopsMC/IntegratedCrafting#99
+
