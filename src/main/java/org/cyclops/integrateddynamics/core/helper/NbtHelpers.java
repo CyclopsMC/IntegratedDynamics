@@ -158,11 +158,12 @@ public class NbtHelpers {
     public static ListTag getListNbtTag(ValueTypeList.ValueList<?, ?> value, Component operatorName) {
         ListTag list = new ListTag();
         for (IValue valueNbt : value.getRawValue()) {
-            if (value.getRawValue().getValueType() != ValueTypes.NBT) {
+            if (!(value.getRawValue().getValueType() == ValueTypes.NBT ||
+                    (value.getRawValue().getValueType() == ValueTypes.CATEGORY_ANY && valueNbt.getType() == ValueTypes.NBT))) {
                 MutableComponent error = new TranslatableComponent(
                         L10NValues.OPERATOR_ERROR_WRONGTYPE,
                         operatorName,
-                        new TranslatableComponent(value.getType().getTranslationKey()),
+                        new TranslatableComponent(value.getRawValue().getValueType().getTranslationKey()),
                         1,
                         new TranslatableComponent(ValueTypes.NBT.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
