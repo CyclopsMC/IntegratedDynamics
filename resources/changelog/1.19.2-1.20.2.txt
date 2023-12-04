@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Fixes:
+* Fix predicate-based filtering interfaces causing ingredient loss
+  Integrated Tunnels filtering interaces could lose items
+  when using predicate-based filters.
+  Closes CyclopsMC/IntegratedTunnels#282
+
