@@ -175,9 +175,9 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
         if (filter != null && !simulate) {
             T extractedSimulated;
             if (storage instanceof IIngredientComponentStorageSlotted) {
-                extractedSimulated = ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, simulate);
+                extractedSimulated = ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, true);
             } else {
-                extractedSimulated = storage.extract(maxQuantity, simulate);
+                extractedSimulated = storage.extract(maxQuantity, true);
             }
             if (!filter.testExtraction(extractedSimulated)) {
                 return getComponent().getMatcher().getEmptyInstance();
