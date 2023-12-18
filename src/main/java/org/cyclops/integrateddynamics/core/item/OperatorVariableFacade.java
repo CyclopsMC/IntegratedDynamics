@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
@@ -62,7 +63,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
+    public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
         if(isValid()) {
             int newNetworkHash = network != null ? network.hashCode() : -1;
             if(expression == null || expression.hasErrored() || newNetworkHash != this.lastNetworkHash) {
@@ -70,10 +71,10 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                 IVariable[] variables = new IVariable[variableIds.length];
                 for (int i = 0; i < variableIds.length; i++) {
                     int variableId = variableIds[i];
-                    if (!network.hasVariableFacade(variableId)) {
+                    if (!partNetwork.hasVariableFacade(variableId)) {
                         return null;
                     }
-                    IVariableFacade variableFacade = network.getVariableFacade(variableId);
+                    IVariableFacade variableFacade = partNetwork.getVariableFacade(variableId);
                     if(!variableFacade.isValid() || variableFacade == this) {
                         return null;
                     }
@@ -81,13 +82,13 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                         return null;
                     }
                     this.variables[i] = true;
-                    variables[i] = variableFacade.getVariable(network);
+                    variables[i] = variableFacade.getVariable(network, partNetwork);
                     this.variables[i] = false;
                     if(variables[i] == null) {
                         return null;
                     }
                 }
-                expression = new LazyExpression(getId(), operator, variables, network);
+                expression = new LazyExpression(getId(), operator, variables, partNetwork);
             }
             return expression;
         }
@@ -100,7 +101,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
     }
 
     @Override
-    public void validate(IPartNetwork network, final IValidator validator, IValueType containingValueType) {
+    public void validate(INetwork network, IPartNetwork partNetwork, final IValidator validator, IValueType containingValueType) {
         if(!isValid()) {
             validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else {
@@ -113,13 +114,13 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                 if (variableId < 0) {
                     validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_INVALIDITEM));
                     checkFurther = false;
-                } else if (!network.hasVariableFacade(variableId)) { // Check id present in network
+                } else if (!partNetwork.hasVariableFacade(variableId)) { // Check id present in network
                     validator.addError(Component.translatable(L10NValues.OPERATOR_ERROR_VARIABLENOTINNETWORK,
                             Integer.toString(variableId)));
                     checkFurther = false;
                 } else {
                     // Check variable represented by this id is valid.
-                    IVariableFacade variableFacade = network.getVariableFacade(variableId);
+                    IVariableFacade variableFacade = partNetwork.getVariableFacade(variableId);
                     if(variableFacade == this) {
                         validator.addError(Component.translatable(L10NValues.OPERATOR_ERROR_CYCLICREFERENCE,
                                 Integer.toString(variableId)));
@@ -134,7 +135,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                             break;
                         }
                         validatingVariables[i] = true;
-                        variableFacade.validate(network, new IValidator() {
+                        variableFacade.validate(network, partNetwork, new IValidator() {
                             @Override
                             public void addError(MutableComponent error) {
                                 validator.addError(error);
@@ -143,7 +144,7 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
                         }, valueType);
                         validatingVariables[i] = false;
                         if (isValid.get()) {
-                            IVariable variable = variableFacade.getVariable(network);
+                            IVariable variable = variableFacade.getVariable(network, partNetwork);
                             if (variable != null) {
                                 variables [i] = variable;
                                 valueTypes[i] = variable.getType();
