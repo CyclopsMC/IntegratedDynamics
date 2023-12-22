@@ -1,11 +1,12 @@
 package org.cyclops.integrateddynamics.api.evaluate.expression;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariableInvalidateListener;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * A basic variable implementation.
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public abstract class VariableAdapter<V extends IValue> implements IVariable<V> {
 
-    private List<IVariableInvalidateListener> invalidateListeners = Lists.newLinkedList();
+    private Set<IVariableInvalidateListener> invalidateListeners = Sets.newIdentityHashSet();
 
     @Override
     public void invalidate() {
