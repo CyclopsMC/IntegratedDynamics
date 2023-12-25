@@ -74,7 +74,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
       - name: 'Deploy to Maven'
-        if: startsWith(github.ref, 'refs/heads/master')
+        if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/feature')
         env:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
