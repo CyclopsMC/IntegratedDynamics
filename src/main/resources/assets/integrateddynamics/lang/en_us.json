@@ -926,6 +926,7 @@
     "operator.integrateddynamics.error.group.no_match_group": "No group regex match was found for regex \"%s\" in \"%s\" for group \"%s\".",
     "operator.integrateddynamics.error.regex_scan.index_negative": "The regex scan index must not be negative.",
     "operator.integrateddynamics.error.regex_scan.no_match_group": "No regex scan match was found for regex \"%s\" in \"%s\" for group \"%s\".",
+    "operator.integrateddynamics.error.replace_regex.invalid_group": "Invalid group in regex replacement for replacement \"%s\": %s",
     "operator.integrateddynamics.error.infinite_list.illegal": "The operator %s can not be applied on infinite lists.",
     "operator.integrateddynamics.error.index_out_of_bounds": "Index out of bounds. Tried to get element %s of a list of length %s. Use the getOrDefault operator to provide a default when an index is out of bounds.",
     "operator.integrateddynamics.error.slice.to_greater_than_from": "The slice end position must strictly larger than the start position.",

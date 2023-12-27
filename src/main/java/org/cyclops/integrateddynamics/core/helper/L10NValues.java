@@ -134,6 +134,8 @@ public class L10NValues {
     public static final String OPERATOR_ERROR_REGEXSCAN_INDEXNEGATIVE = "operator." + NS + ".error.regex_scan.index_negative";
     // 0: regex-value, 1: value, 2: group
     public static final String OPERATOR_ERROR_REGEXSCAN_NOMATCHGROUP = "operator." + NS + ".error.regex_scan.no_match_group";
+    // 0: replacement-value, 1: message
+    public static final String OPERATOR_ERROR_REPLACEREGEX_INVALIDGROUP = "operator." + NS + ".error.replace_regex.invalid_group";
     // 0: operation
     public static final String OPERATOR_ERROR_INFINITELIST_ILLEGAL = "operator." + NS + ".error.infinite_list.illegal";
     // 0: index, 1: length
