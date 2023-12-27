@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Fixes:
+* Fix hard crash on replace_regex with invalid group, Closes #1317
+
