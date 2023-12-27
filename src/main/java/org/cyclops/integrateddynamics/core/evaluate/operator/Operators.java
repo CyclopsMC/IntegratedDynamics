@@ -745,6 +745,9 @@ public final class Operators {
             } catch (PatternSyntaxException e) {
                 throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REGEX_INVALID,
                         pattern.getRawValue()));
+            } catch (IndexOutOfBoundsException e) {
+                throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REPLACEREGEX_INVALIDGROUP,
+                        replacement.getRawValue(), e.getMessage()));
             }
         }).build()
     );
