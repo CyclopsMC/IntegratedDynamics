@@ -2,11 +2,11 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.codehaus.plexus.util.StringUtils;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   public ParseOperator(final T2 to, IFunction operator) {
     super("parse_" + to.getTypeName(),
             "parse_" + to.getTranslationKey(),
-            "parseAs" + StringUtils.capitalise(to.getTypeName()),
+            "parseAs" + Helpers.capitalizeString(to.getTypeName()),
             null,
             false,
             constructInputVariables(1, ValueTypes.STRING),

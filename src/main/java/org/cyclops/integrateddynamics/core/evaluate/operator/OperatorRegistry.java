@@ -15,7 +15,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import org.codehaus.plexus.util.StringUtils;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -30,6 +29,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
@@ -85,7 +85,7 @@ public class OperatorRegistry implements IOperatorRegistry {
                 operator.getGlobalInteractNamePrefix() :
                 (operator.getInputTypes().length > 0 ? operator.getInputTypes()[0].getTypeName() : null);
         String globalInteractName = globalInteractNamePrefix != null ?
-                globalInteractNamePrefix + StringUtils.capitalise(operator.getInteractName()) :
+                globalInteractNamePrefix + Helpers.capitalizeString(operator.getInteractName()) :
                 operator.getInteractName();
         if (globalInteractOperators.containsKey(globalInteractName)) {
             throw new IllegalStateException("Detected registration of an operator with non-unique global interact name: " + operator.getUniqueName().toString() + ", " + globalInteractOperators.get(globalInteractName).getUniqueName().toString());
@@ -99,7 +99,7 @@ public class OperatorRegistry implements IOperatorRegistry {
                 scopedInteractOperators.put(operator.getInputTypes()[0], scopedIteracts);
             }
             String scopedInteractName = operator.shouldAlsoPrefixLocalScope() ?
-                    operator.getGlobalInteractNamePrefix() + StringUtils.capitalise(operator.getInteractName()) :
+                    operator.getGlobalInteractNamePrefix() + Helpers.capitalizeString(operator.getInteractName()) :
                     operator.getInteractName();
             if (scopedIteracts.containsKey(scopedInteractName)) {
                 throw new IllegalStateException("Detected registration of an operator with non-unique scoped interact name: " + operator.getUniqueName().toString() + ", " + scopedIteracts.get(scopedInteractName).getUniqueName().toString());
