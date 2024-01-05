@@ -2742,6 +2742,19 @@ public final class Operators {
                     })).build());
 
     /**
+     * Apply for a given operator with zero arguments.
+     */
+    public static final IOperator OPERATOR_APPLY_0 = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("apply0")
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(new IValueType[0]))
+            .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
+                    input -> {
+                        IOperator innerOperator = input.getLeft();
+                        return ValueHelpers.evaluateOperator(innerOperator, new IVariable[0]);
+                    })).build());
+
+    /**
      * Apply the given operator on all elements of a list, resulting in a new list of mapped values.
      */
     public static final IOperator OPERATOR_MAP = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG

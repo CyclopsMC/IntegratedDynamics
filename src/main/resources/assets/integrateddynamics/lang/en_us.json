@@ -1479,6 +1479,8 @@
     "operator.integrateddynamics.operator.apply3.info": "Apply for a given operator the given three value.",
     "operator.integrateddynamics.operator.apply_n": "Apply N",
     "operator.integrateddynamics.operator.apply_n.info": "Apply for a given operator the given list of values.",
+    "operator.integrateddynamics.operator.apply0": "Apply 0",
+    "operator.integrateddynamics.operator.apply0.info": "Apply for a given operator without arguments.",
     "operator.integrateddynamics.operator.map": "Map",
     "operator.integrateddynamics.operator.map.info": "Apply the given operator on all elements of a list, resulting in a new list of mapped values.",
     "operator.integrateddynamics.operator.filter": "Filter",

@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
+import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -53,6 +54,7 @@ public class TestOperatorOperators {
     private DummyVariableOperator oListContains;
     private DummyVariableOperator oOperatorMap;
     private DummyVariableOperator oSubStr;
+    private DummyVariableOperator oGetConstStr;
 
     private DummyVariableList lempty;
     private DummyVariableList lintegers;
@@ -93,6 +95,12 @@ public class TestOperatorOperators {
         oListContains             = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_CONTAINS));
         oOperatorMap              = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_MAP));
         oSubStr                   = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.STRING_SUBSTRING));
+        oGetConstStr              = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(new OperatorBase("NONE", "NONE", "NONE", "NONE", false, new IValueType[0], ValueTypes.STRING, variables -> ValueTypeString.ValueString.of("HI"), null) {
+            @Override
+            protected String getUnlocalizedType() {
+                return "NONE";
+            }
+        }));
 
         lempty = new DummyVariableList(ValueTypeList.ValueList.ofAll());
         lintegers = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()));
@@ -357,6 +365,30 @@ public class TestOperatorOperators {
         assertThat(Operators.OPERATOR_APPLY_N.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
         assertThat(Operators.OPERATOR_APPLY_N.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), nullValue());
         assertThat(Operators.OPERATOR_APPLY_N.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}), notNullValue());
+    }
+
+    /**
+     * ----------------------------------- APPLY_0 -----------------------------------
+     */
+
+    @Test
+    public void testApply0() throws EvaluationException {
+        IValue res1 = Operators.OPERATOR_APPLY_0.evaluate(new IVariable[]{oGetConstStr});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("apply_0(getConstStr) == 'HI'", ((ValueTypeString.ValueString) res1).getRawValue(), is("HI"));
+    }
+
+    @Test
+    public void testConditionalOutputTypesApply0() {
+        assertThat(Operators.OPERATOR_APPLY_0.getConditionalOutputType(new IVariable[]{oGetConstStr}),
+                CoreMatchers.<IValueType>is(ValueTypes.STRING));
+    }
+
+    @Test
+    public void testValidateTypesApply0() {
+        assertThat(Operators.OPERATOR_APPLY_0.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_0.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), nullValue());
+        assertThat(Operators.OPERATOR_APPLY_0.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), notNullValue());
     }
 
     /**
