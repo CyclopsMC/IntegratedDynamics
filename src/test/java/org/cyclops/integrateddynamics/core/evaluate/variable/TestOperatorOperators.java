@@ -333,6 +333,33 @@ public class TestOperatorOperators {
     }
 
     /**
+     * ----------------------------------- APPLY_N -----------------------------------
+     */
+
+    @Test
+    public void testApplyN() throws EvaluationException {
+        DummyVariableList applyArgs = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), sAnd.getValue()));
+        IValue res1 = Operators.OPERATOR_APPLY_N.evaluate(new IVariable[]{oSubStr, applyArgs});
+        assertThat("result is a string", res1, instanceOf(ValueTypeString.ValueString.class));
+        assertThat("apply_n(substr, [0, 1, 'operator...']) == 'o''", ((ValueTypeString.ValueString) res1).getRawValue(), is("i"));
+    }
+
+    @Test
+    public void testConditionalOutputTypesApplyN() {
+        DummyVariableList applyArgs = new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), sAnd.getValue()));
+        assertThat(Operators.OPERATOR_APPLY_N.getConditionalOutputType(new IVariable[]{oSubStr, applyArgs}),
+                CoreMatchers.<IValueType>is(ValueTypes.STRING));
+    }
+
+    @Test
+    public void testValidateTypesApplyN() {
+        assertThat(Operators.OPERATOR_APPLY_N.validateTypes(new IValueType[]{}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_N.validateTypes(new IValueType[]{ValueTypes.OPERATOR}), notNullValue());
+        assertThat(Operators.OPERATOR_APPLY_N.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY}), nullValue());
+        assertThat(Operators.OPERATOR_APPLY_N.validateTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}), notNullValue());
+    }
+
+    /**
      * ----------------------------------- MAP -----------------------------------
      */
 

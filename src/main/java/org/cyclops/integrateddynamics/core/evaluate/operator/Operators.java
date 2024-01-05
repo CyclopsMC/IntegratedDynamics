@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -2722,6 +2723,22 @@ public final class Operators {
                         IVariable variable1 = variables.getVariables()[1];
                         IVariable variable2 = variables.getVariables()[2];
                         return ValueHelpers.evaluateOperator(innerOperator, variable0, variable1, variable2);
+                    })).build());
+
+    /**
+     * Apply for a given operator the given list of values.
+     */
+    public static final IOperator OPERATOR_APPLY_N = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER_LIST)
+            .inputTypes(ValueTypes.OPERATOR, ValueTypes.LIST)
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("apply_n")
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST))
+            .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR_LIST.build(
+                    input -> {
+                        IOperator innerOperator = input.getLeft();
+                        OperatorBase.SafeVariablesGetter variables = input.getRight();
+                        IValueTypeListProxy<IValueType<IValue>, IValue> list = variables.getValue(0, ValueTypes.LIST).getRawValue();
+                        return ValueHelpers.evaluateOperator(innerOperator, Iterables.toArray(list, IValue.class));
                     })).build());
 
     /**

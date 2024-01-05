@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -23,6 +24,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
@@ -40,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Collection of operator builders.
@@ -320,6 +323,32 @@ public class OperatorBuilders {
                     return ValueTypes.OPERATOR;
                 }
             }
+        } catch (EvaluationException e) {
+            return ValueTypes.CATEGORY_ANY;
+        }
+    };
+    /**
+     * Corresponds to {@link ValueHelpers#evaluateOperator(IOperator, IVariable[])}, but with the input variable being a list.
+     */
+    public static OperatorBuilder.IConditionalOutputTypeDeriver OPERATOR_CONDITIONAL_OUTPUT_DERIVER_LIST = (operator, variablesIn) -> {
+        try {
+            // Get second param as list
+            IValue valueList = variablesIn[1].getValue();
+            // In some cases, validation can succeed because of parameters being ANY.
+            // In this case, return a dummy type.
+            if (!(valueList instanceof ValueTypeList.ValueList)) {
+                return ValueTypes.CATEGORY_ANY;
+            }
+            IValueTypeListProxy listProxy = ((ValueTypeList.ValueList) valueList).getRawValue();
+
+            // Expand the list to a variable array, with variablesIn[0] prepended (the operator to apply).
+            IVariable[] variablesExpanded = Stream.concat(
+                    Stream.of(variablesIn[0]),
+                    Stream.<IValue>of(Iterables.toArray(listProxy, IValue.class))
+                        .map(Variable::new)
+            ).toArray(IVariable[]::new);
+
+            return OPERATOR_CONDITIONAL_OUTPUT_DERIVER.getConditionalOutputType(operator, variablesExpanded);
         } catch (EvaluationException e) {
             return ValueTypes.CATEGORY_ANY;
         }
