@@ -1465,7 +1465,7 @@ public final class Operators {
      * Item Stack isstackable operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISSTACKABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperator("stackable").interactName("stackable")
+            .output(ValueTypes.BOOLEAN).symbolOperator("stackable").interactName("isStackable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isStackable()
             )).build());
@@ -1474,7 +1474,7 @@ public final class Operators {
      * Item Stack isdamageable operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISDAMAGEABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperator("damageable").interactName("damageable")
+            .output(ValueTypes.BOOLEAN).symbolOperator("damageable").interactName("isDamageable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isDamageableItem()
             )).build());
@@ -1501,7 +1501,7 @@ public final class Operators {
      * Item Stack isenchanted operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperatorInteract("enchanted")
+            .output(ValueTypes.BOOLEAN).symbolOperatorInteract("isEnchanted")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isEnchanted()
             )).build());
@@ -1510,7 +1510,7 @@ public final class Operators {
      * Item Stack isenchantable operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperatorInteract("enchantable")
+            .output(ValueTypes.BOOLEAN).symbolOperatorInteract("isEnchantable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isEnchantable()
             )).build());
@@ -3295,7 +3295,7 @@ public final class Operators {
      * Check if the first NBT compound tag is a subset of the second NBT compound tag.
      */
     public static final IOperator NBT_COMPOUND_SUBSET = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.BOOLEAN).operatorName("compound_subset").symbol("NBT{}.⊆").interactName("subset")
+            .output(ValueTypes.BOOLEAN).operatorName("compound_subset").symbol("NBT{}.⊆").interactName("isSubset")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1, ValueTypes.NBT);
