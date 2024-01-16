@@ -1501,7 +1501,7 @@ public final class Operators {
      * Item Stack isenchanted operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperatorInteract("isEnchanted")
+            .output(ValueTypes.BOOLEAN).symbolOperator("enchanted").interactName("isEnchanted")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isEnchanted()
             )).build());
@@ -1510,7 +1510,7 @@ public final class Operators {
      * Item Stack isenchantable operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperatorInteract("isEnchantable")
+            .output(ValueTypes.BOOLEAN).symbolOperator("enchantable").interactName("isEnchantable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isEnchantable()
             )).build());
