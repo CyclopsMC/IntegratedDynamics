@@ -44,7 +44,7 @@ public class OperatorAppendix extends SectionAppendix {
 
     @Override
     protected int getHeight() {
-        return 30 + (operator.getInputTypes().length) * 8;
+        return 46 + (operator.getInputTypes().length) * 8;
     }
 
     @Override
@@ -58,7 +58,6 @@ public class OperatorAppendix extends SectionAppendix {
         // Base information
         String operatorName = L10NHelpers.localize(operator.getTranslationKey());
         gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(operatorName) + " (" + operator.getSymbol() + ")", x, y + 8, width, 1f, gui.getBannerWidth(), 0);
-        //gui.getFont().setBidiFlag(true);
 
         // Input/output types
         IValueType[] inputTypes = operator.getInputTypes();
@@ -72,7 +71,16 @@ public class OperatorAppendix extends SectionAppendix {
         gui.getFont().draw(matrixStack, L10NHelpers.localize(L10NValues.GUI_OUTPUT,
                 operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, 0);
 
-        //gui.getFont().setBidiFlag(wasUnicode);
+        // Global/local names
+        offsetY += 8;
+        gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(L10NValues.GUI_OPERATOR_GLOBALNAME,
+                operator.getGlobalInteractName()), x, y + offsetY + 6, width, 1f, gui.getBannerWidth(), 0);
+        offsetY += 8;
+        if (operator.getInputTypes().length > 0) {
+            String scopedTypeName = L10NHelpers.localize(operator.getInputTypes()[0].getTranslationKey());
+            gui.drawScaledCenteredString(matrixStack, L10NHelpers.localize(L10NValues.GUI_OPERATOR_LOCALNAME,
+                    operator.getInputTypes()[0].getDisplayColorFormat() + scopedTypeName + "." + operator.getScopedInteractName()), x, y + offsetY + 6, width, 1f, gui.getBannerWidth(), 0);
+        }
     }
 
     @Override

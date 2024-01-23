@@ -29,7 +29,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
-import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
@@ -81,12 +80,7 @@ public class OperatorRegistry implements IOperatorRegistry {
         outputTypedOperators.put(operator.getOutputType(), operator);
         categoryOperators.put(operator.getUnlocalizedCategoryName(), operator);
 
-        String globalInteractNamePrefix = operator.getGlobalInteractNamePrefix() != null ?
-                operator.getGlobalInteractNamePrefix() :
-                (operator.getInputTypes().length > 0 ? operator.getInputTypes()[0].getTypeName() : null);
-        String globalInteractName = globalInteractNamePrefix != null ?
-                globalInteractNamePrefix + Helpers.capitalizeString(operator.getInteractName()) :
-                operator.getInteractName();
+        String globalInteractName = operator.getGlobalInteractName();
         if (globalInteractOperators.containsKey(globalInteractName)) {
             throw new IllegalStateException("Detected registration of an operator with non-unique global interact name: " + operator.getUniqueName().toString() + ", " + globalInteractOperators.get(globalInteractName).getUniqueName().toString());
         }
@@ -98,9 +92,7 @@ public class OperatorRegistry implements IOperatorRegistry {
                 scopedIteracts = Maps.newHashMap();
                 scopedInteractOperators.put(operator.getInputTypes()[0], scopedIteracts);
             }
-            String scopedInteractName = operator.shouldAlsoPrefixLocalScope() ?
-                    operator.getGlobalInteractNamePrefix() + Helpers.capitalizeString(operator.getInteractName()) :
-                    operator.getInteractName();
+            String scopedInteractName = operator.getScopedInteractName();
             if (scopedIteracts.containsKey(scopedInteractName)) {
                 throw new IllegalStateException("Detected registration of an operator with non-unique scoped interact name: " + operator.getUniqueName().toString() + ", " + scopedIteracts.get(scopedInteractName).getUniqueName().toString());
             }

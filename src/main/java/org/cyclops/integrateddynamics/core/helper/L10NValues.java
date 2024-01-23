@@ -34,6 +34,8 @@ public class L10NValues {
     public static final String GUI_RECIPE_STRICTNBT = "gui." + NS + ".recipe.strictnbt";
     public static final String GUI_RECIPE_TAGVARIANTS = "gui." + NS + ".recipe.tagvariants";
     public static final String GUI_RECIPE_REUSABLE = "gui." + NS + ".recipe.reusable";
+    public static final String GUI_OPERATOR_GLOBALNAME = "gui." + NS + ".operator.globalname";
+    public static final String GUI_OPERATOR_LOCALNAME = "gui." + NS + ".operator.localname";
     // 0: value
     public static final String GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT = "gui." + NS + ".mechanical_squeezer.togglefluidautoeject";
 

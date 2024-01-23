@@ -51,6 +51,8 @@
     "gui.integrateddynamics.recipe.strictnbt": "Strict NBT",
     "gui.integrateddynamics.recipe.tagvariants": "Item tag variants",
     "gui.integrateddynamics.recipe.reusable": "Reusable",
+    "gui.integrateddynamics.operator.globalname": "Global name: %s",
+    "gui.integrateddynamics.operator.localname": "Method name: %s",
 
     "_comment": "Diagnostics",
     "gui.integrateddynamics.diagnostics.title": "Integrated Dynamics - Network Diagnostics",

@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -44,6 +45,27 @@ public interface IOperator {
      * @return If the global interact name prefix should also be used for local scopes.
      */
     public boolean shouldAlsoPrefixLocalScope();
+
+    /**
+     * @return The global interact name.
+     */
+    public default String getGlobalInteractName() {
+        String globalInteractNamePrefix = this.getGlobalInteractNamePrefix() != null ?
+                this.getGlobalInteractNamePrefix() :
+                (this.getInputTypes().length > 0 ? this.getInputTypes()[0].getTypeName() : null);
+        return globalInteractNamePrefix != null ?
+                globalInteractNamePrefix + Helpers.capitalizeString(this.getInteractName()) :
+                this.getInteractName();
+    }
+
+    /**
+     * @return The scoped interact name.
+     */
+    public default String getScopedInteractName() {
+        return this.shouldAlsoPrefixLocalScope() ?
+                this.getGlobalInteractNamePrefix() + Helpers.capitalizeString(this.getInteractName()) :
+                this.getInteractName();
+    }
 
     /**
      * @return The unique unlocalized name for this operator.
