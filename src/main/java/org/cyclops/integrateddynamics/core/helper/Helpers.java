@@ -169,6 +169,21 @@ public final class Helpers {
         INTERFACE_RETRIEVERS.add(interfaceRetriever);
     }
 
+    /**
+     * Return a string with the first character capitalized.
+     * @param value A string.
+     * @return A capitalized string.
+     */
+    public static String capitalizeString(String value) {
+        if (value == null) {
+            return null;
+        } else if (value.length() == 0) {
+            return "";
+        } else {
+            return Character.toTitleCase(value.charAt(0)) + value.substring(1);
+        }
+    }
+
     public static interface IInterfaceRetriever {
 
         /**

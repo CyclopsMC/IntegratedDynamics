@@ -30,6 +30,8 @@ public class RegistryExportableOperator implements IRegistryExportable {
             }
             object.add("inputs", inputs);
             object.add("output", serializeValueType(operator.getOutputType()));
+            object.addProperty("globalInteractName", operator.getGlobalInteractName());
+            object.addProperty("scopedInteractName", operator.getScopedInteractName());
 
             element.add(operator.getUniqueName().toString(), object);
         }

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -118,7 +119,7 @@ public final class Operators {
     /**
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
-    public static final IOperator LOGICAL_AND = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("&&").operatorName("and")
+    public static final IOperator LOGICAL_AND = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("&&").operatorInteract("and")
             .function(variables -> {
                 ValueTypeBoolean.ValueBoolean a = variables.getValue(0, ValueTypes.BOOLEAN);
                 if (!a.getRawValue()) {
@@ -131,7 +132,7 @@ public final class Operators {
     /**
      * Short-circuit logical AND operator with two input booleans and one output boolean.
      */
-    public static final IOperator LOGICAL_OR = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("||").operatorName("or")
+    public static final IOperator LOGICAL_OR = REGISTRY.register(OperatorBuilders.LOGICAL_2.symbol("||").operatorInteract("or")
             .function(variables -> {
                 ValueTypeBoolean.ValueBoolean a = variables.getValue(0, ValueTypes.BOOLEAN);
                 if (a.getRawValue()) {
@@ -144,7 +145,7 @@ public final class Operators {
     /**
      * Logical NOT operator with one input booleans and one output boolean.
      */
-    public static final IOperator LOGICAL_NOT = REGISTRY.register(OperatorBuilders.LOGICAL_1_PREFIX.symbol("!").operatorName("not")
+    public static final IOperator LOGICAL_NOT = REGISTRY.register(OperatorBuilders.LOGICAL_1_PREFIX.symbol("!").operatorInteract("not")
             .function(variables -> {
                         ValueTypeBoolean.ValueBoolean valueBoolean = variables.getValue(0, ValueTypes.BOOLEAN);
                         return ValueTypeBoolean.ValueBoolean.of(!valueBoolean.getRawValue());
@@ -156,14 +157,14 @@ public final class Operators {
      */
     public static final IOperator LOGICAL_NAND = REGISTRY.register(
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT).apply(LOGICAL_AND).build(
-                    "!&&", "nand", IConfigRenderPattern.INFIX, "logical"));
+                    "!&&", "nand", "nand", IConfigRenderPattern.INFIX, "logical"));
 
     /**
      * Short-circuit logical NAND operator with two input booleans and one output boolean.
      */
     public static final IOperator LOGICAL_NOR = REGISTRY.register(
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT).apply(LOGICAL_OR).build(
-                    "!||", "nor", IConfigRenderPattern.INFIX, "logical"));
+                    "!||", "nor", "nor", IConfigRenderPattern.INFIX, "logical"));
 
     /**
      * ----------------------------------- ARITHMETIC OPERATORS -----------------------------------
@@ -172,7 +173,7 @@ public final class Operators {
     /**
      * Arithmetic ADD operator with two input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_ADDITION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("+").operatorName("addition")
+    public static final IOperator ARITHMETIC_ADDITION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("+").operatorName("addition").interactName("add")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.add(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
@@ -180,7 +181,7 @@ public final class Operators {
     /**
      * Arithmetic MINUS operator with two input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("-").operatorName("subtraction")
+    public static final IOperator ARITHMETIC_SUBTRACTION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("-").operatorName("subtraction").interactName("subtract")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.subtract(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
@@ -188,7 +189,7 @@ public final class Operators {
     /**
      * Arithmetic MULTIPLY operator with two input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("*").operatorName("multiplication")
+    public static final IOperator ARITHMETIC_MULTIPLICATION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("*").operatorName("multiplication").interactName("multiply")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.multiply(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
@@ -196,7 +197,7 @@ public final class Operators {
     /**
      * Arithmetic DIVIDE operator with two input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_DIVISION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("/").operatorName("division")
+    public static final IOperator ARITHMETIC_DIVISION = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("/").operatorName("division").interactName("divide")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.divide(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
@@ -204,7 +205,7 @@ public final class Operators {
     /**
      * Arithmetic MAX operator with two input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_MAXIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("max").operatorName("maximum")
+    public static final IOperator ARITHMETIC_MAXIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("max").operatorName("maximum").interactName("max")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.max(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
@@ -212,7 +213,7 @@ public final class Operators {
     /**
      * Arithmetic MIN operator with two input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_MINIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("min").operatorName("minimum")
+    public static final IOperator ARITHMETIC_MINIMUM = REGISTRY.register(OperatorBuilders.ARITHMETIC_2_PREFIX.symbol("min").operatorName("minimum").interactName("min")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.min(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
@@ -220,7 +221,7 @@ public final class Operators {
     /**
      * Arithmetic INCREMENT operator with one input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_INCREMENT = REGISTRY.register(OperatorBuilders.ARITHMETIC_1_SUFFIX.symbol("++").operatorName("increment")
+    public static final IOperator ARITHMETIC_INCREMENT = REGISTRY.register(OperatorBuilders.ARITHMETIC_1_SUFFIX.symbol("++").operatorInteract("increment")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.increment(variables.getVariables()[0])
             ).build());
@@ -228,7 +229,7 @@ public final class Operators {
     /**
      * Arithmetic DECREMENT operator with one input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_DECREMENT = REGISTRY.register(OperatorBuilders.ARITHMETIC_1_SUFFIX.symbol("--").operatorName("decrement")
+    public static final IOperator ARITHMETIC_DECREMENT = REGISTRY.register(OperatorBuilders.ARITHMETIC_1_SUFFIX.symbol("--").operatorInteract("decrement")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.decrement(variables.getVariables()[0])
             ).build());
@@ -236,7 +237,7 @@ public final class Operators {
     /**
      * Arithmetic MODULO operator with two input numbers and one output number.
      */
-    public static final IOperator ARITHMETIC_MODULUS = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("%").operatorName("modulus")
+    public static final IOperator ARITHMETIC_MODULUS = REGISTRY.register(OperatorBuilders.ARITHMETIC_2.symbol("%").operatorInteract("modulus")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.modulus(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
@@ -253,7 +254,7 @@ public final class Operators {
      * @deprecated by {@link #ARITHMETIC_MODULUS} - TODO remove in next major update
      */
     @Deprecated
-    public static final IOperator INTEGER_MODULUS = REGISTRY.register(OperatorBuilders.INTEGER_2.symbol("%").operatorName("modulus")
+    public static final IOperator INTEGER_MODULUS = REGISTRY.register(OperatorBuilders.INTEGER_2.symbol("%").operatorName("modulus").interactName("modulus_old")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
                 if (b.getRawValue() == 0) { // You can not divide by zero
@@ -272,7 +273,7 @@ public final class Operators {
      * @deprecated by {@link #ARITHMETIC_INCREMENT} - TODO remove in next major update
      */
     @Deprecated
-    public static final IOperator INTEGER_INCREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("++").operatorName("increment")
+    public static final IOperator INTEGER_INCREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("++").operatorName("increment").interactName("increment_old")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeInteger.ValueInteger.of(a.getRawValue() + 1);
@@ -284,7 +285,7 @@ public final class Operators {
      * @deprecated by {@link #ARITHMETIC_DECREMENT} - TODO remove in next major update
      */
     @Deprecated
-    public static final IOperator INTEGER_DECREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("--").operatorName("decrement")
+    public static final IOperator INTEGER_DECREMENT = REGISTRY.register(OperatorBuilders.INTEGER_1_SUFFIX.symbol("--").operatorName("decrement").interactName("decrement_old")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeInteger.ValueInteger.of(a.getRawValue() - 1);
@@ -299,7 +300,7 @@ public final class Operators {
      */
     public static final IOperator RELATIONAL_EQUALS = REGISTRY.register(OperatorBuilders.RELATIONAL
             .inputTypes(2, ValueTypes.CATEGORY_ANY).renderPattern(IConfigRenderPattern.INFIX)
-            .symbol("==").operatorName("equals")
+            .symbol("==").operatorInteract("equals")
             .function(
                 variables -> ValueTypeBoolean.ValueBoolean.of(variables.getValue(0).equals(variables.getValue(1)))
             )
@@ -338,7 +339,7 @@ public final class Operators {
      * Relational &gt; operator with two input integers and one output boolean.
      */
     public static final IOperator RELATIONAL_GT = REGISTRY.register(OperatorBuilders.RELATIONAL_2
-            .inputTypes(2, ValueTypes.CATEGORY_NUMBER).symbol(">").operatorName("gt")
+            .inputTypes(2, ValueTypes.CATEGORY_NUMBER).symbol(">").operatorName("gt").interactName("greaterThan")
             .function(
                 variables -> ValueTypeBoolean.ValueBoolean.of(ValueTypes.CATEGORY_NUMBER.greaterThan(variables.getVariables()[0], variables.getVariables()[1]))
             ).build());
@@ -347,7 +348,7 @@ public final class Operators {
      * Relational &gt; operator with two input integers and one output boolean.
      */
     public static final IOperator RELATIONAL_LT = REGISTRY.register(OperatorBuilders.RELATIONAL_2
-            .inputTypes(2, ValueTypes.CATEGORY_NUMBER).symbol("<").operatorName("lt")
+            .inputTypes(2, ValueTypes.CATEGORY_NUMBER).symbol("<").operatorName("lt").interactName("lessThan")
             .function(
                 variables -> ValueTypeBoolean.ValueBoolean.of(ValueTypes.CATEGORY_NUMBER.lessThan(variables.getVariables()[0], variables.getVariables()[1]))
             ).build());
@@ -357,21 +358,21 @@ public final class Operators {
      */
     public static final IOperator RELATIONAL_NOTEQUALS = REGISTRY.register(
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT).apply(RELATIONAL_EQUALS).build(
-                    "!=", "notequals", IConfigRenderPattern.INFIX, "relational"));
+                    "!=", "notequals", "notEquals", IConfigRenderPattern.INFIX, "relational"));
 
     /**
      * Relational &gt;= operator with two inputs of any type (but equal) and one output boolean.
      */
     public static final IOperator RELATIONAL_GE = REGISTRY.register(
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_OR).apply(RELATIONAL_EQUALS, RELATIONAL_GT).build(
-                    ">=", "ge", IConfigRenderPattern.INFIX, "relational"));
+                    ">=", "ge", "greaterThanOrEquals", IConfigRenderPattern.INFIX, "relational"));
 
     /**
      * Relational &lt;= operator with two inputs of any type (but equal) and one output boolean.
      */
     public static final IOperator RELATIONAL_LE = REGISTRY.register(
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_OR).apply(RELATIONAL_EQUALS, RELATIONAL_LT).build(
-                    "<=", "le", IConfigRenderPattern.INFIX, "relational"));
+                    "<=", "le", "lessThanOrEquals", IConfigRenderPattern.INFIX, "relational"));
 
     /**
      * ----------------------------------- BINARY OPERATORS -----------------------------------
@@ -380,7 +381,7 @@ public final class Operators {
     /**
      * Binary AND operator with two input integers and one output integers.
      */
-    public static final IOperator BINARY_AND = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("&").operatorName("and")
+    public static final IOperator BINARY_AND = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("&").operatorName("and").interactName("binaryAnd")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
@@ -390,7 +391,7 @@ public final class Operators {
     /**
      * Binary OR operator with two input integers and one output integers.
      */
-    public static final IOperator BINARY_OR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("|").operatorName("or")
+    public static final IOperator BINARY_OR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("|").operatorName("or").interactName("binaryOr")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
@@ -400,7 +401,7 @@ public final class Operators {
     /**
      * Binary XOR operator with two input integers and one output integers.
      */
-    public static final IOperator BINARY_XOR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("^").operatorName("xor")
+    public static final IOperator BINARY_XOR = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("^").operatorInteract("xor")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
@@ -410,7 +411,7 @@ public final class Operators {
     /**
      * Binary COMPLEMENT operator with one input integers and one output integers.
      */
-    public static final IOperator BINARY_COMPLEMENT = REGISTRY.register(OperatorBuilders.BINARY_1_PREFIX.symbol("~").operatorName("complement")
+    public static final IOperator BINARY_COMPLEMENT = REGISTRY.register(OperatorBuilders.BINARY_1_PREFIX.symbol("~").operatorInteract("complement")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeInteger.ValueInteger.of(~a.getRawValue());
@@ -419,7 +420,7 @@ public final class Operators {
     /**
      * Binary &lt;&lt; operator with two input integers and one output integers.
      */
-    public static final IOperator BINARY_LSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("<<").operatorName("lshift")
+    public static final IOperator BINARY_LSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol("<<").operatorName("lshift").interactName("leftShift")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
@@ -429,7 +430,7 @@ public final class Operators {
     /**
      * Binary &gt;&gt; operator with two input integers and one output integers.
      */
-    public static final IOperator BINARY_RSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>").operatorName("rshift")
+    public static final IOperator BINARY_RSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>").operatorName("rshift").interactName("rightShift")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
@@ -439,7 +440,7 @@ public final class Operators {
     /**
      * Binary &gt;&gt;&gt; operator with two input integers and one output integers.
      */
-    public static final IOperator BINARY_RZSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>>").operatorName("rzshift")
+    public static final IOperator BINARY_RZSHIFT = REGISTRY.register(OperatorBuilders.BINARY_2.symbol(">>>").operatorName("rzshift").interactName("unsignedRightShift")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
@@ -453,7 +454,7 @@ public final class Operators {
     /**
      * String length operator with one input string and one output integer.
      */
-    public static final IOperator STRING_LENGTH = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX.symbol("len").operatorName("length")
+    public static final IOperator STRING_LENGTH = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX.symbol("len").operatorInteract("length")
             .output(ValueTypes.INTEGER).function(variables -> {
                 ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
                 return ValueTypeInteger.ValueInteger.of(a.getRawValue().length());
@@ -462,7 +463,7 @@ public final class Operators {
     /**
      * String concat operator with two input strings and one output string.
      */
-    public static final IOperator STRING_CONCAT = REGISTRY.register(OperatorBuilders.STRING_2.symbol("+").operatorName("concat")
+    public static final IOperator STRING_CONCAT = REGISTRY.register(OperatorBuilders.STRING_2.symbol("+").operatorInteract("concat")
             .function(variables -> {
                 ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString b = variables.getValue(1, ValueTypes.STRING);
@@ -472,7 +473,7 @@ public final class Operators {
     /**
      * String contains operator which checks whether a given (literal) string is contained in the given string.
      */
-    public static final IOperator STRING_CONTAINS = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("contains")
+    public static final IOperator STRING_CONTAINS = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperatorInteract("contains")
         .output(ValueTypes.BOOLEAN).function(variables -> {
                 ValueTypeString.ValueString search = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -482,7 +483,7 @@ public final class Operators {
     /**
      * String match operator which checks whether a given regular expression is contained within a string.
      */
-    public static final IOperator STRING_CONTAINS_REGEX = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("contains_regex")
+    public static final IOperator STRING_CONTAINS_REGEX = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("contains_regex").interactName("containsRegex")
         .output(ValueTypes.BOOLEAN).function(variables -> {
                 ValueTypeString.ValueString pattern = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -498,7 +499,7 @@ public final class Operators {
     /**
      * String match operator which checks whether a given regular expression matches a string.
      */
-    public static final IOperator STRING_MATCHES_REGEX = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("matches_regex")
+    public static final IOperator STRING_MATCHES_REGEX = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("matches_regex").interactName("matchesRegex")
             .output(ValueTypes.BOOLEAN).function(variables -> {
                 ValueTypeString.ValueString pattern = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -514,7 +515,7 @@ public final class Operators {
     /**
      * String operator which returns the integral index of the first position where the search string appears in the given string.
      */
-    public static final IOperator STRING_INDEX_OF = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("index_of")
+    public static final IOperator STRING_INDEX_OF = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("index_of").interactName("indexOf")
         .output(ValueTypes.INTEGER).function(variables -> {
                 ValueTypeString.ValueString search = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -524,7 +525,7 @@ public final class Operators {
     /**
      * String operator which returns the integral index where the a substring matching the regular expression appears in the given string.
      */
-    public static final IOperator STRING_INDEX_OF_REGEX = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("index_of_regex")
+    public static final IOperator STRING_INDEX_OF_REGEX = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("index_of_regex").interactName("indexOfRegex")
         .output(ValueTypes.INTEGER).function(variables -> {
                 ValueTypeString.ValueString pattern = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -544,7 +545,7 @@ public final class Operators {
     /**
      * String match operator which checks whether a given string matches the beginning of the given string.
      */
-    public static final IOperator STRING_STARTS_WITH = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("starts_with")
+    public static final IOperator STRING_STARTS_WITH = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("starts_with").interactName("startsWith")
         .output(ValueTypes.BOOLEAN).function(variables -> {
                 ValueTypeString.ValueString search = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -554,7 +555,7 @@ public final class Operators {
     /**
      * String match operator which checks whether a given string matches the end of the given string.
      */
-    public static final IOperator STRING_ENDS_WITH = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("ends_with")
+    public static final IOperator STRING_ENDS_WITH = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("ends_with").interactName("endsWith")
         .output(ValueTypes.BOOLEAN).function(variables -> {
                 ValueTypeString.ValueString search = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -564,7 +565,7 @@ public final class Operators {
     /**
      * String operator which splits on the given (literal) delimiter the input string .
      */
-    public static final IOperator STRING_SPLIT_ON = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("split_on")
+    public static final IOperator STRING_SPLIT_ON = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperator("split_on").interactName("splitOn")
         .output(ValueTypes.LIST).function(variables -> {
                 ValueTypeString.ValueString search = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -579,7 +580,7 @@ public final class Operators {
     /**
      * String operator which splits on the given (regular expression) delimiter the input string.
      */
-    public static final IOperator STRING_SPLIT_ON_REGEX = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("split_on_regex")
+    public static final IOperator STRING_SPLIT_ON_REGEX = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("split_on_regex").interactName("splitOnRegex")
         .output(ValueTypes.LIST).function(variables -> {
                 ValueTypeString.ValueString pattern = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeString.ValueString str = variables.getValue(1, ValueTypes.STRING);
@@ -599,7 +600,7 @@ public final class Operators {
     /**
      * String operator which takes the substring of the given string between the two integer indices.
      */
-    public static final IOperator STRING_SUBSTRING = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("substring")
+    public static final IOperator STRING_SUBSTRING = REGISTRY.register(OperatorBuilders.STRING.symbolOperatorInteract("substring")
         .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
         .inputTypes(ValueTypes.INTEGER, ValueTypes.INTEGER, ValueTypes.STRING)
         .output(ValueTypes.STRING)
@@ -624,7 +625,7 @@ public final class Operators {
     /**
      * String operator which matches against a regex and takes the group at the index of the integer given (including zero), in the input string. It is invalid for the pattern to not match.
      */
-    public static final IOperator STRING_REGEX_GROUP = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("regex_group")
+    public static final IOperator STRING_REGEX_GROUP = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("regex_group").interactName("regexGroup")
         .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
         .inputTypes(ValueTypes.STRING, ValueTypes.INTEGER, ValueTypes.STRING)
         .output(ValueTypes.STRING)
@@ -657,7 +658,7 @@ public final class Operators {
     /**
      * String operator which matches against a regex the input string and returns a list containing all groups matched (including zero). An empty list is returned if the regex does not match.
      */
-    public static final IOperator STRING_REGEX_GROUPS = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("regex_groups")
+    public static final IOperator STRING_REGEX_GROUPS = REGISTRY.register(OperatorBuilders.STRING_2_LONG.symbolOperator("regex_groups").interactName("regexGroups")
         .output(ValueTypes.LIST)
         .function(variables -> {
             ValueTypeString.ValueString pattern = variables.getValue(0, ValueTypes.STRING);
@@ -684,7 +685,7 @@ public final class Operators {
     /**
      * String operator which finds all matches of the regular expression in the given string and returns the given group for each match.
      */
-    public static final IOperator STRING_REGEX_SCAN = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("regex_scan")
+    public static final IOperator STRING_REGEX_SCAN = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("regex_scan").interactName("regexScan")
         .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
         .inputTypes(ValueTypes.STRING, ValueTypes.INTEGER, ValueTypes.STRING)
         .output(ValueTypes.LIST)
@@ -715,7 +716,7 @@ public final class Operators {
     /**
      * String operator which, finds all the matches of the (literal) search and replaces them with the given replacement, in the input string.
      */
-    public static final IOperator STRING_REPLACE = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("replace")
+    public static final IOperator STRING_REPLACE = REGISTRY.register(OperatorBuilders.STRING.symbolOperatorInteract("replace")
         .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
         .inputTypes(3, ValueTypes.STRING)
         .output(ValueTypes.STRING)
@@ -730,7 +731,7 @@ public final class Operators {
     /**
      * String operator which, finds all the matches of the regular expression pattern and replaces them with the given replacement, in the input string.
      */
-    public static final IOperator STRING_REPLACE_REGEX = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("replace_regex")
+    public static final IOperator STRING_REPLACE_REGEX = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("replace_regex").interactName("replaceRegex")
         .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
         .inputTypes(3, ValueTypes.STRING)
         .output(ValueTypes.STRING)
@@ -753,7 +754,7 @@ public final class Operators {
     /**
      * String operator to join a list using a string delimiter
      */
-    public static final IOperator STRING_JOIN = REGISTRY.register(OperatorBuilders.STRING.symbolOperator("join")
+    public static final IOperator STRING_JOIN = REGISTRY.register(OperatorBuilders.STRING.symbolOperatorInteract("join")
             .renderPattern(IConfigRenderPattern.PREFIX_2)
             .inputTypes(ValueTypes.STRING, ValueTypes.LIST)
             .output(ValueTypes.STRING)
@@ -799,7 +800,7 @@ public final class Operators {
     /**
      * Get a name value type name.
      */
-    public static final IOperator NAMED_NAME = REGISTRY.register(OperatorBuilders.STRING_2.symbol("name").operatorName("name")
+    public static final IOperator NAMED_NAME = REGISTRY.register(OperatorBuilders.STRING_2.symbolOperatorInteract("name")
             .inputType(ValueTypes.CATEGORY_NAMED).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
             .function(
                 variables -> ValueTypeString.ValueString.of(ValueTypes.CATEGORY_NAMED.getName(variables.getVariables()[0]))
@@ -808,7 +809,7 @@ public final class Operators {
     /**
      * Get a unique name value type name.
      */
-    public static final IOperator UNIQUELYNAMED_UNIQUENAME = REGISTRY.register(OperatorBuilders.STRING_2.symbol("uname").operatorName("unique_name")
+    public static final IOperator UNIQUELYNAMED_UNIQUENAME = REGISTRY.register(OperatorBuilders.STRING_2.symbol("uname").operatorName("unique_name").interactName("uniqueName")
             .inputType(ValueTypes.CATEGORY_UNIQUELY_NAMED).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
             .function(
                 variables -> ValueTypeString.ValueString.of(ValueTypes.CATEGORY_UNIQUELY_NAMED.getUniqueName(variables.getVariables()[0]))
@@ -822,7 +823,7 @@ public final class Operators {
      * Number round operator with one input double and one output integers.
      */
     public static final IOperator NUMBER_ROUND = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
-            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("|| ||").operatorName("round")
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("|| ||").operatorInteract("round")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.round(variables.getVariables()[0])
             ).build());
@@ -831,7 +832,7 @@ public final class Operators {
      * Number ceil operator with one input double and one output integers.
      */
     public static final IOperator NUMBER_CEIL = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
-            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorName("ceil")
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌈ ⌉").operatorInteract("ceil")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.ceil(variables.getVariables()[0])
             ).build());
@@ -840,7 +841,7 @@ public final class Operators {
      * Number floor operator with one input double and one output integers.
      */
     public static final IOperator NUMBER_FLOOR = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
-            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorName("floor")
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER).symbol("⌊ ⌋").operatorInteract("floor")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.floor(variables.getVariables()[0])
             ).build());
@@ -849,7 +850,7 @@ public final class Operators {
      * Accepts a number, and returns a string roughly representing that number
      */
     public static final IOperator NUMBER_COMPACT = REGISTRY.register(OperatorBuilders.NUMBER_1_LONG
-            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.STRING).symbolOperator("compact")
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.STRING).symbolOperatorInteract("compact")
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.compact(variables.getVariables()[0])
             ).build());
@@ -861,7 +862,7 @@ public final class Operators {
     /**
      * Check if something is null
      */
-    public static final IOperator NULLABLE_ISNULL = REGISTRY.register(OperatorBuilders.NULLABLE_1_PREFIX.symbol("o").operatorName("isnull")
+    public static final IOperator NULLABLE_ISNULL = REGISTRY.register(OperatorBuilders.NULLABLE_1_PREFIX.symbol("o").operatorName("isnull").interactName("isNull")
             .inputType(ValueTypes.CATEGORY_ANY).output(ValueTypes.BOOLEAN).function(variables -> {
                 if(ValueHelpers.correspondsTo(variables.getVariables()[0].getType(), ValueTypes.CATEGORY_NULLABLE)) {
                     return ValueTypeBoolean.ValueBoolean.of(ValueTypes.CATEGORY_NULLABLE.isNull(variables.getVariables()[0]));
@@ -873,7 +874,7 @@ public final class Operators {
      * Check if something is not null
      */
     public static final IOperator NULLABLE_ISNOTNULL = REGISTRY.register(new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT)
-            .apply(NULLABLE_ISNULL).build("∅", "isnotnull", IConfigRenderPattern.PREFIX_1, "general"));
+            .apply(NULLABLE_ISNULL).build("∅", "isnotnull", "isNotNull", IConfigRenderPattern.PREFIX_1, "general"));
 
     /**
      * ----------------------------------- LIST OPERATORS -----------------------------------
@@ -882,7 +883,7 @@ public final class Operators {
     /**
      * List operator with one input list and one output integer
      */
-    public static final IOperator LIST_LENGTH = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX.output(ValueTypes.INTEGER).symbol("| |").operatorName("length")
+    public static final IOperator LIST_LENGTH = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX.output(ValueTypes.INTEGER).symbol("| |").operatorInteract("length")
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy a = valueList.getRawValue();
@@ -892,7 +893,7 @@ public final class Operators {
     /**
      * Check if a list is empty
      */
-    public static final IOperator LIST_EMPTY = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX.output(ValueTypes.BOOLEAN).symbol("∅").operatorName("empty")
+    public static final IOperator LIST_EMPTY = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX.output(ValueTypes.BOOLEAN).symbol("∅").operatorName("empty").interactName("isEmpty")
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy a = valueList.getRawValue();
@@ -904,14 +905,14 @@ public final class Operators {
      */
     public static final IOperator LIST_NOT_EMPTY = REGISTRY.register(
             new CompositionalOperator.AppliedOperatorBuilder(LOGICAL_NOT).apply(LIST_EMPTY).build(
-                    "o", "notempty", IConfigRenderPattern.PREFIX_1, "list"));
+                    "o", "notempty", "isNotEmpty", IConfigRenderPattern.PREFIX_1, "list"));
 
     /**
      * List operator with one input list and one output integer
      */
     public static final IOperator LIST_ELEMENT = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER}).output(ValueTypes.CATEGORY_ANY)
-            .renderPattern(IConfigRenderPattern.INFIX).symbolOperator("get")
+            .renderPattern(IConfigRenderPattern.INFIX).symbolOperatorInteract("get")
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy a = valueList.getRawValue();
@@ -936,7 +937,7 @@ public final class Operators {
      */
     public static final IOperator LIST_ELEMENT_DEFAULT = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.INTEGER, ValueTypes.CATEGORY_ANY}).output(ValueTypes.CATEGORY_ANY)
-            .renderPattern(IConfigRenderPattern.INFIX_2_LONG).symbolOperator("get_or_default")
+            .renderPattern(IConfigRenderPattern.INFIX_2_LONG).symbolOperator("get_or_default").interactName("getOrDefault")
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy a = valueList.getRawValue();
@@ -962,7 +963,7 @@ public final class Operators {
     public static final IOperator LIST_CONTAINS = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
             .renderPattern(IConfigRenderPattern.PREFIX_2_LONG)
-            .output(ValueTypes.BOOLEAN).symbolOperator("contains")
+            .output(ValueTypes.BOOLEAN).symbolOperatorInteract("contains")
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
@@ -981,7 +982,7 @@ public final class Operators {
     public static final IOperator LIST_CONTAINS_PREDICATE = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.INFIX)
-            .output(ValueTypes.BOOLEAN).symbolOperator("contains_p")
+            .output(ValueTypes.BOOLEAN).symbolOperator("contains_p").interactName("containsPredicate")
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
@@ -1002,7 +1003,7 @@ public final class Operators {
     public static final IOperator LIST_COUNT = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
             .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.INTEGER)
-            .symbolOperator("count")
+            .symbolOperatorInteract("count")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -1029,7 +1030,7 @@ public final class Operators {
     public static final IOperator LIST_COUNT_PREDICATE = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.INTEGER)
-            .symbolOperator("count_p")
+            .symbolOperator("count_p").interactName("countPredicate")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -1058,7 +1059,7 @@ public final class Operators {
     public static final IOperator LIST_APPEND = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
             .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
-            .symbolOperator("append")
+            .symbolOperatorInteract("append")
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy a = valueList.getRawValue();
@@ -1078,7 +1079,7 @@ public final class Operators {
     public static final IOperator LIST_CONCAT = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.LIST})
             .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
-            .symbolOperator("concat")
+            .symbolOperatorInteract("concat")
             .function(variables -> {
                 ValueTypeList.ValueList valueList0 = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy a = valueList0.getRawValue();
@@ -1099,7 +1100,7 @@ public final class Operators {
     public static final IOperator LIST_LAZYBUILT = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.CATEGORY_ANY, ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
-            .symbolOperator("lazybuilt")
+            .symbolOperator("lazybuilt").interactName("lazyBuilt")
             .function(variables -> {
                 IValue a = variables.getValue(0);
                 IOperator operator = OperatorBuilders.getSafeOperator(variables.getValue(1, ValueTypes.OPERATOR), a.getType());
@@ -1111,7 +1112,7 @@ public final class Operators {
      */
     public static final IOperator LIST_HEAD = REGISTRY.register(OperatorBuilders.LIST_1_PREFIX
             .inputTypes(new IValueType[]{ValueTypes.LIST}).output(ValueTypes.CATEGORY_ANY)
-            .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).symbolOperator("head")
+            .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).symbolOperatorInteract("head")
             .function(variables -> {
                 ValueTypeList.ValueList list = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy a = list.getRawValue();
@@ -1136,7 +1137,7 @@ public final class Operators {
     public static final IOperator LIST_TAIL = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.LIST})
             .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).output(ValueTypes.LIST)
-            .symbolOperator("tail")
+            .symbolOperatorInteract("tail")
             .function(variables -> {
                 ValueTypeList.ValueList list = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy a = list.getRawValue();
@@ -1149,7 +1150,7 @@ public final class Operators {
     public static final IOperator LIST_UNIQ_PREDICATE = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
-            .symbolOperator("uniq_p")
+            .symbolOperator("uniq_p").interactName("uniquePredicate")
             .function(variables -> {
                 ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
@@ -1178,7 +1179,7 @@ public final class Operators {
     public static final IOperator LIST_UNIQ = REGISTRY.register(OperatorBuilders.LIST
             .inputType(ValueTypes.LIST)
             .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).output(ValueTypes.LIST)
-            .symbolOperator("uniq")
+            .symbolOperator("uniq").interactName("unique")
             .function(variables -> {
                 ValueTypeList.ValueList valueList =variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
@@ -1191,7 +1192,7 @@ public final class Operators {
     public static final IOperator LIST_SLICE = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(ValueTypes.LIST, ValueTypes.INTEGER, ValueTypes.INTEGER)
             .renderPattern(IConfigRenderPattern.PREFIX_3).output(ValueTypes.LIST)
-            .symbolOperator("slice")
+            .symbolOperatorInteract("slice")
             .function(variables -> {
                 ValueTypeList.ValueList valueList =variables.getValue(0, ValueTypes.LIST);
                 IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
@@ -1209,7 +1210,7 @@ public final class Operators {
     public static final IOperator LIST_INTERSECTION = REGISTRY.register(OperatorBuilders.LIST
             .inputTypes(ValueTypes.LIST, ValueTypes.LIST)
             .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
-            .symbol("∩").operatorName("intersection")
+            .symbol("∩").operatorInteract("intersection")
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -1233,7 +1234,7 @@ public final class Operators {
     /**
      * Block isOpaque operator with one input block and one output boolean.
      */
-    public static final IOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("opaque")
+    public static final IOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("opaque").interactName("isOpaque")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && a.getRawValue().get().isSolidRender(null, null));
@@ -1242,7 +1243,7 @@ public final class Operators {
     /**
      * The itemstack representation of the block
      */
-    public static final IOperator OBJECT_BLOCK_ITEMSTACK = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("itemstack")
+    public static final IOperator OBJECT_BLOCK_ITEMSTACK = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("itemstack").interactName("itemStack")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueObjectTypeItemStack.ValueItemStack.of(a.getRawValue().isPresent() ? BlockHelpers.getItemStackFromBlockState(a.getRawValue().get()) : ItemStack.EMPTY);
@@ -1251,7 +1252,7 @@ public final class Operators {
     /**
      * The name of the mod owning this block
      */
-    public static final IOperator OBJECT_BLOCK_MODNAME = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+    public static final IOperator OBJECT_BLOCK_MODNAME = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperatorInteract("mod")
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
@@ -1264,7 +1265,7 @@ public final class Operators {
      * The breaksound of the block
      */
     public static final IOperator OBJECT_BLOCK_BREAKSOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING)
-            .symbol("break_sound").operatorName("breaksound")
+            .symbol("break_sound").operatorName("breaksound").interactName("breakSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
                     (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getBreakSound().location.toString() : "",
@@ -1274,7 +1275,7 @@ public final class Operators {
      * The placesound of the block
      */
     public static final IOperator OBJECT_BLOCK_PLACESOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING)
-            .symbol("place_sound").operatorName("placesound")
+            .symbol("place_sound").operatorName("placesound").interactName("placeSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
                     (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getPlaceSound().location.toString() : "",
@@ -1284,7 +1285,7 @@ public final class Operators {
      * The stepsound of the block
      */
     public static final IOperator OBJECT_BLOCK_STEPSOUND = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING)
-            .symbol("step_sound").operatorName("stepsound")
+            .symbol("step_sound").operatorName("stepsound").interactName("stepSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
                     (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getStepSound().location.toString() : "",
@@ -1295,7 +1296,7 @@ public final class Operators {
      * If the block is shearable
      */
     public static final IOperator OBJECT_BLOCK_ISSHEARABLE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN)
-            .symbol("is_shearable").operatorName("isshearable")
+            .symbol("is_shearable").operatorName("isshearable").interactName("isShearable")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
@@ -1307,7 +1308,7 @@ public final class Operators {
      * If the block is plantable
      */
     public static final IOperator OBJECT_BLOCK_ISPLANTABLE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN)
-            .symbol("is_plantable").operatorName("isplantable")
+            .symbol("is_plantable").operatorName("isplantable").interactName("isPlantable")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
@@ -1318,7 +1319,7 @@ public final class Operators {
      * The block plant type
      */
     public static final IOperator OBJECT_BLOCK_PLANTTYPE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING)
-            .symbol("plant_type").operatorName("planttype")
+            .symbol("plant_type").operatorName("planttype").interactName("plantType")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 String type = "none";
@@ -1332,7 +1333,7 @@ public final class Operators {
      * The block when this block is planted
      */
     public static final IOperator OBJECT_BLOCK_PLANT = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant")
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant").interactName("plant")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 BlockState plant = null;
@@ -1346,7 +1347,7 @@ public final class Operators {
      * The block when this block is planted
      */
     public static final IOperator OBJECT_BLOCK_PLANTAGE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbol("plant_age").operatorName("plantage")
+            .output(ValueTypes.INTEGER).symbol("plant_age").operatorName("plantage").interactName("plantAge")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 int age = 0;
@@ -1365,7 +1366,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_BLOCK_BY_NAME = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
             .inputType(ValueTypes.STRING).output(ValueTypes.OBJECT_BLOCK)
-            .symbol("block_by_name").operatorName("blockbyname")
+            .symbol("block_by_name").operatorName("blockbyname").interactName("blockByName")
             .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
                     .build(input -> {
                         Block block = ForgeRegistries.BLOCKS.getValue(input);
@@ -1377,7 +1378,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_BLOCK_PROPERTIES = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
             .output(ValueTypes.NBT)
-            .symbol("block_props").operatorName("blockproperties")
+            .symbol("block_props").operatorName("blockproperties").interactName("properties")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueTypeNbt.ValueNbt.of(a.getRawValue().map(blockState -> {
@@ -1395,7 +1396,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_BLOCK_WITH_PROPERTIES = REGISTRY.register(OperatorBuilders.BLOCK_INFIX_VERYLONG
             .inputTypes(ValueTypes.OBJECT_BLOCK, ValueTypes.NBT).output(ValueTypes.OBJECT_BLOCK)
-            .symbol("block_with_props").operatorName("blockfromproperties")
+            .symbol("block_with_props").operatorName("blockfromproperties").interactName("withProperties")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 ValueTypeNbt.ValueNbt b = variables.getValue(1, ValueTypes.NBT);
@@ -1423,7 +1424,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_BLOCK_POSSIBLE_PROPERTIES = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
             .output(ValueTypes.NBT)
-            .symbol("block_all_props").operatorName("blockpossibleproperties")
+            .symbol("block_all_props").operatorName("blockpossibleproperties").interactName("possibleProperties")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueTypeNbt.ValueNbt.of(a.getRawValue().map(blockState -> {
@@ -1447,7 +1448,7 @@ public final class Operators {
      * Item Stack size operator with one input itemstack and one output integer.
      */
     public static final IOperator OBJECT_ITEMSTACK_SIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("size")
+            .output(ValueTypes.INTEGER).symbolOperator("size").interactName("size")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
                 itemStack -> !itemStack.isEmpty() ? itemStack.getCount() : 0
             )).build());
@@ -1456,7 +1457,7 @@ public final class Operators {
      * Item Stack maxsize operator with one input itemstack and one output integer.
      */
     public static final IOperator OBJECT_ITEMSTACK_MAXSIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("maxsize")
+            .output(ValueTypes.INTEGER).symbolOperator("maxsize").interactName("maxSize")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
                 itemStack -> !itemStack.isEmpty() ? itemStack.getMaxStackSize() : 0
             )).build());
@@ -1465,7 +1466,7 @@ public final class Operators {
      * Item Stack isstackable operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISSTACKABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperator("stackable")
+            .output(ValueTypes.BOOLEAN).symbolOperator("stackable").interactName("isStackable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isStackable()
             )).build());
@@ -1474,7 +1475,7 @@ public final class Operators {
      * Item Stack isdamageable operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISDAMAGEABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperator("damageable")
+            .output(ValueTypes.BOOLEAN).symbolOperator("damageable").interactName("isDamageable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isDamageableItem()
             )).build());
@@ -1483,7 +1484,7 @@ public final class Operators {
      * Item Stack damage operator with one input itemstack and one output integer.
      */
     public static final IOperator OBJECT_ITEMSTACK_DAMAGE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("damage")
+            .output(ValueTypes.INTEGER).symbolOperator("damage").interactName("damage")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
                 itemStack -> !itemStack.isEmpty() ? itemStack.getDamageValue() : 0
             )).build());
@@ -1492,7 +1493,7 @@ public final class Operators {
      * Item Stack maxdamage operator with one input itemstack and one output integer.
      */
     public static final IOperator OBJECT_ITEMSTACK_MAXDAMAGE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbol("max_damage").operatorName("maxdamage")
+            .output(ValueTypes.INTEGER).symbol("max_damage").operatorName("maxdamage").interactName("maxDamage")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
                 itemStack -> !itemStack.isEmpty() ? itemStack.getMaxDamage() : 0
             )).build());
@@ -1501,7 +1502,7 @@ public final class Operators {
      * Item Stack isenchanted operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISENCHANTED = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperator("enchanted")
+            .output(ValueTypes.BOOLEAN).symbolOperator("enchanted").interactName("isEnchanted")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isEnchanted()
             )).build());
@@ -1510,7 +1511,7 @@ public final class Operators {
      * Item Stack isenchantable operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISENCHANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperator("enchantable")
+            .output(ValueTypes.BOOLEAN).symbolOperator("enchantable").interactName("isEnchantable")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && itemStack.isEnchantable()
             )).build());
@@ -1520,7 +1521,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_REPAIRCOST = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER)
-            .symbol("repair_cost").operatorName("repaircost")
+            .symbol("repair_cost").operatorName("repaircost").interactName("repairCost")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
                 itemStack -> !itemStack.isEmpty() ? itemStack.getBaseRepairCost() : 0
             )).build());
@@ -1529,7 +1530,7 @@ public final class Operators {
      * Get the rarity of an itemstack.
      */
     public static final IOperator OBJECT_ITEMSTACK_RARITY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.STRING).symbolOperator("rarity")
+            .output(ValueTypes.STRING).symbolOperatorInteract("rarity")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return ValueTypeString.ValueString.of(!a.getRawValue().isEmpty() ? a.getRawValue().getRarity().name() : "");
@@ -1540,7 +1541,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}).output(ValueTypes.DOUBLE)
-            .symbolOperator("strength")
+            .symbolOperatorInteract("strength")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeBlock.ValueBlock b = variables.getValue(1, ValueTypes.OBJECT_BLOCK);
@@ -1552,7 +1553,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_2_LONG
             .inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK}).output(ValueTypes.BOOLEAN)
-            .symbol("can_harvest").operatorName("canharvest")
+            .symbol("can_harvest").operatorName("canharvest").interactName("canHarvest")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeBlock.ValueBlock b = variables.getValue(1, ValueTypes.OBJECT_BLOCK);
@@ -1563,7 +1564,7 @@ public final class Operators {
      * The block from the stack
      */
     public static final IOperator OBJECT_ITEMSTACK_BLOCK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperatorInteract("block")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return ValueObjectTypeBlock.ValueBlock.of((!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem) ? BlockHelpers.getBlockStateFromItemStack(a.getRawValue()) : null);
@@ -1574,7 +1575,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_ISFLUIDSTACK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN)
-            .symbol("is_fluidstack").operatorName("isfluidstack")
+            .symbol("is_fluidstack").operatorName("isfluidstack").interactName("isFluidStack")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                 itemStack -> !itemStack.isEmpty() && !Helpers.getFluidStack(itemStack).isEmpty()
             )).build());
@@ -1583,7 +1584,7 @@ public final class Operators {
      * The fluidstack from the stack
      */
     public static final IOperator OBJECT_ITEMSTACK_FLUIDSTACK = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("fluidstack")
+            .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("fluidstack").interactName("fluidStack")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return ValueObjectTypeFluidStack.ValueFluidStack.of(!a.getRawValue().isEmpty() ? Helpers.getFluidStack(a.getRawValue()) : null);
@@ -1594,7 +1595,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER)
-            .symbol("fluidstack_capacity").operatorName("fluidstackcapacity")
+            .symbol("fluidstack_capacity").operatorName("fluidstackcapacity").interactName("fluidCapacity")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
                 itemStack -> !itemStack.isEmpty() ? Helpers.getFluidStackCapacity(itemStack) : 0
             )).build());
@@ -1603,7 +1604,7 @@ public final class Operators {
      * If the NBT tags of the given stacks are equal.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
-            .output(ValueTypes.BOOLEAN).symbol("=NBT=").operatorName("isnbtequal")
+            .output(ValueTypes.BOOLEAN).symbol("=NBT=").operatorName("isnbtequal").interactName("isNbtEqual")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack valueStack0 = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeItemStack.ValueItemStack valueStack1 = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
@@ -1622,7 +1623,7 @@ public final class Operators {
      * If the raw items of the given stacks are equal, ignoring NBT but including damage value.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISITEMEQUALNONBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
-            .output(ValueTypes.BOOLEAN).symbol("=NoNBT=").operatorName("isitemequalnonbt")
+            .output(ValueTypes.BOOLEAN).symbol("=NoNBT=").operatorName("isitemequalnonbt").interactName("isEqualNonNbt")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack valueStack0 = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeItemStack.ValueItemStack valueStack1 = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
@@ -1641,7 +1642,7 @@ public final class Operators {
      * If the raw items of the given stacks are equal, ignoring NBT and damage value.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
-            .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwitemequal")
+            .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwitemequal").interactName("isEqualRaw")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack valueStack0 = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeItemStack.ValueItemStack valueStack1 = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
@@ -1659,7 +1660,8 @@ public final class Operators {
     /**
      * The name of the mod owning this item
      */
-    public static final IOperator OBJECT_ITEMSTACK_MODNAME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+    public static final IOperator OBJECT_ITEMSTACK_MODNAME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING)
+            .symbolOperatorInteract("mod")
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
@@ -1673,7 +1675,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_FUELBURNTIME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER)
-            .symbol("burn_time").operatorName("burntime")
+            .symbol("burn_time").operatorName("burntime").interactName("burnTime")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(itemStack -> {
                 if (!itemStack.isEmpty()) {
                     int burnTime = itemStack.getBurnTime(null);
@@ -1689,7 +1691,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_CANBURN = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN)
-            .symbol("can_burn").operatorName("canburn")
+            .symbol("can_burn").operatorName("canburn").interactName("canBurn")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN
                     .build(AbstractFurnaceBlockEntity::isFuel))
             .build());
@@ -1699,7 +1701,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_TAG = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.LIST)
-            .symbol("tag_names").operatorName("tag")
+            .symbol("tag_names").operatorName("tag").interactName("tags")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
@@ -1718,7 +1720,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_TAG_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
             .output(ValueTypes.LIST)
-            .symbol("tag_values").operatorName("tag")
+            .symbol("tag_values").operatorName("tag").interactName("itemsByTag")
             .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
             .function(variables -> {
                 ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
@@ -1740,7 +1742,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_WITHSIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_INTEGER_1
             .output(ValueTypes.OBJECT_ITEMSTACK)
-            .symbol("with_size").operatorName("withsize")
+            .symbol("with_size").operatorName("withsize").interactName("withSize")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueTypeInteger.ValueInteger b = variables.getValue(1, ValueTypes.INTEGER);
@@ -1757,7 +1759,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_ISFECONTAINER = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN)
-            .symbol("is_fe_container").operatorName("isfecontainer")
+            .symbol("is_fe_container").operatorName("isfecontainer").interactName("isFeContainer")
             .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_BOOLEAN.build(
                 Objects::nonNull
             )).build());
@@ -1767,7 +1769,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_STOREDFE = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER)
-            .symbol("stored_fe").operatorName("storedfe")
+            .symbol("stored_fe").operatorName("storedfe").interactName("feStored")
             .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_INT.build(
                 input -> input != null ? input.getEnergyStored() : 0
             )).build());
@@ -1777,7 +1779,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_FECAPACITY = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER)
-            .symbol("capacity_fe").operatorName("fecapacity")
+            .symbol("capacity_fe").operatorName("fecapacity").interactName("feCapacity")
             .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_INT.build(
                 input -> input != null ? input.getMaxEnergyStored() : 0
             )).build());
@@ -1788,7 +1790,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_HASINVENTORY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN)
-            .symbol("has_inventory").operatorName("hasinventory")
+            .symbol("has_inventory").operatorName("hasinventory").interactName("hasInventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent());
@@ -1799,7 +1801,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_ISPLANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN)
-            .symbol("is_plantable").operatorName("isplantable")
+            .symbol("is_plantable").operatorName("isplantable").interactName("isPlantable")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty()
@@ -1815,7 +1817,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_INVENTORYSIZE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER)
-            .symbol("inventory_size").operatorName("inventorysize")
+            .symbol("inventory_size").operatorName("inventorysize").interactName("inventorySize")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return ValueTypeInteger.ValueInteger.of(a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER)
@@ -1828,7 +1830,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_PLANTTYPE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.STRING)
-            .symbol("plant_type").operatorName("planttype")
+            .symbol("plant_type").operatorName("planttype").interactName("plantType")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 String type = "none";
@@ -1843,7 +1845,7 @@ public final class Operators {
      * Retrieve the inventory of the given item handler contents.
      */
     public static final IOperator OBJECT_ITEMSTACK_INVENTORY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).symbolOperator("inventory")
+            .output(ValueTypes.LIST).symbolOperator("inventory").interactName("inventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER, null)
@@ -1861,7 +1863,7 @@ public final class Operators {
      * The item when this item is planted
      */
     public static final IOperator OBJECT_ITEMSTACK_PLANT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant")
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperatorInteract("plant")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 BlockState plant = null;
@@ -1877,7 +1879,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_BY_NAME = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_PREFIX_LONG
             .inputType(ValueTypes.STRING).output(ValueTypes.OBJECT_ITEMSTACK)
-            .symbol("item_by_name").operatorName("itembyname")
+            .symbol("item_by_name").operatorName("itembyname").interactName("itemByName")
             .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
                     .build(input -> {
                         Item item = ForgeRegistries.ITEMS.getValue(input);
@@ -1894,7 +1896,7 @@ public final class Operators {
     public static final IOperator OBJECT_ITEMSTACK_LIST_COUNT = REGISTRY.register(OperatorBuilders.ITEMSTACK_2_LONG
             .inputTypes(ValueTypes.LIST, ValueTypes.OBJECT_ITEMSTACK)
             .output(ValueTypes.INTEGER)
-            .symbol("item_list_count").operatorName("itemlistcount")
+            .symbol("item_list_count").operatorName("itemlistcount").interactName("itemListCount")
             .function(variables -> {
                 ValueTypeList.ValueList<IValueType<IValue>, IValue> a = variables.getValue(0, ValueTypes.LIST);
                 ValueObjectTypeItemStack.ValueItemStack b = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
@@ -1931,7 +1933,7 @@ public final class Operators {
      * Item Stack size operator with one input itemstack and one output NBT tag.
      */
     public static final IOperator OBJECT_ITEMSTACK_NBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
+            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt").interactName("nbt")
             .function(input -> {
                 ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 // Explicitly check for item emptiness first, because vanilla sometimes persists NBT when setting stacks to empty
@@ -1942,7 +1944,7 @@ public final class Operators {
      * Item Stack has_nbt operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_HASNBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_PREFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("has_nbt").operatorName("hasnbt")
+            .output(ValueTypes.BOOLEAN).symbol("has_nbt").operatorName("hasnbt").interactName("hasNbt")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                     itemStack -> !itemStack.isEmpty() && itemStack.hasTag()
             )).build());
@@ -1955,7 +1957,7 @@ public final class Operators {
      * If the entity is a mob
      */
     public static final IOperator OBJECT_ENTITY_ISMOB = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_mob").operatorName("ismob")
+            .output(ValueTypes.BOOLEAN).symbol("is_mob").operatorName("ismob").interactName("isMob")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity instanceof Enemy
             )).build());
@@ -1964,7 +1966,7 @@ public final class Operators {
      * If the entity is an animal
      */
     public static final IOperator OBJECT_ENTITY_ISANIMAL = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_animal").operatorName("isanimal")
+            .output(ValueTypes.BOOLEAN).symbol("is_animal").operatorName("isanimal").interactName("isAnimal")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity instanceof Animal && !(entity instanceof Enemy)
             )).build());
@@ -1973,7 +1975,7 @@ public final class Operators {
      * If the entity is an item
      */
     public static final IOperator OBJECT_ENTITY_ISITEM = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_item").operatorName("isitem")
+            .output(ValueTypes.BOOLEAN).symbol("is_item").operatorName("isitem").interactName("isItem")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity instanceof ItemEntity
             )).build());
@@ -1982,7 +1984,7 @@ public final class Operators {
      * If the entity is a player
      */
     public static final IOperator OBJECT_ENTITY_ISPLAYER = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_player").operatorName("isplayer")
+            .output(ValueTypes.BOOLEAN).symbol("is_player").operatorName("isplayer").interactName("isPlayer")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity instanceof Player
             )).build());
@@ -1991,7 +1993,7 @@ public final class Operators {
      * If the entity is a minecart
      */
     public static final IOperator OBJECT_ENTITY_ISMINECART = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_minecart").operatorName("isminecart")
+            .output(ValueTypes.BOOLEAN).symbol("is_minecart").operatorName("isminecart").interactName("isMinecart")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity instanceof AbstractMinecart
             )).build());
@@ -2000,7 +2002,7 @@ public final class Operators {
      * The itemstack from the entity
      */
     public static final IOperator OBJECT_ENTITY_ITEMSTACK = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX
-            .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("item")
+            .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperatorInteract("item")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
@@ -2011,7 +2013,7 @@ public final class Operators {
      * The entity health
      */
     public static final IOperator OBJECT_ENTITY_HEALTH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.DOUBLE).symbolOperator("health")
+            .output(ValueTypes.DOUBLE).symbolOperatorInteract("health")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(
                 entity -> entity instanceof LivingEntity ? ((LivingEntity) entity).getHealth() : 0.0
             )).build());
@@ -2020,7 +2022,7 @@ public final class Operators {
      * The entity width
      */
     public static final IOperator OBJECT_ENTITY_WIDTH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.DOUBLE).symbolOperator("width")
+            .output(ValueTypes.DOUBLE).symbolOperatorInteract("width")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(
                 entity -> entity != null ? entity.getBbWidth() : 0.0
             )).build());
@@ -2029,7 +2031,7 @@ public final class Operators {
      * The entity width
      */
     public static final IOperator OBJECT_ENTITY_HEIGHT = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.DOUBLE).symbolOperator("height")
+            .output(ValueTypes.DOUBLE).symbolOperatorInteract("height")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_DOUBLE.build(
                 entity -> entity != null ? entity.getBbHeight() : 0.0
             )).build());
@@ -2038,7 +2040,7 @@ public final class Operators {
      * If the entity is burning
      */
     public static final IOperator OBJECT_ENTITY_ISBURNING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_burning").operatorName("isburning")
+            .output(ValueTypes.BOOLEAN).symbol("is_burning").operatorName("isburning").interactName("entityIsBurning")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity != null && entity.isOnFire()
             )).build());
@@ -2047,7 +2049,7 @@ public final class Operators {
      * If the entity is wet
      */
     public static final IOperator OBJECT_ENTITY_ISWET = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_wet").operatorName("iswet")
+            .output(ValueTypes.BOOLEAN).symbol("is_wet").operatorName("iswet").interactName("isWet")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity != null && entity.isInWaterOrRain()
             )).build());
@@ -2056,7 +2058,7 @@ public final class Operators {
      * If the entity is crouching
      */
     public static final IOperator OBJECT_ENTITY_ISCROUCHING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_crouching").operatorName("iscrouching")
+            .output(ValueTypes.BOOLEAN).symbol("is_crouching").operatorName("iscrouching").interactName("isCrouching")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity != null && entity.isCrouching()
             )).build());
@@ -2065,7 +2067,7 @@ public final class Operators {
      * If the entity is eating
      */
     public static final IOperator OBJECT_ENTITY_ISEATING = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("is_eating").operatorName("iseating")
+            .output(ValueTypes.BOOLEAN).symbol("is_eating").operatorName("iseating").interactName("isEating")
             .function(OperatorBuilders.FUNCTION_ENTITY_TO_BOOLEAN.build(
                 entity -> entity instanceof LivingEntity && ((LivingEntity) entity).getUseItemRemainingTicks() > 0
             )).build());
@@ -2074,7 +2076,7 @@ public final class Operators {
      * The list of armor itemstacks from an entity
      */
     public static final IOperator OBJECT_ENTITY_ARMORINVENTORY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).symbol("armor_inventory").operatorName("armorinventory")
+            .output(ValueTypes.LIST).symbol("armor_inventory").operatorName("armorinventory").interactName("armorInventory")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
@@ -2090,7 +2092,7 @@ public final class Operators {
      * The list of itemstacks from an entity
      */
     public static final IOperator OBJECT_ENTITY_INVENTORY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).symbolOperator("inventory")
+            .output(ValueTypes.LIST).symbolOperator("inventory").interactName("inventory")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
@@ -2105,7 +2107,8 @@ public final class Operators {
     /**
      * The name of the mod owning this entity
      */
-    public static final IOperator OBJECT_ENTITY_MODNAME = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+    public static final IOperator OBJECT_ENTITY_MODNAME = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING)
+            .symbolOperatorInteract("mod")
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
@@ -2123,7 +2126,7 @@ public final class Operators {
      * The block the given player is currently looking at.
      */
     public static final IOperator OBJECT_PLAYER_TARGETBLOCK = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_BLOCK)
-            .symbol("target_block").operatorName("targetblock")
+            .symbol("target_block").operatorName("targetblock").interactName("targetBlock")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 BlockState blockState = null;
@@ -2149,7 +2152,7 @@ public final class Operators {
      * The entity the given player is currently looking at.
      */
     public static final IOperator OBJECT_PLAYER_TARGETENTITY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ENTITY)
-            .symbol("target_entity").operatorName("targetentity")
+            .symbol("target_entity").operatorName("targetentity").interactName("targetEntity")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Entity entityOut = null;
@@ -2186,7 +2189,7 @@ public final class Operators {
      * If the given player has an external gui open.
      */
     public static final IOperator OBJECT_PLAYER_HASGUIOPEN = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN)
-            .symbol("has_gui_open").operatorName("hasguiopen")
+            .symbol("has_gui_open").operatorName("hasguiopen").interactName("hasGuiOpen")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof Player) {
@@ -2200,7 +2203,7 @@ public final class Operators {
      * The item the given entity is currently holding in its main hand.
      */
     public static final IOperator OBJECT_ENTITY_HELDITEM_MAIN = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK)
-            .symbol("held_item_1").operatorName("helditem")
+            .symbol("held_item_1").operatorName("helditem").interactName("heldItem")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 ItemStack itemStack = ItemStack.EMPTY;
@@ -2214,7 +2217,7 @@ public final class Operators {
      * The item the given entity is currently holding in its off hand.
      */
     public static final IOperator OBJECT_ENTITY_HELDITEM_OFF = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK)
-            .symbol("held_item_2").operatorName("helditemoffhand")
+            .symbol("held_item_2").operatorName("helditemoffhand").interactName("heldItemOffHand")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 ItemStack itemStack = ItemStack.EMPTY;
@@ -2227,7 +2230,8 @@ public final class Operators {
     /**
      * The entity's mounted entity
      */
-    public static final IOperator OBJECT_ENTITY_MOUNTED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.LIST).symbolOperator("mounted")
+    public static final IOperator OBJECT_ENTITY_MOUNTED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.LIST)
+            .symbolOperator("mounted").interactName("mounted")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 List<ValueObjectTypeEntity.ValueEntity> passengers = Lists.newArrayList();
@@ -2243,7 +2247,7 @@ public final class Operators {
      * The item frame's contents
      */
     public static final IOperator OBJECT_ITEMFRAME_CONTENTS = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK)
-            .symbol("itemframe_contents").operatorName("itemframecontents")
+            .symbol("itemframe_contents").operatorName("itemframecontents").interactName("itemFrameContents")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 ItemStack itemStack = ItemStack.EMPTY;
@@ -2257,7 +2261,7 @@ public final class Operators {
      * The item frame's rotation
      */
     public static final IOperator OBJECT_ITEMFRAME_ROTATION = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.INTEGER)
-            .symbol("itemframe_rotation").operatorName("itemframerotation")
+            .symbol("itemframe_rotation").operatorName("itemframerotation").interactName("itemFrameRotation")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Integer rotation = 0;
@@ -2270,7 +2274,8 @@ public final class Operators {
     /**
      * The hurtsound of this entity.
      */
-    public static final IOperator OBJECT_ENTITY_HURTSOUND = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("hurtsound")
+    public static final IOperator OBJECT_ENTITY_HURTSOUND = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING)
+            .symbolOperator("hurtsound").interactName("hurtSound")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 String hurtSound = "";
@@ -2286,7 +2291,8 @@ public final class Operators {
     /**
      * The deathsound of this entity.
      */
-    public static final IOperator OBJECT_ENTITY_DEATHSOUND = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("deathsound")
+    public static final IOperator OBJECT_ENTITY_DEATHSOUND = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.STRING)
+            .symbolOperator("deathsound").interactName("deathSound")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 String hurtSound = "";
@@ -2302,7 +2308,8 @@ public final class Operators {
     /**
      * The age of this entity.
      */
-    public static final IOperator OBJECT_ENTITY_AGE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.INTEGER).symbolOperator("age")
+    public static final IOperator OBJECT_ENTITY_AGE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.INTEGER)
+            .symbolOperatorInteract("age")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 int age = 0;
@@ -2316,7 +2323,7 @@ public final class Operators {
      * If the entity is a child.
      */
     public static final IOperator OBJECT_ENTITY_ISCHILD = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN)
-            .symbol("is_child").operatorName("ischild")
+            .symbol("is_child").operatorName("ischild").interactName("isChild")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 boolean child = false;
@@ -2330,7 +2337,7 @@ public final class Operators {
      * If the entity can be bred.
      */
     public static final IOperator OBJECT_ENTITY_CANBREED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN)
-            .symbol("canbreed").operatorName("canbreed")
+            .symbol("canbreed").operatorName("canbreed").interactName("canBreed")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 boolean canBreed = false;
@@ -2344,7 +2351,7 @@ public final class Operators {
      * If the entity is in love.
      */
     public static final IOperator OBJECT_ENTITY_ISINLOVE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN)
-            .symbol("is_in_love").operatorName("isinlove")
+            .symbol("is_in_love").operatorName("isinlove").interactName("isInLove")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 boolean inLove = false;
@@ -2360,7 +2367,7 @@ public final class Operators {
     public static final IOperator OBJECT_ENTITY_CANBREEDWITH = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
             .inputTypes(ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK)
             .output(ValueTypes.BOOLEAN)
-            .symbol("can_breed_with").operatorName("canbreedwith")
+            .symbol("can_breed_with").operatorName("canbreedwith").interactName("canBreedWith")
             .renderPattern(IConfigRenderPattern.INFIX_LONG)
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
@@ -2376,7 +2383,7 @@ public final class Operators {
      * If the entity is shearable.
      */
     public static final IOperator OBJECT_ENTITY_ISSHEARABLE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN)
-            .symbol("is_shearable").operatorName("isshearable")
+            .symbol("is_shearable").operatorName("isshearable").interactName("isShearable")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
@@ -2388,7 +2395,7 @@ public final class Operators {
      * The entity serialized to NBT.
      */
     public static final IOperator OBJECT_ENTITY_NBT = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
+            .output(ValueTypes.NBT).symbol("NBT()").operatorInteract("nbt")
             .function(input -> {
                 ValueObjectTypeEntity.ValueEntity entity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 try {
@@ -2405,7 +2412,7 @@ public final class Operators {
      * The entity type.
      */
     public static final IOperator OBJECT_ENTITY_TYPE = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.STRING).symbol("entity_type").operatorName("entitytype")
+            .output(ValueTypes.STRING).symbol("entity_type").operatorName("entitytype").interactName("type")
             .function(input -> {
                 ValueObjectTypeEntity.ValueEntity entity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 String entityType = "";
@@ -2420,7 +2427,7 @@ public final class Operators {
      * The entity items.
      */
     public static final IOperator OBJECT_ENTITY_ITEMS = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).symbol("entity_items").operatorName("entityitems")
+            .output(ValueTypes.LIST).symbol("entity_items").operatorName("entityitems").interactName("items")
             .function(input -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
@@ -2436,7 +2443,7 @@ public final class Operators {
      * The entity fluids.
      */
     public static final IOperator OBJECT_ENTITY_FLUIDS = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).symbol("entity_fluids").operatorName("entityfluids")
+            .output(ValueTypes.LIST).symbol("entity_fluids").operatorName("entityfluids").interactName("fluids")
             .function(input -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
@@ -2452,7 +2459,7 @@ public final class Operators {
      * The entity energy stored.
      */
     public static final IOperator OBJECT_ENTITY_ENERGY_STORED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbol("entity_stored_fe").operatorName("entityenergystored")
+            .output(ValueTypes.INTEGER).symbol("entity_stored_fe").operatorName("entityenergystored").interactName("energy")
             .function(input -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
@@ -2469,7 +2476,7 @@ public final class Operators {
      * The entity energy stored.
      */
     public static final IOperator OBJECT_ENTITY_ENERGY_CAPACITY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbol("entity_capacity_fe").operatorName("entityenergycapacity")
+            .output(ValueTypes.INTEGER).symbol("entity_capacity_fe").operatorName("entityenergycapacity").interactName("energyCapacity")
             .function(input -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
@@ -2490,7 +2497,7 @@ public final class Operators {
      * The amount of fluid in the fluidstack
      */
     public static final IOperator OBJECT_FLUIDSTACK_AMOUNT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("amount")
+            .output(ValueTypes.INTEGER).symbolOperatorInteract("amount")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
                     FluidStack::getAmount
             )).build());
@@ -2499,7 +2506,7 @@ public final class Operators {
      * The block from the fluidstack
      */
     public static final IOperator OBJECT_FLUIDSTACK_BLOCK = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("block")
+            .output(ValueTypes.OBJECT_BLOCK).symbolOperatorInteract("block")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
@@ -2510,7 +2517,7 @@ public final class Operators {
      * The fluidstack luminosity
      */
     public static final IOperator OBJECT_FLUIDSTACK_LIGHT_LEVEL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("light_level")
+            .output(ValueTypes.INTEGER).symbolOperator("light_level").interactName("lightLevel")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
                 fluidStack -> fluidStack.getFluid().getFluidType().getLightLevel(fluidStack)
             )).build());
@@ -2519,7 +2526,7 @@ public final class Operators {
      * The fluidstack density
      */
     public static final IOperator OBJECT_FLUIDSTACK_DENSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("density")
+            .output(ValueTypes.INTEGER).symbolOperatorInteract("density")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
                 fluidStack -> fluidStack.getFluid().getFluidType().getDensity(fluidStack)
             )).build());
@@ -2528,7 +2535,7 @@ public final class Operators {
      * The fluidstack temperature
      */
     public static final IOperator OBJECT_FLUIDSTACK_TEMPERATURE = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("temperature")
+            .output(ValueTypes.INTEGER).symbolOperatorInteract("temperature")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
                     fluidStack -> fluidStack.getFluid().getFluidType().getTemperature(fluidStack)
             )).build());
@@ -2537,7 +2544,7 @@ public final class Operators {
      * The fluidstack viscosity
      */
     public static final IOperator OBJECT_FLUIDSTACK_VISCOSITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbolOperator("viscosity")
+            .output(ValueTypes.INTEGER).symbolOperatorInteract("viscosity")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_INT.build(
                 fluidStack -> fluidStack.getFluid().getFluidType().getViscosity(fluidStack)
             )).build());
@@ -2546,7 +2553,7 @@ public final class Operators {
      * If the fluidstack is gaseous
      */
     public static final IOperator OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbolOperator("lighter_than_air")
+            .output(ValueTypes.BOOLEAN).symbolOperator("lighter_than_air").interactName("isLighterThanAir")
             .function(OperatorBuilders.FUNCTION_FLUIDSTACK_TO_BOOLEAN.build(
                 fluidStack -> fluidStack.getFluid().getFluidType().isLighterThanAir()
             )).build());
@@ -2555,7 +2562,7 @@ public final class Operators {
      * The rarity of the fluidstack
      */
     public static final IOperator OBJECT_FLUIDSTACK_RARITY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.STRING).symbolOperator("rarity")
+            .output(ValueTypes.STRING).symbolOperatorInteract("rarity")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
@@ -2566,7 +2573,7 @@ public final class Operators {
      * The bucket empty sound of the fluidstack
      */
     public static final IOperator OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.STRING).symbolOperator("sound_bucket_empty")
+            .output(ValueTypes.STRING).symbolOperator("sound_bucket_empty").interactName("bucketEmptySound")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
@@ -2579,7 +2586,7 @@ public final class Operators {
      * The fluid vaporize sound of the fluidstack
      */
     public static final IOperator OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.STRING).symbolOperator("sound_fluid_vaporize")
+            .output(ValueTypes.STRING).symbolOperator("sound_fluid_vaporize").interactName("fluidVaporizeSound")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
@@ -2592,7 +2599,7 @@ public final class Operators {
      * The bucket fill sound of the fluidstack
      */
     public static final IOperator OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.STRING).symbolOperator("sound_bucket_fill")
+            .output(ValueTypes.STRING).symbolOperator("sound_bucket_fill").interactName("bucketFillSound")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
@@ -2605,7 +2612,7 @@ public final class Operators {
      * The bucket of the fluidstack
      */
     public static final IOperator OBJECT_FLUIDSTACK_BUCKET = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("bucket")
+            .output(ValueTypes.OBJECT_ITEMSTACK).symbolOperatorInteract("bucket")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
@@ -2616,7 +2623,7 @@ public final class Operators {
      * If the fluid types of the two given fluidstacks are equal
      */
     public static final IOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2
-            .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwfluidequal")
+            .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwfluidequal").interactName("isRawEqual")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack0 = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack1 = variables.getValue(1, ValueTypes.OBJECT_FLUIDSTACK);
@@ -2626,7 +2633,8 @@ public final class Operators {
     /**
      * The name of the mod owning this fluid
      */
-    public static final IOperator OBJECT_FLUIDSTACK_MODNAME = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING).symbolOperator("mod")
+    public static final IOperator OBJECT_FLUIDSTACK_MODNAME = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG.output(ValueTypes.STRING)
+            .symbolOperatorInteract("mod")
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
@@ -2639,7 +2647,7 @@ public final class Operators {
      * The tag of the given fluidstack.
      */
     public static final IOperator OBJECT_FLUIDSTACK_NBT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt")
+            .output(ValueTypes.NBT).symbol("NBT()").operatorInteract("nbt")
             .function(input -> {
                 ValueObjectTypeFluidStack.ValueFluidStack fluidStack = input.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 return ValueTypeNbt.ValueNbt.of(fluidStack.getRawValue().getTag());
@@ -2650,7 +2658,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_FLUIDSTACK_WITH_AMOUNT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2
             .inputTypes(ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.INTEGER)
-            .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("with_amount")
+            .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("with_amount").interactName("withAmount")
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 ValueTypeInteger.ValueInteger valueInteger = variables.getValue(1, ValueTypes.INTEGER);
@@ -2668,7 +2676,7 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_APPLY = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
-            .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply")
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("apply")
             .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
                     input -> {
@@ -2688,7 +2696,7 @@ public final class Operators {
             .renderPattern(IConfigRenderPattern.INFIX_2)
             .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
             .inputTypes(ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY)
-            .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply2")
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("apply2")
             .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
                     input -> {
@@ -2706,7 +2714,7 @@ public final class Operators {
             .renderPattern(IConfigRenderPattern.INFIX_3)
             .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
             .inputTypes(ValueTypes.OPERATOR, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY)
-            .output(ValueTypes.CATEGORY_ANY).symbolOperator("apply3")
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("apply3")
             .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY))
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
                     input -> {
@@ -2719,11 +2727,40 @@ public final class Operators {
                     })).build());
 
     /**
+     * Apply for a given operator the given list of values.
+     */
+    public static final IOperator OPERATOR_APPLY_N = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER_LIST)
+            .inputTypes(ValueTypes.OPERATOR, ValueTypes.LIST)
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("apply_n")
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(ValueTypes.LIST))
+            .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR_LIST.build(
+                    input -> {
+                        IOperator innerOperator = input.getLeft();
+                        OperatorBase.SafeVariablesGetter variables = input.getRight();
+                        IValueTypeListProxy<IValueType<IValue>, IValue> list = variables.getValue(0, ValueTypes.LIST).getRawValue();
+                        return ValueHelpers.evaluateOperator(innerOperator, Iterables.toArray(list, IValue.class));
+                    })).build());
+
+    /**
+     * Apply for a given operator with zero arguments.
+     */
+    public static final IOperator OPERATOR_APPLY_0 = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
+            .conditionalOutputTypeDeriver(OperatorBuilders.OPERATOR_CONDITIONAL_OUTPUT_DERIVER)
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("apply0")
+            .typeValidator(OperatorBuilders.createOperatorTypeValidator(new IValueType[0]))
+            .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR.build(
+                    input -> {
+                        IOperator innerOperator = input.getLeft();
+                        return ValueHelpers.evaluateOperator(innerOperator, new IVariable[0]);
+                    })).build());
+
+    /**
      * Apply the given operator on all elements of a list, resulting in a new list of mapped values.
      */
     public static final IOperator OPERATOR_MAP = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.LIST})
-            .output(ValueTypes.LIST).symbolOperator("map")
+            .output(ValueTypes.LIST).symbolOperatorInteract("map")
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR_LIST.build(
                     input -> {
                         final IOperator innerOperator = input.getLeft();
@@ -2738,7 +2775,7 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_FILTER = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.LIST})
-            .output(ValueTypes.LIST).symbolOperator("filter")
+            .output(ValueTypes.LIST).symbolOperatorInteract("filter")
             .function(OperatorBuilders.FUNCTION_OPERATOR_TAKE_OPERATOR_LIST.build(
                     new IOperatorValuePropagator<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue>() {
                         @Override
@@ -2764,7 +2801,7 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_CONJUNCTION = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR})
-            .output(ValueTypes.OPERATOR).symbol(".&&.").operatorName("conjunction")
+            .output(ValueTypes.OPERATOR).symbol(".&&.").operatorInteract("conjunction")
             .function(OperatorBuilders.FUNCTION_TWO_PREDICATES.build(
                 input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Conjunction.asOperator(input.getLeft(), input.getRight()))
             )).build());
@@ -2777,7 +2814,7 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_DISJUNCTION = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR})
-            .output(ValueTypes.OPERATOR).symbol(".||.").operatorName("disjunction")
+            .output(ValueTypes.OPERATOR).symbol(".||.").operatorInteract("disjunction")
             .function(OperatorBuilders.FUNCTION_TWO_PREDICATES.build(
                 input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Disjunction.asOperator(input.getLeft(), input.getRight()))
             )).build());
@@ -2791,7 +2828,7 @@ public final class Operators {
     public static final IOperator OPERATOR_NEGATION = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
             .renderPattern(IConfigRenderPattern.PREFIX_1)
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR})
-            .output(ValueTypes.OPERATOR).symbol("!.").operatorName("negation")
+            .output(ValueTypes.OPERATOR).symbol("!.").operatorInteract("negation")
             .function(OperatorBuilders.FUNCTION_ONE_PREDICATE.build(
                 input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Negation.asOperator(input))
             )).build());
@@ -2804,7 +2841,7 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_PIPE = REGISTRY.register(OperatorBuilders.OPERATOR_2_INFIX_LONG
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR})
-            .output(ValueTypes.OPERATOR).symbol(".").operatorName("pipe")
+            .output(ValueTypes.OPERATOR).symbol(".").operatorInteract("pipe")
             .function(OperatorBuilders.FUNCTION_TWO_OPERATORS.build(
                 input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Pipe.asOperator(input.getLeft(), input.getRight()))
             )).build());
@@ -2818,7 +2855,7 @@ public final class Operators {
     public static final IOperator OPERATOR_PIPE2 = REGISTRY.register(OperatorBuilders.OPERATOR
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.OPERATOR, ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.INFIX_2_LATE)
-            .output(ValueTypes.OPERATOR).symbol(".2").operatorName("pipe2")
+            .output(ValueTypes.OPERATOR).symbol(".2").operatorInteract("pipe2")
             .function(OperatorBuilders.FUNCTION_THREE_OPERATORS.build(
                 input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Pipe2.asOperator(input.getLeft(), input.getMiddle(), input.getRight()))
             )).build());
@@ -2832,7 +2869,7 @@ public final class Operators {
     public static final IOperator OPERATOR_FLIP = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
             .renderPattern(IConfigRenderPattern.PREFIX_1)
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR})
-            .output(ValueTypes.OPERATOR).symbolOperator("flip")
+            .output(ValueTypes.OPERATOR).symbolOperatorInteract("flip")
             .function(OperatorBuilders.FUNCTION_ONE_OPERATOR.build(
                 input -> ValueTypeOperator.ValueOperator.of(CombinedOperator.Flip.asOperator(input))
             )).build());
@@ -2846,7 +2883,7 @@ public final class Operators {
     public static final IOperator OPERATOR_REDUCE = REGISTRY.register(OperatorBuilders.OPERATOR
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
             .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
-            .output(ValueTypes.CATEGORY_ANY).symbolOperator("reduce")
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("reduce")
             .conditionalOutputTypeDeriver((operator, input) -> input[2].getType())
             .function(variables -> {
                 IValue accumulator = variables.getValue(2);
@@ -2865,7 +2902,7 @@ public final class Operators {
     public static final IOperator OPERATOR_REDUCE1 = REGISTRY.register(OperatorBuilders.OPERATOR
             .inputTypes(new IValueType[]{ValueTypes.OPERATOR, ValueTypes.LIST})
             .renderPattern(IConfigRenderPattern.PREFIX_2_LONG)
-            .output(ValueTypes.CATEGORY_ANY).symbolOperator("reduce1")
+            .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("reduce1")
             .conditionalOutputTypeDeriver((operator, input) -> {
                 try {
                     IValueTypeListProxy a = ((ValueTypeList.ValueList) input[1].getValue()).getRawValue();
@@ -2897,7 +2934,7 @@ public final class Operators {
      */
     public static final IOperator OPERATOR_BY_NAME = REGISTRY.register(OperatorBuilders.OPERATOR_1_PREFIX_LONG
             .inputType(ValueTypes.STRING).output(ValueTypes.OPERATOR)
-            .symbol("op_by_name").operatorName("by_name")
+            .symbol("op_by_name").operatorName("by_name").interactName("operatorByName")
             .function(input -> {
                 ValueTypeString.ValueString name = input.getValue(0, ValueTypes.STRING);
                 IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.tryParse(name.getRawValue()));
@@ -2916,7 +2953,7 @@ public final class Operators {
      * The number of entries in an NBT tag
      */
     public static final IOperator NBT_COMPOUND_SIZE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("compound_size").symbol("NBT{}.size")
+            .output(ValueTypes.INTEGER).operatorName("compound_size").symbol("NBT{}.size").interactName("size")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_TO_INT.build(
                 opt -> opt.map(CompoundTag::size).orElse(0)
             )).build());
@@ -2925,7 +2962,7 @@ public final class Operators {
      * The list of keys in an NBT tag
      */
     public static final IOperator NBT_COMPOUND_KEYS = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).operatorName("compound_keys").symbol("NBT{}.keys")
+            .output(ValueTypes.LIST).operatorName("compound_keys").symbol("NBT{}.keys").interactName("keys")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtKeys(value.getRawValue()));
@@ -2935,7 +2972,7 @@ public final class Operators {
      * If an NBT tag has the given key
      */
     public static final IOperator NBT_COMPOUND_HASKEY = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.BOOLEAN).operatorName("compound_haskey").symbol("NBT{}.has_key")
+            .output(ValueTypes.BOOLEAN).operatorName("compound_haskey").symbol("NBT{}.has_key").interactName("hasKey")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_BOOLEAN.build(
                     Optional::isPresent
             )).build());
@@ -2944,7 +2981,7 @@ public final class Operators {
      * The NBT value type of an entry
      */
     public static final IOperator NBT_COMPOUND_VALUE_TYPE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.STRING).operatorName("compound_type").symbol("NBT{}.type")
+            .output(ValueTypes.STRING).operatorName("compound_type").symbol("NBT{}.type").interactName("type")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_STRING.build(tag -> {
                 if (tag.isPresent()) {
                     try {
@@ -2960,14 +2997,14 @@ public final class Operators {
      * The NBT tag value
      */
     public static final IOperator NBT_COMPOUND_VALUE_TAG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.NBT).operatorName("compound_value_tag").symbol("NBT{}.get_tag")
+            .output(ValueTypes.NBT).operatorName("compound_value_tag").symbol("NBT{}.get_tag").interactName("getTag")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_NBT.build(o -> o)).build());
 
     /**
      * The NBT boolean value
      */
     public static final IOperator NBT_COMPOUND_VALUE_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.BOOLEAN).operatorName("compound_value_boolean").symbol("NBT{}.get_boolean")
+            .output(ValueTypes.BOOLEAN).operatorName("compound_value_boolean").symbol("NBT{}.get_boolean").interactName("getBoolean")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_BOOLEAN.build(
                     o -> o.map(tag -> tag instanceof NumericTag && ((NumericTag) tag).getAsByte() != 0).orElse(false)
             )).build());
@@ -2976,7 +3013,7 @@ public final class Operators {
      * The NBT integer value
      */
     public static final IOperator NBT_COMPOUND_VALUE_INTEGER = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.INTEGER).operatorName("compound_value_integer").symbol("NBT{}.get_integer")
+            .output(ValueTypes.INTEGER).operatorName("compound_value_integer").symbol("NBT{}.get_integer").interactName("getInteger")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_INT.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsInt() : 0).orElse(0)
             )).build());
@@ -2985,7 +3022,7 @@ public final class Operators {
      * The NBT long value
      */
     public static final IOperator NBT_COMPOUND_VALUE_LONG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LONG).operatorName("compound_value_long").symbol("NBT{}.get_long")
+            .output(ValueTypes.LONG).operatorName("compound_value_long").symbol("NBT{}.get_long").interactName("getLong")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_LONG.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsLong() : 0).orElse(0L)
             )).build());
@@ -2994,7 +3031,7 @@ public final class Operators {
      * The NBT double value
      */
     public static final IOperator NBT_COMPOUND_VALUE_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.DOUBLE).operatorName("compound_value_double").symbol("NBT{}.get_double")
+            .output(ValueTypes.DOUBLE).operatorName("compound_value_double").symbol("NBT{}.get_double").interactName("getDouble")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_DOUBLE.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsDouble() : 0).orElse(0D)
             )).build());
@@ -3003,7 +3040,7 @@ public final class Operators {
      * The NBT string value
      */
     public static final IOperator NBT_COMPOUND_VALUE_STRING = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.STRING).operatorName("compound_value_string").symbol("NBT{}.get_string")
+            .output(ValueTypes.STRING).operatorName("compound_value_string").symbol("NBT{}.get_string").interactName("getString")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_STRING.build(
                     o -> o.map(tag -> tag instanceof StringTag ? tag.getAsString() : "").orElse("")
             )).build());
@@ -3012,7 +3049,7 @@ public final class Operators {
      * The NBT compound value
      */
     public static final IOperator NBT_COMPOUND_VALUE_COMPOUND = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.NBT).operatorName("compound_value_compound").symbol("NBT{}.get_compound")
+            .output(ValueTypes.NBT).operatorName("compound_value_compound").symbol("NBT{}.get_compound").interactName("getCompound")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_NBT.build(
                     o -> o.map(tag -> tag instanceof CompoundTag ? (CompoundTag) tag : new CompoundTag())
             )).build());
@@ -3021,7 +3058,7 @@ public final class Operators {
      * The NBT tag list value
      */
     public static final IOperator NBT_COMPOUND_VALUE_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("compound_value_list_tag").symbol("NBT{}.get_list_tag")
+            .output(ValueTypes.LIST).operatorName("compound_value_list_tag").symbol("NBT{}.get_list_tag").interactName("getListTag")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeString.ValueString key = variables.getValue(1, ValueTypes.STRING);
@@ -3032,7 +3069,7 @@ public final class Operators {
      * The NBT boolean list value
      */
     public static final IOperator NBT_COMPOUND_VALUE_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("compound_value_list_byte").symbol("NBT{}.get_list_byte")
+            .output(ValueTypes.LIST).operatorName("compound_value_list_byte").symbol("NBT{}.get_list_byte").interactName("getListByte")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeString.ValueString key = variables.getValue(1, ValueTypes.STRING);
@@ -3043,7 +3080,7 @@ public final class Operators {
      * The NBT int list value
      */
     public static final IOperator NBT_COMPOUND_VALUE_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("compound_value_list_int").symbol("NBT{}.get_list_int")
+            .output(ValueTypes.LIST).operatorName("compound_value_list_int").symbol("NBT{}.get_list_int").interactName("getListInt")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeString.ValueString key = variables.getValue(1, ValueTypes.STRING);
@@ -3054,7 +3091,7 @@ public final class Operators {
      * The NBT long list value
      */
     public static final IOperator NBT_COMPOUND_VALUE_LIST_LONG = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.LIST).operatorName("compound_value_list_long").symbol("NBT{}.get_list_long")
+            .output(ValueTypes.LIST).operatorName("compound_value_list_long").symbol("NBT{}.get_list_long").interactName("getListLong")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeString.ValueString key = variables.getValue(1, ValueTypes.STRING);
@@ -3065,7 +3102,7 @@ public final class Operators {
      * Remove an entry from an NBT compound
      */
     public static final IOperator NBT_COMPOUND_WITHOUT = REGISTRY.register(OperatorBuilders.NBT_2
-            .output(ValueTypes.NBT).operatorName("compound_without").symbol("NBT{}.without")
+            .output(ValueTypes.NBT).operatorName("compound_without").symbol("NBT{}.without").interactName("without")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt = variables.getValue(0, ValueTypes.NBT);
                 Optional<Tag> tag = valueNbt.getRawValue();
@@ -3094,7 +3131,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_WITH_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.BOOLEAN)
-            .operatorName("compound_with_boolean").symbol("NBT{}.with_boolean")
+            .operatorName("compound_with_boolean").symbol("NBT{}.with_boolean").interactName("withBoolean")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeBoolean.ValueBoolean value = input.getRight().getValue(0, ValueTypes.BOOLEAN);
                 input.getLeft().ifPresent(tag -> tag.putBoolean(input.getMiddle(), value.getRawValue()));
@@ -3106,7 +3143,7 @@ public final class Operators {
      */
     public static final IOperator NBT_COMPOUND_WITH_SHORT = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.INTEGER)
-            .operatorName("compound_with_short").symbol("NBT{}.with_short")
+            .operatorName("compound_with_short").symbol("NBT{}.with_short").interactName("withShort")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeInteger.ValueInteger value = input.getRight().getValue(0, ValueTypes.INTEGER);
                 input.getLeft().ifPresent(tag -> tag.putShort(input.getMiddle(), (short) value.getRawValue()));
@@ -3118,7 +3155,7 @@ public final class Operators {
      */
     public static final IOperator NBT_COMPOUND_WITH_INTEGER = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.INTEGER)
-            .operatorName("compound_with_integer").symbol("NBT{}.with_integer")
+            .operatorName("compound_with_integer").symbol("NBT{}.with_integer").interactName("withInteger")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeInteger.ValueInteger value = input.getRight().getValue(0, ValueTypes.INTEGER);
                 input.getLeft().ifPresent(tag -> tag.putInt(input.getMiddle(), value.getRawValue()));
@@ -3130,7 +3167,7 @@ public final class Operators {
      */
     public static final IOperator NBT_COMPOUND_WITH_LONG = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LONG)
-            .operatorName("compound_with_long").symbol("NBT{}.with_long")
+            .operatorName("compound_with_long").symbol("NBT{}.with_long").interactName("withLong")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeLong.ValueLong value = input.getRight().getValue(0, ValueTypes.LONG);
                 input.getLeft().ifPresent(tag -> tag.putLong(input.getMiddle(), value.getRawValue()));
@@ -3142,7 +3179,7 @@ public final class Operators {
      */
     public static final IOperator NBT_COMPOUND_WITH_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.DOUBLE)
-            .operatorName("compound_with_double").symbol("NBT{}.with_double")
+            .operatorName("compound_with_double").symbol("NBT{}.with_double").interactName("withDouble")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeDouble.ValueDouble value = input.getRight().getValue(0, ValueTypes.DOUBLE);
                 input.getLeft().ifPresent(tag -> tag.putDouble(input.getMiddle(), value.getRawValue()));
@@ -3154,7 +3191,7 @@ public final class Operators {
      */
     public static final IOperator NBT_COMPOUND_WITH_FLOAT = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.DOUBLE)
-            .operatorName("compound_with_float").symbol("NBT{}.with_float")
+            .operatorName("compound_with_float").symbol("NBT{}.with_float").interactName("withFloat")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeDouble.ValueDouble value = input.getRight().getValue(0, ValueTypes.DOUBLE);
                 input.getLeft().ifPresent(tag -> tag.putFloat(input.getMiddle(), (float) value.getRawValue()));
@@ -3166,7 +3203,7 @@ public final class Operators {
      */
     public static final IOperator NBT_COMPOUND_WITH_STRING = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.STRING)
-            .operatorName("compound_with_string").symbol("NBT{}.with_string")
+            .operatorName("compound_with_string").symbol("NBT{}.with_string").interactName("withString")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeString.ValueString value = input.getRight().getValue(0, ValueTypes.STRING);
                 input.getLeft().ifPresent(tag -> tag.putString(input.getMiddle(), value.getRawValue()));
@@ -3178,7 +3215,7 @@ public final class Operators {
      */
     public static final IOperator NBT_COMPOUND_WITH_COMPOUND = REGISTRY.register(OperatorBuilders.NBT_3
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.NBT)
-            .operatorName("compound_with_tag").symbol("NBT{}.with_tag")
+            .operatorName("compound_with_tag").symbol("NBT{}.with_tag").interactName("withTag")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(input -> {
                 ValueTypeNbt.ValueNbt value = input.getRight().getValue(0, ValueTypes.NBT);
                 input.getLeft()
@@ -3193,7 +3230,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_WITH_LIST_TAG = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("compound_with_list_tag").symbol("NBT{}.with_tag_list")
+            .operatorName("compound_with_list_tag").symbol("NBT{}.with_tag_list").interactName("withTagList")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundTag>>() {
                 @Override
                 public Optional<CompoundTag> getOutput(Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
@@ -3210,7 +3247,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_WITH_LIST_BYTE = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("compound_with_list_byte").symbol("NBT{}.with_byte_list")
+            .operatorName("compound_with_list_byte").symbol("NBT{}.with_byte_list").interactName("withByteList")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundTag>>() {
                 @Override
                 public Optional<CompoundTag> getOutput(Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
@@ -3227,7 +3264,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_WITH_LIST_INT = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("compound_with_list_int").symbol("NBT{}.with_int_list")
+            .operatorName("compound_with_list_int").symbol("NBT{}.with_int_list").interactName("withIntList")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundTag>>() {
                 @Override
                 public Optional<CompoundTag> getOutput(Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
@@ -3244,7 +3281,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_WITH_LIST_LONG = REGISTRY.register(OperatorBuilders.NBT_3
             .renderPattern(IConfigRenderPattern.INFIX_2_VERYLONG)
             .inputTypes(ValueTypes.NBT, ValueTypes.STRING, ValueTypes.LIST)
-            .operatorName("compound_with_list_long").symbol("NBT{}.with_list_long")
+            .operatorName("compound_with_list_long").symbol("NBT{}.with_list_long").interactName("withListLong")
             .function(OperatorBuilders.FUNCTION_NBT_COPY_FOR_VALUE_TO_NBT.build(new IOperatorValuePropagator<Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter>, Optional<CompoundTag>>() {
                 @Override
                 public Optional<CompoundTag> getOutput(Triple<Optional<CompoundTag>, String, OperatorBase.SafeVariablesGetter> input) throws EvaluationException {
@@ -3259,7 +3296,7 @@ public final class Operators {
      * Check if the first NBT compound tag is a subset of the second NBT compound tag.
      */
     public static final IOperator NBT_COMPOUND_SUBSET = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.BOOLEAN).operatorName("compound_subset").symbol("NBT{}.⊆")
+            .output(ValueTypes.BOOLEAN).operatorName("compound_subset").symbol("NBT{}.⊆").interactName("isSubset")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1, ValueTypes.NBT);
@@ -3276,7 +3313,7 @@ public final class Operators {
      * The union of the given NBT compound tags. Nested tags will be joined recusively.
      */
     public static final IOperator NBT_COMPOUND_UNION = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.NBT).operatorName("compound_union").symbol("NBT{}.∪")
+            .output(ValueTypes.NBT).operatorName("compound_union").symbol("NBT{}.∪").interactName("union")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1, ValueTypes.NBT);
@@ -3293,7 +3330,7 @@ public final class Operators {
      * The intersection of the given NBT compound tags. Nested tags will be intersected recusively.
      */
     public static final IOperator NBT_COMPOUND_INTERSECTION = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.NBT).operatorName("compound_intersection").symbol("NBT{}.∩")
+            .output(ValueTypes.NBT).operatorName("compound_intersection").symbol("NBT{}.∩").interactName("intersection")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1, ValueTypes.NBT);
@@ -3310,7 +3347,7 @@ public final class Operators {
      * The difference of the given NBT compound tags. Nested tags will be subtracted recusively.
      */
     public static final IOperator NBT_COMPOUND_MINUS = REGISTRY.register(OperatorBuilders.NBT_2_NBT
-            .output(ValueTypes.NBT).operatorName("compound_minus").symbol("NBT{}.∖")
+            .output(ValueTypes.NBT).operatorName("compound_minus").symbol("NBT{}.∖").interactName("minus")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt valueNbt0 = variables.getValue(0, ValueTypes.NBT);
                 ValueTypeNbt.ValueNbt valueNbt1 = variables.getValue(1, ValueTypes.NBT);
@@ -3327,7 +3364,7 @@ public final class Operators {
      * The boolean value of an NBT value
      */
     public static final IOperator NBT_AS_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN).operatorName("as_boolean").symbol("NBT.as_boolean")
+            .output(ValueTypes.BOOLEAN).operatorName("as_boolean").symbol("NBT.as_boolean").interactName("asBoolean")
             .function(OperatorBuilders.FUNCTION_NBT_TO_BOOLEAN.build(
                     o -> o.map(tag -> tag instanceof ByteTag && ((ByteTag) tag).getAsByte() != 0).orElse(false)
             )).build());
@@ -3336,7 +3373,7 @@ public final class Operators {
      * The byte value of an NBT value
      */
     public static final IOperator NBT_AS_BYTE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("as_byte").symbol("NBT.as_byte")
+            .output(ValueTypes.INTEGER).operatorName("as_byte").symbol("NBT.as_byte").interactName("asByte")
             .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsInt() : 0).orElse(0)
             )).build());
@@ -3345,7 +3382,7 @@ public final class Operators {
      * The short value of an NBT value
      */
     public static final IOperator NBT_AS_SHORT = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("as_short").symbol("NBT.as_short")
+            .output(ValueTypes.INTEGER).operatorName("as_short").symbol("NBT.as_short").interactName("asShort")
             .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsInt() : 0).orElse(0)
             )).build());
@@ -3354,7 +3391,7 @@ public final class Operators {
      * The int value of an NBT value
      */
     public static final IOperator NBT_AS_INT = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).operatorName("as_int").symbol("NBT.as_int")
+            .output(ValueTypes.INTEGER).operatorName("as_int").symbol("NBT.as_int").interactName("asInt")
             .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsInt() : 0).orElse(0)
             )).build());
@@ -3363,7 +3400,7 @@ public final class Operators {
      * The long value of an NBT value
      */
     public static final IOperator NBT_AS_LONG = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.LONG).operatorName("as_long").symbol("NBT.as_long")
+            .output(ValueTypes.LONG).operatorName("as_long").symbol("NBT.as_long").interactName("asLong")
             .function(OperatorBuilders.FUNCTION_NBT_TO_LONG.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsLong() : 0L).orElse(0L)
             )).build());
@@ -3372,7 +3409,7 @@ public final class Operators {
      * The double value of an NBT value
      */
     public static final IOperator NBT_AS_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.DOUBLE).operatorName("as_double").symbol("NBT.as_double")
+            .output(ValueTypes.DOUBLE).operatorName("as_double").symbol("NBT.as_double").interactName("asDouble")
             .function(OperatorBuilders.FUNCTION_NBT_TO_DOUBLE.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsDouble() : 0D).orElse(0D)
             )).build());
@@ -3381,7 +3418,7 @@ public final class Operators {
      * The float value of an NBT value
      */
     public static final IOperator NBT_AS_FLOAT = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.DOUBLE).operatorName("as_float").symbol("NBT.as_float")
+            .output(ValueTypes.DOUBLE).operatorName("as_float").symbol("NBT.as_float").interactName("asFloat")
             .function(OperatorBuilders.FUNCTION_NBT_TO_DOUBLE.build(
                     o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsFloat() : 0D).orElse(0D)
             )).build());
@@ -3390,7 +3427,7 @@ public final class Operators {
      * The string value of an NBT value
      */
     public static final IOperator NBT_AS_STRING = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.STRING).operatorName("as_string").symbol("NBT.as_string")
+            .output(ValueTypes.STRING).operatorName("as_string").symbol("NBT.as_string").interactName("asString")
             .function(OperatorBuilders.FUNCTION_NBT_TO_STRING.build(
                     o -> o.map(tag -> tag instanceof StringTag ? ((StringTag) tag).getAsString() : "").orElse("")
             )).build());
@@ -3399,7 +3436,7 @@ public final class Operators {
      * The tag list value of an NBT value
      */
     public static final IOperator NBT_AS_TAG_LIST = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).operatorName("as_tag_list").symbol("NBT.as_tag_list")
+            .output(ValueTypes.LIST).operatorName("as_tag_list").symbol("NBT.as_tag_list").interactName("asTagList")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtAsListTag(value.getRawValue()));
@@ -3409,7 +3446,7 @@ public final class Operators {
      * The byte list value of an NBT value
      */
     public static final IOperator NBT_AS_BYTE_LIST = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).operatorName("as_byte_list").symbol("NBT.as_byte_list")
+            .output(ValueTypes.LIST).operatorName("as_byte_list").symbol("NBT.as_byte_list").interactName("asByteList")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtAsListByte(value.getRawValue()));
@@ -3419,7 +3456,7 @@ public final class Operators {
      * The int list value of an NBT value
      */
     public static final IOperator NBT_AS_INT_LIST = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).operatorName("as_int_list").symbol("NBT.as_int_list")
+            .output(ValueTypes.LIST).operatorName("as_int_list").symbol("NBT.as_int_list").interactName("asIntList")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtAsListInt(value.getRawValue()));
@@ -3429,7 +3466,7 @@ public final class Operators {
      * The long list value of an NBT value
      */
     public static final IOperator NBT_AS_LONG_LIST = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).operatorName("as_long_list").symbol("NBT.as_long_list")
+            .output(ValueTypes.LIST).operatorName("as_long_list").symbol("NBT.as_long_list").interactName("asLongList")
             .function(variables -> {
                 ValueTypeNbt.ValueNbt value = variables.getValue(0, ValueTypes.NBT);
                 return ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyNbtAsListLong(value.getRawValue()));
@@ -3440,7 +3477,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.BOOLEAN).output(ValueTypes.NBT)
-            .operatorName("from_boolean").symbol("NBT.from_boolean")
+            .operatorName("from_boolean").symbol("NBT.from_boolean").interactName("asNbt")
             .function(variables -> {
                 ValueTypeBoolean.ValueBoolean value = variables.getValue(0, ValueTypes.BOOLEAN);
                 return ValueTypeNbt.ValueNbt.of(ByteTag.valueOf(value.getRawValue()));
@@ -3451,7 +3488,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_SHORT = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.INTEGER).output(ValueTypes.NBT)
-            .operatorName("from_short").symbol("NBT.from_short")
+            .operatorName("from_short").symbol("NBT.from_short").interactName("asNbt", "short", true)
             .function(variables -> {
                 ValueTypeInteger.ValueInteger value = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeNbt.ValueNbt.of(ShortTag.valueOf((short) value.getRawValue()));
@@ -3462,7 +3499,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_BYTE = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.INTEGER).output(ValueTypes.NBT)
-            .operatorName("from_byte").symbol("NBT.from_byte")
+            .operatorName("from_byte").symbol("NBT.from_byte").interactName("asNbt", "byte", true)
             .function(variables -> {
                 ValueTypeInteger.ValueInteger value = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeNbt.ValueNbt.of(ByteTag.valueOf((byte) value.getRawValue()));
@@ -3473,7 +3510,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_INT = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.INTEGER).output(ValueTypes.NBT)
-            .operatorName("from_int").symbol("NBT.from_int")
+            .operatorName("from_int").symbol("NBT.from_int").interactName("asNbt")
             .function(variables -> {
                 ValueTypeInteger.ValueInteger value = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeNbt.ValueNbt.of(IntTag.valueOf(value.getRawValue()));
@@ -3484,7 +3521,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_LONG = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.LONG).output(ValueTypes.NBT)
-            .operatorName("from_long").symbol("NBT.from_long")
+            .operatorName("from_long").symbol("NBT.from_long").interactName("asNbt")
             .function(variables -> {
                 ValueTypeLong.ValueLong value = variables.getValue(0, ValueTypes.LONG);
                 return ValueTypeNbt.ValueNbt.of(LongTag.valueOf(value.getRawValue()));
@@ -3495,7 +3532,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.DOUBLE).output(ValueTypes.NBT)
-            .operatorName("from_double").symbol("NBT.from_double")
+            .operatorName("from_double").symbol("NBT.from_double").interactName("asNbt")
             .function(variables -> {
                 ValueTypeDouble.ValueDouble value = variables.getValue(0, ValueTypes.DOUBLE);
                 return ValueTypeNbt.ValueNbt.of(DoubleTag.valueOf(value.getRawValue()));
@@ -3506,7 +3543,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_FLOAT = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.DOUBLE).output(ValueTypes.NBT)
-            .operatorName("from_float").symbol("NBT.from_float")
+            .operatorName("from_float").symbol("NBT.from_float").interactName("asNbt", "float", true)
             .function(variables -> {
                 ValueTypeDouble.ValueDouble value = variables.getValue(0, ValueTypes.DOUBLE);
                 return ValueTypeNbt.ValueNbt.of(FloatTag.valueOf((float) value.getRawValue()));
@@ -3517,7 +3554,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_STRING = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.STRING).output(ValueTypes.NBT)
-            .operatorName("from_string").symbol("NBT.from_string")
+            .operatorName("from_string").symbol("NBT.from_string").interactName("asNbt")
             .function(variables -> {
                 ValueTypeString.ValueString value = variables.getValue(0, ValueTypes.STRING);
                 return ValueTypeNbt.ValueNbt.of(StringTag.valueOf(value.getRawValue()));
@@ -3528,7 +3565,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_TAG_LIST = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.LIST).output(ValueTypes.NBT)
-            .operatorName("from_tag_list").symbol("NBT.from_tag_list")
+            .operatorName("from_tag_list").symbol("NBT.from_tag_list").interactName("asNbt", "tagList", true)
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -3542,7 +3579,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_BYTE_LIST = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.LIST).output(ValueTypes.NBT)
-            .operatorName("from_byte_list").symbol("NBT.from_byte_list")
+            .operatorName("from_byte_list").symbol("NBT.from_byte_list").interactName("asNbt", "byteList", true)
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -3556,7 +3593,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_INT_LIST = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.LIST).output(ValueTypes.NBT)
-            .operatorName("from_int_list").symbol("NBT.from_int_list")
+            .operatorName("from_int_list").symbol("NBT.from_int_list").interactName("asNbt", "intList", true)
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -3570,7 +3607,7 @@ public final class Operators {
      */
     public static final IOperator NBT_FROM_LONG_LIST = REGISTRY.register(OperatorBuilders.NBT_1_PREFIX_LONG
             .inputType(ValueTypes.LIST).output(ValueTypes.NBT)
-            .operatorName("from_long_list").symbol("NBT.from_long_list")
+            .operatorName("from_long_list").symbol("NBT.from_long_list").interactName("asNbt", "longList", true)
             .function(new OperatorBase.IFunction() {
                 @Override
                 public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
@@ -3584,7 +3621,7 @@ public final class Operators {
      */
     public static final IOperator NBT_PATH_MATCH_FIRST = REGISTRY.register(OperatorBuilders.NBT_2
             .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.NBT)
-            .operatorName("path_match_first").symbol("NBT.path_match_first")
+            .operatorName("path_match_first").symbol("NBT.path_match_first").interactName("nbtPathMatchFirst")
             .function(variables -> {
                 ValueTypeString.ValueString string = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeNbt.ValueNbt nbt = variables.getValue(1, ValueTypes.NBT);
@@ -3607,7 +3644,7 @@ public final class Operators {
      */
     public static final IOperator NBT_PATH_MATCH_ALL = REGISTRY.register(OperatorBuilders.NBT_2
             .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.LIST)
-            .operatorName("path_match_all").symbol("NBT.path_match_all")
+            .operatorName("path_match_all").symbol("NBT.path_match_all").interactName("nbtPathMatchAll")
             .function(variables -> {
                 ValueTypeString.ValueString string = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeNbt.ValueNbt nbt = variables.getValue(1, ValueTypes.NBT);
@@ -3633,7 +3670,7 @@ public final class Operators {
      */
     public static final IOperator NBT_PATH_TEST = REGISTRY.register(OperatorBuilders.NBT_2
             .inputTypes(ValueTypes.STRING, ValueTypes.NBT).output(ValueTypes.BOOLEAN)
-            .operatorName("path_test").symbol("NBT.path_test")
+            .operatorName("path_test").symbol("NBT.path_test").interactName("nbtPathTest")
             .function(variables -> {
                 ValueTypeString.ValueString string = variables.getValue(0, ValueTypes.STRING);
                 ValueTypeNbt.ValueNbt nbt = variables.getValue(1, ValueTypes.NBT);
@@ -3659,7 +3696,7 @@ public final class Operators {
      * The list of items.
      */
     public static final IOperator INGREDIENTS_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_PREFIX_LONG
-            .output(ValueTypes.LIST).operatorName("items").symbol("Ingr.items")
+            .output(ValueTypes.LIST).operatorInteract("items").symbol("Ingr.items")
             .function(OperatorBuilders.createFunctionIngredientsList(() -> IngredientComponent.ITEMSTACK))
             .build());
 
@@ -3667,7 +3704,7 @@ public final class Operators {
      * The list of fluids
      */
     public static final IOperator INGREDIENTS_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_PREFIX_LONG
-            .output(ValueTypes.LIST).operatorName("fluids").symbol("Ingr.fluids")
+            .output(ValueTypes.LIST).operatorInteract("fluids").symbol("Ingr.fluids")
             .function(OperatorBuilders.createFunctionIngredientsList(() -> IngredientComponent.FLUIDSTACK))
             .build());
 
@@ -3675,7 +3712,7 @@ public final class Operators {
      * The list of fluids
      */
     public static final IOperator INGREDIENTS_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_1_PREFIX_LONG
-            .output(ValueTypes.LIST).operatorName("energies").symbol("Ingr.energies")
+            .output(ValueTypes.LIST).operatorInteract("energies").symbol("Ingr.energies")
             .function(OperatorBuilders.createFunctionIngredientsList(() -> IngredientComponent.ENERGY))
             .build());
 
@@ -3683,7 +3720,7 @@ public final class Operators {
      * Set an ingredient item
      */
     public static final IOperator INGREDIENTS_WITH_ITEM = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_ITEMSTACK
-            .operatorName("with_item").symbol("Ingr.with_item")
+            .operatorName("with_item").symbol("Ingr.with_item").interactName("withItem")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1, ValueTypes.INTEGER);
@@ -3700,7 +3737,7 @@ public final class Operators {
      * Set an ingredient fluid
      */
     public static final IOperator INGREDIENTS_WITH_FLUID = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_FLUIDSTACK
-            .operatorName("with_fluid").symbol("Ingr.with_fluid")
+            .operatorName("with_fluid").symbol("Ingr.with_fluid").interactName("withFluid")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1, ValueTypes.INTEGER);
@@ -3717,7 +3754,7 @@ public final class Operators {
      * Set an ingredient energy
      */
     public static final IOperator INGREDIENTS_WITH_ENERGY = REGISTRY.register(OperatorBuilders.INGREDIENTS_3_LONG
-            .operatorName("with_energy").symbol("Ingr.with_energy")
+            .operatorName("with_energy").symbol("Ingr.with_energy").interactName("withEnergy")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients value = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
                 ValueTypeInteger.ValueInteger index = variables.getValue(1, ValueTypes.INTEGER);
@@ -3734,7 +3771,7 @@ public final class Operators {
      * Set the list of items
      */
     public static final IOperator INGREDIENTS_WITH_ITEMS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
-            .operatorName("with_items").symbol("Ingr.with_items")
+            .operatorName("with_items").symbol("Ingr.with_items").interactName("withItems")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
                 ValueTypeList.ValueList<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> list = variables.getValue(1, ValueTypes.LIST);
@@ -3750,7 +3787,7 @@ public final class Operators {
      * Set the list of fluids
      */
     public static final IOperator INGREDIENTS_WITH_FLUIDS = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
-            .operatorName("with_fluids").symbol("Ingr.with_fluids")
+            .operatorName("with_fluids").symbol("Ingr.with_fluids").interactName("withFluids")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
                 ValueTypeList.ValueList<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> list = variables.getValue(1, ValueTypes.LIST);
@@ -3767,7 +3804,7 @@ public final class Operators {
      */
     public static final IOperator INGREDIENTS_WITH_ENERGIES = REGISTRY.register(OperatorBuilders.INGREDIENTS_2_LIST
             .renderPattern(IConfigRenderPattern.INFIX_VERYLONG)
-            .operatorName("with_energies").symbol("Ingr.with_energies")
+            .operatorName("with_energies").symbol("Ingr.with_energies").interactName("withEnergies")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
                 ValueTypeList.ValueList<ValueTypeInteger, ValueTypeInteger.ValueInteger> list = variables.getValue(1, ValueTypes.LIST);
@@ -3788,7 +3825,7 @@ public final class Operators {
      */
     public static final IOperator RECIPE_INPUT = REGISTRY.register(OperatorBuilders.RECIPE_1_SUFFIX_LONG
             .output(ValueTypes.OBJECT_INGREDIENTS)
-            .operatorName("input").symbol("recipe_in")
+            .operatorInteract("input").symbol("recipe_in")
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0, ValueTypes.OBJECT_RECIPE);
                 if (value.getRawValue().isPresent()) {
@@ -3802,7 +3839,7 @@ public final class Operators {
      */
     public static final IOperator RECIPE_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_1_SUFFIX_LONG
             .output(ValueTypes.OBJECT_INGREDIENTS)
-            .operatorName("output").symbol("recipe_out")
+            .operatorInteract("output").symbol("recipe_out")
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe value = variables.getValue(0, ValueTypes.OBJECT_RECIPE);
                 if (value.getRawValue().isPresent()) {
@@ -3816,7 +3853,7 @@ public final class Operators {
      */
     public static final IOperator RECIPE_WITH_INPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_INFIX
             .output(ValueTypes.OBJECT_RECIPE)
-            .operatorName("with_input").symbol("Recipe.with_in")
+            .operatorName("with_input").symbol("Recipe.with_in").interactName("withInput")
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe valueRecipe = variables.getValue(0, ValueTypes.OBJECT_RECIPE);
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(1, ValueTypes.OBJECT_INGREDIENTS);
@@ -3843,7 +3880,7 @@ public final class Operators {
      */
     public static final IOperator RECIPE_WITH_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_INFIX
             .output(ValueTypes.OBJECT_RECIPE)
-            .operatorName("with_output").symbol("Recipe.with_out")
+            .operatorName("with_output").symbol("Recipe.with_out").interactName("withOutput")
             .function(variables -> {
                 ValueObjectTypeRecipe.ValueRecipe valueRecipe = variables.getValue(0, ValueTypes.OBJECT_RECIPE);
                 ValueObjectTypeIngredients.ValueIngredients valueIngredients = variables.getValue(1, ValueTypes.OBJECT_INGREDIENTS);
@@ -3866,7 +3903,7 @@ public final class Operators {
      */
     public static final IOperator RECIPE_WITH_INPUT_OUTPUT = REGISTRY.register(OperatorBuilders.RECIPE_2_PREFIX
             .output(ValueTypes.OBJECT_RECIPE)
-            .operatorName("with_input_output").symbol("Recipe.with_io")
+            .operatorName("with_input_output").symbol("Recipe.with_io").interactName("withInputOutput")
             .function(variables -> {
                 ValueObjectTypeIngredients.ValueIngredients valueIn = variables.getValue(0, ValueTypes.OBJECT_INGREDIENTS);
                 ValueObjectTypeIngredients.ValueIngredients valueOut = variables.getValue(1, ValueTypes.OBJECT_INGREDIENTS);
@@ -3979,16 +4016,16 @@ public final class Operators {
     /**
      * Choice operator with one boolean input, two any inputs and one output any.
      */
-    public static final GeneralOperator GENERAL_CHOICE = REGISTRY.register(new GeneralChoiceOperator("?", "choice"));
+    public static final GeneralOperator GENERAL_CHOICE = REGISTRY.register(new GeneralChoiceOperator("?", "choice", "choice"));
 
     /**
      * Identity operator with one any input and one any output
      */
-    public static final GeneralOperator GENERAL_IDENTITY = REGISTRY.register(new GeneralIdentityOperator("id", "identity"));
+    public static final GeneralOperator GENERAL_IDENTITY = REGISTRY.register(new GeneralIdentityOperator("id", "identity", "identity"));
 
     /**
      * Constant operator with two any inputs and one any output
      */
-    public static final GeneralOperator GENERAL_CONSTANT = REGISTRY.register(new GeneralConstantOperator("K", "constant"));
+    public static final GeneralOperator GENERAL_CONSTANT = REGISTRY.register(new GeneralConstantOperator("K", "constant", "constant"));
 
 }

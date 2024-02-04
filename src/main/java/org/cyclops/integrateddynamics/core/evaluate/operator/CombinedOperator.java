@@ -33,13 +33,13 @@ public class CombinedOperator extends OperatorBase {
 
     private final String unlocalizedType;
 
-    public CombinedOperator(String symbol, String operatorName, OperatorsFunction function, IValueType outputType) {
-        this(symbol, operatorName, function, new IValueType[]{ValueTypes.CATEGORY_ANY}, outputType, null);
+    public CombinedOperator(String symbol, String operatorName, String interactName, OperatorsFunction function, IValueType outputType) {
+        this(symbol, operatorName, interactName, function, new IValueType[]{ValueTypes.CATEGORY_ANY}, outputType, null);
     }
 
-    public CombinedOperator(String symbol, String operatorName, OperatorsFunction function, IValueType[] inputTypes,
+    public CombinedOperator(String symbol, String operatorName, String interactName, OperatorsFunction function, IValueType[] inputTypes,
                             IValueType outputType, @Nullable IConfigRenderPattern configRenderPattern) {
-        super(symbol, operatorName,
+        super(symbol, operatorName, interactName, null, false,
                 inputTypes, outputType, function, configRenderPattern);
         this.unlocalizedType = "virtual";
     }
@@ -92,7 +92,7 @@ public class CombinedOperator extends OperatorBase {
 
         public static CombinedOperator asOperator(IOperator... operators) {
             CombinedOperator.Conjunction conjunction = new CombinedOperator.Conjunction(operators);
-            return new CombinedOperator(":&&:", "p_conjunction", conjunction, ValueTypes.BOOLEAN);
+            return new CombinedOperator(":&&:", "p_conjunction", "p_conjunction", conjunction, ValueTypes.BOOLEAN);
         }
 
         public static class Serializer extends ListOperatorSerializer<Conjunction> {
@@ -130,7 +130,7 @@ public class CombinedOperator extends OperatorBase {
 
         public static CombinedOperator asOperator(IOperator... operators) {
             CombinedOperator.Disjunction disjunction = new CombinedOperator.Disjunction(operators);
-            return new CombinedOperator(":||:", "p_disjunction", disjunction, ValueTypes.BOOLEAN);
+            return new CombinedOperator(":||:", "p_disjunction", "p_disjunction", disjunction, ValueTypes.BOOLEAN);
         }
 
         public static class Serializer extends ListOperatorSerializer<Disjunction> {
@@ -164,7 +164,7 @@ public class CombinedOperator extends OperatorBase {
 
         public static CombinedOperator asOperator(IOperator operator) {
             CombinedOperator.Negation negation = new CombinedOperator.Negation(operator);
-            return new CombinedOperator("!:", "p_negation", negation, ValueTypes.BOOLEAN);
+            return new CombinedOperator("!:", "p_negation", "p_negation", negation, ValueTypes.BOOLEAN);
         }
 
         public static class Serializer extends ListOperatorSerializer<Negation> {
@@ -245,12 +245,12 @@ public class CombinedOperator extends OperatorBase {
         }
 
         public static CombinedOperator asOperator(final IOperator... operators) {
-            return asOperator(new CombinedOperator.Pipe(operators), ":.:", "piped", operators);
+            return asOperator(new CombinedOperator.Pipe(operators), ":.:", "piped", "piped", operators);
         }
 
-        public static CombinedOperator asOperator(OperatorsFunction function, String symbol, String operatorName, final IOperator... operators) {
+        public static CombinedOperator asOperator(OperatorsFunction function, String symbol, String operatorName, String interactName, final IOperator... operators) {
             Pair<IValueType[], IValueType> ioTypes = getPipedInputOutputTypes(operators);
-            return new CombinedOperator(symbol, operatorName, function, ioTypes.getRight()) {
+            return new CombinedOperator(symbol, operatorName, interactName, function, ioTypes.getRight()) {
                 @Override
                 public IValueType getConditionalOutputType(IVariable[] allVariables) {
                     try {
@@ -293,7 +293,7 @@ public class CombinedOperator extends OperatorBase {
         }
 
         public static CombinedOperator asOperator(IOperator... operators) {
-            return Pipe.asOperator(new CombinedOperator.Pipe2(operators), ":.2:", "piped2", operators);
+            return Pipe.asOperator(new CombinedOperator.Pipe2(operators), ":.2:", "piped2", "piped2", operators);
         }
 
         public static class Serializer extends ListOperatorSerializer<Pipe2> {
@@ -343,7 +343,7 @@ public class CombinedOperator extends OperatorBase {
             }
             CombinedOperator combinedOperator;
             try {
-                combinedOperator = new CombinedOperator(":flip:", "flipped", flip, flippedInputTypes,
+                combinedOperator = new CombinedOperator(":flip:", "flipped", "flipped", flip, flippedInputTypes,
                         operator.getOutputType(), null);
             } catch (IllegalArgumentException e) {
                 throw new EvaluationException(Component.translatable(e.getMessage()));

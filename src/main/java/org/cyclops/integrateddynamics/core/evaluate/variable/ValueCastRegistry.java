@@ -32,6 +32,11 @@ public final class ValueCastRegistry implements IValueCastRegistry {
     }
 
     @Override
+    public int size() {
+        return this.mappings.size();
+    }
+
+    @Override
     public <T1 extends IValueType<V1>, T2 extends IValueType<V2>, V1 extends IValue, V2 extends IValue> void register(T1 from, T2 to, IMapping<T1, T2, V1, V2> mapping) {
         mappings.put(Pair.<IValueType, IValueType>of(from, to), mapping);
         Operators.REGISTRY.register(new CastOperator<>(from, to, mapping));

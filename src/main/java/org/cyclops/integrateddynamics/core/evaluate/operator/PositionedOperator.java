@@ -28,9 +28,9 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
     private DimPos pos;
     private Direction side;
 
-    protected PositionedOperator(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
+    protected PositionedOperator(String symbol, String operatorName, String interactName, IValueType[] inputTypes, IValueType outputType,
                                  IFunction function, IConfigRenderPattern renderPattern, DimPos pos, Direction side) {
-        super(symbol, operatorName, inputTypes, outputType, function, renderPattern);
+        super(symbol, operatorName, interactName, null, false, inputTypes, outputType, function, renderPattern);
         this.pos = pos;
         this.side = side;
     }

@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.IterativeFunction;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,10 @@ public class OperatorBuilder<O> {
     private final IValueType outputType;
     private final String symbol;
     private final String operatorName;
+    private final String interactName;
+    @Nullable
+    private final String globalInteractNamePrefix;
+    private final boolean alsoPrefixLocalScope;
     private final IValueType[] inputTypes;
     private final OperatorBase.IFunction function;
     private final IConfigRenderPattern renderPattern;
@@ -40,12 +45,16 @@ public class OperatorBuilder<O> {
     private final ITypeValidator typeValidator;
     private final List<IOperatorValuePropagator> valuePropagators;
 
-    protected OperatorBuilder(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
+    protected OperatorBuilder(String symbol, String operatorName, String interactName, String globalInteractNamePrefix, boolean alsoPrefixLocalScope,
+                              IValueType[] inputTypes, IValueType outputType,
                               OperatorBase.IFunction function, IConfigRenderPattern renderPattern, String modId,
                               List<String> kinds, IConditionalOutputTypeDeriver conditionalOutputTypeDeriver,
                               ITypeValidator typeValidator, List<IOperatorValuePropagator> valuePropagators) {
         this.symbol = symbol;
         this.operatorName = operatorName;
+        this.interactName = interactName;
+        this.globalInteractNamePrefix = globalInteractNamePrefix;
+        this.alsoPrefixLocalScope = alsoPrefixLocalScope;
         this.inputTypes = inputTypes;
         this.outputType = outputType;
         this.function = function;
@@ -63,7 +72,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> output(IValueType outputType) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -73,7 +82,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> symbol(String symbol) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -83,7 +92,29 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> operatorName(String operatorName) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
+    }
+
+    /**
+     * Set the unique interact name.
+     * @param interactName The unique interact name.
+     * @return The builder instance.
+     */
+    public OperatorBuilder<O> interactName(String interactName) {
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
+                conditionalOutputTypeDeriver, typeValidator, valuePropagators);
+    }
+
+    /**
+     * Set the unique interact name.
+     * @param interactName The unique interact name.
+     * @param globalInteractNamePrefix The prefix to use for the global interact name.
+     * @param alsoPrefixLocalScope If the prefix should also be used for the local scope.
+     * @return The builder instance.
+     */
+    public OperatorBuilder<O> interactName(String interactName, String globalInteractNamePrefix, boolean alsoPrefixLocalScope) {
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -94,7 +125,28 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> symbolOperator(String symbolOperator) {
-        return new OperatorBuilder<>(symbolOperator, symbolOperator, inputTypes, outputType, function, renderPattern,
+        return new OperatorBuilder<>(symbolOperator, symbolOperator, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern,
+                modId, kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
+    }
+
+    /**
+     * Set the symbol, operator, and unique interact name to the given value.
+     * The symbol is used for display while the operator name is used for localization.
+     * @param symbolOperator The symbol, operator, and unique name.
+     * @return The builder instance.
+     */
+    public OperatorBuilder<O> symbolOperatorInteract(String symbolOperator) {
+        return new OperatorBuilder<>(symbolOperator, symbolOperator, symbolOperator, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern,
+                modId, kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
+    }
+
+    /**
+     * Set the operator, and unique interact name to the given value.
+     * @param operatorInteract The operator and interact name.
+     * @return The builder instance.
+     */
+    public OperatorBuilder<O> operatorInteract(String operatorInteract) {
+        return new OperatorBuilder<>(symbol, operatorInteract, operatorInteract, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern,
                 modId, kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -104,7 +156,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> inputTypes(IValueType... inputTypes) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -115,7 +167,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> inputTypes(int length, IValueType defaultType) {
-        return new OperatorBuilder<>(symbol, operatorName, OperatorBase.constructInputVariables(length, defaultType),
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, OperatorBase.constructInputVariables(length, defaultType),
                 outputType, function, renderPattern, modId, kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -137,7 +189,7 @@ public class OperatorBuilder<O> {
         if(this.valuePropagators != null) {
             throw new IllegalStateException("Can not add a function when value propagators are present.");
         }
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -147,7 +199,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> renderPattern(IConfigRenderPattern renderPattern) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -157,7 +209,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> modId(String modId) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -167,7 +219,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> appendKind(String kind) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId,
                 Helpers.joinList(kinds, kind), conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -178,7 +230,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> conditionalOutputTypeDeriver(IConditionalOutputTypeDeriver conditionalOutputTypeDeriver) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId,
                 kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -188,7 +240,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public OperatorBuilder<O> typeValidator(ITypeValidator typeValidator) {
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId,
                 kinds, conditionalOutputTypeDeriver, typeValidator, valuePropagators);
     }
 
@@ -202,7 +254,7 @@ public class OperatorBuilder<O> {
         if(this.function != null) {
             throw new IllegalStateException("Can not add a function when value propagators are present.");
         }
-        return new OperatorBuilder<>(symbol, operatorName, inputTypes, outputType, function, renderPattern, modId, kinds,
+        return new OperatorBuilder<>(symbol, operatorName, interactName, globalInteractNamePrefix, alsoPrefixLocalScope, inputTypes, outputType, function, renderPattern, modId, kinds,
                 conditionalOutputTypeDeriver, typeValidator, Helpers.joinList(valuePropagators, valuePropagator));
     }
 
@@ -220,7 +272,7 @@ public class OperatorBuilder<O> {
      * @return The builder instance.
      */
     public static OperatorBuilder<OperatorBase.SafeVariablesGetter> forType(IValueType<?> outputType) {
-        return new OperatorBuilder<>(null, null, null, outputType, null, null, Reference.MOD_ID,
+        return new OperatorBuilder<>(null, null, null, null, false, null, outputType, null, null, Reference.MOD_ID,
                 Collections.<String>emptyList(), null, null, null);
     }
 
@@ -234,6 +286,9 @@ public class OperatorBuilder<O> {
         protected Built(OperatorBuilder operatorBuilder) {
             super(Objects.requireNonNull(operatorBuilder.symbol),
                     Objects.requireNonNull(operatorBuilder.operatorName),
+                    Objects.requireNonNull(operatorBuilder.interactName),
+                    operatorBuilder.globalInteractNamePrefix,
+                    operatorBuilder.alsoPrefixLocalScope,
                     Objects.requireNonNull(operatorBuilder.inputTypes),
                     Objects.requireNonNull(operatorBuilder.outputType),
                     Objects.requireNonNull(deriveFunction(operatorBuilder)), Objects.requireNonNull(operatorBuilder.renderPattern));

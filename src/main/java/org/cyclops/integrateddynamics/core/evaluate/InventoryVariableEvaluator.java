@@ -81,7 +81,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         } else if (this.variableStored != null) {
             preValidate();
             try {
-                variableStored.validate(partNetwork, this, containingValueType);
+                variableStored.validate(network, partNetwork, this, containingValueType);
             } catch (IllegalArgumentException e) {
                 addError(Component.translatable(e.getMessage()));
             }
@@ -93,15 +93,27 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
 
     @Nullable
     public IVariable<V> getVariable(INetwork network) {
-        return getVariable(NetworkHelpers.getPartNetworkChecked(network));
+        return getVariable(network, NetworkHelpers.getPartNetworkChecked(network));
 
     }
 
     @Nullable
-    public IVariable<V> getVariable(IPartNetwork network) {
+    @Deprecated // Use method below // TODO: remove in next major version
+    public IVariable<V> getVariable(IPartNetwork partNetwork) {
         if(getVariableFacade() == null || !getErrors().isEmpty()) return null;
         try {
-            return getVariableFacade().getVariable(network);
+            return getVariableFacade().getVariable(partNetwork);
+        } catch (IllegalArgumentException e) {
+            addError(Component.translatable(e.getMessage()));
+            return null;
+        }
+    }
+
+    @Nullable
+    public IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
+        if(getVariableFacade() == null || !getErrors().isEmpty()) return null;
+        try {
+            return getVariableFacade().getVariable(network, partNetwork);
         } catch (IllegalArgumentException e) {
             addError(Component.translatable(e.getMessage()));
             return null;

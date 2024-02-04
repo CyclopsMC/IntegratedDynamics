@@ -11,6 +11,8 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
  */
 public interface IValueCastRegistry extends IRegistry {
 
+    public int size();
+
     /**
      * Register a mapping between to value types.
      * @param from The source type.

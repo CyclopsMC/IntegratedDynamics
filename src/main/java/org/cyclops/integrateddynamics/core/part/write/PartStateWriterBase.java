@@ -8,6 +8,7 @@ import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -54,10 +55,10 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    protected void validate(IPartNetwork network) {
+    protected void validate(INetwork network, IPartNetwork partNetwork) {
         // Note that this is only called server-side, so these errors are sent via NBT to the client(s).
         if(getActiveAspect() != null) {
-            this.currentVariableFacade.validate(network,
+            this.currentVariableFacade.validate(network, partNetwork,
                     new PartStateWriterBase.Validator(this, getActiveAspect()), getActiveAspect().getValueType());
         }
     }

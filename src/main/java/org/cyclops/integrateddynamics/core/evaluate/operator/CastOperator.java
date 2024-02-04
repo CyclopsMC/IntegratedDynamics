@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     private final IValueCastRegistry.IMapping<T1, T2, V1, V2> mapping;
 
     public CastOperator(final T1 from, final T2 to, final IValueCastRegistry.IMapping<T1, T2, V1, V2> mapping) {
-        super("()", from.getTranslationKey() + "$" + to.getTranslationKey(), constructInputVariables(1, from), to, new IFunction() {
+        super("()", from.getTranslationKey() + "$" + to.getTranslationKey(), from.getTypeName() + "To" + Helpers.capitalizeString(to.getTypeName()), null, false, constructInputVariables(1, from), to, new IFunction() {
             @Override
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 IValue value = variables.getValue(0);
