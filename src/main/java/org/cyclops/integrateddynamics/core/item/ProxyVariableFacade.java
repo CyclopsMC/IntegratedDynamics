@@ -100,16 +100,16 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     }
 
     @Override
-    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
-        Optional<IVariable> targetVariable = getTargetVariable(network);
+    public void validate(IPartNetwork partNetwork, IValidator validator, IValueType containingValueType) {
+        Optional<IVariable> targetVariable = getTargetVariable(partNetwork);
         if (!isValid()) {
             validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_INVALIDITEM));
-        } else if (network.getProxy(proxyId) == null) {
+        } else if (partNetwork.getProxy(proxyId) == null) {
             validator.addError(getProxyNotInNetworkError());
         } else if (!targetVariable.isPresent()) {
             validator.addError(getProxyInvalidError());
         } else if (!ValueHelpers.correspondsTo(containingValueType, targetVariable.get().getType())) {
-            validator.addError(getProxyInvalidTypeError(network, containingValueType,
+            validator.addError(getProxyInvalidTypeError(partNetwork, containingValueType,
                     targetVariable.get().getType()));
         }
 
@@ -118,7 +118,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
             throw new VariableRecursionException("Detected infinite recursion for variable references.");
         }
         this.isValidatingVariable = true;
-        getVariable(network);
+        getVariable(partNetwork);
         this.isValidatingVariable = false;
     }
 

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +28,10 @@ public abstract class OperatorBase implements IOperator {
 
     private final String symbol;
     private final String operatorName;
+    private final String interactName;
+    @Nullable
+    private final String globalInteractNamePrefix;
+    private final boolean alsoPrefixLocalScope;
     private final IValueType[] inputTypes;
     private final IValueType outputType;
     private final IFunction function;
@@ -36,10 +41,13 @@ public abstract class OperatorBase implements IOperator {
     private String translationKey = null;
     private int recursiveInvocations;
 
-    protected OperatorBase(String symbol, String operatorName, IValueType[] inputTypes,
+    protected OperatorBase(String symbol, String operatorName, String interactName, String globalInteractNamePrefix, boolean alsoPrefixLocalScope, IValueType[] inputTypes,
                            IValueType outputType, IFunction function, @Nullable IConfigRenderPattern renderPattern) {
         this.symbol = symbol;
         this.operatorName = operatorName;
+        this.interactName = interactName;
+        this.globalInteractNamePrefix = globalInteractNamePrefix;
+        this.alsoPrefixLocalScope = alsoPrefixLocalScope;
         this.inputTypes = inputTypes;
         this.outputType = outputType;
         this.function = function;
@@ -66,6 +74,22 @@ public abstract class OperatorBase implements IOperator {
     @Override
     public ResourceLocation getUniqueName() {
         return new ResourceLocation(getModId(), this.getUnlocalizedType().replaceAll("\\.", "_") + "_" + getOperatorName());
+    }
+
+    @Override
+    public String getInteractName() {
+        return this.interactName;
+    }
+
+    @Override
+    @Nullable
+    public String getGlobalInteractNamePrefix() {
+        return globalInteractNamePrefix;
+    }
+
+    @Override
+    public boolean shouldAlsoPrefixLocalScope() {
+        return this.alsoPrefixLocalScope;
     }
 
     @Override
@@ -116,6 +140,44 @@ public abstract class OperatorBase implements IOperator {
         }
         lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
+            // Global name
+            MutableComponent globalNameComponent = Component.translatable(L10NValues.GUI_OPERATOR_GLOBALNAME,
+                            ChatFormatting.WHITE + this.getGlobalInteractName() + "(")
+                    .withStyle(ChatFormatting.YELLOW);
+            for(int i = 0; i < inputTypes.length; i++) {
+                if (i > 0) {
+                    globalNameComponent = globalNameComponent.append(Component
+                            .literal(", ")
+                            .withStyle(ChatFormatting.WHITE));
+                }
+                globalNameComponent = globalNameComponent.append(Component
+                        .translatable(inputTypes[i].getTranslationKey())
+                        .withStyle(inputTypes[i].getDisplayColorFormat()));
+            }
+            lines.add(globalNameComponent.append(Component
+                    .literal(")")
+                    .withStyle(ChatFormatting.WHITE)));
+
+            // Local name
+            if (this.getInputTypes().length > 0) {
+                String scopedTypeName = L10NHelpers.localize(this.getInputTypes()[0].getTranslationKey());
+                MutableComponent localNameComponent = Component.translatable(L10NValues.GUI_OPERATOR_LOCALNAME,
+                                this.getInputTypes()[0].getDisplayColorFormat() + scopedTypeName + "." + ChatFormatting.WHITE + this.getScopedInteractName() + "(")
+                        .withStyle(ChatFormatting.YELLOW);
+                for(int i = 1; i < inputTypes.length; i++) {
+                    if (i > 1) {
+                        localNameComponent = localNameComponent.append(Component
+                                .literal(", ")
+                                .withStyle(ChatFormatting.WHITE));
+                    }
+                    localNameComponent = localNameComponent.append(Component
+                            .translatable(inputTypes[i].getTranslationKey())
+                            .withStyle(inputTypes[i].getDisplayColorFormat()));
+                }
+                lines.add(localNameComponent.append(Component
+                        .literal(")")
+                        .withStyle(ChatFormatting.WHITE)));
+            }
             L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
         }
     }

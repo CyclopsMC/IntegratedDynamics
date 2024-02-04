@@ -20,9 +20,9 @@ public class CompositionalOperator extends OperatorBase {
 
     private final String unlocalizedType;
 
-    protected CompositionalOperator(String symbol, String operatorName, IValueType[] inputTypes, IValueType outputType,
+    protected CompositionalOperator(String symbol, String operatorName, String interactName, IValueType[] inputTypes, IValueType outputType,
                                     IFunction function, IConfigRenderPattern renderPattern, String unlocalizedType) {
-        super(symbol, operatorName, inputTypes, outputType, function, renderPattern);
+        super(symbol, operatorName, interactName, null, false, inputTypes, outputType, function, renderPattern);
         this.unlocalizedType = unlocalizedType;
     }
 
@@ -148,12 +148,13 @@ public class CompositionalOperator extends OperatorBase {
          * Make a new operator based on the applied elements.
          * @param symbol The symbol for the operator.
          * @param operatorName The operator name.
+         * @param interactName The unique interact name.
          * @param renderPattern The config render pattern.
          * @param unlocalizedType The unlocalized type name.
          * @return The built operator.
          */
-        public IOperator build(String symbol, String operatorName, IConfigRenderPattern renderPattern, String unlocalizedType) {
-            return new CompositionalOperator(symbol, operatorName, getInputTypes(), this.base.getOutputType(), new IFunction() {
+        public IOperator build(String symbol, String operatorName, String interactName, IConfigRenderPattern renderPattern, String unlocalizedType) {
+            return new CompositionalOperator(symbol, operatorName, interactName, getInputTypes(), this.base.getOutputType(), new IFunction() {
                 @Override
                 public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                     return AppliedOperatorBuilder.this.evaluate(variables.getVariables());

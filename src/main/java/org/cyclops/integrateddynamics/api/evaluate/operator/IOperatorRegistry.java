@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Registry for {@link IOperator}
@@ -77,5 +78,15 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
      * @throws EvaluationException If an error occurs while deserializing.
      */
     public IOperator deserialize(Tag value) throws EvaluationException;
+
+    /**
+     * @return Mapping of globally interaction names of operators to their instance.
+     */
+    public Map<String, IOperator> getGlobalInteractOperators();
+
+    /**
+     * @return Mapping of value types to locally interaction names of operators to their instance.
+     */
+    public Map<IValueType<?>, Map<String, IOperator>> getScopedInteractOperators();
 
 }

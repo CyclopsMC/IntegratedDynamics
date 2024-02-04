@@ -14,8 +14,8 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
  */
 public class GeneralConstantOperator extends GeneralOperator {
 
-    public GeneralConstantOperator(String symbol, String operatorName) {
-        super(symbol, operatorName, new IValueType[]{ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}, ValueTypes.CATEGORY_ANY,
+    public GeneralConstantOperator(String symbol, String operatorName, String interactName) {
+        super(symbol, operatorName, interactName, new IValueType[]{ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_ANY}, ValueTypes.CATEGORY_ANY,
                 variables -> variables.getValue(0), IConfigRenderPattern.PREFIX_2);
     }
 

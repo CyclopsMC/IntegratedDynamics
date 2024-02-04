@@ -16,8 +16,8 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
  */
 public class GeneralIdentityOperator extends GeneralOperator {
 
-    public GeneralIdentityOperator(String symbol, String operatorName) {
-        super(symbol, operatorName, new IValueType[]{ValueTypes.CATEGORY_ANY}, ValueTypes.CATEGORY_ANY, new IFunction() {
+    public GeneralIdentityOperator(String symbol, String operatorName, String interactName) {
+        super(symbol, operatorName, interactName, new IValueType[]{ValueTypes.CATEGORY_ANY}, ValueTypes.CATEGORY_ANY, new IFunction() {
             @Override
             public IValue evaluate(SafeVariablesGetter variables) throws EvaluationException {
                 return variables.getValue(0);

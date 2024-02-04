@@ -6,6 +6,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   public ParseOperator(final T2 to, IFunction operator) {
     super("parse_" + to.getTypeName(),
             "parse_" + to.getTranslationKey(),
+            "parseAs" + Helpers.capitalizeString(to.getTypeName()),
+            null,
+            false,
             constructInputVariables(1, ValueTypes.STRING),
             to,
             operator, IConfigRenderPattern.PREFIX_1_LONG);

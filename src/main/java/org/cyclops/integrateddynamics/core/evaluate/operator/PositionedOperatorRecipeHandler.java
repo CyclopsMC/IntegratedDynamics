@@ -26,14 +26,14 @@ public class PositionedOperatorRecipeHandler<T extends IValueType<V>, V extends 
     private final String unlocalizedType;
 
     public PositionedOperatorRecipeHandler(String name, Function function, IValueType output, DimPos pos, Direction side) {
-        super(name, name, new IValueType[]{ValueTypes.OBJECT_INGREDIENTS},
+        super(name, name, name, new IValueType[]{ValueTypes.OBJECT_INGREDIENTS},
                 output, function, IConfigRenderPattern.PREFIX_1, pos, side);
         this.unlocalizedType = "virtual";
         ((Function) this.getFunction()).setOperator(this);
     }
 
     public PositionedOperatorRecipeHandler(String name, Function function, DimPos pos, Direction side) {
-        super(name, name, new IValueType[]{ValueTypes.OBJECT_INGREDIENTS},
+        super(name, name, name, new IValueType[]{ValueTypes.OBJECT_INGREDIENTS},
                 ValueTypes.OBJECT_INGREDIENTS, function, IConfigRenderPattern.PREFIX_1, pos, side);
         this.unlocalizedType = "virtual";
         ((Function) this.getFunction()).setOperator(this);

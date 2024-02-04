@@ -22,6 +22,10 @@ public class ValueCastMappings {
     }
 
     public static void load() {
+        if (REGISTRY.size() > 0) {
+            return;
+        }
+
         REGISTRY.register(ValueTypes.INTEGER, ValueTypes.DOUBLE, new IValueCastRegistry.IMapping<ValueTypeInteger, ValueTypeDouble, ValueTypeInteger.ValueInteger, ValueTypeDouble.ValueDouble>() {
             @Override
             public ValueTypeDouble.ValueDouble cast(ValueTypeInteger.ValueInteger value) {
