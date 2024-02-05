@@ -29,6 +29,7 @@ public class BlockCableConfig extends BlockConfig {
                 "cable",
                 eConfig -> new BlockCable(Block.Properties.of()
                         .strength(BlockCable.BLOCK_HARDNESS)
+                        .forceSolidOn()
                         .sound(SoundType.METAL)
                         .isRedstoneConductor((blockState, world, pos) -> false)),
                 (eConfig, block) -> new ItemBlockCable(block, new Item.Properties())
