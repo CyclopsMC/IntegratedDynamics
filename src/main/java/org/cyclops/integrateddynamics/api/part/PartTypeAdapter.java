@@ -160,7 +160,8 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public void afterNetworkReAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
-
+        // This resets any errored offset variables and forces them to reload.
+        state.markOffsetVariablesChanged();
     }
 
     @Override
