@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Fixes:
+* Fix part offsets sometimes being delayed by one aspect update, Closes #1320
+* Fix errored offset variables not resetting after network reset, Closes #1321
+
