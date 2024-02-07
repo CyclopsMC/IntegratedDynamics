@@ -84,7 +84,6 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
 
     @Override
     public void update(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
-        super.update(network, partNetwork, target, state);
         for(IAspect aspect : getUpdateAspects(AspectUpdateType.NETWORK_TICK)) {
             aspect.update(network, partNetwork, this, target, state);
         }
@@ -95,6 +94,11 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
                 aspect.update(network, partNetwork, this, target, state);
             }
         }
+
+        // We call super as last because super will invoke the offset handler, which can cause the PartTarget to change.
+        // This PartTarget change can conflict with aspects, and cause weird delay problems, such as #1320,
+        // So that's why we delay it so it only applies for the next tick.
+        super.update(network, partNetwork, target, state);
     }
 
     @Override
