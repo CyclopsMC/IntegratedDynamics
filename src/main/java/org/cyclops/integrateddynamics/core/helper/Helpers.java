@@ -167,6 +167,20 @@ public final class Helpers {
                 .append(new TranslatableComponent(L10NValues.GENERAL_ENERGY_UNIT));
     }
 
+    // This is copied from Forge's TPSCommand
+    public static double calculateTps(long[] times) {
+        double worldTickTime = mean(times) * 1.0E-6D;
+        double worldTPS = Math.min(1000.0 / worldTickTime, 20);
+        return worldTPS;
+    }
+
+    public static long mean(long[] values) {
+        long sum = 0L;
+        for (long v : values)
+            sum += v;
+        return sum / values.length;
+    }
+
     public static void addInterfaceRetriever(IInterfaceRetriever interfaceRetriever) {
         INTERFACE_RETRIEVERS.add(interfaceRetriever);
     }
