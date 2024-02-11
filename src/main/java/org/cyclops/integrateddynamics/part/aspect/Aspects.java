@@ -742,7 +742,7 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "raincountdown").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> (int) DoubleMath.mean(ServerLifecycleHooks.getCurrentServer().getTickTime(world.dimension()))
+                        world -> (int) (Helpers.mean(ServerLifecycleHooks.getCurrentServer().getTickTime(world.dimension())) * 1.0E-6D)
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
@@ -755,7 +755,7 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TPS =
                     AspectReadBuilders.World.BUILDER_DOUBLE.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            world -> Math.min(20, Stats.meanOf(ServerLifecycleHooks.getCurrentServer().getTickTime(world.dimension())) / 1000)
+                            world -> Helpers.calculateTps(ServerLifecycleHooks.getCurrentServer().getTickTime(world.dimension()))
                     ).handle(AspectReadBuilders.PROP_GET_DOUBLE, "tps").buildRead();
 
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
