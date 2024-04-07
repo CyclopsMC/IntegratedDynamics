@@ -154,6 +154,11 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     }
 
     @Override
+    public boolean useShapeForLightOcclusion(BlockState p_60576_) {
+        return true;
+    }
+
+    @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
         return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING, new BlockEntityMultipartTicking.Ticker<>());
