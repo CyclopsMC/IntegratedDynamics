@@ -309,6 +309,16 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         } catch (NumberFormatException e) {
             return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, outputEnergy);
         }
+        // Validate input item tag strings if they are defined
+        for (ItemMatchProperties inputStack : inputStacks) {
+            if (inputStack.getItemTag() != null) {
+                try {
+                    new ResourceLocation(inputStack.getItemTag());
+                } catch (ResourceLocationException e) {
+                    return new TranslatableComponent(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputStack.getItemTag());
+                }
+            }
+        }
         return null;
     }
 
