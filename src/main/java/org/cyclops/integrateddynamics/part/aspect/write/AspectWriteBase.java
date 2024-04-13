@@ -59,6 +59,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
             } catch (EvaluationException e) {
                 writerState.addError(this, e.getErrorMessage());
                 writerState.setDeactivated(true);
+                e.addResolutionListeners(() -> writerState.onVariableContentsUpdated(partTypeWriter, target));
             }
         } else if(!writerState.isDeactivated()) {
             onDeactivate(partTypeWriter, target, writerState);
