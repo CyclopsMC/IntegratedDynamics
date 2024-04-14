@@ -41,8 +41,10 @@ org.cyclops.integrateddynamics.capability.valueinterface
 org.cyclops.integrateddynamics.capability.variablecontainer
 org.cyclops.integrateddynamics.capability.variablefacade
 org.cyclops.integrateddynamics.client.gui.container
+org.cyclops.integrateddynamics.client.gui.image
 org.cyclops.integrateddynamics.client.model
 org.cyclops.integrateddynamics.client.render.blockentity
+org.cyclops.integrateddynamics.client.render.level
 org.cyclops.integrateddynamics.client.render.model
 org.cyclops.integrateddynamics.client.render.part
 org.cyclops.integrateddynamics.client.render.valuetype
@@ -95,6 +97,7 @@ org.cyclops.integrateddynamics.item
 org.cyclops.integrateddynamics.loot.conditions
 org.cyclops.integrateddynamics.loot.functions
 org.cyclops.integrateddynamics.metadata
+org.cyclops.integrateddynamics.mixin
 org.cyclops.integrateddynamics.network
 org.cyclops.integrateddynamics.network.packet
 org.cyclops.integrateddynamics.part
