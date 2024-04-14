@@ -81,7 +81,8 @@ public class ItemFacadeRecipe extends CustomRecipe {
             if(!element.isEmpty()) {
                 if(element.getItem() == output.getItem()) {
                     facades++;
-                } else if(block.isEmpty() && element.getItem() instanceof BlockItem) {
+                } else if(block.isEmpty() && element.getItem() instanceof BlockItem
+                        && !((BlockItem) element.getItem()).getBlock().useShapeForLightOcclusion(((BlockItem) element.getItem()).getBlock().defaultBlockState())) {
                     block = element;
                 } else {
                     return ItemStack.EMPTY;

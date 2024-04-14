@@ -71,10 +71,12 @@ public class LazyExpression<V extends IValue> extends VariableAdapter<V> impleme
             return (V) value;
         } catch (ClassCastException e) {
             errored = true;
-            throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_WRONGTYPEOUTPUT,
+            EvaluationException e2 = new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_WRONGTYPEOUTPUT,
                     op,
                     Component.translatable(value.getType().getTranslationKey()),
                     Component.translatable(op.getOutputType().getTranslationKey())));
+            e2.addResolutionListeners(this::invalidate);
+            throw e2;
         }
     }
 
