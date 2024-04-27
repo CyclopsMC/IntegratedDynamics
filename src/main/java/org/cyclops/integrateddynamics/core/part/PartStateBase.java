@@ -28,6 +28,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -349,6 +350,11 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
+    public void initializeOffsets() {
+        this.offsetHandler.initializeVariableEvaluators(this.offsetHandler.getOffsetVariablesInventory(this));
+    }
+
+    @Override
     public void updateOffsetVariables(P partType, INetwork network, IPartNetwork partNetwork, PartTarget target) {
         this.offsetHandler.updateOffsetVariables(partType, this, network, partNetwork, target);
     }
@@ -357,6 +363,11 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public MutableComponent getOffsetVariableError(int slot) {
         return this.offsetHandler.getOffsetVariableError(slot);
+    }
+
+    @Override
+    public boolean requiresOffsetUpdates() {
+        return this.offsetHandler.offsetVariableEvaluators.stream().anyMatch(InventoryVariableEvaluator::hasVariable);
     }
 
     @Override

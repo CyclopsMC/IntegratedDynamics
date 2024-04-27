@@ -185,6 +185,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public PartTarget getTarget(PartPos pos, S state);
 
     /**
+     * Called when an offset variable was inserted or removed from a slot.
+     * @param target The target block.
+     * @param state The state.
+     */
+    public void onOffsetVariablesChanged(PartTarget target, S state);
+
+    /**
      * @param state The state
      * @return If this element should be updated. This method is only called once during network initialization.
      */

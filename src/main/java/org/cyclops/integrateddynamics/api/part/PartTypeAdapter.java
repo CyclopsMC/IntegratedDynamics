@@ -139,6 +139,11 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
+    public void onOffsetVariablesChanged(PartTarget target, S state) {
+        state.markOffsetVariablesChanged();
+    }
+
+    @Override
     public boolean isUpdate(S state) {
         return hasOffsetVariables(state);
     }
@@ -225,7 +230,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public void onNetworkAddition(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
-
+        state.initializeOffsets();
     }
 
     @Override

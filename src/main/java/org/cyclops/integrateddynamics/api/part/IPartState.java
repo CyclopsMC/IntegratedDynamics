@@ -262,6 +262,11 @@ public interface IPartState<P extends IPartType> {
     public void clearInventoriesNamed();
 
     /**
+     * Run the initialization logic for offset handling.
+     */
+    public void initializeOffsets();
+
+    /**
      * Tick any internal offset variables.
      * @param partType The part type.
      * @param network The network.
@@ -281,6 +286,11 @@ public interface IPartState<P extends IPartType> {
      */
     @Nullable
     public MutableComponent getOffsetVariableError(int slot);
+
+    /**
+     * @return If the part contains variable-driven offsets that require updating.
+     */
+    public boolean requiresOffsetUpdates();
 
     /**
      * @return The max offset allowed in this part.
