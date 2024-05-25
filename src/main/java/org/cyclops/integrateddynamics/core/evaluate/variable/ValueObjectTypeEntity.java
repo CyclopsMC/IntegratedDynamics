@@ -1,28 +1,21 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import lombok.ToString;
-import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.DistExecutor;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -101,30 +94,12 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     }
 
     @Override
-    public ValuePredicate<ValueEntity> deserializeValuePredicate(JsonObject element, @Nullable IValue value) {
-        JsonElement jsonElement = element.get("entity");
-        String entityTypeName = jsonElement != null && !jsonElement.isJsonNull() ? jsonElement.getAsString() : null;
-        EntityType<? extends Entity> entityType = null;
-        if (entityTypeName != null) {
-            try {
-                entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityTypeName));
-            } catch (ResourceLocationException e) {
-                throw new JsonSyntaxException("Invalid entity type name '" + entityTypeName + "'");
-            }
-            if (entityType == null) {
-                throw new JsonSyntaxException("Could not find the entity type '" + entityTypeName + "'");
-            }
-        }
-        return new ValueEntityPredicate(this, value, entityType);
-    }
-
-    @Override
     public String getUniqueName(ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if (uuid.isPresent()) {
             UUID id = uuid.get();
             String entityName = value.getRawValue()
-                    .map(entity -> ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()).toString())
+                    .map(entity -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString())
                     .orElse("unknown");
             return id.toString() + " (" + entityName + ")";
         }
@@ -210,18 +185,24 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
     public static class ValueEntityPredicate extends ValuePredicate<ValueEntity> {
 
-        private final EntityType<? extends Entity> entityType;
+        private final Optional<String> entityTypeName;
+        private final Optional<EntityType<? extends Entity>> entityType;
 
-        public ValueEntityPredicate(@Nullable IValueType valueType, @Nullable IValue value, @Nullable EntityType<? extends Entity> entityType) {
-            super(valueType, value);
+        public ValueEntityPredicate(Optional<String> entityTypeName, Optional<EntityType<? extends Entity>> entityType) {
+            super(Optional.of(ValueTypes.OBJECT_ENTITY), Optional.empty(), Optional.empty());
+            this.entityTypeName = entityTypeName;
             this.entityType = entityType;
+        }
+
+        public Optional<String> getEntityTypeName() {
+            return entityTypeName;
         }
 
         @Override
         protected boolean testTyped(ValueEntity value) {
             return super.testTyped(value)
-                    && (entityType == null
-                        || (value.getRawValue().isPresent() && value.getRawValue().get().getType() == entityType));
+                    && (entityType.isEmpty()
+                        || (value.getRawValue().isPresent() && value.getRawValue().get().getType() == entityType.get()));
         }
     }
 

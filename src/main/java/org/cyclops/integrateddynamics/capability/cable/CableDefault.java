@@ -77,7 +77,7 @@ public abstract class CableDefault implements ICable {
 
     @Override
     public ItemStack getItemStack() {
-        return new ItemStack(RegistryEntries.BLOCK_CABLE);
+        return new ItemStack(RegistryEntries.BLOCK_CABLE.get());
     }
 
 }

@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 
 /**
@@ -9,6 +11,8 @@ import net.minecraft.world.level.block.Block;
  */
 public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
 
+    public static final MapCodec<BlockCoalGenerator> CODEC = simpleCodec(BlockCoalGenerator::new);
+
     public BlockCreativeEnergyBattery(Block.Properties properties) {
         super(properties);
     }
@@ -17,4 +21,8 @@ public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
         return true;
     }
 
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
 }

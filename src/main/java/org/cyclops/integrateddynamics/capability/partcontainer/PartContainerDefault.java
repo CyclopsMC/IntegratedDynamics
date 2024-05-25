@@ -9,8 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
@@ -23,6 +21,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartCapability;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -31,6 +30,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Default implementation of an {@link IPartContainer}.
@@ -184,42 +184,26 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
-        INetwork network = getNetwork();
-        IPartNetwork partNetwork = getPartNetwork().orElse(null);
-        if (partNetwork != null) {
-            DimPos pos = getPosition();
-            if (facing == null) {
-                for (Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
-                    IPartState partState = entry.getValue().getState();
-                    PartTarget target = PartTarget.fromCenter(pos, entry.getKey());
-                    LazyOptional<T> cap = partState.getCapability(capability, network, partNetwork, target);
-                    if (partState != null && cap.isPresent()) {
-                        return cap;
-                    }
-                }
-            } else {
-                if (hasPart(facing)) {
-                    IPartState partState = getPartState(facing);
-                    PartTarget partTarget = PartTarget.fromCenter(pos, facing);
-                    LazyOptional<T> cap = partState.getCapability(capability, network, partNetwork, partTarget);
-                    if (partState != null && cap.isPresent()) {
-                        return cap;
-                    }
-                }
-            }
+    public <T> Optional<T> getCapability(PartCapability<T> partCapability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        IPartState partState = getPartState(target.getCenter().getSide());
+        if (partState != null) {
+            partState.getCapability(
+                    getPart(target.getCenter().getSide()),
+                    partCapability,
+                    network,
+                    partNetwork,
+                    target
+            );
         }
-        return LazyOptional.empty();
+        return Optional.empty();
     }
 
-    @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
         return tag;
     }
 
-    @Override
     public void deserializeNBT(CompoundTag tag) {
         synchronized (this.partData) {
             PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getLevel());
@@ -237,7 +221,7 @@ public abstract class PartContainerDefault implements IPartContainer {
     protected abstract BlockPos getPos();
     protected abstract INetwork getNetwork();
 
-    protected LazyOptional<IPartNetwork> getPartNetwork() {
+    protected Optional<IPartNetwork> getPartNetwork() {
         return NetworkHelpers.getPartNetwork(getNetwork());
     }
 

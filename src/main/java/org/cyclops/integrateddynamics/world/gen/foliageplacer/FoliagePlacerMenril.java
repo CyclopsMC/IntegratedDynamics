@@ -23,7 +23,7 @@ public class FoliagePlacerMenril extends FoliagePlacer {
     }
 
     protected FoliagePlacerType<?> type() {
-        return RegistryEntries.FOLIAGE_PLACER_MENRIL;
+        return RegistryEntries.FOLIAGE_PLACER_MENRIL.get();
     }
 
     @Override

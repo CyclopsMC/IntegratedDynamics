@@ -7,15 +7,16 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
@@ -27,7 +28,6 @@ import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.SimpleInventoryState;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockSqueezer;
 import org.cyclops.integrateddynamics.core.recipe.handler.RecipeHandlerSqueezer;
@@ -49,10 +49,10 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
     @Getter
     private int itemHeight = 1;
 
-    private SingleCache<ItemStack, Optional<RecipeSqueezer>> recipeCache;
+    private SingleCache<ItemStack, Optional<RecipeHolder<RecipeSqueezer>>> recipeCache;
 
     public BlockEntitySqueezer(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_SQUEEZER, blockPos, blockState);
+        super(RegistryEntries.BLOCK_ENTITY_SQUEEZER.get(), blockPos, blockState);
 
         // Create inventory and tank
         this.inventory = new SimpleInventory(1, 1) {
@@ -70,9 +70,6 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
             }
         };
         this.tank = new SingleUseTank(FluidHelpers.BUCKET_VOLUME);
-        addCapabilityInternal(ForgeCapabilities.ITEM_HANDLER, LazyOptional.of(this.getInventory()::getItemHandler));
-        addCapabilityInternal(Capabilities.INVENTORY_STATE, LazyOptional.of(() -> new SimpleInventoryState(getInventory())));
-        addCapabilityInternal(ForgeCapabilities.FLUID_HANDLER, LazyOptional.of(this::getTank));
 
         // Add dirty mark listeners to inventory and tank
         this.inventory.addDirtyMarkListener(this::sendUpdate);
@@ -80,9 +77,9 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
 
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(
-                new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeSqueezer>>() {
+                new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeHolder<RecipeSqueezer>>>() {
                     @Override
-                    public Optional<RecipeSqueezer> getNewValue(ItemStack key) {
+                    public Optional<RecipeHolder<RecipeSqueezer>> getNewValue(ItemStack key) {
                         Container recipeInput = new SimpleContainer(key);
                         return CraftingHelpers.findServerRecipe(getRegistry(), recipeInput, getLevel());
                     }
@@ -92,9 +89,29 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                         return ItemStack.matches(cacheKey, newKey);
                     }
                 });
+    }
 
-        // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(this::getLevel, RegistryEntries.RECIPETYPE_SQUEEZER)));
+    public static <E> void registerSqueezerCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntitySqueezer> blockEntityType) {
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> blockEntity.getInventory().getItemHandler()
+        );
+        event.registerBlockEntity(
+                org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new SimpleInventoryState(blockEntity.getInventory())
+        );
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> blockEntity.getTank()
+        );
+        event.registerBlockEntity(
+                org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new RecipeHandlerSqueezer<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_SQUEEZER.get())
+        );
     }
 
     public SimpleInventory getInventory() {
@@ -120,10 +137,10 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
     }
 
     protected RecipeType<RecipeSqueezer> getRegistry() {
-        return RegistryEntries.RECIPETYPE_SQUEEZER;
+        return RegistryEntries.RECIPETYPE_SQUEEZER.get();
     }
 
-    public Optional<RecipeSqueezer> getCurrentRecipe() {
+    public Optional<RecipeHolder<RecipeSqueezer>> getCurrentRecipe() {
         return recipeCache.get(getInventory().getItem(0).copy());
     }
 
@@ -144,7 +161,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                         .map(axisDirection -> Direction.get(axisDirection, axis))
                         .forEach(side -> {
                             if (!blockEntity.getTank().isEmpty()) {
-                                BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), ForgeCapabilities.FLUID_HANDLER)
+                                BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK)
                                         .ifPresent(handler -> {
                                             FluidStack fluidStack = new FluidStack(blockEntity.getTank().getFluid(),
                                                     Math.min(100, blockEntity.getTank().getFluidAmount()));
@@ -157,16 +174,16 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                         });
             } else {
                 if (blockEntity.itemHeight == 7) {
-                    Optional<RecipeSqueezer> recipeOptional = blockEntity.getCurrentRecipe();
+                    Optional<RecipeHolder<RecipeSqueezer>> recipeOptional = blockEntity.getCurrentRecipe();
                     if (recipeOptional.isPresent()) {
-                        RecipeSqueezer recipe = recipeOptional.get();
+                        RecipeSqueezer recipe = recipeOptional.get().value();
                         blockEntity.getInventory().setItem(0, ItemStack.EMPTY);
                         for (RecipeSqueezer.IngredientChance itemStackChance : recipe.getOutputItems()) {
                             if (itemStackChance.getChance() == 1.0F || itemStackChance.getChance() >= level.random.nextFloat()) {
                                 ItemStack resultStack = itemStackChance.getIngredientFirst().copy();
                                 for (Direction side : Direction.values()) {
                                     if (!resultStack.isEmpty() && side != Direction.UP) {
-                                        IItemHandler itemHandler = BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), ForgeCapabilities.ITEM_HANDLER).orElse(null);
+                                        IItemHandler itemHandler = BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
                                         if (itemHandler != null) {
                                             resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
                                         }
@@ -177,8 +194,8 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                                 }
                             }
                         }
-                        if (!recipe.getOutputFluid().isEmpty()) {
-                            blockEntity.getTank().fill(recipe.getOutputFluid(), IFluidHandler.FluidAction.EXECUTE);
+                        if (recipe.getOutputFluid().isPresent()) {
+                            blockEntity.getTank().fill(recipe.getOutputFluid().get(), IFluidHandler.FluidAction.EXECUTE);
                         }
                     }
                 }

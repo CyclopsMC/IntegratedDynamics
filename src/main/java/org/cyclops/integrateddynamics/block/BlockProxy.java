@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.Tag;
@@ -7,6 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -28,6 +30,8 @@ import javax.annotation.Nullable;
  */
 public class BlockProxy extends BlockWithEntityGuiCabled {
 
+    public static final MapCodec<BlockProxy> CODEC = simpleCodec(BlockProxy::new);
+
     public static final String NBT_ID = "proxyId";
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -39,9 +43,14 @@ public class BlockProxy extends BlockWithEntityGuiCabled {
     }
 
     @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_PROXY, new BlockEntityProxy.Ticker<>());
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_PROXY.get(), new BlockEntityProxy.Ticker<>());
     }
 
     @Override

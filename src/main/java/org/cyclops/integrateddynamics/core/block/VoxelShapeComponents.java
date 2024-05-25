@@ -24,9 +24,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeMod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -217,7 +217,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         if(entity == null) {
             return null;
         }
-        AttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(ForgeMod.BLOCK_REACH.get()) : null;
+        AttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(NeoForgeMod.BLOCK_REACH.value()) : null;
         double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
         double eyeHeight = entity.getCommandSenderWorld().isClientSide() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()

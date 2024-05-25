@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;

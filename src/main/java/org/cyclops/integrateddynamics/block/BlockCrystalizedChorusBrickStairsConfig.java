@@ -18,7 +18,7 @@ public class BlockCrystalizedChorusBrickStairsConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_chorus_brick_stairs",
-                eConfig -> new StairBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_CHORUS_BRICK.defaultBlockState(), Block.Properties.of()
+                eConfig -> new StairBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_CHORUS_BRICK.get().defaultBlockState(), Block.Properties.of()
                         .sound(SoundType.SNOW)
                         .strength(1.5F)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

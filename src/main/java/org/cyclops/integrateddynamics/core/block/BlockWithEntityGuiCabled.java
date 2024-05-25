@@ -7,7 +7,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -122,7 +121,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos blockPos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos blockPos, Player player) {
         if (isPickBlockPersistData()) {
             return super.getCloneItemStack(state, target, world, blockPos, player);
         } else {

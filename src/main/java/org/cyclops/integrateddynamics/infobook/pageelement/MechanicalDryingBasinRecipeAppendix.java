@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalDryingBasin;
@@ -10,7 +11,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalDryingBas
  * @author rubensworks
  */
 public class MechanicalDryingBasinRecipeAppendix extends DryingBasinRecipeAppendix {
-    public MechanicalDryingBasinRecipeAppendix(IInfoBook infoBook, RecipeMechanicalDryingBasin recipe) {
+    public MechanicalDryingBasinRecipeAppendix(IInfoBook infoBook, RecipeHolder<RecipeMechanicalDryingBasin> recipe) {
         super(infoBook, recipe);
     }
 
@@ -20,7 +21,7 @@ public class MechanicalDryingBasinRecipeAppendix extends DryingBasinRecipeAppend
     }
 
     protected ItemStack getCrafter() {
-        return new ItemStack(RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN);
+        return new ItemStack(RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN.get());
     }
 
 }

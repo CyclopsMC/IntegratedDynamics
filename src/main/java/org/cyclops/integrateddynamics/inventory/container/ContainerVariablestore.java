@@ -20,7 +20,7 @@ public class ContainerVariablestore extends InventoryContainer {
     }
 
     public ContainerVariablestore(int id, Inventory playerInventory, Container inventory) {
-        super(RegistryEntries.CONTAINER_VARIABLESTORE, id, playerInventory, inventory);
+        super(RegistryEntries.CONTAINER_VARIABLESTORE.get(), id, playerInventory, inventory);
         addInventory(inventory, 0, offsetX + 8, offsetY + 18, BlockEntityVariablestore.ROWS, BlockEntityVariablestore.COLS);
         addPlayerInventory(playerInventory, offsetX + 8, offsetY + 14 + BlockEntityVariablestore.ROWS * 18 + 17);
     }

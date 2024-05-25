@@ -16,8 +16,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -107,7 +107,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     targetSide, target, false);
             if(world.getBlockState(target).getBlock().canBeReplaced(world.getBlockState(target),
                     new BlockPlaceContext(world, player, hand, itemStack, targetRayTrace))) {
-                ItemBlockCable itemBlockCable = (ItemBlockCable) Item.byBlock(RegistryEntries.BLOCK_CABLE);
+                ItemBlockCable itemBlockCable = (ItemBlockCable) Item.byBlock(RegistryEntries.BLOCK_CABLE.get());
                 itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
                 if (itemBlockCable.useOn(new UseOnContext(player, hand, targetRayTrace)).consumesAction()) {
                     IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide).orElse(null);

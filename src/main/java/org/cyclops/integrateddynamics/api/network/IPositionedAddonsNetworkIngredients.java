@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.api.network;
 import com.google.common.collect.Iterators;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.Capability;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageSlotted;
@@ -87,7 +87,7 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
         }
         Optional<BlockEntity> tile = BlockEntityHelpers.get(world, dimPos.getBlockPos(), BlockEntity.class);
         return tile
-                .map(tileEntity -> getComponent().getStorage(tileEntity, pos.getSide()))
+                .map(tileEntity -> getComponent().getBlockStorage(pos.getPos().getLevel(true), pos.getPos().getBlockPos(), tileEntity.getBlockState(), tileEntity, pos.getSide()))
                 .orElse(null);
     }
 
@@ -124,8 +124,8 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
      * @return An external storage, or null if no wrapping is possible for the given capability.
      */
     @Nullable
-    public default <S> S getChannelExternal(Capability<S> capability, int channel) {
-        IIngredientComponentStorageWrapperHandler<T, M, S> wrapperHandler = getComponent()
+    public default <S, C> S getChannelExternal(BlockCapability<S, C> capability, int channel) {
+        IIngredientComponentStorageWrapperHandler<T, M, S, C> wrapperHandler = getComponent()
                 .getStorageWrapperHandler(capability);
         return wrapperHandler != null ? wrapperHandler.wrapStorage(getChannel(channel)) : null;
     }

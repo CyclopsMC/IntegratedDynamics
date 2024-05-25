@@ -3,9 +3,9 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
 import javax.annotation.Nullable;
@@ -13,11 +13,11 @@ import javax.annotation.Nullable;
 /**
  * A list proxy for the fluid handler fluids of an entity.
  */
-public class ValueTypeListProxyEntityFluids extends ValueTypeListProxyEntityCapability<IFluidHandler, ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
+public class ValueTypeListProxyEntityFluids extends ValueTypeListProxyEntityCapability<IFluidHandler, Direction, ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
 
     public ValueTypeListProxyEntityFluids(Level world, Entity entity, @Nullable Direction side) {
         super(ValueTypeListProxyFactories.ENTITY_CAPABILITY_FLUIDS.getName(), ValueTypes.OBJECT_FLUIDSTACK,
-                world, entity, ForgeCapabilities.FLUID_HANDLER, side);
+                world, entity, Capabilities.FluidHandler.ENTITY, side);
     }
 
     public ValueTypeListProxyEntityFluids() {

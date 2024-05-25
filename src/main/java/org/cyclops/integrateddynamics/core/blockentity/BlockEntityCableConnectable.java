@@ -5,17 +5,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
-import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableTile;
-import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
@@ -49,9 +47,24 @@ public class BlockEntityCableConnectable extends CyclopsBlockEntity {
                 return tile.connected;
             }
         };
-        addCapabilityInternal(CableConfig.CAPABILITY, LazyOptional.of(() -> cable));
-        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, LazyOptional.of(NetworkCarrierDefault::new));
-        addCapabilityInternal(PathElementConfig.CAPABILITY, LazyOptional.of(() -> new PathElementTile<>(this, cable)));
+    }
+
+    public static void registerCableConnectableCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityCableConnectable> blockEntityType) {
+        event.registerBlockEntity(
+                Capabilities.Cable.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getCable()
+        );
+        event.registerBlockEntity(
+                Capabilities.NetworkCarrier.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new NetworkCarrierDefault()
+        );
+        event.registerBlockEntity(
+                Capabilities.PathElement.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new PathElementTile<>(blockEntity, blockEntity.getCable())
+        );
     }
 
     public EnumFacingMap<Boolean> getConnected() {

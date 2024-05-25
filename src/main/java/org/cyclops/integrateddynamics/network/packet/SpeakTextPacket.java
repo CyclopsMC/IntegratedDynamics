@@ -1,14 +1,16 @@
 package org.cyclops.integrateddynamics.network.packet;
 
 import com.mojang.text2speech.Narrator;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.GeneralConfig;
+import org.cyclops.integrateddynamics.Reference;
 
 import java.util.Date;
 
@@ -19,16 +21,19 @@ import java.util.Date;
  */
 public class SpeakTextPacket extends PacketCodec {
 
+    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "speak_text");
+
     public static long lastSay = 0;
 
     @CodecField
     private String text;
 
     public SpeakTextPacket() {
-
+        super(ID);
     }
 
     public SpeakTextPacket(String text) {
+        super(ID);
         this.text = text;
     }
 

@@ -1,25 +1,17 @@
-buildscript {
-    dependencies {
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-    }
-}
-
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'net.neoforged.gradle.userdev' version '7.0.97'
+    id 'net.darkhax.curseforgegradle' version '1.0.8'
 	id 'com.github.kt3k.coveralls' version '2.12.0'
     id 'com.diffplug.spotless' version '5.14.3'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 	id 'com.modrinth.minotaur' version '2.+'
 }
 
-apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
-apply plugin: 'org.spongepowered.mixin'
 
-import net.minecraftforge.gradle.common.tasks.SignJar
+import net.neoforged.gradle.common.tasks.PotentiallySignJar
 
 // Determine build number
 String build_number = "DEV" // this will be referenced as simply build_number from now on.
@@ -61,6 +53,7 @@ sourceSets {
         runtimeClasspath += sourceSets.main.output
     }
 }
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
     shadow.setTransitive(false);
@@ -86,38 +79,37 @@ repositories {
         name "Cyclops Repo"
         url "https://maven.pkg.github.com/CyclopsMC/packages"
         credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("MAVEN_USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("MAVEN_KEY")
+            username = project.findProperty("gpr.user") ?: System.getenv("MAVEN_USERNAME") ?: System.getenv("GITHUB_USER")
+            password = project.findProperty("gpr.key") ?: System.getenv("MAVEN_KEY") ?: System.getenv("GITHUB_TOKEN")
         }
     }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation "net.neoforged:neoforge:${project.neoforge_version}"
 
     // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local CyclopsCore version.
     if(secrets.cyclopscore_version_local) {
-        implementation "org.cyclops.cyclopscore:cyclopscore:${project.minecraft_version}-${secrets.cyclopscore_version_local}:deobf"
+        implementation "org.cyclops.cyclopscore:cyclopscore-${project.minecraft_version}-neoforge:${secrets.cyclopscore_version_local}:deobf"
     } else {
-        implementation "org.cyclops.cyclopscore:cyclopscore:${project.minecraft_version}-${project.cyclopscore_version}:deobf"
+                implementation "org.cyclops.cyclopscore:cyclopscore-${project.minecraft_version}-neoforge:${project.cyclopscore_version}:deobf"
     }
 	
-    // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local Integrated Dynamics Compat version.
-    if(secrets.integrateddynamicscompat_version_local) {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat:${secrets.integrateddynamicscompat_version_local}") {
-            transitive = false
-        }
-    } else {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat:${project.integrateddynamicscompat_version}") {
-            transitive = false
-        }
-    }
+//    // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local Integrated Dynamics Compat version.
+//    if(secrets.integrateddynamicscompat_version_local) {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
+//            transitive = false
+//        }
+//    } else {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${project.integrateddynamicscompat_version}") {
+//            transitive = false
+//        }
+//    }
 
     if(secrets.commoncapabilities_version_local) {
-        implementation "org.cyclops.commoncapabilities:commoncapabilities:${secrets.commoncapabilities_version_local}:deobf"
+        implementation "org.cyclops.commoncapabilities:commoncapabilities-${project.minecraft_version}-neoforge:${secrets.commoncapabilities_version_local}:deobf"
     } else {
-        implementation fg.deobf("org.cyclops.commoncapabilities:commoncapabilities:${project.commoncapabilities_version}") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
+        implementation("org.cyclops.commoncapabilities:commoncapabilities-${project.minecraft_version}-neoforge:${project.commoncapabilities_version}:deobf") { // https://dl.bintray.com/cyclopsmc/dev/org/cyclops/commoncapabilities/CommonCapabilities/
             transitive = false
         }
     }
@@ -140,68 +132,45 @@ dependencies {
 }
 
 minecraft {
-    mappings channel: "official", version: "${project.minecraft_version}"
+    accessTransformers {
+        file('src/main/resources/META-INF/accesstransformer.cfg')
+	}
+}
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+runs {
+    configureEach {
+		systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
 
-    runs {
-        client {
-            workingDirectory project.file('run')
-            //property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                integrateddynamics {
-                    source sourceSets.main
-                    source sourceSets.integrationtest
-                }
-            }
-
-            lazyToken('minecraft_classpath') {
-                configurations.modLib.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-            }
+        dependencies {
+            runtime project.configurations.modLib
         }
+    }
+	
+    client {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
 
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                integrateddynamics {
-                    source sourceSets.main
-                    source sourceSets.integrationtest
-                }
-            }
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
 
-            lazyToken('minecraft_classpath') {
-                configurations.modLib.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-            }
-        }
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
 
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'integrateddynamics', '--all', '--output', file('src/generated/resources/')
-            mods {
-                integrateddynamics {
-                    source sourceSets.main
-                }
-            }
-
-            lazyToken('minecraft_classpath') {
-                configurations.modLib.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-            }
-        }
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
-mixin {
-    add sourceSets.main, "mixins.integrateddynamics.refmap.json"
-    config 'mixins.integrateddynamics.json'
-}
-
 if (build_number.equals("RELEASE"))
-    version = "${project.minecraft_version}-${project.mod_version}"
+    version = "${project.mod_version}"
 else
-    version = "${project.minecraft_version}-${project.mod_version}-${build_number}"
+    version = "${project.mod_version}-${build_number}"
 
 jar {
     archiveClassifier.set('slim')
@@ -220,12 +189,15 @@ jar {
 }
 
 javadoc {
+    options.encoding = 'UTF-8'
     source = [sourceSets.main.allJava]
     // prevent java 8's strict doclint for javadocs from failing builds
     options.addStringOption('Xdoclint:accessibility,html,reference,syntax', '-quiet')
 }
 
-task signJar(type: SignJar, dependsOn: jar) {
+task signJar(type: PotentiallySignJar, dependsOn: jar) {
+	dependsOn(tasks.jar)
+
     onlyIf {
         System.getenv().SIGN_KEYSTORE
     }
@@ -234,10 +206,9 @@ task signJar(type: SignJar, dependsOn: jar) {
     alias = System.getenv().SIGN_ALIAS
     storePass = System.getenv().SIGN_STOREPASS
     keyPass = System.getenv().SIGN_KEYPASS
-    inputFile = jar.archivePath
-    outputFile = jar.archivePath
+    input = jar.archivePath
+    output = jar.archivePath
 }
-build.dependsOn signJar
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
@@ -285,10 +256,9 @@ shadowJar {
     relocate 'io.netty.handler.codec.http', 'org.cyclops.integrateddynamics.vendors.io.netty.handler.codec.http'
     relocate 'io.netty.handler.codec.rtsp', 'org.cyclops.integrateddynamics.vendors.io.netty.handler.codec.rtsp'
     relocate 'io.netty.handler.codec.spdy', 'org.cyclops.integrateddynamics.vendors.io.netty.handler.codec.spdy'
-    finalizedBy 'reobfShadowJar'
 }
 assemble.dependsOn shadowJar
-reobf {
+jar {
     shadowJar {}
 }
 
@@ -300,33 +270,29 @@ artifacts {
     archives javadocJar
 }
 
-curseforge {
-    if(secrets.curseforge_key) {
-        apiKey = secrets.curseforge_key
+task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+    dependsOn(tasks.jar)
+
+    if(secrets.hasProperty("curseforge_key") && secrets.hasProperty("changelog")) {
+        apiToken = secrets.curseforge_key
     } else if(System.getenv().GITHUB_ACTIONS && System.getenv().CURSEFORGE_KEY_SECRET) {
-        apiKey = System.getenv().CURSEFORGE_KEY_SECRET
+        apiToken = System.getenv().CURSEFORGE_KEY_SECRET
+    } else {
+        apiToken = "DUMMY"
     }
 
-    project {
-        id = "236307" // my project url is http://minecraft.curseforge.com/mc-mods/236307/
-        releaseType = project.project.release_type
-        addGameVersion project.minecraft_version
-        mainArtifact(shadowJar) {
-            relations {
-                requiredDependency 'cyclops-core'
-                requiredDependency 'common-capabilities'
-            }
-        }
+    def projectId = "236307" // my project url is http://minecraft.curseforge.com/mc-mods/236307/
 
-        changelog = ""
-        if (new File("resources/changelog/${project.version}.txt").exists()) {
-            changelog = new File("resources/changelog/${project.version}.txt").text
-        }
-
-        addArtifact deobfJar
-        addArtifact sourcesJar
-        addArtifact javadocJar
+    def mainFile = upload(projectId, shadowJar)
+	mainFile.changelogType = "text"
+    if (new File("resources/changelog/${project.version}.txt").exists()) {
+        mainFile.changelog = file("resources/changelog/${project.version}.txt")
     }
+	mainFile.addGameVersion(project.minecraft_version)
+	mainFile.addModLoader("NeoForge")
+	
+	mainFile.addRequirement('cyclops-core')
+	mainFile.addRequirement('common-capabilities')
 }
 
 modrinth {
@@ -417,3 +383,7 @@ tasks.register('updateGitHooks', Copy) {
     into './.git/hooks'
 }
 compileJava.dependsOn updateGitHooks
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}

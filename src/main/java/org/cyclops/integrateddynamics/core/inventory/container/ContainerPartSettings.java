@@ -55,7 +55,7 @@ public class ContainerPartSettings extends InventoryContainer {
 
     public ContainerPartSettings(int id, Inventory playerInventory, Container inventory,
                                  PartTarget target, Optional<IPartContainer> partContainer, IPartType partType) {
-      this(RegistryEntries.CONTAINER_PART_SETTINGS, id, playerInventory, inventory, target, partContainer, partType);
+      this(RegistryEntries.CONTAINER_PART_SETTINGS.get(), id, playerInventory, inventory, target, partContainer, partType);
     }
 
     public ContainerPartSettings(@Nullable MenuType<?> type, int id, Inventory playerInventory, Container inventory,

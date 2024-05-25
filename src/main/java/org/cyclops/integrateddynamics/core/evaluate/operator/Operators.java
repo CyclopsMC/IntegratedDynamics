@@ -11,6 +11,7 @@ import com.google.re2j.PatternSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Lombok;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -41,18 +42,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.IForgeShearable;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.IReverseTag;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.IPlantable;
+import net.neoforged.neoforge.common.IShearable;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.common.SoundActions;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
@@ -1256,7 +1255,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                        return a.getRawValue().isPresent() ? ForgeRegistries.BLOCKS.getKey(a.getRawValue().get().getBlock()) : new ResourceLocation("");
+                        return a.getRawValue().isPresent() ? BuiltInRegistries.BLOCK.getKey(a.getRawValue().get().getBlock()) : new ResourceLocation("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1268,7 +1267,7 @@ public final class Operators {
             .symbol("break_sound").operatorName("breaksound").interactName("breakSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getBreakSound().location.toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getBreakSound().getLocation().toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
     /**
@@ -1278,7 +1277,7 @@ public final class Operators {
             .symbol("place_sound").operatorName("placesound").interactName("placeSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getPlaceSound().location.toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getPlaceSound().getLocation().toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
     /**
@@ -1288,7 +1287,7 @@ public final class Operators {
             .symbol("step_sound").operatorName("stepsound").interactName("stepSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getStepSound().location.toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getStepSound().getLocation().toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
 
@@ -1300,8 +1299,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
-                        && a.getRawValue().get().getBlock() instanceof IForgeShearable
-                        && ((IForgeShearable) a.getRawValue().get().getBlock()).isShearable(ItemStack.EMPTY, null, null));
+                        && a.getRawValue().get().getBlock() instanceof IShearable
+                        && ((IShearable) a.getRawValue().get().getBlock()).isShearable(ItemStack.EMPTY, null, null));
             }).build());
 
     /**
@@ -1369,7 +1368,7 @@ public final class Operators {
             .symbol("block_by_name").operatorName("blockbyname").interactName("blockByName")
             .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
                     .build(input -> {
-                        Block block = ForgeRegistries.BLOCKS.getValue(input);
+                        Block block = BuiltInRegistries.BLOCK.get(input);
                         return ValueObjectTypeBlock.ValueBlock.of(block.defaultBlockState());
                     })).build());
 
@@ -1665,7 +1664,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                        return !a.getRawValue().isEmpty() ? ForgeRegistries.ITEMS.getKey(a.getRawValue().getItem()) : new ResourceLocation("");
+                        return !a.getRawValue().isEmpty() ? BuiltInRegistries.ITEM.getKey(a.getRawValue().getItem()) : new ResourceLocation("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1679,8 +1678,8 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(itemStack -> {
                 if (!itemStack.isEmpty()) {
                     int burnTime = itemStack.getBurnTime(null);
-                    return ForgeEventFactory.getItemBurnTime(itemStack, burnTime == -1
-                            ? ForgeHooks.getBurnTime(itemStack, null)
+                    return EventHooks.getItemBurnTime(itemStack, burnTime == -1
+                            ? CommonHooks.getBurnTime(itemStack, null)
                             : burnTime, null);
                 }
                 return 0;
@@ -1706,11 +1705,9 @@ public final class Operators {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
                 if(!a.getRawValue().isEmpty()) {
-                    Optional<IReverseTag<Item>> optionalReverseTag = ForgeRegistries.ITEMS.tags().getReverseTag(a.getRawValue().getItem());
-                    optionalReverseTag
-                            .ifPresent(reverseTag -> reverseTag.getTagKeys()
-                                    .forEach(owningTag -> builder.add(ValueTypeString.ValueString
-                                            .of(owningTag.location().toString()))));
+                    a.getRawValue().getItem().builtInRegistryHolder().tags()
+                            .forEach(owningTag -> builder.add(ValueTypeString.ValueString
+                                    .of(owningTag.location().toString())));
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING, builder.build());
             }).build());
@@ -1793,7 +1790,7 @@ public final class Operators {
             .symbol("has_inventory").operatorName("hasinventory").interactName("hasInventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent());
+                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().getCapability(Capabilities.ItemHandler.ITEM) != null);
             }).build());
 
     /**
@@ -1820,9 +1817,8 @@ public final class Operators {
             .symbol("inventory_size").operatorName("inventorysize").interactName("inventorySize")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueTypeInteger.ValueInteger.of(a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER)
-                        .map(IItemHandler::getSlots)
-                        .orElse(0));
+                IItemHandler itemHandler = a.getRawValue().getCapability(Capabilities.ItemHandler.ITEM);
+                return ValueTypeInteger.ValueInteger.of(itemHandler != null ? itemHandler.getSlots() : 0);
             }).build());
 
     /**
@@ -1848,15 +1844,15 @@ public final class Operators {
             .output(ValueTypes.LIST).symbolOperator("inventory").interactName("inventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return a.getRawValue().getCapability(ForgeCapabilities.ITEM_HANDLER, null)
-                        .map(itemHandler -> {
-                            List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.getSlots());
-                            for (int i = 0; i < itemHandler.getSlots(); i++) {
-                                values.add(ValueObjectTypeItemStack.ValueItemStack.of(itemHandler.getStackInSlot(i)));
-                            }
-                            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
-                        })
-                        .orElseGet(() -> ValueTypes.LIST.getDefault());
+                IItemHandler itemHandler = a.getRawValue().getCapability(Capabilities.ItemHandler.ITEM);
+                if (itemHandler != null) {
+                    List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.getSlots());
+                    for (int i = 0; i < itemHandler.getSlots(); i++) {
+                        values.add(ValueObjectTypeItemStack.ValueItemStack.of(itemHandler.getStackInSlot(i)));
+                    }
+                    return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
+                }
+                return ValueTypes.LIST.getDefault();
             }).build());
 
     /**
@@ -1882,7 +1878,7 @@ public final class Operators {
             .symbol("item_by_name").operatorName("itembyname").interactName("itemByName")
             .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
                     .build(input -> {
-                        Item item = ForgeRegistries.ITEMS.getValue(input);
+                        Item item = BuiltInRegistries.ITEM.get(input);
                         ItemStack itemStack = ItemStack.EMPTY;
                         if (item != null) {
                             itemStack = new ItemStack(item);
@@ -2114,7 +2110,7 @@ public final class Operators {
                         ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                         if(a.getRawValue().isPresent()) {
                             Entity entity = a.getRawValue().get();
-                            return ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
+                            return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
                         }
                         return new ResourceLocation("");
                     },
@@ -2132,7 +2128,7 @@ public final class Operators {
                 BlockState blockState = null;
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
                     LivingEntity entity = (LivingEntity) a.getRawValue().get();
-                    AttributeInstance reachDistanceAttribute = entity.getAttribute(ForgeMod.BLOCK_REACH.get());
+                    AttributeInstance reachDistanceAttribute = entity.getAttribute(NeoForgeMod.BLOCK_REACH.value());
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
                     double eyeHeight = entity.getEyeHeight();
                     Vec3 lookVec = entity.getLookAngle();
@@ -2158,7 +2154,7 @@ public final class Operators {
                 Entity entityOut = null;
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
                     LivingEntity entity = (LivingEntity) a.getRawValue().get();
-                    AttributeInstance reachDistanceAttribute = entity.getAttribute(ForgeMod.ENTITY_REACH.get());
+                    AttributeInstance reachDistanceAttribute = entity.getAttribute(NeoForgeMod.ENTITY_REACH.value());
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
                     // Copied and modified from GameRenderer#getMouseOver
@@ -2280,7 +2276,7 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 String hurtSound = "";
                 if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
-                    String sound = ((LivingEntity) a.getRawValue().get()).getHurtSound(a.getRawValue().get().damageSources().generic()).location.toString();
+                    String sound = ((LivingEntity) a.getRawValue().get()).getHurtSound(a.getRawValue().get().damageSources().generic()).getLocation().toString();
                     if (sound != null) {
                         hurtSound = sound;
                     }
@@ -2297,7 +2293,7 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 String hurtSound = "";
                 if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
-                    String sound = ((LivingEntity) a.getRawValue().get()).getDeathSound().location.toString();
+                    String sound = ((LivingEntity) a.getRawValue().get()).getDeathSound().getLocation().toString();
                     if (sound != null) {
                         hurtSound = sound;
                     }
@@ -2387,8 +2383,8 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
-                        && a.getRawValue().get() instanceof IForgeShearable
-                        && ((IForgeShearable) a.getRawValue().get()).isShearable(ItemStack.EMPTY, null, null));
+                        && a.getRawValue().get() instanceof IShearable
+                        && ((IShearable) a.getRawValue().get()).isShearable(ItemStack.EMPTY, null, null));
             }).build());
 
     /**
@@ -2418,7 +2414,7 @@ public final class Operators {
                 String entityType = "";
                 if (entity.getRawValue().isPresent()) {
                     Entity e = entity.getRawValue().get();
-                    entityType = ForgeRegistries.ENTITY_TYPES.getKey(e.getType()).toString();
+                    entityType = BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).toString();
                 }
                 return ValueTypeString.ValueString.of(entityType);
             }).build());
@@ -2465,9 +2461,8 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    return ValueTypeInteger.ValueInteger.of(entity.getCapability(ForgeCapabilities.ENERGY, null)
-                            .map(IEnergyStorage::getEnergyStored)
-                            .orElse(0));
+                    IEnergyStorage energyStorage = entity.getCapability(Capabilities.EnergyStorage.ENTITY, null);
+                    return ValueTypeInteger.ValueInteger.of(energyStorage != null ? energyStorage.getEnergyStored() : 0);
                 }
                 return ValueTypeInteger.ValueInteger.of(0);
             }).build());
@@ -2482,9 +2477,8 @@ public final class Operators {
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    return ValueTypeInteger.ValueInteger.of(entity.getCapability(ForgeCapabilities.ENERGY, null)
-                            .map(IEnergyStorage::getMaxEnergyStored)
-                            .orElse(0));
+                    IEnergyStorage energyStorage = entity.getCapability(Capabilities.EnergyStorage.ENTITY, null);
+                    return ValueTypeInteger.ValueInteger.of(energyStorage != null ? energyStorage.getMaxEnergyStored() : 0);
                 }
                 return ValueTypeInteger.ValueInteger.of(0);
             }).build());
@@ -2638,7 +2632,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
-                        return ForgeRegistries.FLUIDS.getKey(a.getRawValue().getFluid());
+                        return BuiltInRegistries.FLUID.getKey(a.getRawValue().getFluid());
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());

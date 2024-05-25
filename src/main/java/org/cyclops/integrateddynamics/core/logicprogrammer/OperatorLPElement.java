@@ -6,8 +6,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -112,7 +112,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         int[] variableIds = getVariableIds(inputVariables);
         return registry.writeVariableFacadeItem(!player.level().isClientSide(), itemStack, Operators.REGISTRY,
-                new OperatorVariableFacadeFactory(operator, variableIds), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
+                new OperatorVariableFacadeFactory(operator, variableIds), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
     }
 
     @Override
@@ -158,7 +158,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     @Override
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
-        return itemStack.getItem() == RegistryEntries.ITEM_VARIABLE;
+        return itemStack.getItem() == RegistryEntries.ITEM_VARIABLE.get();
     }
 
     @Override

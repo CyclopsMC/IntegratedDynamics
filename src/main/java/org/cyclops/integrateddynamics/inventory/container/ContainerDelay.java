@@ -29,7 +29,7 @@ public class ContainerDelay extends ContainerActiveVariableBase<BlockEntityDelay
 
     public ContainerDelay(int id, Inventory playerInventory, Container inventory,
                           Optional<BlockEntityDelay> tileSupplier) {
-        super(RegistryEntries.CONTAINER_DELAY, id, playerInventory, inventory, tileSupplier);
+        super(RegistryEntries.CONTAINER_DELAY.get(), id, playerInventory, inventory, tileSupplier);
         addSlot(new SlotVariable(inventory, BlockEntityProxy.SLOT_READ, 81, 25));
         addSlot(new SlotVariable(inventory, BlockEntityProxy.SLOT_WRITE_IN, 56, 78));
         addSlot(new SlotRemoveOnly(inventory, BlockEntityProxy.SLOT_WRITE_OUT, 104, 78));

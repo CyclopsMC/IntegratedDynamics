@@ -3,15 +3,14 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Iterators;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * A list proxy for an inventory at a certain position.
@@ -26,8 +25,8 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
         this(null, null);
     }
 
-    protected LazyOptional<IItemHandler> getInventory() {
-        return BlockEntityHelpers.getCapability(getPos(), getSide(), ForgeCapabilities.ITEM_HANDLER);
+    protected Optional<IItemHandler> getInventory() {
+        return BlockEntityHelpers.getCapability(getPos(), getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK);
     }
 
     @Override

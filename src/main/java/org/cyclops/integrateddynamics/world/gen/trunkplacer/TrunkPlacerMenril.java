@@ -38,7 +38,7 @@ public class TrunkPlacerMenril extends TrunkPlacer {
 
     @Override
     protected TrunkPlacerType<?> type() {
-        return RegistryEntries.TRUNK_PLACER_MENRIL;
+        return RegistryEntries.TRUNK_PLACER_MENRIL.get();
     }
 
     @Override

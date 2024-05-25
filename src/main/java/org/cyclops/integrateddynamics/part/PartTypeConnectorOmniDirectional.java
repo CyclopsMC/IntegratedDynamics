@@ -16,8 +16,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -28,7 +29,6 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
@@ -216,7 +216,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 Set<ISidedPathElement> pathElements = Sets.newTreeSet();
                 for (PartPos pos : PartTypeConnectorOmniDirectional.LOADED_GROUPS.getPositions(getGroupId())) {
                     if (!pos.equals(this.getPartPos())) {
-                        BlockEntityHelpers.getCapability(pos.getPos(), pos.getSide(), PathElementConfig.CAPABILITY)
+                        BlockEntityHelpers.getCapability(pos.getPos(), pos.getSide(), Capabilities.PathElement.BLOCK)
                                 .ifPresent(pathElement -> pathElements.add(SidedPathElement.of(pathElement, pos.getSide())));
                     }
                 }

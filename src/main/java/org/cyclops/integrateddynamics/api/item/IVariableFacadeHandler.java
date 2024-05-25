@@ -1,16 +1,8 @@
 package org.cyclops.integrateddynamics.api.item;
 
-import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
-import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
-import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
-
-import javax.annotation.Nullable;
 
 /**
  * Handler for retrieving variable facades from items.
@@ -41,29 +33,5 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
      * @param variableFacade The facade to write.
      */
     public void setVariableFacade(CompoundTag tagCompound, F variableFacade);
-
-    /**
-     * Deserialize the given JSON element to a variable predicate.
-     *
-     * @param valueDeseralizationContext
-     * @param element The JSON element.
-     * @param valueType The optional value type.
-     * @param valuePredicate The value predicate.
-     * @return The variable predicate.
-     */
-    default public VariablePredicate deserializeVariablePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
-        return new VariablePredicate<>(IVariable.class, valueType, valuePredicate);
-    }
-
-    /**
-     * Deserialize the given JSON element to a variable facade predicate.
-     *
-     * @param valueDeseralizationContext
-     * @param element The JSON element.
-     * @return The variable facade predicate.
-     */
-    default public VariableFacadePredicate deserializeVariableFacadePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element) {
-        return new VariableFacadePredicate<>(IVariableFacade.class);
-    }
 
 }

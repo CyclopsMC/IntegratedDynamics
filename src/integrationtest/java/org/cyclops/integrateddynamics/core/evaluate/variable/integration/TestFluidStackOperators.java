@@ -6,7 +6,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -294,10 +294,10 @@ public class TestFluidStackOperators {
     public void testSoundBucketEmpty() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BUCKET_EMPTY_LAVA.location.toString(), "soundBucketEmpty(lava) = bucket_empty");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BUCKET_EMPTY_LAVA.getLocation().toString(), "soundBucketEmpty(lava) = bucket_empty");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BUCKET_EMPTY.location.toString(), "soundBucketEmpty(water) = bucket_empty");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BUCKET_EMPTY.getLocation().toString(), "soundBucketEmpty(water) = bucket_empty");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -323,10 +323,10 @@ public class TestFluidStackOperators {
     public void testSoundBucketFill() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BUCKET_FILL_LAVA.location.toString(), "soundBucketFill(lava) = bucket_fill");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BUCKET_FILL_LAVA.getLocation().toString(), "soundBucketFill(lava) = bucket_fill");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BUCKET_FILL.location.toString(), "soundBucketFill(water) = bucket_fill");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BUCKET_FILL.getLocation().toString(), "soundBucketFill(water) = bucket_fill");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -355,7 +355,7 @@ public class TestFluidStackOperators {
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "", "soundFluidVaporize(lava) = ");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.FIRE_EXTINGUISH.location.toString(), "soundFluidVaporize(water) = ");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.FIRE_EXTINGUISH.getLocation().toString(), "soundFluidVaporize(water) = ");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

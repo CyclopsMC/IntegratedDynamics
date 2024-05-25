@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
@@ -22,6 +22,7 @@ import org.cyclops.integrateddynamics.core.block.BlockContainerCabled;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A block that holds energy.
@@ -37,7 +38,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY, new BlockEntityEnergyBattery.Ticker());
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY.get(), new BlockEntityEnergyBattery.Ticker());
     }
 
     @Override
@@ -95,7 +96,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
     }
 
     public static void itemStackToTile(ItemStack itemStack, BlockEntityEnergyBattery tile) {
-        itemStack.getCapability(ForgeCapabilities.ENERGY)
+        Optional.ofNullable(itemStack.getCapability(Capabilities.EnergyStorage.ITEM))
                 .ifPresent(energyStorage -> {
                     tile.setEnergyStored(energyStorage.getEnergyStored());
                     tile.setCapacity(energyStorage.getMaxEnergyStored());

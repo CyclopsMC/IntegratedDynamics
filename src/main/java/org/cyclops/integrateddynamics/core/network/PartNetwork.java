@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -22,11 +23,12 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
-import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.Iterator;
@@ -123,7 +125,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
                 DimPos dimPos = it.next();
                 if (dimPos.isLoaded()) {
-                    IVariableContainer variableContainer = BlockEntityHelpers.getCapability(dimPos, null, VariableContainerConfig.CAPABILITY).orElse(null);
+                    IVariableContainer variableContainer = BlockEntityHelpers.getCapability(dimPos, null, Capabilities.VariableContainer.BLOCK).orElse(null);
                     if (variableContainer != null) {
                         compositeMap.addElement(variableContainer.getVariableCache());
                     } else {
@@ -133,10 +135,11 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
                 }
             }
             // Also check parts
+            IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
             for(PartPos partPos : partPositions.values()) {
                 if (partPos.getPos().isLoaded()) {
                     IPartContainer partContainer = PartHelpers.getPartContainerChecked(partPos.getPos(), partPos.getSide());
-                    partContainer.getCapability(VariableContainerConfig.CAPABILITY, partPos.getSide())
+                    partContainer.getCapability(Capabilities.VariableContainer.PART, network, partNetwork, PartTarget.fromCenter(partPos))
                             .ifPresent(variableContainer -> compositeMap.addElement(variableContainer.getVariableCache()));
                 }
             }

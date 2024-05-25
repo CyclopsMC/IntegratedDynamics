@@ -23,7 +23,7 @@ public class ContainerCoalGenerator extends InventoryContainer {
     }
 
     public ContainerCoalGenerator(int id, Inventory playerInventory, Container inventory, DataSlot progressReference) {
-        super(RegistryEntries.CONTAINER_COAL_GENERATOR, id, playerInventory, inventory);
+        super(RegistryEntries.CONTAINER_COAL_GENERATOR.get(), id, playerInventory, inventory);
 
         this.referenceProgress = addDataSlot(progressReference);
 

@@ -1,12 +1,13 @@
 package org.cyclops.integrateddynamics.part.aspect.read.redstone;
 
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
+
+import java.util.Optional;
 
 /**
  * Default component for writing redstone levels.
@@ -21,7 +22,7 @@ public class ReadRedstoneComponent implements IReadRedstoneComponent {
     }
 
     @Override
-    public LazyOptional<IDynamicRedstone> getDynamicRedstoneBlock(DimPos dimPos, Direction side) {
-        return BlockEntityHelpers.getCapability(dimPos, side, DynamicRedstoneConfig.CAPABILITY);
+    public Optional<IDynamicRedstone> getDynamicRedstoneBlock(DimPos dimPos, Direction side) {
+        return BlockEntityHelpers.getCapability(dimPos, side, Capabilities.DynamicRedstone.BLOCK);
     }
 }

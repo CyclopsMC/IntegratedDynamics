@@ -1,53 +1,45 @@
 package org.cyclops.integrateddynamics.advancement.criterion;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
-import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.core.helper.Codecs;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Triggers when a variable is created.
  * @author rubensworks
  */
 public class VariableCreatedTrigger extends SimpleCriterionTrigger<VariableCreatedTrigger.Instance> {
-    private final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "variable_created");
+
+    public static final Codec<VariableCreatedTrigger.Instance> CODEC = RecordCodecBuilder.create(
+            p_311401_ -> p_311401_.group(
+                            ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(VariableCreatedTrigger.Instance::player),
+                            ExtraCodecs.strictOptionalField(BuiltInRegistries.BLOCK.byNameCodec(), "block").forGetter(VariableCreatedTrigger.Instance::block),
+                            ExtraCodecs.strictOptionalField(Codecs.VARIABLE_FACADE, "variable_facade").forGetter(VariableCreatedTrigger.Instance::variableFacadePredicate)
+                    )
+                    .apply(p_311401_, VariableCreatedTrigger.Instance::new)
+    );
 
     public VariableCreatedTrigger() {
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     @Override
-    public ResourceLocation getId() {
-        return ID;
-    }
-
-    @Override
-    public Instance createInstance(JsonObject json, ContextAwarePredicate entityPredicate, DeserializationContext conditionsParser) {
-        JsonElement blockElement = json.get("block");
-        Block block = null;
-        if (blockElement != null && !blockElement.isJsonNull()) {
-            block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(json.get("block").getAsString()));
-            if (block == null) {
-                throw new JsonSyntaxException("No block found with name: " + json.get("block").getAsString());
-            }
-        }
-        return new Instance(getId(), entityPredicate, block, VariableFacadePredicate.deserialize(ValueDeseralizationContext.ofAllEnabled(), json.get("variable_facade")));
+    public Codec<Instance> codec() {
+        return CODEC;
     }
 
     public void test(ServerPlayer player, LogicProgrammerVariableFacadeCreatedEvent event) {
@@ -61,19 +53,15 @@ public class VariableCreatedTrigger extends SimpleCriterionTrigger<VariableCreat
         }
     }
 
-    public static class Instance extends AbstractCriterionTriggerInstance implements ICriterionInstanceTestable<LogicProgrammerVariableFacadeCreatedEvent> {
-        private final Block block;
-        private final VariableFacadePredicate variableFacadePredicate;
-
-        public Instance(ResourceLocation criterionIn, ContextAwarePredicate player,
-                        @Nullable Block block, VariableFacadePredicate variableFacadePredicate) {
-            super(criterionIn, player);
-            this.block = block;
-            this.variableFacadePredicate = variableFacadePredicate;
-        }
-
+    public static record Instance(
+            Optional<ContextAwarePredicate> player,
+            Optional<Block> block,
+            Optional<VariableFacadePredicate> variableFacadePredicate
+    ) implements SimpleCriterionTrigger.SimpleInstance, ICriterionInstanceTestable<LogicProgrammerVariableFacadeCreatedEvent> {
+        @Override
         public boolean test(ServerPlayer player, LogicProgrammerVariableFacadeCreatedEvent event) {
-            return (block == null || event.getBlockState().getBlock() == block) && variableFacadePredicate.test(event.getVariableFacade());
+            return (block.isEmpty() || event.getBlockState().getBlock() == block.get())
+                    && variableFacadePredicate.orElse(VariableFacadePredicate.ANY).test(event.getVariableFacade());
         }
     }
 

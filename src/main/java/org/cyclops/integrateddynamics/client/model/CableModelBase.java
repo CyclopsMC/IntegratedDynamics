@@ -28,10 +28,10 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.ChunkRenderTypeSet;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.SimpleModelState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
+import net.neoforged.neoforge.client.ClientHooks;
+import net.neoforged.neoforge.client.model.SimpleModelState;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -279,7 +279,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                                             LENGTH_CONNECTION, invert ? 0 : length)
                             );
                             i++;
-                            ForgeHooksClient.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
+                            ClientHooks.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
                             ret.add(new BakedQuad(data, -1, realSide, texture, true));
                         }
                     } else {
@@ -319,7 +319,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     @Override
     public TextureAtlasSprite getParticleIcon() {
-        return RegistryEntries.BLOCK_CABLE.texture;
+        return RegistryEntries.BLOCK_CABLE.get().texture;
     }
 
     @Nonnull

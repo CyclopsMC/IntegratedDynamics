@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.InvalidValueTypeException;
@@ -18,7 +19,6 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLight;
 import org.cyclops.integrateddynamics.block.BlockInvisibleLightConfig;
-import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -118,16 +118,16 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
         if (BlockInvisibleLightConfig.invisibleLightBlock) {
             Level world = target.getTarget().getPos().getLevel(true);
             BlockPos pos = target.getTarget().getPos().getBlockPos();
-            if(world.isEmptyBlock(pos) || world.getBlockState(pos).getBlock() == RegistryEntries.BLOCK_INVISIBLE_LIGHT) {
+            if(world.isEmptyBlock(pos) || world.getBlockState(pos).getBlock() == RegistryEntries.BLOCK_INVISIBLE_LIGHT.get()) {
                 if(lightLevel > 0) {
-                    world.setBlockAndUpdate(pos, RegistryEntries.BLOCK_INVISIBLE_LIGHT.defaultBlockState()
+                    world.setBlockAndUpdate(pos, RegistryEntries.BLOCK_INVISIBLE_LIGHT.get().defaultBlockState()
                             .setValue(BlockInvisibleLight.LIGHT, lightLevel));
                 } else {
                     world.setBlock(pos, Blocks.AIR.defaultBlockState(), MinecraftHelpers.BLOCK_NOTIFY_CLIENT);
                 }
             }
         } else {
-            BlockEntityHelpers.getCapability(target.getCenter().getPos(), target.getCenter().getSide(), DynamicLightConfig.CAPABILITY)
+            BlockEntityHelpers.getCapability(target.getCenter().getPos(), target.getCenter().getSide(), Capabilities.DynamicLight.BLOCK)
                     .ifPresent(dynamicLight -> dynamicLight.setLightLevel(lightLevel));
         }
     }

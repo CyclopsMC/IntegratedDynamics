@@ -6,6 +6,7 @@ import com.google.common.math.Stats;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -25,11 +26,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -37,6 +38,7 @@ import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.LocationHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -51,8 +53,6 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
-import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
-import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerInputs;
@@ -189,7 +189,9 @@ public class Aspects {
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_BIOME =
                     AspectReadBuilders.Block.BUILDER_STRING
                             .handle(
-                                    dimPos -> ForgeRegistries.BIOMES.getKey(dimPos.getLevel(true).getBiome(dimPos.getBlockPos()).value()).toString()
+                                    // Copied from DebugScreenOverlay#printBiome
+                                    dimPos -> dimPos.getLevel(true).getBiome(dimPos.getBlockPos())
+                                            .unwrap().map(key -> key.location().toString(), biome -> "[unregistered " + biome + "]")
                             ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHT =
@@ -206,7 +208,7 @@ public class Aspects {
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ENTITIES =
                     AspectReadBuilders.Entity.BUILDER_LIST.handle(dimPos -> {
                         List<net.minecraft.world.entity.Entity> entities = dimPos.getLevel(true).getEntities((net.minecraft.world.entity.Entity) null,
-                                new AABB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), EntitySelector.NO_SPECTATORS);
+                                new AABB(Vec3.atLowerCornerOf(dimPos.getBlockPos()), Vec3.atLowerCornerOf(dimPos.getBlockPos().offset(1, 1, 1))), EntitySelector.NO_SPECTATORS);
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities,
                             ValueObjectTypeEntity.ValueEntity::of
                         ));
@@ -214,7 +216,7 @@ public class Aspects {
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
                     AspectReadBuilders.Entity.BUILDER_LIST.handle(dimPos -> {
                         List<net.minecraft.world.entity.Entity> entities = dimPos.getLevel(true).getEntities((net.minecraft.world.entity.Entity) null,
-                                new AABB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), Helpers.SELECTOR_IS_PLAYER);
+                                new AABB(Vec3.atLowerCornerOf(dimPos.getBlockPos()), Vec3.atLowerCornerOf(dimPos.getBlockPos().offset(1, 1, 1))), Helpers.SELECTOR_IS_PLAYER);
                         return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ENTITY, Lists.transform(entities,
                             ValueObjectTypeEntity.ValueEntity::of
                         ));
@@ -225,7 +227,7 @@ public class Aspects {
                         int i = input.getRight().getValue(AspectReadBuilders.PROPERTY_LISTINDEX).getRawValue();
                         DimPos dimPos = input.getLeft().getTarget().getPos();
                         List<net.minecraft.world.entity.Entity> entities = dimPos.getLevel(true).getEntities((net.minecraft.world.entity.Entity) null,
-                                new AABB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), EntitySelector.NO_SPECTATORS);
+                                new AABB(Vec3.atLowerCornerOf(dimPos.getBlockPos()), Vec3.atLowerCornerOf(dimPos.getBlockPos().offset(1, 1, 1))), EntitySelector.NO_SPECTATORS);
                         return ValueObjectTypeEntity.ValueEntity.of(i < entities.size() ? entities.get(i) : null);
                     }).buildRead();
 
@@ -250,12 +252,12 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "playercount").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
                     AspectReadBuilders.ExtraDimensional.BUILDER_INTEGER.handle(
-                        minecraft -> (int) DoubleMath.mean(minecraft.tickTimes)
+                        minecraft -> (int) DoubleMath.mean(minecraft.getAverageTickTimeNanos())
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_TPS =
                     AspectReadBuilders.ExtraDimensional.BUILDER_DOUBLE.handle(
-                            minecraft -> Math.min(20, Stats.meanOf(minecraft.tickTimes) / 1000)
+                            minecraft -> Math.min(20, Stats.meanOf(minecraft.getTickTimesNanos()) / 1000)
                     ).handle(AspectReadBuilders.PROP_GET_DOUBLE, "tps").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_PLAYERS =
@@ -645,7 +647,7 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "elementcount").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_BATTERY_COUNT =
                     AspectReadBuilders.Network.BUILDER_INTEGER.handle(
-                        network -> network != null ? network.getCapability(EnergyNetworkConfig.CAPABILITY)
+                        network -> network != null ? network.getCapability(Capabilities.EnergyNetwork.NETWORK)
                                 .map(energyNetwork -> energyNetwork.getPrioritizedPositions().size())
                                 .orElse(0): 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("batterycount").buildRead();
@@ -670,7 +672,7 @@ public class Aspects {
                             data -> {
                                 PartPos target = data.getLeft().getTarget();
                                 IValueInterface valueInterface = BlockEntityHelpers
-                                        .getCapability(target.getPos(), target.getSide(), ValueInterfaceConfig.CAPABILITY)
+                                        .getCapability(target.getPos(), target.getSide(), Capabilities.ValueInterface.BLOCK)
                                         .orElseThrow(() -> {
                                             EvaluationException error = new EvaluationException(Component.translatable(
                                                     L10NValues.ASPECT_ERROR_NOVALUEINTERFACE));
@@ -895,8 +897,8 @@ public class Aspects {
         public static final class Effect {
 
             public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticle(final ParticleOptions particle) {
-                return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(ForgeRegistries
-                                .PARTICLE_TYPES.getKey(particle.getType()).toString().toLowerCase(Locale.ROOT).replaceAll(":", "_"))
+                return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(BuiltInRegistries
+                                .PARTICLE_TYPE.getKey(particle.getType()).toString().toLowerCase(Locale.ROOT).replaceAll(":", "_"))
                         .handle(input -> {
                             double velocity = input.getRight();
                             if (velocity < 0) {

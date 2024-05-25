@@ -23,8 +23,8 @@ public class FluidLiquidChorusConfig extends FluidConfig {
                                 .viscosity(3000)
                                 .rarity(Rarity.EPIC)
                                 .descriptionId("block.integrateddynamics.block_liquid_chorus"))
-                        .bucket(() -> RegistryEntries.ITEM_BUCKET_LIQUID_CHORUS)
-                        .block(() -> RegistryEntries.BLOCK_FLUID_LIQUID_CHORUS)
+                        .bucket(RegistryEntries.ITEM_BUCKET_LIQUID_CHORUS::get)
+                        .block(RegistryEntries.BLOCK_FLUID_LIQUID_CHORUS::get)
         );
     }
 

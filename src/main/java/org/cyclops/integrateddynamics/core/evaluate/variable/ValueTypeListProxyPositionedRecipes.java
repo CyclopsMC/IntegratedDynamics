@@ -2,12 +2,11 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.modcompat.commoncapabilities.BlockCapabilitiesHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
-import org.cyclops.integrateddynamics.Capabilities;
+
+import java.util.Optional;
 
 /**
  * A list proxy for the recipes of a recipe handler at a certain position.
@@ -22,8 +21,8 @@ public class ValueTypeListProxyPositionedRecipes extends ValueTypeListProxyPosit
         this(null, null);
     }
 
-    protected LazyOptional<IRecipeHandler> getRecipeHandler() {
-        return BlockCapabilitiesHelpers.getTileOrBlockCapability(getPos(), getSide(), Capabilities.RECIPE_HANDLER);
+    protected Optional<IRecipeHandler> getRecipeHandler() {
+        return Optional.ofNullable(getPos().getLevel(true).getCapability(org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK, getPos().getBlockPos(), getSide()));
     }
 
     @Override

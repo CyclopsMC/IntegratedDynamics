@@ -9,9 +9,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.event.level.BlockEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -43,7 +43,7 @@ public class BlockMenrilWoodStrippedConfig extends BlockConfig {
                 },
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-        MinecraftForge.EVENT_BUS.addListener(BlockMenrilWoodStrippedConfig::toolActionEvent);
+        NeoForge.EVENT_BUS.addListener(BlockMenrilWoodStrippedConfig::toolActionEvent);
     }
 
     @Override
@@ -52,8 +52,8 @@ public class BlockMenrilWoodStrippedConfig extends BlockConfig {
     }
 
     public static void toolActionEvent(BlockEvent.BlockToolModificationEvent event) {
-        if (event.getToolAction() == ToolActions.AXE_STRIP && event.getState().getBlock() == RegistryEntries.BLOCK_MENRIL_WOOD) {
-            BlockState blockStateNew = RegistryEntries.BLOCK_MENRIL_WOOD_STRIPPED.defaultBlockState();
+        if (event.getToolAction() == ToolActions.AXE_STRIP && event.getState().getBlock() == RegistryEntries.BLOCK_MENRIL_WOOD.get()) {
+            BlockState blockStateNew = RegistryEntries.BLOCK_MENRIL_WOOD_STRIPPED.get().defaultBlockState();
             for (Property property : event.getState().getProperties()) {
                 if(blockStateNew.hasProperty(property))
                     blockStateNew = blockStateNew.setValue(property, event.getState().getValue(property));

@@ -12,10 +12,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityDispatcher;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.fml.ModLoader;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -26,6 +23,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.AttachCapabilitiesEventPart;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartCapability;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
@@ -35,6 +33,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A default implementation of the {@link IPartState}.
@@ -58,8 +57,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private final Map<String, NonNullList<ItemStack>> inventoriesNamed = Maps.newHashMap();
     private final PartStateOffsetHandler<P> offsetHandler = new PartStateOffsetHandler<>();
 
-    private CapabilityDispatcher capabilities = null;
-    private IdentityHashMap<Capability<?>, LazyOptional<Object>> volatileCapabilities = new IdentityHashMap<>();
+    private IdentityHashMap<PartCapability<?>, Optional<Object>> volatileCapabilities = new IdentityHashMap<>();
 
     @Override
     public void writeToNBT(CompoundTag tag) {
@@ -72,9 +70,6 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         tag.putInt("id", this.id);
         writeAspectProperties("aspectProperties", tag);
         tag.putBoolean("enabled", this.enabled);
-        if (this.capabilities != null) {
-            tag.put("ForgeCaps", this.capabilities.serializeNBT());
-        }
         tag.putInt("maxOffset", this.maxOffset);
         tag.putInt("offsetX", this.targetOffset.getX());
         tag.putInt("offsetY", this.targetOffset.getY());
@@ -110,9 +105,6 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         this.aspectProperties.clear();
         readAspectProperties(valueDeseralizationContext, "aspectProperties", tag);
         this.enabled = tag.getBoolean("enabled");
-        if (this.capabilities != null && tag.contains("ForgeCaps")) {
-            this.capabilities.deserializeNBT(tag.getCompound("ForgeCaps"));
-        }
         this.maxOffset = tag.getInt("maxOffset");
         this.targetOffset = new Vec3i(tag.getInt("offsetX"), tag.getInt("offsetY"), tag.getInt("offsetZ"));
 
@@ -322,26 +314,25 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
      */
     public void gatherCapabilities(P partType) {
         AttachCapabilitiesEventPart event = new AttachCapabilitiesEventPart(partType, this);
-        MinecraftForge.EVENT_BUS.post(event);
-        this.capabilities = event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners()) : null;
+        ModLoader.get().postEventWrapContainerInModOrder(event);
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
-        LazyOptional<Object> o = volatileCapabilities.get(capability);
+    public <T> Optional<T> getCapability(P partType, PartCapability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        Optional<Object> o = volatileCapabilities.get(capability);
         if(o != null && o.isPresent()) {
-            return o.cast();
+            return (Optional<T>) o;
         }
-        return capabilities == null ? LazyOptional.empty() : capabilities.getCapability(capability);
+        return Optional.ofNullable(capability.getCapability(partType, target));
     }
 
     @Override
-    public <T> void addVolatileCapability(Capability<T> capability, LazyOptional<T> value) {
-        volatileCapabilities.put(capability, (LazyOptional<Object>) value);
+    public <T> void addVolatileCapability(PartCapability<T> capability, Optional<T> value) {
+        volatileCapabilities.put(capability, (Optional<Object>) value);
     }
 
     @Override
-    public void removeVolatileCapability(Capability<?> capability) {
+    public void removeVolatileCapability(PartCapability<?> capability) {
         volatileCapabilities.remove(capability);
     }
 

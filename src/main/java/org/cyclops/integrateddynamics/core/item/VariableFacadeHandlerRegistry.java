@@ -11,8 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
@@ -126,7 +126,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         CompoundTag tag = itemStack.getOrCreateTag();
         F variableFacade = writeVariableFacade(generateId, itemStack, variableFacadeHandler, variableFacadeFactory, ValueDeseralizationContext.of(level));
         if (player != null) {
-            MinecraftForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade, blockState));
+            NeoForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade, blockState));
         }
         this.write(tag, variableFacade, variableFacadeHandler);
         return itemStack;

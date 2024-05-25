@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.WorldHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;

@@ -1,24 +1,13 @@
 package org.cyclops.integrateddynamics;
 
 import org.cyclops.cyclopscore.config.ConfigHandler;
+import org.cyclops.integrateddynamics.advancement.criterion.NetworkInitializedTriggerConfig;
+import org.cyclops.integrateddynamics.advancement.criterion.PartReaderAspectTriggerConfig;
+import org.cyclops.integrateddynamics.advancement.criterion.PartVariableDrivenAspectTriggerConfig;
+import org.cyclops.integrateddynamics.advancement.criterion.PartWriterAspectTriggerConfig;
+import org.cyclops.integrateddynamics.advancement.criterion.VariableCreatedTriggerConfig;
 import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.blockentity.*;
-import org.cyclops.integrateddynamics.capability.cable.CableConfig;
-import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
-import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
-import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
-import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
-import org.cyclops.integrateddynamics.capability.ingredient.IngredientComponentValueHandlerConfig;
-import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
-import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
-import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
-import org.cyclops.integrateddynamics.capability.network.PositionedAddonsNetworkIngredientsHandlerConfig;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
-import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
-import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
-import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTickingConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettingsConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffsetConfig;
@@ -29,6 +18,12 @@ import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.inventory.container.*;
 import org.cyclops.integrateddynamics.item.*;
+import org.cyclops.integrateddynamics.loot.conditions.LootConditionMatchWrenchConfig;
+import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyEnergyBatteryDataConfig;
+import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyMechanicalDryingBasinTanksConfig;
+import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyMechanicalMachineEnergyConfig;
+import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyMechanicalSqueezerTankConfig;
+import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyProxyIdConfig;
 import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipeConfig;
 import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipeConfig;
 import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapedOmniDirectional3Config;
@@ -44,24 +39,6 @@ import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenrilCon
 public class Configs {
 
     public static void registerBlocks(ConfigHandler configHandler) {
-
-        // Capabilities
-        configHandler.addConfigurable(new PartContainerConfig());
-        configHandler.addConfigurable(new NetworkElementProviderConfig());
-        configHandler.addConfigurable(new DynamicLightConfig());
-        configHandler.addConfigurable(new DynamicRedstoneConfig());
-        configHandler.addConfigurable(new FacadeableConfig());
-        configHandler.addConfigurable(new VariableContainerConfig());
-        configHandler.addConfigurable(new CableConfig());
-        configHandler.addConfigurable(new CableFakeableConfig());
-        configHandler.addConfigurable(new NetworkCarrierConfig());
-        configHandler.addConfigurable(new PathElementConfig());
-        configHandler.addConfigurable(new VariableFacadeHolderConfig());
-        configHandler.addConfigurable(new PartNetworkConfig());
-        configHandler.addConfigurable(new EnergyNetworkConfig());
-        configHandler.addConfigurable(new ValueInterfaceConfig());
-        configHandler.addConfigurable(new PositionedAddonsNetworkIngredientsHandlerConfig());
-        configHandler.addConfigurable(new IngredientComponentValueHandlerConfig());
 
         // Fluids
         configHandler.addConfigurable(new FluidMenrilResinConfig());
@@ -189,6 +166,23 @@ public class Configs {
         configHandler.addConfigurable(new RecipeSerializerCraftingSpecialShapedOmniDirectionalConfig());
         configHandler.addConfigurable(new RecipeSerializerCraftingSpecialShapedOmniDirectional3Config());
         configHandler.addConfigurable(new RecipeSerializerCraftingSpecialShapelessOmniDirectionalConfig());
+
+        // Criterion triggers
+        configHandler.addConfigurable(new NetworkInitializedTriggerConfig());
+        configHandler.addConfigurable(new PartReaderAspectTriggerConfig());
+        configHandler.addConfigurable(new PartVariableDrivenAspectTriggerConfig());
+        configHandler.addConfigurable(new PartWriterAspectTriggerConfig());
+        configHandler.addConfigurable(new VariableCreatedTriggerConfig());
+
+        // Loot conditions
+        configHandler.addConfigurable(new LootConditionMatchWrenchConfig());
+
+        // Loot functions
+        configHandler.addConfigurable(new LootFunctionCopyEnergyBatteryDataConfig());
+        configHandler.addConfigurable(new LootFunctionCopyMechanicalDryingBasinTanksConfig());
+        configHandler.addConfigurable(new LootFunctionCopyMechanicalMachineEnergyConfig());
+        configHandler.addConfigurable(new LootFunctionCopyMechanicalSqueezerTankConfig());
+        configHandler.addConfigurable(new LootFunctionCopyProxyIdConfig());
     }
 
 }

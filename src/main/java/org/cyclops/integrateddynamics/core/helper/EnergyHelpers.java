@@ -5,14 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Helpers related to energy.
@@ -26,27 +25,27 @@ public class EnergyHelpers {
         ENERGY_STORAGE_PROXIES.add(energyStorageProxy);
     }
 
-    public static LazyOptional<IEnergyStorage> getEnergyStorage(PartPos pos) {
+    public static Optional<IEnergyStorage> getEnergyStorage(PartPos pos) {
         return getEnergyStorage(pos.getPos(), pos.getSide());
     }
 
-    public static LazyOptional<IEnergyStorage> getEnergyStorage(DimPos pos, Direction facing) {
+    public static Optional<IEnergyStorage> getEnergyStorage(DimPos pos, Direction facing) {
         Level world = pos.getLevel(true);
-        return world != null ? getEnergyStorage(world, pos.getBlockPos(), facing) : LazyOptional.empty();
+        return world != null ? getEnergyStorage(world, pos.getBlockPos(), facing) : Optional.empty();
     }
 
-    public static LazyOptional<IEnergyStorage> getEnergyStorage(BlockGetter world, BlockPos pos, Direction facing) {
-        IEnergyStorage energyStorage = BlockEntityHelpers.getCapability(world, pos, facing, ForgeCapabilities.ENERGY)
+    public static Optional<IEnergyStorage> getEnergyStorage(Level world, BlockPos pos, Direction facing) {
+        IEnergyStorage energyStorage = BlockEntityHelpers.getCapability(world, pos, facing, net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK)
                 .orElseGet(() -> {
                     for (IEnergyStorageProxy energyStorageProxy : ENERGY_STORAGE_PROXIES) {
-                        LazyOptional<IEnergyStorage> optionalEnergyStorage = energyStorageProxy.getEnergyStorageProxy(world, pos, facing);
+                        Optional<IEnergyStorage> optionalEnergyStorage = energyStorageProxy.getEnergyStorageProxy(world, pos, facing);
                         if (optionalEnergyStorage.isPresent()) {
                             return optionalEnergyStorage.orElse(null);
                         }
                     }
                     return null;
                 });
-        return energyStorage == null ? LazyOptional.empty() : LazyOptional.of(() -> energyStorage);
+        return energyStorage == null ? Optional.empty() : Optional.of(energyStorage);
     }
 
     /**
@@ -72,7 +71,7 @@ public class EnergyHelpers {
     }
 
     public static interface IEnergyStorageProxy {
-        public LazyOptional<IEnergyStorage> getEnergyStorageProxy(BlockGetter world, BlockPos pos, Direction facing);
+        public Optional<IEnergyStorage> getEnergyStorageProxy(BlockGetter world, BlockPos pos, Direction facing);
     }
 
 }

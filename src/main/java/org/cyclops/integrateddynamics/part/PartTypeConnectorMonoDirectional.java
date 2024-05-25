@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -20,7 +21,6 @@ import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
@@ -148,7 +148,7 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
             if (getPartPos() != null) {
                 Direction targetSide = getPartPos().getSide().getOpposite();
                 IPathElement pathElement = BlockEntityHelpers.getCapability(State.getTargetPos(getPartPos(), offset),
-                        targetSide, PathElementConfig.CAPABILITY).orElse(null);
+                        targetSide, Capabilities.PathElement.BLOCK).orElse(null);
                 if (pathElement != null) {
                     return Sets.newHashSet(SidedPathElement.of(pathElement, targetSide));
                 }

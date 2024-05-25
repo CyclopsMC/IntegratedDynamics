@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.network.event;
 
 import com.google.common.collect.Maps;
-import net.minecraftforge.eventbus.EventBus;
+import net.neoforged.bus.EventBus;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;

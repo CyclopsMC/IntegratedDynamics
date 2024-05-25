@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.recipe;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.CommonHooks;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -26,8 +26,8 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
     private NonNullList<Ingredient> ingredients;
 
-    public ItemFacadeRecipe(ResourceLocation id, CraftingBookCategory craftingBookCategory) {
-        super(id, craftingBookCategory);
+    public ItemFacadeRecipe(CraftingBookCategory craftingBookCategory) {
+        super(craftingBookCategory);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
         for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getItem(i);
-            aitemstack.set(i, net.minecraftforge.common.ForgeHooks.getCraftingRemainingItem(itemstack));
+            aitemstack.set(i, CommonHooks.getCraftingRemainingItem(itemstack));
         }
 
         return aitemstack;
@@ -93,7 +93,7 @@ public class ItemFacadeRecipe extends CustomRecipe {
             return ItemStack.EMPTY;
         }
 
-        RegistryEntries.ITEM_FACADE.writeFacadeBlock(output, BlockHelpers.getBlockStateFromItemStack(block));
+        RegistryEntries.ITEM_FACADE.get().writeFacadeBlock(output, BlockHelpers.getBlockStateFromItemStack(block));
         return output;
     }
 
@@ -109,13 +109,13 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return RegistryEntries.RECIPESERIALIZER_FACADE;
+        return RegistryEntries.RECIPESERIALIZER_FACADE.get();
     }
 
     public static class BlocksIngredient extends Ingredient {
 
         protected BlocksIngredient() {
-            super(ForgeRegistries.BLOCKS.getValues().stream().map(ItemStack::new).map(Ingredient.ItemValue::new));
+            super(BuiltInRegistries.BLOCK.stream().map(ItemStack::new).map(Ingredient.ItemValue::new));
         }
 
         @Override

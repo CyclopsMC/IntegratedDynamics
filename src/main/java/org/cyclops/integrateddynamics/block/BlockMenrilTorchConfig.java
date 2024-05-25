@@ -11,8 +11,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -29,11 +29,11 @@ public class BlockMenrilTorchConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_torch",
-                eConfig -> new TorchBlock(Block.Properties.of()
+                eConfig -> new TorchBlock(ParticleTypes.FLAME, Block.Properties.of()
                         .noCollission()
                         .strength(0)
                         .lightLevel((blockState) -> 14)
-                        .sound(SoundType.WOOD), ParticleTypes.FLAME) {
+                        .sound(SoundType.WOOD)) {
                     @Override
                     @OnlyIn(Dist.CLIENT)
                     public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
@@ -41,7 +41,7 @@ public class BlockMenrilTorchConfig extends BlockConfig {
                     }
                 },
                 (eConfig, block) -> new StandingAndWallBlockItem(block,
-                        RegistryEntries.BLOCK_MENRIL_TORCH_WALL,
+                        RegistryEntries.BLOCK_MENRIL_TORCH_WALL.get(),
                         new Item.Properties(), Direction.DOWN)
         );
     }

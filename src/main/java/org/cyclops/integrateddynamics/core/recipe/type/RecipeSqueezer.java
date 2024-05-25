@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -11,11 +10,13 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Squeezer recipe
@@ -23,14 +24,13 @@ import java.util.Objects;
  */
 public class RecipeSqueezer implements Recipe<Container> {
 
-    private final ResourceLocation id;
     private final Ingredient inputIngredient;
     private final NonNullList<IngredientChance> outputItems;
-    private final FluidStack outputFluid;
+    private final Optional<FluidStack> outputFluid;
 
-    public RecipeSqueezer(ResourceLocation id, Ingredient inputIngredient,
-                          NonNullList<IngredientChance> outputItems, FluidStack outputFluid) {
-        this.id = id;
+    public RecipeSqueezer(Ingredient inputIngredient,
+                          NonNullList<IngredientChance> outputItems,
+                          Optional<FluidStack> outputFluid) {
         this.inputIngredient = inputIngredient;
         this.outputItems = outputItems;
         this.outputFluid = outputFluid;
@@ -44,7 +44,7 @@ public class RecipeSqueezer implements Recipe<Container> {
         return outputItems;
     }
 
-    public FluidStack getOutputFluid() {
+    public Optional<FluidStack> getOutputFluid() {
         return outputFluid;
     }
 
@@ -77,30 +77,27 @@ public class RecipeSqueezer implements Recipe<Container> {
     }
 
     @Override
-    public ResourceLocation getId() {
-        return this.id;
-    }
-
-    @Override
     public RecipeSerializer<?> getSerializer() {
-        return RegistryEntries.RECIPESERIALIZER_SQUEEZER;
+        return RegistryEntries.RECIPESERIALIZER_SQUEEZER.get();
     }
 
     @Override
     public RecipeType<?> getType() {
-        return RegistryEntries.RECIPETYPE_SQUEEZER;
+        return RegistryEntries.RECIPETYPE_SQUEEZER.get();
     }
 
     public static class IngredientChance {
-        private final Either<ItemStack, ItemStackFromIngredient> ingredient;
-        private final float chance;
+        private final Either<Pair<ItemStack, Float>, Pair<ItemStackFromIngredient, Float>> ingredient;
 
-        public IngredientChance(Either<ItemStack, ItemStackFromIngredient> ingredient, float chance) {
+        public IngredientChance(Either<Pair<ItemStack, Float>, Pair<ItemStackFromIngredient, Float>> ingredient) {
             this.ingredient = Objects.requireNonNull(ingredient);
-            this.chance = chance;
         }
 
         public Either<ItemStack, ItemStackFromIngredient> getIngredient() {
+            return ingredient.mapBoth(Pair::getLeft, Pair::getLeft);
+        }
+
+        public Either<Pair<ItemStack, Float>, Pair<ItemStackFromIngredient, Float>> getIngredientChance() {
             return ingredient;
         }
 
@@ -109,7 +106,7 @@ public class RecipeSqueezer implements Recipe<Container> {
         }
 
         public float getChance() {
-            return chance;
+            return ingredient.map(Pair::getRight, Pair::getRight);
         }
 
     }

@@ -5,6 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -12,9 +15,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonCheckbox;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.image.Images;
@@ -123,13 +125,12 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     private Set<IDropdownEntry<ResourceLocation>> getDropdownEntries() {
         LinkedHashSet<IDropdownEntry<ResourceLocation>> set = Sets.newLinkedHashSet();
         if (getSlotContents().isEmpty()) {
-            ForgeRegistries.ITEMS.tags().getTagNames()
+            BuiltInRegistries.ITEM.getTagNames()
                     .forEach(registeredTag -> set.add(new DropdownEntry(registeredTag.location())));
 
         } else {
-            ForgeRegistries.ITEMS.tags().getReverseTag(getSlotContents().getItem())
-                    .ifPresent(reverseTag -> reverseTag.getTagKeys()
-                            .forEach(registeredTag -> set.add(new DropdownEntry(registeredTag.location()))));
+            getSlotContents().getItem().builtInRegistryHolder().tags()
+                    .forEach(registeredTag -> set.add(new DropdownEntry(registeredTag.location())));
         }
         return set;
     }
@@ -212,7 +213,11 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
                                    int mouseX, int mouseY, int columns, int offset) {
         int x = mouseX - guiLeft;
         int y = mouseY - guiTop;
-        List<Item> items = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registries.ITEM, hoveredPossibility.getValue())).stream().toList();
+        List<Item> items = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, hoveredPossibility.getValue()))
+                .stream()
+                .flatMap(HolderSet.ListBacked::stream)
+                .map(Holder::value)
+                .toList();
 
         // Draw background
         GuiHelpers.drawTooltipBackground(guiGraphics.pose(), x, y, Math.min(items.size(), columns) * offset,

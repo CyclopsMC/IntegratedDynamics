@@ -58,7 +58,7 @@ public class ContainerPartOffset extends InventoryContainer {
 
     public ContainerPartOffset(int id, Inventory playerInventory, Container inventory,
                                PartTarget target, Optional<IPartContainer> partContainer, IPartType partType) {
-      this(RegistryEntries.CONTAINER_PART_OFFSET, id, playerInventory, inventory, target, partContainer, partType);
+      this(RegistryEntries.CONTAINER_PART_OFFSET.get(), id, playerInventory, inventory, target, partContainer, partType);
     }
 
     public ContainerPartOffset(@Nullable MenuType<?> type, int id, Inventory playerInventory, Container inventory,

@@ -77,13 +77,6 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    protected void containerTick() {
-        super.containerTick();
-        this.numberFieldUpdateInterval.tick();
-        this.numberFieldCapacity.tick();
-    }
-
-    @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (!this.numberFieldUpdateInterval.charTyped(typedChar, keyCode)
                 && !this.numberFieldCapacity.charTyped(typedChar, keyCode)) {

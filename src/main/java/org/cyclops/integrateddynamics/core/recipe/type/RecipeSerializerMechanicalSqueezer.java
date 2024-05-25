@@ -1,17 +1,18 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Recipe serializer for mechanical squeezer recipes
@@ -19,37 +20,37 @@ import javax.annotation.Nullable;
  */
 public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<RecipeMechanicalSqueezer> {
 
+    public static final Codec<RecipeMechanicalSqueezer> CODEC = RecordCodecBuilder.create(
+            builder -> builder.group(
+                            Ingredient.CODEC_NONEMPTY.fieldOf("input_item").forGetter(RecipeMechanicalSqueezer::getInputIngredient),
+                            RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE_LIST.fieldOf("output_items").forGetter(r -> r.getOutputItems().stream().toList()),
+                            ExtraCodecs.strictOptionalField(FluidStack.CODEC, "output_fluid").forGetter(RecipeMechanicalSqueezer::getOutputFluid),
+                            Codec.INT.fieldOf("duration").forGetter(RecipeMechanicalSqueezer::getDuration)
+                    )
+                    .apply(builder, (inputIngredient, outputItemStacks, outputFluid, duration) -> {
+                        // Validation
+                        if (inputIngredient.isEmpty()) {
+                            throw new JsonSyntaxException("An input item is required");
+                        }
+                        if (outputItemStacks.isEmpty() && outputFluid.isEmpty()) {
+                            throw new JsonSyntaxException("An output item or fluid is required");
+                        }
+                        if (duration <= 0) {
+                            throw new JsonSyntaxException("Durations must be higher than one tick");
+                        }
+
+                        return new RecipeMechanicalSqueezer(inputIngredient, NonNullList.copyOf(outputItemStacks), outputFluid, duration);
+                    })
+    );
+
     @Override
-    public RecipeMechanicalSqueezer fromJson(ResourceLocation recipeId, JsonObject json) {
-        JsonObject result = GsonHelper.getAsJsonObject(json, "result");
-
-        // Input
-        Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", true);
-
-        // Output
-        NonNullList<RecipeSqueezer.IngredientChance> outputItemStacks = RecipeSerializerSqueezer.getJsonItemStackChances(result, "items");
-        FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
-
-        // Other stuff
-        int duration = GsonHelper.getAsInt(json, "duration");
-
-        // Validation
-        if (inputIngredient.isEmpty()) {
-            throw new JsonSyntaxException("An input item is required");
-        }
-        if (outputItemStacks.isEmpty() && outputFluid.isEmpty()) {
-            throw new JsonSyntaxException("An output item or fluid is required");
-        }
-        if (duration <= 0) {
-            throw new JsonSyntaxException("Durations must be higher than one tick");
-        }
-
-        return new RecipeMechanicalSqueezer(recipeId, inputIngredient, outputItemStacks, outputFluid, duration);
+    public Codec<RecipeMechanicalSqueezer> codec() {
+        return CODEC;
     }
 
     @Nullable
     @Override
-    public RecipeMechanicalSqueezer fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+    public RecipeMechanicalSqueezer fromNetwork(FriendlyByteBuf buffer) {
         // Input
         Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
 
@@ -58,16 +59,15 @@ public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<Reci
         int outputItemStacksCount = buffer.readInt();
         for (int i = 0; i < outputItemStacksCount; i++) {
             outputItemStacks.add(new RecipeSqueezer.IngredientChance(
-                    RecipeSerializerHelpers.readItemStackOrItemStackIngredient(buffer),
-                    buffer.readFloat()
+                    RecipeSerializerHelpers.readItemStackOrItemStackIngredientChance(buffer)
             ));
         }
-        FluidStack outputFluid = FluidStack.readFromPacket(buffer);
+        Optional<FluidStack> outputFluid = RecipeSerializerHelpers.readOptionalFromNetwork(buffer, FluidStack::readFromPacket);
 
         // Other stuff
         int duration = buffer.readVarInt();
 
-        return new RecipeMechanicalSqueezer(recipeId, inputIngredient, outputItemStacks, outputFluid, duration);
+        return new RecipeMechanicalSqueezer(inputIngredient, outputItemStacks, outputFluid, duration);
     }
 
     @Override
@@ -78,10 +78,9 @@ public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<Reci
         // Output
         buffer.writeInt(recipe.getOutputItems().size());
         for (RecipeSqueezer.IngredientChance outputItem : recipe.getOutputItems()) {
-            RecipeSerializerHelpers.writeItemStackOrItemStackIngredient(buffer, outputItem.getIngredient());
-            buffer.writeFloat(outputItem.getChance());
+            RecipeSerializerHelpers.writeItemStackOrItemStackIngredientChance(buffer, outputItem.getIngredientChance());
         }
-        recipe.getOutputFluid().writeToPacket(buffer);
+        RecipeSerializerHelpers.writeOptionalToNetwork(buffer, recipe.getOutputFluid(), (b, value) -> value.writeToPacket(b));
 
         // Other stuff
         buffer.writeVarInt(recipe.getDuration());

@@ -4,24 +4,23 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.network.MechanicalMachineNetworkElement;
@@ -33,7 +32,7 @@ import java.util.Optional;
  * @param <RCK> The recipe cache key type.
  * @param <R> The recipe type.
  */
-public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe> extends BlockEntityCableConnectableInventory
+public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> extends BlockEntityCableConnectableInventory
         implements IEnergyStorage {
 
     /**
@@ -48,38 +47,47 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe> extend
     @NBTPersist
     private int sleep = -1;
 
-    private SingleCache<RCK, Optional<R>> recipeCache;
+    private SingleCache<RCK, Optional<RecipeHolder<R>>> recipeCache;
 
     public BlockEntityMechanicalMachine(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState, int inventorySize) {
         super(type, blockPos, blockState, inventorySize, 64);
-
-        // Add energy capability
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
-            @Override
-            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                return new MechanicalMachineNetworkElement(DimPos.of(world, blockPos));
-            }
-        }));
-        addCapabilityInternal(ForgeCapabilities.ENERGY, LazyOptional.of(() -> this));
-
-        // Set inventory sides
-        LazyOptional<IItemHandler> itemHandlerInput = LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), getInputSlots()));
-        LazyOptional<IItemHandler> itemHandlerOutput = LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), getOutputSlots()));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.UP, itemHandlerInput);
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.DOWN, itemHandlerOutput);
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.NORTH, itemHandlerInput);
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.SOUTH, itemHandlerInput);
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.WEST, itemHandlerInput);
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.EAST, itemHandlerInput);
 
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(createCacheUpdater());
     }
 
+    public static <E> void registerMechanicalMachineCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMechanicalMachine> blockEntityType) {
+        BlockEntityCableConnectableInventory.registerCableConnectableInventoryCapabilities(event, blockEntityType);
+
+        event.registerBlockEntity(
+                Capabilities.NetworkElementProvider.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new NetworkElementProviderSingleton() {
+                    @Override
+                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                        return new MechanicalMachineNetworkElement(DimPos.of(world, blockPos));
+                    }
+                }
+        );
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> blockEntity
+        );
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> {
+                    int[] slots = direction == Direction.DOWN ? blockEntity.getOutputSlots() : blockEntity.getInputSlots();
+                    return new ItemHandlerSlotMasked(blockEntity.getInventory(), slots);
+                }
+        );
+    }
+
     /**
      * @return A new cache updater instance.
      */
-    protected abstract SingleCache.ICacheUpdater<RCK, Optional<R>> createCacheUpdater();
+    protected abstract SingleCache.ICacheUpdater<RCK, Optional<RecipeHolder<R>>> createCacheUpdater();
 
     /**
      * @return The available input slots.
@@ -144,7 +152,7 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe> extend
         return sleep;
     }
 
-    public LazyOptional<IEnergyNetwork> getEnergyNetwork() {
+    public Optional<IEnergyNetwork> getEnergyNetwork() {
         return NetworkHelpers.getEnergyNetwork(getNetwork());
     }
 
@@ -182,7 +190,7 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe> extend
     /**
      * @return The currently applicable recipe.
      */
-    public Optional<R> getCurrentRecipe() {
+    public Optional<RecipeHolder<R>> getCurrentRecipe() {
         return recipeCache.get(getCurrentRecipeCacheKey());
     }
 
@@ -206,7 +214,7 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe> extend
      * @param recipe A recipe.
      * @return The duration of a given recipe.
      */
-    public abstract int getRecipeDuration(R recipe);
+    public abstract int getRecipeDuration(RecipeHolder<R> recipe);
 
     /**
      * Finalize a recipe.
@@ -308,7 +316,7 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe> extend
         return true;
     }
 
-    public static class Ticker<RCK, R extends Recipe, BE extends BlockEntityMechanicalMachine<RCK, R>> extends BlockEntityCableConnectableInventory.Ticker<BE> {
+    public static class Ticker<RCK, R extends Recipe<?>, BE extends BlockEntityMechanicalMachine<RCK, R>> extends BlockEntityCableConnectableInventory.Ticker<BE> {
         @Override
         protected void update(Level level, BlockPos pos, BlockState blockState, BE blockEntity) {
             super.update(level, pos, blockState, blockEntity);
@@ -317,10 +325,10 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe> extend
                 blockEntity.setSleep(blockEntity.getSleep() - 1);
                 blockEntity.setChanged();
             } else if (blockEntity.canWork()) {
-                Optional<R> recipeOptional = blockEntity.getCurrentRecipe();
+                Optional<RecipeHolder<R>> recipeOptional = blockEntity.getCurrentRecipe();
                 if (recipeOptional.isPresent()) {
-                    R recipe = recipeOptional.get();
-                    if (blockEntity.getProgress() == 0 && !blockEntity.finalizeRecipe(recipe, true)) {
+                    RecipeHolder<R> recipe = recipeOptional.get();
+                    if (blockEntity.getProgress() == 0 && !blockEntity.finalizeRecipe(recipe.value(), true)) {
                         blockEntity.setSleep(SLEEP_TIME);
                     } else if (blockEntity.getProgress() < blockEntity.getMaxProgress()) {
                         // // Consume energy while progressing
@@ -337,9 +345,9 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe> extend
 
                         // First check if we have enough room for the recipe output,
                         // if not, we sleep for a while.
-                        if (blockEntity.finalizeRecipe(recipe, true)) {
+                        if (blockEntity.finalizeRecipe(recipe.value(), true)) {
                             blockEntity.setProgress(0);
-                            blockEntity.finalizeRecipe(recipe, false);
+                            blockEntity.finalizeRecipe(recipe.value(), false);
                         } else {
                             blockEntity.setSleep(40);
                         }

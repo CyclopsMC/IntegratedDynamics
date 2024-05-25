@@ -11,8 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -95,10 +95,10 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     protected void initializeSlotsPre() {
-        addSlot(new SlotSingleItem(writeSlot, 0, OUTPUT_X, OUTPUT_Y, RegistryEntries.ITEM_VARIABLE));
-        SlotSingleItem filterSlotIn1 = new SlotSingleItem(filterSlots, 0, 6, 218, RegistryEntries.ITEM_VARIABLE);
-        SlotSingleItem filterSlotIn2 = new SlotSingleItem(filterSlots, 1, 24, 218, RegistryEntries.ITEM_VARIABLE);
-        SlotSingleItem filterSlotOut = new SlotSingleItem(filterSlots, 2, 58, 218, RegistryEntries.ITEM_VARIABLE);
+        addSlot(new SlotSingleItem(writeSlot, 0, OUTPUT_X, OUTPUT_Y, RegistryEntries.ITEM_VARIABLE.get()));
+        SlotSingleItem filterSlotIn1 = new SlotSingleItem(filterSlots, 0, 6, 218, RegistryEntries.ITEM_VARIABLE.get());
+        SlotSingleItem filterSlotIn2 = new SlotSingleItem(filterSlots, 1, 24, 218, RegistryEntries.ITEM_VARIABLE.get());
+        SlotSingleItem filterSlotOut = new SlotSingleItem(filterSlots, 2, 58, 218, RegistryEntries.ITEM_VARIABLE.get());
         filterSlotIn1.setPhantom(true);
         filterSlotIn2.setPhantom(true);
         filterSlotOut.setPhantom(true);
@@ -229,7 +229,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     protected void labelCurrent() {
         ItemStack itemStack = writeSlot.getItem(0);
         if(!itemStack.isEmpty()) {
-            IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(ValueDeseralizationContext.of(player.level()), itemStack);
+            IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.of(player.level()), itemStack);
             if(this.lastLabel != null && variableFacade.isValid()) {
                 LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableFacade.getId(), this.lastLabel);
             }

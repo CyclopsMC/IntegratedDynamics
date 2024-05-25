@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.inventory.container.ContainerExtended;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGui;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;

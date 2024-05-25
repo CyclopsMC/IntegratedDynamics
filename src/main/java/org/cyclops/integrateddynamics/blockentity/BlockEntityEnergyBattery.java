@@ -3,18 +3,18 @@ package org.cyclops.integrateddynamics.blockentity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectable;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
@@ -33,14 +33,27 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
     private int capacity = BlockEnergyBatteryConfig.capacity;
 
     public BlockEntityEnergyBattery(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY, blockPos, blockState);
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
-            @Override
-            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                return new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
-            }
-        }));
-        addCapabilityInternal(ForgeCapabilities.ENERGY, LazyOptional.of(() -> this));
+        super(RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY.get(), blockPos, blockState);
+    }
+
+    public static void registerEnergyBatteryCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityEnergyBattery> blockEntityType) {
+        BlockEntityCableConnectable.registerCableConnectableCapabilities(event, blockEntityType);
+
+        event.registerBlockEntity(
+                Capabilities.NetworkElementProvider.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new NetworkElementProviderSingleton() {
+                    @Override
+                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                        return new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
+                    }
+                }
+        );
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> ((BlockEntityEnergyBattery) blockEntity)
+        );
     }
 
     public boolean isCreative() {

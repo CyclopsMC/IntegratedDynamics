@@ -7,8 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -18,6 +16,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A value holder for an {@link IPartType}.
@@ -189,28 +188,29 @@ public interface IPartState<P extends IPartType> {
 
     /**
      * Get the given capability.
+     * @param <T> The capability type.
+     * @param partType The part type.
      * @param capability The capability to get.
      * @param network The network the part belongs to.
      * @param partNetwork The part network the part belongs to.
      * @param target The target.
-     * @param <T> The capability type.
      * @return The optional capability instance.
      */
-    <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target);
+    public <T> Optional<T> getCapability(P partType, PartCapability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target);
 
     /**
      * Add a capability to this state that will not be automatically persisted to NBT.
+     * @param <T> The capability type.
      * @param capability The optional capability.
      * @param value The capability instance.
-     * @param <T> The capability type.
      */
-    public <T> void addVolatileCapability(Capability<T> capability, LazyOptional<T> value);
+    public <T> void addVolatileCapability(PartCapability<T> capability, Optional<T> value);
 
     /**
      * Remove a non-persisted capability.
      * @param capability The capability.
      */
-    public void removeVolatileCapability(Capability<?> capability);
+    public void removeVolatileCapability(PartCapability<?> capability);
 
     /**
      * Load the inventory of the given name from the part state.

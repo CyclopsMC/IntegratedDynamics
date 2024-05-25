@@ -10,24 +10,22 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
-import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
-import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectableInventory;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.inventory.container.ContainerVariablestore;
@@ -53,18 +51,32 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
     private boolean shouldSendUpdateEvent = false;
 
     public BlockEntityVariablestore(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_VARIABLE_STORE, blockPos, blockState, BlockEntityVariablestore.INVENTORY_SIZE, 1);
+        super(RegistryEntries.BLOCK_ENTITY_VARIABLE_STORE.get(), blockPos, blockState, BlockEntityVariablestore.INVENTORY_SIZE, 1);
         getInventory().addDirtyMarkListener(this);
-
-        addCapabilityInternal(ForgeCapabilities.ITEM_HANDLER, LazyOptional.of(() -> getInventory().getItemHandler()));
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
-            @Override
-            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                return new VariablestoreNetworkElement(DimPos.of(world, blockPos));
-            }
-        }));
         variableContainer = new VariableContainerDefault();
-        addCapabilityInternal(VariableContainerConfig.CAPABILITY, LazyOptional.of(() -> variableContainer));
+    }
+
+    public static void registerVariablestoreCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityVariablestore> blockEntityType) {
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getInventory().getItemHandler()
+        );
+        event.registerBlockEntity(
+                Capabilities.NetworkElementProvider.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new NetworkElementProviderSingleton() {
+                    @Override
+                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                        return new VariablestoreNetworkElement(DimPos.of(world, blockPos));
+                    }
+                }
+        );
+        event.registerBlockEntity(
+                Capabilities.VariableContainer.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getVariableContainer()
+        );
     }
 
     @Override
@@ -73,9 +85,13 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
             @Override
             public boolean canPlaceItem(int slot, ItemStack itemStack) {
                 return super.canPlaceItem(slot, itemStack)
-                        && (itemStack.isEmpty() || itemStack.getCapability(VariableFacadeHolderConfig.CAPABILITY, null).isPresent());
+                        && (itemStack.isEmpty() || itemStack.getCapability(Capabilities.VariableFacade.ITEM) != null);
             }
         };
+    }
+
+    public IVariableContainer getVariableContainer() {
+        return variableContainer;
     }
 
     @Override

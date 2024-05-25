@@ -4,11 +4,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -23,6 +24,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerSetElementInventory extends PacketCodec {
 
+    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "logic_programmer_set_element");
+
     @CodecField
     private String listValueType;
     @CodecField
@@ -31,10 +34,11 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
     private int baseY;
 
     public LogicProgrammerSetElementInventory() {
-
+        super(ID);
     }
 
     public LogicProgrammerSetElementInventory(IValueType listValueType, int baseX, int baseY) {
+        super(ID);
         this.listValueType = listValueType.getUniqueName().toString();
         this.baseX = baseX;
         this.baseY = baseY;

@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
@@ -29,7 +29,7 @@ public class ItemStackBlockEntityEnergyBatteryRender extends BlockEntityWithoutL
 
     @Override
     public void renderByItem(ItemStack itemStackIn, ItemDisplayContext transformType, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        BlockEntityEnergyBattery tile = new BlockEntityEnergyBattery(BlockPos.ZERO, RegistryEntries.BLOCK_ENERGY_BATTERY.defaultBlockState());
+        BlockEntityEnergyBattery tile = new BlockEntityEnergyBattery(BlockPos.ZERO, RegistryEntries.BLOCK_ENERGY_BATTERY.get().defaultBlockState());
         BlockEnergyBatteryBase.itemStackToTile(itemStackIn, tile);
         this.blockEntityRenderDispatcher.renderItem(tile, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
     }

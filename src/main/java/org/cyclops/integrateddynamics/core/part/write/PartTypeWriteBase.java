@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.network.PacketCodec;
@@ -169,7 +169,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         if (network != null && aspect != null) {
             IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network).orElse(null);
             if (partNetwork != null) {
-                MinecraftForge.EVENT_BUS.post(new PartWriterAspectEvent<>(network, partNetwork, target, (P) this,
+                NeoForge.EVENT_BUS.post(new PartWriterAspectEvent<>(network, partNetwork, target, (P) this,
                         partState, player, aspect, partState.getInventory().getItem(activeIndex)));
             }
         }

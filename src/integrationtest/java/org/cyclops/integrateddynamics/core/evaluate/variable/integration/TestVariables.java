@@ -2,15 +2,18 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonParseException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
@@ -35,6 +38,11 @@ import java.util.Map;
  */
 public class TestVariables {
 
+    protected static Tag serializeStack(ItemStack itemStack) {
+        return ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, itemStack)
+                .getOrThrow(false, JsonParseException::new);
+    }
+
     @IntegrationTest
     public void testIngredientsType() {
         DummyVariableIngredients inull = new DummyVariableIngredients(ValueObjectTypeIngredients.ValueIngredients.of(null));
@@ -49,10 +57,10 @@ public class TestVariables {
 
         CompoundTag tag = new CompoundTag();
         ListTag itemStacks = new ListTag();
-        itemStacks.add(ItemStack.EMPTY.serializeNBT());
-        itemStacks.add(new ItemStack(Items.OAK_BOAT).serializeNBT());
-        itemStacks.add(new ItemStack(Blocks.STONE).serializeNBT());
-        itemStacks.add(ItemStack.EMPTY.serializeNBT());
+        itemStacks.add(serializeStack(ItemStack.EMPTY));
+        itemStacks.add(serializeStack(new ItemStack(Items.OAK_BOAT)));
+        itemStacks.add(serializeStack(new ItemStack(Blocks.STONE)));
+        itemStacks.add(serializeStack(ItemStack.EMPTY));
         tag.put("minecraft:itemstack", itemStacks);
 
         TestHelpers.assertEqual(i0.getType().serialize(i0.getValue()), tag, "Serialization is correct");
@@ -91,8 +99,8 @@ public class TestVariables {
         energies.add(LongTag.valueOf(777L));
         output.put("minecraft:energy", energies);
         ListTag itemStacks = new ListTag();
-        itemStacks.add(new ItemStack(Items.OAK_BOAT).serializeNBT());
-        itemStacks.add(new ItemStack(Blocks.STONE).serializeNBT());
+        itemStacks.add(serializeStack(new ItemStack(Items.OAK_BOAT)));
+        itemStacks.add(serializeStack(new ItemStack(Blocks.STONE)));
         output.put("minecraft:itemstack", itemStacks);
         ListTag fluidStacks = new ListTag();
         fluidStacks.add(new FluidStack(Fluids.WATER, 123).writeToNBT(new CompoundTag()));

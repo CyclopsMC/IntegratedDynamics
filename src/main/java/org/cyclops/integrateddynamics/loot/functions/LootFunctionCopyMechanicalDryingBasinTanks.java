@@ -1,10 +1,8 @@
 package org.cyclops.integrateddynamics.loot.functions;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -12,19 +10,23 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.cyclops.cyclopscore.helper.LootHelpers;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalDryingBasin;
+
+import java.util.List;
 
 /**
  * Copies the mechanical drying basin tanks.
  * @author rubensworks
  */
 public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditionalFunction {
-    public static final LootItemFunctionType TYPE = LootHelpers.registerFunction(new ResourceLocation(Reference.MOD_ID, "copy_mechanical_drying_basin_tanks"), new LootFunctionCopyMechanicalDryingBasinTanks.Serializer());
 
-    protected LootFunctionCopyMechanicalDryingBasinTanks(LootItemCondition[] conditionsIn) {
+    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyMechanicalDryingBasinTanks.CODEC);
+    public static final Codec<LootFunctionCopyMechanicalDryingBasinTanks> CODEC = RecordCodecBuilder.create(
+            builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalDryingBasinTanks::new)
+    );
+
+    protected LootFunctionCopyMechanicalDryingBasinTanks(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
     }
 
@@ -41,22 +43,6 @@ public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditio
     @Override
     public LootItemFunctionType getType() {
         return TYPE;
-    }
-
-    public static void load() {
-        // Dummy call, to enforce class loading
-    }
-
-    public static class Serializer extends LootItemConditionalFunction.Serializer<LootFunctionCopyMechanicalDryingBasinTanks> {
-        @Override
-        public void serialize(JsonObject jsonObject, LootFunctionCopyMechanicalDryingBasinTanks lootFunctionCopyId, JsonSerializationContext jsonSerializationContext) {
-
-        }
-
-        @Override
-        public LootFunctionCopyMechanicalDryingBasinTanks deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext, LootItemCondition[] conditionsIn) {
-            return new LootFunctionCopyMechanicalDryingBasinTanks(conditionsIn);
-        }
     }
 
 }

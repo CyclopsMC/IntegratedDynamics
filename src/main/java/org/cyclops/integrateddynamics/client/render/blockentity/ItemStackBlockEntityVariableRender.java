@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -24,7 +24,7 @@ public class ItemStackBlockEntityVariableRender extends BlockEntityWithoutLevelR
 
     @Override
     public void renderByItem(ItemStack itemStackIn, ItemDisplayContext p_239207_2_, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-        IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(ValueDeseralizationContext.ofClient(), itemStackIn);
+        IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.ofClient(), itemStackIn);
         variableFacade.renderISTER(itemStackIn, p_239207_2_, matrixStack, buffer, combinedLight, combinedOverlay);
     }
 

@@ -10,12 +10,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.ItemCapability;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -159,7 +159,7 @@ public class OperatorBuilders {
             .appendPre(input -> {
                 ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 if(!a.getRawValue().isEmpty()) {
-                    return a.getRawValue().getCapability(ForgeCapabilities.ENERGY).orElse(null);
+                    return a.getRawValue().getCapability(Capabilities.EnergyStorage.ITEM);
                 }
                 return null;
             });
@@ -570,21 +570,22 @@ public class OperatorBuilders {
      * Helper function to create an operator function builder for deriving capabilities from an itemstack.
      * @param capabilityReference The capability instance reference.
      * @param <T> The capability type.
+     * @param <C> The capability context type.
      * @return The builder.
      */
-    public static <T> IterativeFunction.PrePostBuilder<T, IValue> getItemCapability(@Nullable final ICapabilityReference<T> capabilityReference) {
+    public static <T, C> IterativeFunction.PrePostBuilder<T, IValue> getItemCapability(@Nullable final ICapabilityReference<T, C> capabilityReference) {
         return IterativeFunction.PrePostBuilder.begin()
                 .appendPre(input -> {
                     ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                     if(!a.getRawValue().isEmpty()) {
-                        return a.getRawValue().getCapability(capabilityReference.getReference(), null).orElse(null);
+                        return a.getRawValue().getCapability(capabilityReference.getReference(), null);
                     }
                     return null;
                 });
     }
 
-    public static interface ICapabilityReference<T> {
-        public Capability<T> getReference();
+    public static interface ICapabilityReference<T, C> {
+        public ItemCapability<T, C> getReference();
     }
 
 }

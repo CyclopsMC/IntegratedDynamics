@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetwork;

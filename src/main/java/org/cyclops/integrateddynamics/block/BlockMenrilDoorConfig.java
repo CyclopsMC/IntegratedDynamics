@@ -19,10 +19,10 @@ public class BlockMenrilDoorConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_door",
-                eConfig -> new DoorBlock(Block.Properties.of()
+                eConfig -> new DoorBlock(BlockSetType.OAK, Block.Properties.of()
                         .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F, 3.0F)
-                        .sound(SoundType.WOOD), BlockSetType.OAK),
+                        .sound(SoundType.WOOD)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

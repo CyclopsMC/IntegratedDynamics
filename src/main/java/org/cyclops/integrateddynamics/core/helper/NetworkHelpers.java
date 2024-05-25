@@ -2,16 +2,15 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -24,13 +23,6 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
-import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
-import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
-import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
-import org.cyclops.integrateddynamics.capability.network.PartNetworkConfig;
-import org.cyclops.integrateddynamics.capability.network.PositionedAddonsNetworkIngredientsHandlerConfig;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -52,8 +44,8 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network carrier capability.
      */
-    public static LazyOptional<INetworkCarrier> getNetworkCarrier(BlockGetter world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, NetworkCarrierConfig.CAPABILITY);
+    public static Optional<INetworkCarrier> getNetworkCarrier(Level world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkCarrier.BLOCK);
     }
 
     /**
@@ -63,8 +55,8 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network element provider capability.
      */
-    public static LazyOptional<INetworkElementProvider> getNetworkElementProvider(BlockGetter world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, NetworkElementProviderConfig.CAPABILITY);
+    public static Optional<INetworkElementProvider> getNetworkElementProvider(Level world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkElementProvider.BLOCK);
     }
 
     /**
@@ -74,13 +66,13 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network.
      */
-    public static LazyOptional<INetwork> getNetwork(BlockGetter world, BlockPos pos, @Nullable Direction side) {
-        LazyOptional<LazyOptional<INetwork>> networkCarried = getNetworkCarrier(world, pos, side)
-                .lazyMap(carrier -> {
+    public static Optional<INetwork> getNetwork(Level world, BlockPos pos, @Nullable Direction side) {
+        Optional<Optional<INetwork>> networkCarried = getNetworkCarrier(world, pos, side)
+                .map(carrier -> {
                     INetwork network = carrier.getNetwork();
-                    return network != null ? LazyOptional.of(() -> network) : LazyOptional.empty();
+                    return network != null ? Optional.of(network) : Optional.empty();
                 });
-        return networkCarried.orElse(LazyOptional.empty());
+        return networkCarried.orElse(Optional.empty());
     }
 
     /**
@@ -88,7 +80,7 @@ public class NetworkHelpers {
      * @param pos The position.
      * @return The optional network.
      */
-    public static LazyOptional<INetwork> getNetwork(PartPos pos) {
+    public static Optional<INetwork> getNetwork(PartPos pos) {
         return getNetwork(pos.getPos().getLevel(true), pos.getPos().getBlockPos(), pos.getSide());
     }
 
@@ -103,7 +95,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The network.
      */
-    public static INetwork getNetworkChecked(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+    public static INetwork getNetworkChecked(Level world, BlockPos pos, @Nullable Direction side) {
         return getNetwork(world, pos, side)
                 .orElseThrow(() -> new IllegalStateException("Could not find a network container at " + pos.toString()));
     }
@@ -127,10 +119,10 @@ public class NetworkHelpers {
      * @param optionalNetwork The optional network.
      * @return The optional part network.
      */
-    public static LazyOptional<IPartNetwork> getPartNetwork(LazyOptional<INetwork> optionalNetwork) {
+    public static Optional<IPartNetwork> getPartNetwork(Optional<INetwork> optionalNetwork) {
         return optionalNetwork
-                .map(network -> network.getCapability(PartNetworkConfig.CAPABILITY))
-                .orElse(LazyOptional.empty());
+                .map(network -> network.getCapability(Capabilities.PartNetwork.NETWORK))
+                .orElse(Optional.empty());
     }
 
     /**
@@ -138,11 +130,11 @@ public class NetworkHelpers {
      * @param network The network.
      * @return The optional part network.
      */
-    public static LazyOptional<IPartNetwork> getPartNetwork(@Nullable INetwork network) {
+    public static Optional<IPartNetwork> getPartNetwork(@Nullable INetwork network) {
         if (network == null) {
-            return LazyOptional.empty();
+            return Optional.empty();
         }
-        return network.getCapability(PartNetworkConfig.CAPABILITY);
+        return network.getCapability(Capabilities.PartNetwork.NETWORK);
     }
 
     /**
@@ -155,7 +147,7 @@ public class NetworkHelpers {
      * @return The part network.
      */
     public static IPartNetwork getPartNetworkChecked(INetwork network) {
-        return network.getCapability(PartNetworkConfig.CAPABILITY)
+        return network.getCapability(Capabilities.PartNetwork.NETWORK)
                 .orElseThrow(() -> new IllegalStateException("Could not find a network's part network"));
     }
 
@@ -164,10 +156,10 @@ public class NetworkHelpers {
      * @param optionalNetwork The optional network.
      * @return The optional energy network.
      */
-    public static LazyOptional<IEnergyNetwork> getEnergyNetwork(LazyOptional<INetwork> optionalNetwork) {
+    public static Optional<IEnergyNetwork> getEnergyNetwork(Optional<INetwork> optionalNetwork) {
         return optionalNetwork
-                .map(network -> network.getCapability(EnergyNetworkConfig.CAPABILITY))
-                .orElse(LazyOptional.empty());
+                .map(network -> network.getCapability(Capabilities.EnergyNetwork.NETWORK))
+                .orElse(Optional.empty());
     }
 
     /**
@@ -175,11 +167,11 @@ public class NetworkHelpers {
      * @param network The network.
      * @return The optional energy network.
      */
-    public static LazyOptional<IEnergyNetwork> getEnergyNetwork(@Nullable INetwork network) {
+    public static Optional<IEnergyNetwork> getEnergyNetwork(@Nullable INetwork network) {
         if (network == null) {
-            return LazyOptional.empty();
+            return Optional.empty();
         }
-        return network.getCapability(EnergyNetworkConfig.CAPABILITY);
+        return network.getCapability(Capabilities.EnergyNetwork.NETWORK);
     }
 
     /**
@@ -188,7 +180,7 @@ public class NetworkHelpers {
      * @return The energy network.
      */
     public static IEnergyNetwork getEnergyNetworkChecked(INetwork network) {
-        return network.getCapability(EnergyNetworkConfig.CAPABILITY)
+        return network.getCapability(Capabilities.EnergyNetwork.NETWORK)
                 .orElseThrow(() -> new IllegalStateException("Could not find a network's energy network"));
     }
 
@@ -200,13 +192,13 @@ public class NetworkHelpers {
      * @param <M> The matching condition parameter.
      * @return The optional ingredient network.
      */
-    public static <T, M> LazyOptional<IPositionedAddonsNetworkIngredients<T, M>> getIngredientNetwork(LazyOptional<INetwork> optionalNetwork,
+    public static <T, M> Optional<IPositionedAddonsNetworkIngredients<T, M>> getIngredientNetwork(Optional<INetwork> optionalNetwork,
                                                                                                       IngredientComponent<T, M> ingredientComponent) {
         return optionalNetwork
-                .map(network -> ingredientComponent.getCapability(PositionedAddonsNetworkIngredientsHandlerConfig.CAPABILITY)
+                .map(network -> ingredientComponent.getCapability(Capabilities.PositionedAddonsNetworkIngredientsHandler.INGREDIENT)
                         .map(handler -> handler.getStorage(network))
-                        .orElse(LazyOptional.empty()))
-                .orElse(LazyOptional.empty());
+                        .orElse(Optional.empty()))
+                .orElse(Optional.empty());
     }
 
     /**
@@ -221,7 +213,7 @@ public class NetworkHelpers {
      * Can be absent if the starting position did not have a {@link IPathElement} capability.
      */
     public static Optional<INetwork> initNetwork(Level world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY)
+        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PathElement.BLOCK)
                 .map(pathElement -> {
                     Network network = Network.initiateNetworkSetup(SidedPathElement.of(pathElement, side));
                     network.initialize();
@@ -270,16 +262,18 @@ public class NetworkHelpers {
      * @param tile The tile entity that is unloaded.
      */
     public static void invalidateNetworkElements(Level world, BlockPos pos, BlockEntity tile) {
-        tile.getCapability(NetworkCarrierConfig.CAPABILITY, null).ifPresent(networkCarrier -> {
+        INetworkCarrier networkCarrier = world.getCapability(Capabilities.NetworkCarrier.BLOCK, pos, null);
+        if (networkCarrier != null) {
             INetwork network = networkCarrier.getNetwork();
             if (network != null) {
-                tile.getCapability(NetworkElementProviderConfig.CAPABILITY, null).ifPresent(networkElementProvider -> {
+                INetworkElementProvider networkElementProvider = world.getCapability(Capabilities.NetworkElementProvider.BLOCK, pos, null);
+                if (networkElementProvider != null) {
                     for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                         networkElement.invalidate(network);
                     }
-                });
+                }
             }
-        });
+        }
     }
 
     /**
@@ -289,12 +283,12 @@ public class NetworkHelpers {
      * @param pos The position.
      */
     public static void revalidateNetworkElements(Level world, BlockPos pos) {
-        INetworkCarrier networkCarrier = BlockEntityHelpers.getCapability(world, pos, NetworkCarrierConfig.CAPABILITY).orElse(null);
-        IPathElement pathElement = BlockEntityHelpers.getCapability(world, pos, PathElementConfig.CAPABILITY).orElse(null);
+        INetworkCarrier networkCarrier = BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkCarrier.BLOCK).orElse(null);
+        IPathElement pathElement = BlockEntityHelpers.getCapability(world, pos, Capabilities.PathElement.BLOCK).orElse(null);
         if (TickHandler.getInstance().ticked
                 && networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null
-                && BlockEntityHelpers.getCapability(world, pos, CableFakeableConfig.CAPABILITY).map(ICableFakeable::isRealCable).orElse(false)) {
-            BlockEntityHelpers.getCapability(world, pos, NetworkElementProviderConfig.CAPABILITY).ifPresent(networkElementProvider -> {
+                && BlockEntityHelpers.getCapability(world, pos, Capabilities.CableFakeable.BLOCK).map(ICableFakeable::isRealCable).orElse(false)) {
+            BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).ifPresent(networkElementProvider -> {
                 // Attempt to revalidate the network elements in this provider
                 boolean foundNetwork = false;
                 for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {

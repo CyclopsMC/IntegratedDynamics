@@ -2,15 +2,18 @@ package org.cyclops.integrateddynamics.capability.ingredient;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.capability.IngredientComponentCapabilityAttacherAdapter;
 import org.cyclops.commoncapabilities.api.ingredient.capability.IngredientComponentCapabilityAttacherManager;
-import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
-import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
-import org.cyclops.integrateddynamics.capability.network.PositionedAddonsNetworkIngredientsHandlerConfig;
+import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.api.ingredient.capability.IIngredientComponentValueHandler;
+import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 
 /**
  * Value handlers for ingredient components.
@@ -26,36 +29,33 @@ public class IngredientComponentCapabilities {
         IngredientComponentCapabilityAttacherManager attacherManager = new IngredientComponentCapabilityAttacherManager();
 
         // Value handlers
-        ResourceLocation capabilityIngredientComponentValueHandler = new ResourceLocation(Reference.MOD_ID, "ingredient_component_value_handler");
-        attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<ItemStack, Integer>(INGREDIENT_ITEMSTACK_NAME, capabilityIngredientComponentValueHandler) {
+        attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<ItemStack, Integer>(INGREDIENT_ITEMSTACK_NAME, Capabilities.IngredientComponentValueHandler.INGREDIENT) {
             @Override
-            public ICapabilityProvider createCapabilityProvider(IngredientComponent<ItemStack, Integer> ingredientComponent) {
-                return new DefaultCapabilityProvider<>(() -> IngredientComponentValueHandlerConfig.CAPABILITY,
-                        new IngredientComponentValueHandlerItemStack(ingredientComponent));
+            public ICapabilityProvider<IngredientComponent<?, ?>, Void, IIngredientComponentValueHandler<ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack, ItemStack, Integer>>
+            createCapabilityProvider(IngredientComponent<ItemStack, Integer> ingredientComponent) {
+                return (object, context) -> new IngredientComponentValueHandlerItemStack(ingredientComponent);
             }
         });
-        attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<FluidStack, Integer>(INGREDIENT_FLUIDSTACK_NAME, capabilityIngredientComponentValueHandler) {
+        attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<FluidStack, Integer>(INGREDIENT_FLUIDSTACK_NAME, Capabilities.IngredientComponentValueHandler.INGREDIENT) {
             @Override
-            public ICapabilityProvider createCapabilityProvider(IngredientComponent<FluidStack, Integer> ingredientComponent) {
-                return new DefaultCapabilityProvider<>(() -> IngredientComponentValueHandlerConfig.CAPABILITY,
-                        new IngredientComponentValueHandlerFluidStack(ingredientComponent));
+            public ICapabilityProvider<IngredientComponent<?, ?>, Void, IIngredientComponentValueHandler<ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack, FluidStack, Integer>>
+            createCapabilityProvider(IngredientComponent<FluidStack, Integer> ingredientComponent) {
+                return (object, context) -> new IngredientComponentValueHandlerFluidStack(ingredientComponent);
             }
         });
-        attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<Integer, Boolean>(INGREDIENT_ENERGY_NAME, capabilityIngredientComponentValueHandler) {
+        attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<Integer, Boolean>(INGREDIENT_ENERGY_NAME, Capabilities.IngredientComponentValueHandler.INGREDIENT) {
             @Override
-            public ICapabilityProvider createCapabilityProvider(IngredientComponent<Integer, Boolean> ingredientComponent) {
-                return new DefaultCapabilityProvider<>(() -> IngredientComponentValueHandlerConfig.CAPABILITY,
-                        new IngredientComponentValueHandlerEnergy(ingredientComponent));
+            public ICapabilityProvider<IngredientComponent<?, ?>, Void, IIngredientComponentValueHandler<ValueTypeInteger, ValueTypeInteger.ValueInteger, Integer, Boolean>>
+            createCapabilityProvider(IngredientComponent<Integer, Boolean> ingredientComponent) {
+                return (object, context) -> new IngredientComponentValueHandlerEnergy(ingredientComponent);
             }
         });
 
         // Network handler
-        ResourceLocation networkHandler = new ResourceLocation(Reference.MOD_ID, "network_handler");
-        attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<Integer, Boolean>(INGREDIENT_ENERGY_NAME, networkHandler) {
+        attacherManager.addAttacher(new IngredientComponentCapabilityAttacherAdapter<Integer, Boolean>(INGREDIENT_ENERGY_NAME, Capabilities.PositionedAddonsNetworkIngredientsHandler.INGREDIENT) {
             @Override
-            public ICapabilityProvider createCapabilityProvider(IngredientComponent<Integer, Boolean> ingredientComponent) {
-                return new DefaultCapabilityProvider<>(() -> PositionedAddonsNetworkIngredientsHandlerConfig.CAPABILITY,
-                        (network) -> network.getCapability(EnergyNetworkConfig.CAPABILITY));
+            public ICapabilityProvider<INetwork, Void, IEnergyNetwork> createCapabilityProvider(IngredientComponent<Integer, Boolean> ingredientComponent) {
+                return (network, context) -> network.getCapability(Capabilities.EnergyNetwork.NETWORK).orElse(null);
             }
         });
     }

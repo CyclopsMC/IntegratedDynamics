@@ -7,8 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
-import org.cyclops.integrateddynamics.IntegratedDynamicsSoundEvents;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.inventory.container.ContainerOnTheDynamicsOfIntegration;
 
@@ -74,12 +74,12 @@ public class ContainerScreenOnTheDynamicsOfIntegration extends ScreenInfoBook<Co
 
     @Override
     public void playPageFlipSound(SoundManager soundHandler) {
-        soundHandler.play(SimpleSoundInstance.forUI(IntegratedDynamicsSoundEvents.effect_page_flipsingle, 1.0F));
+        soundHandler.play(SimpleSoundInstance.forUI(RegistryEntries.SOUNDEVENT_EFFECT_PAGE_FLIPSINGLE, 1.0F));
     }
 
     @Override
     public void playPagesFlipSound(SoundManager soundHandler) {
-        soundHandler.play(SimpleSoundInstance.forUI(IntegratedDynamicsSoundEvents.effect_page_flipmultiple, 1.0F));
+        soundHandler.play(SimpleSoundInstance.forUI(RegistryEntries.SOUNDEVENT_EFFECT_PAGE_FLIPMULTIPLE, 1.0F));
     }
 
     @Override

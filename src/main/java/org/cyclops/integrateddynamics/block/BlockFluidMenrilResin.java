@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 public class BlockFluidMenrilResin extends LiquidBlock {
 
     public BlockFluidMenrilResin(Block.Properties builder) {
-        super(() -> RegistryEntries.FLUID_MENRIL_RESIN, builder);
+        super(RegistryEntries.FLUID_MENRIL_RESIN::get, builder);
     }
 
 }

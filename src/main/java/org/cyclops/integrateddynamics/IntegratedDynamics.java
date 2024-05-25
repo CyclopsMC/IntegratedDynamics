@@ -4,17 +4,17 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.NewRegistryEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.ConfigHandler;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -78,8 +78,6 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
-import org.cyclops.integrateddynamics.loot.conditions.LootConditions;
-import org.cyclops.integrateddynamics.loot.functions.LootFunctions;
 import org.cyclops.integrateddynamics.metadata.RegistryExportables;
 import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -101,8 +99,8 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
 
     public static GlobalCounters globalCounters = null;
 
-    public IntegratedDynamics() {
-        super(Reference.MOD_ID, (instance) -> _instance = instance);
+    public IntegratedDynamics(IEventBus modEventBus) {
+        super(Reference.MOD_ID, (instance) -> _instance = instance, modEventBus);
 
         // Register world storages
         registerWorldStorage(NetworkWorldStorage.getInstance(this));
@@ -133,13 +131,13 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         // Preload parts, so we force their blocks and items to be registered
         PartTypes.load();
 
-        if (MinecraftHelpers.isClientSide()) {
-            FMLJavaModLoadingContext.get().getModEventBus().register(IntegratedDynamicsSoundEvents.class);
-        }
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, IngredientComponentHandlers::onIngredientComponentsPopulated);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegistriesCreate);
+        modEventBus.addListener(EventPriority.LOWEST, IngredientComponentHandlers::onIngredientComponentsPopulated);
+        modEventBus.addListener(this::onRegistriesCreate);
+        modEventBus.register(new NetworkCapabilityConstructors());
 
-        MinecraftForge.EVENT_BUS.addListener(this::onServerStartedLoadedGroups);
+        NeoForge.EVENT_BUS.addListener(this::onServerStartedLoadedGroups);
+        NeoForge.EVENT_BUS.register(TickHandler.getInstance());
+        NeoForge.EVENT_BUS.register(NoteBlockEventReceiver.getInstance());
     }
 
     public void onRegistriesCreate(NewRegistryEvent event) {
@@ -177,18 +175,10 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
 
         super.setup(event);
 
-        Advancements.load();
-        LootFunctions.load();
-        LootConditions.load();
-
         // Register info book
         putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
         getRegistryManager().getRegistry(IInfoBookRegistry.class).registerInfoBook(
                 OnTheDynamicsOfIntegrationBook.getInstance(), "/data/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");
-
-        MinecraftForge.EVENT_BUS.register(TickHandler.getInstance());
-        MinecraftForge.EVENT_BUS.register(NoteBlockEventReceiver.getInstance());
-        MinecraftForge.EVENT_BUS.register(new NetworkCapabilityConstructors());
 
         IntegratedDynamicsSetupEvent integratedDynamicsSetupEvent = new IntegratedDynamicsSetupEvent(this.getContainer());
         ModList.get().forEachModContainer((name, container) -> {

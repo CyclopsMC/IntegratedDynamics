@@ -5,12 +5,15 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.metadata.IRegistryExportable;
 import org.cyclops.cyclopscore.metadata.RegistryExportableRecipeAbstract;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
+
+import java.util.Optional;
 
 /**
  * Squeezer recipe exporter.
@@ -18,7 +21,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAbstract<RecipeType<RecipeSqueezer>, RecipeSqueezer, Container> {
 
     protected RegistryExportableSqueezerRecipe() {
-        super(() -> RegistryEntries.RECIPETYPE_SQUEEZER);
+        super(RegistryEntries.RECIPETYPE_SQUEEZER::get);
     }
 
     public static JsonObject serializeRecipeStatic(RecipeSqueezer recipe) {
@@ -33,10 +36,8 @@ public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAb
 
         // Outputs
         JsonObject outputObject = new JsonObject();
-        FluidStack fluidOutput = recipe.getOutputFluid();
-        if (fluidOutput != null) {
-            outputObject.add("fluid", IRegistryExportable.serializeFluidStack(fluidOutput));
-        }
+        Optional<FluidStack> fluidOutput = recipe.getOutputFluid();
+        fluidOutput.ifPresent(fluidStack -> outputObject.add("fluid", IRegistryExportable.serializeFluidStack(fluidStack)));
         NonNullList<RecipeSqueezer.IngredientChance> itemOutputs = recipe.getOutputItems();
         JsonArray arrayItemOutputs = new JsonArray();
         int i = 0;
@@ -58,7 +59,7 @@ public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAb
     }
 
     @Override
-    public JsonObject serializeRecipe(RecipeSqueezer recipe) {
-        return serializeRecipeStatic(recipe);
+    public JsonObject serializeRecipe(RecipeHolder<RecipeSqueezer> recipe) {
+        return serializeRecipeStatic(recipe.value());
     }
 }

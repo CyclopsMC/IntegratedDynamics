@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.ingredient.capability;
 
-import net.minecraftforge.common.util.LazyOptional;
+import java.util.Optional;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 
@@ -19,6 +19,6 @@ public interface IPositionedAddonsNetworkIngredientsHandler<T, M> {
      * @param network The network.
      * @return The optional ingredient component network.
      */
-    public LazyOptional<IPositionedAddonsNetworkIngredients<T, M>> getStorage(INetwork network);
+    public Optional<IPositionedAddonsNetworkIngredients<T, M>> getStorage(INetwork network);
 
 }

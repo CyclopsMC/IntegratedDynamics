@@ -3,6 +3,7 @@
 doc/info.txt
 /build
 /run
+/runs
 
 # Ignore project specific files
 .classpath
@@ -17,6 +18,7 @@ repo/*
 *.iws
 out/*
 keystore.jks
+.idea
 
 # Ignore IDE specific files
 .vscode

@@ -3,8 +3,8 @@ package org.cyclops.integrateddynamics.core.ingredient;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -40,13 +40,13 @@ public class IngredientComponentHandlers {
     }
 
     public static void onIngredientComponentsPopulated(RegisterEvent event) {
-        if (event.getRegistryKey().equals(IngredientComponent.REGISTRY.getRegistryKey())) {
+        if (event.getRegistryKey().equals(IngredientComponent.REGISTRY.key())) {
             // Components are still loading here, so grab them by name
-            IngredientComponent componentItem = IngredientComponent.REGISTRY.getValue(
+            IngredientComponent componentItem = IngredientComponent.REGISTRY.get(
                     new ResourceLocation("minecraft:itemstack"));
-            IngredientComponent componentFluid = IngredientComponent.REGISTRY.getValue(
+            IngredientComponent componentFluid = IngredientComponent.REGISTRY.get(
                     new ResourceLocation("minecraft:fluidstack"));
-            IngredientComponent componentEnergy = IngredientComponent.REGISTRY.getValue(
+            IngredientComponent componentEnergy = IngredientComponent.REGISTRY.get(
                     new ResourceLocation("minecraft:energy"));
 
             REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeItemStack,

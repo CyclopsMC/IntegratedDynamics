@@ -13,17 +13,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.NetworkHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -36,7 +34,6 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.core.network.event.UnknownPartEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
@@ -45,6 +42,7 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Helpers related to parts.
@@ -59,8 +57,8 @@ public class PartHelpers {
      * @param side The side.
      * @return The optional part container capability.
      */
-    public static LazyOptional<IPartContainer> getPartContainer(BlockGetter world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, PartContainerConfig.CAPABILITY);
+    public static Optional<IPartContainer> getPartContainer(Level world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PartContainer.BLOCK);
     }
 
     /**
@@ -69,8 +67,8 @@ public class PartHelpers {
      * @param side The side.
      * @return The optional part container capability.
      */
-    public static LazyOptional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(dimPos, side, PartContainerConfig.CAPABILITY);
+    public static Optional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(dimPos, side, Capabilities.PartContainer.BLOCK);
     }
 
     /**
@@ -84,9 +82,9 @@ public class PartHelpers {
      * @param side The side.
      * @return The part container capability.
      */
-    public static IPartContainer getPartContainerChecked(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+    public static IPartContainer getPartContainerChecked(Level world, BlockPos pos, @Nullable Direction side) {
         return getPartContainer(world, pos, side)
-                .orElseThrow(() -> new PartStateException(DimPos.of((Level) world, pos), side));
+                .orElseThrow(() -> new PartStateException(DimPos.of(world, pos), side));
     }
 
     /**
@@ -415,7 +413,7 @@ public class PartHelpers {
     public static InteractionResult openContainerPart(ServerPlayer player, PartPos pos, IPartType<?, ?> partType) {
         return partType.getContainerProvider(pos)
                 .map(containerProvider -> {
-                    NetworkHooks.openScreen(player, containerProvider, packetBuffer -> partType.writeExtraGuiData(packetBuffer, pos, player));
+                    player.openMenu(containerProvider, packetBuffer -> partType.writeExtraGuiData(packetBuffer, pos, player));
                     return InteractionResult.SUCCESS;
                 })
                 .orElse(InteractionResult.PASS);
@@ -431,7 +429,7 @@ public class PartHelpers {
     public static boolean openContainerPartSettings(ServerPlayer player, PartPos pos, IPartType<?, ?> partType) {
         return partType.getContainerProviderSettings(pos)
                 .map(containerProvider -> {
-                    NetworkHooks.openScreen(player, containerProvider, packetBuffer -> partType.writeExtraGuiDataSettings(packetBuffer, pos, player));
+                    player.openMenu(containerProvider, packetBuffer -> partType.writeExtraGuiDataSettings(packetBuffer, pos, player));
                     return true;
                 })
                 .orElse(false);
@@ -444,7 +442,7 @@ public class PartHelpers {
      * @param aspect The aspect for which to show the settings.
      */
     public static void openContainerAspectSettings(ServerPlayer player, PartPos pos, IAspect<?, ?> aspect) {
-        NetworkHooks.openScreen(player, aspect.getPropertiesContainerProvider(pos),
+        player.openMenu(aspect.getPropertiesContainerProvider(pos),
                 packetBuffer -> packetBuffer.writeUtf(aspect.getUniqueName().toString()));
     }
 
@@ -458,7 +456,7 @@ public class PartHelpers {
     public static boolean openContainerPartOffsets(ServerPlayer player, PartPos pos, IPartType<?, ?> partType) {
         return partType.getContainerProviderOffsets(pos)
                 .map(containerProvider -> {
-                    NetworkHooks.openScreen(player, containerProvider, packetBuffer -> partType.writeExtraGuiDataOffsets(packetBuffer, pos, player));
+                    player.openMenu(containerProvider, packetBuffer -> partType.writeExtraGuiDataOffsets(packetBuffer, pos, player));
                     return true;
                 })
                 .orElse(false);

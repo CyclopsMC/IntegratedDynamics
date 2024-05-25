@@ -9,8 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraftforge.event.level.NoteBlockEvent;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.event.level.NoteBlockEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
@@ -128,10 +128,10 @@ public class AspectWriteBuilders {
                 Level world = input.getLeft().getTarget().getPos().getLevel(false);
                 if (world != null) { // If a block falls in a world when there's no one around, does it make any sound?
                     NoteBlockEvent.Play e = new NoteBlockEvent.Play(world, pos, world.getBlockState(pos), eventParam, instrument);
-                    if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) {
+                    if (!net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(e).isCanceled()) {
                         float f = (float) Math.pow(2.0D, (double) (eventParam - 12) / 12.0D);
                         float volume = (float) properties.getValue(PROP_VOLUME).getRawValue();
-                        world.playSound(null, pos, instrument.getSoundEvent().get(), SoundSource.RECORDS, volume, f);
+                        world.playSound(null, pos, e.getInstrument().getSoundEvent().value(), SoundSource.RECORDS, volume, f);
                     }
                 }
             }

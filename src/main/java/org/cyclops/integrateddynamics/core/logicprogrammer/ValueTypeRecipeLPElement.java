@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -18,14 +20,12 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITag;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
@@ -53,6 +53,7 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRec
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -238,7 +239,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
     protected ItemStack getFluidBucket(FluidStack fluidStack) {
         ItemStack itemStack = new ItemStack(Items.BUCKET);
-        IFluidHandlerItem fluidHandler = itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).orElse(null);
+        IFluidHandlerItem fluidHandler = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
         fluidHandler.fill(new FluidStack(fluidStack, FluidHelpers.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
         return fluidHandler.getContainer();
     }
@@ -373,9 +374,11 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     String tagName = props.getItemTag();
                     if (tagName != null) {
                         try {
-                            ITag<Item> tag = ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registries.ITEM, new ResourceLocation(tagName)));
+                            Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, new ResourceLocation(tagName)));
                             if (!tag.isEmpty()) {
-                                List<Item> items = tag.stream().toList();
+                                List<Item> items = tag.stream()
+                                        .flatMap(holders -> holders.stream())
+                                        .map(holder -> holder.value()).toList();
                                 int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;
                                 Item item = items.get(tick % items.size());
                                 return new ItemStack(item, props.getTagQuantity());

@@ -23,7 +23,7 @@ public class ContainerProxy extends ContainerActiveVariableBase<BlockEntityProxy
 
     public ContainerProxy(int id, Inventory playerInventory, Container inventory,
                           Optional<BlockEntityProxy> tileSupplier) {
-        super(RegistryEntries.CONTAINER_PROXY, id, playerInventory, inventory, tileSupplier);
+        super(RegistryEntries.CONTAINER_PROXY.get(), id, playerInventory, inventory, tileSupplier);
         addSlot(new SlotVariable(inventory, BlockEntityProxy.SLOT_READ, 81, 25));
         addSlot(new SlotVariable(inventory, BlockEntityProxy.SLOT_WRITE_IN, 56, 78));
         addSlot(new SlotRemoveOnly(inventory, BlockEntityProxy.SLOT_WRITE_OUT, 104, 78));

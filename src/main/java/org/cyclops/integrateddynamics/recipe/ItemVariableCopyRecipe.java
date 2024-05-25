@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.recipe;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -26,8 +25,8 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
 
     private ValueDeseralizationContext lastValueDeseralizationContext;
 
-    public ItemVariableCopyRecipe(ResourceLocation id, CraftingBookCategory craftingBookCategory) {
-        super(id, craftingBookCategory);
+    public ItemVariableCopyRecipe(CraftingBookCategory craftingBookCategory) {
+        super(craftingBookCategory);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
             ItemStack element = inv.getItem(j);
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 count++;
-                facade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(lastValueDeseralizationContext, element);
+                facade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, element);
                 if(!facade.isValid() && withoutData.isEmpty()) {
                     withoutData = element;
                 }
@@ -81,7 +80,7 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
         for(int j = 0; j < inv.getContainerSize(); j++) {
             ItemStack element = inv.getItem(j);
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
-                IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(lastValueDeseralizationContext, element);
+                IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, element);
                 if(facade.isValid()) {
                     // Create a copy with a new id.
                     ret.set(j, IntegratedDynamics._instance.getRegistryManager()
@@ -104,6 +103,6 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return RegistryEntries.RECIPESERIALIZER_VARIABLE_COPY;
+        return RegistryEntries.RECIPESERIALIZER_VARIABLE_COPY.get();
     }
 }

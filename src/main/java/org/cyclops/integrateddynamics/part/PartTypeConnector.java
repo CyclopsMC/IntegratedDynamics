@@ -1,20 +1,21 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.PartCapability;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.part.PartStateBase;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
+
+import java.util.Optional;
 
 /**
  * A base wireless connector part.
@@ -71,11 +72,11 @@ public abstract class PartTypeConnector<P extends PartTypeConnector<P, S>, S ext
         }
 
         @Override
-        public <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
-            if (capability == PathElementConfig.CAPABILITY) {
-                return LazyOptional.of(() -> this).cast();
+        public <T> Optional<T> getCapability(P partType, PartCapability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+            if (capability == Capabilities.PathElement.PART) {
+                return Optional.of((T) this);
             }
-            return super.getCapability(capability, network, partNetwork, target);
+            return super.getCapability(partType, capability, network, partNetwork, target);
         }
 
     }

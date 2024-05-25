@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.energystorage;
 
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
  * An energy storage with a mutable capacity.

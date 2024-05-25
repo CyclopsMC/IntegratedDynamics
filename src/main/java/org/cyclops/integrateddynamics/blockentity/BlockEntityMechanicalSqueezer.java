@@ -12,13 +12,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -26,7 +27,6 @@ import org.cyclops.cyclopscore.helper.CraftingHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
-import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezerConfig;
@@ -58,23 +58,32 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
     private final SingleUseTank tank = new SingleUseTank(TANK_SIZE);
 
     public BlockEntityMechanicalSqueezer(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_MECHANICAL_SQUEEZER, blockPos, blockState, INVENTORY_SIZE);
-
-        // Add fluid tank capability
-        addCapabilityInternal(ForgeCapabilities.FLUID_HANDLER, LazyOptional.of(() -> this.tank));
-
-        // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerSqueezer<>(this::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER)));
+        super(RegistryEntries.BLOCK_ENTITY_MECHANICAL_SQUEEZER.get(), blockPos, blockState, INVENTORY_SIZE);
 
         // Add tank update listeners
         tank.addDirtyMarkListener(this::onTankChanged);
     }
 
+    public static <E> void registerMechanicalSqueezerCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMechanicalSqueezer> blockEntityType) {
+        BlockEntityMechanicalMachine.registerMechanicalMachineCapabilities(event, blockEntityType);
+
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> blockEntity.getTank()
+        );
+        event.registerBlockEntity(
+                org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new RecipeHandlerSqueezer<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER.get())
+        );
+    }
+
     @Override
-    protected SingleCache.ICacheUpdater<ItemStack, Optional<RecipeMechanicalSqueezer>> createCacheUpdater() {
-        return new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeMechanicalSqueezer>>() {
+    protected SingleCache.ICacheUpdater<ItemStack, Optional<RecipeHolder<RecipeMechanicalSqueezer>>> createCacheUpdater() {
+        return new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeHolder<RecipeMechanicalSqueezer>>>() {
             @Override
-            public Optional<RecipeMechanicalSqueezer> getNewValue(ItemStack key) {
+            public Optional<RecipeHolder<RecipeMechanicalSqueezer>> getNewValue(ItemStack key) {
                 Container recipeInput = new SimpleContainer(key);
                 return CraftingHelpers.findServerRecipe(getRecipeRegistry(), recipeInput, getLevel());
             }
@@ -125,7 +134,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
 
     @Override
     protected RecipeType<RecipeMechanicalSqueezer> getRecipeRegistry() {
-        return RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER;
+        return RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER.get();
     }
 
     @Override
@@ -134,8 +143,8 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
     }
 
     @Override
-    public int getRecipeDuration(RecipeMechanicalSqueezer recipe) {
-        return recipe.getDuration();
+    public int getRecipeDuration(RecipeHolder<RecipeMechanicalSqueezer> recipe) {
+        return recipe.value().getDuration();
     }
 
     @Override
@@ -154,9 +163,9 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         }
 
         // Output fluid
-        FluidStack outputFluid = recipe.getOutputFluid();
-        if (outputFluid != null) {
-            if (getTank().fill(outputFluid.copy(), FluidHelpers.simulateBooleanToAction(simulate)) != outputFluid.getAmount()) {
+        Optional<FluidStack> outputFluid = recipe.getOutputFluid();
+        if (outputFluid.isPresent()) {
+            if (getTank().fill(outputFluid.get().copy(), FluidHelpers.simulateBooleanToAction(simulate)) != outputFluid.get().getAmount()) {
                 return false;
             }
         }
@@ -208,7 +217,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
             if (blockEntity.isAutoEjectFluids() && !blockEntity.getTank().isEmpty()) {
                 for (Direction side : Direction.values()) {
                     IFluidHandler handler = BlockEntityHelpers.getCapability(level, pos.relative(side),
-                            side.getOpposite(), ForgeCapabilities.FLUID_HANDLER).orElse(null);
+                            side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK).orElse(null);
                     if(handler != null) {
                         FluidStack fluidStack = blockEntity.getTank().getFluid().copy();
                         fluidStack.setAmount(Math.min(BlockMechanicalSqueezerConfig.autoEjectFluidRate, fluidStack.getAmount()));

@@ -2,9 +2,10 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.infobook.AdvancedButtonEnum;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoSection;
@@ -28,7 +29,7 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
     private static final AdvancedButtonEnum RESULT_ITEM = AdvancedButtonEnum.create();
     private static final AdvancedButtonEnum RESULT_FLUID = AdvancedButtonEnum.create();
 
-    public DryingBasinRecipeAppendix(IInfoBook infoBook, RecipeDryingBasin recipe) {
+    public DryingBasinRecipeAppendix(IInfoBook infoBook, RecipeHolder<? extends RecipeDryingBasin> recipe) {
         super(infoBook, recipe);
     }
 
@@ -64,10 +65,10 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
 
         // Prepare items
         int tick = getTick(gui);
-        ItemStack inputItem = prepareItemStacks(recipe.getInputIngredient().getItems(), tick);
-        FluidStack inputFluid = recipe.getInputFluid();
-        ItemStack resultItem = prepareItemStack(recipe.getOutputItemFirst(), tick);
-        FluidStack resultFluid = recipe.getOutputFluid();
+        ItemStack inputItem = recipe.value().getInputIngredient().isPresent() ? prepareItemStacks(recipe.value().getInputIngredient().get().getItems(), tick) : ItemStack.EMPTY;
+        FluidStack inputFluid = recipe.value().getInputFluid().orElse(FluidStack.EMPTY);
+        ItemStack resultItem = prepareItemStack(recipe.value().getOutputItemFirst(), tick);
+        FluidStack resultFluid = recipe.value().getOutputFluid().orElse(FluidStack.EMPTY);
 
         // Items
         renderItem(gui, guiGraphics, x + SLOT_INPUT_OFFSET_X, y, inputItem, mx, my, INPUT_ITEM);
@@ -79,7 +80,7 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
     }
 
     protected ItemStack getCrafter() {
-        return new ItemStack(RegistryEntries.BLOCK_DRYING_BASIN);
+        return new ItemStack(RegistryEntries.BLOCK_DRYING_BASIN.get());
     }
 
 }

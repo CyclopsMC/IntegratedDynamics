@@ -8,15 +8,16 @@ import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
@@ -29,7 +30,6 @@ import org.cyclops.cyclopscore.inventory.SimpleInventoryState;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.cyclopscore.recipe.type.InventoryFluid;
-import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.handler.RecipeHandlerDryingBasin;
@@ -55,10 +55,10 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
     @NBTPersist
     private int fire = 0;
 
-    private SingleCache<Pair<ItemStack, FluidStack>, Optional<RecipeDryingBasin>> recipeCache;
+    private SingleCache<Pair<ItemStack, FluidStack>, Optional<RecipeHolder<RecipeDryingBasin>>> recipeCache;
 
     public BlockEntityDryingBasin(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_DRYING_BASIN, blockPos, blockState);
+        super(RegistryEntries.BLOCK_ENTITY_DRYING_BASIN.get(), blockPos, blockState);
 
         // Create inventory and tank
         this.inventory = new SimpleInventory(1, 1) {
@@ -75,18 +75,15 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
             }
         };
         this.tank = new SingleUseTank(FluidHelpers.BUCKET_VOLUME);
-        addCapabilityInternal(ForgeCapabilities.ITEM_HANDLER, LazyOptional.of(this.getInventory()::getItemHandler));
-        addCapabilityInternal(Capabilities.INVENTORY_STATE, LazyOptional.of(() -> new SimpleInventoryState(getInventory())));
-        addCapabilityInternal(ForgeCapabilities.FLUID_HANDLER, LazyOptional.of(this::getTank));
 
         // Add dirty mark listeners to inventory and tank
         this.inventory.addDirtyMarkListener(this::sendUpdate);
         this.tank.addDirtyMarkListener(this.inventory::setChanged);
 
         // Efficient cache to retrieve the current craftable recipe.
-        recipeCache = new SingleCache<>(new SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeDryingBasin>>() {
+        recipeCache = new SingleCache<>(new SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeHolder<RecipeDryingBasin>>>() {
             @Override
-            public Optional<RecipeDryingBasin> getNewValue(Pair<ItemStack, FluidStack> key) {
+            public Optional<RecipeHolder<RecipeDryingBasin>> getNewValue(Pair<ItemStack, FluidStack> key) {
                 IInventoryFluid recipeInput = new InventoryFluid(
                         NonNullList.of(ItemStack.EMPTY, key.getLeft()),
                         NonNullList.of(FluidStack.EMPTY, key.getRight()));
@@ -101,9 +98,29 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                                 FluidHelpers.getAmount(cacheKey.getRight()) == FluidHelpers.getAmount(newKey.getRight());
             }
         });
+    }
 
-        // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin<>(this::getLevel, RegistryEntries.RECIPETYPE_DRYING_BASIN)));
+    public static <E> void registerDryingBasinCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityDryingBasin> blockEntityType) {
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> blockEntity.getInventory().getItemHandler()
+        );
+        event.registerBlockEntity(
+                org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new SimpleInventoryState(blockEntity.getInventory())
+        );
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> blockEntity.getTank()
+        );
+        event.registerBlockEntity(
+                org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new RecipeHandlerDryingBasin<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_DRYING_BASIN.get())
+        );
     }
 
     public int getProgress() {
@@ -145,10 +162,10 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
     }
 
     protected RecipeType<RecipeDryingBasin> getRegistry() {
-        return RegistryEntries.RECIPETYPE_DRYING_BASIN;
+        return RegistryEntries.RECIPETYPE_DRYING_BASIN.get();
     }
 
-    public Optional<RecipeDryingBasin> getCurrentRecipe() {
+    public Optional<RecipeHolder<RecipeDryingBasin>> getCurrentRecipe() {
         return recipeCache.get(Pair.of(getInventory().getItem(0).copy(), FluidHelpers.copy(getTank().getFluid())));
     }
 
@@ -165,7 +182,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
         protected void update(Level level, BlockPos pos, BlockState blockState, BlockEntityDryingBasin blockEntity) {
             super.update(level, pos, blockState, blockEntity);
 
-            Optional<RecipeDryingBasin> currentRecipe = blockEntity.getCurrentRecipe();
+            Optional<RecipeHolder<RecipeDryingBasin>> currentRecipe = blockEntity.getCurrentRecipe();
             if (!blockEntity.getTank().isEmpty() && blockEntity.getTank().getFluid().getFluid().getFluidType().getTemperature(blockEntity.getTank().getFluid()) >= WOOD_IGNITION_TEMPERATURE) {
                 blockEntity.setFire(blockEntity.getFire() + 1);
                 if (blockEntity.getFire() >= 100) {
@@ -175,10 +192,10 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 }
 
             } else if (currentRecipe.isPresent()) {
-                RecipeDryingBasin recipe = currentRecipe.get();
+                RecipeDryingBasin recipe = currentRecipe.get().value();
                 if (blockEntity.getProgress() >= recipe.getDuration()) {
                     // Consume input fluid
-                    int amount = FluidHelpers.getAmount(recipe.getInputFluid());
+                    int amount = FluidHelpers.getAmount(recipe.getInputFluid().orElse(FluidStack.EMPTY));
                     blockEntity.getTank().drain(amount, IFluidHandler.FluidAction.EXECUTE);
 
                     // Produce output item
@@ -191,9 +208,9 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                     }
 
                     // Produce output fluid
-                    if (!recipe.getOutputFluid().isEmpty()) {
-                        if (blockEntity.getTank().fill(recipe.getOutputFluid(), IFluidHandler.FluidAction.EXECUTE) == 0) {
-                            IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, "Encountered an invalid recipe: " + recipe.getId());
+                    if (recipe.getOutputFluid().isPresent()) {
+                        if (blockEntity.getTank().fill(recipe.getOutputFluid().get(), IFluidHandler.FluidAction.EXECUTE) == 0) {
+                            IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, "Encountered an invalid recipe: " + currentRecipe.get().id());
                         }
                     }
 

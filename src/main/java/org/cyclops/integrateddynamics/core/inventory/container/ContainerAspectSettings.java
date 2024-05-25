@@ -66,7 +66,7 @@ public class ContainerAspectSettings extends InventoryContainer {
     public ContainerAspectSettings(int id, Inventory playerInventory, Container inventory,
                                    Optional<PartTarget> target, Optional<IPartContainer> partContainer,
                                    Optional<IPartType> partType, IAspect<?, ?> aspect) {
-        super(RegistryEntries.CONTAINER_ASPECT_SETTINGS, id, playerInventory, inventory);
+        super(RegistryEntries.CONTAINER_ASPECT_SETTINGS.get(), id, playerInventory, inventory);
         this.target = target;
         this.partType = partType;
         this.partContainer = partContainer;

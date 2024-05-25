@@ -8,14 +8,13 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -26,10 +25,6 @@ import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
-import org.cyclops.integrateddynamics.capability.cable.CableConfig;
-import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
-import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
@@ -59,8 +54,8 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional cable capability.
      */
-    public static LazyOptional<ICable> getCable(BlockGetter world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, CableConfig.CAPABILITY);
+    public static Optional<ICable> getCable(Level world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.Cable.BLOCK);
     }
 
     /**
@@ -70,8 +65,8 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional fakeable cable capability.
      */
-    public static LazyOptional<ICableFakeable> getCableFakeable(BlockGetter world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, CableFakeableConfig.CAPABILITY);
+    public static Optional<ICableFakeable> getCableFakeable(Level world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.CableFakeable.BLOCK);
     }
 
     /**
@@ -81,8 +76,8 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional path element capability.
      */
-    public static LazyOptional<IPathElement> getPathElement(BlockGetter world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY);
+    public static Optional<IPathElement> getPathElement(Level world, BlockPos pos, @Nullable Direction side) {
+        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PathElement.BLOCK);
     }
 
     /**
@@ -91,7 +86,7 @@ public class CableHelpers {
      * @param pos The center position.
      * @param sides The sides to update connections for.
      */
-    public static void updateConnectionsNeighbours(BlockGetter world, BlockPos pos, Collection<Direction> sides) {
+    public static void updateConnectionsNeighbours(Level world, BlockPos pos, Collection<Direction> sides) {
         for(Direction side : sides) {
             updateConnections(world, pos.relative(side), side.getOpposite());
         }
@@ -103,7 +98,7 @@ public class CableHelpers {
      * @param pos The position.
      * @param side The side.
      */
-    public static void updateConnections(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+    public static void updateConnections(Level world, BlockPos pos, @Nullable Direction side) {
         getCable(world, pos, side)
                 .ifPresent(ICable::updateConnections);
     }
@@ -115,7 +110,7 @@ public class CableHelpers {
      * @param side The side to check a connection for.
      * @return If there is a cable that is connected.
      */
-    public static boolean isCableConnected(BlockGetter world, BlockPos pos, Direction side) {
+    public static boolean isCableConnected(Level world, BlockPos pos, Direction side) {
         return getCable(world, pos, side)
                 .map(cable -> cable.isConnected(side))
                 .orElse(false);
@@ -133,7 +128,7 @@ public class CableHelpers {
      * @param originCable The cable at the center position.
      * @return If it can connect.
      */
-    public static boolean canCableConnectTo(BlockGetter world, BlockPos pos, Direction side, ICable originCable) {
+    public static boolean canCableConnectTo(Level world, BlockPos pos, Direction side, ICable originCable) {
         BlockPos neighbourPos = pos.relative(side);
         return getCable(world, neighbourPos, side.getOpposite())
                 .map(neighbourCable -> originCable.canConnect(neighbourCable, side)
@@ -150,7 +145,7 @@ public class CableHelpers {
      * @param side The side.
      * @return If there is no fake cable.
      */
-    public static boolean isNoFakeCable(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+    public static boolean isNoFakeCable(Level world, BlockPos pos, @Nullable Direction side) {
         return getCableFakeable(world, pos, side)
                 .map(ICableFakeable::isRealCable)
                 .orElse(true);
@@ -245,13 +240,13 @@ public class CableHelpers {
         CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
         if(!world.isClientSide()) {
             NetworkHelpers.initNetwork(world, pos, null)
-                    .ifPresent(network -> MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, null)));
+                    .ifPresent(network -> NeoForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, null)));
         }
     }
 
     /**
      * This should be called when a cable was added by a player.
-     * This should be called after {@link CableHelpers#onCableAdded(World, BlockPos)}.
+     * This should be called after {@link CableHelpers#onCableAdded(Level, BlockPos)}.
      * It simply emits an player-sensitive init event on the network bus.
      * @param world The world.
      * @param pos The position.
@@ -261,7 +256,7 @@ public class CableHelpers {
         CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
         if(!world.isClientSide()) {
             NetworkHelpers.initNetwork(world, pos, null)
-                    .ifPresent(network -> MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer)));
+                    .ifPresent(network -> NeoForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer)));
         }
     }
 
@@ -382,8 +377,8 @@ public class CableHelpers {
      * @param pos The position.
      * @return If it has a facade.
      */
-    public static boolean hasFacade(BlockGetter world, BlockPos pos) {
-        return BlockEntityHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY)
+    public static boolean hasFacade(Level world, BlockPos pos) {
+        return BlockEntityHelpers.getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
                 .map(IFacadeable::hasFacade)
                 .orElse(false);
     }
@@ -394,13 +389,12 @@ public class CableHelpers {
      * @param pos The position.
      * @return The optional facade.
      */
-    public static Optional<BlockState> getFacade(BlockGetter world, BlockPos pos) {
-        return BlockEntityHelpers.getCapability(world, pos, null, FacadeableConfig.CAPABILITY)
-                .resolve()
+    public static Optional<BlockState> getFacade(Level world, BlockPos pos) {
+        return BlockEntityHelpers.getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
                 .flatMap(facadeable -> Optional.ofNullable(facadeable.getFacade()));
     }
 
-    public static boolean isLightTransparent(BlockGetter world, BlockPos pos, @Nullable Direction side) {
+    public static boolean isLightTransparent(Level world, BlockPos pos, @Nullable Direction side) {
         return PartHelpers.getPartContainer(world, pos, side)
                 .map(partContainer -> {
                     for (Map.Entry<Direction, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {

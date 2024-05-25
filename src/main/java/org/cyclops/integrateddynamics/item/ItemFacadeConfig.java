@@ -2,11 +2,10 @@ package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -22,7 +21,7 @@ public class ItemFacadeConfig extends ItemConfig {
                 "facade",
                 eConfig -> new ItemFacade(new Item.Properties())
         );
-        FMLJavaModLoadingContext.get().getModEventBus().register(this);
+        IntegratedDynamics._instance.getModEventBus().register(this);
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -1,12 +1,14 @@
 package org.cyclops.integrateddynamics.network.packet;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
 
 /**
@@ -16,14 +18,17 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
  */
 public class ItemStackRenamePacket extends PacketCodec {
 
+    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "item_stack_rename");
+
     @CodecField
     private String name;
 
     public ItemStackRenamePacket() {
-
+        super(ID);
     }
 
     public ItemStackRenamePacket(String name) {
+        super(ID);
         this.name = name;
     }
 

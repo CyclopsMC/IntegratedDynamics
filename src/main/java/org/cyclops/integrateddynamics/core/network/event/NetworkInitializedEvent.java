@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.network.event;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 
 import javax.annotation.Nullable;

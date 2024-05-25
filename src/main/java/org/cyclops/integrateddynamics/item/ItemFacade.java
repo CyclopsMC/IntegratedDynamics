@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -13,15 +14,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
-import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
 
 /**
@@ -73,7 +73,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     public InteractionResult useOn(UseOnContext context) {
         ItemStack itemStack = context.getItemInHand();
         if(!context.getLevel().isClientSide()) {
-            IFacadeable facadeable = BlockEntityHelpers.getCapability(context.getLevel(), context.getClickedPos(), null, FacadeableConfig.CAPABILITY).orElse(null);
+            IFacadeable facadeable = BlockEntityHelpers.getCapability(context.getLevel(), context.getClickedPos(), null, Capabilities.Facadeable.BLOCK).orElse(null);
             BlockState blockState = getFacadeBlock(itemStack);
             if(facadeable != null && blockState != null) {
                 // Add facade to existing cable
@@ -97,7 +97,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     @Override
     public BakedModel createDynamicModel(ModelEvent.ModifyBakingResult event) {
         // Don't throw away the original model, but use if for displaying an unbound facade item.
-        ModelResourceLocation location = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(this), "inventory");
+        ModelResourceLocation location = new ModelResourceLocation(BuiltInRegistries.ITEM.getKey(this), "inventory");
         FacadeModel.emptyModel = event.getModels().get(location);
         return new FacadeModel();
     }

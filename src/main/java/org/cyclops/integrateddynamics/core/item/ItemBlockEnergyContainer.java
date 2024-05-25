@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
@@ -8,16 +7,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
-import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.capability.energystorage.EnergyStorageItemBlockEnergyContainer;
@@ -25,6 +21,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * {@link BlockItem} that can be used for blocks that implement the {@link IEnergyStorage} capability.
@@ -49,11 +46,8 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         return block;
     }
 
-    public LazyOptional<IEnergyStorage> getEnergyBattery(ItemStack itemStack) {
-        if (ForgeCapabilities.ENERGY == null) {
-            return LazyOptional.of(() -> this.createCapability(itemStack));
-        }
-        return itemStack.getCapability(ForgeCapabilities.ENERGY);
+    public Optional<IEnergyStorage> getEnergyBattery(ItemStack itemStack) {
+        return Optional.ofNullable(itemStack.getCapability(Capabilities.EnergyStorage.ITEM));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -90,19 +84,13 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         return Mth.hsvToRgb(Math.max(0.0F, ((float) getBarWidth(stack)) / 13) / 3.0F, 1.0F, 1.0F);
     }
 
-    protected EnergyStorageItemBlockEnergyContainer createCapability(ItemStack itemStack) {
+    public EnergyStorageItemBlockEnergyContainer createCapability(ItemStack itemStack) {
         return new EnergyStorageItemBlockEnergyContainer(this, itemStack) {
             @Override
             public int getRate() {
                 return BlockEntityEnergyBattery.getEnergyPerTick(getMaxEnergyStored());
             }
         };
-    }
-
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt) {
-        return new DefaultCapabilityProvider<>(() -> ForgeCapabilities.ENERGY,
-                LazyOptional.of(() -> this.createCapability(stack)));
     }
 
 }

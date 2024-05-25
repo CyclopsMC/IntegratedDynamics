@@ -8,8 +8,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -56,12 +56,6 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         element.setInputString(textField.getValue());
         this.textField.setWidth(searchWidth);
         this.textField.setX(guiLeft + (searchX + searchWidth) - this.textField.getWidth());
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        textField.tick();
     }
 
     @Override

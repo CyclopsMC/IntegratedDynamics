@@ -7,8 +7,8 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
@@ -56,12 +56,12 @@ public class RecipeHandlerDryingBasin<T extends RecipeDryingBasin> extends Recip
     @Override
     protected Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> getRecipeInputIngredients(RecipeDryingBasin recipe) {
         Map<IngredientComponent<?, ?>, List<IPrototypedIngredientAlternatives<?, ?>>> inputs = Maps.newIdentityHashMap();
-        if (!recipe.getInputIngredient().isEmpty()) {
-            inputs.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(IngredientRecipeHelpers.getPrototypesFromIngredient(recipe.getInputIngredient())));
+        if (recipe.getInputIngredient().isPresent()) {
+            inputs.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(IngredientRecipeHelpers.getPrototypesFromIngredient(recipe.getInputIngredient().get())));
         }
-        if (!recipe.getInputFluid().isEmpty()) {
+        if (recipe.getInputFluid().isPresent()) {
             inputs.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(new PrototypedIngredientAlternativesList<>(
-                    Lists.newArrayList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, recipe.getInputFluid(), FluidMatch.EXACT)))));
+                    Lists.newArrayList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, recipe.getInputFluid().get(), FluidMatch.EXACT)))));
         }
         return inputs;
     }

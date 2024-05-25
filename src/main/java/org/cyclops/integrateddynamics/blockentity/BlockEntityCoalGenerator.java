@@ -9,21 +9,21 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DataSlotSupplied;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectableInventory;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
@@ -32,6 +32,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerCoalGenerator
 import org.cyclops.integrateddynamics.network.CoalGeneratorNetworkElement;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A part entity for the coal energy generator.
@@ -50,17 +51,30 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
     private int currentlyBurning;
 
     public BlockEntityCoalGenerator(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_COAL_GENERATOR, blockPos, blockState, BlockEntityCoalGenerator.INVENTORY_SIZE, 64);
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
-            @Override
-            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                return new CoalGeneratorNetworkElement(DimPos.of(world, blockPos));
-            }
-        }));
-        addCapabilityInternal(ForgeCapabilities.ENERGY, LazyOptional.of(() -> this));
+        super(RegistryEntries.BLOCK_ENTITY_COAL_GENERATOR.get(), blockPos, blockState, BlockEntityCoalGenerator.INVENTORY_SIZE, 64);
     }
 
-    public LazyOptional<IEnergyNetwork> getEnergyNetwork() {
+    public static void registerCoalGeneratorCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityCoalGenerator> blockEntityType) {
+        BlockEntityCableConnectableInventory.registerCableConnectableInventoryCapabilities(event, blockEntityType);
+
+        event.registerBlockEntity(
+                Capabilities.NetworkElementProvider.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new NetworkElementProviderSingleton() {
+                    @Override
+                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                        return new CoalGeneratorNetworkElement(DimPos.of(world, blockPos));
+                    }
+                }
+        );
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity
+        );
+    }
+
+    public Optional<IEnergyNetwork> getEnergyNetwork() {
         return NetworkHelpers.getEnergyNetwork(getNetwork());
     }
 
@@ -111,7 +125,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
     }
 
     public static int getFuelTime(ItemStack itemStack) {
-        return ForgeHooks.getBurnTime(itemStack, RecipeType.SMELTING);
+        return CommonHooks.getBurnTime(itemStack, RecipeType.SMELTING);
     }
 
     @Override

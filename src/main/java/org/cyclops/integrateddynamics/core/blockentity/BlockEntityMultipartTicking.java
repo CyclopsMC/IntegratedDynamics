@@ -7,42 +7,39 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.PartCapability;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.block.BlockCable;
-import org.cyclops.integrateddynamics.capability.cable.CableConfig;
-import org.cyclops.integrateddynamics.capability.cable.CableFakeableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableFakeableMultipartTicking;
 import org.cyclops.integrateddynamics.capability.cable.CableTileMultipartTicking;
-import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightConfig;
 import org.cyclops.integrateddynamics.capability.dynamiclight.DynamicLightTileMultipartTicking;
-import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneConfig;
 import org.cyclops.integrateddynamics.capability.dynamicredstone.DynamicRedstoneTileMultipartTicking;
-import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableDefault;
 import org.cyclops.integrateddynamics.capability.facadeable.FacadeableTileMultipartTicking;
-import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderPartContainer;
-import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerConfig;
 import org.cyclops.integrateddynamics.capability.partcontainer.PartContainerTileMultipartTicking;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementTileMultipartTicking;
 import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
@@ -92,22 +89,78 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     private ModelData cachedState = null;
 
     public BlockEntityMultipartTicking(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING, blockPos, blockState);
+        super(RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING.get(), blockPos, blockState);
         partContainer = new PartContainerTileMultipartTicking(this);
-        addCapabilityInternal(PartContainerConfig.CAPABILITY, LazyOptional.of(() -> partContainer));
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderPartContainer(partContainer)));
-        addCapabilityInternal(FacadeableConfig.CAPABILITY, LazyOptional.of(() -> new FacadeableTileMultipartTicking(this)));
         cable = new CableTileMultipartTicking(this);
-        addCapabilityInternal(CableConfig.CAPABILITY, LazyOptional.of(() -> cable));
         networkCarrier = new NetworkCarrierDefault();
-        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, LazyOptional.of(() -> networkCarrier));
         cableFakeable = new CableFakeableMultipartTicking(this);
-        addCapabilityInternal(CableFakeableConfig.CAPABILITY, LazyOptional.of(() -> cableFakeable));
-        addCapabilityInternal(PathElementConfig.CAPABILITY, LazyOptional.of(() -> new PathElementTileMultipartTicking(this, cable)));
+    }
+
+    public static void registerMultipartTickingCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMultipartTicking> blockEntityType) {
+        event.registerBlockEntity(
+                Capabilities.PartContainer.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getPartContainer()
+        );
+        event.registerBlockEntity(
+                Capabilities.NetworkElementProvider.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new NetworkElementProviderPartContainer(blockEntity.getPartContainer())
+        );
+        event.registerBlockEntity(
+                Capabilities.Facadeable.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new FacadeableTileMultipartTicking(blockEntity)
+        );
+        event.registerBlockEntity(
+                Capabilities.Cable.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getCable()
+        );
+        event.registerBlockEntity(
+                Capabilities.NetworkCarrier.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getNetworkCarrier()
+        );
+        event.registerBlockEntity(
+                Capabilities.CableFakeable.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getCableFakeable()
+        );
+        event.registerBlockEntity(
+                Capabilities.PathElement.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new PathElementTileMultipartTicking(blockEntity, blockEntity.getCable())
+        );
+        registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.ValueInterface.BLOCK, Capabilities.ValueInterface.PART);
+        registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.VariableContainer.BLOCK, Capabilities.VariableContainer.PART);
+
         for (Direction facing : Direction.values()) {
-            addCapabilitySided(DynamicLightConfig.CAPABILITY, facing, LazyOptional.of(() -> new DynamicLightTileMultipartTicking(this, facing)));
-            addCapabilitySided(DynamicRedstoneConfig.CAPABILITY, facing, LazyOptional.of(() -> new DynamicRedstoneTileMultipartTicking(this, facing)));
+            event.registerBlockEntity(
+                    Capabilities.DynamicLight.BLOCK,
+                    blockEntityType,
+                    (blockEntity, context) -> new DynamicLightTileMultipartTicking(blockEntity, facing)
+            );
+            event.registerBlockEntity(
+                    Capabilities.DynamicRedstone.BLOCK,
+                    blockEntityType,
+                    (blockEntity, context) -> new DynamicRedstoneTileMultipartTicking(blockEntity, facing)
+            );
         }
+    }
+
+    public static <T> void registerPartCapabilityAsBlockCapability(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMultipartTicking> blockEntityType, BlockCapability<T, Direction> blockCapability, PartCapability<T> partCapability) {
+        event.registerBlockEntity(
+                blockCapability,
+                blockEntityType,
+                (blockEntity, context) -> {
+                    INetwork network = blockEntity.getNetwork();
+                    IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
+                    return blockEntity.getPartContainer()
+                            .getCapability(partCapability, network, partNetwork, PartTarget.fromCenter(PartPos.of(blockEntity.getLevel(), blockEntity.getBlockPos(), context)))
+                            .orElse(null);
+                }
+        );
     }
 
     @Override
@@ -164,7 +217,8 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
                 builder.with(BlockCable.PART_RENDERPOSITIONS[side.ordinal()],
                         partContainer.hasPart(side) ? partContainer.getPart(side).getPartRenderPosition() : PartRenderPosition.NONE);
             }
-            IFacadeable facadeable = getCapability(FacadeableConfig.CAPABILITY).orElseGet(FacadeableDefault::new);
+            IFacadeable facadeable = Optional.ofNullable(level.getCapability(Capabilities.Facadeable.BLOCK, getBlockPos(), getBlockState(), this, null))
+                    .orElseGet(FacadeableDefault::new);
             builder.with(BlockCable.FACADE, facadeable.hasFacade() ? Optional.of(facadeable.getFacade()) : Optional.empty());
             builder.with(BlockCable.PARTCONTAINER, partContainer);
             builder.with(BlockCable.RENDERSTATE, new CableRenderState(
@@ -211,15 +265,6 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     public void setForceDisconnected(EnumFacingMap<Boolean> forceDisconnected) {
         this.forceDisconnected.clear();
         this.forceDisconnected.putAll(forceDisconnected);
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
-        LazyOptional<T> value = super.getCapability(capability, facing);
-        if (value.isPresent()) {
-            return value;
-        }
-        return partContainer.getCapability(capability, facing);
     }
 
     @Override

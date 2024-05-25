@@ -23,10 +23,10 @@ public class BlockMenrilFenceGateConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_fence_gate",
-                eConfig -> new FenceGateBlock(BlockBehaviour.Properties.of()
+                eConfig -> new FenceGateBlock(WoodType.OAK, BlockBehaviour.Properties.of()
                         .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F, 3.0F)
-                        .sound(SoundType.WOOD), WoodType.OAK) {
+                        .sound(SoundType.WOOD)) {
                     @Override
                     public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
                         return 5;

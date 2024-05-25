@@ -6,9 +6,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -16,7 +17,6 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
-import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
 import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -39,19 +39,26 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
     public BlockEntityActiveVariableBase(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState, int inventorySize) {
         super(type, blockPos, blockState, inventorySize, 1);
         getInventory().addDirtyMarkListener(this);
-        addCapabilityInternal(ValueInterfaceConfig.CAPABILITY, LazyOptional.of(() -> () -> {
-            INetwork network = getNetwork();
-            IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
-            if (hasVariable()) {
-                IVariable<?> variable = getVariable(partNetwork);
-                if (variable != null) {
-                    return Optional.of(variable.getValue());
-                }
-            }
-            return Optional.empty();
-        }));
 
         this.evaluator = createEvaluator();
+    }
+
+    public static <E> void registerActiveVariableBaseCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityActiveVariableBase<E>> blockEntityType) {
+        event.registerBlockEntity(
+                Capabilities.ValueInterface.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> () -> {
+                    INetwork network = blockEntity.getNetwork();
+                    IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
+                    if (blockEntity.hasVariable()) {
+                        IVariable<?> variable = blockEntity.getVariable(partNetwork);
+                        if (variable != null) {
+                            return Optional.of(variable.getValue());
+                        }
+                    }
+                    return Optional.empty();
+                }
+        );
     }
 
     protected InventoryVariableEvaluator<IValue> createEvaluator() {

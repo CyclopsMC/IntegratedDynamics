@@ -1,20 +1,11 @@
 package org.cyclops.integrateddynamics.api.advancement.criterion;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A predicate for variables of all types.
@@ -22,26 +13,31 @@ import javax.annotation.Nullable;
  */
 public class VariablePredicate<V extends IVariable> {
 
-    private static final IVariableFacadeHandlerRegistry VARIABLE_FACADE_HANDLER_REGISTRY = IntegratedDynamics._instance
-            .getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-
-    public static final VariablePredicate ANY = new VariablePredicate<>(IVariable.class, null, ValuePredicate.ANY);
+    public static final VariablePredicate ANY = new VariablePredicate<>(IVariable.class, Optional.empty(), Optional.empty());
 
     private final Class<V> variableClass;
-    private final IValueType valueType;
-    private final ValuePredicate valuePredicate;
+    private final Optional<IValueType> valueType;
+    private final Optional<ValuePredicate> valuePredicate;
 
-    public VariablePredicate(Class<V> variableClass, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
+    public VariablePredicate(Class<V> variableClass, Optional<IValueType> valueType, Optional<ValuePredicate> valuePredicate) {
         this.variableClass = variableClass;
         this.valueType = valueType;
         this.valuePredicate = valuePredicate;
     }
 
+    public Optional<IValueType> getValueType() {
+        return valueType;
+    }
+
+    public Optional<ValuePredicate> getValuePredicate() {
+        return valuePredicate;
+    }
+
     public final boolean test(IVariable variable) {
         try {
             return variableClass.isInstance(variable)
-                    && (this.valueType == null || ValueHelpers.correspondsTo(this.valueType, variable.getType()))
-                    && valuePredicate.test(variable.getValue())
+                    && (this.valueType.isEmpty() || ValueHelpers.correspondsTo(this.valueType.get(), variable.getType()))
+                    && valuePredicate.orElse(ValuePredicate.ANY).test(variable.getValue())
                     && testTyped((V) variable);
         } catch (EvaluationException e) {
             return false;
@@ -50,30 +46,6 @@ public class VariablePredicate<V extends IVariable> {
 
     protected boolean testTyped(V variable) {
         return true;
-    }
-
-    public static VariablePredicate deserialize(ValueDeseralizationContext valueDeseralizationContext, @Nullable JsonElement element) {
-        if (element != null && !element.isJsonNull()) {
-            JsonObject jsonobject = GsonHelper.convertToJsonObject(element, "variable");
-            IVariableFacadeHandler handler;
-
-            IValueType valueType = JsonDeserializers.deserializeValueType(jsonobject);
-            ValuePredicate valuePredicate = JsonDeserializers.deserializeValue(valueDeseralizationContext, jsonobject, valueType);
-
-            JsonElement typeElement = jsonobject.get("type");
-            if (typeElement != null && !typeElement.isJsonNull()) {
-                String type = GsonHelper.getAsString(jsonobject, "type");
-                handler = VARIABLE_FACADE_HANDLER_REGISTRY.getHandler(new ResourceLocation(type));
-                if (handler == null) {
-                    throw new JsonSyntaxException("Unknown variable type '" + type + "', valid types are: "
-                            + VARIABLE_FACADE_HANDLER_REGISTRY.getHandlerNames());
-                }
-                return handler.deserializeVariablePredicate(valueDeseralizationContext, jsonobject, valueType, valuePredicate);
-            } else {
-                return new VariablePredicate<>(IVariable.class, valueType, valuePredicate);
-            }
-        }
-        return ANY;
     }
 
 }

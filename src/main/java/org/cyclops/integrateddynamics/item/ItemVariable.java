@@ -3,21 +3,18 @@ package org.cyclops.integrateddynamics.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderConfig;
-import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderDefault;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHolder;
 import org.cyclops.integrateddynamics.client.render.blockentity.ItemStackBlockEntityVariableRender;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 
@@ -56,15 +53,12 @@ public class ItemVariable extends Item {
         return super.getName(itemStack);
     }
 
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt) {
-        return new DefaultCapabilityProvider<>(() -> VariableFacadeHolderConfig.CAPABILITY, new VariableFacadeHolderDefault(stack));
-    }
-
     public IVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
-        return itemStack.getCapability(VariableFacadeHolderConfig.CAPABILITY)
-                .map(iVariableFacadeHolder -> iVariableFacadeHolder.getVariableFacade(valueDeseralizationContext))
-                .orElse(VariableFacadeHandlerRegistry.DUMMY_FACADE);
+        IVariableFacadeHolder holder = itemStack.getCapability(Capabilities.VariableFacade.ITEM);
+        if (holder != null) {
+            return holder.getVariableFacade(valueDeseralizationContext);
+        }
+        return VariableFacadeHandlerRegistry.DUMMY_FACADE;
     }
 
     @Override

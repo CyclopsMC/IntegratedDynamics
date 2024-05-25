@@ -3,14 +3,12 @@ package org.cyclops.integrateddynamics.inventory.container;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -53,7 +51,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
 
     public ContainerPartPanelVariableDriven(int id, Inventory playerInventory, Container inventory,
                                             Optional<PartTarget> target, Optional<IPartContainer> partContainer, P partType) {
-        super(RegistryEntries.CONTAINER_PART_DISPLAY, id, playerInventory, inventory, target, partContainer, partType);
+        super(RegistryEntries.CONTAINER_PART_DISPLAY.get(), id, playerInventory, inventory, target, partContainer, partType);
 
         readValueId = getNextValueId();
         readColorId = getNextValueId();
@@ -102,13 +100,13 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         if (!player.level().isClientSide()) {
             S partState = getPartState().get();
             partState.onVariableContentsUpdated(getPartType(), getTarget().get());
-            LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(getTarget().get().getCenter());
+            Optional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(getTarget().get().getCenter());
             if (!getContainerInventory().isEmpty()) {
                     NetworkHelpers.getPartNetwork(optionalNetwork).ifPresent(partNetwork -> {
                         try {
                             INetwork network = optionalNetwork.orElse(null);
                             IVariable variable = partState.getVariable(network, partNetwork, ValueDeseralizationContext.of(player.level()));
-                            MinecraftForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network, partNetwork, getTarget().get(),
+                            NeoForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network, partNetwork, getTarget().get(),
                                     getPartType(), partState, player, variable, variable != null ? variable.getValue() : null));
                         } catch (EvaluationException e) {
 

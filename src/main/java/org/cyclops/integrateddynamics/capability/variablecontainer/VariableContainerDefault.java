@@ -45,7 +45,7 @@ public class VariableContainerDefault implements IVariableContainer {
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack itemStack = inventory.getItem(i);
             if (!itemStack.isEmpty()) {
-                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.getVariableFacade(valueDeseralizationContext, itemStack);
+                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(valueDeseralizationContext, itemStack);
                 if (variableFacade != null) {
                     if (variableFacade.isValid()) {
                         getVariableCache().put(variableFacade.getId(), variableFacade);

@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -94,7 +94,7 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     public String getUniqueName(ValueFluidStack value) {
         FluidStack fluidStack = value.getRawValue();
         return !fluidStack.isEmpty() ?
-                String.format("%s %s", ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid()), fluidStack.getAmount()) : "";
+                String.format("%s %s", BuiltInRegistries.FLUID.getKey(fluidStack.getFluid()), fluidStack.getAmount()) : "";
     }
 
     @ToString

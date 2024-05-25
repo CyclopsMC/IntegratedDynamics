@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -13,9 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 
@@ -150,16 +148,6 @@ public interface IValueType<V extends IValue> {
      * @return A new logic programmer element for this value type.
      */
     public IValueTypeLogicProgrammerElement createLogicProgrammerElement();
-
-    /**
-     * Deserialize the given JSON element to a value predicate.
-     * @param element The JSON element.
-     * @param value The value.
-     * @return The value predicate.
-     */
-    default public ValuePredicate<V> deserializeValuePredicate(JsonObject element, @Nullable IValue value) {
-        return new ValuePredicate<>(this, value);
-    }
 
     /**
      * Attempt to cast the given value to a value of this value type.

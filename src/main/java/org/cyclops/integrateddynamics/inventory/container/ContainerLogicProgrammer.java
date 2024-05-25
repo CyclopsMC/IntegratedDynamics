@@ -10,6 +10,6 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 public class ContainerLogicProgrammer extends ContainerLogicProgrammerBase {
 
     public ContainerLogicProgrammer(int id, Inventory playerInventory) {
-        super(RegistryEntries.CONTAINER_LOGIC_PROGRAMMER, id, playerInventory);
+        super(RegistryEntries.CONTAINER_LOGIC_PROGRAMMER.get(), id, playerInventory);
     }
 }

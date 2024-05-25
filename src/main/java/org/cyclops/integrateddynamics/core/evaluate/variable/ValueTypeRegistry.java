@@ -1,16 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
-import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.api.advancement.criterion.JsonDeserializers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -22,11 +20,11 @@ import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Registry for {@link IValueType}.
@@ -126,28 +124,30 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
         tag.put("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
     }
 
-    @Override
-    public VariableFacadePredicate deserializeVariableFacadePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element) {
-        IValueType valueType = JsonDeserializers.deserializeValueType(element);
-        return new AspectVariableFacadePredicate(valueType, JsonDeserializers.deserializeValue(valueDeseralizationContext, element, valueType));
-    }
+    public static class ValueTypeVariableFacadePredicate extends VariableFacadePredicate<IValueTypeVariableFacade> {
 
-    public static class AspectVariableFacadePredicate extends VariableFacadePredicate<IValueTypeVariableFacade> {
+        private final Optional<IValueType> valueType;
+        private final Optional<ValuePredicate> valuePredicate;
 
-        private final IValueType valueType;
-        private final ValuePredicate valuePredicate;
-
-        public AspectVariableFacadePredicate(@Nullable IValueType valueType, ValuePredicate valuePredicate) {
+        public ValueTypeVariableFacadePredicate(Optional<IValueType> valueType, Optional<ValuePredicate> valuePredicate) {
             super(IValueTypeVariableFacade.class);
             this.valueType = valueType;
             this.valuePredicate = valuePredicate;
         }
 
+        public Optional<IValueType> getValueType() {
+            return valueType;
+        }
+
+        public Optional<ValuePredicate> getValuePredicate() {
+            return valuePredicate;
+        }
+
         @Override
         protected boolean testTyped(IValueTypeVariableFacade variableFacade) {
             return super.testTyped(variableFacade)
-                    && (valueType == null || ValueHelpers.correspondsTo(variableFacade.getValueType(), valueType))
-                    && valuePredicate.test(variableFacade.getValue());
+                    && (valueType.isEmpty() || ValueHelpers.correspondsTo(variableFacade.getValueType(), valueType.get()))
+                    && valuePredicate.orElse(ValuePredicate.ANY).test(variableFacade.getValue());
         }
     }
 }

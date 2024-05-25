@@ -14,8 +14,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.client.model.CableModel;
@@ -41,7 +41,7 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
 
     @Override
     public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
-        if (CableHelpers.isNoFakeCable(world, blockPos, null)) {
+        if (CableHelpers.isNoFakeCable((Level) world, blockPos, null)) {
             return Collections.singletonList(COMPONENT);
         }
         return Collections.emptyList();
@@ -60,7 +60,7 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
 
         @Override
         public ItemStack getCloneItemStack(Level world, BlockPos pos) {
-            return new ItemStack(RegistryEntries.BLOCK_CABLE);
+            return new ItemStack(RegistryEntries.BLOCK_CABLE.get());
         }
 
         @Override

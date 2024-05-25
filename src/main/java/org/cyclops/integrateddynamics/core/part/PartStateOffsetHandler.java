@@ -9,7 +9,7 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -154,7 +154,7 @@ public class PartStateOffsetHandler<P extends IPartType> {
         }
 
         try {
-            MinecraftForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network,
+            NeoForge.EVENT_BUS.post(new PartVariableDrivenVariableContentsUpdatedEvent<>(network,
                     partNetwork, target,
                     partType, partState, null, variable,
                     variable != null ? variable.getValue() : null));

@@ -12,22 +12,21 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.level.NoteBlockEvent;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.event.level.NoteBlockEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.commoncapabilities.api.capability.Capabilities;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.commoncapabilities.api.capability.temperature.ITemperature;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.modcompat.commoncapabilities.BlockCapabilitiesHelpers;
-import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
@@ -35,7 +34,6 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
-import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.core.NoteBlockEventReceiver;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -224,13 +222,13 @@ public class AspectReadBuilders {
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidHandler> PROP_GET = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             return BlockEntityHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                    ForgeCapabilities.FLUID_HANDLER)
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK)
                     .orElse(EmptyFluidHandler.INSTANCE);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Pair<IFluidHandler, Integer>> PROP_GET_ACTIVATABLE = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             IFluidHandler fluidHandler = BlockEntityHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                    ForgeCapabilities.FLUID_HANDLER).orElse(null);
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK).orElse(null);
             if(fluidHandler != null) {
                 int i = input.getRight().getValue(PROP_TANKID).getRawValue();
                 if(i < fluidHandler.getTanks()) {
@@ -275,11 +273,11 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = input -> {
             PartPos target = input.getLeft().getTarget();
-            return BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), ForgeCapabilities.ITEM_HANDLER).orElse(null);
+            return BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = input -> {
             PartPos target = input.getLeft().getTarget();
-            IItemHandler itemHandler = BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), ForgeCapabilities.ITEM_HANDLER).orElse(null);
+            IItemHandler itemHandler = BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
             int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
             if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
                 return itemHandler.getStackInSlot(slotId);
@@ -304,17 +302,17 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IWorker> PROP_GET_WORKER = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return BlockEntityHelpers.getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.WORKER).orElse(null);
+            return BlockEntityHelpers.getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.Worker.BLOCK).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ITemperature> PROP_GET_TEMPERATURE = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return BlockEntityHelpers.getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.TEMPERATURE).orElse(null);
+            return BlockEntityHelpers.getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), org.cyclops.commoncapabilities.api.capability.Capabilities.Temperature.BLOCK).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IRecipeHandler> PROP_GET_RECIPE_HANDLER = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IRecipeHandler>() {
             @Override
             public IRecipeHandler getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos dimPos = input.getLeft().getTarget().getPos();
-                return BlockCapabilitiesHelpers.getTileOrBlockCapability(dimPos, input.getLeft().getTarget().getSide(), Capabilities.RECIPE_HANDLER).orElse(null);
+                return BlockEntityHelpers.getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK).orElse(null);
             }
         };
 
@@ -359,8 +357,8 @@ public class AspectReadBuilders {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             INetwork network = NetworkHelpers.getNetwork(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide()).orElse(null);
             int channel = input.getRight().getValue(PROPERTY_CHANNEL).getRawValue();
-            return network != null ? network.getCapability(EnergyNetworkConfig.CAPABILITY)
-                    .map(energyNetwork -> energyNetwork.getChannelExternal(ForgeCapabilities.ENERGY, channel))
+            return network != null ? network.getCapability(org.cyclops.integrateddynamics.Capabilities.EnergyNetwork.NETWORK)
+                    .map(energyNetwork -> energyNetwork.getChannelExternal(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, channel))
                     .orElse(null) : null;
         };
 
@@ -440,7 +438,7 @@ public class AspectReadBuilders {
             DimPos dimPos = pair.getLeft().getTarget().getPos();
             Direction facing = pair.getLeft().getTarget().getSide();
             List<net.minecraft.world.entity.Entity> entities = dimPos.getLevel(true).getEntities((net.minecraft.world.entity.Entity) null,
-                    new AABB(dimPos.getBlockPos(), dimPos.getBlockPos().offset(1, 1, 1)), ENTITY_SELECTOR_ITEMFRAME);
+                    new AABB(Vec3.atLowerCornerOf(dimPos.getBlockPos()), Vec3.atLowerCornerOf(dimPos.getBlockPos().offset(1, 1, 1))), ENTITY_SELECTOR_ITEMFRAME);
             for(net.minecraft.world.entity.Entity entity : entities) {
                 if(Direction.fromYRot(((ItemFrame) entity).yRotO) == facing.getOpposite()) {
                     return ((ItemFrame) entity);

@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.blockentity;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,13 +12,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -27,7 +26,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
 import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
@@ -64,31 +62,42 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
     private boolean writeVariable;
 
     public BlockEntityProxy(BlockPos blockPos, BlockState blockState) {
-        this(RegistryEntries.BLOCK_ENTITY_PROXY, blockPos, blockState, BlockEntityProxy.INVENTORY_SIZE);
-
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.NORTH,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.SOUTH,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.EAST,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.WEST,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.UP,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_IN)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.DOWN,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_OUT)));
+        this(RegistryEntries.BLOCK_ENTITY_PROXY.get(), blockPos, blockState, BlockEntityProxy.INVENTORY_SIZE);
     }
 
     public BlockEntityProxy(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState, int inventorySize) {
         super(type, blockPos, blockState, inventorySize);
+    }
 
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
-            @Override
-            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                return new ProxyNetworkElement(DimPos.of(world, blockPos));
-            }
-        }));
+    public static <E> void registerProxyCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityProxy> blockEntityType) {
+        BlockEntityActiveVariableBase.registerActiveVariableBaseCapabilities(event, blockEntityType);
+
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> {
+                    int slot = -1;
+                    switch (direction) {
+                        case DOWN ->  slot = SLOT_WRITE_OUT;
+                        case UP ->    slot = SLOT_WRITE_IN;
+                        case NORTH -> slot = SLOT_READ;
+                        case SOUTH -> slot = SLOT_READ;
+                        case WEST ->  slot = SLOT_READ;
+                        case EAST ->  slot = SLOT_READ;
+                    }
+                    return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
+                }
+        );
+        event.registerBlockEntity(
+                Capabilities.NetworkElementProvider.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new NetworkElementProviderSingleton() {
+                    @Override
+                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                        return new ProxyNetworkElement(DimPos.of(world, blockPos));
+                    }
+                }
+        );
     }
 
     public boolean isWriteVariable() {

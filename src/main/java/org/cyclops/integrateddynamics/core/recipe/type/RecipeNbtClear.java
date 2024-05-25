@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -20,8 +19,8 @@ public class RecipeNbtClear extends CustomRecipe {
 
     private final Ingredient inputIngredient;
 
-    public RecipeNbtClear(ResourceLocation id, CraftingBookCategory craftingBookCategory, Ingredient inputIngredient) {
-        super(id, craftingBookCategory);
+    public RecipeNbtClear(Ingredient inputIngredient) {
+        super(CraftingBookCategory.MISC);
         this.inputIngredient = inputIngredient;
     }
 
@@ -85,6 +84,6 @@ public class RecipeNbtClear extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return RegistryEntries.RECIPESERIALIZER_NBT_CLEAR;
+        return RegistryEntries.RECIPESERIALIZER_NBT_CLEAR.get();
     }
 }

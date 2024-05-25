@@ -8,8 +8,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -116,7 +116,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     public ItemStack writeElement(Player player, ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         return registry.writeVariableFacadeItem(!player.level().isClientSide(), itemStack, ValueTypes.REGISTRY,
-                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState());
+                new ValueTypeVariableFacadeFactory(getValueType(), getValue()), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
     }
 
     @Override
@@ -146,7 +146,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
-        return itemStack.getItem() == RegistryEntries.ITEM_VARIABLE;
+        return itemStack.getItem() == RegistryEntries.ITEM_VARIABLE.get();
     }
 
     @Override

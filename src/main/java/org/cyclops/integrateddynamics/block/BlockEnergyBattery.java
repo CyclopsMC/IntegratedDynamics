@@ -1,14 +1,16 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 
 /**
@@ -18,17 +20,24 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
+    public static final MapCodec<BlockEnergyBattery> CODEC = simpleCodec(BlockEnergyBattery::new);
+
     public TextureAtlasSprite iconOverlay;
 
     public BlockEnergyBattery(Block.Properties properties) {
         super(properties);
         if(MinecraftHelpers.isClientSide()) {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::postTextureStitch);
+            IntegratedDynamics._instance.getModEventBus().addListener(this::postTextureStitch);
         }
     }
 
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
     @OnlyIn(Dist.CLIENT)
-    public void postTextureStitch(TextureStitchEvent.Post event) {
+    public void postTextureStitch(TextureAtlasStitchedEvent event) {
         if (event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS)) {
             iconOverlay = event.getAtlas().getSprite(new ResourceLocation(Reference.MOD_ID, "block/energy_battery_overlay"));
         }

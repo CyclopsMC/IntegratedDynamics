@@ -2,13 +2,10 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.modcompat.commoncapabilities.BlockCapabilitiesHelpers;
-import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -16,6 +13,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An operator related to a recipe handler.
@@ -39,8 +37,8 @@ public class PositionedOperatorRecipeHandler<T extends IValueType<V>, V extends 
         ((Function) this.getFunction()).setOperator(this);
     }
 
-    protected LazyOptional<IRecipeHandler> getRecipeHandler() {
-        return BlockCapabilitiesHelpers.getTileOrBlockCapability(getPos(), getSide(), Capabilities.RECIPE_HANDLER);
+    protected Optional<IRecipeHandler> getRecipeHandler() {
+        return Optional.ofNullable(getPos().getLevel(true).getCapability(org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK, getPos().getBlockPos(), getSide()));
     }
 
     @Override

@@ -10,8 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 
 import java.util.List;
@@ -53,21 +53,23 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     }
 
     public static ItemStack tryFillContainerForPlayer(IEnergyStorage source, ItemStack held, int tickAmount, Player player) {
-        return held.getCapability(ForgeCapabilities.ENERGY, null)
-                .map(target -> {
-                    int moved = target.receiveEnergy(source.extractEnergy(target.receiveEnergy(tickAmount, true), false), false);
-                    if (moved > 0) {
-                        return held;
-                    }
-                    return ItemStack.EMPTY;
-                }).orElse(ItemStack.EMPTY);
+        IEnergyStorage target = held.getCapability(Capabilities.EnergyStorage.ITEM, null);
+        if (target != null) {
+            int moved = target.receiveEnergy(source.extractEnergy(target.receiveEnergy(tickAmount, true), false), false);
+            if (moved > 0) {
+                return held;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
     public void inventoryTick(ItemStack itemStack, Level world, Entity entity, int itemSlot, boolean par5) {
         if (isActivated(itemStack)) {
-            itemStack.getCapability(ForgeCapabilities.ENERGY, null)
-                    .ifPresent(energyStorage -> autofill(energyStorage, world, entity));
+            IEnergyStorage energyStorage = itemStack.getCapability(Capabilities.EnergyStorage.ITEM, null);
+            if (energyStorage != null) {
+                autofill(energyStorage, world, entity);
+            }
         }
         super.inventoryTick(itemStack, world, entity, itemSlot, par5);
     }

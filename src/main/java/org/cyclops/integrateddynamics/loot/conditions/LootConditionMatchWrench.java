@@ -1,11 +1,9 @@
 package org.cyclops.integrateddynamics.loot.conditions;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,8 +12,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import org.cyclops.cyclopscore.helper.LootHelpers;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 
 import java.util.Set;
@@ -25,7 +21,11 @@ import java.util.Set;
  * @author rubensworks
  */
 public class LootConditionMatchWrench implements LootItemCondition {
-    public static final LootItemConditionType TYPE = LootHelpers.registerCondition(new ResourceLocation(Reference.MOD_ID, "match_wrench"), new LootConditionMatchWrench.Serializer());
+
+    public static final LootItemConditionType TYPE = new LootItemConditionType(LootConditionMatchWrench.CODEC);
+    public static final Codec<LootConditionMatchWrench> CODEC = RecordCodecBuilder.create(
+            builder -> builder.point(new LootConditionMatchWrench())
+    );
 
     @Override
     public boolean test(LootContext lootContext) {
@@ -45,23 +45,6 @@ public class LootConditionMatchWrench implements LootItemCondition {
     @Override
     public LootItemConditionType getType() {
         return TYPE;
-    }
-
-    public static void load() {
-        // Dummy call, to enforce class loading
-    }
-
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<LootConditionMatchWrench> {
-
-        @Override
-        public void serialize(JsonObject jsonObject, LootConditionMatchWrench lootConditionMatchWrench, JsonSerializationContext jsonSerializationContext) {
-
-        }
-
-        @Override
-        public LootConditionMatchWrench deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext) {
-            return new LootConditionMatchWrench();
-        }
     }
 
 }

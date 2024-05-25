@@ -57,7 +57,7 @@ public class TestBlockOperators {
         bAir = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.AIR.defaultBlockState()));
         bCoal = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.COAL_BLOCK.defaultBlockState()));
         bDarkOakLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.DARK_OAK_LEAVES.defaultBlockState()));
-        bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(RegistryEntries.BLOCK_LOGIC_PROGRAMMER.defaultBlockState()));
+        bLogicProgrammer = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState()));
         bLeaves = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OAK_LEAVES.defaultBlockState()));
         bReed = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.SUGAR_CANE.defaultBlockState()));
         bSand = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.SAND.defaultBlockState()));

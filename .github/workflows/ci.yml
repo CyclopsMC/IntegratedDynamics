@@ -49,6 +49,8 @@ jobs:
           SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_KEY: ${{ secrets.MAVEN_KEY }}
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Test'
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

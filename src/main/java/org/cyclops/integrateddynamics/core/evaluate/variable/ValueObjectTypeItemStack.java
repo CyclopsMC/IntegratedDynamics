@@ -1,20 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.google.gson.JsonObject;
 import lombok.ToString;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -22,8 +19,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Value type with values that are itemstacks.
@@ -126,15 +123,6 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     @Override
-    public ValuePredicate<ValueItemStack> deserializeValuePredicate(JsonObject element, @Nullable IValue value) {
-        ItemPredicate itemPredicate = null;
-        if (element != null && !element.isJsonNull()) {
-            itemPredicate = ItemPredicate.fromJson(element);
-        }
-        return new ValueItemStackPredicate(this, value, itemPredicate);
-    }
-
-    @Override
     public ValueItemStack materialize(ValueItemStack value) throws EvaluationException {
         return ValueItemStack.of(value.getRawValue().copy());
     }
@@ -142,7 +130,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     @Override
     public String getUniqueName(ValueItemStack value) {
         ItemStack itemStack = value.getRawValue();
-        return !itemStack.isEmpty() ? ForgeRegistries.ITEMS.getKey(itemStack.getItem()).toString() : "";
+        return !itemStack.isEmpty() ? BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString() : "";
     }
 
     @ToString
@@ -176,16 +164,20 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     public static class ValueItemStackPredicate extends ValuePredicate<ValueItemStack> {
 
-        private final @Nullable ItemPredicate itemPredicate;
+        private final Optional<ItemPredicate> itemPredicate;
 
-        public ValueItemStackPredicate(@Nullable IValueType valueType, @Nullable IValue value, @Nullable ItemPredicate itemPredicate) {
-            super(valueType, value);
+        public ValueItemStackPredicate(Optional<ItemPredicate> itemPredicate) {
+            super(Optional.of(ValueTypes.OBJECT_ITEMSTACK), Optional.empty(), Optional.empty());
             this.itemPredicate = itemPredicate;
+        }
+
+        public Optional<ItemPredicate> getItemPredicate() {
+            return itemPredicate;
         }
 
         @Override
         protected boolean testTyped(ValueItemStack value) {
-            return super.testTyped(value) && (itemPredicate == null || itemPredicate.matches(value.getRawValue()));
+            return super.testTyped(value) && (itemPredicate.isEmpty() || itemPredicate.get().matches(value.getRawValue()));
         }
     }
 

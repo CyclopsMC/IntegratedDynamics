@@ -9,7 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -31,9 +30,7 @@ public final class WrenchHelpers {
      * @return If the wrenching can continue with the held item.
      */
     public static boolean isWrench(Player player, ItemStack heldItem, Level world, BlockPos pos, @Nullable Direction side) {
-        return ForgeRegistries.ITEMS.tags().getReverseTag(heldItem.getItem())
-                .map(reverseTag -> reverseTag.containsTag(WrenchHelpers.TAG_WRENCH))
-                .orElse(false);
+        return heldItem.getItem().builtInRegistryHolder().tags().anyMatch(tag -> tag.equals(WrenchHelpers.TAG_WRENCH));
     }
 
     /**

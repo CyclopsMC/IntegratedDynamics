@@ -15,10 +15,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -30,8 +33,8 @@ import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
 import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
@@ -70,7 +73,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
     private EvaluationException lastError = null;
 
     public BlockEntityDelay(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_DELAY, blockPos, blockState, BlockEntityDelay.INVENTORY_SIZE);
+        super(RegistryEntries.BLOCK_ENTITY_DELAY.get(), blockPos, blockState, BlockEntityDelay.INVENTORY_SIZE);
         this.variable = new VariableAdapter<ValueTypeList.ValueList>() {
 
             @Override
@@ -86,13 +89,37 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
                 return list;
             }
         };
+    }
 
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
-            @Override
-            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                return new DelayNetworkElement(DimPos.of(world, blockPos));
-            }
-        }));
+    public static <E> void registerDelayCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityDelay> blockEntityType) {
+        BlockEntityActiveVariableBase.registerActiveVariableBaseCapabilities(event, blockEntityType);
+
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> {
+                    int slot = -1;
+                    switch (direction) {
+                        case DOWN ->  slot = SLOT_WRITE_OUT;
+                        case UP ->    slot = SLOT_WRITE_IN;
+                        case NORTH -> slot = SLOT_READ;
+                        case SOUTH -> slot = SLOT_READ;
+                        case WEST ->  slot = SLOT_READ;
+                        case EAST ->  slot = SLOT_READ;
+                    }
+                    return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
+                }
+        );
+        event.registerBlockEntity(
+                Capabilities.NetworkElementProvider.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new NetworkElementProviderSingleton() {
+                    @Override
+                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                        return new DelayNetworkElement(DimPos.of(world, blockPos));
+                    }
+                }
+        );
     }
 
     @Override

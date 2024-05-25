@@ -8,13 +8,13 @@ import com.google.common.collect.Multimap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -30,15 +30,15 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
+import org.cyclops.integrateddynamics.core.helper.Codecs;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * Registry for {@link IOperator}
@@ -193,33 +193,6 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public VariablePredicate deserializeVariablePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
-        JsonElement operatorElement = element.get("operator");
-        IOperator operator = null;
-        if (operatorElement != null && !operatorElement.isJsonNull()) {
-            operator = Operators.REGISTRY.getOperator(new ResourceLocation(GsonHelper.getAsString(element, "operator")));
-            if (operator == null) {
-                throw new JsonSyntaxException("Unknown operator type '" + GsonHelper.getAsString(element, "operator")
-                        + "', valid types are: " + Operators.REGISTRY.getOperators().stream()
-                        .map(IOperator::getUniqueName).collect(Collectors.toList()));
-            }
-        }
-        JsonElement inputElement = element.get("input");
-        Int2ObjectMap<VariablePredicate> inputPredicates = new Int2ObjectOpenHashMap<>();
-        if (inputElement != null && !inputElement.isJsonNull()) {
-            for (Map.Entry<String, JsonElement> inputEntry : inputElement.getAsJsonObject().entrySet()) {
-                try {
-                    int slot = Integer.parseInt(inputEntry.getKey());
-                    inputPredicates.put(slot, VariablePredicate.deserialize(valueDeseralizationContext, inputEntry.getValue()));
-                } catch (NumberFormatException e) {
-                    throw new JsonSyntaxException("All inputs must refer to an input id as key, but got '" + inputEntry.getKey() + '"');
-                }
-            }
-        }
-        return new OperatorVariablePredicate(valueType, valuePredicate, operator, inputPredicates);
-    }
-
-    @Override
     public Map<String, IOperator> getGlobalInteractOperators() {
         return globalInteractOperators;
     }
@@ -231,20 +204,47 @@ public class OperatorRegistry implements IOperatorRegistry {
 
     public static class OperatorVariablePredicate extends VariablePredicate<LazyExpression> {
 
-        private final IOperator operator;
+        private final Optional<IOperator> operator;
         private final Int2ObjectMap<VariablePredicate> inputPredicates;
 
-        public OperatorVariablePredicate(@Nullable IValueType valueType, ValuePredicate valuePredicate,
-                                         @Nullable IOperator operator, Int2ObjectMap<VariablePredicate> inputPredicates) {
+        public OperatorVariablePredicate(Optional<IValueType> valueType, Optional<ValuePredicate> valuePredicate,
+                                         Optional<IOperator> operator, Int2ObjectMap<VariablePredicate> inputPredicates) {
             super(LazyExpression.class, valueType, valuePredicate);
             this.operator = operator;
             this.inputPredicates = inputPredicates;
         }
 
+        public OperatorVariablePredicate(Optional<IValueType> valueType, Optional<ValuePredicate> valuePredicate,
+                                         Optional<IOperator> operator, JsonElement inputPredicates) {
+            this(valueType, valuePredicate, operator, parseInputPredicates(inputPredicates));
+        }
+
+        public static Int2ObjectMap<VariablePredicate> parseInputPredicates(JsonElement inputElement) {
+            Int2ObjectMap<VariablePredicate> inputPredicates = new Int2ObjectOpenHashMap<>();
+            if (inputElement != null && !inputElement.isJsonNull()) {
+                for (Map.Entry<String, JsonElement> inputEntry : inputElement.getAsJsonObject().entrySet()) {
+                    try {
+                        int slot = Integer.parseInt(inputEntry.getKey());
+                        VariablePredicate variablePredicate = Codecs.VARIABLE
+                                .parse(JsonOps.INSTANCE, inputEntry.getValue())
+                                .getOrThrow(false, JsonSyntaxException::new);
+                        inputPredicates.put(slot, variablePredicate);
+                    } catch (NumberFormatException e) {
+                        throw new JsonSyntaxException("All inputs must refer to an input id as key, but got '" + inputEntry.getKey() + '"');
+                    }
+                }
+            }
+            return inputPredicates;
+        }
+
+        public Optional<IOperator> getOperator() {
+            return operator;
+        }
+
         @Override
         protected boolean testTyped(LazyExpression variable) {
             if (!super.testTyped(variable)
-                    || !(operator == null || variable.getOperator() == operator)) {
+                    || !(operator.isEmpty() || variable.getOperator() == operator.get())) {
                 return false;
             }
             for (int i = 0; i < variable.getInput().length; i++) {
@@ -255,6 +255,21 @@ public class OperatorRegistry implements IOperatorRegistry {
                 }
             }
             return true;
+        }
+
+        public Int2ObjectMap<VariablePredicate> getInputPredicates() {
+            return inputPredicates;
+        }
+
+        public JsonElement getInputJson() {
+            JsonObject element = new JsonObject();
+            int i = 0;
+            for (Int2ObjectMap.Entry<VariablePredicate> entry : getInputPredicates().int2ObjectEntrySet()) {
+                element.add(String.valueOf(i++), Codecs.VARIABLE
+                        .encodeStart(JsonOps.INSTANCE, entry.getValue())
+                        .getOrThrow(false, JsonSyntaxException::new));
+            }
+            return element;
         }
     }
 }

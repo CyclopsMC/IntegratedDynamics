@@ -1,14 +1,10 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
-
-import javax.annotation.Nullable;
 
 /**
  * Recipe serializer for NBT clear recipes.
@@ -16,17 +12,22 @@ import javax.annotation.Nullable;
  */
 public class RecipeSerializerNbtClear implements RecipeSerializer<RecipeNbtClear> {
 
+    public static final Codec<RecipeNbtClear> CODEC = RecordCodecBuilder.create(
+            builder -> builder.group(
+                            Ingredient.CODEC_NONEMPTY.fieldOf("item").forGetter(RecipeNbtClear::getInputIngredient)
+                    )
+                    .apply(builder, RecipeNbtClear::new)
+    );
+
     @Override
-    public RecipeNbtClear fromJson(ResourceLocation recipeId, JsonObject json) {
-        Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", false);
-        return new RecipeNbtClear(recipeId, CraftingBookCategory.MISC, inputIngredient);
+    public Codec<RecipeNbtClear> codec() {
+        return CODEC;
     }
 
-    @Nullable
     @Override
-    public RecipeNbtClear fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+    public RecipeNbtClear fromNetwork(FriendlyByteBuf buffer) {
         Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
-        return new RecipeNbtClear(recipeId, CraftingBookCategory.MISC, inputIngredient);
+        return new RecipeNbtClear(inputIngredient);
     }
 
     @Override

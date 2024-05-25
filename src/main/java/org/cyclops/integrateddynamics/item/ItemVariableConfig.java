@@ -3,13 +3,16 @@ package org.cyclops.integrateddynamics.item;
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.capability.variablefacade.VariableFacadeHolderDefault;
 import org.cyclops.integrateddynamics.core.client.model.ModelLoaderVariable;
 
 import java.util.List;
@@ -28,14 +31,14 @@ public class ItemVariableConfig extends ItemConfig {
                 "variable",
                 eConfig -> new ItemVariable(new Item.Properties())
         );
-        FMLJavaModLoadingContext.get().getModEventBus().register(this);
+        IntegratedDynamics._instance.getModEventBus().register(this);
     }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onModelLoading(ModelEvent.RegisterGeometryLoaders event) {
         subModels = Lists.newArrayList();
-        event.register("variable", new ModelLoaderVariable(subModels));
+        event.register(new ResourceLocation(Reference.MOD_ID, "variable"), new ModelLoaderVariable(subModels));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -44,5 +47,10 @@ public class ItemVariableConfig extends ItemConfig {
         for (ResourceLocation subModel : subModels) {
             event.register(subModel);
         }
+    }
+
+    @SubscribeEvent
+    protected void registerCapability(RegisterCapabilitiesEvent event) {
+        event.registerItem(Capabilities.VariableFacade.ITEM, (stack, context) -> new VariableFacadeHolderDefault(stack), getInstance());
     }
 }

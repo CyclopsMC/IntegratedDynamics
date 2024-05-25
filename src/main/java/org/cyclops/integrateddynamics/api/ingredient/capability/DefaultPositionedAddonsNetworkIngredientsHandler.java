@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.api.ingredient.capability;
 
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -21,7 +21,7 @@ public class DefaultPositionedAddonsNetworkIngredientsHandler<T, M> implements I
 
     @Nullable
     @Override
-    public LazyOptional<IPositionedAddonsNetworkIngredients<T, M>> getStorage(INetwork network) {
-        return LazyOptional.of(() -> networkRetriever.apply(network));
+    public Optional<IPositionedAddonsNetworkIngredients<T, M>> getStorage(INetwork network) {
+        return Optional.of(networkRetriever.apply(network));
     }
 }

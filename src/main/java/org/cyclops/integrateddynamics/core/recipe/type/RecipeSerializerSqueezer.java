@@ -1,23 +1,20 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
-import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.integrateddynamics.GeneralConfig;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Recipe serializer for squeezer recipes
@@ -25,53 +22,41 @@ import javax.annotation.Nullable;
  */
 public class RecipeSerializerSqueezer implements RecipeSerializer<RecipeSqueezer> {
 
-    protected static RecipeSqueezer.IngredientChance getJsonItemStackChance(JsonObject json) {
-        Either<ItemStack, ItemStackFromIngredient> itemStack = RecipeSerializerHelpers.getJsonItemStackOrTag(json, true, GeneralConfig.recipeTagOutputModPriorities);
-        float chance = GsonHelper.getAsFloat(json, "chance", 1.0F);
-        return new RecipeSqueezer.IngredientChance(itemStack, chance);
-    }
+    public static final Codec<RecipeSqueezer.IngredientChance> CODEC_INGREDIENT_CHANCE = RecipeSerializerHelpers
+            .getCodecItemStackOrTagChance(() -> GeneralConfig.recipeTagOutputModPriorities)
+            .xmap(
+                    RecipeSqueezer.IngredientChance::new,
+                    RecipeSqueezer.IngredientChance::getIngredientChance
+            );
+    public static final Codec<List<RecipeSqueezer.IngredientChance>> CODEC_INGREDIENT_CHANCE_LIST = Codec.list(CODEC_INGREDIENT_CHANCE);
 
-    protected static NonNullList<RecipeSqueezer.IngredientChance> getJsonItemStackChances(JsonObject json, String key) {
-        JsonElement element = json.get(key);
-        if (element == null) {
-            return NonNullList.create();
-        } else if (element.isJsonArray()) {
-            JsonArray jsonElements = element.getAsJsonArray();
-            NonNullList<RecipeSqueezer.IngredientChance> elements = NonNullList.create();
-            for (JsonElement jsonElement : jsonElements) {
-                elements.add(getJsonItemStackChance(jsonElement.getAsJsonObject()));
-            }
-            return elements;
-        } else {
-            throw new JsonSyntaxException("A JSON array is required as value for " + key);
-        }
-    }
+    public static final Codec<RecipeSqueezer> CODEC = RecordCodecBuilder.create(
+            builder -> builder.group(
+                            Ingredient.CODEC_NONEMPTY.fieldOf("input_item").forGetter(RecipeSqueezer::getInputIngredient),
+                            RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE_LIST.fieldOf("output_items").forGetter(r -> r.getOutputItems().stream().toList()),
+                            ExtraCodecs.strictOptionalField(FluidStack.CODEC, "output_fluid").forGetter(RecipeSqueezer::getOutputFluid)
+                    )
+                    .apply(builder, (inputIngredient, outputItemStacks, outputFluid) -> {
+                        // Validation
+                        if (inputIngredient.isEmpty()) {
+                            throw new JsonSyntaxException("An input item is required");
+                        }
+                        if (outputItemStacks.isEmpty() && outputFluid.isEmpty()) {
+                            throw new JsonSyntaxException("An output item or fluid is required");
+                        }
+
+                        return new RecipeSqueezer(inputIngredient, NonNullList.copyOf(outputItemStacks), outputFluid);
+                    })
+    );
 
     @Override
-    public RecipeSqueezer fromJson(ResourceLocation recipeId, JsonObject json) {
-        JsonObject result = GsonHelper.getAsJsonObject(json, "result");
-
-        // Input
-        Ingredient inputIngredient = RecipeSerializerHelpers.getJsonIngredient(json, "item", true);
-
-        // Output
-        NonNullList<RecipeSqueezer.IngredientChance> outputItemStacks = getJsonItemStackChances(result, "items");
-        FluidStack outputFluid = RecipeSerializerHelpers.getJsonFluidStack(result, "fluid", false);
-
-        // Validation
-        if (inputIngredient.isEmpty()) {
-            throw new JsonSyntaxException("An input item is required");
-        }
-        if (outputItemStacks.isEmpty() && outputFluid.isEmpty()) {
-            throw new JsonSyntaxException("An output item or fluid is required");
-        }
-
-        return new RecipeSqueezer(recipeId, inputIngredient, outputItemStacks, outputFluid);
+    public Codec<RecipeSqueezer> codec() {
+        return CODEC;
     }
 
     @Nullable
     @Override
-    public RecipeSqueezer fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+    public RecipeSqueezer fromNetwork(FriendlyByteBuf buffer) {
         // Input
         Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
 
@@ -80,13 +65,12 @@ public class RecipeSerializerSqueezer implements RecipeSerializer<RecipeSqueezer
         int outputItemStacksCount = buffer.readInt();
         for (int i = 0; i < outputItemStacksCount; i++) {
             outputItemStacks.add(new RecipeSqueezer.IngredientChance(
-                    RecipeSerializerHelpers.readItemStackOrItemStackIngredient(buffer),
-                    buffer.readFloat()
+                    RecipeSerializerHelpers.readItemStackOrItemStackIngredientChance(buffer)
             ));
         }
-        FluidStack outputFluid = FluidStack.readFromPacket(buffer);
+        Optional<FluidStack> outputFluid = RecipeSerializerHelpers.readOptionalFromNetwork(buffer, FluidStack::readFromPacket);
 
-        return new RecipeSqueezer(recipeId, inputIngredient, outputItemStacks, outputFluid);
+        return new RecipeSqueezer(inputIngredient, outputItemStacks, outputFluid);
     }
 
     @Override
@@ -97,9 +81,8 @@ public class RecipeSerializerSqueezer implements RecipeSerializer<RecipeSqueezer
         // Output
         buffer.writeInt(recipe.getOutputItems().size());
         for (RecipeSqueezer.IngredientChance outputItem : recipe.getOutputItems()) {
-            RecipeSerializerHelpers.writeItemStackOrItemStackIngredient(buffer, outputItem.getIngredient());
-            buffer.writeFloat(outputItem.getChance());
+            RecipeSerializerHelpers.writeItemStackOrItemStackIngredientChance(buffer, outputItem.getIngredientChance());
         }
-        recipe.getOutputFluid().writeToPacket(buffer);
+        RecipeSerializerHelpers.writeOptionalToNetwork(buffer, recipe.getOutputFluid(), (b, value) -> value.writeToPacket(b));
     }
 }

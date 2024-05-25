@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,13 +9,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -26,7 +26,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -54,27 +53,38 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
     private boolean writeVariable;
 
     public BlockEntityMaterializer(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_MATERIALIZER, blockPos, blockState, BlockEntityMaterializer.INVENTORY_SIZE);
+        super(RegistryEntries.BLOCK_ENTITY_MATERIALIZER.get(), blockPos, blockState, BlockEntityMaterializer.INVENTORY_SIZE);
+    }
 
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.NORTH,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.SOUTH,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.EAST,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.WEST,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_READ)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.UP,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_IN)));
-        addCapabilitySided(ForgeCapabilities.ITEM_HANDLER, Direction.DOWN,
-                LazyOptional.of(() -> new ItemHandlerSlotMasked(getInventory(), SLOT_WRITE_OUT)));
+    public static <E> void registerMaterializerCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMaterializer> blockEntityType) {
+        BlockEntityActiveVariableBase.registerActiveVariableBaseCapabilities(event, blockEntityType);
 
-        addCapabilityInternal(NetworkElementProviderConfig.CAPABILITY, LazyOptional.of(() -> new NetworkElementProviderSingleton() {
-            @Override
-            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                return new MaterializerNetworkElement(DimPos.of(world, blockPos));
-            }
-        }));
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> {
+                    int slot = -1;
+                    switch (direction) {
+                        case DOWN ->  slot = SLOT_WRITE_OUT;
+                        case UP ->    slot = SLOT_WRITE_IN;
+                        case NORTH -> slot = SLOT_READ;
+                        case SOUTH -> slot = SLOT_READ;
+                        case WEST ->  slot = SLOT_READ;
+                        case EAST ->  slot = SLOT_READ;
+                    }
+                    return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
+                }
+        );
+        event.registerBlockEntity(
+                Capabilities.NetworkElementProvider.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new NetworkElementProviderSingleton() {
+                    @Override
+                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                        return new MaterializerNetworkElement(DimPos.of(world, blockPos));
+                    }
+                }
+        );
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.event;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;

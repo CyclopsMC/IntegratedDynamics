@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.event;
 
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 /**
  * A logic programmer event that is posted in the Forge event bus.

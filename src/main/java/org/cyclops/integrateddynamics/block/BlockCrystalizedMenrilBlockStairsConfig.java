@@ -18,7 +18,7 @@ public class BlockCrystalizedMenrilBlockStairsConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_menril_block_stairs",
-                nulleConfig -> new StairBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_MENRIL_BLOCK.defaultBlockState(), Block.Properties.of()
+                nulleConfig -> new StairBlock(() -> RegistryEntries.BLOCK_CRYSTALIZED_MENRIL_BLOCK.get().defaultBlockState(), Block.Properties.of()
                         .sound(SoundType.SNOW)
                         .strength(1.5F)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

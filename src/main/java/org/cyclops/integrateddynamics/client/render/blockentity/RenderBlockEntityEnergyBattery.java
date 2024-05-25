@@ -82,7 +82,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
 
             for(Direction side : Direction.Plane.HORIZONTAL) {
                 combinedLight = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(side.getNormal()));
-                TextureAtlasSprite icon = RegistryEntries.BLOCK_ENERGY_BATTERY.iconOverlay;
+                TextureAtlasSprite icon = RegistryEntries.BLOCK_ENERGY_BATTERY.get().iconOverlay;
 
                 float[][] c = coordinates[side.ordinal()];
                 float replacedMaxV = icon.getV1();

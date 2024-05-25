@@ -7,13 +7,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
-import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.IValueInterface;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -21,15 +20,14 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartCapability;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
-import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceDefault;
-import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerConfig;
 import org.cyclops.integrateddynamics.capability.variablecontainer.VariableContainerDefault;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An abstract part state with a focus on activatable variables.
@@ -53,7 +51,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
         this.inventory = new SingularInventory(inventorySize);
         this.inventory.addDirtyMarkListener(this); // No need to remove myself eventually. If I am removed, inv is also removed.
         variableContainer = new VariableContainerDefault();
-        addVolatileCapability(VariableContainerConfig.CAPABILITY, LazyOptional.of(() -> variableContainer));
+        addVolatileCapability(Capabilities.VariableContainer.PART, Optional.of(variableContainer));
     }
 
     /**
@@ -168,23 +166,17 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
-        if (capability == ValueInterfaceConfig.CAPABILITY) {
+    public <T> Optional<T> getCapability(P partType, PartCapability<T> capability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        if (capability == Capabilities.ValueInterface.PART) {
             if (hasVariable()) {
                 IVariable<IValue> variable = getVariable(network, partNetwork, ValueDeseralizationContext.of(target.getCenter().getPos().getLevel(true)));
                 if (variable != null) {
-                    return LazyOptional.of(() -> {
-                        try {
-                            return new ValueInterfaceDefault(variable.getValue());
-                        } catch (EvaluationException e) {
-                            return new ValueInterfaceDefault(variable.getType().getDefault());
-                        }
-                    }).cast();
+                    return (Optional<T>) Optional.<IValueInterface>of(() -> Optional.of(variable.getValue()));
                 }
             }
-            return LazyOptional.empty();
+            return Optional.empty();
         }
-        return super.getCapability(capability, network, partNetwork, target);
+        return super.getCapability(partType, capability, network, partNetwork, target);
     }
 
     /**

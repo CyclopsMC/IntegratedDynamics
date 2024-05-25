@@ -2,17 +2,18 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.integrateddynamics.RegistryEntries;
+
+import java.util.Optional;
 
 /**
  * Drying basin recipe
@@ -20,16 +21,14 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  */
 public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
 
-    private final ResourceLocation id;
-    private final Ingredient inputIngredient;
-    private final FluidStack inputFluid;
-    private final Either<ItemStack, ItemStackFromIngredient> outputItem;
-    private final FluidStack outputFluid;
+    private final Optional<Ingredient> inputIngredient;
+    private final Optional<FluidStack> inputFluid;
+    private final Optional<Either<ItemStack, ItemStackFromIngredient>> outputItem;
+    private final Optional<FluidStack> outputFluid;
     private final int duration;
 
-    public RecipeDryingBasin(ResourceLocation id, Ingredient inputIngredient, FluidStack inputFluid,
-                             Either<ItemStack, ItemStackFromIngredient> outputIngredient, FluidStack outputFluid, int duration) {
-        this.id = id;
+    public RecipeDryingBasin(Optional<Ingredient> inputIngredient, Optional<FluidStack> inputFluid,
+                             Optional<Either<ItemStack, ItemStackFromIngredient>> outputIngredient, Optional<FluidStack> outputFluid, int duration) {
         this.inputIngredient = inputIngredient;
         this.inputFluid = inputFluid;
         this.outputItem = outputIngredient;
@@ -37,23 +36,23 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
         this.duration = duration;
     }
 
-    public Ingredient getInputIngredient() {
+    public Optional<Ingredient> getInputIngredient() {
         return inputIngredient;
     }
 
-    public FluidStack getInputFluid() {
+    public Optional<FluidStack> getInputFluid() {
         return inputFluid;
     }
 
-    public Either<ItemStack, ItemStackFromIngredient> getOutputItem() {
+    public Optional<Either<ItemStack, ItemStackFromIngredient>> getOutputItem() {
         return outputItem;
     }
 
     public ItemStack getOutputItemFirst() {
-        return getOutputItem().map(l -> l, ItemStackFromIngredient::getFirstItemStack);
+        return getOutputItem().get().map(l -> l, ItemStackFromIngredient::getFirstItemStack);
     }
 
-    public FluidStack getOutputFluid() {
+    public Optional<FluidStack> getOutputFluid() {
         return outputFluid;
     }
 
@@ -63,9 +62,9 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
 
     @Override
     public boolean matches(IInventoryFluid inv, Level worldIn) {
-        return inputIngredient.test(inv.getItem(0))
-                && inputFluid.getFluid() == inv.getFluidHandler().getFluidInTank(0).getFluid()
-                && inputFluid.getAmount() <= inv.getFluidHandler().getFluidInTank(0).getAmount();
+        return inputIngredient.map(p -> p.test(inv.getItem(0))).orElse(true)
+                && inputFluid.map(f -> f.getFluid() == inv.getFluidHandler().getFluidInTank(0).getFluid()).orElse(true)
+                && inputFluid.map(f -> f.getAmount() <= inv.getFluidHandler().getFluidInTank(0).getAmount()).orElse(true);
     }
 
     @Override
@@ -84,17 +83,12 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
     }
 
     @Override
-    public ResourceLocation getId() {
-        return this.id;
-    }
-
-    @Override
     public RecipeSerializer<?> getSerializer() {
-        return RegistryEntries.RECIPESERIALIZER_DRYING_BASIN;
+        return RegistryEntries.RECIPESERIALIZER_DRYING_BASIN.get();
     }
 
     @Override
     public RecipeType<?> getType() {
-        return RegistryEntries.RECIPETYPE_DRYING_BASIN;
+        return RegistryEntries.RECIPETYPE_DRYING_BASIN.get();
     }
 }

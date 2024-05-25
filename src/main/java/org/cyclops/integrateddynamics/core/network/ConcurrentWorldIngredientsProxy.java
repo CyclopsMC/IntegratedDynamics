@@ -2,9 +2,9 @@ package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.cyclops.commoncapabilities.api.capability.Capabilities;
 import org.cyclops.commoncapabilities.api.capability.inventorystate.IInventoryState;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
@@ -80,7 +80,7 @@ public class ConcurrentWorldIngredientsProxy<T, M> {
             // Fetch inventory states
             if (this.readStates.contains(pos) || !this.states.containsKey(pos)) {
                 IInventoryState inventoryState = BlockEntityHelpers
-                        .getCapability(pos.getPos(), pos.getSide(), Capabilities.INVENTORY_STATE)
+                        .getCapability(pos.getPos(), pos.getSide(), Capabilities.InventoryState.BLOCK)
                         .orElse(null);
                 if (inventoryState != null) {
                     int newState = inventoryState.getState();

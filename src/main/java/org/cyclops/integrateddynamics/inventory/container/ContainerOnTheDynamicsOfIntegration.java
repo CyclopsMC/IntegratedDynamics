@@ -17,7 +17,7 @@ public class ContainerOnTheDynamicsOfIntegration extends ItemInventoryContainer 
     }
 
     public ContainerOnTheDynamicsOfIntegration(int id, Inventory playerInventory, ItemLocation itemLocation) {
-        super(RegistryEntries.CONTAINER_ON_THE_DYNAMICS_OF_INTEGRATION, id, playerInventory, itemLocation);
+        super(RegistryEntries.CONTAINER_ON_THE_DYNAMICS_OF_INTEGRATION.get(), id, playerInventory, itemLocation);
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,12 +18,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITag;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.IFluidBlock;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
@@ -76,9 +76,9 @@ public final class Helpers {
      * @return A Stream containing ItemStacks registered for this ore
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
-        ITag<Item> tag = ForgeRegistries.ITEMS.tags()
+        Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM
                 .getTag(TagKey.create(Registries.ITEM, new ResourceLocation(name)));
-        return tag.stream().map(ItemStack::new);
+        return tag.stream().flatMap(named -> named.stream().map(ItemStack::new));
     }
 
     /**

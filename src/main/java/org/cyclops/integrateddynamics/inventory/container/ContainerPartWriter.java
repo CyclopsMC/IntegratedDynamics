@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.common.util.LazyOptional;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
@@ -59,7 +59,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     public ContainerPartWriter(int id, Inventory playerInventory, Container inventory,
                                PartTarget target, Optional<IPartContainer> partContainer, P partType) {
-        super(RegistryEntries.CONTAINER_PART_WRITER, id, playerInventory, inventory, target, partContainer, partType,
+        super(RegistryEntries.CONTAINER_PART_WRITER.get(), id, playerInventory, inventory, target, partContainer, partType,
                 partType.getWriteAspects());
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
             addSlot(new SlotVariable(inputSlots, i, SLOT_X, SLOT_Y + getAspectBoxHeight() * i));
@@ -126,7 +126,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                     readValue = Pair.of(Component.literal("NO POWER"), 0);
                 } else if (partState.hasVariable()) {
                     IPartContainer partContainer = getPartContainer();
-                    LazyOptional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(partContainer.getPosition().getLevel(true),
+                    Optional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(partContainer.getPosition().getLevel(true),
                             partContainer.getPosition().getBlockPos(), getTarget().getCenter().getSide());
                     IPartNetwork partNetwork = optionalNetwork.map(NetworkHelpers::getPartNetworkChecked).orElse(null);
                     if (partNetwork != null) {

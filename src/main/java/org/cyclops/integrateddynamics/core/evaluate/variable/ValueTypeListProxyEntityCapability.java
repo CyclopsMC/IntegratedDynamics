@@ -6,34 +6,34 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.EntityCapability;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A list proxy for a capability of an entity.
  */
-public abstract class ValueTypeListProxyEntityCapability<C, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyEntityBase<T, V> {
+public abstract class ValueTypeListProxyEntityCapability<C, Context, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyEntityBase<T, V> {
 
-    private final Capability<C> capability;
+    private final EntityCapability<C, Context> capability;
     private Direction side;
 
     public ValueTypeListProxyEntityCapability(ResourceLocation name, T valueType, Level world, Entity entity,
-                                              Capability<C> capability, @Nullable Direction side) {
+                                              EntityCapability<C, Context> capability, @Nullable Direction side) {
         super(name, valueType, world, entity);
         this.capability = capability;
         this.side = side;
     }
 
-    protected LazyOptional<C> getCapability() {
+    protected Optional<C> getCapability() {
         Entity e = getEntity();
         if(e != null) {
-            return e.getCapability(this.capability, this.side);
+            return Optional.ofNullable(e.getCapability(this.capability, capability.contextClass() == Direction.class ? (Context) this.side : null));
         }
-        return LazyOptional.empty();
+        return Optional.empty();
     }
 
     @Override

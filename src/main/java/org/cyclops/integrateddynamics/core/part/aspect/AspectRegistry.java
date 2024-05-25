@@ -4,15 +4,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -30,16 +26,14 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
-import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Registry for {@link IAspect}.
@@ -197,52 +191,41 @@ public final class AspectRegistry implements IAspectRegistry {
         tag.putString("aspectName", variableFacade.getAspect().getUniqueName().toString());
     }
 
-    @Override
-    public VariablePredicate deserializeVariablePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element, @Nullable IValueType valueType, ValuePredicate valuePredicate) {
-        JsonElement aspectElement = element.get("aspect");
-        IAspect aspect = null;
-        if (aspectElement != null && !aspectElement.isJsonNull()) {
-            aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(GsonHelper.getAsString(element, "aspect")));
-            if (aspect == null) {
-                throw new JsonSyntaxException("Unknown aspect type '" + GsonHelper.getAsString(element, "aspect") + "', valid types are: "
-                        + Aspects.REGISTRY.getAspects().stream().map(IAspect::getUniqueName).collect(Collectors.toList()));
-            }
-        }
-        return new AspectVariablePredicate(valueType, valuePredicate, aspect);
-    }
-
-    @Override
-    public VariableFacadePredicate deserializeVariableFacadePredicate(ValueDeseralizationContext valueDeseralizationContext, JsonObject element) {
-        return null;
-    }
-
     public static class AspectVariablePredicate extends VariablePredicate<IAspectVariable> {
 
-        private final IAspect aspect;
+        private final Optional<IAspect> aspect;
 
-        public AspectVariablePredicate(@Nullable IValueType valueType, ValuePredicate valuePredicate, @Nullable IAspect aspect) {
+        public AspectVariablePredicate(Optional<IValueType> valueType, Optional<ValuePredicate> valuePredicate, Optional<IAspect> aspect) {
             super(IAspectVariable.class, valueType, valuePredicate);
             this.aspect = aspect;
         }
 
+        public Optional<IAspect> getAspect() {
+            return aspect;
+        }
+
         @Override
         protected boolean testTyped(IAspectVariable variable) {
-            return super.testTyped(variable) && (aspect == null || variable.getAspect() == aspect);
+            return super.testTyped(variable) && (aspect.isEmpty() || variable.getAspect() == aspect.get());
         }
     }
 
     public static class AspectVariableFacadePredicate extends VariableFacadePredicate<IAspectVariableFacade> {
 
-        private final IAspect aspect;
+        private final Optional<IAspect> aspect;
 
-        public AspectVariableFacadePredicate(@Nullable IAspect aspect) {
+        public AspectVariableFacadePredicate(Optional<IAspect> aspect) {
             super(IAspectVariableFacade.class);
             this.aspect = aspect;
         }
 
+        public Optional<IAspect> getAspect() {
+            return aspect;
+        }
+
         @Override
         protected boolean testTyped(IAspectVariableFacade variableFacade) {
-            return super.testTyped(variableFacade) && (aspect == null || variableFacade.getAspect() == aspect);
+            return super.testTyped(variableFacade) && (aspect.isEmpty() || variableFacade.getAspect() == aspect.get());
         }
     }
 }

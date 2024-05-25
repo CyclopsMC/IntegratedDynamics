@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -66,13 +66,13 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
 
     @Override
     public BakedModel handleItemState(ItemStack itemStack, Level world, LivingEntity entity) {
-        BlockState blockState = RegistryEntries.ITEM_FACADE.getFacadeBlock(itemStack);
+        BlockState blockState = RegistryEntries.ITEM_FACADE.get().getFacadeBlock(itemStack);
         if(blockState == null) {
             return new FacadeModel(emptyModel, itemStack, world, entity);
         }
         BakedModel bakedModel = RenderHelpers.getBakedModel(blockState);
         bakedModel = bakedModel.getOverrides().resolve(bakedModel,
-                RegistryEntries.ITEM_FACADE.getFacadeBlockItem(itemStack), (ClientLevel) world, entity, 0);
+                RegistryEntries.ITEM_FACADE.get().getFacadeBlockItem(itemStack), (ClientLevel) world, entity, 0);
         return new FacadeModel(bakedModel, itemStack, world, entity);
     }
 

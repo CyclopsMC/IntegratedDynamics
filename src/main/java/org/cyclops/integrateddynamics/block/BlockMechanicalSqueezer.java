@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -17,7 +19,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalSqueezer;
@@ -31,6 +33,8 @@ import javax.annotation.Nullable;
  */
 public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
 
+    public static final MapCodec<BlockMechanicalSqueezer> CODEC = simpleCodec(BlockMechanicalSqueezer::new);
+
     public static final String NBT_TANK = "tank";
 
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -43,9 +47,14 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
     }
 
     @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MECHANICAL_SQUEEZER, new BlockEntityMechanicalSqueezer.Ticker());
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MECHANICAL_SQUEEZER.get(), new BlockEntityMechanicalSqueezer.Ticker());
     }
 
     @Override

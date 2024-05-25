@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -41,7 +41,7 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
     public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
         Collection<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
         for (Direction direction : Direction.values()) {
-            IPartContainer partContainer = PartHelpers.getPartContainer(world, blockPos, direction).orElse(null);
+            IPartContainer partContainer = PartHelpers.getPartContainer((Level) world, blockPos, direction).orElse(null);
             if (partContainer != null && partContainer.hasPart(direction)) {
                 components.add(new Component(direction, partContainer));
             }

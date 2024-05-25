@@ -1,8 +1,10 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -23,6 +25,8 @@ import javax.annotation.Nullable;
  */
 public class BlockMaterializer extends BlockWithEntityGuiCabled {
 
+    public static final MapCodec<BlockMaterializer> CODEC = simpleCodec(BlockMaterializer::new);
+
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public BlockMaterializer(Properties properties) {
@@ -32,9 +36,14 @@ public class BlockMaterializer extends BlockWithEntityGuiCabled {
     }
 
     @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MATERIALIZER, new BlockEntityMaterializer.Ticker());
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MATERIALIZER.get(), new BlockEntityMaterializer.Ticker());
     }
 
     @Override

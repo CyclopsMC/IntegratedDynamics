@@ -12,13 +12,13 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 
 import java.util.Collection;
@@ -84,7 +84,7 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
                 IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Skipped loading part from a network at the " +
                         "invalid dimension id %s.", dimensionId));
             } else {
-                IPathElement pathElement = BlockEntityHelpers.getCapability(world, pos, side, PathElementConfig.CAPABILITY).orElse(null);
+                IPathElement pathElement = BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PathElement.BLOCK).orElse(null);
                 if(pathElement == null) {
                     IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Skipped loading part from a network at " +
                             "position %s in world %s because it has no valid path element.", pos, dimensionId));

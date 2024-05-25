@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.client.render.valuetype;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 

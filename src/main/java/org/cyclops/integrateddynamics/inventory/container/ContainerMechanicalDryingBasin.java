@@ -4,7 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalDryingBasin;
@@ -31,7 +31,7 @@ public class ContainerMechanicalDryingBasin extends ContainerMechanicalMachine<B
 
     public ContainerMechanicalDryingBasin(int id, Inventory playerInventory, Container inventory,
                                           Optional<BlockEntityMechanicalDryingBasin> tileSupplier) {
-        super(RegistryEntries.CONTAINER_MECHANICAL_DRYING_BASIN, id, playerInventory, inventory, tileSupplier);
+        super(RegistryEntries.CONTAINER_MECHANICAL_DRYING_BASIN.get(), id, playerInventory, inventory, tileSupplier);
 
         this.variableInputFluidStack = registerSyncedVariable(FluidStack.class, () -> getTileSupplier().get().getTankInput().getFluid());
         this.variableInputFluidCapacity = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getTankInput().getCapacity());

@@ -10,12 +10,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
@@ -24,7 +25,6 @@ import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.cyclopscore.helper.InventoryHelpers;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.cyclopscore.recipe.type.InventoryFluid;
-import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasinConfig;
@@ -52,29 +52,33 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
     private final SingleUseTank tankOut = new SingleUseTank(FluidHelpers.BUCKET_VOLUME * 100);
 
     public BlockEntityMechanicalDryingBasin(BlockPos blockPos, BlockState blockState) {
-        super(RegistryEntries.BLOCK_ENTITY_MECHANICAL_DRYING_BASIN, blockPos, blockState, INVENTORY_SIZE);
-
-        // Add fluid tank capability
-        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.UP, LazyOptional.of(() -> tankIn));
-        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.DOWN, LazyOptional.of(() -> tankOut));
-        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.NORTH, LazyOptional.of(() -> tankIn));
-        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.SOUTH, LazyOptional.of(() -> tankIn));
-        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.WEST, LazyOptional.of(() -> tankIn));
-        addCapabilitySided(ForgeCapabilities.FLUID_HANDLER, Direction.EAST, LazyOptional.of(() -> tankIn));
-
-        // Add recipe handler capability
-        addCapabilityInternal(Capabilities.RECIPE_HANDLER, LazyOptional.of(() -> new RecipeHandlerDryingBasin<>(this::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN)));
+        super(RegistryEntries.BLOCK_ENTITY_MECHANICAL_DRYING_BASIN.get(), blockPos, blockState, INVENTORY_SIZE);
 
         // Add tank update listeners
         tankIn.addDirtyMarkListener(this::onTankChanged);
         tankOut.addDirtyMarkListener(this::onTankChanged);
     }
 
+    public static <E> void registerMechanicalDryingBasinCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMechanicalDryingBasin> blockEntityType) {
+        BlockEntityMechanicalMachine.registerMechanicalMachineCapabilities(event, blockEntityType);
+
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> direction == Direction.DOWN ? blockEntity.getTankOutput() : blockEntity.getTankInput()
+        );
+        event.registerBlockEntity(
+                org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, direction) -> new RecipeHandlerDryingBasin<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN.get())
+        );
+    }
+
     @Override
-    protected SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeMechanicalDryingBasin>> createCacheUpdater() {
-        return new SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeMechanicalDryingBasin>>() {
+    protected SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeHolder<RecipeMechanicalDryingBasin>>> createCacheUpdater() {
+        return new SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeHolder<RecipeMechanicalDryingBasin>>>() {
             @Override
-            public Optional<RecipeMechanicalDryingBasin> getNewValue(Pair<ItemStack, FluidStack> key) {
+            public Optional<RecipeHolder<RecipeMechanicalDryingBasin>> getNewValue(Pair<ItemStack, FluidStack> key) {
                 IInventoryFluid recipeInput = new InventoryFluid(
                         NonNullList.of(ItemStack.EMPTY, key.getLeft()),
                         NonNullList.of(FluidStack.EMPTY, key.getRight()));
@@ -136,7 +140,7 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
 
     @Override
     protected RecipeType<RecipeMechanicalDryingBasin> getRecipeRegistry() {
-        return RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN;
+        return RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN.get();
     }
 
     @Override
@@ -145,8 +149,8 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
     }
 
     @Override
-    public int getRecipeDuration(RecipeMechanicalDryingBasin recipe) {
-        return recipe.getDuration();
+    public int getRecipeDuration(RecipeHolder<RecipeMechanicalDryingBasin> recipe) {
+        return recipe.value().getDuration();
     }
 
     @Override
@@ -162,9 +166,9 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         }
 
         // Output fluid
-        FluidStack outputFluid = recipe.getOutputFluid();
-        if (outputFluid != null) {
-            if (getTankOutput().fill(outputFluid.copy(), fluidAction) != outputFluid.getAmount()) {
+        Optional<FluidStack> outputFluid = recipe.getOutputFluid();
+        if (outputFluid.isPresent()) {
+            if (getTankOutput().fill(outputFluid.get().copy(), fluidAction) != outputFluid.get().getAmount()) {
                 return false;
             }
         }
@@ -177,9 +181,9 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         }
 
         // Consume fluid
-        FluidStack inputFluid = recipe.getInputFluid();
-        if (inputFluid != null) {
-            if (FluidHelpers.getAmount(getTankInput().drain(inputFluid, fluidAction)) != inputFluid.getAmount()) {
+        Optional<FluidStack> inputFluid = recipe.getInputFluid();
+        if (inputFluid.isPresent()) {
+            if (FluidHelpers.getAmount(getTankInput().drain(inputFluid.get(), fluidAction)) != inputFluid.get().getAmount()) {
                 return false;
             }
         }

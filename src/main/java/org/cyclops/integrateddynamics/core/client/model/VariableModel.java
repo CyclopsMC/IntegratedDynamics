@@ -13,10 +13,10 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.ForgeFaceData;
-import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
-import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
+import net.neoforged.neoforge.client.model.ExtraFaceData;
+import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
+import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
+import net.neoforged.neoforge.client.model.geometry.UnbakedGeometryHelper;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import javax.annotation.Nullable;
@@ -79,7 +79,7 @@ public class VariableModel implements UnbakedModel, IUnbakedGeometry<VariableMod
         itemModel.textureMap.put("layer0", Either.left(textureName));
         TextureAtlasSprite textureAtlasSprite = spriteGetter.apply(textureName);
         builder.particle(textureAtlasSprite);
-        for (BakedQuad bakedQuad : UnbakedGeometryHelper.bakeElements(UnbakedGeometryHelper.createUnbakedItemElements(0, textureAtlasSprite.contents(), ForgeFaceData.DEFAULT), $ -> textureAtlasSprite, modelState, modelLocation)) {
+        for (BakedQuad bakedQuad : UnbakedGeometryHelper.bakeElements(UnbakedGeometryHelper.createUnbakedItemElements(0, textureAtlasSprite, ExtraFaceData.DEFAULT), $ -> textureAtlasSprite, modelState, modelLocation)) {
             builder.addUnculledFace(bakedQuad);
         }
         BakedModel baseModel = builder.build();

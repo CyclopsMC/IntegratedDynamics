@@ -3,10 +3,10 @@ package org.cyclops.integrateddynamics.core;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.level.NoteBlockEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.level.NoteBlockEvent;
 
 /**
  * Captures note block events for one tick.
@@ -37,8 +37,8 @@ public final class NoteBlockEventReceiver {
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent event) {
-        if(event.type == TickEvent.Type.SERVER && event.phase == TickEvent.Phase.START) {
+    public void onTick(TickEvent.ServerTickEvent event) {
+        if(event.phase == TickEvent.Phase.START) {
             Multimap<NoteBlockInstrument, NoteBlockEvent.Play> tmp = previousEvents;
             previousEvents.clear();
             previousEvents = currentEvents;

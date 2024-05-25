@@ -1,37 +1,40 @@
 package org.cyclops.integrateddynamics.advancement.criterion;
 
-import com.google.gson.JsonObject;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.util.ExtraCodecs;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
+
+import java.util.Optional;
 
 /**
  * Triggers when a network is initialized.
  * @author rubensworks
  */
 public class NetworkInitializedTrigger extends SimpleCriterionTrigger<NetworkInitializedTrigger.Instance> {
-    private final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "network_initialized");
+
+    public static final Codec<NetworkInitializedTrigger.Instance> CODEC = RecordCodecBuilder.create(
+            p_311401_ -> p_311401_.group(
+                            ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(NetworkInitializedTrigger.Instance::player),
+                            ExtraCodecs.strictOptionalField(Codec.INT, "min_cables").forGetter(NetworkInitializedTrigger.Instance::minCables)
+                    )
+                    .apply(p_311401_, NetworkInitializedTrigger.Instance::new)
+    );
 
     public NetworkInitializedTrigger() {
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     @Override
-    public ResourceLocation getId() {
-        return ID;
-    }
-
-    @Override
-    public Instance createInstance(JsonObject json, ContextAwarePredicate entityPredicate, DeserializationContext conditionsParser) {
-        return new Instance(getId(), entityPredicate, json.get("min_cables").getAsInt());
+    public Codec<NetworkInitializedTrigger.Instance> codec() {
+        return CODEC;
     }
 
     public void test(ServerPlayer player, NetworkInitializedEvent event) {
@@ -45,17 +48,15 @@ public class NetworkInitializedTrigger extends SimpleCriterionTrigger<NetworkIni
         }
     }
 
-    public static class Instance extends AbstractCriterionTriggerInstance implements ICriterionInstanceTestable<NetworkInitializedEvent> {
-        private final int minCablesCount;
-
-        public Instance(ResourceLocation criterionIn, ContextAwarePredicate player, int minCablesCount) {
-            super(criterionIn, player);
-            this.minCablesCount = minCablesCount;
-        }
-
+    public static record Instance(
+            Optional<ContextAwarePredicate> player,
+            Optional<Integer> minCables
+    ) implements SimpleCriterionTrigger.SimpleInstance, ICriterionInstanceTestable<NetworkInitializedEvent> {
+        @Override
         public boolean test(ServerPlayer player, NetworkInitializedEvent networkEvent) {
-            return networkEvent.getNetwork().getCablesCount() >= minCablesCount;
+            return minCables
+                    .map(minCablesCount -> networkEvent.getNetwork().getCablesCount() >= minCablesCount)
+                    .orElse(true);
         }
     }
-
 }

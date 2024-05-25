@@ -3,13 +3,12 @@ package org.cyclops.integrateddynamics.proxy;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.client.settings.KeyModifier;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.client.settings.KeyModifier;
+import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.client.key.IKeyRegistry;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
@@ -43,9 +42,8 @@ public class ClientProxy extends ClientProxyComponent {
 
     public ClientProxy() {
         super(new CommonProxy());
-        MinecraftForge.EVENT_BUS.register(this);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onPostTextureStitch);
-        MinecraftForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
+        IntegratedDynamics._instance.getModEventBus().addListener(this::onPostTextureStitch);
+        NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
     }
 
     @Override
@@ -56,8 +54,8 @@ public class ClientProxy extends ClientProxyComponent {
     @Override
     public void registerEventHooks() {
         super.registerEventHooks();
-        MinecraftForge.EVENT_BUS.register(NetworkDiagnosticsPartOverlayRenderer.getInstance());
-        MinecraftForge.EVENT_BUS.register(PartOffsetsOverlayRenderer.getInstance());
+        NeoForge.EVENT_BUS.register(NetworkDiagnosticsPartOverlayRenderer.getInstance());
+        NeoForge.EVENT_BUS.register(PartOffsetsOverlayRenderer.getInstance());
     }
 
     @Override
@@ -67,7 +65,7 @@ public class ClientProxy extends ClientProxyComponent {
         event.register(FOCUS_LP_RENAME);
     }
 
-    public void onPostTextureStitch(TextureStitchEvent.Post event) {
+    public void onPostTextureStitch(TextureAtlasStitchedEvent event) {
         if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
             event.getAtlas().getSprite(SlotVariable.VARIABLE_EMPTY);
         }

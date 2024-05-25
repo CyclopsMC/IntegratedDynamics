@@ -14,13 +14,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.capability.facadeable.FacadeableConfig;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
@@ -45,7 +45,7 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
 
     @Override
     public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
-        if (CableHelpers.hasFacade(world, blockPos)) {
+        if (CableHelpers.hasFacade((Level) world, blockPos)) {
             return Collections.singletonList(COMPONENT);
         }
         return Collections.emptyList();
@@ -56,7 +56,7 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
         @Override
         public String getStateId(BlockState blockState, BlockGetter world, BlockPos blockPos) {
             String id = "fac";
-            Optional<BlockState> optionalFacade = CableHelpers.getFacade(world, blockPos);
+            Optional<BlockState> optionalFacade = CableHelpers.getFacade((Level) world, blockPos);
             if (optionalFacade.isPresent()) {
                 id += "(" + optionalFacade.get().toString() + ")";
             }
@@ -72,18 +72,18 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
         public ItemStack getCloneItemStack(Level world, BlockPos pos) {
             ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_FACADE);
             CableHelpers.getFacade(world, pos)
-                    .ifPresent(facade -> RegistryEntries.ITEM_FACADE.writeFacadeBlock(itemStack, facade));
+                    .ifPresent(facade -> RegistryEntries.ITEM_FACADE.get().writeFacadeBlock(itemStack, facade));
             return itemStack;
         }
 
         @Override
         public boolean destroy(Level world, BlockPos pos, Player player, boolean saveState) {
             if(!world.isClientSide()) {
-                BlockEntityHelpers.getCapability(world, pos, FacadeableConfig.CAPABILITY)
+                BlockEntityHelpers.getCapability(world, pos, Capabilities.Facadeable.BLOCK)
                         .ifPresent(facadeable -> {
                             BlockState blockState = facadeable.getFacade();
                             ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_FACADE);
-                            RegistryEntries.ITEM_FACADE.writeFacadeBlock(itemStack, blockState);
+                            RegistryEntries.ITEM_FACADE.get().writeFacadeBlock(itemStack, blockState);
                             facadeable.setFacade(null);
                             if (!player.isCreative()) {
                                 ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);

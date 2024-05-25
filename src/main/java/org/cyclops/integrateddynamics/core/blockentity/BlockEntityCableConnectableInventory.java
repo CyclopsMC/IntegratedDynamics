@@ -5,8 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
@@ -17,11 +16,8 @@ import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
-import org.cyclops.integrateddynamics.capability.cable.CableConfig;
 import org.cyclops.integrateddynamics.capability.cable.CableTile;
-import org.cyclops.integrateddynamics.capability.network.NetworkCarrierConfig;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
-import org.cyclops.integrateddynamics.capability.path.PathElementConfig;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
@@ -60,12 +56,35 @@ public class BlockEntityCableConnectableInventory extends CyclopsBlockEntity {
                 return tile.connected;
             }
         };
-        addCapabilityInternal(CableConfig.CAPABILITY, LazyOptional.of(() -> cable));
         networkCarrier = new NetworkCarrierDefault();
-        addCapabilityInternal(NetworkCarrierConfig.CAPABILITY, LazyOptional.of(() -> networkCarrier));
-        addCapabilityInternal(PathElementConfig.CAPABILITY, LazyOptional.of(() -> new PathElementTile<>(this, cable)));
-        addCapabilityInternal(ForgeCapabilities.ITEM_HANDLER, LazyOptional.of(inventory::getItemHandler));
-        addCapabilityInternal(Capabilities.INVENTORY_STATE, LazyOptional.of(() -> new SimpleInventoryState(getInventory())));
+    }
+
+    public static void registerCableConnectableInventoryCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityCableConnectableInventory> blockEntityType) {
+        event.registerBlockEntity(
+                Capabilities.Cable.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getCable()
+        );
+        event.registerBlockEntity(
+                Capabilities.NetworkCarrier.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getNetworkCarrier()
+        );
+        event.registerBlockEntity(
+                Capabilities.PathElement.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new PathElementTile<>(blockEntity, blockEntity.getCable())
+        );
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> blockEntity.getInventory().getItemHandler()
+        );
+        event.registerBlockEntity(
+                org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
+                blockEntityType,
+                (blockEntity, context) -> new SimpleInventoryState(blockEntity.getInventory())
+        );
     }
 
     public EnumFacingMap<Boolean> getConnected() {
@@ -74,6 +93,10 @@ public class BlockEntityCableConnectableInventory extends CyclopsBlockEntity {
 
     public ICable getCable() {
         return cable;
+    }
+
+    public INetworkCarrier getNetworkCarrier() {
+        return networkCarrier;
     }
 
     protected SimpleInventory createInventory(int inventorySize, int stackSize) {

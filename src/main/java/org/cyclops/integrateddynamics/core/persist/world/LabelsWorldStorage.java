@@ -2,9 +2,9 @@ package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Maps;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -31,7 +31,7 @@ public class LabelsWorldStorage extends WorldStorage {
 
     private LabelsWorldStorage(ModBase mod) {
         super(mod);
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     public static LabelsWorldStorage getInstance(ModBase mod) {

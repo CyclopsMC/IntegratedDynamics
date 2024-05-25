@@ -21,7 +21,7 @@ public class ContainerLogicProgrammerPortable extends ContainerLogicProgrammerBa
     }
 
     public ContainerLogicProgrammerPortable(int id, Inventory playerInventory, ItemLocation itemLocation) {
-        super(RegistryEntries.CONTAINER_LOGIC_PROGRAMMER_PORTABLE, id, playerInventory);
+        super(RegistryEntries.CONTAINER_LOGIC_PROGRAMMER_PORTABLE.get(), id, playerInventory);
         this.itemLocation = itemLocation;
     }
 
@@ -32,7 +32,7 @@ public class ContainerLogicProgrammerPortable extends ContainerLogicProgrammerBa
     @Override
     public boolean stillValid(Player playerIn) {
         ItemStack item = getItemStack(player);
-        return item != null && item.getItem() == RegistryEntries.ITEM_PORTABLE_LOGIC_PROGRAMMER;
+        return item != null && item.getItem() == RegistryEntries.ITEM_PORTABLE_LOGIC_PROGRAMMER.get();
     }
 
 }

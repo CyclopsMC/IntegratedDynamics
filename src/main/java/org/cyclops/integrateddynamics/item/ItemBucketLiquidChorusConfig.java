@@ -17,7 +17,7 @@ public class ItemBucketLiquidChorusConfig extends ItemConfig {
         super(
                 IntegratedDynamics._instance,
                 "bucket_liquid_chorus",
-                eConfig -> new BucketItem(() -> RegistryEntries.FLUID_LIQUID_CHORUS, new Item.Properties()
+                eConfig -> new BucketItem(() -> RegistryEntries.FLUID_LIQUID_CHORUS.get(), new Item.Properties()
                         .craftRemainder(Items.BUCKET)
                         .stacksTo(1))
         );

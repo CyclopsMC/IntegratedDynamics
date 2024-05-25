@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -23,6 +25,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -40,6 +43,7 @@ import javax.annotation.Nullable;
  */
 public class BlockSqueezer extends BlockWithEntity {
 
+    public static final MapCodec<BlockSqueezer> CODEC = simpleCodec(BlockSqueezer::new);
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
     public static final IntegerProperty HEIGHT = IntegerProperty.create("height", 1, 7); // 1 is heighest, 7 is lowest
 
@@ -79,9 +83,14 @@ public class BlockSqueezer extends BlockWithEntity {
     }
 
     @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_SQUEEZER, new BlockEntitySqueezer.Ticker());
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_SQUEEZER.get(), new BlockEntitySqueezer.Ticker());
     }
 
     @Override
@@ -160,7 +169,7 @@ public class BlockSqueezer extends BlockWithEntity {
             for (Direction enumfacing : Direction.values()) {
                 if (worldIn.hasSignal(pos.relative(enumfacing), enumfacing)) {
                     worldIn.setBlockAndUpdate(pos, state.setValue(HEIGHT, 1));
-                    for(Entity entity : worldIn.getEntitiesOfClass(Entity.class, new AABB(pos, pos.offset(1, 1, 1)))) {
+                    for(Entity entity : worldIn.getEntitiesOfClass(Entity.class, new AABB(Vec3.atLowerCornerOf(pos), Vec3.atLowerCornerOf(pos.offset(1, 1, 1))))) {
                         entity.getDeltaMovement().add(0, 0.25F, 0);
                         entity.setDeltaMovement(0, 1, 0);
                     }

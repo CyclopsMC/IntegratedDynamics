@@ -5,18 +5,21 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * An interface for containers that can hold {@link IPartType}s.
  * @author rubensworks
  */
-public interface IPartContainer extends ICapabilitySerializable<CompoundTag> {
+public interface IPartContainer extends INBTSerializable<CompoundTag> {
 
     /**
      * Should be called every tick, updates parts.
@@ -108,5 +111,16 @@ public interface IPartContainer extends ICapabilitySerializable<CompoundTag> {
      */
     public @Nullable
     Direction getWatchingSide(Level world, BlockPos pos, Player player);
+
+    /**
+     * Get a part capability.
+     * @param partCapability A part capability.
+     * @param network The network.
+     * @param partNetwork The part network.
+     * @param target The part target.
+     * @param <T> The capability type.
+     * @return The capability instance.
+     */
+    public <T> Optional<T> getCapability(PartCapability<T> partCapability, INetwork network, IPartNetwork partNetwork, PartTarget target);
 
 }

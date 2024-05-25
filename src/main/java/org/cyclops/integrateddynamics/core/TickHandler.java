@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core;
 
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.TickEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
@@ -39,11 +39,11 @@ public final class TickHandler {
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent event) {
+    public void onTick(TickEvent.ServerTickEvent event) {
         if (shouldCrash) {
             throw new RuntimeException("Forcefully crashed the server.");
         }
-        if(event.type == TickEvent.Type.SERVER && event.phase == TickEvent.Phase.END) {
+        if(event.phase == TickEvent.Phase.END) {
             // Invoke update logic irrespective of safe-mode
             for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                 network.updateGuaranteed();

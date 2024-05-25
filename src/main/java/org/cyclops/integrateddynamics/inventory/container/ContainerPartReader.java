@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -60,7 +60,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
 
     public ContainerPartReader(int id, Inventory playerInventory, Container inventory,
                                 PartTarget target, Optional<IPartContainer> partContainer, P partType) {
-        super(RegistryEntries.CONTAINER_PART_READER, id, playerInventory, inventory, target, partContainer, partType,
+        super(RegistryEntries.CONTAINER_PART_READER.get(), id, playerInventory, inventory, target, partContainer, partType,
                 partType.getReadAspects());
 
         for(int i = 0; i < getUnfilteredItemCount(); i++) {
@@ -215,7 +215,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
         IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
         PartReaderAspectEvent event = new PartReaderAspectEvent<>(network, partNetwork, target, getPartType(),
                 getPartState(), player, (IAspectRead) aspect, resultStack);
-        MinecraftForge.EVENT_BUS.post(event);
+        NeoForge.EVENT_BUS.post(event);
         return event.getItemStack();
     }
 

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.event;
 
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.event.lifecycle.ModLifecycleEvent;
 
 /**
  * This event is invoked during the FMLCommonSetupEvent of Integrated Dynamics,

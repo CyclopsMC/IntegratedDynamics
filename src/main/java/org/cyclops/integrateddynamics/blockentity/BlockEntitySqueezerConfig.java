@@ -2,8 +2,9 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -21,8 +22,13 @@ public class BlockEntitySqueezerConfig extends BlockEntityConfig<BlockEntitySque
                 IntegratedDynamics._instance,
                 "squeezer",
                 (eConfig) -> new BlockEntityType<>(BlockEntitySqueezer::new,
-                        Sets.newHashSet(RegistryEntries.BLOCK_SQUEEZER), null)
+                        Sets.newHashSet(RegistryEntries.BLOCK_SQUEEZER.get()), null)
         );
+        IntegratedDynamics._instance.getModEventBus().addListener(this::registerCapability);
+    }
+
+    protected void registerCapability(RegisterCapabilitiesEvent event) {
+        BlockEntitySqueezer.registerSqueezerCapabilities(event, getInstance());
     }
 
     @Override

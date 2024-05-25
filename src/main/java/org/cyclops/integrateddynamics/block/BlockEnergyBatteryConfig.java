@@ -2,13 +2,17 @@ package org.cyclops.integrateddynamics.block;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -18,6 +22,7 @@ import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainerAutoSupply;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -63,10 +68,28 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
                     }
                 }
         );
+        IntegratedDynamics._instance.getModEventBus().addListener(this::registerCapability);
+        IntegratedDynamics._instance.getModEventBus().addListener(this::fillCreativeTab);
+    }
+    protected void registerCapability(RegisterCapabilitiesEvent event) {
+        event.registerItem(Capabilities.EnergyStorage.ITEM, (stack, context) -> ((ItemBlockEnergyContainer) getItemInstance()).createCapability(stack), getInstance());
+    }
+
+    protected void fillCreativeTab(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTab() == IntegratedDynamics._instance.getDefaultCreativeTab()) {
+            for (ItemStack itemStack : defaultCreativeTabEntries()) {
+                event.accept(itemStack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            }
+        }
     }
 
     @Override
     protected Collection<ItemStack> defaultCreativeTabEntries() {
+        // Register items dynamically into tab, because when this is called, capabilities are not initialized yet.
+        return Collections.emptyList();
+    }
+
+    protected Collection<ItemStack> dynamicCreativeTabEntries() {
         List<ItemStack> itemStacks = Lists.newArrayList();
 
         ItemStack itemStack = new ItemStack(getInstance());

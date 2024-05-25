@@ -24,7 +24,7 @@ public class ContainerMaterializer extends ContainerActiveVariableBase<BlockEnti
 
     public ContainerMaterializer(int id, Inventory playerInventory, Container inventory,
                           Optional<BlockEntityMaterializer> tileSupplier) {
-        super(RegistryEntries.CONTAINER_MATERIALIZER, id, playerInventory, inventory, tileSupplier);
+        super(RegistryEntries.CONTAINER_MATERIALIZER.get(), id, playerInventory, inventory, tileSupplier);
         addSlot(new SlotVariable(inventory, BlockEntityProxy.SLOT_READ, 81, 25));
         addSlot(new SlotVariable(inventory, BlockEntityProxy.SLOT_WRITE_IN, 56, 78));
         addSlot(new SlotRemoveOnly(inventory, BlockEntityProxy.SLOT_WRITE_OUT, 104, 78));

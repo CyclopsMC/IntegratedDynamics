@@ -4,7 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.inventory.slot.SlotRemoveOnly;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalSqueezer;
@@ -32,7 +32,7 @@ public class ContainerMechanicalSqueezer extends ContainerMechanicalMachine<Bloc
 
     public ContainerMechanicalSqueezer(int id, Inventory playerInventory, Container inventory,
                                           Optional<BlockEntityMechanicalSqueezer> tileSupplier) {
-        super(RegistryEntries.CONTAINER_MECHANICAL_SQUEEZER, id, playerInventory, inventory, tileSupplier);
+        super(RegistryEntries.CONTAINER_MECHANICAL_SQUEEZER.get(), id, playerInventory, inventory, tileSupplier);
 
         this.variableFluidStack = registerSyncedVariable(FluidStack.class, () -> getTileSupplier().get().getTank().getFluid());
         this.variableFluidCapacity = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getTank().getCapacity());

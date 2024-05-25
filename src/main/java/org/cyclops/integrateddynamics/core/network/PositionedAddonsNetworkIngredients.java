@@ -9,7 +9,8 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import org.checkerframework.checker.units.qual.C;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageSlotted;
@@ -249,8 +250,8 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
 
     @Nullable
     @Override
-    public <S> S getChannelExternal(Capability<S> capability, int channel) {
-        IIngredientComponentStorageWrapperHandler<T, M, S> wrapperHandler = getComponent()
+    public <S, C> S getChannelExternal(BlockCapability<S, C> capability, int channel) {
+        IIngredientComponentStorageWrapperHandler<T, M, S, C> wrapperHandler = getComponent()
                 .getStorageWrapperHandler(capability);
         return wrapperHandler != null ? wrapperHandler.wrapStorage(getChannelSlotted(channel)) : null;
     }

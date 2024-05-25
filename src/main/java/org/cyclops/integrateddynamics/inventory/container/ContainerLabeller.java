@@ -5,8 +5,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.inventory.ItemLocation;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -37,7 +37,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
     }
 
     public ContainerLabeller(int id, Inventory inventory, ItemLocation itemLocation) {
-        super(RegistryEntries.CONTAINER_LABELLER, id, inventory, itemLocation);
+        super(RegistryEntries.CONTAINER_LABELLER.get(), id, inventory, itemLocation);
         this.temporaryInputSlots = new SimpleInventory(1, 1);
         addSlot(new SlotExtended(temporaryInputSlots, 0, 8, 8));
         this.addPlayerInventory(player.getInventory(), 8, 31);

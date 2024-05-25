@@ -1,21 +1,11 @@
 package org.cyclops.integrateddynamics.api.advancement.criterion;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagParser;
-import net.minecraft.util.GsonHelper;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A predicate for values of a certain type.
@@ -23,56 +13,37 @@ import javax.annotation.Nullable;
  */
 public class ValuePredicate<V extends IValue> {
 
-    private static final IVariableFacadeHandlerRegistry VARIABLE_FACADE_HANDLER_REGISTRY = IntegratedDynamics._instance
-            .getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+    public static final ValuePredicate ANY = new ValuePredicate<>(Optional.empty(), Optional.empty(), Optional.empty());
 
-    public static final ValuePredicate ANY = new ValuePredicate<>(null, null);
+    private final Optional<IValueType> valueType;
+    private final Optional<IValue> value;
+    private final Optional<JsonElement> valueJson;
 
-    private final IValueType valueType;
-    private final IValue value;
-
-    public ValuePredicate(@Nullable IValueType valueType, @Nullable IValue value) {
+    public ValuePredicate(Optional<IValueType> valueType, Optional<IValue> value, Optional<JsonElement> valueJson) {
         this.valueType = valueType;
         this.value = value;
+        this.valueJson = valueJson;
+    }
+
+    public Optional<IValueType> getValueType() {
+        return valueType;
+    }
+
+    public Optional<IValue> getValue() {
+        return value;
+    }
+
+    public Optional<JsonElement> getValueJson() {
+        return valueJson;
     }
 
     public final boolean test(IValue value) {
-        return (this.value == null || ValueHelpers.areValuesEqual(this.value, value))
-                && (this.valueType == null || value.getType() == this.valueType) && testTyped((V) value);
+        return (this.value.isEmpty() || ValueHelpers.areValuesEqual(this.value.get(), value))
+                && (this.valueType.isEmpty() || value.getType() == this.valueType.get()) && testTyped((V) value);
     }
 
     protected boolean testTyped(V value) {
         return true;
-    }
-
-    public static ValuePredicate deserialize(ValueDeseralizationContext valueDeseralizationContext, JsonObject jsonObject, @Nullable IValueType valueType) {
-        JsonElement valueElement = jsonObject.get("value");
-        IValue value = null;
-        if (valueElement != null && !valueElement.isJsonNull()) {
-            if (valueElement.isJsonPrimitive()) {
-                String valueString = GsonHelper.getAsString(jsonObject, "value");
-                if (valueType == null) {
-                    throw new JsonSyntaxException("A value '" + valueString + "' requires a corresponding valueType to be defined");
-                }
-                try {
-                    Tag tag = TagParser.parseTag(valueString);
-                    if (((CompoundTag) tag).contains("Primitive")) {
-                        tag = ((CompoundTag) tag).get("Primitive");
-                    }
-                    value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, tag);
-                } catch (CommandSyntaxException e) {
-                    e.printStackTrace();
-                }
-            } else if (valueType != null && valueElement.isJsonObject()) {
-                return valueType.deserializeValuePredicate(valueElement.getAsJsonObject(), null);
-            }
-
-            if (value == null) {
-                throw new JsonSyntaxException("value '" + valueElement.toString() + "' has an incorrect syntax");
-            }
-            return new ValuePredicate(valueType, value);
-        }
-        return ANY;
     }
 
 }

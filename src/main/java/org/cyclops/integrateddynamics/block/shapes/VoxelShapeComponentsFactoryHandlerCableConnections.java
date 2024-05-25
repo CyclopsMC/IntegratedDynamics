@@ -45,11 +45,11 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
     @Override
     public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
         Collection<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
-        if (CableHelpers.isNoFakeCable(world, blockPos, null)) {
+        if (CableHelpers.isNoFakeCable((Level) world, blockPos, null)) {
             for (Direction direction : Direction.values()) {
                 IPartContainer partContainer = null;
-                if (CableHelpers.isCableConnected(world, blockPos, direction) ||
-                        (partContainer = PartHelpers.getPartContainer(world, blockPos, direction).orElse(null)) != null
+                if (CableHelpers.isCableConnected((Level) world, blockPos, direction) ||
+                        (partContainer = PartHelpers.getPartContainer((Level) world, blockPos, direction).orElse(null)) != null
                                 && partContainer.hasPart(direction)) {
                     components.add(new Component(direction, partContainer));
                 }

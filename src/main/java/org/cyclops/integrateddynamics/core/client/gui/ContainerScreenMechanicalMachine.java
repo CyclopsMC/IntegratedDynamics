@@ -6,7 +6,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.helper.GuiHelpers;
 import org.cyclops.cyclopscore.item.DamageIndicatedItemComponent;

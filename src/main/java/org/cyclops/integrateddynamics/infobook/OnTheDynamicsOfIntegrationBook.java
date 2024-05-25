@@ -36,10 +36,10 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
     private static OnTheDynamicsOfIntegrationBook _instance = null;
 
     static {
-        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_SQUEEZER, SqueezerRecipeAppendix::new);
-        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER, MechanicalSqueezerRecipeAppendix::new);
-        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_DRYING_BASIN, DryingBasinRecipeAppendix::new);
-        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN, MechanicalDryingBasinRecipeAppendix::new);
+        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_SQUEEZER.get(), SqueezerRecipeAppendix::new);
+        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER.get(), MechanicalSqueezerRecipeAppendix::new);
+        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_DRYING_BASIN.get(), DryingBasinRecipeAppendix::new);
+        InfoBookParser.registerAppendixRecipeFactories(RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN.get(), MechanicalDryingBasinRecipeAppendix::new);
 
         InfoBookParser.registerAppendixFactory(Reference.MOD_ID + ":aspect", new InfoBookParser.IAppendixFactory() {
             @Override

@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.Tag;
@@ -9,17 +10,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalDryingBasin;
@@ -34,6 +35,8 @@ import javax.annotation.Nullable;
  */
 public class BlockMechanicalDryingBasin extends BlockMechanicalMachine {
 
+    public static final MapCodec<BlockMechanicalDryingBasin> CODEC = simpleCodec(BlockMechanicalDryingBasin::new);
+
     public static final String NBT_TANK_IN = "tankInput";
     public static final String NBT_TANK_OUT = "tankOutput";
 
@@ -47,9 +50,14 @@ public class BlockMechanicalDryingBasin extends BlockMechanicalMachine {
     }
 
     @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MECHANICAL_DRYING_BASIN, new BlockEntityMechanicalMachine.Ticker<>());
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MECHANICAL_DRYING_BASIN.get(), new BlockEntityMechanicalMachine.Ticker<>());
     }
 
     @Override

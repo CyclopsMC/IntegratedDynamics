@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -9,7 +10,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -105,7 +105,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     public String getUniqueName(ValueBlock value) {
         if (value.getRawValue().isPresent()) {
             BlockState blockState = value.getRawValue().get();
-            return ForgeRegistries.BLOCKS.getKey(blockState.getBlock()).toString();
+            return BuiltInRegistries.BLOCK.getKey(blockState.getBlock()).toString();
         }
         return "";
     }

@@ -4,10 +4,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
@@ -17,16 +18,19 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerActivateElementPacket extends PacketCodec {
 
+    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "logic_programmer_activate_element");
+
     @CodecField
     private String typeId;
     @CodecField
     private String elementId;
 
     public LogicProgrammerActivateElementPacket() {
-
+        super(ID);
     }
 
     public LogicProgrammerActivateElementPacket(ResourceLocation typeId, ResourceLocation elementId) {
+        super(ID);
         this.typeId = typeId.toString();
         this.elementId = elementId.toString();
     }

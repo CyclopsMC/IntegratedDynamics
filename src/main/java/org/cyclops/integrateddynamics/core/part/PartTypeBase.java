@@ -181,7 +181,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         // Save enhancements
         if (!saveState && state.getMaxOffset() > 0) {
             ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_ENHANCEMENT_OFFSET);
-            RegistryEntries.ITEM_ENHANCEMENT_OFFSET.setEnhancementValue(itemStack, state.getMaxOffset());
+            RegistryEntries.ITEM_ENHANCEMENT_OFFSET.get().setEnhancementValue(itemStack, state.getMaxOffset());
             itemStacks.add(itemStack);
         }
     }
