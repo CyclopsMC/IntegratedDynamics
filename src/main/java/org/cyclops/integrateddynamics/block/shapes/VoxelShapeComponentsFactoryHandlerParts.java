@@ -16,6 +16,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -40,10 +41,12 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
     @Override
     public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
         Collection<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
-        for (Direction direction : Direction.values()) {
-            IPartContainer partContainer = PartHelpers.getPartContainer((Level) world, blockPos, direction).orElse(null);
-            if (partContainer != null && partContainer.hasPart(direction)) {
-                components.add(new Component(direction, partContainer));
+        if (world instanceof ILevelExtension level) {
+            for (Direction direction : Direction.values()) {
+                IPartContainer partContainer = PartHelpers.getPartContainer(level, blockPos, direction).orElse(null);
+                if (partContainer != null && partContainer.hasPart(direction)) {
+                    components.add(new Component(direction, partContainer));
+                }
             }
         }
         return components;

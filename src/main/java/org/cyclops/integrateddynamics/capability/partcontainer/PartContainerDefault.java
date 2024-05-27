@@ -185,15 +185,17 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public <T> Optional<T> getCapability(PartCapability<T> partCapability, INetwork network, IPartNetwork partNetwork, PartTarget target) {
-        IPartState partState = getPartState(target.getCenter().getSide());
-        if (partState != null) {
-            partState.getCapability(
-                    getPart(target.getCenter().getSide()),
-                    partCapability,
-                    network,
-                    partNetwork,
-                    target
-            );
+        if (hasPart(target.getCenter().getSide())) {
+            IPartState partState = getPartState(target.getCenter().getSide());
+            if (partState != null) {
+                partState.getCapability(
+                        getPart(target.getCenter().getSide()),
+                        partCapability,
+                        network,
+                        partNetwork,
+                        target
+                );
+            }
         }
         return Optional.empty();
     }

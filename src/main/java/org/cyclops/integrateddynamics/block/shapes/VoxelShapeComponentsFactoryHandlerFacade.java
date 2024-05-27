@@ -16,6 +16,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -45,8 +46,10 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
 
     @Override
     public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
-        if (CableHelpers.hasFacade((Level) world, blockPos)) {
-            return Collections.singletonList(COMPONENT);
+        if (world instanceof ILevelExtension level) {
+            if (CableHelpers.hasFacade(level, blockPos)) {
+                return Collections.singletonList(COMPONENT);
+            }
         }
         return Collections.emptyList();
     }

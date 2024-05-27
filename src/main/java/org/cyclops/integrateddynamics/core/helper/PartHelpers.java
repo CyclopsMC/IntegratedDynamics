@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -57,7 +58,7 @@ public class PartHelpers {
      * @param side The side.
      * @return The optional part container capability.
      */
-    public static Optional<IPartContainer> getPartContainer(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<IPartContainer> getPartContainer(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PartContainer.BLOCK);
     }
 

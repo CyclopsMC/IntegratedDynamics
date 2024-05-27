@@ -8,6 +8,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -44,7 +45,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network carrier capability.
      */
-    public static Optional<INetworkCarrier> getNetworkCarrier(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<INetworkCarrier> getNetworkCarrier(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkCarrier.BLOCK);
     }
 
@@ -55,7 +56,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network element provider capability.
      */
-    public static Optional<INetworkElementProvider> getNetworkElementProvider(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<INetworkElementProvider> getNetworkElementProvider(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkElementProvider.BLOCK);
     }
 
@@ -66,7 +67,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The optional network.
      */
-    public static Optional<INetwork> getNetwork(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<INetwork> getNetwork(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         Optional<Optional<INetwork>> networkCarried = getNetworkCarrier(world, pos, side)
                 .map(carrier -> {
                     INetwork network = carrier.getNetwork();
@@ -95,7 +96,7 @@ public class NetworkHelpers {
      * @param side The side.
      * @return The network.
      */
-    public static INetwork getNetworkChecked(Level world, BlockPos pos, @Nullable Direction side) {
+    public static INetwork getNetworkChecked(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return getNetwork(world, pos, side)
                 .orElseThrow(() -> new IllegalStateException("Could not find a network container at " + pos.toString()));
     }
@@ -212,7 +213,7 @@ public class NetworkHelpers {
      * @return The optionally created part network.
      * Can be absent if the starting position did not have a {@link IPathElement} capability.
      */
-    public static Optional<INetwork> initNetwork(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<INetwork> initNetwork(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PathElement.BLOCK)
                 .map(pathElement -> {
                     Network network = Network.initiateNetworkSetup(SidedPathElement.of(pathElement, side));

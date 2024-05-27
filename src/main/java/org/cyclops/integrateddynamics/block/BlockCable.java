@@ -58,6 +58,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.block.BlockWithEntity;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
@@ -301,8 +302,8 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     @Override
     public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(state, world, pos, neighbor);
-        if (world instanceof Level) {
-            NetworkHelpers.onElementProviderBlockNeighborChange((Level) world, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
+        if (world instanceof Level level) {
+            NetworkHelpers.onElementProviderBlockNeighborChange(level, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
         }
     }
 
@@ -384,12 +385,15 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     @Override
     public int getLightBlock(BlockState blockState, BlockGetter world, BlockPos pos) {
-        if (CableHelpers.isLightTransparent((Level) world, pos, null)) {
-            return 0;
+        if (world instanceof Level level) {
+            if (CableHelpers.isLightTransparent(level, pos, null)) {
+                return 0;
+            }
+            return CableHelpers.getFacade(level, pos)
+                    .map(facade -> facade.getLightBlock(world, pos))
+                    .orElse(0);
         }
-        return CableHelpers.getFacade((Level) world, pos)
-                .map(facade -> facade.getLightBlock(world, pos))
-                .orElse(0);
+        return 0;
     }
 
     @Override
@@ -422,6 +426,18 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     /* --------------- Start IDynamicRedstone --------------- */
 
+    @Nullable
+    protected static Level getAsLevelRM(BlockGetter level, BlockPos pos) { // TODO: if this works, move to CC.
+        if (level instanceof Level levelCast) {
+            return levelCast;
+        }
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity != null) {
+            return blockEntity.getLevel();
+        }
+        return null;
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public boolean isSignalSource(BlockState blockState) {
@@ -432,28 +448,28 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     public boolean canConnectRedstone(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
         if(side == null) {
             for(Direction dummySide : Direction.values()) {
-                IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((Level) world, pos, dummySide, Capabilities.DynamicRedstone.BLOCK).orElse(null);
+                IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((ILevelExtension) world, pos, dummySide, Capabilities.DynamicRedstone.BLOCK).orElse(null);
                 if(dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput())) {
                     return true;
                 }
             }
             return false;
         }
-        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((Level) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((ILevelExtension) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
         return dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput());
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public int getDirectSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
-        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((Level) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((ILevelExtension) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
         return dynamicRedstone != null && dynamicRedstone.isDirect() ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public int getSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
-        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((Level) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((ILevelExtension) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
         return dynamicRedstone != null ? dynamicRedstone.getRedstoneLevel() : 0;
     }
 
@@ -462,10 +478,12 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     @Override
     public int getLightEmission(BlockState blockState, BlockGetter world, BlockPos pos) {
         int light = 0;
-        for(Direction side : Direction.values()) {
-            IDynamicLight dynamicLight = BlockEntityHelpers.getCapability((Level) world, pos, side, Capabilities.DynamicLight.BLOCK).orElse(null);
-            if (dynamicLight != null) {
-                light = Math.max(light, dynamicLight.getLightLevel());
+        if (world instanceof ILevelExtension levelExtension) {
+            for (Direction side : Direction.values()) {
+                IDynamicLight dynamicLight = BlockEntityHelpers.getCapability(levelExtension, pos, side, Capabilities.DynamicLight.BLOCK).orElse(null);
+                if (dynamicLight != null) {
+                    light = Math.max(light, dynamicLight.getLightLevel());
+                }
             }
         }
         return light;
@@ -495,7 +513,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         public int getColor(BlockState blockState, @Nullable BlockAndTintGetter world, @Nullable BlockPos blockPos, int color) {
             // Only modify color if we have a facade
             return world == null || blockPos == null ?
-                -1 : CableHelpers.getFacade((Level) world, blockPos)
+                -1 : CableHelpers.getFacade((ILevelExtension) world, blockPos)
                     .map(facadeState -> Minecraft.getInstance().getBlockColors().getColor(facadeState, world, blockPos, color))
                     .orElse(-1);
         }

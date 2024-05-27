@@ -14,6 +14,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -45,13 +46,15 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
     @Override
     public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
         Collection<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
-        if (CableHelpers.isNoFakeCable((Level) world, blockPos, null)) {
-            for (Direction direction : Direction.values()) {
-                IPartContainer partContainer = null;
-                if (CableHelpers.isCableConnected((Level) world, blockPos, direction) ||
-                        (partContainer = PartHelpers.getPartContainer((Level) world, blockPos, direction).orElse(null)) != null
-                                && partContainer.hasPart(direction)) {
-                    components.add(new Component(direction, partContainer));
+        if (world instanceof ILevelExtension level) {
+            if (CableHelpers.isNoFakeCable(level, blockPos, null)) {
+                for (Direction direction : Direction.values()) {
+                    IPartContainer partContainer = null;
+                    if (CableHelpers.isCableConnected((Level) world, blockPos, direction) ||
+                            (partContainer = PartHelpers.getPartContainer(level, blockPos, direction).orElse(null)) != null
+                                    && partContainer.hasPart(direction)) {
+                        components.add(new Component(direction, partContainer));
+                    }
                 }
             }
         }

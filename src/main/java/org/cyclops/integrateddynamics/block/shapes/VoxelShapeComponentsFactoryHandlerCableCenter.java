@@ -16,6 +16,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.client.model.CableModel;
@@ -41,8 +42,10 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
 
     @Override
     public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
-        if (CableHelpers.isNoFakeCable((Level) world, blockPos, null)) {
-            return Collections.singletonList(COMPONENT);
+        if (world instanceof ILevelExtension level) {
+            if (CableHelpers.isNoFakeCable(level, blockPos, null)) {
+                return Collections.singletonList(COMPONENT);
+            }
         }
         return Collections.emptyList();
     }

@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -54,7 +55,7 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional cable capability.
      */
-    public static Optional<ICable> getCable(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<ICable> getCable(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.Cable.BLOCK);
     }
 
@@ -65,7 +66,7 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional fakeable cable capability.
      */
-    public static Optional<ICableFakeable> getCableFakeable(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<ICableFakeable> getCableFakeable(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.CableFakeable.BLOCK);
     }
 
@@ -76,7 +77,7 @@ public class CableHelpers {
      * @param side The side.
      * @return The optional path element capability.
      */
-    public static Optional<IPathElement> getPathElement(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<IPathElement> getPathElement(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PathElement.BLOCK);
     }
 
@@ -86,7 +87,7 @@ public class CableHelpers {
      * @param pos The center position.
      * @param sides The sides to update connections for.
      */
-    public static void updateConnectionsNeighbours(Level world, BlockPos pos, Collection<Direction> sides) {
+    public static void updateConnectionsNeighbours(ILevelExtension world, BlockPos pos, Collection<Direction> sides) {
         for(Direction side : sides) {
             updateConnections(world, pos.relative(side), side.getOpposite());
         }
@@ -98,7 +99,7 @@ public class CableHelpers {
      * @param pos The position.
      * @param side The side.
      */
-    public static void updateConnections(Level world, BlockPos pos, @Nullable Direction side) {
+    public static void updateConnections(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         getCable(world, pos, side)
                 .ifPresent(ICable::updateConnections);
     }
@@ -110,7 +111,7 @@ public class CableHelpers {
      * @param side The side to check a connection for.
      * @return If there is a cable that is connected.
      */
-    public static boolean isCableConnected(Level world, BlockPos pos, Direction side) {
+    public static boolean isCableConnected(ILevelExtension world, BlockPos pos, Direction side) {
         return getCable(world, pos, side)
                 .map(cable -> cable.isConnected(side))
                 .orElse(false);
@@ -128,7 +129,7 @@ public class CableHelpers {
      * @param originCable The cable at the center position.
      * @return If it can connect.
      */
-    public static boolean canCableConnectTo(Level world, BlockPos pos, Direction side, ICable originCable) {
+    public static boolean canCableConnectTo(ILevelExtension world, BlockPos pos, Direction side, ICable originCable) {
         BlockPos neighbourPos = pos.relative(side);
         return getCable(world, neighbourPos, side.getOpposite())
                 .map(neighbourCable -> originCable.canConnect(neighbourCable, side)
@@ -145,7 +146,7 @@ public class CableHelpers {
      * @param side The side.
      * @return If there is no fake cable.
      */
-    public static boolean isNoFakeCable(Level world, BlockPos pos, @Nullable Direction side) {
+    public static boolean isNoFakeCable(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return getCableFakeable(world, pos, side)
                 .map(ICableFakeable::isRealCable)
                 .orElse(true);
@@ -377,7 +378,7 @@ public class CableHelpers {
      * @param pos The position.
      * @return If it has a facade.
      */
-    public static boolean hasFacade(Level world, BlockPos pos) {
+    public static boolean hasFacade(ILevelExtension world, BlockPos pos) {
         return BlockEntityHelpers.getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
                 .map(IFacadeable::hasFacade)
                 .orElse(false);
@@ -389,7 +390,7 @@ public class CableHelpers {
      * @param pos The position.
      * @return The optional facade.
      */
-    public static Optional<BlockState> getFacade(Level world, BlockPos pos) {
+    public static Optional<BlockState> getFacade(ILevelExtension world, BlockPos pos) {
         return BlockEntityHelpers.getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
                 .flatMap(facadeable -> Optional.ofNullable(facadeable.getFacade()));
     }

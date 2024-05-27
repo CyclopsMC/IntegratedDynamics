@@ -29,7 +29,7 @@ public class PathElementTileMultipartTicking extends PathElementTile<BlockEntity
         // Add the reachable path elements from the parts that provide one.
         Set<ISidedPathElement> pathElements = super.getReachableElements();
         INetwork network = getTile().getNetwork();
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network).orElse(null);
         for (Direction side : Direction.values()) {
             getTile().getPartContainer().getCapability(Capabilities.PathElement.PART, network, partNetwork, PartTarget.fromCenter(PartPos.of(getTile().getLevel(), getTile().getBlockPos(), side)))
                     .ifPresent(pathElement -> pathElements.addAll(pathElement.getReachableElements()));
