@@ -32,6 +32,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
@@ -113,13 +114,18 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
         event.registerBlockEntity(
                 Capabilities.NetworkElementProvider.BLOCK,
                 blockEntityType,
-                (blockEntity, direction) -> new NetworkElementProviderSingleton() {
-                    @Override
-                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                        return new DelayNetworkElement(DimPos.of(world, blockPos));
-                    }
-                }
+                (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
         );
+    }
+
+    @Override
+    public INetworkElementProvider getNetworkElementProvider() {
+        return new NetworkElementProviderSingleton() {
+            @Override
+            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                return new DelayNetworkElement(DimPos.of(world, blockPos));
+            }
+        };
     }
 
     @Override

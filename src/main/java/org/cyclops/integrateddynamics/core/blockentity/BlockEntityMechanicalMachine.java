@@ -20,6 +20,7 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
@@ -62,12 +63,7 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> ext
         event.registerBlockEntity(
                 Capabilities.NetworkElementProvider.BLOCK,
                 blockEntityType,
-                (blockEntity, direction) -> new NetworkElementProviderSingleton() {
-                    @Override
-                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                        return new MechanicalMachineNetworkElement(DimPos.of(world, blockPos));
-                    }
-                }
+                (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
         );
         event.registerBlockEntity(
                 net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
@@ -82,6 +78,16 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> ext
                     return new ItemHandlerSlotMasked(blockEntity.getInventory(), slots);
                 }
         );
+    }
+
+    @Override
+    public INetworkElementProvider getNetworkElementProvider() {
+        return new NetworkElementProviderSingleton() {
+            @Override
+            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                return new MechanicalMachineNetworkElement(DimPos.of(world, blockPos));
+            }
+        };
     }
 
     /**

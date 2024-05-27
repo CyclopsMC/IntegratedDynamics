@@ -12,6 +12,9 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.capability.cable.CableTile;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
@@ -21,12 +24,13 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
  * A part entity whose block can connect with cables.
  * @author rubensworks
  */
-public class BlockEntityCableConnectable extends CyclopsBlockEntity {
+public abstract class BlockEntityCableConnectable extends CyclopsBlockEntity {
 
     @NBTPersist
     private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
 
     private final ICable cable;
+    private final INetworkCarrier networkCarrier;
 
     public BlockEntityCableConnectable(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState) {
         super(type, blockPos, blockState);
@@ -47,6 +51,7 @@ public class BlockEntityCableConnectable extends CyclopsBlockEntity {
                 return tile.connected;
             }
         };
+        networkCarrier = new NetworkCarrierDefault();
     }
 
     public static void registerCableConnectableCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityCableConnectable> blockEntityType) {
@@ -58,7 +63,7 @@ public class BlockEntityCableConnectable extends CyclopsBlockEntity {
         event.registerBlockEntity(
                 Capabilities.NetworkCarrier.BLOCK,
                 blockEntityType,
-                (blockEntity, context) -> new NetworkCarrierDefault()
+                (blockEntity, context) -> blockEntity.getNetworkCarrier()
         );
         event.registerBlockEntity(
                 Capabilities.PathElement.BLOCK,
@@ -75,6 +80,12 @@ public class BlockEntityCableConnectable extends CyclopsBlockEntity {
         return cable;
     }
 
+    public INetworkCarrier getNetworkCarrier() {
+        return networkCarrier;
+    }
+
+    public abstract INetworkElementProvider getNetworkElementProvider();
+
     @Override
     public void read(CompoundTag tag) {
         super.read(tag);
@@ -85,7 +96,10 @@ public class BlockEntityCableConnectable extends CyclopsBlockEntity {
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
         if (getLevel() != null && !getLevel().isClientSide) {
-            NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), this);
+            INetwork network = getNetworkCarrier().getNetwork();
+            if (network != null) {
+                NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), network, getNetworkElementProvider());
+            }
         }
     }
 

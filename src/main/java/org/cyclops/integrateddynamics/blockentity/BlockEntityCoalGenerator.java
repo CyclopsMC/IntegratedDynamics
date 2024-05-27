@@ -22,6 +22,7 @@ import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.block.BlockCoalGenerator;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
@@ -60,18 +61,23 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
         event.registerBlockEntity(
                 Capabilities.NetworkElementProvider.BLOCK,
                 blockEntityType,
-                (blockEntity, context) -> new NetworkElementProviderSingleton() {
-                    @Override
-                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                        return new CoalGeneratorNetworkElement(DimPos.of(world, blockPos));
-                    }
-                }
+                (blockEntity, context) -> blockEntity.getNetworkElementProvider()
         );
         event.registerBlockEntity(
                 net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
                 blockEntityType,
                 (blockEntity, context) -> blockEntity
         );
+    }
+
+    @Override
+    public INetworkElementProvider getNetworkElementProvider() {
+        return new NetworkElementProviderSingleton() {
+            @Override
+            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                return new CoalGeneratorNetworkElement(DimPos.of(world, blockPos));
+            }
+        };
     }
 
     public Optional<IEnergyNetwork> getEnergyNetwork() {

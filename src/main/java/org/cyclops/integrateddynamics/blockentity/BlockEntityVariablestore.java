@@ -22,6 +22,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
@@ -65,18 +66,23 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
         event.registerBlockEntity(
                 Capabilities.NetworkElementProvider.BLOCK,
                 blockEntityType,
-                (blockEntity, context) -> new NetworkElementProviderSingleton() {
-                    @Override
-                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                        return new VariablestoreNetworkElement(DimPos.of(world, blockPos));
-                    }
-                }
+                (blockEntity, context) -> blockEntity.getNetworkElementProvider()
         );
         event.registerBlockEntity(
                 Capabilities.VariableContainer.BLOCK,
                 blockEntityType,
                 (blockEntity, context) -> blockEntity.getVariableContainer()
         );
+    }
+
+    @Override
+    public INetworkElementProvider getNetworkElementProvider() {
+        return new NetworkElementProviderSingleton() {
+            @Override
+            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                return new VariablestoreNetworkElement(DimPos.of(world, blockPos));
+            }
+        };
     }
 
     @Override

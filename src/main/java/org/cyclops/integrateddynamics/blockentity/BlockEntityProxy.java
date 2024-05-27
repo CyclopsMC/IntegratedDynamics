@@ -26,6 +26,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
 import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
@@ -91,13 +92,18 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
         event.registerBlockEntity(
                 Capabilities.NetworkElementProvider.BLOCK,
                 blockEntityType,
-                (blockEntity, direction) -> new NetworkElementProviderSingleton() {
-                    @Override
-                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                        return new ProxyNetworkElement(DimPos.of(world, blockPos));
-                    }
-                }
+                (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
         );
+    }
+
+    @Override
+    public INetworkElementProvider getNetworkElementProvider() {
+        return new NetworkElementProviderSingleton() {
+            @Override
+            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                return new ProxyNetworkElement(DimPos.of(world, blockPos));
+            }
+        };
     }
 
     public boolean isWriteVariable() {

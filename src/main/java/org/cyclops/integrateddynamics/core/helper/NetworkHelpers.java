@@ -6,7 +6,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -260,20 +259,12 @@ public class NetworkHelpers {
      * Warning: this assumes unsided network carrier capabilities, for example full-block network elements.
      * @param world The world.
      * @param pos The position.
-     * @param tile The tile entity that is unloaded.
+     * @param network The network.
+     * @param networkElementProvider The network element provider.
      */
-    public static void invalidateNetworkElements(Level world, BlockPos pos, BlockEntity tile) {
-        INetworkCarrier networkCarrier = world.getCapability(Capabilities.NetworkCarrier.BLOCK, pos, null);
-        if (networkCarrier != null) {
-            INetwork network = networkCarrier.getNetwork();
-            if (network != null) {
-                INetworkElementProvider networkElementProvider = world.getCapability(Capabilities.NetworkElementProvider.BLOCK, pos, null);
-                if (networkElementProvider != null) {
-                    for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-                        networkElement.invalidate(network);
-                    }
-                }
-            }
+    public static void invalidateNetworkElements(Level world, BlockPos pos, INetwork network, INetworkElementProvider networkElementProvider) {
+        for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
+            networkElement.invalidate(network);
         }
     }
 

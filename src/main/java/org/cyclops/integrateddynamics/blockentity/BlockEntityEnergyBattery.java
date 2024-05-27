@@ -12,6 +12,7 @@ import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
@@ -42,18 +43,23 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
         event.registerBlockEntity(
                 Capabilities.NetworkElementProvider.BLOCK,
                 blockEntityType,
-                (blockEntity, context) -> new NetworkElementProviderSingleton() {
-                    @Override
-                    public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
-                        return new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
-                    }
-                }
+                (blockEntity, context) -> blockEntity.getNetworkElementProvider()
         );
         event.registerBlockEntity(
                 net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
                 blockEntityType,
                 (blockEntity, context) -> ((BlockEntityEnergyBattery) blockEntity)
         );
+    }
+
+    @Override
+    public INetworkElementProvider getNetworkElementProvider() {
+        return new NetworkElementProviderSingleton() {
+            @Override
+            public INetworkElement createNetworkElement(Level world, BlockPos blockPos) {
+                return new EnergyBatteryNetworkElement(DimPos.of(world, blockPos));
+            }
+        };
     }
 
     public boolean isCreative() {

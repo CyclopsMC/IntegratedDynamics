@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
+import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.capability.cable.CableTile;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
@@ -27,7 +28,7 @@ import javax.annotation.Nullable;
  * A part entity with inventory whose block can connect with cables.
  * @author rubensworks
  */
-public class BlockEntityCableConnectableInventory extends CyclopsBlockEntity {
+public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockEntity {
 
     @NBTPersist
     private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
@@ -99,6 +100,8 @@ public class BlockEntityCableConnectableInventory extends CyclopsBlockEntity {
         return networkCarrier;
     }
 
+    public abstract INetworkElementProvider getNetworkElementProvider();
+
     protected SimpleInventory createInventory(int inventorySize, int stackSize) {
         return new SimpleInventory(inventorySize, stackSize);
     }
@@ -137,7 +140,10 @@ public class BlockEntityCableConnectableInventory extends CyclopsBlockEntity {
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
         if (getLevel() != null && !getLevel().isClientSide) {
-            NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), this);
+            INetwork network = getNetworkCarrier().getNetwork();
+            if (network != null) {
+                NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), network, getNetworkElementProvider());
+            }
         }
     }
 
