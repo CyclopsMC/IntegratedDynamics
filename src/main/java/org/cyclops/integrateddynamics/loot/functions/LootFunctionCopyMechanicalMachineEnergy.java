@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class LootFunctionCopyMechanicalMachineEnergy extends LootItemConditionalFunction {
 
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyMechanicalMachineEnergy.CODEC);
     public static final Codec<LootFunctionCopyMechanicalMachineEnergy> CODEC = RecordCodecBuilder.create(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalMachineEnergy::new)
     );
+    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyMechanicalMachineEnergy.CODEC);
 
     protected LootFunctionCopyMechanicalMachineEnergy(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);

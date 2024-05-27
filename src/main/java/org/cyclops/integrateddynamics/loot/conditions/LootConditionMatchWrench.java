@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.loot.conditions;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -22,10 +21,8 @@ import java.util.Set;
  */
 public class LootConditionMatchWrench implements LootItemCondition {
 
+    public static final Codec<LootConditionMatchWrench> CODEC = Codec.unit(new LootConditionMatchWrench());
     public static final LootItemConditionType TYPE = new LootItemConditionType(LootConditionMatchWrench.CODEC);
-    public static final Codec<LootConditionMatchWrench> CODEC = RecordCodecBuilder.create(
-            builder -> builder.point(new LootConditionMatchWrench())
-    );
 
     @Override
     public boolean test(LootContext lootContext) {

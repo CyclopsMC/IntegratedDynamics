@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class LootFunctionCopyProxyId extends LootItemConditionalFunction {
 
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyProxyId.CODEC);
     public static final Codec<LootFunctionCopyProxyId> CODEC = RecordCodecBuilder.create(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyProxyId::new)
     );
+    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyProxyId.CODEC);
 
     protected LootFunctionCopyProxyId(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);

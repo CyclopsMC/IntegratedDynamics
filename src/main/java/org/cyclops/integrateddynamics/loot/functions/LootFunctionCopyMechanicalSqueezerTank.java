@@ -21,10 +21,10 @@ import java.util.List;
  */
 public class LootFunctionCopyMechanicalSqueezerTank extends LootItemConditionalFunction {
 
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyMechanicalSqueezerTank.CODEC);
     public static final Codec<LootFunctionCopyMechanicalSqueezerTank> CODEC = RecordCodecBuilder.create(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalSqueezerTank::new)
     );
+    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyMechanicalSqueezerTank.CODEC);
 
     protected LootFunctionCopyMechanicalSqueezerTank(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);

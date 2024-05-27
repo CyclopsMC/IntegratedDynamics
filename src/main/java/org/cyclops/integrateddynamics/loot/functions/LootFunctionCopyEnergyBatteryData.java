@@ -23,10 +23,10 @@ import java.util.List;
  */
 public class LootFunctionCopyEnergyBatteryData extends LootItemConditionalFunction {
 
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyEnergyBatteryData.CODEC);
     public static final Codec<LootFunctionCopyEnergyBatteryData> CODEC = RecordCodecBuilder.create(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyEnergyBatteryData::new)
     );
+    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyEnergyBatteryData.CODEC);
 
     protected LootFunctionCopyEnergyBatteryData(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
