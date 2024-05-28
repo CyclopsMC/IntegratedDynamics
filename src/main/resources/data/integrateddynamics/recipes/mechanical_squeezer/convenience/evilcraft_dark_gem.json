@@ -1,24 +1,26 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "evilcraft:dark_ore",
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "evilcraft:dark_gem",
-          "count": 2
-        }
-      },
-      {
-        "item": "evilcraft:dark_gem_crushed",
-        "chance": 0.5
-      }
-    ]
+  "input_item": {
+    "item": "evilcraft:dark_ore"
   },
-  "duration": 20,
-  "conditions": [
+  "output_items": [
     {
-      "type": "forge:mod_loaded",
+      "item": {
+        "item": "evilcraft:dark_gem",
+        "count": 2
+      }
+    },
+    {
+      "item": {
+        "item": "evilcraft:dark_gem_crushed"
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 20,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
       "modid": "evilcraft"
     }
   ]

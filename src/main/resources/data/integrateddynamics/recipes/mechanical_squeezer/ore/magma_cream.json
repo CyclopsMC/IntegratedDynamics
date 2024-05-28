@@ -1,13 +1,15 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "minecraft:magma_block",
-  "result": {
-    "items": [
-      {
+  "input_item": {
+    "item": "minecraft:magma_block"
+  },
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:magma_cream",
         "count": 4
       }
-    ]
-  },
+    }
+  ],
   "duration": 40
 }

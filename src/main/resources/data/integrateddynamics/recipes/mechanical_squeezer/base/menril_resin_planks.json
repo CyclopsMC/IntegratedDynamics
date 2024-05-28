@@ -1,16 +1,18 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "integrateddynamics:menril_planks",
-  "result": {
-    "fluid": {
-      "fluid": "integrateddynamics:menril_resin",
-      "amount": 250
-    },
-    "items": [
-      {
+  "input_item": {
+    "item": "integrateddynamics:menril_planks"
+  },
+  "output_fluid": {
+    "FluidName": "integrateddynamics:menril_resin",
+    "Amount": 250
+  },
+  "output_items": [
+    {
+      "item": {
         "item": "integrateddynamics:crystalized_menril_chunk"
       }
-    ]
-  },
+    }
+  ],
   "duration": 15
 }

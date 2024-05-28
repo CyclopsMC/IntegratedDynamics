@@ -1,16 +1,14 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "item": "minecraft:peony"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:pink_dye",
-          "count": 8
-        }
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:pink_dye",
+        "count": 8
       }
-    ]
-  }
+    }
+  ]
 }

@@ -1,27 +1,31 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "minecraft:popped_chorus_fruit",
-  "result": {
-    "fluid": {
-      "fluid": "integrateddynamics:liquid_chorus",
-      "amount": 125
-    },
-    "items": [
-      {
-        "item": {
-          "item": "integrateddynamics:crystalized_chorus_chunk",
-          "count": 2
-        }
-      },
-      {
-        "item": "integrateddynamics:crystalized_chorus_chunk",
-        "chance": 0.5
-      },
-      {
-        "item": "integrateddynamics:crystalized_chorus_chunk",
-        "chance": 0.5
-      }
-    ]
+  "input_item": {
+    "item": "minecraft:popped_chorus_fruit"
   },
+  "output_fluid": {
+    "FluidName": "integrateddynamics:liquid_chorus",
+    "Amount": 125
+  },
+  "output_items": [
+    {
+      "item": {
+        "item": "integrateddynamics:crystalized_chorus_chunk",
+        "count": 2
+      }
+    },
+    {
+      "item": {
+        "item": "integrateddynamics:crystalized_chorus_chunk"
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "item": "integrateddynamics:crystalized_chorus_chunk"
+      },
+      "chance": 0.5
+    }
+  ],
   "duration": 15
 }

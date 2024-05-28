@@ -1,16 +1,14 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "item": "minecraft:wither_rose"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:black_dye",
-          "count": 4
-        }
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:black_dye",
+        "count": 4
       }
-    ]
-  }
+    }
+  ]
 }

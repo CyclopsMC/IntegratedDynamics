@@ -1,16 +1,14 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "evilcraft:dark_gem",
-  "result": {
-    "items": [
-      {
-        "item": "evilcraft:dark_gem_crushed"
-      }
-    ]
-  },
-  "conditions": [
+  "input_item": "evilcraft:dark_gem",
+  "output_items": [
     {
-      "type": "forge:mod_loaded",
+      "item": "evilcraft:dark_gem_crushed"
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
       "modid": "evilcraft"
     }
   ]

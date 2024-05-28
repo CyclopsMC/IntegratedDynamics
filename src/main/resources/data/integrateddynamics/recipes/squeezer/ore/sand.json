@@ -1,14 +1,14 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "minecraft:sandstone",
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:sand",
-          "count": 2
-        }
+  "input_item": {
+    "item": "minecraft:sandstone"
+  },
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:sand",
+        "count": 2
       }
-    ]
-  }
+    }
+  ]
 }

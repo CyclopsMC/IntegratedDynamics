@@ -1,18 +1,22 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "minecraft:gilded_blackstone",
-  "result": {
-    "items": [
-      {
+  "input_item": {
+    "item": "minecraft:gilded_blackstone"
+  },
+  "output_items": [
+    {
+      "tag": {
         "tag": "forge:nuggets/gold",
         "count": 4
-      },
-      {
-        "tag": "forge:nuggets/gold",
-        "count": 5,
-        "chance": 0.5
       }
-    ]
-  },
+    },
+    {
+      "tag": {
+        "tag": "forge:nuggets/gold",
+        "count": 5
+      },
+      "chance": 0.5
+    }
+  ],
   "duration": 30
 }

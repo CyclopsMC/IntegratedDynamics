@@ -1,16 +1,14 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "item": "minecraft:oxeye_daisy"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:light_gray_dye",
-          "count": 4
-        }
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:light_gray_dye",
+        "count": 4
       }
-    ]
-  }
+    }
+  ]
 }

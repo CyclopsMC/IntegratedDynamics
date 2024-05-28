@@ -1,33 +1,35 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "tag": "forge:ores/zinc"
   },
-  "result": {
-    "items": [
-      {
+  "output_items": [
+    {
+      "item": {
         "tag": "forge:raw_materials/zinc",
         "count": 2
-      },
-      {
-        "tag": "forge:raw_materials/zinc",
-        "chance": 0.75
       }
-    ]
-  },
-  "duration": 40,
-  "conditions": [
+    },
     {
-      "type": "forge:not",
+      "item": {
+        "tag": "forge:raw_materials/zinc"
+      },
+      "chance": 0.75
+    }
+  ],
+  "duration": 40,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
       "value": {
-        "type": "forge:tag_empty",
+        "type": "neoforge:tag_empty",
         "tag": "forge:raw_materials/zinc"
       }
     },
     {
-      "type": "forge:not",
+      "type": "neoforge:not",
       "value": {
-        "type": "forge:tag_empty",
+        "type": "neoforge:tag_empty",
         "tag": "forge:ores/zinc"
       }
     }

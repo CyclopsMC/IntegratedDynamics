@@ -1,18 +1,20 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "honey_bottle",
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:sugar",
-          "count": 4
-        }
-      },
-      {
+  "input_item":  {
+    "item": "honey_bottle"
+  },
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:sugar",
-        "chance": 0.75
+        "count": 4
       }
-    ]
-  }
+    },
+    {
+      "item": {
+        "item": "minecraft:sugar"
+      },
+      "chance": 0.75
+    }
+  ]
 }

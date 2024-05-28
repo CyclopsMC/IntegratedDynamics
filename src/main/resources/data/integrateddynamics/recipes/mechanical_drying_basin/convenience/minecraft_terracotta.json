@@ -1,8 +1,10 @@
 {
   "type": "integrateddynamics:mechanical_drying_basin",
-  "item": "minecraft:clay",
+  "input_item": {
+    "item": "minecraft:clay"
+  },
   "duration": 40,
-  "result": {
+  "output_item": {
     "item": "minecraft:terracotta"
   }
 }

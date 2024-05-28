@@ -1,24 +1,22 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": {
+  "input_item": {
     "item": "minecraft:pink_tulip"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:pink_dye",
-          "count": 4
-        }
-      },
-      {
-        "item": {
-          "item": "minecraft:pink_dye",
-          "count": 2
-        },
-        "chance": 0.5
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:pink_dye",
+        "count": 4
       }
-    ]
-  },
+    },
+    {
+      "item": {
+        "item": "minecraft:pink_dye",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
   "duration": 5
 }

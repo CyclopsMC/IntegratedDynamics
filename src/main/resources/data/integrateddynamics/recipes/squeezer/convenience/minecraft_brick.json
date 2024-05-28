@@ -1,14 +1,14 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "minecraft:bricks",
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:brick",
-          "count": 4
-        }
+  "input_item": {
+    "item": "minecraft:bricks"
+  },
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:brick",
+        "count": 4
       }
-    ]
-  }
+    }
+  ]
 }

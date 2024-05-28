@@ -1,21 +1,21 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "evilcraft:undead_leaves",
-  "result": {
-    "items": [
-      {
-        "item": "evilcraft:hardened_blood_shard",
-        "chance": 0.25
-      }
-    ],
-    "fluid": {
-      "fluid": "evilcraft:blood",
-      "amount": 50
-    }
+  "input_item": {
+    "item": "evilcraft:undead_leaves"
   },
-  "conditions": [
+  "output_items": [
     {
-      "type": "forge:mod_loaded",
+      "item": "evilcraft:hardened_blood_shard",
+      "chance": 0.25
+    }
+  ],
+  "output_fluid": {
+    "FluidName": "evilcraft:blood",
+    "Amount": 50
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
       "modid": "evilcraft"
     }
   ]

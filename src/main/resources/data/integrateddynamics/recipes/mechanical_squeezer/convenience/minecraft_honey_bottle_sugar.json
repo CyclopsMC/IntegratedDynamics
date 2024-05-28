@@ -1,19 +1,21 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "honey_bottle",
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:sugar",
-          "count": 5
-        }
-      },
-      {
-        "item": "minecraft:sugar",
-        "chance": 0.75
-      }
-    ]
+  "input_item": {
+    "item": "minecraft:honey_bottle"
   },
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:sugar",
+        "count": 5
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:sugar"
+      },
+      "chance": 0.75
+    }
+  ],
   "duration": 20
 }

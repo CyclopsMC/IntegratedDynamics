@@ -1,11 +1,11 @@
 {
   "type": "integrateddynamics:mechanical_drying_basin",
-  "fluid": {
-    "fluid": "minecraft:lava",
-    "amount": 1000
+  "input_fluid": {
+    "FluidName": "minecraft:lava",
+    "Amount": 1000
   },
   "duration": 100,
-  "result": {
+  "output_item": {
     "item": "minecraft:magma_block"
   }
 }

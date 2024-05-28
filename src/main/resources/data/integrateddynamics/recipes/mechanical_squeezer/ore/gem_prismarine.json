@@ -1,12 +1,14 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "minecraft:prismarine_shard",
-  "result": {
-    "items": [
-      {
+  "input_item": {
+    "item": "minecraft:prismarine_shard"
+  },
+  "output_items": [
+    {
+      "tag": {
         "tag": "forge:gems/prismarine"
       }
-    ]
-  },
+    }
+  ],
   "duration": 30
 }

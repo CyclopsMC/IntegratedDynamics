@@ -1,24 +1,22 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": {
+  "input_item": {
     "item": "minecraft:sugar_cane"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:sugar",
-          "count": 4
-        }
-      },
-      {
-        "item": {
-          "item": "minecraft:sugar",
-          "count": 2
-        },
-        "chance": 0.5
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:sugar",
+        "count": 4
       }
-    ]
-  },
+    },
+    {
+      "item": {
+        "item": "minecraft:sugar",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
   "duration": 40
 }

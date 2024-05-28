@@ -1,14 +1,14 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": {
+  "input_item": {
     "tag": "forge:glass"
   },
-  "result": {
-    "items": [
-      {
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:sand"
       }
-    ]
-  },
+    }
+  ],
   "duration": 10
 }

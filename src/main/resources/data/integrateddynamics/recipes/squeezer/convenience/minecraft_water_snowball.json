@@ -1,10 +1,10 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "minecraft:snowball",
-  "result": {
-    "fluid": {
-      "fluid": "minecraft:water",
-      "amount": 250
-    }
+  "input_item": {
+    "item": "minecraft:snowball"
+  },
+  "output_fluid": {
+    "FluidName": "minecraft:water",
+    "Amount": 250
   }
 }

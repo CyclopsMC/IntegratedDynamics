@@ -1,16 +1,14 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "item": "minecraft:blue_orchid"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:light_blue_dye",
-          "count": 4
-        }
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:light_blue_dye",
+        "count": 4
       }
-    ]
-  }
+    }
+  ]
 }

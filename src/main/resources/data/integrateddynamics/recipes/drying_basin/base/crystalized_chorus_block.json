@@ -1,11 +1,11 @@
 {
   "type": "integrateddynamics:drying_basin",
-  "fluid": {
-    "fluid": "integrateddynamics:liquid_chorus",
-    "amount": 1000
+  "input_fluid": {
+    "FluidName": "integrateddynamics:liquid_chorus",
+    "Amount": 1000
   },
   "duration": 300,
-  "result": {
+  "output_item": {
     "item": "integrateddynamics:crystalized_chorus_block"
   }
 }

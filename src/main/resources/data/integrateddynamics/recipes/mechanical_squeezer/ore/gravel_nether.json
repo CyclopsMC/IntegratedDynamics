@@ -1,13 +1,15 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "minecraft:blackstone",
-  "result": {
-    "items": [
-      {
+  "input_item": {
+    "item": "minecraft:blackstone"
+  },
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:gravel",
         "count": 2
       }
-    ]
-  },
+    }
+  ],
   "duration": 30
 }

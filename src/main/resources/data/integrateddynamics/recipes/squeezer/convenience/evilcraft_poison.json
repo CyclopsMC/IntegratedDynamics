@@ -1,17 +1,15 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "tag": "evilcraft:poisonous"
   },
-  "result": {
-    "fluid": {
-      "fluid": "evilcraft:poison",
-      "amount": 250
-    }
+  "output_fluid": {
+    "FluidName": "evilcraft:poison",
+    "Amount": 250
   },
-  "conditions": [
+  "neoforge:conditions": [
     {
-      "type": "forge:mod_loaded",
+      "type": "neoforge:mod_loaded",
       "modid": "evilcraft"
     }
   ]

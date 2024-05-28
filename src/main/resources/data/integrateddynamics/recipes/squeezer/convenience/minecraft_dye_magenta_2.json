@@ -1,16 +1,14 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "item": "minecraft:lilac"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:magenta_dye",
-          "count": 8
-        }
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:magenta_dye",
+        "count": 8
       }
-    ]
-  }
+    }
+  ]
 }

@@ -1,16 +1,20 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "minecraft:gravel",
-  "result": {
-    "items": [
-      {
+  "input_item": {
+    "item": "minecraft:gravel"
+  },
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:flint"
+      }
+    },
+    {
+      "item": {
         "item": "minecraft:flint"
       },
-      {
-        "item": "minecraft:flint",
-        "chance": 0.5
-      }
-    ]
-  },
+      "chance": 0.5
+    }
+  ],
   "duration": 30
 }

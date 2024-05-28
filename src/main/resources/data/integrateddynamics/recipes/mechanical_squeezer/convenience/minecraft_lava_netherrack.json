@@ -1,11 +1,11 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "minecraft:netherrack",
-  "result": {
-    "fluid": {
-      "fluid": "minecraft:lava",
-      "amount": 1000
-    }
+  "input_item": {
+    "item": "minecraft:netherrack"
+  },
+  "output_fluid": {
+    "FluidName": "minecraft:lava",
+    "Amount": 1000
   },
   "duration": 750
 }

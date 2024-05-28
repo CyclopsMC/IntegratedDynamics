@@ -1,21 +1,25 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "integrateddynamics:proto_chorus",
-  "result": {
-    "fluid": {
-      "fluid": "integrateddynamics:liquid_chorus",
-      "amount": 125
-    },
-    "items": [
-      {
-        "item": "integrateddynamics:crystalized_chorus_chunk",
-        "chance": 0.5
-      },
-      {
-        "item": "integrateddynamics:crystalized_chorus_chunk",
-        "chance": 0.5
-      }
-    ]
+  "input_item": {
+    "item": "integrateddynamics:proto_chorus"
   },
+  "output_fluid": {
+    "FluidName": "integrateddynamics:liquid_chorus",
+    "Amount": 125
+  },
+  "output_items": [
+    {
+      "item": {
+        "item": "integrateddynamics:crystalized_chorus_chunk"
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "item": "integrateddynamics:crystalized_chorus_chunk"
+      },
+      "chance": 0.5
+    }
+  ],
   "duration": 15
 }

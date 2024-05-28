@@ -1,11 +1,13 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "minecraft:stone_bricks",
-  "result": {
-    "items": [
-      {
+  "input_item": {
+    "item": "minecraft:stone_bricks"
+  },
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:cracked_stone_bricks"
       }
-    ]
-  }
+    }
+  ]
 }

@@ -1,12 +1,14 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": "minecraft:stone",
-  "result": {
-    "items": [
-      {
+  "input_item": {
+    "item": "minecraft:stone"
+  },
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:cobblestone"
       }
-    ]
-  },
+    }
+  ],
   "duration": 40
 }

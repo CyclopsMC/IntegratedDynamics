@@ -1,39 +1,43 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": {
+  "input_item": {
     "tag": "forge:ores/silver"
   },
-  "result": {
-    "items": [
-      {
+  "output_items": [
+    {
+      "tag": {
         "tag": "forge:raw_materials/silver",
         "count": 3
-      },
-      {
-        "tag": "forge:raw_materials/silver",
-        "count": 2,
-        "chance": 0.5
-      },
-      {
-        "tag": "forge:raw_materials/silver",
-        "count": 2,
-        "chance": 0.5
       }
-    ]
-  },
-  "duration": 40,
-  "conditions": [
+    },
     {
-      "type": "forge:not",
+      "tag": {
+        "tag": "forge:raw_materials/silver",
+        "count": 2
+      },
+      "chance": 0.5
+    },
+    {
+      "tag": {
+        "tag": "forge:raw_materials/silver",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 40,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
       "value": {
-        "type": "forge:tag_empty",
+        "type": "neoforge:tag_empty",
         "tag": "forge:raw_materials/silver"
       }
     },
     {
-      "type": "forge:not",
+      "type": "neoforge:not",
       "value": {
-        "type": "forge:tag_empty",
+        "type": "neoforge:tag_empty",
         "tag": "forge:ores/silver"
       }
     }

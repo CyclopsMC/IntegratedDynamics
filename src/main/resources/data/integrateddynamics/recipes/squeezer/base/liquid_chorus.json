@@ -1,10 +1,10 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "minecraft:popped_chorus_fruit",
-  "result": {
-    "fluid": {
-      "fluid": "integrateddynamics:liquid_chorus",
-      "amount": 125
-    }
+  "input_item": {
+    "item": "minecraft:popped_chorus_fruit"
+  },
+  "output_fluid": {
+    "FluidName": "integrateddynamics:liquid_chorus",
+    "Amount": 125
   }
 }

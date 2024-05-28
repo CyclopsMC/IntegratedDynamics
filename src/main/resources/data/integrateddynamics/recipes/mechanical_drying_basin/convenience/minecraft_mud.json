@@ -1,8 +1,10 @@
 {
   "type": "integrateddynamics:mechanical_drying_basin",
-  "item": "minecraft:mud",
+  "input_item": {
+    "item": "minecraft:mud"
+  },
   "duration": 10,
-  "result": {
+  "output_item": {
     "item": "minecraft:dirt"
   }
 }

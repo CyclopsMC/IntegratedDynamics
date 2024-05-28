@@ -1,24 +1,22 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "item": {
+  "input_item": {
     "tag": "forge:ores/redstone"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:redstone",
-          "count": 12
-        }
-      },
-      {
-        "item": {
-          "item": "minecraft:redstone",
-          "count": 2
-        },
-        "chance": 0.5
+  "output_items": [
+    {
+      "item": {
+        "item": "minecraft:redstone",
+        "count": 12
       }
-    ]
-  },
+    },
+    {
+      "item": {
+        "item": "minecraft:redstone",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
   "duration": 40
 }

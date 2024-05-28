@@ -9,6 +9,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.fluids.FluidStack;
+import org.cyclops.cyclopscore.codec.ListCodecStrict;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 
 import javax.annotation.Nullable;
@@ -23,15 +24,12 @@ public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<Reci
     public static final Codec<RecipeMechanicalSqueezer> CODEC = RecordCodecBuilder.create(
             builder -> builder.group(
                             Ingredient.CODEC_NONEMPTY.fieldOf("input_item").forGetter(RecipeMechanicalSqueezer::getInputIngredient),
-                            RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE_LIST.fieldOf("output_items").forGetter(r -> r.getOutputItems().stream().toList()),
+                            ExtraCodecs.strictOptionalField(new ListCodecStrict<>(RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE), "output_items").forGetter(r -> r.getOutputItems().isEmpty() ? Optional.empty() : Optional.of(r.getOutputItems().stream().toList())),
                             ExtraCodecs.strictOptionalField(FluidStack.CODEC, "output_fluid").forGetter(RecipeMechanicalSqueezer::getOutputFluid),
                             Codec.INT.fieldOf("duration").forGetter(RecipeMechanicalSqueezer::getDuration)
                     )
                     .apply(builder, (inputIngredient, outputItemStacks, outputFluid, duration) -> {
                         // Validation
-                        if (inputIngredient.isEmpty()) {
-                            throw new JsonSyntaxException("An input item is required");
-                        }
                         if (outputItemStacks.isEmpty() && outputFluid.isEmpty()) {
                             throw new JsonSyntaxException("An output item or fluid is required");
                         }
@@ -39,7 +37,7 @@ public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<Reci
                             throw new JsonSyntaxException("Durations must be higher than one tick");
                         }
 
-                        return new RecipeMechanicalSqueezer(inputIngredient, NonNullList.copyOf(outputItemStacks), outputFluid, duration);
+                        return new RecipeMechanicalSqueezer(inputIngredient, outputItemStacks.map(NonNullList::copyOf).orElseGet(NonNullList::create), outputFluid, duration);
                     })
     );
 

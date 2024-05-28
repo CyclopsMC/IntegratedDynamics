@@ -1,11 +1,13 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "minecraft:cobblestone",
-  "result": {
-    "items": [
-      {
+  "input_item": {
+    "item": "minecraft:cobblestone"
+  },
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:gravel"
       }
-    ]
-  }
+    }
+  ]
 }

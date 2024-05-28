@@ -1,33 +1,35 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "tag": "forge:ores/osmium"
   },
-  "result": {
-    "items": [
-      {
+  "output_items": [
+    {
+      "tag": {
         "tag": "forge:raw_materials/osmium",
         "count": 2
-      },
-      {
-        "tag": "forge:raw_materials/osmium",
-        "chance": 0.75
       }
-    ]
-  },
-  "duration": 40,
-  "conditions": [
+    },
     {
-      "type": "forge:not",
+      "tag": {
+        "tag": "forge:raw_materials/osmium"
+      },
+      "chance": 0.75
+    }
+  ],
+  "duration": 40,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
       "value": {
-        "type": "forge:tag_empty",
+        "type": "neoforge:tag_empty",
         "tag": "forge:raw_materials/osmium"
       }
     },
     {
-      "type": "forge:not",
+      "type": "neoforge:not",
       "value": {
-        "type": "forge:tag_empty",
+        "type": "neoforge:tag_empty",
         "tag": "forge:ores/osmium"
       }
     }

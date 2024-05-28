@@ -9,11 +9,11 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.fluids.FluidStack;
+import org.cyclops.cyclopscore.codec.ListCodecStrict;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,24 +28,20 @@ public class RecipeSerializerSqueezer implements RecipeSerializer<RecipeSqueezer
                     RecipeSqueezer.IngredientChance::new,
                     RecipeSqueezer.IngredientChance::getIngredientChance
             );
-    public static final Codec<List<RecipeSqueezer.IngredientChance>> CODEC_INGREDIENT_CHANCE_LIST = Codec.list(CODEC_INGREDIENT_CHANCE);
 
     public static final Codec<RecipeSqueezer> CODEC = RecordCodecBuilder.create(
             builder -> builder.group(
                             Ingredient.CODEC_NONEMPTY.fieldOf("input_item").forGetter(RecipeSqueezer::getInputIngredient),
-                            RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE_LIST.fieldOf("output_items").forGetter(r -> r.getOutputItems().stream().toList()),
+                            ExtraCodecs.strictOptionalField(new ListCodecStrict<>(RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE), "output_items").forGetter(r -> r.getOutputItems().isEmpty() ? Optional.empty() : Optional.of(r.getOutputItems().stream().toList())),
                             ExtraCodecs.strictOptionalField(FluidStack.CODEC, "output_fluid").forGetter(RecipeSqueezer::getOutputFluid)
                     )
                     .apply(builder, (inputIngredient, outputItemStacks, outputFluid) -> {
                         // Validation
-                        if (inputIngredient.isEmpty()) {
-                            throw new JsonSyntaxException("An input item is required");
-                        }
                         if (outputItemStacks.isEmpty() && outputFluid.isEmpty()) {
                             throw new JsonSyntaxException("An output item or fluid is required");
                         }
 
-                        return new RecipeSqueezer(inputIngredient, NonNullList.copyOf(outputItemStacks), outputFluid);
+                        return new RecipeSqueezer(inputIngredient, outputItemStacks.map(NonNullList::copyOf).orElseGet(NonNullList::create), outputFluid);
                     })
     );
 

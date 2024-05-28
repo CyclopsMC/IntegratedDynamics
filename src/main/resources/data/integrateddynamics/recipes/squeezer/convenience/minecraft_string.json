@@ -1,24 +1,26 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "tag": "minecraft:wool"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:string",
-          "count": 2
-        }
-      },
-      {
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:string",
-        "chance": 0.5
-      },
-      {
-        "item": "minecraft:string",
-        "chance": 0.5
+        "count": 2
       }
-    ]
-  }
+    },
+    {
+      "item": {
+        "item": "minecraft:string"
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "item": "minecraft:string"
+      },
+      "chance": 0.5
+    }
+  ]
 }

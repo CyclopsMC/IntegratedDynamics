@@ -1,17 +1,19 @@
 {
   "type": "integrateddynamics:mechanical_drying_basin",
-  "item": "minecraft:sand",
+  "input_item": {
+    "item": "minecraft:sand"
+  },
   "fluid": {
-    "fluid": "evilcraft:blood",
-    "amount": 10
+    "FluidName": "evilcraft:blood",
+    "Amount": 10
   },
   "duration": 4,
-  "result": {
+  "output_item": {
     "item": "minecraft:red_sand"
   },
-  "conditions": [
+  "neoforge:conditions": [
     {
-      "type": "forge:mod_loaded",
+      "type": "neoforge:mod_loaded",
       "modid": "evilcraft"
     }
   ]

@@ -1,10 +1,10 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": "integrateddynamics:proto_chorus",
-  "result": {
-    "fluid": {
-      "fluid": "integrateddynamics:liquid_chorus",
-      "amount": 125
-    }
+  "input_item": {
+    "item": "integrateddynamics:proto_chorus"
+  },
+  "output_fluid": {
+    "FluidName": "integrateddynamics:liquid_chorus",
+    "Amount": 125
   }
 }

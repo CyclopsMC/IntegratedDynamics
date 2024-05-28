@@ -1,24 +1,26 @@
 {
   "type": "integrateddynamics:squeezer",
-  "item": {
+  "input_item": {
     "tag": "forge:ores/coal"
   },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "minecraft:coal",
-          "count": 4
-        }
-      },
-      {
+  "output_items": [
+    {
+      "item": {
         "item": "minecraft:coal",
-        "chance": 0.5
-      },
-      {
-        "item": "minecraft:coal",
-        "chance": 0.5
+        "count": 4
       }
-    ]
-  }
+    },
+    {
+      "item": {
+        "item": "minecraft:coal"
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "item": "minecraft:coal"
+      },
+      "chance": 0.5
+    }
+  ]
 }
