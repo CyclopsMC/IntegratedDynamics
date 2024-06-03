@@ -15,13 +15,9 @@
     "criteria_0": {
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
-        "items": [
-          {
-            "items": [
-              "integrateddynamics:part_display_panel"
-            ]
-          }
-        ]
+        "item": {
+          "item": "integrateddynamics:part_display_panel"
+        }
       }
     }
   }

@@ -15,13 +15,9 @@
     "criteria_0": {
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
-        "items": [
-          {
-            "items": [
-              "integrateddynamics:wrench"
-            ]
-          }
-        ]
+        "item": {
+          "item": "integrateddynamics:wrench"
+        }
       }
     }
   }

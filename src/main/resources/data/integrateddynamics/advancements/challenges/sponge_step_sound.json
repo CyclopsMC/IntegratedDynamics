@@ -16,15 +16,19 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_writer_aspect",
       "conditions": {
-        "parttype": "integrateddynamics:audio_writer",
+        "part_type": "integrateddynamics:audio_writer",
         "aspect": "integrateddynamics:write_string_audio_sound",
         "variable": {
-          "type": "integrateddynamics:operator",
+          "type": "operator",
           "operator": "integrateddynamics:block_stepsound",
           "input": {
             "0": {
-              "valuetype": "integrateddynamics:block",
-              "value": "{Name:\"minecraft:wet_sponge\"}"
+              "type": "value_type",
+              "value": {
+                "type": "serialized",
+                "value_type": "integrateddynamics:block",
+                "value": "{Name:\"minecraft:wet_sponge\"}"
+              }
             }
           }
         }

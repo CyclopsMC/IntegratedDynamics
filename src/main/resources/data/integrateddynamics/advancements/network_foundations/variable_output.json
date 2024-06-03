@@ -28,13 +28,9 @@
     "criteria_0": {
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
-        "items": [
-          {
-            "items": [
-              "integrateddynamics:variable_transformer_output"
-            ]
-          }
-        ]
+        "item": {
+          "item": "integrateddynamics:variable_transformer_output"
+        }
       }
     }
   }

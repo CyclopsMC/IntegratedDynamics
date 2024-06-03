@@ -16,7 +16,7 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_reader_aspect",
       "conditions": {
-        "parttype": "integrateddynamics:redstone_reader",
+        "part_type": "integrateddynamics:redstone_reader",
         "aspect": "integrateddynamics:read_integer_redstone_value"
       }
     }

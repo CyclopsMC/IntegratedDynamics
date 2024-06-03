@@ -18,8 +18,8 @@
       "conditions": {
         "block": "integrateddynamics:logic_programmer",
         "variable_facade": {
-          "type": "integrateddynamics:valuetype",
-          "valuetype": "integrateddynamics:integer"
+          "type": "value_type",
+          "value_type": "integrateddynamics:integer"
         }
       }
     }

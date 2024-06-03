@@ -16,18 +16,19 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "integrateddynamics:display_panel",
+        "part_type": "integrateddynamics:display_panel",
         "variable": {
-          "type": "integrateddynamics:operator",
+          "type": "operator",
           "operator": "integrateddynamics:operator_apply",
           "input": {
             "0": {
-              "type": "integrateddynamics:operator",
+              "type": "operator",
               "operator": "integrateddynamics:operator_apply",
-              "valuetype": "integrateddynamics:operator"
+              "value_type": "integrateddynamics:operator"
             },
             "1": {
-              "valuetype": "integrateddynamics:integer"
+              "type": "value_type",
+              "value_type": "integrateddynamics:integer"
             }
           }
         }

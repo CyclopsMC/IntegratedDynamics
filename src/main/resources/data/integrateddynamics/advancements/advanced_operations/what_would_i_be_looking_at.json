@@ -16,10 +16,13 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "integrateddynamics:display_panel",
+        "part_type": "integrateddynamics:display_panel",
         "variable": {
-          "type": "integrateddynamics:operator",
-          "operator": "integrateddynamics:entity_targetblock"
+          "type": "value_type",
+          "value": {
+            "type": "operator",
+            "operator": "integrateddynamics:entity_targetblock"
+          }
         }
       }
     }

@@ -185,17 +185,15 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
     public static class ValueEntityPredicate extends ValuePredicate<ValueEntity> {
 
-        private final Optional<String> entityTypeName;
         private final Optional<EntityType<? extends Entity>> entityType;
 
-        public ValueEntityPredicate(Optional<String> entityTypeName, Optional<EntityType<? extends Entity>> entityType) {
+        public ValueEntityPredicate(Optional<EntityType<? extends Entity>> entityType) {
             super(Optional.of(ValueTypes.OBJECT_ENTITY), Optional.empty(), Optional.empty());
-            this.entityTypeName = entityTypeName;
             this.entityType = entityType;
         }
 
-        public Optional<String> getEntityTypeName() {
-            return entityTypeName;
+        public Optional<EntityType<? extends Entity>> getEntityType() {
+            return entityType;
         }
 
         @Override

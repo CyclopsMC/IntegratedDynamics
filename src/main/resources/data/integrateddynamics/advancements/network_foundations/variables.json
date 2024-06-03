@@ -24,13 +24,9 @@
     "criteria_0": {
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
-        "items": [
-          {
-            "items": [
-              "integrateddynamics:variable"
-            ]
-          }
-        ]
+        "item": {
+          "item": "integrateddynamics:variable"
+        }
       }
     }
   }

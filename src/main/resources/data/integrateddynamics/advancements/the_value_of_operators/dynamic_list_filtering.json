@@ -16,12 +16,15 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "integrateddynamics:display_panel",
+        "part_type": "integrateddynamics:display_panel",
         "variable": {
-          "type": "integrateddynamics:operator",
+          "type": "operator",
           "operator": "integrateddynamics:operator_filter",
-          "valuetype": "integrateddynamics:list",
-          "value": "{proxyName:\"integrateddynamics:materialized\",serialized:{valueType:\"integrateddynamics:integer\",values:[10]}}"
+          "value": {
+            "type": "serialized",
+            "value_type": "integrateddynamics:list",
+            "value": "{proxyName:\"integrateddynamics:materialized\",serialized:{valueType:\"integrateddynamics:integer\",values:[10]}}"
+          }
         }
       }
     }

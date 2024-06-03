@@ -16,17 +16,21 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "integrateddynamics:display_panel",
+        "part_type": "integrateddynamics:display_panel",
         "variable": {
-          "type": "integrateddynamics:operator",
+          "type": "operator",
           "operator": "integrateddynamics:nbt_path_match_first",
           "input": {
             "0": {
-              "valuetype": "integrateddynamics:string",
-              "value": "{Primitive:\".Book.id\"}"
+              "type": "value_type",
+              "value": {
+                "type": "serialized",
+                "value_type": "integrateddynamics:string",
+                "value": "{Primitive:\".Book.id\"}"
+              }
             },
             "1": {
-              "type": "integrateddynamics:aspect",
+              "type": "aspect",
               "aspect": "integrateddynamics:read_nbt_block_tile"
             }
           }

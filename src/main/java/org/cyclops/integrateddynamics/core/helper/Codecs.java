@@ -34,6 +34,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeEntity;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -41,6 +42,8 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -86,68 +89,51 @@ public class Codecs {
                 return valueType;
             }, (valueType) -> valueType.getUniqueName().toString());
 
-    public static final Codec<ValuePredicate> VALUE = xorCommon(
-            xorCommon(
-                    xorCommon(
-                            xorCommon(
-                                    null,
-                                    RecordCodecBuilder.<ValueTypeOperator.ValueOperatorPredicate>create(
-                                            builder -> builder.group(
-                                                            VALUE_TYPE.fieldOf("type").forGetter(v -> v.getValueType().get()),
-                                                            ExtraCodecs.strictOptionalField(OPERATOR, "operator").forGetter(ValueTypeOperator.ValueOperatorPredicate::getOperator)
-                                                    )
-                                                    .apply(builder, (type, operator) -> {
-                                                        if ("operator".equals(type)) {
-                                                            throw new JsonSyntaxException("Value predicate is expected to have 'type': 'operator'");
-                                                        }
+    public static final Codec<EntityType<? extends Entity>> ENTITY_TYPE = Codec.STRING.xmap(
+            name -> {
+                try {
+                    return BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(name));
+                } catch (ResourceLocationException e) {
+                    throw new JsonSyntaxException("Invalid entity type name '" + name + "'");
+                }
+            }, (entityType) -> BuiltInRegistries.ENTITY_TYPE.getKey(entityType).toString());
 
-                                                        return new ValueTypeOperator.ValueOperatorPredicate(operator);
-                                                    })
-                                    )
-                            ),
-                            RecordCodecBuilder.<ValueObjectTypeItemStack.ValueItemStackPredicate>create(
-                                    builder -> builder.group(
-                                                    VALUE_TYPE.fieldOf("type").forGetter(v -> v.getValueType().get()),
-                                                    ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(ValueObjectTypeItemStack.ValueItemStackPredicate::getItemPredicate)
-                                            )
-                                            .apply(builder, (type, itemPredicate) -> {
-                                                if ("itemstack".equals(type)) {
-                                                    throw new JsonSyntaxException("Value predicate is expected to have 'type': 'itemstack'");
-                                                }
-
-                                                return new ValueObjectTypeItemStack.ValueItemStackPredicate(itemPredicate);
-                                            })
+    public static final Codec<ValuePredicate> VALUE = xorCommonList(Arrays.asList(
+            RecordCodecBuilder.<ValueTypeOperator.ValueOperatorPredicate>create(
+                    builder -> builder.group(
+                                    staticTypeField("operator"),
+                                    ExtraCodecs.strictOptionalField(OPERATOR, "operator").forGetter(ValueTypeOperator.ValueOperatorPredicate::getOperator)
                             )
-                    ),
-                    RecordCodecBuilder.<ValueObjectTypeEntity.ValueEntityPredicate>create(
-                            builder -> builder.group(
-                                            VALUE_TYPE.fieldOf("type").forGetter(v -> v.getValueType().get()),
-                                            ExtraCodecs.strictOptionalField(Codec.STRING, "entity").forGetter(ValueObjectTypeEntity.ValueEntityPredicate::getEntityTypeName)
-                                    )
-                                    .apply(builder, (type, entityTypeName) -> {
-                                        if ("entity".equals(type)) {
-                                            throw new JsonSyntaxException("Value predicate is expected to have 'type': 'entity'");
-                                        }
-
-                                        Optional<EntityType<? extends Entity>> entityType = Optional.empty();
-                                        if (entityTypeName.isPresent()) {
-                                            try {
-                                                entityType = Optional.of(BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(entityTypeName.get())));
-                                            } catch (ResourceLocationException e) {
-                                                throw new JsonSyntaxException("Invalid entity type name '" + entityTypeName + "'");
-                                            }
-                                        }
-
-                                        return new ValueObjectTypeEntity.ValueEntityPredicate(entityTypeName, entityType);
-                                    })
-                    )
+                            .apply(builder, (type, operator) -> new ValueTypeOperator.ValueOperatorPredicate(operator))
+            ),
+            RecordCodecBuilder.<ValueObjectTypeItemStack.ValueItemStackPredicate>create(
+                    builder -> builder.group(
+                                    staticTypeField("itemstack"),
+                                    ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(ValueObjectTypeItemStack.ValueItemStackPredicate::getItemPredicate)
+                            )
+                            .apply(builder, (type, itemPredicate) -> new ValueObjectTypeItemStack.ValueItemStackPredicate(itemPredicate))
+            ),
+            RecordCodecBuilder.<ValueObjectTypeEntity.ValueEntityPredicate>create(
+                    builder -> builder.group(
+                                    staticTypeField("entity"),
+                                    ExtraCodecs.strictOptionalField(ENTITY_TYPE, "entity").forGetter(ValueObjectTypeEntity.ValueEntityPredicate::getEntityType)
+                            )
+                            .apply(builder, (type, entityType) -> new ValueObjectTypeEntity.ValueEntityPredicate(entityType))
+            ),
+            RecordCodecBuilder.<ValueTypeList.ValueListPredicate>create(
+                    builder -> builder.group(
+                                    staticTypeField("list"),
+                                    ExtraCodecs.strictOptionalField(Codec.BOOL, "infinite_list").forGetter(ValueTypeList.ValueListPredicate::getInfinite)
+                            )
+                            .apply(builder, (type, infinite) -> new ValueTypeList.ValueListPredicate(infinite))
             ),
             RecordCodecBuilder.create(
                     builder -> builder.group(
-                                    VALUE_TYPE.fieldOf("type").forGetter(v -> (IValueType) v.getValueType().get()),
+                                    staticTypeField("serialized"),
+                                    VALUE_TYPE.fieldOf("value_type").forGetter(v -> (IValueType) v.getValueType().get()),
                                     ExtraCodecs.FLAT_JSON.fieldOf("value").forGetter(v -> (JsonElement) v.getValueJson().get())
                             )
-                            .apply(builder, (valueType, valueJson) -> {
+                            .apply(builder, (raw, valueType, valueJson) -> {
                                 Optional<IValue> value = Optional.empty();
                                 try {
                                     Tag tag = TagParser.parseTag(valueJson.toString());
@@ -161,79 +147,79 @@ public class Codecs {
                                 return new ValuePredicate(Optional.of(valueType), value, Optional.of(valueJson));
                             })
             )
-    );
+    ));
 
-    public static final Codec<VariablePredicate> VARIABLE = xorCommon(
-            xorCommon(
-                    RecordCodecBuilder.<OperatorRegistry.OperatorVariablePredicate>create(
-                            builder -> builder.group(
-                                            Codec.STRING.fieldOf("type").forGetter(p -> "operator"),
-                                            ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(OperatorRegistry.OperatorVariablePredicate::getValueType),
-                                            ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(OperatorRegistry.OperatorVariablePredicate::getValuePredicate),
-                                            ExtraCodecs.strictOptionalField(OPERATOR, "operator").forGetter(OperatorRegistry.OperatorVariablePredicate::getOperator),
-                                            ExtraCodecs.FLAT_JSON.fieldOf("input").forGetter(OperatorRegistry.OperatorVariablePredicate::getInputJson)
-                                    )
-                                    .apply(builder, (type, valueType, value, operator, input) -> {
-                                        if ("operator".equals(type)) {
-                                            throw new JsonSyntaxException("Variable predicate is expected to have 'type': 'operator'");
-                                        }
-                                        return new OperatorRegistry.OperatorVariablePredicate(valueType, value, operator, input);
-                                    })
-                    ),
-                    RecordCodecBuilder.<AspectRegistry.AspectVariablePredicate>create(
-                            builder -> builder.group(
-                                            Codec.STRING.fieldOf("type").forGetter(p -> "aspect"),
-                                            ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(AspectRegistry.AspectVariablePredicate::getValueType),
-                                            ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(AspectRegistry.AspectVariablePredicate::getValuePredicate),
-                                            ExtraCodecs.strictOptionalField(ASPECT, "aspect").forGetter(AspectRegistry.AspectVariablePredicate::getAspect)
-                                    )
-                                    .apply(builder, (type, valueType, value, aspect) -> {
-                                        if ("aspect".equals(type)) {
-                                            throw new JsonSyntaxException("Variable predicate is expected to have 'type': 'aspect'");
-                                        }
-                                        return new AspectRegistry.AspectVariablePredicate(valueType, value, aspect);
-                                    })
-                    )
-            ),
-            RecordCodecBuilder.create(
+    public static Codec<VariablePredicate> getVariableCodec() { // This is a function so we can achieve recursion using lazyInitializedCodec
+        return xorCommonList(Arrays.asList(
+                RecordCodecBuilder.<OperatorRegistry.OperatorVariablePredicate>create(
+                        builder -> builder.group(
+                                        staticTypeField("operator"),
+                                        ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(OperatorRegistry.OperatorVariablePredicate::getValueType),
+                                        ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(OperatorRegistry.OperatorVariablePredicate::getValuePredicate),
+                                        ExtraCodecs.strictOptionalField(OPERATOR, "operator").forGetter(OperatorRegistry.OperatorVariablePredicate::getOperator),
+                                        ExtraCodecs.strictOptionalField(ExtraCodecs.strictUnboundedMap(Codec.STRING.xmap(
+                                                Integer::parseInt,
+                                                integer -> Integer.toString(integer)
+                                        ), ExtraCodecs.lazyInitializedCodec(Codecs::getVariableCodec)), "input").forGetter(OperatorRegistry.OperatorVariablePredicate::getInputPredicates)
+                                )
+                                .apply(builder, (type, valueType, value, operator, input) -> new OperatorRegistry.OperatorVariablePredicate(valueType, value, operator, input))
+                ),
+                RecordCodecBuilder.<AspectRegistry.AspectVariablePredicate>create(
+                        builder -> builder.group(
+                                        staticTypeField("aspect"),
+                                        ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(AspectRegistry.AspectVariablePredicate::getValueType),
+                                        ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(AspectRegistry.AspectVariablePredicate::getValuePredicate),
+                                        ExtraCodecs.strictOptionalField(ASPECT, "aspect").forGetter(AspectRegistry.AspectVariablePredicate::getAspect)
+                                )
+                                .apply(builder, (type, valueType, value, aspect) -> new AspectRegistry.AspectVariablePredicate(valueType, value, aspect))
+                ),
+                RecordCodecBuilder.create(
+                        builder -> builder.group(
+                                        staticTypeField("value_type"),
+                                        ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(VariablePredicate::getValueType),
+                                        ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(VariablePredicate::getValuePredicate)
+                                )
+                                .apply(builder, (type, valueType, valuePredicate) -> new VariablePredicate<>(IVariable.class, valueType, valuePredicate))
+                )
+        ));
+    }
+    public static final Codec<VariablePredicate> VARIABLE = getVariableCodec();
+
+    public static final Codec<VariableFacadePredicate> VARIABLE_FACADE = xorCommonList(Arrays.asList(
+            RecordCodecBuilder.<AspectRegistry.AspectVariableFacadePredicate>create(
                     builder -> builder.group(
-                                    ExtraCodecs.strictOptionalField(VALUE_TYPE, "type").forGetter(VariablePredicate::getValueType),
-                                    ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(VariablePredicate::getValuePredicate)
+                                    staticTypeField("aspect"),
+                                    ExtraCodecs.strictOptionalField(ASPECT, "aspect").forGetter(AspectRegistry.AspectVariableFacadePredicate::getAspect)
                             )
-                            .apply(builder, (valueType, valuePredicate) -> new VariablePredicate<>(IVariable.class, valueType, valuePredicate))
-            )
-    );
-
-    public static final Codec<VariableFacadePredicate> VARIABLE_FACADE = xorCommon(
-            xorCommon(
-                    RecordCodecBuilder.<AspectRegistry.AspectVariableFacadePredicate>create(
-                            builder -> builder.group(
-                                            Codec.STRING.fieldOf("type").forGetter(p -> "aspect"),
-                                            ExtraCodecs.strictOptionalField(ASPECT, "aspect").forGetter(AspectRegistry.AspectVariableFacadePredicate::getAspect)
-                                    )
-                                    .apply(builder, (type, aspect) -> {
-                                        if ("aspect".equals(type)) {
-                                            throw new JsonSyntaxException("Variable facade predicate is expected to have 'type': 'aspect'");
-                                        }
-                                        return new AspectRegistry.AspectVariableFacadePredicate(aspect);
-                                    })
-                    ),
-                    RecordCodecBuilder.<ValueTypeRegistry.ValueTypeVariableFacadePredicate>create(
-                            builder -> builder.group(
-                                            Codec.STRING.fieldOf("type").forGetter(p -> "value_type"),
-                                            ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValueType),
-                                            ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValuePredicate)
-                                    )
-                                    .apply(builder, (type, valueType, value) -> {
-                                        if ("value_type".equals(type)) {
-                                            throw new JsonSyntaxException("Variable facade predicate is expected to have 'type': 'value_type'");
-                                        }
-                                        return new ValueTypeRegistry.ValueTypeVariableFacadePredicate(valueType, value);
-                                    })
-                    )
+                            .apply(builder, (type, aspect) -> new AspectRegistry.AspectVariableFacadePredicate(aspect))
+            ),
+            RecordCodecBuilder.<ValueTypeRegistry.ValueTypeVariableFacadePredicate>create(
+                    builder -> builder.group(
+                                    staticTypeField("value_type"),
+                                    ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValueType),
+                                    ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValuePredicate)
+                            )
+                            .apply(builder, (type, valueType, value) -> new ValueTypeRegistry.ValueTypeVariableFacadePredicate(valueType, value))
             ),
             Codec.unit(new VariableFacadePredicate<>(IVariableFacade.class))
-    );
+    ));
+
+    public static <T> RecordCodecBuilder<T, String> staticTypeField(String value) {
+        return ExtraCodecs.validate(
+                Codec.STRING,
+                type -> !value.equals(type) ?
+                        DataResult.error(() -> "Variable facade predicate is expected to have 'type': '" + value + "'") :
+                        DataResult.success(type)
+        ).fieldOf("type").forGetter(p -> value);
+    }
+
+    public static <X> Codec<X> xorCommonList(List<Codec<? extends X>> codecs) {
+        Codec<X> codec = (Codec<X>) codecs.get(0);
+        for (Codec<? extends X> codecEntry : codecs.subList(1, codecs.size())) {
+            codec = xorCommon(codec, codecEntry);
+        }
+        return codec;
+    }
 
     public static <X, F extends X, S extends X> Codec<X> xorCommon(Codec<F> p_144640_, Codec<S> p_144641_) {
         return new XorCodecCommon<>(p_144640_, p_144641_);

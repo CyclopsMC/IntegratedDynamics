@@ -16,19 +16,22 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "integrateddynamics:display_panel",
+        "part_type": "integrateddynamics:display_panel",
         "variable": {
-          "type": "integrateddynamics:operator",
+          "type": "operator",
           "operator": "integrateddynamics:operator_apply",
           "input": {
             "0": {
-              "type": "integrateddynamics:aspect",
+              "type": "aspect",
               "aspect": "integrateddynamics:read_operator_recipehandler_recipebyoutput"
             },
             "1": {
-              "type": "integrateddynamics:valuetype",
-              "valuetype": "integrateddynamics:ingredients",
-              "value": "{\"minecraft:itemstack\":[{id:\"minecraft:chest\",Count:1b,Damage:0s}]}"
+              "type": "value_type",
+              "value": {
+                "type": "serialized",
+                "value_type": "integrateddynamics:ingredients",
+                "value": "{\"minecraft:itemstack\":[{id:\"minecraft:chest\",Count:1}]}"
+              }
             }
           }
         }

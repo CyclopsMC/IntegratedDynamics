@@ -16,7 +16,7 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_reader_aspect",
       "conditions": {
-        "parttype": "integrateddynamics:machine_reader",
+        "part_type": "integrateddynamics:machine_reader",
         "aspect": "integrateddynamics:read_list_recipehandler_recipes"
       }
     }

@@ -16,22 +16,27 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "integrateddynamics:display_panel",
+        "part_type": "integrateddynamics:display_panel",
         "variable": {
-          "type": "integrateddynamics:operator",
+          "type": "operator",
           "operator": "integrateddynamics:itemstack_canharvest",
           "input": {
             "0": {
-              "valuetype": "integrateddynamics:itemstack",
+              "type": "value_type",
               "value": {
-                "items": [
-                  "minecraft:stone_pickaxe"
-                ]
+                "type": "itemstack",
+                "item": {
+                  "item": "minecraft:stone_pickaxe"
+                }
               }
             },
             "1": {
-              "valuetype": "integrateddynamics:block",
-              "value": "{Name:\"minecraft:obsidian\"}"
+              "type": "value_type",
+              "value": {
+                "type": "serialized",
+                "value_type": "integrateddynamics:block",
+                "value": "{Name:\"minecraft:obsidian\"}"
+              }
             }
           }
         }

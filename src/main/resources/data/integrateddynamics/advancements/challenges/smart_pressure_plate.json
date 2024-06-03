@@ -17,17 +17,17 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_writer_aspect",
       "conditions": {
-        "parttype": "integrateddynamics:redstone_writer",
+        "part_type": "integrateddynamics:redstone_writer",
         "variable": {
-          "type": "integrateddynamics:operator",
+          "type": "operator",
           "operator": "integrateddynamics:relational_equals",
           "input": {
             "0": {
-              "type": "integrateddynamics:operator",
+              "type": "operator",
               "operator": "integrateddynamics:string_name",
               "input": {
                 "0": {
-                  "type": "integrateddynamics:aspect",
+                  "type": "aspect",
                   "aspect": "integrateddynamics:read_entity_entity"
                 }
               }

@@ -5,10 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +26,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
-import org.cyclops.integrateddynamics.core.helper.Codecs;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
@@ -205,36 +200,13 @@ public class OperatorRegistry implements IOperatorRegistry {
     public static class OperatorVariablePredicate extends VariablePredicate<LazyExpression> {
 
         private final Optional<IOperator> operator;
-        private final Int2ObjectMap<VariablePredicate> inputPredicates;
+        private final Optional<Int2ObjectMap<VariablePredicate>> inputPredicates;
 
         public OperatorVariablePredicate(Optional<IValueType> valueType, Optional<ValuePredicate> valuePredicate,
-                                         Optional<IOperator> operator, Int2ObjectMap<VariablePredicate> inputPredicates) {
+                                         Optional<IOperator> operator, Optional<Map<Integer, VariablePredicate>> inputPredicates) {
             super(LazyExpression.class, valueType, valuePredicate);
             this.operator = operator;
-            this.inputPredicates = inputPredicates;
-        }
-
-        public OperatorVariablePredicate(Optional<IValueType> valueType, Optional<ValuePredicate> valuePredicate,
-                                         Optional<IOperator> operator, JsonElement inputPredicates) {
-            this(valueType, valuePredicate, operator, parseInputPredicates(inputPredicates));
-        }
-
-        public static Int2ObjectMap<VariablePredicate> parseInputPredicates(JsonElement inputElement) {
-            Int2ObjectMap<VariablePredicate> inputPredicates = new Int2ObjectOpenHashMap<>();
-            if (inputElement != null && !inputElement.isJsonNull()) {
-                for (Map.Entry<String, JsonElement> inputEntry : inputElement.getAsJsonObject().entrySet()) {
-                    try {
-                        int slot = Integer.parseInt(inputEntry.getKey());
-                        VariablePredicate variablePredicate = Codecs.VARIABLE
-                                .parse(JsonOps.INSTANCE, inputEntry.getValue())
-                                .getOrThrow(false, JsonSyntaxException::new);
-                        inputPredicates.put(slot, variablePredicate);
-                    } catch (NumberFormatException e) {
-                        throw new JsonSyntaxException("All inputs must refer to an input id as key, but got '" + inputEntry.getKey() + '"');
-                    }
-                }
-            }
-            return inputPredicates;
+            this.inputPredicates = inputPredicates.map(Int2ObjectOpenHashMap::new);
         }
 
         public Optional<IOperator> getOperator() {
@@ -247,29 +219,21 @@ public class OperatorRegistry implements IOperatorRegistry {
                     || !(operator.isEmpty() || variable.getOperator() == operator.get())) {
                 return false;
             }
-            for (int i = 0; i < variable.getInput().length; i++) {
-                IVariable inputVariable = variable.getInput()[i];
-                VariablePredicate variablePredicate = inputPredicates.get(i);
-                if (variablePredicate != null && !variablePredicate.test(inputVariable)) {
-                    return false;
+            if (inputPredicates.isPresent()) {
+                Int2ObjectMap<VariablePredicate> inputPredicatesMap = inputPredicates.get();
+                for (int i = 0; i < variable.getInput().length; i++) {
+                    IVariable inputVariable = variable.getInput()[i];
+                    VariablePredicate variablePredicate = inputPredicatesMap.get(i);
+                    if (variablePredicate != null && !variablePredicate.test(inputVariable)) {
+                        return false;
+                    }
                 }
             }
             return true;
         }
 
-        public Int2ObjectMap<VariablePredicate> getInputPredicates() {
-            return inputPredicates;
-        }
-
-        public JsonElement getInputJson() {
-            JsonObject element = new JsonObject();
-            int i = 0;
-            for (Int2ObjectMap.Entry<VariablePredicate> entry : getInputPredicates().int2ObjectEntrySet()) {
-                element.add(String.valueOf(i++), Codecs.VARIABLE
-                        .encodeStart(JsonOps.INSTANCE, entry.getValue())
-                        .getOrThrow(false, JsonSyntaxException::new));
-            }
-            return element;
+        public Optional<Map<Integer, VariablePredicate>> getInputPredicates() {
+            return inputPredicates.map(map -> map);
         }
     }
 }

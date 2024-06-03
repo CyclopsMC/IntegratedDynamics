@@ -15,13 +15,9 @@
     "criteria_0": {
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
-        "items": [
-          {
-            "items": [
-              "integrateddynamics:drying_basin"
-            ]
-          }
-        ]
+        "item": {
+          "item": "integrateddynamics:drying_basin"
+        }
       }
     }
   }

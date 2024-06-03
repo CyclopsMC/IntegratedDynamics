@@ -17,10 +17,11 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_variable_driven",
       "conditions": {
-        "parttype": "integrateddynamics:display_panel",
+        "part_type": "integrateddynamics:display_panel",
         "variable": {
-          "valuetype": "integrateddynamics:list",
+          "type": "value_type",
           "value": {
+            "type": "list",
             "infinite_list": true
           }
         }
