@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.block;
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -61,8 +62,8 @@ public class BlockCreativeEnergyBatteryConfig extends BlockConfig {
     }
 
     protected void fillCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTab() == IntegratedDynamics._instance.getDefaultCreativeTab()) {
-            for (ItemStack itemStack : defaultCreativeTabEntries()) {
+        if (event.getTab() == IntegratedDynamics._instance.getDefaultCreativeTab() || event.getTabKey().equals(CreativeModeTabs.SEARCH)) {
+            for (ItemStack itemStack : dynamicCreativeTabEntries()) {
                 event.accept(itemStack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             }
         }
