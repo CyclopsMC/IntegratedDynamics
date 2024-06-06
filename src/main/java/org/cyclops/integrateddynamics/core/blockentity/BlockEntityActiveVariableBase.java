@@ -101,7 +101,7 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
     }
 
     @Nullable
-    public IVariable<?> getVariable(IPartNetwork network) { // TODO: in next major version, add network as first param to avoid calling getNetwork() in the impl.
+    public IVariable<?> getVariable(IPartNetwork network) {
         return evaluator.getVariable(getNetwork(), network);
     }
 

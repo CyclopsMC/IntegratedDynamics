@@ -44,22 +44,11 @@ public interface IVariableFacade {
     /**
      * Get the variable.
      * @param <V> The value type.
-     * @param network The object used to look for the variable.
-     * @return The variable.
-     */
-    @Deprecated // Use method below // TODO: remove in next major version
-    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network);
-
-    /**
-     * Get the variable.
-     * @param <V> The value type.
      * @param network The network used to look for the variable.
      * @param partNetwork The part network used to look for the variable.
      * @return The variable.
      */
-    public default <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
-        return getVariable(partNetwork);
-    }
+    public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork);
 
     /**
      * @return If this is a valid reference.
@@ -68,23 +57,12 @@ public interface IVariableFacade {
 
     /**
      * Check if this facade is valid, otherwise notify the validator of any errors.
-     * @param network The object used to look for the variable.
-     * @param validator The object to notify errors to.
-     * @param containingValueType The value type in which this variable facade is being used.
-     */
-    @Deprecated // Use method below // TODO: remove in next major version
-    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType);
-
-    /**
-     * Check if this facade is valid, otherwise notify the validator of any errors.
      * @param network The network used to look for the variable.
      * @param partNetwork The part network used to look for the variable.
      * @param validator The object to notify errors to.
      * @param containingValueType The value type in which this variable facade is being used.
      */
-    public default void validate(INetwork network, IPartNetwork partNetwork, IValidator validator, IValueType containingValueType) {
-        validate(partNetwork, validator, containingValueType);
-    }
+    public void validate(INetwork network, IPartNetwork partNetwork, IValidator validator, IValueType containingValueType);
 
     /**
      * @return The output type of this variable facade.

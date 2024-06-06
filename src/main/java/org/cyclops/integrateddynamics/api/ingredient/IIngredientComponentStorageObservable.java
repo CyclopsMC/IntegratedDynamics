@@ -109,12 +109,6 @@ public interface IIngredientComponentStorageObservable<T, M> {
         private final IIngredientCollection<T, M> instances;
         private final boolean initialChange;
 
-        @Deprecated // TODO: remove in next major MC version
-        public StorageChangeEvent(int channel, PrioritizedPartPos pos,
-                                  Change changeType, boolean completeChange, IIngredientCollection<T, M> instances) {
-            this(channel, pos, changeType, completeChange, instances, false);
-        }
-
         public StorageChangeEvent(int channel, PrioritizedPartPos pos,
                                   Change changeType, boolean completeChange, IIngredientCollection<T, M> instances,
                                   boolean initialChange) {

@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
@@ -181,7 +182,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
+        public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
             return VARIABLE_TRUE;
         }
 
@@ -191,7 +192,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
+        public void validate(INetwork network, IPartNetwork partNetwork, IValidator validator, IValueType containingValueType) {
             if (!ValueHelpers.correspondsTo(containingValueType, ValueTypes.BOOLEAN)) {
                 validator.addError(Component.translatable(unlocalizedError));
             }

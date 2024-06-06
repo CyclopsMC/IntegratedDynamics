@@ -91,26 +91,4 @@ public class VariableModel implements UnbakedModel, IUnbakedGeometry<VariableMod
 
         return bakedModel;
     }
-
-    /* TODO: rm
-    @Override
-    public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-        base.parent = ModelHelpers.MODEL_GENERATED; // To enable texture resolving
-
-        Set<Material> textures = Sets.newHashSet(base.getMaterial("particle"));
-
-        // Loop over all textures for the default layers and add them to the collection if available.
-        if(base.getRootModel() == ModelBakery.GENERATION_MARKER) {
-            ItemModelGenerator.LAYERS.forEach((p_228814_2_) -> {
-                textures.add(base.getMaterial(p_228814_2_));
-            });
-        }
-
-        // Loop over all textures in this model and add them to the collection.
-        for(Either<Material, String> texture : base.textureMap.values()) {
-            texture.ifLeft(textures::add);
-        }
-
-        return textures;
-    }*/
 }

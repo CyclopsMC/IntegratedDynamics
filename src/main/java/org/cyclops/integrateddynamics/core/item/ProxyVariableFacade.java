@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityProxy;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
@@ -63,14 +64,14 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
+    public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
         if(isValid()) {
             // Check if we are entering an infinite recursion (e.g. proxies refering to each other)
             if(this.isGettingVariable) {
                 throw new VariableRecursionException("Detected infinite recursion for variable references.");
             }
             this.isGettingVariable = true;
-            IVariable<V> variable = getTargetVariable(network).orElse(null);
+            IVariable<V> variable = getTargetVariable(partNetwork).orElse(null);
             this.isGettingVariable = false;
             return variable;
         }
@@ -100,7 +101,7 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     }
 
     @Override
-    public void validate(IPartNetwork partNetwork, IValidator validator, IValueType containingValueType) {
+    public void validate(INetwork network, IPartNetwork partNetwork, IValidator validator, IValueType containingValueType) {
         Optional<IVariable> targetVariable = getTargetVariable(partNetwork);
         if (!isValid()) {
             validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_INVALIDITEM));

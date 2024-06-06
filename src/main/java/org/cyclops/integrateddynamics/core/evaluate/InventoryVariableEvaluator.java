@@ -94,19 +94,6 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
     @Nullable
     public IVariable<V> getVariable(INetwork network) {
         return getVariable(network, NetworkHelpers.getPartNetworkChecked(network));
-
-    }
-
-    @Nullable
-    @Deprecated // Use method below // TODO: remove in next major version
-    public IVariable<V> getVariable(IPartNetwork partNetwork) {
-        if(getVariableFacade() == null || !getErrors().isEmpty()) return null;
-        try {
-            return getVariableFacade().getVariable(partNetwork);
-        } catch (IllegalArgumentException e) {
-            addError(Component.translatable(e.getMessage()));
-            return null;
-        }
     }
 
     @Nullable

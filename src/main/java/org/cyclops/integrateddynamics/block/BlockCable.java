@@ -426,18 +426,6 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     /* --------------- Start IDynamicRedstone --------------- */
 
-    @Nullable
-    protected static Level getAsLevelRM(BlockGetter level, BlockPos pos) { // TODO: if this works, move to CC.
-        if (level instanceof Level levelCast) {
-            return levelCast;
-        }
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity != null) {
-            return blockEntity.getLevel();
-        }
-        return null;
-    }
-
     @SuppressWarnings("deprecation")
     @Override
     public boolean isSignalSource(BlockState blockState) {

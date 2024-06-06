@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
+import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
@@ -47,9 +48,9 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
     }
 
     @Override
-    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
-        if(isValid() && getAspect() instanceof IAspectRead && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect())) {
-            return network.getPartVariable(getPartId(), (IAspectRead) getAspect());
+    public <V extends IValue> IVariable<V> getVariable(INetwork network, IPartNetwork partNetwork) {
+        if(isValid() && getAspect() instanceof IAspectRead && partNetwork.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect())) {
+            return partNetwork.getPartVariable(getPartId(), (IAspectRead) getAspect());
         }
         return null;
     }
@@ -60,11 +61,11 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
     }
 
     @Override
-    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
+    public void validate(INetwork network, IPartNetwork partNetwork, IValidator validator, IValueType containingValueType) {
         if (!isValid()) {
             validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_INVALIDITEM));
         } else if (!(getAspect() instanceof IAspectRead
-                && network.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
+                && partNetwork.hasPartVariable(getPartId(), (IAspectRead<IValue, ?>) getAspect()))) {
             validator.addError(Component.translatable(L10NValues.VARIABLE_ERROR_PARTNOTINNETWORK,
                     Integer.toString(getPartId())));
         } else if (!ValueHelpers.correspondsTo(containingValueType, getAspect().getValueType())) {
