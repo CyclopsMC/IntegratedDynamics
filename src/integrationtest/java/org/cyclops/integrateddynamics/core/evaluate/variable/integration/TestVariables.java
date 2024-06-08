@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonParseException;
+import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
@@ -139,8 +140,18 @@ public class TestVariables {
 
         input.put("minecraft:itemstack", itemStacksIn);
 
+        CompoundTag inputReusable = new CompoundTag();
+        List<Byte> reusableBytes = Lists.newArrayList();
+        reusableBytes.add((byte) 0);
+        reusableBytes.add((byte) 0);
+        reusableBytes.add((byte) 0);
+        reusableBytes.add((byte) 0);
+        ByteArrayTag itemStacksReusable = new ByteArrayTag(reusableBytes);
+        inputReusable.put("minecraft:itemstack", itemStacksReusable);
+
         tag.put("output", output);
         tag.put("input", input);
+        tag.put("inputReusable", inputReusable);
 
         TestHelpers.assertEqual(r0.getType().serialize(r0.getValue()), tag, "Serialization is correct");
         TestHelpers.assertEqual(r0.getType().deserialize(ValueDeseralizationContext.ofClient(), tag), r0.getValue(), "Deserialization is correct");

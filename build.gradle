@@ -143,6 +143,7 @@ runs {
         systemProperty 'forge.logging.console.level', 'debug'
         systemProperty 'forge.logging.console.level', 'debug'
         modSource project.sourceSets.main
+        modSource project.sourceSets.integrationtest
 
         dependencies {
             runtime project.configurations.modLib
