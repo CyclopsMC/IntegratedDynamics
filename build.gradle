@@ -28,7 +28,10 @@ logger.lifecycle "BUILDING VERSION: " + build_number
 // Set mod details
 version = project.mod_version
 group = "org.cyclops.integrateddynamics"
-archivesBaseName = "IntegratedDynamics"
+archivesBaseName = "IntegratedDynamics-${project.minecraft_version}-neoforge"
+base {
+    archivesName = archivesBaseName
+}
 
 // Set Java details
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
