@@ -19,6 +19,7 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -45,6 +46,7 @@ import org.cyclops.integrateddynamics.client.model.CableRenderState;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.core.part.event.RegisterPartCapabilitiesEvent;
 
 import java.util.Map;
 import java.util.Objects;
@@ -134,6 +136,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         );
         registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.ValueInterface.BLOCK, Capabilities.ValueInterface.PART);
         registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.VariableContainer.BLOCK, Capabilities.VariableContainer.PART);
+        IntegratedDynamics._instance.getModEventBus().post(new RegisterPartCapabilitiesEvent(event, blockEntityType));
 
         for (Direction facing : Direction.values()) {
             event.registerBlockEntity(
