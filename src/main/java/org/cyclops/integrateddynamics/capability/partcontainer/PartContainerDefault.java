@@ -188,7 +188,7 @@ public abstract class PartContainerDefault implements IPartContainer {
         if (hasPart(target.getCenter().getSide())) {
             IPartState partState = getPartState(target.getCenter().getSide());
             if (partState != null) {
-                partState.getCapability(
+                return partState.getCapability(
                         getPart(target.getCenter().getSide()),
                         partCapability,
                         network,
