@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModLoader;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -57,6 +58,7 @@ public class Network implements INetwork {
     private TreeSet<INetworkElement> invalidatedElements = Sets.newTreeSet();
     private Map<INetworkElement, Long> lastSecondDurations = Maps.newHashMap();
 
+    private Map<NetworkCapability<?>, List<ICapabilityProvider<INetwork, Void, ?>>> capabilityProviders;
     private IFullNetworkListener[] fullNetworkListeners;
 
     private CompoundTag toRead = null;
@@ -116,6 +118,7 @@ public class Network implements INetwork {
         ModLoader.get().postEventWrapContainerInModOrder(event);
         List<IFullNetworkListener> listeners = event.getFullNetworkListeners();
         this.fullNetworkListeners = listeners.toArray(new IFullNetworkListener[listeners.size()]);
+        this.capabilityProviders = event.getProviders();
     }
 
     protected IFullNetworkListener[] gatherFullNetworkListeners() {
@@ -531,7 +534,7 @@ public class Network implements INetwork {
 
     @Override
     public <T> Optional<T> getCapability(NetworkCapability<T> capability) {
-        return Optional.ofNullable(capability.getCapability(this));
+        return Optional.ofNullable(capability.getCapability(this.capabilityProviders, this));
     }
 
     @Override

@@ -4,11 +4,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.CapabilityRegistry;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author rubensworks
@@ -32,15 +32,16 @@ public class NetworkCapability<T> extends BaseCapability<T, Void> {
         super(name, typeClass, void.class);
     }
 
-    final List<ICapabilityProvider<INetwork, Void, T>> providers = Lists.newArrayList();
-
     @ApiStatus.Internal
     @Nullable
-    public T getCapability(INetwork network) {
-        for (var provider : providers) {
-            var ret = provider.getCapability(network, null);
-            if (ret != null)
-                return ret;
+    public T getCapability(Map<NetworkCapability<?>, List<ICapabilityProvider<INetwork, Void, ?>>> providers, INetwork network) {
+        List<ICapabilityProvider<INetwork, Void, ?>> list = providers.get(this);
+        if (list != null) {
+            for (var provider : (List<ICapabilityProvider<INetwork, Void, T>>) (List) list) {
+                var ret = provider.getCapability(network, null);
+                if (ret != null)
+                    return ret;
+            }
         }
         return null;
     }
