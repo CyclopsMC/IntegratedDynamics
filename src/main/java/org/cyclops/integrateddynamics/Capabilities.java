@@ -72,11 +72,11 @@ public class Capabilities {
     }
 
     public static final class IngredientComponentValueHandler {
-        public static final IngredientComponentCapability<IIngredientComponentValueHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(new ResourceLocation(Reference.MOD_ID, "positioned_addons_network_ingredients_handler"), IIngredientComponentValueHandler.class);
+        public static final IngredientComponentCapability<IIngredientComponentValueHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(new ResourceLocation(Reference.MOD_ID, "ingredient_component_value_handler"), IIngredientComponentValueHandler.class);
     }
 
     public static final class PositionedAddonsNetworkIngredientsHandler {
-        public static final IngredientComponentCapability<IPositionedAddonsNetworkIngredientsHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(new ResourceLocation(Reference.MOD_ID, "ingredient_component_value_handler"), IPositionedAddonsNetworkIngredientsHandler.class);
+        public static final IngredientComponentCapability<IPositionedAddonsNetworkIngredientsHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(new ResourceLocation(Reference.MOD_ID, "positioned_addons_network_ingredients_handler"), IPositionedAddonsNetworkIngredientsHandler.class);
     }
 
     public static final class ValueInterface {
