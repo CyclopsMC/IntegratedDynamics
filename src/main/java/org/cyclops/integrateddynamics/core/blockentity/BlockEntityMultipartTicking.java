@@ -9,6 +9,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -19,7 +20,6 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
@@ -136,7 +136,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         );
         registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.ValueInterface.BLOCK, Capabilities.ValueInterface.PART);
         registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.VariableContainer.BLOCK, Capabilities.VariableContainer.PART);
-        IntegratedDynamics._instance.getModEventBus().post(new RegisterPartCapabilitiesEvent(event, blockEntityType));
+        ModLoader.get().postEventWrapContainerInModOrder(new RegisterPartCapabilitiesEvent(event, blockEntityType));
 
         for (Direction facing : Direction.values()) {
             event.registerBlockEntity(
