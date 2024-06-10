@@ -26,7 +26,7 @@ public class PrioritizedPartPos implements Comparable<PrioritizedPartPos> {
             if (compPos == 0) {
                 Direction thisSide = this.getPartPos().getSide();
                 Direction otherSide = o.getPartPos().getSide();
-                return thisSide == null ? -1 : (otherSide == null ? 1 : thisSide.compareTo(otherSide));
+                return thisSide == null ? (otherSide == null ? 0 : -1) : (otherSide == null ? 1 : thisSide.compareTo(otherSide));
             }
             return compPos;
         }
