@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
@@ -27,6 +28,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
@@ -38,6 +40,8 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.VariableFacadePredicateTyped;
+import org.cyclops.integrateddynamics.core.evaluate.variable.VariablePredicateTyped;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -180,6 +184,19 @@ public class Codecs {
                                         ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(VariablePredicate::getValuePredicate)
                                 )
                                 .apply(builder, (type, valueType, valuePredicate) -> new VariablePredicate<>(IVariable.class, valueType, valuePredicate))
+                ),
+                RecordCodecBuilder.<VariablePredicateTyped>create(
+                        builder -> builder.group(
+                                        ExtraCodecs.validate(
+                                                Codec.STRING,
+                                                type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(new ResourceLocation(type)) == null ?
+                                                        DataResult.error(() -> "Variable facade predicate is expected to have as 'type' one of: " + String.join(", ", IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandlerNames())) :
+                                                        DataResult.success(type)
+                                        ).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString()),
+                                        ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(VariablePredicate::getValueType),
+                                        ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(VariablePredicate::getValuePredicate)
+                                )
+                                .apply(builder, (type, valueType, valuePredicate) -> new VariablePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(new ResourceLocation(type)), valueType, valuePredicate))
                 )
         ));
     }
@@ -200,6 +217,17 @@ public class Codecs {
                                     ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValuePredicate)
                             )
                             .apply(builder, (type, valueType, value) -> new ValueTypeRegistry.ValueTypeVariableFacadePredicate(valueType, value))
+            ),
+            RecordCodecBuilder.<VariableFacadePredicateTyped>create(
+                    builder -> builder.group(
+                                    ExtraCodecs.validate(
+                                            Codec.STRING,
+                                            type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(new ResourceLocation(type)) == null ?
+                                                    DataResult.error(() -> "Variable facade predicate is expected to have as 'type' one of: " + String.join(", ", IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandlerNames())) :
+                                                    DataResult.success(type)
+                                    ).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString())
+                            )
+                            .apply(builder, (type) -> new VariableFacadePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(new ResourceLocation(type))))
             ),
             Codec.unit(new VariableFacadePredicate<>(IVariableFacade.class))
     ));

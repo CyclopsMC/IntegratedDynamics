@@ -15,8 +15,10 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeRegistry;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 
@@ -122,6 +124,16 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     public void setVariableFacade(CompoundTag tag, IValueTypeVariableFacade variableFacade) {
         tag.putString("typeName", variableFacade.getValueType().getUniqueName().toString());
         tag.put("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
+    }
+
+    @Override
+    public boolean isInstance(IVariableFacade variableFacade) {
+        return variableFacade instanceof IValueTypeVariableFacade;
+    }
+
+    @Override
+    public boolean isInstance(IVariable<?> variable) {
+        return variable instanceof IVariable;
     }
 
     public static class ValueTypeVariableFacadePredicate extends VariableFacadePredicate<IValueTypeVariableFacade> {

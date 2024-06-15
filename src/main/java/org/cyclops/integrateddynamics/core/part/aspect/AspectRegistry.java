@@ -16,8 +16,10 @@ import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariablePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -189,6 +191,16 @@ public final class AspectRegistry implements IAspectRegistry {
     public void setVariableFacade(CompoundTag tag, IAspectVariableFacade variableFacade) {
         tag.putInt("partId", variableFacade.getPartId());
         tag.putString("aspectName", variableFacade.getAspect().getUniqueName().toString());
+    }
+
+    @Override
+    public boolean isInstance(IVariableFacade variableFacade) {
+        return variableFacade instanceof IAspectVariableFacade;
+    }
+
+    @Override
+    public boolean isInstance(IVariable<?> variable) {
+        return variable instanceof IAspectVariable;
     }
 
     public static class AspectVariablePredicate extends VariablePredicate<IAspectVariable> {

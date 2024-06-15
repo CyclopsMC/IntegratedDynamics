@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.item;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
@@ -34,4 +35,17 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
      */
     public void setVariableFacade(CompoundTag tagCompound, F variableFacade);
 
+    /**
+     * If the given facade is created by this handler.
+     * @param variableFacade A facade.
+     * @return If it is an instance.
+     */
+    public boolean isInstance(IVariableFacade variableFacade);
+
+    /**
+     * If the given variable is created by this handler.
+     * @param variable A variable.
+     * @return If it is an instance.
+     */
+    public boolean isInstance(IVariable<?> variable);
 }

@@ -24,6 +24,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -185,6 +186,16 @@ public class OperatorRegistry implements IOperatorRegistry {
     public void setVariableFacade(CompoundTag tag, IOperatorVariableFacade variableFacade) {
         tag.put("operatorName", serialize(variableFacade.getOperator()));
         tag.putIntArray("variableIds", variableFacade.getVariableIds());
+    }
+
+    @Override
+    public boolean isInstance(IVariableFacade variableFacade) {
+        return variableFacade instanceof IOperatorVariableFacade;
+    }
+
+    @Override
+    public boolean isInstance(IVariable<?> variable) {
+        return variable instanceof IVariable;
     }
 
     @Override
