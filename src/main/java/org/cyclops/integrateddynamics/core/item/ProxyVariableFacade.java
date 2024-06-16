@@ -114,12 +114,12 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
                     targetVariable.get().getType()));
         }
 
-        // Check if we are entering an infinite recursion (e.g. proxies refering to each other)
+        // Check if we are entering an infinite recursion (e.g. proxies referring to each other)
         if(this.isValidatingVariable) {
             throw new VariableRecursionException("Detected infinite recursion for variable references.");
         }
         this.isValidatingVariable = true;
-        getVariable(partNetwork);
+        getVariable(network, partNetwork);
         this.isValidatingVariable = false;
     }
 

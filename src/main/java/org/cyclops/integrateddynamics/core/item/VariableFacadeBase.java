@@ -7,11 +7,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 import java.util.List;
@@ -55,16 +51,6 @@ public abstract class VariableFacadeBase implements IVariableFacade {
     @Override
     public void appendHoverText(List<Component> list, Level world) {
         list.add(Component.translatable("item.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
-    }
-
-    @Deprecated
-    public <V extends IValue> IVariable<V> getVariable(IPartNetwork network) {
-        throw new UnsupportedOperationException("This method has been deprecated");
-    }
-
-    @Deprecated
-    public void validate(IPartNetwork network, IValidator validator, IValueType containingValueType) {
-        throw new UnsupportedOperationException("This method has been deprecated");
     }
 
 }

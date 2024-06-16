@@ -44,6 +44,8 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
     }
 
     public static <E> void registerActiveVariableBaseCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityActiveVariableBase<E>> blockEntityType) {
+        BlockEntityCableConnectableInventory.registerCableConnectableInventoryCapabilities(event, blockEntityType);
+
         event.registerBlockEntity(
                 Capabilities.ValueInterface.BLOCK,
                 blockEntityType,
