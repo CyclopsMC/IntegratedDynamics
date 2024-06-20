@@ -21,9 +21,13 @@
     "criteria_0": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
-        "item": {
-          "item": "integrateddynamics:menril_log"
-        }
+        "items": [
+          {
+            "items": [
+              "integrateddynamics:menril_log"
+            ]
+          }
+        ]
       }
     }
   }

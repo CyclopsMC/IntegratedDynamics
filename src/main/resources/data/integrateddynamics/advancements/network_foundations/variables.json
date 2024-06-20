@@ -25,7 +25,7 @@
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
         "item": {
-          "item": "integrateddynamics:variable"
+          "items": ["integrateddynamics:variable"]
         }
       }
     }

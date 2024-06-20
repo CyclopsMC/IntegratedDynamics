@@ -30,7 +30,7 @@
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
         "item": {
-          "item": "integrateddynamics:variable_transformer_input"
+          "items": ["integrateddynamics:variable_transformer_input"]
         }
       }
     }

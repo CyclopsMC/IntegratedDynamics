@@ -16,7 +16,7 @@
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
         "item": {
-          "item": "integrateddynamics:part_display_panel"
+          "items": ["integrateddynamics:part_display_panel"]
         }
       }
     }

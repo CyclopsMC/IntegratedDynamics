@@ -16,7 +16,7 @@
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
         "item": {
-          "item": "integrateddynamics:part_block_reader"
+          "items": ["integrateddynamics:part_block_reader"]
         }
       }
     }

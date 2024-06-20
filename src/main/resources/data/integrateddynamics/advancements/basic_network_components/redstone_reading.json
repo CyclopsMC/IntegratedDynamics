@@ -16,7 +16,7 @@
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
         "item": {
-          "item": "integrateddynamics:part_redstone_reader"
+          "items": ["integrateddynamics:part_redstone_reader"]
         }
       }
     }

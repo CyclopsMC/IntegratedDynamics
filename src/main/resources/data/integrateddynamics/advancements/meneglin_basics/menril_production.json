@@ -30,9 +30,13 @@
     "criteria_0": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
-        "item": {
-          "item": "integrateddynamics:crystalized_menril_block"
-        }
+        "items": [
+          {
+            "items": [
+              "integrateddynamics:crystalized_menril_block"
+            ]
+          }
+        ]
       }
     }
   }

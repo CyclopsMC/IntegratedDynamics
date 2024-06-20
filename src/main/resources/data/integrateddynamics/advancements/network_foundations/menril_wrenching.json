@@ -16,7 +16,7 @@
       "trigger": "cyclopscore:item_crafted",
       "conditions": {
         "item": {
-          "item": "integrateddynamics:wrench"
+          "items": ["integrateddynamics:wrench"]
         }
       }
     }
