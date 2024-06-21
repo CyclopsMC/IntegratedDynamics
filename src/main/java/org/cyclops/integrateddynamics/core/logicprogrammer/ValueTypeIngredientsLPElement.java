@@ -73,7 +73,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IConfigRenderPattern getRenderPattern() {
-        return IConfigRenderPattern.NONE_CANVAS;
+        return IConfigRenderPattern.NONE_CANVAS_WIDE;
     }
 
     @Override
@@ -353,8 +353,8 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                         element.activeElement,
                         subGui);
             }
-            int x = getX() + baseX - 24;
-            int y = getY() + baseY - 23;
+            int x = getX() + baseX - 20;
+            int y = getY() + baseY - 21;
             gui.getMenu().setElementInventory(subElement, x, y);
             subElement.setValueInGui(subGui);
             subGuiHolder.addSubGui(subGui);

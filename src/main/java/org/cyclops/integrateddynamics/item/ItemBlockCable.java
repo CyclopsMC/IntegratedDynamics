@@ -95,7 +95,9 @@ public class ItemBlockCable extends BlockItem {
     protected void afterItemUse(UseOnContext context, BlockPos pos, BlockCable blockCable, boolean calledSuper) {
         if(!calledSuper) {
             playPlaceSound(context.getLevel(), pos);
-            context.getItemInHand().shrink(1);
+            if (context.getItemInHand().getItem() == RegistryEntries.ITEM_CABLE.get()) {
+                context.getItemInHand().shrink(1);
+            }
         }
         blockCable.setDisableCollisionBox(false);
     }

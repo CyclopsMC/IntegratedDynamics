@@ -138,6 +138,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                     state.addGlobalError(e.getErrorMessage());
                     if (e.isRetryEvaluation()) {
                         state.setRetryEvaluation(true);
+                    } else {
+                        e.addResolutionListeners(() -> state.onVariableContentsUpdated((P) this, target));
                     }
                 }
             }
@@ -192,6 +194,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 materializedValue = newValue.getType().materialize(newValue);
             } catch (EvaluationException e) {
                 state.addGlobalError(e.getErrorMessage());
+                e.addResolutionListeners(() -> state.addGlobalError(null)); // TODO: also change here?
             }
             state.setDisplayValue(materializedValue);
         }

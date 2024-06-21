@@ -187,7 +187,7 @@ public class ContainerPartOffset extends InventoryContainer {
             if (this.dirtyInv) {
                 this.dirtyInv = false;
                 partState.saveInventoryNamed("offsetVariablesInventory", offsetVariablesInventory);
-                partState.markOffsetVariablesChanged();
+                getPartType().onOffsetVariablesChanged(getTarget(), partState);
             }
 
             for (int i = 0; i < 3; i++) {

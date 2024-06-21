@@ -41,6 +41,21 @@ public class PartStateOffsetHandler<P extends IPartType> {
     public final IntSet offsetVariableSlotDirty = new IntArraySet();
     public final Map<IVariable, Boolean> offsetVariableListeners = new MapMaker().weakKeys().makeMap();
 
+    public void initializeVariableEvaluators(SimpleInventory offsetVariablesInventory, PartTarget target) {
+        offsetVariableEvaluators.clear();
+        for (int i = 0; i < 3; i++) {
+            int slot = i;
+            offsetVariableEvaluators.add(new InventoryVariableEvaluator<>(
+                    offsetVariablesInventory, slot, ValueDeseralizationContext.of(target.getCenter().getPos().getLevel(true)), ValueTypes.INTEGER) {
+                @Override
+                public void onErrorsChanged() {
+                    super.onErrorsChanged();
+                    setOffsetVariableErrors(slot, getErrors());
+                }
+            });
+        }
+    }
+
     public void updateOffsetVariables(P partType, IPartState<P> partState, INetwork network, IPartNetwork partNetwork, PartTarget target) {
         // Reload offset variables if needed
         if (offsetVariablesDirty) {
@@ -69,20 +84,9 @@ public class PartStateOffsetHandler<P extends IPartType> {
     }
 
     public void reloadOffsetVariables(P partType, IPartState<P> partState, INetwork network, IPartNetwork partNetwork, PartTarget target) {
-        offsetVariableEvaluators.clear();
         offsetVariableSlotDirty.clear();
         SimpleInventory offsetVariablesInventory = getOffsetVariablesInventory(partState);
-        for (int i = 0; i < 3; i++) {
-            int slot = i;
-            offsetVariableEvaluators.add(new InventoryVariableEvaluator<>(
-                    offsetVariablesInventory, slot, ValueDeseralizationContext.of(target.getCenter().getPos().getLevel(true)), ValueTypes.INTEGER) {
-                @Override
-                public void onErrorsChanged() {
-                    super.onErrorsChanged();
-                    setOffsetVariableErrors(slot, getErrors());
-                }
-            });
-        }
+        initializeVariableEvaluators(offsetVariablesInventory, target);
         for (int i = 0; i < offsetVariablesInventory.getContainerSize(); i++) {
             reloadOffsetVariable(partType, partState, network, partNetwork, target, i);
         }
