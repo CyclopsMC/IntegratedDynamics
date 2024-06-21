@@ -14,7 +14,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
@@ -35,6 +34,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalDry
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A part entity for the mechanical drying basin.
@@ -59,19 +59,24 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         tankOut.addDirtyMarkListener(this::onTankChanged);
     }
 
-    public static <E> void registerMechanicalDryingBasinCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMechanicalDryingBasin> blockEntityType) {
-        BlockEntityMechanicalMachine.registerMechanicalMachineCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar extends BlockEntityMechanicalMachine.CapabilityRegistrar<BlockEntityMechanicalDryingBasin> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityMechanicalDryingBasin>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> direction == Direction.DOWN ? blockEntity.getTankOutput() : blockEntity.getTankInput()
-        );
-        event.registerBlockEntity(
-                org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> new RecipeHandlerDryingBasin<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN.get())
-        );
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    (blockEntity, direction) -> direction == Direction.DOWN ? blockEntity.getTankOutput() : blockEntity.getTankInput()
+            );
+            add(
+                    org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
+                    (blockEntity, direction) -> new RecipeHandlerDryingBasin<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_DRYING_BASIN.get())
+            );
+        }
     }
 
     @Override

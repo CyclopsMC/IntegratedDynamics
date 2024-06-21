@@ -17,7 +17,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
@@ -38,6 +37,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalSqu
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A part entity for the mechanical squeezer.
@@ -64,19 +64,24 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         tank.addDirtyMarkListener(this::onTankChanged);
     }
 
-    public static <E> void registerMechanicalSqueezerCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMechanicalSqueezer> blockEntityType) {
-        BlockEntityMechanicalMachine.registerMechanicalMachineCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar extends BlockEntityMechanicalMachine.CapabilityRegistrar<BlockEntityMechanicalSqueezer> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityMechanicalSqueezer>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getTank()
-        );
-        event.registerBlockEntity(
-                org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> new RecipeHandlerSqueezer<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER.get())
-        );
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getTank()
+            );
+            add(
+                    org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
+                    (blockEntity, direction) -> new RecipeHandlerSqueezer<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_MECHANICAL_SQUEEZER.get())
+            );
+        }
     }
 
     @Override

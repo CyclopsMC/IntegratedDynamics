@@ -17,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -48,6 +47,7 @@ import org.cyclops.integrateddynamics.network.DelayNetworkElement;
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.function.Supplier;
 
 /**
  * A part entity for the variable delay.
@@ -92,30 +92,35 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
         };
     }
 
-    public static <E> void registerDelayCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityDelay> blockEntityType) {
-        BlockEntityActiveVariableBase.registerActiveVariableBaseCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar extends BlockEntityActiveVariableBase.CapabilityRegistrar<BlockEntityDelay> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityDelay>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> {
-                    int slot = -1;
-                    switch (direction) {
-                        case DOWN ->  slot = SLOT_WRITE_OUT;
-                        case UP ->    slot = SLOT_WRITE_IN;
-                        case NORTH -> slot = SLOT_READ;
-                        case SOUTH -> slot = SLOT_READ;
-                        case WEST ->  slot = SLOT_READ;
-                        case EAST ->  slot = SLOT_READ;
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    (blockEntity, direction) -> {
+                        int slot = -1;
+                        switch (direction) {
+                            case DOWN ->  slot = SLOT_WRITE_OUT;
+                            case UP ->    slot = SLOT_WRITE_IN;
+                            case NORTH -> slot = SLOT_READ;
+                            case SOUTH -> slot = SLOT_READ;
+                            case WEST ->  slot = SLOT_READ;
+                            case EAST ->  slot = SLOT_READ;
+                        }
+                        return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
                     }
-                    return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
-                }
-        );
-        event.registerBlockEntity(
-                Capabilities.NetworkElementProvider.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
-        );
+            );
+            add(
+                    Capabilities.NetworkElementProvider.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
+            );
+        }
     }
 
     @Override

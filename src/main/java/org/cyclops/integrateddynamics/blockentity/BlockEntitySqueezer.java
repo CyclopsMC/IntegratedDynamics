@@ -12,13 +12,13 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
+import org.cyclops.cyclopscore.capability.registrar.BlockEntityCapabilityRegistrar;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -35,6 +35,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A part entity for squeezing stuff.
@@ -91,27 +92,30 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                 });
     }
 
-    public static <E> void registerSqueezerCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntitySqueezer> blockEntityType) {
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getInventory().getItemHandler()
-        );
-        event.registerBlockEntity(
-                org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> new SimpleInventoryState(blockEntity.getInventory())
-        );
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getTank()
-        );
-        event.registerBlockEntity(
-                org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> new RecipeHandlerSqueezer<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_SQUEEZER.get())
-        );
+    public static class CapabilityRegistrar extends BlockEntityCapabilityRegistrar<BlockEntitySqueezer> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntitySqueezer>> blockEntityType) {
+            super(blockEntityType);
+        }
+
+        @Override
+        public void populate() {
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getInventory().getItemHandler()
+            );
+            add(
+                    org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
+                    (blockEntity, direction) -> new SimpleInventoryState(blockEntity.getInventory())
+            );
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getTank()
+            );
+            add(
+                    org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
+                    (blockEntity, direction) -> new RecipeHandlerSqueezer<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_SQUEEZER.get())
+            );
+        }
     }
 
     public SimpleInventory getInventory() {

@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -24,11 +23,7 @@ public class BlockEntityDryingBasinConfig extends BlockEntityConfig<BlockEntityD
                 (eConfig) -> new BlockEntityType<>(BlockEntityDryingBasin::new,
                         Sets.newHashSet(RegistryEntries.BLOCK_DRYING_BASIN.get()), null)
         );
-        IntegratedDynamics._instance.getModEventBus().addListener(this::registerCapability);
-    }
-
-    protected void registerCapability(RegisterCapabilitiesEvent event) {
-        BlockEntityDryingBasin.registerDryingBasinCapabilities(event, getInstance());
+        IntegratedDynamics._instance.getModEventBus().addListener(new BlockEntityDryingBasin.CapabilityRegistrar(this::getInstance)::register);
     }
 
     @Override

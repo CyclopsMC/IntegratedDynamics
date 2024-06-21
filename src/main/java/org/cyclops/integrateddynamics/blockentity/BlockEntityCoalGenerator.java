@@ -11,7 +11,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DataSlotSupplied;
@@ -34,6 +33,7 @@ import org.cyclops.integrateddynamics.network.CoalGeneratorNetworkElement;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A part entity for the coal energy generator.
@@ -55,19 +55,24 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
         super(RegistryEntries.BLOCK_ENTITY_COAL_GENERATOR.get(), blockPos, blockState, BlockEntityCoalGenerator.INVENTORY_SIZE, 64);
     }
 
-    public static void registerCoalGeneratorCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityCoalGenerator> blockEntityType) {
-        BlockEntityCableConnectableInventory.registerCableConnectableInventoryCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar extends BlockEntityCableConnectableInventory.CapabilityRegistrar<BlockEntityCoalGenerator> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityCoalGenerator>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                Capabilities.NetworkElementProvider.BLOCK,
-                blockEntityType,
-                (blockEntity, context) -> blockEntity.getNetworkElementProvider()
-        );
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
-                blockEntityType,
-                (blockEntity, context) -> blockEntity
-        );
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    Capabilities.NetworkElementProvider.BLOCK,
+                    (blockEntity, context) -> blockEntity.getNetworkElementProvider()
+            );
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                    (blockEntity, context) -> blockEntity
+            );
+        }
     }
 
     @Override

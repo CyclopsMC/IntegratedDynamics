@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -34,6 +33,7 @@ import org.cyclops.integrateddynamics.network.VariablestoreNetworkElement;
 
 import javax.annotation.Nullable;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * A part entity used to store variables.
@@ -57,22 +57,28 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
         variableContainer = new VariableContainerDefault();
     }
 
-    public static void registerVariablestoreCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityVariablestore> blockEntityType) {
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, context) -> blockEntity.getInventory().getItemHandler()
-        );
-        event.registerBlockEntity(
-                Capabilities.NetworkElementProvider.BLOCK,
-                blockEntityType,
-                (blockEntity, context) -> blockEntity.getNetworkElementProvider()
-        );
-        event.registerBlockEntity(
-                Capabilities.VariableContainer.BLOCK,
-                blockEntityType,
-                (blockEntity, context) -> blockEntity.getVariableContainer()
-        );
+    public static class CapabilityRegistrar extends BlockEntityCableConnectableInventory.CapabilityRegistrar<BlockEntityVariablestore> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityVariablestore>> blockEntityType) {
+            super(blockEntityType);
+        }
+
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    (blockEntity, context) -> blockEntity.getInventory().getItemHandler()
+            );
+            add(
+                    Capabilities.NetworkElementProvider.BLOCK,
+                    (blockEntity, context) -> blockEntity.getNetworkElementProvider()
+            );
+            add(
+                    Capabilities.VariableContainer.BLOCK,
+                    (blockEntity, context) -> blockEntity.getVariableContainer()
+            );
+        }
     }
 
     @Override

@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -26,6 +25,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Base part entity that can hold variables.
@@ -43,24 +43,30 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
         this.evaluator = createEvaluator();
     }
 
-    public static <E> void registerActiveVariableBaseCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityActiveVariableBase<E>> blockEntityType) {
-        BlockEntityCableConnectableInventory.registerCableConnectableInventoryCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar<T extends BlockEntityActiveVariableBase<?>> extends BlockEntityCableConnectableInventory.CapabilityRegistrar<T> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends T>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                Capabilities.ValueInterface.BLOCK,
-                blockEntityType,
-                (blockEntity, context) -> () -> {
-                    INetwork network = blockEntity.getNetwork();
-                    IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
-                    if (blockEntity.hasVariable()) {
-                        IVariable<?> variable = blockEntity.getVariable(partNetwork);
-                        if (variable != null) {
-                            return Optional.of(variable.getValue());
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    Capabilities.ValueInterface.BLOCK,
+                    (blockEntity, context) -> () -> {
+                        INetwork network = blockEntity.getNetwork();
+                        IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
+                        if (blockEntity.hasVariable()) {
+                            IVariable<?> variable = blockEntity.getVariable(partNetwork);
+                            if (variable != null) {
+                                return Optional.of(variable.getValue());
+                            }
                         }
+                        return Optional.empty();
                     }
-                    return Optional.empty();
-                }
-        );
+            );
+        }
     }
 
     protected InventoryVariableEvaluator<IValue> createEvaluator() {

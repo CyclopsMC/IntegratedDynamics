@@ -15,12 +15,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
+import org.cyclops.cyclopscore.capability.registrar.BlockEntityCapabilityRegistrar;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.CraftingHelpers;
@@ -36,6 +36,7 @@ import org.cyclops.integrateddynamics.core.recipe.handler.RecipeHandlerDryingBas
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A part entity for drying stuff.
@@ -100,27 +101,30 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
         });
     }
 
-    public static <E> void registerDryingBasinCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityDryingBasin> blockEntityType) {
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getInventory().getItemHandler()
-        );
-        event.registerBlockEntity(
-                org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> new SimpleInventoryState(blockEntity.getInventory())
-        );
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getTank()
-        );
-        event.registerBlockEntity(
-                org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> new RecipeHandlerDryingBasin<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_DRYING_BASIN.get())
-        );
+    public static class CapabilityRegistrar extends BlockEntityCapabilityRegistrar<BlockEntityDryingBasin> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityDryingBasin>> blockEntityType) {
+            super(blockEntityType);
+        }
+
+        @Override
+        public void populate() {
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getInventory().getItemHandler()
+            );
+            add(
+                    org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
+                    (blockEntity, direction) -> new SimpleInventoryState(blockEntity.getInventory())
+            );
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getTank()
+            );
+            add(
+                    org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK,
+                    (blockEntity, direction) -> new RecipeHandlerDryingBasin<>(blockEntity::getLevel, RegistryEntries.RECIPETYPE_DRYING_BASIN.get())
+            );
+        }
     }
 
     public int getProgress() {

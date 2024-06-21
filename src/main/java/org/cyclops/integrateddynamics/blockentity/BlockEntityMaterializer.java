@@ -11,7 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -29,6 +28,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectableInventory;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
@@ -37,6 +37,7 @@ import org.cyclops.integrateddynamics.network.MaterializerNetworkElement;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A part entity for the variable materializer.
@@ -57,30 +58,35 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
         super(RegistryEntries.BLOCK_ENTITY_MATERIALIZER.get(), blockPos, blockState, BlockEntityMaterializer.INVENTORY_SIZE);
     }
 
-    public static <E> void registerMaterializerCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMaterializer> blockEntityType) {
-        BlockEntityActiveVariableBase.registerActiveVariableBaseCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar extends BlockEntityCableConnectableInventory.CapabilityRegistrar<BlockEntityMaterializer> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityMaterializer>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> {
-                    int slot = -1;
-                    switch (direction) {
-                        case DOWN ->  slot = SLOT_WRITE_OUT;
-                        case UP ->    slot = SLOT_WRITE_IN;
-                        case NORTH -> slot = SLOT_READ;
-                        case SOUTH -> slot = SLOT_READ;
-                        case WEST ->  slot = SLOT_READ;
-                        case EAST ->  slot = SLOT_READ;
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    (blockEntity, direction) -> {
+                        int slot = -1;
+                        switch (direction) {
+                            case DOWN ->  slot = SLOT_WRITE_OUT;
+                            case UP ->    slot = SLOT_WRITE_IN;
+                            case NORTH -> slot = SLOT_READ;
+                            case SOUTH -> slot = SLOT_READ;
+                            case WEST ->  slot = SLOT_READ;
+                            case EAST ->  slot = SLOT_READ;
+                        }
+                        return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
                     }
-                    return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
-                }
-        );
-        event.registerBlockEntity(
-                Capabilities.NetworkElementProvider.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
-        );
+            );
+            add(
+                    Capabilities.NetworkElementProvider.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
+            );
+        }
     }
 
     @Override

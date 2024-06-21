@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -39,6 +38,7 @@ import org.cyclops.integrateddynamics.network.ProxyNetworkElement;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A part entity for the variable proxy.
@@ -70,30 +70,35 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
         super(type, blockPos, blockState, inventorySize);
     }
 
-    public static <E> void registerProxyCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityProxy> blockEntityType) {
-        BlockEntityActiveVariableBase.registerActiveVariableBaseCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar extends BlockEntityActiveVariableBase.CapabilityRegistrar<BlockEntityProxy> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityProxy>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> {
-                    int slot = -1;
-                    switch (direction) {
-                        case DOWN ->  slot = SLOT_WRITE_OUT;
-                        case UP ->    slot = SLOT_WRITE_IN;
-                        case NORTH -> slot = SLOT_READ;
-                        case SOUTH -> slot = SLOT_READ;
-                        case WEST ->  slot = SLOT_READ;
-                        case EAST ->  slot = SLOT_READ;
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    (blockEntity, direction) -> {
+                        int slot = -1;
+                        switch (direction) {
+                            case DOWN ->  slot = SLOT_WRITE_OUT;
+                            case UP ->    slot = SLOT_WRITE_IN;
+                            case NORTH -> slot = SLOT_READ;
+                            case SOUTH -> slot = SLOT_READ;
+                            case WEST ->  slot = SLOT_READ;
+                            case EAST ->  slot = SLOT_READ;
+                        }
+                        return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
                     }
-                    return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
-                }
-        );
-        event.registerBlockEntity(
-                Capabilities.NetworkElementProvider.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
-        );
+            );
+            add(
+                    Capabilities.NetworkElementProvider.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
+            );
+        }
     }
 
     @Override

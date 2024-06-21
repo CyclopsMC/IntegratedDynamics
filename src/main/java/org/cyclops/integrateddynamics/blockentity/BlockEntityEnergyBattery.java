@@ -5,7 +5,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -20,6 +19,8 @@ import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkE
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectable;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.network.EnergyBatteryNetworkElement;
+
+import java.util.function.Supplier;
 
 /**
  * A part entity used to store variables.
@@ -37,19 +38,24 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
         super(RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY.get(), blockPos, blockState);
     }
 
-    public static void registerEnergyBatteryCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityEnergyBattery> blockEntityType) {
-        BlockEntityCableConnectable.registerCableConnectableCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar extends BlockEntityCableConnectable.CapabilityRegistrar<BlockEntityEnergyBattery> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends BlockEntityEnergyBattery>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                Capabilities.NetworkElementProvider.BLOCK,
-                blockEntityType,
-                (blockEntity, context) -> blockEntity.getNetworkElementProvider()
-        );
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
-                blockEntityType,
-                (blockEntity, context) -> ((BlockEntityEnergyBattery) blockEntity)
-        );
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    Capabilities.NetworkElementProvider.BLOCK,
+                    (blockEntity, context) -> blockEntity.getNetworkElementProvider()
+            );
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                    (blockEntity, context) -> blockEntity
+            );
+        }
     }
 
     @Override

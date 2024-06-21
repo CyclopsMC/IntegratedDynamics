@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -24,11 +23,7 @@ public class BlockEntityEnergyBatteryConfig extends BlockEntityConfig<BlockEntit
                 (eConfig) -> new BlockEntityType<>(BlockEntityEnergyBattery::new,
                         Sets.newHashSet(RegistryEntries.BLOCK_ENERGY_BATTERY.get()), null)
         );
-        IntegratedDynamics._instance.getModEventBus().addListener(this::registerCapability);
-    }
-
-    protected void registerCapability(RegisterCapabilitiesEvent event) {
-        BlockEntityEnergyBattery.registerEnergyBatteryCapabilities(event, getInstance());
+        IntegratedDynamics._instance.getModEventBus().addListener(new BlockEntityEnergyBattery.CapabilityRegistrar(this::getInstance)::register);
     }
 
     @Override

@@ -9,7 +9,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.apache.commons.lang3.ArrayUtils;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
@@ -27,6 +26,7 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.network.MechanicalMachineNetworkElement;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * An abstract machine base tile entity that is able to process recipes by consuming energy.
@@ -57,27 +57,31 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> ext
         recipeCache = new SingleCache<>(createCacheUpdater());
     }
 
-    public static <E> void registerMechanicalMachineCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMechanicalMachine> blockEntityType) {
-        BlockEntityCableConnectableInventory.registerCableConnectableInventoryCapabilities(event, blockEntityType);
+    public static class CapabilityRegistrar<T extends BlockEntityMechanicalMachine<?, ?>> extends BlockEntityCableConnectableInventory.CapabilityRegistrar<T> {
+        public CapabilityRegistrar(Supplier<BlockEntityType<? extends T>> blockEntityType) {
+            super(blockEntityType);
+        }
 
-        event.registerBlockEntity(
-                Capabilities.NetworkElementProvider.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
-        );
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> blockEntity
-        );
-        event.registerBlockEntity(
-                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                blockEntityType,
-                (blockEntity, direction) -> {
-                    int[] slots = direction == Direction.DOWN ? blockEntity.getOutputSlots() : blockEntity.getInputSlots();
-                    return new ItemHandlerSlotMasked(blockEntity.getInventory(), slots);
-                }
-        );
+        @Override
+        public void populate() {
+            super.populate();
+
+            add(
+                    Capabilities.NetworkElementProvider.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
+            );
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                    (blockEntity, direction) -> blockEntity
+            );
+            add(
+                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    (blockEntity, direction) -> {
+                        int[] slots = direction == Direction.DOWN ? blockEntity.getOutputSlots() : blockEntity.getInputSlots();
+                        return new ItemHandlerSlotMasked(blockEntity.getInventory(), slots);
+                    }
+            );
+        }
     }
 
     @Override
