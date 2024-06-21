@@ -1,5 +1,5 @@
 {
-    "effect.page.flipsingle": {
+    "effect_page_flipsingle": {
         "sounds": [
             "integrateddynamics:page_flip1",
             "integrateddynamics:page_flip2",
@@ -7,7 +7,7 @@
         ],
         "subtitle": "subtitles.integrateddynamics.effect.page.flipsingle"
     },
-    "effect.page.flipmultiple": {
+    "effect_page_flipmultiple": {
         "sounds": [
             "integrateddynamics:pages_flip"
         ],

@@ -152,8 +152,8 @@ public class RegistryEntries {
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<ItemFacadeRecipe>> RECIPESERIALIZER_FACADE = DeferredHolder.create(Registries.RECIPE_SERIALIZER, new ResourceLocation("integrateddynamics:crafting_special_facade"));
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<ItemVariableCopyRecipe>> RECIPESERIALIZER_VARIABLE_COPY = DeferredHolder.create(Registries.RECIPE_SERIALIZER, new ResourceLocation("integrateddynamics:crafting_special_variable_copy"));
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> SOUNDEVENT_EFFECT_PAGE_FLIPSINGLE = DeferredHolder.create(Registries.SOUND_EVENT, new ResourceLocation("item.book.page_turn"));
-    public static final DeferredHolder<SoundEvent, SoundEvent> SOUNDEVENT_EFFECT_PAGE_FLIPMULTIPLE = DeferredHolder.create(Registries.SOUND_EVENT, new ResourceLocation("item.book.put"));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOUNDEVENT_EFFECT_PAGE_FLIPSINGLE = DeferredHolder.create(Registries.SOUND_EVENT, new ResourceLocation("integrateddynamics:effect_page_flipsingle"));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOUNDEVENT_EFFECT_PAGE_FLIPMULTIPLE = DeferredHolder.create(Registries.SOUND_EVENT, new ResourceLocation("integrateddynamics:effect_page_flipmultiple"));
 
 
 }

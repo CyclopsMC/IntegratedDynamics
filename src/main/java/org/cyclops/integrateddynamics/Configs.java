@@ -29,6 +29,8 @@ import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipeConfig;
 import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapedOmniDirectional3Config;
 import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapedOmniDirectionalConfig;
 import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapelessOmniDirectionalConfig;
+import org.cyclops.integrateddynamics.sound.SoundEventEffectPageFlipMultipleConfig;
+import org.cyclops.integrateddynamics.sound.SoundEventEffectPageFlipSingleConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenrilConfig;
 import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenrilConfig;
 
@@ -183,6 +185,10 @@ public class Configs {
         configHandler.addConfigurable(new LootFunctionCopyMechanicalMachineEnergyConfig());
         configHandler.addConfigurable(new LootFunctionCopyMechanicalSqueezerTankConfig());
         configHandler.addConfigurable(new LootFunctionCopyProxyIdConfig());
+
+        // Sounds
+        configHandler.addConfigurable(new SoundEventEffectPageFlipMultipleConfig());
+        configHandler.addConfigurable(new SoundEventEffectPageFlipSingleConfig());
     }
 
 }
