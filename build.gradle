@@ -293,10 +293,9 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     def projectId = "236307" // my project url is http://minecraft.curseforge.com/mc-mods/236307/
 
     def mainFile = upload(projectId, shadowJar)
+    mainFile.releaseType = 'release'
 	mainFile.changelogType = "text"
-    if (new File("resources/changelog/${project.version}.txt").exists()) {
-        mainFile.changelog = file("resources/changelog/${project.version}.txt")
-    }
+    mainFile.changelog = file("resources/changelog/${project.minecraft_version}-${project.version}.txt")
 	mainFile.addGameVersion(project.minecraft_version)
 	mainFile.addModLoader("NeoForge")
 	

@@ -60,7 +60,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         env:
           CURSEFORGE_KEY_SECRET: ${{ secrets.CURSEFORGE_KEY_SECRET }}
-        run: ./gradlew curseforge
+        run: ./gradlew publishCurseForge
       - name: 'Deploy to Modrinth'
         if: startsWith(github.ref, 'refs/tags/')
         env:
