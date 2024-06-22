@@ -5,7 +5,9 @@
   },
   "output_items": [
     {
-      "item": "evilcraft:hardened_blood_shard",
+      "item": {
+        "item": "evilcraft:hardened_blood_shard"
+      },
       "chance": 0.25
     }
   ],

@@ -1,6 +1,8 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": "evilcraft:undead_log",
+  "input_item": {
+    "item": "evilcraft:undead_log"
+  },
   "output_fluid": {
     "FluidName": "evilcraft:blood",
     "Amount": 100
