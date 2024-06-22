@@ -1,12 +1,11 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
@@ -34,13 +33,13 @@ public class BlockCableConfig extends BlockConfig {
                 (eConfig, block) -> new ItemBlockCable(block, new Item.Properties())
                 );
         if (MinecraftHelpers.isClientSide()) {
-            IntegratedDynamics._instance.getModEventBus().addListener(this::onModLoaded);
+            IntegratedDynamics._instance.getModEventBus().addListener(this::onRegisterColors);
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void onModLoaded(FMLLoadCompleteEvent event) {
-        Minecraft.getInstance().getBlockColors().register(new BlockCable.BlockColor(), getInstance());
+    public void onRegisterColors(RegisterColorHandlersEvent.Block event) {
+        event.register(new BlockCable.BlockColor(), getInstance());
     }
 
 }

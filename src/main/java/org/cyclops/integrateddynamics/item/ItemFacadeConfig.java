@@ -1,12 +1,11 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -21,13 +20,14 @@ public class ItemFacadeConfig extends ItemConfig {
                 "facade",
                 eConfig -> new ItemFacade(new Item.Properties())
         );
-        IntegratedDynamics._instance.getModEventBus().register(this);
+        if (MinecraftHelpers.isClientSide()) {
+            IntegratedDynamics._instance.getModEventBus().addListener(this::onRegisterColors);
+        }
     }
 
     @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public void onModLoaded(FMLLoadCompleteEvent event) {
-        Minecraft.getInstance().getItemColors().register(new ItemFacade.Color(), getInstance());
+    public void onRegisterColors(RegisterColorHandlersEvent.Item event) {
+        event.register(new ItemFacade.Color(), getInstance());
     }
 
 }
