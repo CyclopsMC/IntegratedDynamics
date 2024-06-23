@@ -200,21 +200,23 @@ public class OperatorBuilders {
     public static final IterativeFunction.PrePostBuilder<Pair<IOperator, OperatorBase.SafeVariablesGetter>, IValue> FUNCTION_OPERATOR_TAKE_OPERATOR = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 IOperator innerOperator = input.getValue(0, ValueTypes.OPERATOR).getRawValue();
-                if (innerOperator.getRequiredInputLength() == 1) {
-                    IValue applyingValue = input.getValue(1);
-                    MutableComponent error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
-                    if (error != null) {
-                        throw new EvaluationException(error);
-                    }
-                } else if (innerOperator.getRequiredInputLength() > 0) {
-                    if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
-                        MutableComponent error = Component.translatable(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
-                                Component.translatable(innerOperator.getTranslationKey()),
-                                Component.translatable(input.getVariables()[1].getType().getTranslationKey()),
-                                0,
-                                Component.translatable(innerOperator.getInputTypes()[0].getTranslationKey())
-                                );
-                        throw new EvaluationException(error);
+                if (input.getVariables().length > 1) {
+                    if (innerOperator.getRequiredInputLength() == 1) {
+                        IValue applyingValue = input.getValue(1);
+                        MutableComponent error = innerOperator.validateTypes(new IValueType[]{applyingValue.getType()});
+                        if (error != null) {
+                            throw new EvaluationException(error);
+                        }
+                    } else if (innerOperator.getRequiredInputLength() > 0) {
+                        if (!ValueHelpers.correspondsTo(input.getVariables()[1].getType(), innerOperator.getInputTypes()[0])) {
+                            MutableComponent error = Component.translatable(L10NValues.OPERATOR_ERROR_WRONGCURRYINGTYPE,
+                                    Component.translatable(innerOperator.getTranslationKey()),
+                                    Component.translatable(input.getVariables()[1].getType().getTranslationKey()),
+                                    0,
+                                    Component.translatable(innerOperator.getInputTypes()[0].getTranslationKey())
+                            );
+                            throw new EvaluationException(error);
+                        }
                     }
                 }
                 return Pair.<IOperator, OperatorBase.SafeVariablesGetter>of(innerOperator,
