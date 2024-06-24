@@ -3,40 +3,43 @@ on:
   issues:
     types: [labeled]
 
-env:
-  MY_GITHUB_TOKEN: ${{ secrets.PAT }}
-
 jobs:
   assign:
     runs-on: ubuntu-latest
     steps:
-    - name: Maintenance Issues
-      uses: srggrs/assign-one-project-github-action@1.2.0
-      if: |
-        contains(github.event.issue.labels.*.name, 'bug') ||
-        contains(github.event.issue.labels.*.name, 'performance') ||
-        contains(github.event.issue.labels.*.name, 'question')
-      with:
-        project: 'https://github.com/orgs/CyclopsMC/projects/1'
-        column_name: 'To Do'
-    - name: Feature Optional
-      uses: srggrs/assign-one-project-github-action@1.2.0
-      if: |
-        contains(github.event.issue.labels.*.name, 'feature-long-term')
-      with:
-        project: 'https://github.com/orgs/CyclopsMC/projects/2'
-        column_name: 'Options'
-    - name: Feature Accepted
-      uses: srggrs/assign-one-project-github-action@1.2.0
-      if: |
-        contains(github.event.issue.labels.*.name, 'feature')
-      with:
-        project: 'https://github.com/orgs/CyclopsMC/projects/2'
-        column_name: 'Accepted (To Do)'
-    - name: More Information Needed
-      uses: srggrs/assign-one-project-github-action@1.2.0
-      if: |
-        contains(github.event.issue.labels.*.name, 'more-information-needed')
-      with:
-        project: 'https://github.com/orgs/CyclopsMC/projects/1'
-        column_name: 'On hold (awaiting input)'
+      - name: Maintenance Issues
+        id: add-project-maintenance
+        uses: actions/add-to-project@v1.0.1
+        with:
+          project-url: https://github.com/orgs/CyclopsMC/projects/3
+          github-token: ${{ secrets.PAT }}
+          labeled: bug, performance, question, more-information-needed
+          label-operator: OR
+      - name: Development Issues
+        id: add-project-development
+        uses: actions/add-to-project@v1.0.1
+        with:
+          project-url: https://github.com/orgs/CyclopsMC/projects/4
+          github-token: ${{ secrets.PAT }}
+          labeled: feature-long-term, feature
+          label-operator: OR
+      - name: Feature Accepted
+        if: |
+          contains(github.event.issue.labels.*.name, 'feature')
+        uses: titoportas/update-project-fields@v0.1.0
+        with:
+          project-url: https://github.com/orgs/CyclopsMC/projects/4
+          github-token: ${{ secrets.PAT }}
+          item-id: ${{ steps.add-project-development.outputs.itemId }}
+          field-keys: Status
+          field-values: 'Accepted (To Do)'
+      - name: More Information Needed
+        if: |
+          contains(github.event.issue.labels.*.name, 'more-information-needed')
+        uses: titoportas/update-project-fields@v0.1.0
+        with:
+          project-url: https://github.com/orgs/CyclopsMC/projects/3
+          github-token: ${{ secrets.PAT }}
+          item-id: ${{ steps.add-project-maintenance.outputs.itemId }}
+          field-keys: Status
+          field-values: 'On hold (awaiting input)'

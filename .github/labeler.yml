@@ -1,33 +1,33 @@
 bug:
-    - '- :bug: Bug'
+  - '- :bug: Bug'
 feature-long-term:
-	- '- :heavy_plus_sign: Feature request'
+  - '- :heavy_plus_sign: Feature request'
 performance:
-	- '- :snail: Performance issue'
+  - '- :snail: Performance issue'
 question:
-	- '- :question: Question'
+  - '- :question: Question'
 
 mc-1.12:
-	- 'Minecraft: 1.12'
+  - 'Minecraft: 1.12'
 mc-1.14:
-	- 'Minecraft: 1.14'
+  - 'Minecraft: 1.14'
 mc-1.15:
-	- 'Minecraft: 1.15'
+  - 'Minecraft: 1.15'
 mc-1.16:
-	- 'Minecraft: 1.16'
+  - 'Minecraft: 1.16'
 mc-1.18:
-	- 'Minecraft: 1.18'
+  - 'Minecraft: 1.18'
 mc-1.19:
-	- 'Minecraft: 1.19'
+  - 'Minecraft: 1.19'
 mc-1.20:
-	- 'Minecraft: 1.20'
+  - 'Minecraft: 1.20'
 mc-1.21:
-	- 'Minecraft: 1.21'
+  - 'Minecraft: 1.21'
 mc-1.22:
-	- 'Minecraft: 1.22'
+  - 'Minecraft: 1.22'
 mc-1.23:
-	- 'Minecraft: 1.23'
+  - 'Minecraft: 1.23'
 mc-1.24:
-	- 'Minecraft: 1.24'
+  - 'Minecraft: 1.24'
 mc-1.25:
-	- 'Minecraft: 1.25'
+  - 'Minecraft: 1.25'
