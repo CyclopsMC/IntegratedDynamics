@@ -104,6 +104,9 @@ public class LabelsWorldStorage extends WorldStorage {
      * @return The corresponding variable onLabelPacket or null.
      */
     public synchronized String getLabel(int variableId) {
+        if (variableId < 0) {
+            return null;
+        }
         return labels.get(variableId);
     }
 
