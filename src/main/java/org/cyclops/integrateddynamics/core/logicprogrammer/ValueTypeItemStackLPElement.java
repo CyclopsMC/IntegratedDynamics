@@ -42,6 +42,11 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     }
 
     @Override
+    public int getItemStackSizeLimit() {
+        return ItemStack.EMPTY.getMaxStackSize();
+    }
+
+    @Override
     public void onInputSlotUpdated(Player player, int slotId, ItemStack itemStack) {
         this.itemStack = itemStack;
     }

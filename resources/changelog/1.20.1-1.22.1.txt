@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.4 or higher.
+
+Changes:
+* Also copy label when copying variable cards, Closes #1354
+* Allow Ingredient.with* operators to have empty ingredient inputs
+* Allow entering items in logic programmer with larger stack sizes
+
+Fixes:
+* Fix default labeller textfield being modifiable, Closes #1352
+* Fix apply_0 crashing on operators with input, Closes CyclopsMC/IntegratedScripting#11
+* Fix incorrect comparator in PrioritizedPartPos
+

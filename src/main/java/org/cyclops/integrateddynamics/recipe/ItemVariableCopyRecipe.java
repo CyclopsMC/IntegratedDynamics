@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 /**
@@ -83,8 +84,19 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
                 IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, element);
                 if(facade.isValid()) {
                     // Create a copy with a new id.
-                    ret.set(j, IntegratedDynamics._instance.getRegistryManager()
-                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSideThread(), element));
+                    ItemStack copy = IntegratedDynamics._instance.getRegistryManager()
+                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSideThread(), element);
+
+                    // If the input had a label, also copy the label
+                    String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(facade.getId());
+                    if(label != null) {
+                        IVariableFacade facadeCopy = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, copy);
+                        if (facadeCopy != null) {
+                            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(facadeCopy.getId(), label);
+                        }
+                    }
+
+                    ret.set(j, copy);
                 }
             }
         }
