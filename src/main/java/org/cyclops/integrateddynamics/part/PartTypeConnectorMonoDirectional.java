@@ -95,13 +95,13 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public ItemStack getItemStack(State state, boolean saveState) {
+    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, State state, boolean saveState) {
         // Set offset to 0 to make sure it is not stored in the item
         int offset = state.getOffset();
         state.setOffset(0);
 
         // Serialize to item
-        ItemStack itemStack = super.getItemStack(state, saveState);
+        ItemStack itemStack = super.getItemStack(valueDeseralizationContext, state, saveState);
 
         // Set original offset back
         state.setOffset(offset);
@@ -198,8 +198,8 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         }
 
         @Override
-        public void writeToNBT(CompoundTag tag) {
-            super.writeToNBT(tag);
+        public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
+            super.writeToNBT(valueDeseralizationContext, tag);
             if (offset > 0) {
                 tag.putInt("connect_offset", offset);
             }

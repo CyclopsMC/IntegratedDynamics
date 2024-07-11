@@ -1,0 +1,10 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "item": "minecraft:blaze_powder"
+  },
+  "output_fluid": {
+    "id": "minecraft:lava",
+    "amount": 250
+  }
+}

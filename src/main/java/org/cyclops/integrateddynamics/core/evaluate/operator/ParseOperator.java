@@ -32,7 +32,7 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
 
   @Override
   public ResourceLocation getUniqueName() {
-    return new ResourceLocation(getModId(), "operator." + getModId() + ".parse." + to.getTranslationKey());
+    return ResourceLocation.fromNamespaceAndPath(getModId(), "operator." + getModId() + ".parse." + to.getTranslationKey());
   }
 
   @Override

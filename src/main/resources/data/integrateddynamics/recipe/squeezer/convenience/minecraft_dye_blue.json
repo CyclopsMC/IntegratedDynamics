@@ -1,0 +1,14 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "item": "minecraft:cornflower"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:blue_dye",
+        "count": 4
+      }
+    }
+  ]
+}

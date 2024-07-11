@@ -131,16 +131,16 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public Tag serialize(IOperator value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, IOperator value) {
         for (IOperatorSerializer serializer : serializers) {
             if (serializer.canHandle(value)) {
                 CompoundTag tag = new CompoundTag();
                 tag.putString("serializer", serializer.getUniqueName().toString());
-                tag.put("value", serializer.serialize(value));
+                tag.put("value", serializer.serialize(valueDeseralizationContext, value));
                 return tag;
             }
         }
-        return DEFAULT_SERIALIZER.serialize(value);
+        return DEFAULT_SERIALIZER.serialize(valueDeseralizationContext, value);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class OperatorRegistry implements IOperatorRegistry {
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "operator");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "operator");
     }
 
     @Override
@@ -183,8 +183,8 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public void setVariableFacade(CompoundTag tag, IOperatorVariableFacade variableFacade) {
-        tag.put("operatorName", serialize(variableFacade.getOperator()));
+    public void setVariableFacade(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, IOperatorVariableFacade variableFacade) {
+        tag.put("operatorName", serialize(valueDeseralizationContext, variableFacade.getOperator()));
         tag.putIntArray("variableIds", variableFacade.getVariableIds());
     }
 

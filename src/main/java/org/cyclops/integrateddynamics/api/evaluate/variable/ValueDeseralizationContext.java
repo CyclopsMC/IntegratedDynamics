@@ -1,24 +1,26 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 
 /**
  * @author rubensworks
  */
-public record ValueDeseralizationContext(HolderGetter<Block> holderGetter) {
+public record ValueDeseralizationContext(HolderLookup.Provider holderLookupProvider) {
     public static ValueDeseralizationContext of(Level level) {
         if (level == null) {
             return ofAllEnabled();
         }
-        return new ValueDeseralizationContext(level.holderLookup(Registries.BLOCK));
+        return new ValueDeseralizationContext(level.registryAccess());
+    }
+
+    public static ValueDeseralizationContext of(HolderLookup.Provider holderLookupProvider) {
+        return new ValueDeseralizationContext(holderLookupProvider);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -27,6 +29,6 @@ public record ValueDeseralizationContext(HolderGetter<Block> holderGetter) {
     }
 
     public static ValueDeseralizationContext ofAllEnabled() {
-        return new ValueDeseralizationContext(BlockHelpers.HOLDER_GETTER_FORGE);
+        return new ValueDeseralizationContext(ServerLifecycleHooks.getCurrentServer().registryAccess());
     }
 }

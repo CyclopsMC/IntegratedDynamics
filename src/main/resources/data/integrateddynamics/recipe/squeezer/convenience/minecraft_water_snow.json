@@ -1,0 +1,10 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "item": "minecraft:snow"
+  },
+  "output_fluid": {
+    "id": "minecraft:water",
+    "amount": 1000
+  }
+}

@@ -105,6 +105,6 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
 
     protected void drawError(BlockEntityRendererProvider.Context context, PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
                              int combinedLight, int combinedOverlay, float distanceAlpha) {
-        Images.ERROR.drawWorldWithAlpha(Minecraft.getInstance().textureManager, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, 12.5F, 12.5F, distanceAlpha);
+        Images.ERROR.drawWorldWithAlpha(Minecraft.getInstance().getTextureManager(), matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, 12.5F, 12.5F, distanceAlpha);
     }
 }

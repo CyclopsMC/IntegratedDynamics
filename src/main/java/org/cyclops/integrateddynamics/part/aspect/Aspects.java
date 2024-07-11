@@ -179,7 +179,7 @@ public class Aspects {
                         BlockEntity tile = dimPos.getLevel(true).getBlockEntity(dimPos.getBlockPos());
                         try {
                             if (tile != null) {
-                                return Optional.<Tag>of(tile.saveWithFullMetadata());
+                                return Optional.<Tag>of(tile.saveWithFullMetadata(tile.getLevel().registryAccess()));
                             }
                         } catch (Exception e) {
                             // Catch possible errors
@@ -361,7 +361,7 @@ public class Aspects {
                                 BlockState blockState = dimPos.getLevel(true).getBlockState(dimPos.getBlockPos());
                                 net.minecraft.world.level.block.Block block = blockState.getBlock();
                                 if (block instanceof LiquidBlock) {
-                                    return new FluidStack(((LiquidBlock) block).getFluid(), FluidHelpers.BUCKET_VOLUME);
+                                    return new FluidStack(((LiquidBlock) block).fluid, FluidHelpers.BUCKET_VOLUME);
                                 }
                                 return FluidStack.EMPTY;
                             })
@@ -520,7 +520,7 @@ public class Aspects {
                             ))).appendKind("recipeoutputbyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerOutput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_output")));
+                        PositionedOperatorRecipeHandlerOutput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_output")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEINPUTS =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(input ->
@@ -529,7 +529,7 @@ public class Aspects {
                             ))).appendKind("recipeinputsbyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerInputs.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_inputs")));
+                        PositionedOperatorRecipeHandlerInputs.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_inputs")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPESBYINPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -538,7 +538,7 @@ public class Aspects {
                             ))).appendKind("recipesbyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipesByInput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_input")));
+                        PositionedOperatorRecipeHandlerRecipesByInput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_input")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPESBYOUTPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -547,7 +547,7 @@ public class Aspects {
                             ))).appendKind("recipesbyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipesByOutput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_output")));
+                        PositionedOperatorRecipeHandlerRecipesByOutput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_output")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYINPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -556,7 +556,7 @@ public class Aspects {
                             ))).appendKind("recipebyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipeByInput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_input")));
+                        PositionedOperatorRecipeHandlerRecipeByInput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_input")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYOUTPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -565,7 +565,7 @@ public class Aspects {
                             ))).appendKind("recipebyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipeByOutput.class, new ResourceLocation(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_output")));
+                        PositionedOperatorRecipeHandlerRecipeByOutput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_output")));
             }
 
             public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IEnergyStorage>
@@ -887,7 +887,7 @@ public class Aspects {
                                     int range = properties.getValue(AspectWriteBuilders.Audio.PROP_RANGE).getRawValue();
                                     IntegratedDynamics._instance.getPacketHandler().sendToAllAround(
                                             new SpeakTextPacket(input.getRight()),
-                                            LocationHelpers.createTargetPointFromLocation(world, pos, range));
+                                            LocationHelpers.createTargetPointFromLocation((ServerLevel) world, pos, range));
                                 }
                                 return null;
                             }, "text").buildWrite();

@@ -6,7 +6,6 @@ import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
@@ -21,6 +20,7 @@ import org.cyclops.cyclopscore.client.model.IDynamicModelElement;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
 
@@ -35,11 +35,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     }
 
     public BlockState getFacadeBlock(ItemStack itemStack) {
-        if(!itemStack.isEmpty() && itemStack.hasTag()) {
-            CompoundTag tag = itemStack.getTag();
-            return BlockHelpers.deserializeBlockState(BlockHelpers.HOLDER_GETTER_FORGE, tag.getCompound("block"));
-        }
-        return null;
+        return itemStack.get(RegistryEntries.DATACOMPONENT_FACADE_BLOCK);
     }
 
     public ItemStack getFacadeBlockItem(ItemStack itemStack) {
@@ -51,9 +47,7 @@ public class ItemFacade extends Item implements IDynamicModelElement {
     }
 
     public void writeFacadeBlock(ItemStack itemStack, BlockState blockState) {
-        CompoundTag tag = itemStack.getOrCreateTag();
-        CompoundTag serializedBlockState = BlockHelpers.serializeBlockState(blockState);
-        tag.put("block", serializedBlockState);
+        itemStack.set(RegistryEntries.DATACOMPONENT_FACADE_BLOCK, blockState);
     }
 
     @Override

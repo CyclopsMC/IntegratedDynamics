@@ -59,7 +59,7 @@ public class CurriedOperator implements IOperator {
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation("curried_operator");
+        return ResourceLocation.parse("curried_operator");
     }
 
     @Override
@@ -193,11 +193,11 @@ public class CurriedOperator implements IOperator {
 
         @Override
         public ResourceLocation getUniqueName() {
-            return new ResourceLocation(Reference.MOD_ID, "curry");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "curry");
         }
 
         @Override
-        public Tag serialize(CurriedOperator operator) {
+        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, CurriedOperator operator) {
             ListTag list = new ListTag();
             for (int i = 0; i < operator.appliedVariables.length; i++) {
                 IVariable appliedVariable = operator.appliedVariables[i];
@@ -210,13 +210,13 @@ public class CurriedOperator implements IOperator {
                 CompoundTag valueTag = new CompoundTag();
                 IValueType valueType = value.getType();
                 valueTag.putString("valueType", valueType.getUniqueName().toString());
-                valueTag.put("value", ValueHelpers.serializeRaw(value));
+                valueTag.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, value));
                 list.add(valueTag);
             }
 
             CompoundTag tag = new CompoundTag();
             tag.put("values", list);
-            tag.put("baseOperator", Operators.REGISTRY.serialize(operator.baseOperator));
+            tag.put("baseOperator", Operators.REGISTRY.serialize(valueDeseralizationContext, operator.baseOperator));
             return tag;
         }
 
@@ -234,7 +234,7 @@ public class CurriedOperator implements IOperator {
             IVariable[] variables = new IVariable[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag valuetag = list.getCompound(i);
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valuetag.getString("valueType")));
+                IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valuetag.getString("valueType")));
                 IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, valuetag.get("value"));
                 variables[i] = new Variable(valueType, value);
             }

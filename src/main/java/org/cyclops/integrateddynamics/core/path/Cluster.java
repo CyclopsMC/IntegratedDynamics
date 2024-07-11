@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Delegate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -47,7 +48,7 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
     }
 
     @Override
-    public CompoundTag toNBT() {
+    public CompoundTag toNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();
 
@@ -66,12 +67,12 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
     }
 
     @Override
-    public void fromNBT(CompoundTag tag) {
+    public void fromNBT(HolderLookup.Provider provider, CompoundTag tag) {
         ListTag list = tag.getList("list", Tag.TAG_COMPOUND);
 
         for(int i = 0; i < list.size(); i++) {
             CompoundTag elementTag = list.getCompound(i);
-            ResourceLocation dimensionId = new ResourceLocation(elementTag.getString("dimension"));
+            ResourceLocation dimensionId = ResourceLocation.parse(elementTag.getString("dimension"));
             ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimensionId);
             Level world = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
             BlockPos pos = BlockPos.of(elementTag.getLong("pos"));

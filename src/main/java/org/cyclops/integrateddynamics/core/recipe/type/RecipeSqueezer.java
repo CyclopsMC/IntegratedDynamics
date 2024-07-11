@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.mojang.datafixers.util.Either;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -22,7 +22,7 @@ import java.util.Optional;
  * Squeezer recipe
  * @author rubensworks
  */
-public class RecipeSqueezer implements Recipe<Container> {
+public class RecipeSqueezer implements Recipe<CraftingInput> {
 
     private final Ingredient inputIngredient;
     private final NonNullList<IngredientChance> outputItems;
@@ -49,12 +49,12 @@ public class RecipeSqueezer implements Recipe<Container> {
     }
 
     @Override
-    public boolean matches(Container inv, Level worldIn) {
+    public boolean matches(CraftingInput inv, Level worldIn) {
         return inputIngredient.test(inv.getItem(0));
     }
 
     @Override
-    public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
+    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registryAccess) {
         // Should not be called, but let's provide a good fallback
         if (this.outputItems.isEmpty()) {
             return ItemStack.EMPTY;
@@ -68,7 +68,7 @@ public class RecipeSqueezer implements Recipe<Container> {
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
         // Should not be called, but lets provide a good fallback
         if (this.outputItems.isEmpty()) {
             return ItemStack.EMPTY;

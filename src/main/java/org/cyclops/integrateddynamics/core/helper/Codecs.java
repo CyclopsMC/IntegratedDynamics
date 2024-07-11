@@ -6,14 +6,20 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
@@ -50,15 +56,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author rubensworks
  */
 public class Codecs {
 
+    public static final Codec<CompoundTag> COMPOUND_TAG = Codec.PASSTHROUGH.xmap(
+            dynamic -> (CompoundTag) dynamic.convert(NbtOps.INSTANCE).getValue(),
+            tag -> new Dynamic<>(NbtOps.INSTANCE, tag)
+    );
+
     public static final Codec<IPartType> PART_TYPE = Codec.STRING.xmap(
             name -> {
-                IPartType<?, ?> partType = PartTypes.REGISTRY.getPartType(new ResourceLocation(name));
+                IPartType<?, ?> partType = PartTypes.REGISTRY.getPartType(ResourceLocation.parse(name));
                 if (partType == null) {
                     throw new JsonSyntaxException("No part type found with name: " + name);
                 }
@@ -67,7 +79,7 @@ public class Codecs {
 
     public static final Codec<IAspect> ASPECT = Codec.STRING.xmap(
             name -> {
-                IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(name));
+                IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(ResourceLocation.parse(name));
                 if (aspect == null) {
                     throw new JsonSyntaxException("No aspect found with name: " + name);
                 }
@@ -76,7 +88,7 @@ public class Codecs {
 
     public static final Codec<IOperator> OPERATOR = Codec.STRING.xmap(
             name -> {
-                IOperator operator = Operators.REGISTRY.getOperator(new ResourceLocation(name));
+                IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.parse(name));
                 if (operator == null) {
                     throw new JsonSyntaxException("No operator found with name: " + name);
                 }
@@ -85,7 +97,7 @@ public class Codecs {
 
     public static final Codec<IValueType> VALUE_TYPE = Codec.STRING.xmap(
             name -> {
-                IValueType<?> valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(name));
+                IValueType<?> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(name));
                 if (valueType == null) {
                     throw new JsonSyntaxException("Unknown value type '" + name + "', valid types are: "
                             + ValueTypes.REGISTRY.getValueTypes().stream().map(IValueType::getUniqueName).collect(Collectors.toList()));
@@ -96,7 +108,7 @@ public class Codecs {
     public static final Codec<EntityType<? extends Entity>> ENTITY_TYPE = Codec.STRING.xmap(
             name -> {
                 try {
-                    return BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(name));
+                    return BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(name));
                 } catch (ResourceLocationException e) {
                     throw new JsonSyntaxException("Invalid entity type name '" + name + "'");
                 }
@@ -106,28 +118,28 @@ public class Codecs {
             RecordCodecBuilder.<ValueTypeOperator.ValueOperatorPredicate>create(
                     builder -> builder.group(
                                     staticTypeField("operator"),
-                                    ExtraCodecs.strictOptionalField(OPERATOR, "operator").forGetter(ValueTypeOperator.ValueOperatorPredicate::getOperator)
+                                    OPERATOR.optionalFieldOf("operator").forGetter(ValueTypeOperator.ValueOperatorPredicate::getOperator)
                             )
                             .apply(builder, (type, operator) -> new ValueTypeOperator.ValueOperatorPredicate(operator))
             ),
             RecordCodecBuilder.<ValueObjectTypeItemStack.ValueItemStackPredicate>create(
                     builder -> builder.group(
                                     staticTypeField("itemstack"),
-                                    ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(ValueObjectTypeItemStack.ValueItemStackPredicate::getItemPredicate)
+                                    ItemPredicate.CODEC.optionalFieldOf("item").forGetter(ValueObjectTypeItemStack.ValueItemStackPredicate::getItemPredicate)
                             )
                             .apply(builder, (type, itemPredicate) -> new ValueObjectTypeItemStack.ValueItemStackPredicate(itemPredicate))
             ),
             RecordCodecBuilder.<ValueObjectTypeEntity.ValueEntityPredicate>create(
                     builder -> builder.group(
                                     staticTypeField("entity"),
-                                    ExtraCodecs.strictOptionalField(ENTITY_TYPE, "entity").forGetter(ValueObjectTypeEntity.ValueEntityPredicate::getEntityType)
+                                    ENTITY_TYPE.optionalFieldOf("entity").forGetter(ValueObjectTypeEntity.ValueEntityPredicate::getEntityType)
                             )
                             .apply(builder, (type, entityType) -> new ValueObjectTypeEntity.ValueEntityPredicate(entityType))
             ),
             RecordCodecBuilder.<ValueTypeList.ValueListPredicate>create(
                     builder -> builder.group(
                                     staticTypeField("list"),
-                                    ExtraCodecs.strictOptionalField(Codec.BOOL, "infinite_list").forGetter(ValueTypeList.ValueListPredicate::getInfinite)
+                                    Codec.BOOL.optionalFieldOf("infinite_list").forGetter(ValueTypeList.ValueListPredicate::getInfinite)
                             )
                             .apply(builder, (type, infinite) -> new ValueTypeList.ValueListPredicate(infinite))
             ),
@@ -135,16 +147,16 @@ public class Codecs {
                     builder -> builder.group(
                                     staticTypeField("serialized"),
                                     VALUE_TYPE.fieldOf("value_type").forGetter(v -> (IValueType) v.getValueType().get()),
-                                    ExtraCodecs.FLAT_JSON.fieldOf("value").forGetter(v -> (JsonElement) v.getValueJson().get())
+                                    ExtraCodecs.JSON.fieldOf("value").forGetter(v -> (JsonElement) v.getValueJson().get())
                             )
                             .apply(builder, (raw, valueType, valueJson) -> {
                                 Optional<IValue> value = Optional.empty();
                                 try {
-                                    Tag tag = TagParser.parseTag(valueJson.toString());
+                                    Tag tag = TagParser.parseTag(valueJson.getAsString());
                                     if (((CompoundTag) tag).contains("Primitive")) {
                                         tag = ((CompoundTag) tag).get("Primitive");
                                     }
-                                    value = Optional.of(ValueHelpers.deserializeRaw(ValueDeseralizationContext.ofAllEnabled(), valueType, tag));
+                                    value = Optional.of(ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(getHolderLookupProviderDuringWorldLoadHack()), valueType, tag));
                                 } catch (CommandSyntaxException e) {
                                     e.printStackTrace();
                                 }
@@ -153,50 +165,62 @@ public class Codecs {
             )
     ));
 
+    public static HolderLookup.Provider getHolderLookupProviderDuringWorldLoadHack() {
+        return new HolderLookup.Provider() {
+            @Override
+            public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
+                return (Stream) BuiltInRegistries.WRITABLE_REGISTRY.registryKeySet().stream();
+            }
+
+            @Override
+            public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(ResourceKey<? extends Registry<? extends T>> key) {
+                WritableRegistry<T> registry = (WritableRegistry) BuiltInRegistries.WRITABLE_REGISTRY.get(key.location());
+                return Optional.of(registry.asLookup());
+            }
+        };
+    }
+
     public static Codec<VariablePredicate> getVariableCodec() { // This is a function so we can achieve recursion using lazyInitializedCodec
         return xorCommonList(Arrays.asList(
                 RecordCodecBuilder.<OperatorRegistry.OperatorVariablePredicate>create(
                         builder -> builder.group(
                                         staticTypeField("operator"),
-                                        ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(OperatorRegistry.OperatorVariablePredicate::getValueType),
-                                        ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(OperatorRegistry.OperatorVariablePredicate::getValuePredicate),
-                                        ExtraCodecs.strictOptionalField(OPERATOR, "operator").forGetter(OperatorRegistry.OperatorVariablePredicate::getOperator),
-                                        ExtraCodecs.strictOptionalField(ExtraCodecs.strictUnboundedMap(Codec.STRING.xmap(
+                                        VALUE_TYPE.optionalFieldOf("value_type").forGetter(OperatorRegistry.OperatorVariablePredicate::getValueType),
+                                        VALUE.optionalFieldOf("value").forGetter(OperatorRegistry.OperatorVariablePredicate::getValuePredicate),
+                                        OPERATOR.optionalFieldOf("operator").forGetter(OperatorRegistry.OperatorVariablePredicate::getOperator),
+                                        ExtraCodecs.strictUnboundedMap(Codec.STRING.xmap(
                                                 Integer::parseInt,
                                                 integer -> Integer.toString(integer)
-                                        ), ExtraCodecs.lazyInitializedCodec(Codecs::getVariableCodec)), "input").forGetter(OperatorRegistry.OperatorVariablePredicate::getInputPredicates)
+                                        ), Codec.lazyInitialized(Codecs::getVariableCodec)).optionalFieldOf("input").forGetter(OperatorRegistry.OperatorVariablePredicate::getInputPredicates)
                                 )
                                 .apply(builder, (type, valueType, value, operator, input) -> new OperatorRegistry.OperatorVariablePredicate(valueType, value, operator, input))
                 ),
                 RecordCodecBuilder.<AspectRegistry.AspectVariablePredicate>create(
                         builder -> builder.group(
                                         staticTypeField("aspect"),
-                                        ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(AspectRegistry.AspectVariablePredicate::getValueType),
-                                        ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(AspectRegistry.AspectVariablePredicate::getValuePredicate),
-                                        ExtraCodecs.strictOptionalField(ASPECT, "aspect").forGetter(AspectRegistry.AspectVariablePredicate::getAspect)
+                                        VALUE_TYPE.optionalFieldOf("value_type").forGetter(AspectRegistry.AspectVariablePredicate::getValueType),
+                                        VALUE.optionalFieldOf("value").forGetter(AspectRegistry.AspectVariablePredicate::getValuePredicate),
+                                        ASPECT.optionalFieldOf("aspect").forGetter(AspectRegistry.AspectVariablePredicate::getAspect)
                                 )
                                 .apply(builder, (type, valueType, value, aspect) -> new AspectRegistry.AspectVariablePredicate(valueType, value, aspect))
                 ),
                 RecordCodecBuilder.create(
                         builder -> builder.group(
                                         staticTypeField("value_type"),
-                                        ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(VariablePredicate::getValueType),
-                                        ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(VariablePredicate::getValuePredicate)
+                                        VALUE_TYPE.optionalFieldOf("value_type").forGetter(VariablePredicate::getValueType),
+                                        VALUE.optionalFieldOf("value").forGetter(VariablePredicate::getValuePredicate)
                                 )
                                 .apply(builder, (type, valueType, valuePredicate) -> new VariablePredicate<>(IVariable.class, valueType, valuePredicate))
                 ),
                 RecordCodecBuilder.<VariablePredicateTyped>create(
                         builder -> builder.group(
-                                        ExtraCodecs.validate(
-                                                Codec.STRING,
-                                                type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(new ResourceLocation(type)) == null ?
-                                                        DataResult.error(() -> "Variable facade predicate is expected to have as 'type' one of: " + String.join(", ", IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandlerNames())) :
-                                                        DataResult.success(type)
-                                        ).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString()),
-                                        ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(VariablePredicate::getValueType),
-                                        ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(VariablePredicate::getValuePredicate)
+                                        Codec.STRING.validate(type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type)) == null ?
+                                                DataResult.error(() -> "Variable facade predicate is expected to have as 'type' one of: " + String.join(", ", IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandlerNames())) :
+                                                DataResult.success(type)).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString()),
+                                        VALUE_TYPE.optionalFieldOf("value_type").forGetter(VariablePredicate::getValueType),
+                                        VALUE.optionalFieldOf("value").forGetter(VariablePredicate::getValuePredicate)
                                 )
-                                .apply(builder, (type, valueType, valuePredicate) -> new VariablePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(new ResourceLocation(type)), valueType, valuePredicate))
+                                .apply(builder, (type, valueType, valuePredicate) -> new VariablePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type)), valueType, valuePredicate))
                 )
         ));
     }
@@ -206,39 +230,33 @@ public class Codecs {
             RecordCodecBuilder.<AspectRegistry.AspectVariableFacadePredicate>create(
                     builder -> builder.group(
                                     staticTypeField("aspect"),
-                                    ExtraCodecs.strictOptionalField(ASPECT, "aspect").forGetter(AspectRegistry.AspectVariableFacadePredicate::getAspect)
+                                    ASPECT.optionalFieldOf("aspect").forGetter(AspectRegistry.AspectVariableFacadePredicate::getAspect)
                             )
                             .apply(builder, (type, aspect) -> new AspectRegistry.AspectVariableFacadePredicate(aspect))
             ),
             RecordCodecBuilder.<ValueTypeRegistry.ValueTypeVariableFacadePredicate>create(
                     builder -> builder.group(
                                     staticTypeField("value_type"),
-                                    ExtraCodecs.strictOptionalField(VALUE_TYPE, "value_type").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValueType),
-                                    ExtraCodecs.strictOptionalField(VALUE, "value").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValuePredicate)
+                                    VALUE_TYPE.optionalFieldOf("value_type").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValueType),
+                                    VALUE.optionalFieldOf("value").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValuePredicate)
                             )
                             .apply(builder, (type, valueType, value) -> new ValueTypeRegistry.ValueTypeVariableFacadePredicate(valueType, value))
             ),
             RecordCodecBuilder.<VariableFacadePredicateTyped>create(
                     builder -> builder.group(
-                                    ExtraCodecs.validate(
-                                            Codec.STRING,
-                                            type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(new ResourceLocation(type)) == null ?
-                                                    DataResult.error(() -> "Variable facade predicate is expected to have as 'type' one of: " + String.join(", ", IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandlerNames())) :
-                                                    DataResult.success(type)
-                                    ).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString())
+                                    Codec.STRING.validate(type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type)) == null ?
+                                            DataResult.error(() -> "Variable facade predicate is expected to have as 'type' one of: " + String.join(", ", IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandlerNames())) :
+                                            DataResult.success(type)).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString())
                             )
-                            .apply(builder, (type) -> new VariableFacadePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(new ResourceLocation(type))))
+                            .apply(builder, (type) -> new VariableFacadePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type))))
             ),
             Codec.unit(new VariableFacadePredicate<>(IVariableFacade.class))
     ));
 
     public static <T> RecordCodecBuilder<T, String> staticTypeField(String value) {
-        return ExtraCodecs.validate(
-                Codec.STRING,
-                type -> !value.equals(type) ?
-                        DataResult.error(() -> "Variable facade predicate is expected to have 'type': '" + value + "'") :
-                        DataResult.success(type)
-        ).fieldOf("type").forGetter(p -> value);
+        return Codec.STRING.validate(type -> !value.equals(type) ?
+                DataResult.error(() -> "Variable facade predicate is expected to have 'type': '" + value + "'") :
+                DataResult.success(type)).fieldOf("type").forGetter(p -> value);
     }
 
     public static <X> Codec<X> xorCommonList(List<Codec<? extends X>> codecs) {

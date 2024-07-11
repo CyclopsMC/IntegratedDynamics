@@ -42,11 +42,11 @@ public class ValueTypeListProxyNbtKeys extends ValueTypeListProxyBase<ValueTypeS
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "nbt.keys");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "nbt.keys");
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyNbtKeys value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyNbtKeys value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             value.tag.ifPresent(inbt -> tag.put("tag", inbt));
         }
 

@@ -34,7 +34,7 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/mechanical_squeezer.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/mechanical_squeezer.png");
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
-    public Tag serialize(ValueInteger value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueInteger value) {
         return IntTag.valueOf(value.getRawValue());
     }
 

@@ -1,0 +1,20 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "minecraft:cobblestone"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:gravel"
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:flint"
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 40
+}

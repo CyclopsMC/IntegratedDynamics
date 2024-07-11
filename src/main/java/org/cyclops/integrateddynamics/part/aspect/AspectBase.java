@@ -49,7 +49,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(getModId(), getUnlocalizedType().replaceAll("\\.", "_"));
+        return ResourceLocation.fromNamespaceAndPath(getModId(), getUnlocalizedType().replaceAll("\\.", "_"));
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.network.packet;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +26,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerSetElementInventory extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "logic_programmer_set_element");
+    public static final Type<LogicProgrammerSetElementInventory> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_set_element"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerSetElementInventory> CODEC = getCodec(LogicProgrammerSetElementInventory::new);
 
     @CodecField
     private String listValueType;
@@ -61,7 +64,7 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
             ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) player.containerMenu;
             ILogicProgrammerElement element = container.getActiveElement();
             if (element instanceof ValueTypeListLPElement || element instanceof ValueTypeIngredientsLPElement) {
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(this.listValueType));
+                IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(this.listValueType));
                 if (valueType != null) {
                     ((ContainerLogicProgrammerBase) player.containerMenu).setElementInventory(
                             valueType.createLogicProgrammerElement(), baseX, baseY);

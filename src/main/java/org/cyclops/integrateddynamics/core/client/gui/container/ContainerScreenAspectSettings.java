@@ -61,7 +61,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/aspect_settings.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/aspect_settings.png");
     }
 
     public int getActivePropertyIndex() {
@@ -70,7 +70,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     protected void saveSetting() {
         if(guiElement != null && lastError == null) {
-            container.setValue(getActiveProperty(), guiElement.getValue());
+            container.setValue(ValueDeseralizationContext.ofClient(), getActiveProperty(), guiElement.getValue());
         }
     }
 

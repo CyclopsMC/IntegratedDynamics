@@ -16,9 +16,9 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 public abstract class ValueTypeListProxyNBTFactorySimple<T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> implements IValueTypeListProxyFactoryTypeRegistry.IProxyFactory<T, V, P> {
 
     @Override
-    public Tag serialize(P value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         CompoundTag tag = new CompoundTag();
-        serializeNbt(value, tag);
+        serializeNbt(valueDeseralizationContext, value, tag);
         return tag;
     }
 
@@ -32,6 +32,6 @@ public abstract class ValueTypeListProxyNBTFactorySimple<T extends IValueType<V>
         }
     }
 
-    protected abstract void serializeNbt(P value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException;
+    protected abstract void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, P value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException;
     protected abstract P deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException;
 }

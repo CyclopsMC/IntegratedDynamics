@@ -7,7 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
@@ -33,13 +32,13 @@ public class ItemVariable extends Item {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
-        IVariableFacade variableFacade = getVariableFacade(ValueDeseralizationContext.of(world), itemStack);
-        variableFacade.appendHoverText(list, world);
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+        IVariableFacade variableFacade = getVariableFacade(ValueDeseralizationContext.ofClient(), itemStack);
+        variableFacade.appendHoverText(list, context);
         if (variableFacade != VariableFacadeHandlerRegistry.DUMMY_FACADE && Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
             list.add(Component.translatable("item.integrateddynamics.variable.warning"));
         }
-        super.appendHoverText(itemStack, world, list, flag);
+        super.appendHoverText(itemStack, context, list, flag);
     }
 
     @Override

@@ -9,9 +9,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -71,11 +71,12 @@ public interface IVariableFacade {
 
     /**
      * Add information about this variable facade to the list.
-     * @param list The list to add lines to.
-     * @param world The world.
+     *
+     * @param list    The list to add lines to.
+     * @param context The context.
      */
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(List<Component> list, Level world);
+    public void appendHoverText(List<Component> list, Item.TooltipContext context);
 
     /**
      * Handle the quads for the given baked model.

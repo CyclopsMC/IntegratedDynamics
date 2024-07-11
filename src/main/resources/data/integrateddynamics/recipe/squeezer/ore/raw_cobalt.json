@@ -1,0 +1,37 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "tag": "c:ores/cobalt"
+  },
+  "output_items": [
+    {
+      "tag": {
+        "tag": "c:raw_materials/cobalt",
+        "count": 2
+      }
+    },
+    {
+      "tag": {
+        "tag": "c:raw_materials/cobalt"
+      },
+      "chance": 0.75
+    }
+  ],
+  "duration": 40,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:raw_materials/cobalt"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:ores/cobalt"
+      }
+    }
+  ]
+}

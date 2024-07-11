@@ -1,8 +1,7 @@
 package org.cyclops.integrateddynamics.loot.functions;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -10,7 +9,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalSqueezer;
 
 import java.util.List;
@@ -21,10 +20,10 @@ import java.util.List;
  */
 public class LootFunctionCopyMechanicalSqueezerTank extends LootItemConditionalFunction {
 
-    public static final Codec<LootFunctionCopyMechanicalSqueezerTank> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<LootFunctionCopyMechanicalSqueezerTank> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalSqueezerTank::new)
     );
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyMechanicalSqueezerTank.CODEC);
+    public static final LootItemFunctionType<LootFunctionCopyMechanicalSqueezerTank> TYPE = new LootItemFunctionType<>(LootFunctionCopyMechanicalSqueezerTank.CODEC);
 
     protected LootFunctionCopyMechanicalSqueezerTank(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -34,7 +33,7 @@ public class LootFunctionCopyMechanicalSqueezerTank extends LootItemConditionalF
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
         BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalSqueezer) {
-            itemStack.getOrCreateTag().put(BlockMechanicalSqueezer.NBT_TANK, ((BlockEntityMechanicalSqueezer) tile).getTank().writeToNBT(new CompoundTag()));
+            itemStack.set(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_FLUID_CONTENT, SimpleFluidContent.copyOf(((BlockEntityMechanicalSqueezer) tile).getTank().getFluid()));
         }
         return itemStack;
     }

@@ -42,7 +42,7 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "operator." + getModId() + ".cast"
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "operator." + getModId() + ".cast"
                 + from.getUniqueName().toString().replaceAll(":", "_") + "__"
                 + to.getUniqueName().toString().replaceAll(":", "_"));
     }

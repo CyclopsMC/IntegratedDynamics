@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
@@ -11,8 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.DistExecutor;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -62,7 +59,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     }
 
     @Override
-    public Tag serialize(ValueEntity value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueEntity value) {
         Optional<UUID> uuid = value.getUuid();
         if(uuid.isPresent()) {
             return StringTag.valueOf(uuid.get().toString());
@@ -127,26 +124,14 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         public Optional<Entity> getRawValue() {
             Optional<UUID> uuid = getUuid();
             if (uuid.isPresent()) {
-                Optional<Entity> optionalEntity = DistExecutor.callWhenOn(Dist.CLIENT, ()->()-> {
-                    if (MinecraftHelpers.isClientSideThread()) {
-                        for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()) {
-                            if (entity.getUUID().equals(uuid.get())) {
-                                return Optional.of(entity);
-                            }
-                        }
-                        return Optional.empty();
+                if (MinecraftHelpers.isClientSideThread()) {
+                    return ValueObjectTypeEntityClient.getEntity(uuid.get());
+                }
+                for (ServerLevel world : ServerLifecycleHooks.getCurrentServer().getAllLevels()) {
+                    Entity entity = world.getEntity(uuid.get());
+                    if (entity != null) {
+                        return Optional.of(entity);
                     }
-                    return null;
-                });
-                if (optionalEntity == null) {
-                    for (ServerLevel world : ServerLifecycleHooks.getCurrentServer().getAllLevels()) {
-                        Entity entity = world.getEntity(uuid.get());
-                        if (entity != null) {
-                            return Optional.of(entity);
-                        }
-                    }
-                } else {
-                    return optionalEntity;
                 }
             }
             return Optional.empty();

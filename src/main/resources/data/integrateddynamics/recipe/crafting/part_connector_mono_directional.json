@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " O ",
+    "CCC",
+    " I "
+  ],
+  "key": {
+    "I": {
+      "item": "integrateddynamics:variable_transformer_input"
+    },
+    "O": {
+      "item": "integrateddynamics:variable_transformer_output"
+    },
+    "C": {
+      "item": "integrateddynamics:cable"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:part_connector_mono_directional"
+  }
+}

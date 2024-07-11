@@ -170,7 +170,7 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "aspect");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "aspect");
     }
 
     @Override
@@ -180,7 +180,7 @@ public final class AspectRegistry implements IAspectRegistry {
             return INVALID_FACADE;
         }
         int partId = tag.getInt("partId");
-        IAspect aspect = getAspect(new ResourceLocation(tag.getString("aspectName")));
+        IAspect aspect = getAspect(ResourceLocation.parse(tag.getString("aspectName")));
         if(aspect == null) {
             return INVALID_FACADE;
         }
@@ -188,7 +188,7 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public void setVariableFacade(CompoundTag tag, IAspectVariableFacade variableFacade) {
+    public void setVariableFacade(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, IAspectVariableFacade variableFacade) {
         tag.putInt("partId", variableFacade.getPartId());
         tag.putString("aspectName", variableFacade.getAspect().getUniqueName().toString());
     }

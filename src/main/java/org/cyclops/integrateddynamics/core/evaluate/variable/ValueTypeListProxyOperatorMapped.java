@@ -41,13 +41,13 @@ public class ValueTypeListProxyOperatorMapped extends ValueTypeListProxyBase<IVa
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "mapped");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "mapped");
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyOperatorMapped value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.put("operator", Operators.REGISTRY.serialize(value.operator));
-            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.listProxy));
+        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyOperatorMapped value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            tag.put("operator", Operators.REGISTRY.serialize(valueDeseralizationContext, value.operator));
+            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.listProxy));
         }
 
         @Override

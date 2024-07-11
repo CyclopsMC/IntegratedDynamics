@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.world.gen.foliageplacer;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -15,7 +15,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  * @author rubensworks
  */
 public class FoliagePlacerMenril extends FoliagePlacer {
-    public static final Codec<FoliagePlacerMenril> CODEC = RecordCodecBuilder.create((builder) -> foliagePlacerParts(builder)
+    public static final MapCodec<FoliagePlacerMenril> CODEC = RecordCodecBuilder.mapCodec((builder) -> foliagePlacerParts(builder)
             .apply(builder, FoliagePlacerMenril::new));
 
     public FoliagePlacerMenril(IntProvider radius, IntProvider offset) {

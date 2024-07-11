@@ -46,9 +46,9 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
     }
 
     @Override
-    public Tag serialize(P values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         CompoundTag tag = new CompoundTag();
-        values.writeGeneratedFieldsToNBT(tag);
+        values.writeGeneratedFieldsToNBT(tag, valueDeseralizationContext.holderLookupProvider());
         return tag;
     }
 
@@ -56,7 +56,7 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
     public P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         try {
             P proxy = this.proxyClassConstructor.newInstance();
-            proxy.readGeneratedFieldsFromNBT((CompoundTag) value);
+            proxy.readGeneratedFieldsFromNBT((CompoundTag) value, valueDeseralizationContext.holderLookupProvider());
             return proxy;
         } catch (InvocationTargetException | InstantiationException | ClassCastException | IllegalAccessException e) {
             e.printStackTrace();

@@ -17,7 +17,6 @@ public class PartTypeEffectWriter extends PartTypeWriteBase<PartTypeEffectWriter
     public PartTypeEffectWriter(String name) {
         super(name);
         Aspects.REGISTRY.register(this, Lists.<IAspect>newArrayList(
-                Aspects.Write.Effect.createForParticle(ParticleTypes.AMBIENT_ENTITY_EFFECT),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.ANGRY_VILLAGER),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.BUBBLE),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.CLOUD),
@@ -34,7 +33,6 @@ public class PartTypeEffectWriter extends PartTypeWriteBase<PartTypeEffectWriter
                 Aspects.Write.Effect.createForParticle(ParticleTypes.ENCHANTED_HIT),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.ENCHANT),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.END_ROD),
-                Aspects.Write.Effect.createForParticle(ParticleTypes.ENTITY_EFFECT),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.EXPLOSION_EMITTER),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.EXPLOSION),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.SONIC_BOOM),

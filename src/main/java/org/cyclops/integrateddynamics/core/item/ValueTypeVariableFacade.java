@@ -11,9 +11,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -106,13 +106,13 @@ public class ValueTypeVariableFacade<V extends IValue> extends VariableFacadeBas
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<Component> list, Level world) {
+    public void appendHoverText(List<Component> list, Item.TooltipContext context) {
         if(isValid()) {
             V value = getValue();
             getValueType().loadTooltip(list, false, value);
             list.add(Component.translatable(L10NValues.VALUETYPE_TOOLTIP_VALUE, getValueType().toCompactString(value)));
         }
-        super.appendHoverText(list, world);
+        super.appendHoverText(list, context);
     }
 
     @OnlyIn(Dist.CLIENT)

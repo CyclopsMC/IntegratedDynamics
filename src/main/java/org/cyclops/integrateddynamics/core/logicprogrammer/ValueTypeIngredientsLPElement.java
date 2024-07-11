@@ -25,6 +25,7 @@ import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
@@ -169,7 +170,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         }
         if (MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerValueTypeIngredientsValueChangedPacket(
+                    new LogicProgrammerValueTypeIngredientsValueChangedPacket(ValueDeseralizationContext.ofClient(),
                             ValueObjectTypeIngredients.ValueIngredients.of(constructValues())));
         }
         for (Map<Integer, IValueTypeLogicProgrammerElement> componentValues : subElements.values()) {

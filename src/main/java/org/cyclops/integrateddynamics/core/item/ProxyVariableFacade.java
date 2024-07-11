@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -134,11 +134,11 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<Component> list, Level world) {
+    public void appendHoverText(List<Component> list, Item.TooltipContext context) {
         if(isValid()) {
             list.add(getProxyTooltip());
         }
-        super.appendHoverText(list, world);
+        super.appendHoverText(list, context);
     }
 
     @OnlyIn(Dist.CLIENT)

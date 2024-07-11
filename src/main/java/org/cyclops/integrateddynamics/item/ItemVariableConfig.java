@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.item;
 
 import com.google.common.collect.Lists;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
@@ -38,14 +39,14 @@ public class ItemVariableConfig extends ItemConfig {
     @SubscribeEvent
     public void onModelLoading(ModelEvent.RegisterGeometryLoaders event) {
         subModels = Lists.newArrayList();
-        event.register(new ResourceLocation(Reference.MOD_ID, "variable"), new ModelLoaderVariable(subModels));
+        event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable"), new ModelLoaderVariable(subModels));
     }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onModelLoading(ModelEvent.RegisterAdditional event) {
         for (ResourceLocation subModel : subModels) {
-            event.register(subModel);
+            event.register(ModelResourceLocation.standalone(subModel));
         }
     }
 

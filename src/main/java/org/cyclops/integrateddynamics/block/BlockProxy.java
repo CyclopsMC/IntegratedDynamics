@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.block;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -31,8 +30,6 @@ import javax.annotation.Nullable;
 public class BlockProxy extends BlockWithEntityGuiCabled {
 
     public static final MapCodec<BlockProxy> CODEC = simpleCodec(BlockProxy::new);
-
-    public static final String NBT_ID = "proxyId";
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
@@ -68,8 +65,8 @@ public class BlockProxy extends BlockWithEntityGuiCabled {
         if (!world.isClientSide()) {
             BlockEntityHelpers.get(world, blockPos, BlockEntityProxy.class)
                     .ifPresent(tile -> {
-                        if (itemStack.hasTag() && itemStack.getTag().contains(NBT_ID, Tag.TAG_INT)) {
-                            tile.setProxyId(itemStack.getTag().getInt(NBT_ID));
+                        if (itemStack.has(RegistryEntries.DATACOMPONENT_PROXY_ID)) {
+                            tile.setProxyId(itemStack.get(RegistryEntries.DATACOMPONENT_PROXY_ID));
                         } else {
                             tile.generateNewProxyId();
                         }

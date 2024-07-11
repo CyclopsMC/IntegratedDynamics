@@ -37,7 +37,7 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     }
 
     @Override
-    public Tag serialize(ValueLong value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueLong value) {
         return LongTag.valueOf(value.getRawValue());
     }
 

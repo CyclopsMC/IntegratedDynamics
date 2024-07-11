@@ -23,7 +23,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public abstract class SubGuiBox implements ISubGuiBox {
 
-    protected static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID,
+    protected static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID,
             IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "sub_gui.png");
 
     private final Box type;

@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -48,7 +48,7 @@ public class ContainerPartSettings extends InventoryContainer {
     private final int lastSideValueId;
     private final int lastMinUpdateValueId;
 
-    public ContainerPartSettings(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+    public ContainerPartSettings(int id, Inventory playerInventory, RegistryFriendlyByteBuf packetBuffer) {
         this(id, playerInventory, new SimpleContainer(0),
                 PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }

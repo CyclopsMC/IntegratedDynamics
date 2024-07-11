@@ -65,7 +65,7 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/" + getNameId() + ".png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/" + getNameId() + ".png");
     }
 
     protected float colorSmoothener(float color) {

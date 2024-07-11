@@ -21,7 +21,7 @@ public class ContainerScreenVariablestore extends ContainerScreenExtended<Contai
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation("textures/gui/container/generic_54.png");
+        return ResourceLocation.parse("textures/gui/container/generic_54.png");
     }
 
     @Override

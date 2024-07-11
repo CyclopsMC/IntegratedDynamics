@@ -151,22 +151,26 @@ public class ValueHelpers {
 
     /**
      * Serialize the given value to a raw tag without its value type.
-     * @param value The value.
+     *
+     * @param valueDeseralizationContext The deserialization context.
+     * @param value                      The value.
      * @return The NBT tag.
      */
-    public static Tag serializeRaw(IValue value) {
-        return value.getType().serialize(value);
+    public static Tag serializeRaw(ValueDeseralizationContext valueDeseralizationContext, IValue value) {
+        return value.getType().serialize(valueDeseralizationContext, value);
     }
 
     /**
      * Serialize the given value to NBT.
-     * @param value The value.
+     *
+     * @param valueDeseralizationContext The deserialization context.
+     * @param value                      The value.
      * @return The NBT tag.
      */
-    public static CompoundTag serialize(IValue value) {
+    public static CompoundTag serialize(ValueDeseralizationContext valueDeseralizationContext, IValue value) {
         CompoundTag tag = new CompoundTag();
         tag.putString("valueType", value.getType().getUniqueName().toString());
-        tag.put("value", serializeRaw(value));
+        tag.put("value", serializeRaw(valueDeseralizationContext, value));
         return tag;
     }
 
@@ -178,7 +182,7 @@ public class ValueHelpers {
      * @return The value.
      */
     public static IValue deserialize(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
+        IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("valueType")));
         if (valueType == null) {
             return null;
         }
@@ -275,7 +279,7 @@ public class ValueHelpers {
      */
     public static ResourceLocation createResourceLocationInEvaluation(String value) throws EvaluationException {
         try {
-            return new ResourceLocation(value);
+            return ResourceLocation.parse(value);
         } catch (ResourceLocationException e) {
             throw new EvaluationException(Component.literal(e.getMessage()));
         }

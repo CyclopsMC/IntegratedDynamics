@@ -59,7 +59,7 @@ public class ContainerAspectSettings extends InventoryContainer {
 
     protected static IAspect<?, ?> readAspect(FriendlyByteBuf packetBuffer) {
         String name = packetBuffer.readUtf();
-        return Objects.requireNonNull(AspectRegistry.getInstance().getAspect(new ResourceLocation(name)),
+        return Objects.requireNonNull(AspectRegistry.getInstance().getAspect(ResourceLocation.parse(name)),
                 String.format("Could not find an aspect by name %s", name));
     }
 
@@ -107,12 +107,12 @@ public class ContainerAspectSettings extends InventoryContainer {
         super.initializeValues();
         IAspectProperties properties = aspect.getProperties(getPartType().get(), getTarget().get(), getPartState().get());
         for(IAspectPropertyTypeInstance property : aspect.getPropertyTypes()) {
-            setValue(property, properties.getValue(property));
+            setValue(ValueDeseralizationContext.ofAllEnabled(), property, properties.getValue(property));
         }
     }
 
-    public void setValue(IAspectPropertyTypeInstance property, IValue value) {
-        ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), ValueHelpers.serializeRaw(value));
+    public void setValue(ValueDeseralizationContext valueDeseralizationContext, IAspectPropertyTypeInstance property, IValue value) {
+        ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), ValueHelpers.serializeRaw(valueDeseralizationContext, value));
     }
 
     public Optional<IPartState> getPartState() {

@@ -22,27 +22,27 @@ public class CommonProxy extends CommonProxyComponent {
         super.registerPacketHandlers(packetHandler);
 
         // Register packets.
-        packetHandler.register(LogicProgrammerActivateElementPacket.ID, LogicProgrammerActivateElementPacket::new);
-        packetHandler.register(LogicProgrammerValueTypeStringValueChangedPacket.ID, LogicProgrammerValueTypeStringValueChangedPacket::new);
-        packetHandler.register(ActionLabelPacket.ID, ActionLabelPacket::new);
-        packetHandler.register(AllLabelsPacket.ID, AllLabelsPacket::new);
-        packetHandler.register(ItemStackRenamePacket.ID, ItemStackRenamePacket::new);
-        packetHandler.register(LogicProgrammerValueTypeListValueChangedPacket.ID, LogicProgrammerValueTypeListValueChangedPacket::new);
-        packetHandler.register(LogicProgrammerLabelPacket.ID, LogicProgrammerLabelPacket::new);
-        packetHandler.register(LogicProgrammerValueTypeOperatorValueChangedPacket.ID, LogicProgrammerValueTypeOperatorValueChangedPacket::new);
-        packetHandler.register(NetworkDiagnosticsSubscribePacket.ID, NetworkDiagnosticsSubscribePacket::new);
-        packetHandler.register(NetworkDiagnosticsNetworkPacket.ID, NetworkDiagnosticsNetworkPacket::new);
-        packetHandler.register(NetworkDiagnosticsTriggerClient.ID, NetworkDiagnosticsTriggerClient::new);
-        packetHandler.register(PlayerTeleportPacket.ID, PlayerTeleportPacket::new);
-        packetHandler.register(LogicProgrammerValueTypeSlottedValueChangedPacket.ID, LogicProgrammerValueTypeSlottedValueChangedPacket::new);
-        packetHandler.register(LogicProgrammerSetElementInventory.ID, LogicProgrammerSetElementInventory::new);
-        packetHandler.register(LogicProgrammerValueTypeIngredientsValueChangedPacket.ID, LogicProgrammerValueTypeIngredientsValueChangedPacket::new);
-        packetHandler.register(LogicProgrammerValueTypeRecipeValueChangedPacket.ID, LogicProgrammerValueTypeRecipeValueChangedPacket::new);
-        packetHandler.register(LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket.ID, LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket::new);
-        packetHandler.register(SpeakTextPacket.ID, SpeakTextPacket::new);
-        packetHandler.register(LogicProgrammerValueTypeBooleanValueChangedPacket.ID, LogicProgrammerValueTypeBooleanValueChangedPacket::new);
-        packetHandler.register(PartOffsetsSubscribePacket.ID, PartOffsetsSubscribePacket::new);
-        packetHandler.register(PartOffsetsDataPacket.ID, PartOffsetsDataPacket::new);
+        packetHandler.register(LogicProgrammerActivateElementPacket.ID, LogicProgrammerActivateElementPacket.CODEC);
+        packetHandler.register(LogicProgrammerValueTypeStringValueChangedPacket.ID, LogicProgrammerValueTypeStringValueChangedPacket.CODEC);
+        packetHandler.register(ActionLabelPacket.TYPE, ActionLabelPacket.CODEC);
+        packetHandler.register(AllLabelsPacket.ID, AllLabelsPacket.CODEC);
+        packetHandler.register(ItemStackRenamePacket.ID, ItemStackRenamePacket.CODEC);
+        packetHandler.register(LogicProgrammerValueTypeListValueChangedPacket.ID, LogicProgrammerValueTypeListValueChangedPacket.CODEC);
+        packetHandler.register(LogicProgrammerLabelPacket.ID, LogicProgrammerLabelPacket.CODEC);
+        packetHandler.register(LogicProgrammerValueTypeOperatorValueChangedPacket.ID, LogicProgrammerValueTypeOperatorValueChangedPacket.CODEC);
+        packetHandler.register(NetworkDiagnosticsSubscribePacket.ID, NetworkDiagnosticsSubscribePacket.CODEC);
+        packetHandler.register(NetworkDiagnosticsNetworkPacket.ID, NetworkDiagnosticsNetworkPacket.CODEC);
+        packetHandler.register(NetworkDiagnosticsTriggerClient.ID, NetworkDiagnosticsTriggerClient.CODEC);
+        packetHandler.register(PlayerTeleportPacket.ID, PlayerTeleportPacket.CODEC);
+        packetHandler.register(LogicProgrammerValueTypeSlottedValueChangedPacket.ID, LogicProgrammerValueTypeSlottedValueChangedPacket.CODEC);
+        packetHandler.register(LogicProgrammerSetElementInventory.ID, LogicProgrammerSetElementInventory.CODEC);
+        packetHandler.register(LogicProgrammerValueTypeIngredientsValueChangedPacket.ID, LogicProgrammerValueTypeIngredientsValueChangedPacket.CODEC);
+        packetHandler.register(LogicProgrammerValueTypeRecipeValueChangedPacket.ID, LogicProgrammerValueTypeRecipeValueChangedPacket.CODEC);
+        packetHandler.register(LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket.ID, LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket.CODEC);
+        packetHandler.register(SpeakTextPacket.ID, SpeakTextPacket.CODEC);
+        packetHandler.register(LogicProgrammerValueTypeBooleanValueChangedPacket.ID, LogicProgrammerValueTypeBooleanValueChangedPacket.CODEC);
+        packetHandler.register(PartOffsetsSubscribePacket.ID, PartOffsetsSubscribePacket.CODEC);
+        packetHandler.register(PartOffsetsDataPacket.ID, PartOffsetsDataPacket.CODEC);
 
         IntegratedDynamics.clog("Registered packet handler.");
     }

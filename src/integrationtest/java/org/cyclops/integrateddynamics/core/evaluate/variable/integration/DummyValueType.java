@@ -80,7 +80,7 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public Tag serialize(DummyValue value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, DummyValue value) {
         return EndTag.INSTANCE;
     }
 

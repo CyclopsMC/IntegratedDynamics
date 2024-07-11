@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "PVP",
+    " E "
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable_transformer_input"
+    },
+    "P": {
+      "tag": "c:ender_pearls"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:part_extradimensional_reader"
+  }
+}

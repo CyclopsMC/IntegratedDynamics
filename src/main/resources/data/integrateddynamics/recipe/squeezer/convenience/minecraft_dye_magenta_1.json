@@ -1,0 +1,14 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "item": "minecraft:allium"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:magenta_dye",
+        "count": 4
+      }
+    }
+  ]
+}

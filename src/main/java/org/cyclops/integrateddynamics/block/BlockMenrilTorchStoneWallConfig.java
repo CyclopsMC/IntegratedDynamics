@@ -2,22 +2,21 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.WallTorchBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
-import java.util.function.Supplier;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Config for the Menril Stone Torch (wall).
@@ -31,10 +30,11 @@ public class BlockMenrilTorchStoneWallConfig extends BlockConfig {
                 IntegratedDynamics._instance,
                 "menril_torch_stone_wall",
                 eConfig -> {
-                    WallTorchBlock block = new WallTorchBlock(ParticleTypes.FLAME, Block.Properties.of()
+                    return new WallTorchBlock(ParticleTypes.FLAME, Block.Properties.of()
                             .noCollission()
                             .strength(0)
                             .lightLevel((blockState) -> 14)
+                            .lootFrom(RegistryEntries.BLOCK_MENRIL_TORCH_STONE::get)
                             .sound(SoundType.STONE)) {
                         @Override
                         @OnlyIn(Dist.CLIENT)
@@ -42,12 +42,14 @@ public class BlockMenrilTorchStoneWallConfig extends BlockConfig {
                             // No particles
                         }
                     };
-                    ObfuscationReflectionHelper.setPrivateValue(BlockBehaviour.class, block,
-                            (Supplier<ResourceLocation>) () -> RegistryEntries.BLOCK_MENRIL_TORCH_STONE.get().getLootTable(), "lootTableSupplier");
-                    return block;
                 },
                 null
         );
+    }
+
+    @Override
+    protected Collection<ItemStack> defaultCreativeTabEntries() {
+        return Collections.emptyList();
     }
 
 }

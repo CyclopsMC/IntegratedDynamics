@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -220,7 +220,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    public void writeExtraGuiData(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+    public void writeExtraGuiData(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
         // Write inventory size
         IPartContainer partContainer = PartHelpers.getPartContainerChecked(pos);
         PartTypePanelVariableDriven.State partState = (PartTypePanelVariableDriven.State) partContainer.getPartState(pos.getSide());
@@ -310,12 +310,12 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
 
         @Override
-        public void writeToNBT(CompoundTag tag) {
-            super.writeToNBT(tag);
+        public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
+            super.writeToNBT(valueDeseralizationContext, tag);
             IValue value = getDisplayValue();
             if(value != null) {
                 tag.putString("displayValueType", value.getType().getUniqueName().toString());
-                tag.put("displayValue", ValueHelpers.serializeRaw(value));
+                tag.put("displayValue", ValueHelpers.serializeRaw(valueDeseralizationContext, value));
             }
             tag.putInt("facingRotation", facingRotation.ordinal());
         }
@@ -325,7 +325,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.readFromNBT(valueDeseralizationContext, tag);
             if(tag.contains("displayValueType", Tag.TAG_STRING)
                     && tag.contains("displayValue")) {
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("displayValueType")));
+                IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("displayValueType")));
                 if(valueType != null) {
                     Tag serializedValue = tag.get("displayValue");
                     Component deserializationError = valueType.canDeserialize(valueDeseralizationContext, serializedValue);

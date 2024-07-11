@@ -382,18 +382,18 @@ public class CombinedOperator extends OperatorBase {
 
         @Override
         public ResourceLocation getUniqueName() {
-            return new ResourceLocation(Reference.MOD_ID, "combined." + functionName);
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "combined." + functionName);
         }
 
         @Override
-        public Tag serialize(CombinedOperator operator) {
+        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, CombinedOperator operator) {
             OperatorsFunction function = (OperatorsFunction) operator.getFunction();
             IOperator[] operators = function.getOperators();
             CompoundTag tag = new CompoundTag();
             ListTag list = new ListTag();
             for (IOperator functionOperator : operators) {
                 CompoundTag elementTag = new CompoundTag();
-                elementTag.put("v", Operators.REGISTRY.serialize(functionOperator));
+                elementTag.put("v", Operators.REGISTRY.serialize(valueDeseralizationContext, functionOperator));
                 list.add(elementTag);
             }
             tag.put("operators", list);

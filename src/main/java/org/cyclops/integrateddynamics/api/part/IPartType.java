@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -79,10 +79,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * Write the properties of this part to NBT.
      * An identificator for this part is not required, this is written somewhere else.
-     * @param tag The tag to write to. This tag is guaranteed to be empty.
-     * @param partState The state of this part.
+     *
+     * @param valueDeseralizationContext
+     * @param tag                        The tag to write to. This tag is guaranteed to be empty.
+     * @param partState                  The state of this part.
      */
-    public void toNBT(CompoundTag tag, S partState);
+    public void toNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, S partState);
 
     /**
      * Read the properties of this part from nbt.
@@ -238,11 +240,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     /**
      * Get the itemstack from the given state.
-     * @param state The state
-     * @param saveState If the part state should be saved in the item.
+     *
+     * @param valueDeseralizationContext
+     * @param state                      The state
+     * @param saveState                  If the part state should be saved in the item.
      * @return The itemstack possibly containing the state information.
      */
-    public ItemStack getItemStack(S state, boolean saveState);
+    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, S state, boolean saveState);
 
     /**
      * Get the itemstack from the given state.
@@ -431,7 +435,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public boolean forceLightTransparency(S state);
 
     /**
-     * {@link #writeExtraGuiData(FriendlyByteBuf, PartPos, ServerPlayer)}.
+     * {@link #writeExtraGuiData(RegistryFriendlyByteBuf, PartPos, ServerPlayer)}.
      * @return The optional container provider for the part type gui.
      * @param pos The part position. May be null when called client-side, for checking presence.
      */
@@ -445,12 +449,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param pos A part position.
      * @param player The player opening the gui.
      */
-    public default void writeExtraGuiData(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+    public default void writeExtraGuiData(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
 
     }
 
     /**
-     * {@link #writeExtraGuiDataSettings(FriendlyByteBuf, PartPos, ServerPlayer)}.
+     * {@link #writeExtraGuiDataSettings(RegistryFriendlyByteBuf, PartPos, ServerPlayer)}.
      * @return The optional container provider for the part settings gui.
      * @param pos The part position. May be null when called client-side, for checking presence.
      */
@@ -459,7 +463,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     };
 
     /**
-     * {@link #writeExtraGuiDataOffsets(FriendlyByteBuf, PartPos, ServerPlayer)}.
+     * {@link #writeExtraGuiDataOffsets(RegistryFriendlyByteBuf, PartPos, ServerPlayer)}.
      * @return The optional container provider for the part offsets gui.
      * @param pos The part position. May be null when called client-side, for checking presence.
      */
@@ -474,7 +478,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param pos A part position.
      * @param player The player opening the settings gui.
      */
-    public default void writeExtraGuiDataSettings(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+    public default void writeExtraGuiDataSettings(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
 
     }
 
@@ -485,7 +489,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param pos A part position.
      * @param player The player opening the offsets gui.
      */
-    public default void writeExtraGuiDataOffsets(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+    public default void writeExtraGuiDataOffsets(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
 
     }
 }

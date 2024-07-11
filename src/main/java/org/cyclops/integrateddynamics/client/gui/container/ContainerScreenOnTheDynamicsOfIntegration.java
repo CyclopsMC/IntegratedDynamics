@@ -84,7 +84,7 @@ public class ContainerScreenOnTheDynamicsOfIntegration extends ScreenInfoBook<Co
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID,
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID,
                 Reference.TEXTURE_PATH_GUI + "on_the_dynamics_of_integration_gui.png");
     }
 }

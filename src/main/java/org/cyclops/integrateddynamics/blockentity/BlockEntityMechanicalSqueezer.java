@@ -1,17 +1,18 @@
 package org.cyclops.integrateddynamics.blockentity;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -89,8 +90,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         return new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeHolder<RecipeMechanicalSqueezer>>>() {
             @Override
             public Optional<RecipeHolder<RecipeMechanicalSqueezer>> getNewValue(ItemStack key) {
-                Container recipeInput = new SimpleContainer(key);
-                return CraftingHelpers.findServerRecipe(getRecipeRegistry(), recipeInput, getLevel());
+                return CraftingHelpers.findServerRecipe(getRecipeRegistry(), CraftingInput.of(1, 1, Lists.newArrayList(key)), getLevel());
             }
 
             @Override
@@ -126,15 +126,15 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
     }
 
     @Override
-    public void read(CompoundTag tag) {
-        super.read(tag);
-        getTank().readFromNBT(tag.getCompound("tank"));
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+        super.read(tag, provider);
+        getTank().readFromNBT(provider, tag.getCompound("tank"));
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        tag.put("tank", getTank().writeToNBT(new CompoundTag()));
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        tag.put("tank", getTank().writeToNBT(provider, new CompoundTag()));
+        super.saveAdditional(tag, provider);
     }
 
     @Override

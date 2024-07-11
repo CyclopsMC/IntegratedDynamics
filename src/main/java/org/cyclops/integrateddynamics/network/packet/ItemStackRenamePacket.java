@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.network.packet;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +20,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
  */
 public class ItemStackRenamePacket extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "item_stack_rename");
+    public static final Type<ItemStackRenamePacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "item_stack_rename"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackRenamePacket> CODEC = getCodec(ItemStackRenamePacket::new);
 
     @CodecField
     private String name;

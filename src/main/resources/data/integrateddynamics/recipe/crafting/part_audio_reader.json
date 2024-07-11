@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " X ",
+    "XVX",
+    " X "
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable_transformer_input"
+    },
+    "X": {
+      "item": "minecraft:note_block"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:part_audio_reader"
+  }
+}

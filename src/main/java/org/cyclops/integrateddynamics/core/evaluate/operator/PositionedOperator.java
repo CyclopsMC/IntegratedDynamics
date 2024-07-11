@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -41,15 +42,15 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundTag tag) {
-        NBTClassType.writeNbt(DimPos.class, "pos", pos, tag);
-        NBTClassType.writeNbt(Direction.class, "side", side, tag);
+    public void writeGeneratedFieldsToNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
+        NBTClassType.writeNbt(DimPos.class, "pos", pos, tag, holderLookupProvider);
+        NBTClassType.writeNbt(Direction.class, "side", side, tag, holderLookupProvider);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundTag tag) {
-        this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag);
-        this.side = NBTClassType.readNbt(Direction.class, "side", tag);
+    public void readGeneratedFieldsFromNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
+        this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag, holderLookupProvider);
+        this.side = NBTClassType.readNbt(Direction.class, "side", tag, holderLookupProvider);
     }
 
     public DimPos getPos() {
@@ -89,9 +90,9 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
         }
 
         @Override
-        public Tag serialize(PositionedOperator operator) {
+        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, PositionedOperator operator) {
             CompoundTag tag = new CompoundTag();
-            operator.writeGeneratedFieldsToNBT(tag);
+            operator.writeGeneratedFieldsToNBT(tag, valueDeseralizationContext.holderLookupProvider());
             return tag;
         }
 
@@ -100,7 +101,7 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
             try {
                 Constructor<? extends PositionedOperator> constructor = this.clazz.getConstructor();
                 PositionedOperator proxy = constructor.newInstance();
-                proxy.readGeneratedFieldsFromNBT((CompoundTag) value);
+                proxy.readGeneratedFieldsFromNBT((CompoundTag) value, valueDeseralizationContext.holderLookupProvider());
                 return proxy;
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | ClassCastException | IllegalAccessException e) {
                 e.printStackTrace();

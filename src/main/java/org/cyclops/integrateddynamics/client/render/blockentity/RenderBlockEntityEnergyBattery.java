@@ -103,10 +103,10 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
 
                 VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
                 Matrix4f matrix = matrixStack.last().pose();
-                vb.vertex(matrix, c[0][0], c[0][1] * height, c[0][2]).color(r, g, b, 1).uv(icon.getU0(), replacedMaxV).uv2(combinedLight).endVertex();
-                vb.vertex(matrix, c[1][0], c[1][1] * height, c[1][2]).color(r, g, b, 1).uv(icon.getU0(), replacedMinV).uv2(combinedLight).endVertex();
-                vb.vertex(matrix, c[2][0], c[2][1] * height, c[2][2]).color(r, g, b, 1).uv(icon.getU1(), replacedMinV).uv2(combinedLight).endVertex();
-                vb.vertex(matrix, c[3][0], c[3][1] * height, c[3][2]).color(r, g, b, 1).uv(icon.getU1(), replacedMaxV).uv2(combinedLight).endVertex();
+                vb.addVertex(matrix, c[0][0], c[0][1] * height, c[0][2]).setColor(r, g, b, 1).setUv(icon.getU0(), replacedMaxV).setLight(combinedLight);
+                vb.addVertex(matrix, c[1][0], c[1][1] * height, c[1][2]).setColor(r, g, b, 1).setUv(icon.getU0(), replacedMinV).setLight(combinedLight);
+                vb.addVertex(matrix, c[2][0], c[2][1] * height, c[2][2]).setColor(r, g, b, 1).setUv(icon.getU1(), replacedMinV).setLight(combinedLight);
+                vb.addVertex(matrix, c[3][0], c[3][1] * height, c[3][2]).setColor(r, g, b, 1).setUv(icon.getU1(), replacedMaxV).setLight(combinedLight);
             }
 
             matrixStack.popPose();

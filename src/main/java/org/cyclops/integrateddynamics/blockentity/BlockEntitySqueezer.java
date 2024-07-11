@@ -1,12 +1,13 @@
 package org.cyclops.integrateddynamics.blockentity;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -81,8 +82,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                 new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeHolder<RecipeSqueezer>>>() {
                     @Override
                     public Optional<RecipeHolder<RecipeSqueezer>> getNewValue(ItemStack key) {
-                        Container recipeInput = new SimpleContainer(key);
-                        return CraftingHelpers.findServerRecipe(getRegistry(), recipeInput, getLevel());
+                        return CraftingHelpers.findServerRecipe(getRegistry(), CraftingInput.of(1, 1, Lists.newArrayList(key)), getLevel());
                     }
 
                     @Override
@@ -127,17 +127,17 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
     }
 
     @Override
-    public void read(CompoundTag tag) {
-        inventory.readFromNBT(tag, "inventory");
-        tank.readFromNBT(tag, "tank");
-        super.read(tag);
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+        inventory.readFromNBT(provider, tag, "inventory");
+        tank.readFromNBT(provider, tag, "tank");
+        super.read(tag, provider);
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        inventory.writeToNBT(tag, "inventory");
-        tank.writeToNBT(tag, "tank");
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        inventory.writeToNBT(provider, tag, "inventory");
+        tank.writeToNBT(provider, tag, "tank");
+        super.saveAdditional(tag, provider);
     }
 
     protected RecipeType<RecipeSqueezer> getRegistry() {
@@ -167,7 +167,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                             if (!blockEntity.getTank().isEmpty()) {
                                 BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK)
                                         .ifPresent(handler -> {
-                                            FluidStack fluidStack = new FluidStack(blockEntity.getTank().getFluid(),
+                                            FluidStack fluidStack = new FluidStack(blockEntity.getTank().getFluid().getFluid(),
                                                     Math.min(100, blockEntity.getTank().getFluidAmount()));
                                             if (handler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
                                                 int filled = handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);

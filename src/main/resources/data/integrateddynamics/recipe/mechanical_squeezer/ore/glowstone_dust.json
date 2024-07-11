@@ -1,0 +1,15 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "minecraft:glowstone"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:glowstone_dust",
+        "count": 4
+      }
+    }
+  ],
+  "duration": 30
+}

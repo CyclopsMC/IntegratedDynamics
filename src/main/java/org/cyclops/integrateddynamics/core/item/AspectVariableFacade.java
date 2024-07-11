@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -84,12 +84,12 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<Component> list, Level world) {
+    public void appendHoverText(List<Component> list, Item.TooltipContext context) {
         if(isValid()) {
             getAspect().loadTooltip(list, false);
             list.add(Component.translatable(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
         }
-        super.appendHoverText(list, world);
+        super.appendHoverText(list, context);
     }
 
     @OnlyIn(Dist.CLIENT)

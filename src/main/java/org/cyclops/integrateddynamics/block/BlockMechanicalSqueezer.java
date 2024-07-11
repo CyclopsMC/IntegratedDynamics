@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -63,11 +61,11 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level world, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult rayTraceResult) {
-        if (FluidUtil.interactWithFluidHandler(player, hand, world, blockPos, rayTraceResult.getDirection())) {
+    public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player, BlockHitResult rayTraceResult) {
+        if (FluidUtil.interactWithFluidHandler(player, player.getUsedItemHand(), world, blockPos, rayTraceResult.getDirection())) {
             return InteractionResult.SUCCESS;
         }
-        return super.use(blockState, world, blockPos, player, hand, rayTraceResult);
+        return super.useWithoutItem(blockState, world, blockPos, player, rayTraceResult);
     }
 
     @Override
@@ -75,8 +73,8 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
         if (!world.isClientSide()) {
             BlockEntityHelpers.get(world, blockPos, BlockEntityMechanicalSqueezer.class)
                     .ifPresent(tile -> {
-                        if (itemStack.hasTag() && itemStack.getTag().contains(NBT_TANK, Tag.TAG_COMPOUND)) {
-                            tile.getTank().readFromNBT(itemStack.getTag().getCompound(NBT_TANK));
+                        if (itemStack.has(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_FLUID_CONTENT)) {
+                            tile.getTank().setFluidInTank(0, itemStack.get(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_FLUID_CONTENT).copy());
                         }
                     });
         }

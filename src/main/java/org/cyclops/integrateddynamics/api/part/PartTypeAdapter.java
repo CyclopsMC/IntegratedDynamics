@@ -5,7 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -16,6 +15,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -49,8 +49,8 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void toNBT(CompoundTag tag, S partState) {
-        partState.writeToNBT(tag);
+    public void toNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, S partState) {
+        partState.writeToNBT(valueDeseralizationContext, tag);
     }
 
     @Override
@@ -171,27 +171,26 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public ItemStack getItemStack(S state, boolean saveState) {
+    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, S state, boolean saveState) {
         ItemStack itemStack = new ItemStack(getItem());
         if (saveState) {
             CompoundTag tag = new CompoundTag();
-            toNBT(tag, state);
-            itemStack.setTag(tag);
+            toNBT(valueDeseralizationContext, tag, state);
+            itemStack.set(RegistryEntries.DATACOMPONENT_PART_STATE, tag);
         }
         return itemStack;
     }
 
     @Override
     public ItemStack getCloneItemStack(Level world, BlockPos pos, S state) {
-        return getItemStack(state, false);
+        return getItemStack(ValueDeseralizationContext.of(world), state, false);
     }
 
     @Override
     public S getState(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
         S partState = null;
-        if(!itemStack.isEmpty() && itemStack.getTag() != null
-                && itemStack.getTag().contains("id", Tag.TAG_INT)) {
-            partState = fromNBT(valueDeseralizationContext, itemStack.getTag());
+        if(!itemStack.isEmpty() && itemStack.has(RegistryEntries.DATACOMPONENT_PART_STATE)) {
+            partState = fromNBT(valueDeseralizationContext, itemStack.get(RegistryEntries.DATACOMPONENT_PART_STATE));
         }
         if(partState == null) {
             partState = defaultBlockState();
@@ -215,7 +214,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     @Override
     public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
         if(dropMainElement) {
-            itemStacks.add(getItemStack(state, saveState));
+            itemStacks.add(getItemStack(ValueDeseralizationContext.of(target.getCenter().getPos().getLevel(true)), state, saveState));
         }
 
         // Drop contents of named inventories

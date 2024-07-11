@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.loot.functions;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,10 +23,10 @@ import java.util.List;
  */
 public class LootFunctionCopyEnergyBatteryData extends LootItemConditionalFunction {
 
-    public static final Codec<LootFunctionCopyEnergyBatteryData> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<LootFunctionCopyEnergyBatteryData> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyEnergyBatteryData::new)
     );
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyEnergyBatteryData.CODEC);
+    public static final LootItemFunctionType<LootFunctionCopyEnergyBatteryData> TYPE = new LootItemFunctionType<>(LootFunctionCopyEnergyBatteryData.CODEC);
 
     protected LootFunctionCopyEnergyBatteryData(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);

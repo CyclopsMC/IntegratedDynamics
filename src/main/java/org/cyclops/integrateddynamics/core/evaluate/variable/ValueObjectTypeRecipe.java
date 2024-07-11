@@ -89,7 +89,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     }
 
     @Override
-    public Tag serialize(ValueRecipe value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueRecipe value) {
         if(!value.getRawValue().isPresent()) return new CompoundTag();
         return IRecipeDefinition.serialize(value.getRawValue().get());
     }

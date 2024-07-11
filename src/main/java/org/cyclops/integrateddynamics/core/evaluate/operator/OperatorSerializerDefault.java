@@ -24,12 +24,12 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
     }
 
     @Override
-    public Tag serialize(IOperator operator) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, IOperator operator) {
         return StringTag.valueOf(operator.getUniqueName().toString());
     }
 
     @Override
     public IOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        return Operators.REGISTRY.getOperator(new ResourceLocation(value.getAsString()));
+        return Operators.REGISTRY.getOperator(ResourceLocation.parse(value.getAsString()));
     }
 }

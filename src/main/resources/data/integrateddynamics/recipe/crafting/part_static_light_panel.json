@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "BVR",
+    " B "
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable_transformer_output"
+    },
+    "B": {
+      "item": "integrateddynamics:menril_berries"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:part_static_light_panel"
+  }
+}

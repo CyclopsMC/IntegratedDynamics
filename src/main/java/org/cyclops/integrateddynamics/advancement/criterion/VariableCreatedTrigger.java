@@ -7,13 +7,12 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
-import org.cyclops.integrateddynamics.core.helper.Codecs;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
+import org.cyclops.integrateddynamics.core.helper.Codecs;
 import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
 
 import java.util.Optional;
@@ -26,9 +25,9 @@ public class VariableCreatedTrigger extends SimpleCriterionTrigger<VariableCreat
 
     public static final Codec<VariableCreatedTrigger.Instance> CODEC = RecordCodecBuilder.create(
             p_311401_ -> p_311401_.group(
-                            ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(VariableCreatedTrigger.Instance::player),
-                            ExtraCodecs.strictOptionalField(BuiltInRegistries.BLOCK.byNameCodec(), "block").forGetter(VariableCreatedTrigger.Instance::block),
-                            ExtraCodecs.strictOptionalField(Codecs.VARIABLE_FACADE, "variable_facade").forGetter(VariableCreatedTrigger.Instance::variableFacadePredicate)
+                            EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(VariableCreatedTrigger.Instance::player),
+                            BuiltInRegistries.BLOCK.byNameCodec().optionalFieldOf("block").forGetter(VariableCreatedTrigger.Instance::block),
+                            Codecs.VARIABLE_FACADE.optionalFieldOf("variable_facade").forGetter(VariableCreatedTrigger.Instance::variableFacadePredicate)
                     )
                     .apply(p_311401_, VariableCreatedTrigger.Instance::new)
     );

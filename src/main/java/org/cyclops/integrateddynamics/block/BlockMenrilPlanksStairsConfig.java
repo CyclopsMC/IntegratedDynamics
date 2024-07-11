@@ -23,7 +23,7 @@ public class BlockMenrilPlanksStairsConfig extends BlockConfig {
         super(
                 IntegratedDynamics._instance,
                 "menril_planks_stairs",
-                eConfig -> new StairBlock(() -> RegistryEntries.BLOCK_MENRIL_PLANKS.get().defaultBlockState(), Block.Properties.of()
+                eConfig -> new StairBlock(RegistryEntries.BLOCK_MENRIL_PLANKS.get().defaultBlockState(), Block.Properties.of()
                         .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F)
                         .sound(SoundType.WOOD)) {

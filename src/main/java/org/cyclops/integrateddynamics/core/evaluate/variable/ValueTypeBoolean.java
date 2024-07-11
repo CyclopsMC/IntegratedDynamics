@@ -34,7 +34,7 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
     }
 
     @Override
-    public Tag serialize(ValueBoolean value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueBoolean value) {
         return ByteTag.valueOf(value.getRawValue() ? (byte) 1 : (byte) 0);
     }
 

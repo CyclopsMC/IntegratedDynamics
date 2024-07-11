@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "integrateddynamics:logic_programmer",
+  "ingredients": [
+    {
+      "item": "integrateddynamics:portable_logic_programmer"
+    }
+  ],
+  "result": {
+    "id": "integrateddynamics:logic_programmer"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "tag": "c:glass"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:sand"
+      }
+    }
+  ]
+}

@@ -6,7 +6,6 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
@@ -25,9 +24,9 @@ public class PartReaderAspectTrigger extends SimpleCriterionTrigger<PartReaderAs
 
     public static final Codec<PartReaderAspectTrigger.Instance> CODEC = RecordCodecBuilder.create(
             p_311401_ -> p_311401_.group(
-                            ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(PartReaderAspectTrigger.Instance::player),
-                            ExtraCodecs.strictOptionalField(Codecs.PART_TYPE, "parttype").forGetter(PartReaderAspectTrigger.Instance::partType),
-                            ExtraCodecs.strictOptionalField(Codecs.ASPECT, "aspect").forGetter(PartReaderAspectTrigger.Instance::aspect)
+                            EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(PartReaderAspectTrigger.Instance::player),
+                            Codecs.PART_TYPE.optionalFieldOf("parttype").forGetter(PartReaderAspectTrigger.Instance::partType),
+                            Codecs.ASPECT.optionalFieldOf("aspect").forGetter(PartReaderAspectTrigger.Instance::aspect)
                     )
                     .apply(p_311401_, PartReaderAspectTrigger.Instance::new)
     );

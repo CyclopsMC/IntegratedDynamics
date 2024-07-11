@@ -10,7 +10,7 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class DelayNetworkElement extends ProxyNetworkElement {
 
-    public static final ResourceLocation GROUP = new ResourceLocation(Reference.MOD_ID, "delay");
+    public static final ResourceLocation GROUP = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "delay");
 
     public DelayNetworkElement(DimPos pos) {
         super(pos);

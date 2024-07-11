@@ -151,18 +151,18 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     @Override
-    public void writeToNBT(CompoundTag tag) {
-        super.writeToNBT(tag);
-        NBTClassType.writeNbt(List.class, "globalErrorMessages", globalErrorMessages, tag);
-        inventory.writeToNBT(tag, "inventory");
+    public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
+        super.writeToNBT(valueDeseralizationContext, tag);
+        NBTClassType.writeNbt(List.class, "globalErrorMessages", globalErrorMessages, tag, valueDeseralizationContext.holderLookupProvider());
+        inventory.writeToNBT(valueDeseralizationContext.holderLookupProvider(), tag, "inventory");
     }
 
     @Override
     public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
         super.readFromNBT(valueDeseralizationContext, tag);
         //noinspection unchecked
-        this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag);
-        inventory.readFromNBT(tag, "inventory");
+        this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag, valueDeseralizationContext.holderLookupProvider());
+        inventory.readFromNBT(valueDeseralizationContext.holderLookupProvider(), tag, "inventory");
     }
 
     @Override

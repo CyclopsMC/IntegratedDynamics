@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +28,7 @@ import java.util.Optional;
  *
  * @author rubensworks
  */
-public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implements IEnergyContainerBlock {
+public abstract class BlockEnergyBatteryBase extends BlockContainerCabled {
 
     public BlockEnergyBatteryBase(Block.Properties properties) {
         super(properties, BlockEntityEnergyBattery::new);
@@ -41,27 +40,17 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled implem
         return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY.get(), new BlockEntityEnergyBattery.Ticker());
     }
 
-    @Override
-    public String getEneryContainerNBTName() {
-        return "energy";
-    }
-
-    @Override
-    public String getEneryContainerCapacityNBTName() {
-        return "capacity";
-    }
-
     public abstract boolean isCreative();
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
+    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player,
                                              BlockHitResult blockRayTraceResult) {
-        InteractionResult superActionResult = super.use(state, world, pos, player, hand, blockRayTraceResult);
+        InteractionResult superActionResult = super.useWithoutItem(state, world, pos, player, blockRayTraceResult);
         if (superActionResult.consumesAction()) {
             return superActionResult;
         }
 
-        if (player.getItemInHand(hand).isEmpty()) {
+        if (player.getItemInHand(player.getUsedItemHand()).isEmpty()) {
             return BlockEntityHelpers.get(world, pos, BlockEntityEnergyBattery.class)
                     .map(tile -> {
                         player.displayClientMessage(Helpers.getLocalizedEnergyLevel(

@@ -62,12 +62,12 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     @Override
-    public Tag serialize(ValueItemStack value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueItemStack value) {
         CompoundTag tag = new CompoundTag();
         ItemStack itemStack = value.getRawValue();
         if(!itemStack.isEmpty()) {
-            itemStack.save(tag);
             tag.putInt("Count", itemStack.getCount());
+            return itemStack.save(valueDeseralizationContext.holderLookupProvider(), tag);
         }
         return tag;
     }
@@ -82,7 +82,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             // Consider the tag immutable, to avoid changes elsewhere
             tag = tag.copy();
             tag.putByte("Count", (byte)1);
-            ItemStack itemStack = ItemStack.of(tag);
+            ItemStack itemStack = ItemStack.parseOptional(valueDeseralizationContext.holderLookupProvider(), tag);
             if (!itemStack.isEmpty()) {
                 itemStack.setCount(realCount);
             }
@@ -177,7 +177,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
         @Override
         protected boolean testTyped(ValueItemStack value) {
-            return super.testTyped(value) && (itemPredicate.isEmpty() || itemPredicate.get().matches(value.getRawValue()));
+            return super.testTyped(value) && (itemPredicate.isEmpty() || itemPredicate.get().test(value.getRawValue()));
         }
     }
 

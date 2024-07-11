@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.blockentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -78,16 +79,16 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
         List<MutableComponent> errors = evaluator.getErrors();
-        NBTClassType.writeNbt(List.class, "errors", errors, tag);
+        NBTClassType.writeNbt(List.class, "errors", errors, tag, provider);
     }
 
     @Override
-    public void read(CompoundTag tag) {
-        evaluator.setErrors(NBTClassType.readNbt(List.class, "errors", tag));
-        super.read(tag);
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+        evaluator.setErrors(NBTClassType.readNbt(List.class, "errors", tag, provider));
+        super.read(tag, provider);
     }
 
     public abstract int getSlotRead();

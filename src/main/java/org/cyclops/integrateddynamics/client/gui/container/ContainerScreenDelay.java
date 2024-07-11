@@ -32,7 +32,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/delay.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/delay.png");
     }
 
     @Override

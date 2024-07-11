@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "evilcraft:undead_log"
+  },
+  "output_fluid": {
+    "id": "evilcraft:blood",
+    "amount": 100
+  },
+  "duration": 25,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "evilcraft"
+    }
+  ]
+}

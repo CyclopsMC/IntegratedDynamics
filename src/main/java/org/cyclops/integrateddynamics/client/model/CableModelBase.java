@@ -193,7 +193,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         ModelState transformation = new SimpleModelState(getMatrix(getRotation(side)));
         BlockElementRotation DEFAULT_ROTATION = null;
         boolean APPLY_SHADING = true;
-        quads.add(FACE_BAKERY.bakeQuad(from, to, blockPartFace, texture, Direction.NORTH, transformation, DEFAULT_ROTATION, APPLY_SHADING, null));
+        quads.add(FACE_BAKERY.bakeQuad(from, to, blockPartFace, texture, Direction.NORTH, transformation, DEFAULT_ROTATION, APPLY_SHADING));
     }
 
     public static Transformation getMatrix(BlockModelRotation modelRotation) {

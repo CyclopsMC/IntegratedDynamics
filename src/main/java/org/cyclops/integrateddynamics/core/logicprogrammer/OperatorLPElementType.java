@@ -27,7 +27,7 @@ public class OperatorLPElementType implements ILogicProgrammerElementType<Operat
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "operator");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "operator");
     }
 
     @Override

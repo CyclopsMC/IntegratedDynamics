@@ -98,7 +98,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "valuetype");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "valuetype");
     }
 
     @Override
@@ -107,7 +107,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
                 || !tag.contains("value")) {
             return INVALID_FACADE;
         }
-        IValueType type = getValueType(new ResourceLocation(tag.getString("typeName")));
+        IValueType type = getValueType(ResourceLocation.parse(tag.getString("typeName")));
         if(type == null) {
             return INVALID_FACADE;
         }
@@ -121,9 +121,9 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public void setVariableFacade(CompoundTag tag, IValueTypeVariableFacade variableFacade) {
+    public void setVariableFacade(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, IValueTypeVariableFacade variableFacade) {
         tag.putString("typeName", variableFacade.getValueType().getUniqueName().toString());
-        tag.put("value", ValueHelpers.serializeRaw(variableFacade.getValue()));
+        tag.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, variableFacade.getValue()));
     }
 
     @Override

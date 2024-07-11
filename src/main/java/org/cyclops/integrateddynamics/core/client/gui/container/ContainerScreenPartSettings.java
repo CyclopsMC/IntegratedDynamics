@@ -71,7 +71,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/part_settings.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/part_settings.png");
     }
 
     protected Direction getCurrentSide() {

@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -23,9 +25,10 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * @author rubensworks
  *
  */
-public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends PacketCodec {
+public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends PacketCodec<LogicProgrammerValueTypeIngredientsValueChangedPacket> {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "logic_programmer_value_type_ingredients_value_changed");
+    public static final Type<LogicProgrammerValueTypeIngredientsValueChangedPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_value_type_ingredients_value_changed"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerValueTypeIngredientsValueChangedPacket> CODEC = getCodec(LogicProgrammerValueTypeIngredientsValueChangedPacket::new);
 
     @CodecField
     private Tag value;
@@ -34,9 +37,9 @@ public class LogicProgrammerValueTypeIngredientsValueChangedPacket extends Packe
         super(ID);
     }
 
-    public LogicProgrammerValueTypeIngredientsValueChangedPacket(ValueObjectTypeIngredients.ValueIngredients value) {
+    public LogicProgrammerValueTypeIngredientsValueChangedPacket(ValueDeseralizationContext valueDeseralizationContext, ValueObjectTypeIngredients.ValueIngredients value) {
         super(ID);
-        this.value = value.getType().serialize(value);
+        this.value = value.getType().serialize(valueDeseralizationContext, value);
     }
 
     protected ValueObjectTypeIngredients.ValueIngredients getValue(Level level) {

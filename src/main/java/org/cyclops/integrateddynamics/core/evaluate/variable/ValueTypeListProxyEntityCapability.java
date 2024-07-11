@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -37,16 +38,16 @@ public abstract class ValueTypeListProxyEntityCapability<C, Context, T extends I
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundTag tag) {
-        super.writeGeneratedFieldsToNBT(tag);
+    public void writeGeneratedFieldsToNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
+        super.writeGeneratedFieldsToNBT(tag, holderLookupProvider);
         if (side != null) {
             tag.putInt("side", side.ordinal());
         }
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundTag tag) {
-        super.readGeneratedFieldsFromNBT(tag);
+    public void readGeneratedFieldsFromNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
+        super.readGeneratedFieldsFromNBT(tag, holderLookupProvider);
         if (tag.contains("side", Tag.TAG_INT)) {
             this.side = Direction.values()[tag.getInt("side")];
         }

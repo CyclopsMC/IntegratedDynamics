@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.loot.functions;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.cyclops.integrateddynamics.core.block.BlockMechanicalMachine;
+import org.cyclops.cyclopscore.RegistryEntries;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMechanicalMachine;
 
 import java.util.List;
@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class LootFunctionCopyMechanicalMachineEnergy extends LootItemConditionalFunction {
 
-    public static final Codec<LootFunctionCopyMechanicalMachineEnergy> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<LootFunctionCopyMechanicalMachineEnergy> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalMachineEnergy::new)
     );
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyMechanicalMachineEnergy.CODEC);
+    public static final LootItemFunctionType<LootFunctionCopyMechanicalMachineEnergy> TYPE = new LootItemFunctionType<>(LootFunctionCopyMechanicalMachineEnergy.CODEC);
 
     protected LootFunctionCopyMechanicalMachineEnergy(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -33,13 +33,13 @@ public class LootFunctionCopyMechanicalMachineEnergy extends LootItemConditional
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
         BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalMachine) {
-            itemStack.getOrCreateTag().putInt(BlockMechanicalMachine.NBT_ENERGY, ((BlockEntityMechanicalMachine) tile).getEnergy());
+            itemStack.set(RegistryEntries.COMPONENT_ENERGY_STORAGE, ((BlockEntityMechanicalMachine) tile).getEnergy());
         }
         return itemStack;
     }
 
     @Override
-    public LootItemFunctionType getType() {
+    public LootItemFunctionType<LootFunctionCopyMechanicalMachineEnergy> getType() {
         return TYPE;
     }
 

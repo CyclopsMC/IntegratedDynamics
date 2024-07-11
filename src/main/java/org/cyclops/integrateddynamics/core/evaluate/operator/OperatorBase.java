@@ -73,7 +73,7 @@ public abstract class OperatorBase implements IOperator {
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(getModId(), this.getUnlocalizedType().replaceAll("\\.", "_") + "_" + getOperatorName());
+        return ResourceLocation.fromNamespaceAndPath(getModId(), this.getUnlocalizedType().replaceAll("\\.", "_") + "_" + getOperatorName());
     }
 
     @Override

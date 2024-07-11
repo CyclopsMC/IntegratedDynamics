@@ -8,14 +8,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.GeneralConfig;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * An enhancement item.
@@ -53,18 +54,18 @@ public class ItemEnhancement extends Item {
     }
 
     public int getEnhancementValue(ItemStack itemStack) {
-        return itemStack.getOrCreateTag().getInt("value");
+        return Objects.requireNonNullElse(itemStack.get(RegistryEntries.DATACOMPONENT_PART_ENHANCEMENT), 0);
     }
 
     public void setEnhancementValue(ItemStack itemStack, int value) {
-        itemStack.getOrCreateTag().putInt("value", value);
+        itemStack.set(RegistryEntries.DATACOMPONENT_PART_ENHANCEMENT, value);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
         list.add(Component.translatable("item.integrateddynamics.enhancement_offset.tooltip", getEnhancementValue(itemStack)).withStyle(ChatFormatting.GRAY));
-        super.appendHoverText(itemStack, world, list, flag);
+        super.appendHoverText(itemStack, context, list, flag);
     }
 
     public static enum Type {

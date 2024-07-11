@@ -52,10 +52,10 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             float u2 = icon.getU1();
             float v1 = icon.getV0();
             float v2 = icon.getV1();
-            vb.vertex(matrix, max, max, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).uv(u2, v2).uv2(l2, i3).endVertex();
-            vb.vertex(matrix, max, min, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).uv(u2, v1).uv2(l2, i3).endVertex();
-            vb.vertex(matrix, min, min, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).uv(u1, v1).uv2(l2, i3).endVertex();
-            vb.vertex(matrix, min, max, 0).color(color.getLeft(), color.getMiddle(), color.getRight(), alpha).uv(u1, v2).uv2(l2, i3).endVertex();
+            vb.addVertex(matrix, max, max, 0).setColor(color.getLeft(), color.getMiddle(), color.getRight(), alpha).setUv(u2, v2).setUv2(l2, i3);
+            vb.addVertex(matrix, max, min, 0).setColor(color.getLeft(), color.getMiddle(), color.getRight(), alpha).setUv(u2, v1).setUv2(l2, i3);
+            vb.addVertex(matrix, min, min, 0).setColor(color.getLeft(), color.getMiddle(), color.getRight(), alpha).setUv(u1, v1).setUv2(l2, i3);
+            vb.addVertex(matrix, min, max, 0).setColor(color.getLeft(), color.getMiddle(), color.getRight(), alpha).setUv(u1, v2).setUv2(l2, i3);
 
             // Stack size
             matrixStack.translate(7F, 8.5F, 0.1F);

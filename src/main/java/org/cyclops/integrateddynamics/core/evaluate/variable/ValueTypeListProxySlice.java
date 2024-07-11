@@ -45,12 +45,12 @@ public class ValueTypeListProxySlice<T extends IValueType<V>, V extends IValue> 
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "slice");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "slice");
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxySlice<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
+        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxySlice<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.list));
             tag.putInt("from", value.from);
             tag.putInt("to", value.to);
         }

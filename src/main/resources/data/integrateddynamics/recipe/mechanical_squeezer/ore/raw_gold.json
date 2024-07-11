@@ -1,0 +1,29 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "tag": "c:ores/gold"
+  },
+  "output_items": [
+    {
+      "tag": {
+        "tag": "c:raw_materials/gold",
+        "count": 3
+      }
+    },
+    {
+      "tag": {
+        "tag": "c:raw_materials/gold",
+        "count": 2
+      },
+      "chance": 0.5
+    },
+    {
+      "tag": {
+        "tag": "c:raw_materials/gold",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 40
+}

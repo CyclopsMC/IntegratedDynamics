@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "integrateddynamics:cable",
+  "pattern": [
+    "CCC",
+    "SRS",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:cable",
+    "count": 3
+  }
+}

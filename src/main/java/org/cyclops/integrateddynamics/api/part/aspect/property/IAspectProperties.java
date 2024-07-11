@@ -59,7 +59,7 @@ public interface IAspectProperties {
      * Convert the data to an NBT tag.
      * @return The NBT tag.
      */
-    public CompoundTag toNBT();
+    public CompoundTag toNBT(ValueDeseralizationContext valueDeseralizationContext);
 
     /**
      * Read the data from an NBT tag and place it in this object.

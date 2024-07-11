@@ -26,7 +26,7 @@ public final class ModelHelpers {
      */
     public static BlockModel loadModelBlock(ResourceLocation modelLocation) throws IOException {
         Resource resource = Minecraft.getInstance().getResourceManager().getResource(
-                new ResourceLocation(modelLocation.getNamespace(), "models/" + modelLocation.getPath() + ".json"))
+                ResourceLocation.fromNamespaceAndPath(modelLocation.getNamespace(), "models/" + modelLocation.getPath() + ".json"))
                 .get();
         Reader reader = resource.openAsReader();
 

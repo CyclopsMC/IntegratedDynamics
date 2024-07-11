@@ -41,7 +41,7 @@ public abstract class ContainerScreenMechanicalMachine<C extends ContainerMechan
     public void drawFluidTankTooltip(PoseStack poseStack, FluidStack fluidStack, int fluidCapacity, int x, int y, int width, int height, int mouseX, int mouseY) {
         GuiHelpers.renderTooltipOptional(this, poseStack, x, y, width, height, mouseX, mouseY, () -> {
             if (fluidStack != null && !fluidStack.isEmpty()) {
-                Component fluidName = fluidStack.getDisplayName();
+                Component fluidName = fluidStack.getHoverName();
                 return Optional.of(Lists.newArrayList(fluidName,
                         DamageIndicatedItemComponent.getInfo(fluidStack, fluidStack.getAmount(), fluidCapacity)));
             }

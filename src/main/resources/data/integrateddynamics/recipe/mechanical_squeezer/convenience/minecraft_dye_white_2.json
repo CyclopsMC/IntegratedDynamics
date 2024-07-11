@@ -1,0 +1,22 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "minecraft:white_tulip"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:white_dye",
+        "count": 4
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:white_dye",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 5
+}

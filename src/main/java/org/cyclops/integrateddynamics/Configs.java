@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.advancement.criterion.PartWriterAspectTrig
 import org.cyclops.integrateddynamics.advancement.criterion.VariableCreatedTriggerConfig;
 import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.blockentity.*;
+import org.cyclops.integrateddynamics.component.*;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTickingConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettingsConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffsetConfig;
@@ -86,10 +87,10 @@ public class Configs {
         configHandler.addConfigurable(new BlockDryingBasinConfig());
         configHandler.addConfigurable(new BlockSqueezerConfig());
         configHandler.addConfigurable(new BlockMenrilDoorConfig());
-        configHandler.addConfigurable(new BlockMenrilTorchConfig());
         configHandler.addConfigurable(new BlockMenrilTorchWallConfig());
-        configHandler.addConfigurable(new BlockMenrilTorchStoneConfig());
+        configHandler.addConfigurable(new BlockMenrilTorchConfig());
         configHandler.addConfigurable(new BlockMenrilTorchStoneWallConfig());
+        configHandler.addConfigurable(new BlockMenrilTorchStoneConfig());
         configHandler.addConfigurable(new BlockMenrilPlanksStairsConfig());
         configHandler.addConfigurable(new BlockCrystalizedMenrilBlockStairsConfig());
         configHandler.addConfigurable(new BlockCrystalizedMenrilBrickStairsConfig());
@@ -189,6 +190,18 @@ public class Configs {
         // Sounds
         configHandler.addConfigurable(new SoundEventEffectPageFlipMultipleConfig());
         configHandler.addConfigurable(new SoundEventEffectPageFlipSingleConfig());
+
+        // Data components
+        configHandler.addConfigurable(new DataComponentFacadeBlockConfig());
+        configHandler.addConfigurable(new DataComponentFluidContentInOutConfig());
+        configHandler.addConfigurable(new DataComponentOmnidirectionalGroupConfig());
+        configHandler.addConfigurable(new DataComponentPartEnhancementConfig());
+        configHandler.addConfigurable(new DataComponentPartStateConfig());
+        configHandler.addConfigurable(new DataComponentProxyIdConfig());
+        configHandler.addConfigurable(new DataComponentVariableFacadeConfig());
+        configHandler.addConfigurable(new DataComponentWrenchTargetBlockPosConfig());
+        configHandler.addConfigurable(new DataComponentWrenchTargetDirectionConfig());
+        configHandler.addConfigurable(new DataComponentWrenchModeConfig());
     }
 
 }

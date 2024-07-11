@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +29,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "logic_programmer_value_type_operator_value_changed");
+    public static final Type<LogicProgrammerValueTypeOperatorValueChangedPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_value_type_operator_value_changed"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerValueTypeOperatorValueChangedPacket> CODEC = getCodec(LogicProgrammerValueTypeOperatorValueChangedPacket::new);
 
     @CodecField
     private Tag operatorValue;
@@ -36,10 +39,10 @@ public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCo
         super(ID);
     }
 
-    public LogicProgrammerValueTypeOperatorValueChangedPacket(ValueTypeOperator.ValueOperator value) {
+    public LogicProgrammerValueTypeOperatorValueChangedPacket(ValueDeseralizationContext valueDeseralizationContext, ValueTypeOperator.ValueOperator value) {
         super(ID);
         try {
-            this.operatorValue = ValueHelpers.serializeRaw(value);
+            this.operatorValue = ValueHelpers.serializeRaw(valueDeseralizationContext, value);
         } catch (Exception e) {
             this.operatorValue = ByteTag.valueOf((byte) 0);
         }

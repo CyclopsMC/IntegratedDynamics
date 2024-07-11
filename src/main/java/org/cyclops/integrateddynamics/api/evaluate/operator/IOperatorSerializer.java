@@ -25,10 +25,12 @@ public interface IOperatorSerializer<O extends IOperator> {
 
     /**
      * Serialize the given operator.
-     * @param operator The operator to serialize.
+     *
+     * @param valueDeseralizationContext
+     * @param operator                   The operator to serialize.
      * @return The serialized operator value.
      */
-    public Tag serialize(O operator);
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, O operator);
 
     /**
      * Deserialize the given operator value.

@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
@@ -107,8 +108,8 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
     }
 
     @Override
-    public void read(CompoundTag tag) {
-        super.read(tag);
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+        super.read(tag, provider);
         shouldSendUpdateEvent = true;
     }
 

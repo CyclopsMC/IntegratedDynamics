@@ -39,7 +39,7 @@ public class RawObserverData implements IRawData {
     }
 
     public static RawObserverData fromNbt(CompoundTag tag) {
-        return new RawObserverData(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
+        return new RawObserverData(ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
                 tag.contains("side") ? Direction.values()[tag.getInt("side")] : null, tag.getString("name"), tag.getLong("last20TicksDurationNs"));
     }
 

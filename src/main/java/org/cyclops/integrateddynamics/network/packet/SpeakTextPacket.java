@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.network.packet;
 
 import com.mojang.text2speech.Narrator;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +23,8 @@ import java.util.Date;
  */
 public class SpeakTextPacket extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "speak_text");
+    public static final Type<SpeakTextPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "speak_text"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, SpeakTextPacket> CODEC = getCodec(SpeakTextPacket::new);
 
     public static long lastSay = 0;
 

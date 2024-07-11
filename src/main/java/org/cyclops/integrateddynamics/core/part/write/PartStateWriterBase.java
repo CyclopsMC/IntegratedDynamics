@@ -38,19 +38,19 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public void writeToNBT(CompoundTag tag) {
+    public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
         if (this.activeAspect != null) tag.putString("activeAspectName", this.activeAspect.getUniqueName().toString());
-        NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, tag);
-        super.writeToNBT(tag);
+        NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, tag, valueDeseralizationContext.holderLookupProvider());
+        super.writeToNBT(valueDeseralizationContext, tag);
     }
 
     @Override
     public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        IAspect aspect = Aspects.REGISTRY.getAspect(new ResourceLocation(tag.getString("activeAspectName")));
+        IAspect aspect = Aspects.REGISTRY.getAspect(ResourceLocation.parse(tag.getString("activeAspectName")));
         if (aspect instanceof IAspectWrite) {
             this.activeAspect = (IAspectWrite) aspect;
         }
-        this.errorMessages = (Map<String, List<MutableComponent>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag);
+        this.errorMessages = (Map<String, List<MutableComponent>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag, valueDeseralizationContext.holderLookupProvider());
         super.readFromNBT(valueDeseralizationContext, tag);
     }
 

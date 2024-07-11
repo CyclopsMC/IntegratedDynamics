@@ -1,0 +1,28 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "tag": "c:ores/copper"
+  },
+  "output_items": [
+    {
+      "tag": {
+        "tag": "c:raw_materials/copper",
+        "count": 4
+      }
+    },
+    {
+      "tag": {
+        "tag": "c:raw_materials/copper",
+        "count": 2
+      },
+      "chance": 0.5
+    },
+    {
+      "tag": {
+        "tag": "c:raw_materials/copper",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ]
+}

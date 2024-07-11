@@ -1,0 +1,14 @@
+{
+  "type": "integrateddynamics:mechanical_drying_basin",
+  "input_item": {
+    "item": "minecraft:cyan_terracotta"
+  },
+  "input_fluid": {
+    "id": "minecraft:water",
+    "amount": 250
+  },
+  "duration": 10,
+  "output_item": {
+    "id": "minecraft:terracotta"
+  }
+}

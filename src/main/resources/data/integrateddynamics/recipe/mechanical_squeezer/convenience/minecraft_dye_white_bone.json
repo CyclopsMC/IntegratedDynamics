@@ -1,0 +1,29 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "minecraft:bone"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:white_dye",
+        "count": 6
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:white_dye",
+        "count": 2
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:white_dye",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 10
+}

@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.capability.energystorage;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import org.cyclops.cyclopscore.RegistryEntries;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
-import org.cyclops.integrateddynamics.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
 
 /**
@@ -23,7 +23,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         this.itemStack = itemStack;
         this.rate = rate;
 
-        if (!this.itemStack.hasTag()) {
+        if (!this.itemStack.has(RegistryEntries.COMPONENT_ENERGY_STORAGE)) {
             setItemStackEnergy(itemStack, 0);
         }
     }
@@ -37,14 +37,13 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     }
 
     public boolean isCreative() {
-        IEnergyContainerBlock block = itemBlockEnergyContainer.get();
+        Block block = itemBlockEnergyContainer.get();
         return block instanceof BlockEnergyBatteryBase && ((BlockEnergyBatteryBase) block).isCreative();
     }
 
     protected int getEnergyStoredSingular() {
         if(isCreative()) return Integer.MAX_VALUE;
-        CompoundTag tag = itemStack.getOrCreateTag();
-        return tag.getInt(itemBlockEnergyContainer.get().getEneryContainerNBTName());
+        return itemStack.get(RegistryEntries.COMPONENT_ENERGY_STORAGE);
     }
 
     @Override
@@ -58,11 +57,10 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     public int getMaxEnergyStoredSingular() {
         if(isCreative()) return Integer.MAX_VALUE;
-        CompoundTag tag = itemStack.getOrCreateTag();
-        if (!tag.contains(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName())) {
+        if (!itemStack.has(RegistryEntries.COMPONENT_CAPACITY)) {
             return BlockEnergyBatteryConfig.capacity;
         }
-        return tag.getInt(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
+        return itemStack.get(RegistryEntries.COMPONENT_CAPACITY);
     }
 
     @Override
@@ -116,17 +114,15 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     protected void setItemStackEnergy(ItemStack itemStack, int energy) {
         if(isCreative()) return;
-        CompoundTag tag = itemStack.getOrCreateTag();
-        tag.putInt(itemBlockEnergyContainer.get().getEneryContainerNBTName(), energy);
+        itemStack.set(RegistryEntries.COMPONENT_ENERGY_STORAGE, energy);
     }
 
     @Override
     public void setCapacity(int capacity) {
-        CompoundTag tag = itemStack.getOrCreateTag();
         if (capacity == BlockEnergyBatteryConfig.capacity) {
-            tag.remove(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName());
+            itemStack.remove(RegistryEntries.COMPONENT_CAPACITY);
         } else {
-            tag.putInt(itemBlockEnergyContainer.get().getEneryContainerCapacityNBTName(), capacity);
+            itemStack.set(RegistryEntries.COMPONENT_CAPACITY, capacity);
         }
     }
 

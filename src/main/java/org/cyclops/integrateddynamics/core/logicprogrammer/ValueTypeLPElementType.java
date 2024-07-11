@@ -28,7 +28,7 @@ public class ValueTypeLPElementType implements ILogicProgrammerElementType<IValu
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "valuetype");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "valuetype");
     }
 
     @Override

@@ -20,7 +20,7 @@ public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted>
     public EntityItemTargettedConfig() {
         super(
                 IntegratedDynamics._instance,
-                "entityItemTargetted",
+                "item_targetted",
                 eConfig -> EntityType.Builder.<EntityItemTargetted>of(EntityItemTargetted::new, MobCategory.MISC)
                         .fireImmune()
                         .setShouldReceiveVelocityUpdates(true)

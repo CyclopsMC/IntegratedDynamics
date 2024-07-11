@@ -78,7 +78,7 @@ public class TestEntityOperators {
         Level world = ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD);
         eZombie = new DummyVariableEntity(makeEntity(new Zombie(world)));
         Zombie zombieBurning = new Zombie(world);
-        zombieBurning.setSecondsOnFire(10);
+        zombieBurning.setRemainingFireTicks(10);
         eZombieBurning = new DummyVariableEntity(makeEntity(zombieBurning));
         Zombie zombieWet = new Zombie(world) {
             @Override

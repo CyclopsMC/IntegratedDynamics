@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.network.packet;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +20,8 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerActivateElementPacket extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "logic_programmer_activate_element");
+    public static final Type<LogicProgrammerActivateElementPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_activate_element"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerActivateElementPacket> CODEC = getCodec(LogicProgrammerActivateElementPacket::new);
 
     @CodecField
     private String typeId;
@@ -50,7 +53,7 @@ public class LogicProgrammerActivateElementPacket extends PacketCodec {
     public void actionServer(Level world, ServerPlayer player) {
         if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
             ((ContainerLogicProgrammerBase) player.containerMenu).setActiveElementById(
-                    new ResourceLocation(typeId), new ResourceLocation(elementId));
+                    ResourceLocation.parse(typeId), ResourceLocation.parse(elementId));
         }
     }
 

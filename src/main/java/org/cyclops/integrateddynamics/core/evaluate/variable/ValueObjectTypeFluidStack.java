@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import lombok.ToString;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,20 +41,19 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     @Override
     public MutableComponent toCompactString(ValueFluidStack value) {
         FluidStack fluidStack = value.getRawValue();
-        return !fluidStack.isEmpty() ? ((MutableComponent) fluidStack.getDisplayName()).append(String.format(" (%s mB)", fluidStack.getAmount())) : Component.literal("");
+        return !fluidStack.isEmpty() ? fluidStack.getHoverName().copy().append(String.format(" (%s mB)", fluidStack.getAmount())) : Component.literal("");
     }
 
     @Override
-    public Tag serialize(ValueFluidStack value) {
-        CompoundTag tag = new CompoundTag();
-        value.getRawValue().writeToNBT(tag);
-        return tag;
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueFluidStack value) {
+        return FluidStack.OPTIONAL_CODEC.encodeStart(valueDeseralizationContext.holderLookupProvider().createSerializationContext(NbtOps.INSTANCE), value.getRawValue()).getOrThrow();
     }
 
     @Override
     public ValueFluidStack deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (value instanceof CompoundTag) {
-            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT((CompoundTag) value);
+            FluidStack fluidStack = FluidStack.OPTIONAL_CODEC.decode(valueDeseralizationContext.holderLookupProvider().createSerializationContext(NbtOps.INSTANCE), value)
+                    .getOrThrow().getFirst();
             return ValueFluidStack.of(fluidStack);
         } else {
             return null;
@@ -117,7 +117,7 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof ValueFluidStack && this.getRawValue().isFluidStackIdentical(((ValueFluidStack) o).getRawValue());
+            return o instanceof ValueFluidStack && FluidStack.matches(this.getRawValue(), ((ValueFluidStack) o).getRawValue());
         }
 
         @Override

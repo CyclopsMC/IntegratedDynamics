@@ -105,7 +105,7 @@ public class ItemBlockCable extends BlockItem {
     @SuppressWarnings("deprecation")
     public static void playPlaceSound(Level world, BlockPos pos) {
         Block block = RegistryEntries.BLOCK_CABLE.get();
-        SoundType soundType = block.getSoundType(block.defaultBlockState());
+        SoundType soundType = block.defaultBlockState().getSoundType();
         world.playLocalSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F), (double) ((float) pos.getZ() + 0.5F),
                 soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F, false);
     }

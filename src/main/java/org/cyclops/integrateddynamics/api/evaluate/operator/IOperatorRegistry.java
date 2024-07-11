@@ -67,10 +67,12 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
 
     /**
      * Serialize the given operator.
-     * @param value The operator to serialize.
+     *
+     * @param valueDeseralizationContext
+     * @param value                      The operator to serialize.
      * @return The serialized operator value.
      */
-    public Tag serialize(IOperator value);
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, IOperator value);
 
     /**
      * Deserialize the given operator value.

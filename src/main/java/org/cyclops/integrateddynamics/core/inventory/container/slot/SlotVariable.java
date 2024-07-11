@@ -3,8 +3,7 @@ package org.cyclops.integrateddynamics.core.inventory.container.slot;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.DistExecutor;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -15,7 +14,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  */
 public class SlotVariable extends SlotSingleItem {
 
-    public static ResourceLocation VARIABLE_EMPTY = new ResourceLocation(Reference.MOD_ID, "slot/variable_empty");
+    public static ResourceLocation VARIABLE_EMPTY = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "slot/variable_empty");
 
     /**
      * Make a new instance.
@@ -27,6 +26,8 @@ public class SlotVariable extends SlotSingleItem {
      */
     public SlotVariable(Container inventory, int index, int x, int y) {
         super(inventory, index, x, y, RegistryEntries.ITEM_VARIABLE.get());
-        DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> setBackground(TextureAtlas.LOCATION_BLOCKS, SlotVariable.VARIABLE_EMPTY));
+        if (MinecraftHelpers.isClientSide()) {
+            setBackground(TextureAtlas.LOCATION_BLOCKS, SlotVariable.VARIABLE_EMPTY);
+        }
     }
 }

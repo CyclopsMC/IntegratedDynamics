@@ -22,7 +22,7 @@ public class ContainerScreenProxy extends ContainerScreenActiveVariableBase<Cont
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/proxy.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/proxy.png");
     }
 
     @Override

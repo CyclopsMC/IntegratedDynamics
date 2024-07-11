@@ -23,9 +23,9 @@ import java.util.Optional;
  */
 public class IngredientComponentCapabilities {
 
-    public static final ResourceLocation INGREDIENT_ITEMSTACK_NAME = new ResourceLocation("minecraft", "itemstack");
-    public static final ResourceLocation INGREDIENT_FLUIDSTACK_NAME = new ResourceLocation("minecraft", "fluidstack");
-    public static final ResourceLocation INGREDIENT_ENERGY_NAME = new ResourceLocation("minecraft", "energy");
+    public static final ResourceLocation INGREDIENT_ITEMSTACK_NAME = ResourceLocation.fromNamespaceAndPath("minecraft", "itemstack");
+    public static final ResourceLocation INGREDIENT_FLUIDSTACK_NAME = ResourceLocation.fromNamespaceAndPath("minecraft", "fluidstack");
+    public static final ResourceLocation INGREDIENT_ENERGY_NAME = ResourceLocation.fromNamespaceAndPath("minecraft", "energy");
 
     public static void load() {
         IngredientComponentCapabilityAttacherManager attacherManager = new IngredientComponentCapabilityAttacherManager();

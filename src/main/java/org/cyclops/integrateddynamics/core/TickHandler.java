@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
@@ -39,51 +39,49 @@ public final class TickHandler {
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent.ServerTickEvent event) {
+    public void onTick(ServerTickEvent.Post event) {
         if (shouldCrash) {
             throw new RuntimeException("Forcefully crashed the server.");
         }
-        if(event.phase == TickEvent.Phase.END) {
-            // Invoke update logic irrespective of safe-mode
-            for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
-                network.updateGuaranteed();
-            }
-
-            // Do further network updates only when safe-mode is not enabled
-            if (NetworkHelpers.shouldWork()) {
-                boolean isBeingDiagnozed = NetworkDiagnostics.getInstance().isBeingDiagnozed();
-                if (isBeingDiagnozed) {
-                    tick = (tick + 1) % MinecraftHelpers.SECOND_IN_TICKS;
-                }
-                boolean shouldSendTickDurationInfo = isBeingDiagnozed && tick == 0;
-                for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
-                    if (isBeingDiagnozed && (shouldSendTickDurationInfo || network.hasChanged())) {
-                        NetworkDiagnostics.getInstance().sendNetworkUpdate(network);
-                        network.resetLastSecondDurations();
-
-                        // Also reset durations of indexes
-                        for (IFullNetworkListener fullNetworkListener : network.getFullNetworkListeners()) {
-                            if (fullNetworkListener instanceof IPositionedAddonsNetworkIngredients) {
-                                IPositionedAddonsNetworkIngredients<?, ?> networkIngredients = (IPositionedAddonsNetworkIngredients<?, ?>) fullNetworkListener;
-                                networkIngredients.resetLastSecondDurationsIndex();
-                            }
-                        }
-                    }
-                    try {
-                        if (!network.isCrashed()) {
-                            network.update();
-                        }
-                    } catch (Throwable e) {
-                        network.setCrashed(true);
-                        throw e;
-                    }
-                }
-            }
-
-            ticked = true;
-
-            PartOffsetsClientNotifier.getInstance().tick();
+        // Invoke update logic irrespective of safe-mode
+        for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+            network.updateGuaranteed();
         }
+
+        // Do further network updates only when safe-mode is not enabled
+        if (NetworkHelpers.shouldWork()) {
+            boolean isBeingDiagnozed = NetworkDiagnostics.getInstance().isBeingDiagnozed();
+            if (isBeingDiagnozed) {
+                tick = (tick + 1) % MinecraftHelpers.SECOND_IN_TICKS;
+            }
+            boolean shouldSendTickDurationInfo = isBeingDiagnozed && tick == 0;
+            for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+                if (isBeingDiagnozed && (shouldSendTickDurationInfo || network.hasChanged())) {
+                    NetworkDiagnostics.getInstance().sendNetworkUpdate(network);
+                    network.resetLastSecondDurations();
+
+                    // Also reset durations of indexes
+                    for (IFullNetworkListener fullNetworkListener : network.getFullNetworkListeners()) {
+                        if (fullNetworkListener instanceof IPositionedAddonsNetworkIngredients) {
+                            IPositionedAddonsNetworkIngredients<?, ?> networkIngredients = (IPositionedAddonsNetworkIngredients<?, ?>) fullNetworkListener;
+                            networkIngredients.resetLastSecondDurationsIndex();
+                        }
+                    }
+                }
+                try {
+                    if (!network.isCrashed()) {
+                        network.update();
+                    }
+                } catch (Throwable e) {
+                    network.setCrashed(true);
+                    throw e;
+                }
+            }
+        }
+
+        ticked = true;
+
+        PartOffsetsClientNotifier.getInstance().tick();
     }
 
 }

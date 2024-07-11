@@ -42,12 +42,12 @@ public class ValueTypeListProxyTail<T extends IValueType<V>, V extends IValue> e
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "tail");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "tail");
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyTail<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
+        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyTail<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.list));
         }
 
         @Override

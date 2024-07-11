@@ -12,7 +12,7 @@ public class SoundEventEffectPageFlipMultipleConfig extends org.cyclops.cyclopsc
         super(
                 IntegratedDynamics._instance,
                 "effect_page_flipmultiple",
-                (eConfig) -> SoundEvent.createVariableRangeEvent(new ResourceLocation(eConfig.getMod().getModId(), eConfig.getNamedId()))
+                (eConfig) -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(eConfig.getMod().getModId(), eConfig.getNamedId()))
         );
     }
 }

@@ -70,14 +70,14 @@ public class AspectProperties implements IAspectProperties {
     }
 
     @Override
-    public CompoundTag toNBT() {
+    public CompoundTag toNBT(ValueDeseralizationContext valueDeseralizationContext) {
         CompoundTag tag = new CompoundTag();
         ListTag map = new ListTag();
         for(Map.Entry<IAspectPropertyTypeInstance, IValue> entry : values.entrySet()) {
             CompoundTag nbtEntry = new CompoundTag();
             nbtEntry.putString("key", entry.getKey().getType().getUniqueName().toString());
             nbtEntry.putString("label", entry.getKey().getTranslationKey());
-            nbtEntry.put("value", ValueHelpers.serializeRaw(entry.getValue()));
+            nbtEntry.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, entry.getValue()));
             map.add(nbtEntry);
         }
         tag.put("map", map);
@@ -91,7 +91,7 @@ public class AspectProperties implements IAspectProperties {
         for(int i = 0; i < map.size(); i++) {
             CompoundTag nbtEntry = map.getCompound(i);
             String valueTypeName = nbtEntry.getString("key");
-            IValueType type = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valueTypeName));
+            IValueType type = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueTypeName));
             if(type == null) {
                 IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, String.format("Could not find value type with name %s, skipping loading.", valueTypeName));
             } else {

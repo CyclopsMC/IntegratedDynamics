@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -49,7 +49,7 @@ public abstract class VariableFacadeBase implements IVariableFacade {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<Component> list, Level world) {
+    public void appendHoverText(List<Component> list, Item.TooltipContext context) {
         list.add(Component.translatable("item.integrateddynamics.variable.id", getId() == -1 ? "..." : getId()));
     }
 

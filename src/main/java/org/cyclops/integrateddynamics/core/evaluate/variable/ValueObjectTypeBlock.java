@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -54,7 +55,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     }
 
     @Override
-    public Tag serialize(ValueBlock value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueBlock value) {
         if(!value.getRawValue().isPresent()) return new CompoundTag();
         return BlockHelpers.serializeBlockState(value.getRawValue().get());
     }
@@ -64,7 +65,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
             return ValueBlock.of(Blocks.AIR.defaultBlockState());
         }
-        return ValueBlock.of(BlockHelpers.deserializeBlockState(valueDeseralizationContext.holderGetter(), (CompoundTag) value));
+        return ValueBlock.of(BlockHelpers.deserializeBlockState(valueDeseralizationContext.holderLookupProvider().lookupOrThrow(Registries.BLOCK), (CompoundTag) value));
     }
 
     @Override

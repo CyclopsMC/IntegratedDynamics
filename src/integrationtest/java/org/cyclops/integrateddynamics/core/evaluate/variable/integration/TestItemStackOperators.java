@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -12,6 +13,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.EnchantmentHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -38,6 +40,7 @@ public class TestItemStackOperators {
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
 
     private DummyVariableItemStack iApple;
+    private DummyVariableItemStack iAppleNoData;
     private DummyVariableItemStack iApple2;
     private DummyVariableItemStack iAppleTag;
     private DummyVariableItemStack iBeef;
@@ -71,10 +74,17 @@ public class TestItemStackOperators {
     @IntegrationBefore
     public void before() {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
+        iAppleNoData = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.MAX_STACK_SIZE);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.LORE);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.ENCHANTMENTS);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.REPAIR_COST);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.ATTRIBUTE_MODIFIERS);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.RARITY);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.FOOD);
         iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 2)));
         ItemStack appleStack = new ItemStack(Items.APPLE);
-        appleStack.setTag(new CompoundTag());
-        appleStack.getTag().putString("a", "b");
+        appleStack.set(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, 2);
         iAppleTag = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(appleStack));
         iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.RED_BED)));
         iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ENDER_PEARL)));
@@ -82,8 +92,8 @@ public class TestItemStackOperators {
         iHoe100 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
         iHoe100.getValue().getRawValue().setDamageValue(100);
         ItemStack hoeEnchanted = new ItemStack(Items.DIAMOND_HOE);
-        EnchantmentHelpers.setEnchantmentLevel(hoeEnchanted, Enchantments.AQUA_AFFINITY, 1);
-        hoeEnchanted.setRepairCost(10);
+        EnchantmentHelpers.setEnchantmentLevel(hoeEnchanted, ServerLifecycleHooks.getCurrentServer().registryAccess().holderOrThrow(Enchantments.AQUA_AFFINITY), 1);
+        hoeEnchanted.set(DataComponents.REPAIR_COST, 10);
         iHoeEnchanted = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(hoeEnchanted));
         iPickaxe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_PICKAXE)));
         iStone = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.STONE)));
@@ -357,6 +367,7 @@ public class TestItemStackOperators {
         Operators.OBJECT_ITEMSTACK_ISENCHANTABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+
     /**
      * ----------------------------------- REPAIRCOST -----------------------------------
      */
@@ -550,7 +561,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().isEmpty(), true, "fluidstack(hoe) = null");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACK.evaluate(new IVariable[]{iBucketLava});
-        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue().isFluidStackIdentical(new FluidStack(Fluids.LAVA, FluidHelpers.BUCKET_VOLUME)), true, "fluidstack(bucketlava) = lava:1000");
+        TestHelpers.assertEqual(FluidStack.matches(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue(), new FluidStack(Fluids.LAVA, FluidHelpers.BUCKET_VOLUME)), true, "fluidstack(bucketlava) = lava:1000");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -603,30 +614,30 @@ public class TestItemStackOperators {
 
     @IntegrationTest
     public void testItemStackIsNBTEqual() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_ISNBTEQUAL.evaluate(new IVariable[]{iHoe, iPickaxe});
+        IValue res1 = Operators.OBJECT_ITEMSTACK_ISDATAEQUAL.evaluate(new IVariable[]{iHoe, iPickaxe});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "isnbtequal(hoe, pickaxe) = false");
 
-        IValue res2 = Operators.OBJECT_ITEMSTACK_ISNBTEQUAL.evaluate(new IVariable[]{iHoe, iHoeEnchanted});
+        IValue res2 = Operators.OBJECT_ITEMSTACK_ISDATAEQUAL.evaluate(new IVariable[]{iHoe, iHoeEnchanted});
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), false, "isnbtequal(hoe, hoeenchanted) = false");
 
-        IValue res3 = Operators.OBJECT_ITEMSTACK_ISNBTEQUAL.evaluate(new IVariable[]{iPickaxe, iPickaxe});
+        IValue res3 = Operators.OBJECT_ITEMSTACK_ISDATAEQUAL.evaluate(new IVariable[]{iPickaxe, iPickaxe});
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), true, "isnbtequal(pickaxe, pickaxe) = true");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputIsNBTEqualIsNBTEqualLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISNBTEQUAL.evaluate(new IVariable[]{iApple, iApple, iApple});
+        Operators.OBJECT_ITEMSTACK_ISDATAEQUAL.evaluate(new IVariable[]{iApple, iApple, iApple});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputIsNBTEqualIsNBTEqualSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISNBTEQUAL.evaluate(new IVariable[]{iApple});
+        Operators.OBJECT_ITEMSTACK_ISDATAEQUAL.evaluate(new IVariable[]{iApple});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeIsNBTEqual() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISNBTEQUAL.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Operators.OBJECT_ITEMSTACK_ISDATAEQUAL.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
     /**
@@ -1054,93 +1065,6 @@ public class TestItemStackOperators {
     }
 
     /**
-     * ----------------------------------- ISPLANTABLE -----------------------------------
-     */
-
-    @IntegrationTest
-    public void testItemStackIsPlantable() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{iApple});
-        Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
-        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "isplantable(apple) = false");
-
-        IValue res2 = Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{iSeedWheat});
-        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isplantable(seedWheat) = true");
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeIsPlantableLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{iApple, iApple});
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeIsPlantableSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{});
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypeIsPlantable() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISPLANTABLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- PLANTTYPE -----------------------------------
-     */
-
-    @IntegrationTest
-    public void testItemStackPlantType() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{iApple});
-        Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "none", "planttype(apple) = none");
-
-        IValue res2 = Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{iSeedWheat});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), "crop", "planttype(seedWheat) = crop");
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizePlantTypeLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{iApple, iApple});
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizePlantTypeSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{});
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypePlantType() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_PLANTTYPE.evaluate(new IVariable[]{DUMMY_VARIABLE});
-    }
-
-    /**
-     * ----------------------------------- PLANT -----------------------------------
-     */
-
-    @IntegrationTest
-    public void testItemStackPlant() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{iApple});
-        Asserts.check(res1 instanceof ValueObjectTypeBlock.ValueBlock, "result is a block");
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res1).getRawValue().isPresent(), false, "plant(apple) = null");
-
-        IValue res2 = Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{iSeedWheat});
-        TestHelpers.assertEqual(((ValueObjectTypeBlock.ValueBlock) res2).getRawValue().get().getBlock() == Blocks.WHEAT, true, "plant(seedWheat) = wheat");
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizePlantLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{iApple, iApple});
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizePlantSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{});
-    }
-
-    @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypePlant() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_PLANT.evaluate(new IVariable[]{DUMMY_VARIABLE});
-    }
-
-    /**
      * ----------------------------------- ITEMBYNAME -----------------------------------
      */
 
@@ -1197,61 +1121,61 @@ public class TestItemStackOperators {
     }
 
     /**
-     * ----------------------------------- NBT -----------------------------------
+     * ----------------------------------- DATA -----------------------------------
      */
 
     @IntegrationTest
     public void testItemStackNbt() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iApple});
+        IValue res1 = Operators.OBJECT_ITEMSTACK_DATA.evaluate(new IVariable[]{iAppleNoData});
         Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an nbt tag");
-        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().isPresent(), false, "nbt(apple:1) is null");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().isPresent(), false, "data(apple:1) is null");
 
-        IValue res2 = Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), new CompoundTag(), "nbt(battery) is non null");
+        IValue res2 = Operators.OBJECT_ITEMSTACK_DATA.evaluate(new IVariable[]{iEnergyBatteryFull});
+        TestHelpers.assertNonEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), new CompoundTag(), "data(battery) is non null");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputNbtNbtLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{iApple, iApple});
+        Operators.OBJECT_ITEMSTACK_DATA.evaluate(new IVariable[]{iApple, iApple});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputNbtNbtSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{});
+        Operators.OBJECT_ITEMSTACK_DATA.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeNbt() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_NBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_ITEMSTACK_DATA.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**
-     * ----------------------------------- HASNBT -----------------------------------
+     * ----------------------------------- HASDATA -----------------------------------
      */
 
     @IntegrationTest
     public void testItemStackHasNbt() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iApple});
+        IValue res1 = Operators.OBJECT_ITEMSTACK_HASDATA.evaluate(new IVariable[]{iAppleNoData});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
-        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "hasnbt(apple) = false");
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "hasdata(apple) = false");
 
-        IValue res2 = Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iAppleTag});
-        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "hasnbt(appleTag) = true");
+        IValue res2 = Operators.OBJECT_ITEMSTACK_HASDATA.evaluate(new IVariable[]{iAppleTag});
+        TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "hasdata(appleTag) = true");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputHasNbtHasNbtLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iApple, iApple});
+        Operators.OBJECT_ITEMSTACK_HASDATA.evaluate(new IVariable[]{iApple, iApple});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputHasNbtHasNbtSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{});
+        Operators.OBJECT_ITEMSTACK_HASDATA.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeHasNbt() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_ITEMSTACK_HASDATA.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

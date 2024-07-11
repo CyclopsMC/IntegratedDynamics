@@ -12,7 +12,7 @@ public class SoundEventEffectPageFlipSingleConfig extends org.cyclops.cyclopscor
         super(
                 IntegratedDynamics._instance,
                 "effect_page_flipsingle",
-                (eConfig) -> SoundEvent.createVariableRangeEvent(new ResourceLocation(eConfig.getMod().getModId(), eConfig.getNamedId()))
+                (eConfig) -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(eConfig.getMod().getModId(), eConfig.getNamedId()))
         );
     }
 }

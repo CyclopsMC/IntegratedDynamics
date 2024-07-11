@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -34,14 +34,13 @@ public abstract class BlockContainerCabled extends BlockWithEntity {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
-                                             BlockHitResult blockRayTraceResult) {
-        ItemStack heldItem = player.getItemInHand(hand);
+    public ItemInteractionResult useItemOn(ItemStack heldItem, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
+                                     BlockHitResult blockRayTraceResult) {
         if (!world.isClientSide() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getDirection()) && player.isSecondaryUseActive()) {
             world.destroyBlock(pos, true);
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
-        return super.use(state, world, pos, player, hand, blockRayTraceResult);
+        return super.useItemOn(heldItem, state, world, pos, player, hand, blockRayTraceResult);
     }
 
     @Override

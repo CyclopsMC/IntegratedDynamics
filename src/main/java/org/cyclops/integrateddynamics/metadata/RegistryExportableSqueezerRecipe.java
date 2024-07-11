@@ -3,8 +3,8 @@ package org.cyclops.integrateddynamics.metadata;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * Squeezer recipe exporter.
  */
-public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAbstract<RecipeType<RecipeSqueezer>, RecipeSqueezer, Container> {
+public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAbstract<RecipeType<RecipeSqueezer>, RecipeSqueezer, CraftingInput> {
 
     protected RegistryExportableSqueezerRecipe() {
         super(RegistryEntries.RECIPETYPE_SQUEEZER::get);

@@ -98,7 +98,7 @@ public class TestValueTypeListProxyFactories {
     }
 
     protected void testFactoryType(IValueTypeListProxy<?, ?> proxy) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        Tag serialized = ValueTypeListProxyFactories.REGISTRY.serialize(proxy);
+        Tag serialized = ValueTypeListProxyFactories.REGISTRY.serialize(ValueDeseralizationContextMocked.get(), proxy);
         IValueTypeListProxy<?, ?> proxyNew = ValueTypeListProxyFactories.REGISTRY.deserialize(ValueDeseralizationContextMocked.get(), serialized);
         if (!(proxy.isInfinite() && proxy.isInfinite())) {
             assertThat(proxyNew, equalTo(proxy));

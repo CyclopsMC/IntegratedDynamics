@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "VCV",
+    "LSL",
+    "VCV"
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable"
+    },
+    "C": {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    },
+    "S": {
+      "item": "integrateddynamics:variablestore"
+    },
+    "L": {
+      "item": "minecraft:clock"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:delay"
+  }
+}

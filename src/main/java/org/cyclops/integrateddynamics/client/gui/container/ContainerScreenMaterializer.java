@@ -22,7 +22,7 @@ public class ContainerScreenMaterializer extends ContainerScreenActiveVariableBa
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/materializer.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/materializer.png");
     }
 
     @Override

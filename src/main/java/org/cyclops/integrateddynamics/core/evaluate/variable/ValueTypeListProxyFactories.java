@@ -51,14 +51,14 @@ public class ValueTypeListProxyFactories {
     public static void load() {
         if(MATERIALIZED == null) {
             MATERIALIZED = REGISTRY.register(new ValueTypeListProxyMaterializedFactory());
-            POSITIONED_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(new ResourceLocation(Reference.MOD_ID, "positioned_inventory"), ValueTypeListProxyPositionedInventory.class));
-            ENTITY_ARMORINVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(new ResourceLocation(Reference.MOD_ID, "entity_armor_inventory"), ValueTypeListProxyEntityArmorInventory.class));
-            ENTITY_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(new ResourceLocation(Reference.MOD_ID, "entity_inventory"), ValueTypeListProxyEntityInventory.class));
-            POSITIONED_TANK_FLUIDSTACKS = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(new ResourceLocation(Reference.MOD_ID, "positioned_tank_fluidstacks"), ValueTypeListProxyPositionedTankFluidStacks.class));
-            POSITIONED_TANK_CAPACITIES = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(new ResourceLocation(Reference.MOD_ID, "positioned_tank_capacities"), ValueTypeListProxyPositionedTankCapacities.class));
-            ENTITY_CAPABILITY_ITEMS = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(new ResourceLocation(Reference.MOD_ID, "entity_capability_items"), ValueTypeListProxyEntityItems.class));
-            ENTITY_CAPABILITY_FLUIDS = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(new ResourceLocation(Reference.MOD_ID, "entity_capability_fluids"), ValueTypeListProxyEntityFluids.class));
-            POSITIONED_RECIPES = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(new ResourceLocation(Reference.MOD_ID, "positioned_recipes"), ValueTypeListProxyPositionedRecipes.class));
+            POSITIONED_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_inventory"), ValueTypeListProxyPositionedInventory.class));
+            ENTITY_ARMORINVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "entity_armor_inventory"), ValueTypeListProxyEntityArmorInventory.class));
+            ENTITY_INVENTORY = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "entity_inventory"), ValueTypeListProxyEntityInventory.class));
+            POSITIONED_TANK_FLUIDSTACKS = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_tank_fluidstacks"), ValueTypeListProxyPositionedTankFluidStacks.class));
+            POSITIONED_TANK_CAPACITIES = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_tank_capacities"), ValueTypeListProxyPositionedTankCapacities.class));
+            ENTITY_CAPABILITY_ITEMS = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "entity_capability_items"), ValueTypeListProxyEntityItems.class));
+            ENTITY_CAPABILITY_FLUIDS = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "entity_capability_fluids"), ValueTypeListProxyEntityFluids.class));
+            POSITIONED_RECIPES = REGISTRY.register(new ValueTypeListProxyNBTFactory<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipes"), ValueTypeListProxyPositionedRecipes.class));
             APPEND = REGISTRY.register(new ValueTypeListProxyAppend.Factory());
             CONCAT = REGISTRY.register(new ValueTypeListProxyConcat.Factory());
             LAZY_BUILT = REGISTRY.register(new ValueTypeListProxyLazyBuilt.Factory());

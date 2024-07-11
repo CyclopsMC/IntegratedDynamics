@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "RVR"
+  ],
+  "key": {
+    "V": {
+      "item": "integrateddynamics:variable_transformer_input"
+    },
+    "B": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:part_redstone_reader"
+  }
+}

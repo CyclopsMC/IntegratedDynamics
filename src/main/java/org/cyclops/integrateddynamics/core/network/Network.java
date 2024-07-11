@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModLoader;
@@ -62,6 +63,7 @@ public class Network implements INetwork {
     private IFullNetworkListener[] fullNetworkListeners;
 
     private CompoundTag toRead = null;
+    private HolderLookup.Provider provider = null;
     private volatile boolean changed = false;
     private volatile boolean killed = false;
 
@@ -115,7 +117,7 @@ public class Network implements INetwork {
 
     protected void gatherCapabilities() {
         AttachCapabilitiesEventNetwork event = new AttachCapabilitiesEventNetwork(this);
-        ModLoader.get().postEventWrapContainerInModOrder(event);
+        ModLoader.postEventWrapContainerInModOrder(event);
         List<IFullNetworkListener> listeners = event.getFullNetworkListeners();
         this.fullNetworkListeners = listeners.toArray(new IFullNetworkListener[listeners.size()]);
         this.capabilityProviders = event.getProviders();
@@ -180,23 +182,24 @@ public class Network implements INetwork {
     }
 
     @Override
-    public CompoundTag toNBT() {
+    public CompoundTag toNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.put("baseCluster", this.baseCluster.toNBT());
+        tag.put("baseCluster", this.baseCluster.toNBT(provider));
         tag.putBoolean("crashed", this.crashed);
         return tag;
     }
 
     @Override
-    public void fromNBT(CompoundTag tag) {
+    public void fromNBT(HolderLookup.Provider provider, CompoundTag tag) {
         // NBT reading is postponed until the first network tick, to ensure that the game is properly initialized.
         // Because other mods may register things such as dimensions at the same time when networks
         // are being constructed (as was the case in #349)
         this.toRead = tag;
+        this.provider = provider;
     }
 
-    public void fromNBTEffective(CompoundTag tag) {
-        this.baseCluster.fromNBT(tag.getCompound("baseCluster"));
+    public void fromNBTEffective(HolderLookup.Provider provider, CompoundTag tag) {
+        this.baseCluster.fromNBT(provider, tag.getCompound("baseCluster"));
         this.crashed = tag.getBoolean("crashed");
         deriveNetworkElements(baseCluster);
         initialize(true);
@@ -368,8 +371,9 @@ public class Network implements INetwork {
     @Override
     public void updateGuaranteed() {
         if (this.toRead != null) {
-            this.fromNBTEffective(this.toRead);
+            this.fromNBTEffective(this.provider, this.toRead);
             this.toRead = null;
+            this.provider = null;
         }
     }
 

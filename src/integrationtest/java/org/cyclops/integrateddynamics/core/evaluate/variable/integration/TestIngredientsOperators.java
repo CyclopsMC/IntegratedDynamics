@@ -282,7 +282,7 @@ public class TestIngredientsOperators {
         IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
         List<FluidStack> outputList1 = outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK);
         TestHelpers.assertEqual(outputList1.size(), 1, "with_fluids(mix, 0, fluids)[0]size = 1");
-        TestHelpers.assertEqual(outputList1.get(0), new FluidStack(Fluids.WATER, 123),
+        TestHelpers.assertEqual(FluidStack.matches(outputList1.get(0), new FluidStack(Fluids.WATER, 123)), true,
                 "with_fluids(mix, 0, fluids)[0] = fluids[0]");
 
         TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK).size(), inputIngredients.getInstances(IngredientComponent.FLUIDSTACK).size(), "Fluids size remains the same");
@@ -295,11 +295,11 @@ public class TestIngredientsOperators {
         IMixedIngredients outputIngredients2 = ((ValueObjectTypeIngredients.ValueIngredients) res2).getRawValue().get();
         List<FluidStack> outputList2 = outputIngredients2.getInstances(IngredientComponent.FLUIDSTACK);
         TestHelpers.assertEqual(outputList2.size(), 3, "with_fluids(mix, 3, fluids)[0]size = 2");
-        TestHelpers.assertEqual(outputList2.get(0), new FluidStack(Fluids.WATER, 125),
+        TestHelpers.assertEqual(FluidStack.matches(outputList2.get(0), new FluidStack(Fluids.WATER, 125)), true,
                 "with_fluids(mix, 2, fluids)[0] = fluids[0]");
-        TestHelpers.assertEqual(outputList2.get(1), FluidStack.EMPTY,
+        TestHelpers.assertEqual(FluidStack.matches(outputList2.get(1), FluidStack.EMPTY), true,
                 "with_fluids(mix, 2, fluids)[1] = fluids[1]");
-        TestHelpers.assertEqual(outputList2.get(2), new FluidStack(Fluids.WATER, 123),
+        TestHelpers.assertEqual(FluidStack.matches(outputList2.get(2), new FluidStack(Fluids.WATER, 123)), true,
                 "with_fluids(mix, 2, fluids)[2] = fluids[2]");
 
         TestHelpers.assertNonEqual(outputIngredients2.getInstances(IngredientComponent.FLUIDSTACK).size(), inputIngredients.getInstances(IngredientComponent.FLUIDSTACK).size(), "Fluids size changes");
@@ -421,9 +421,9 @@ public class TestIngredientsOperators {
         IMixedIngredients outputIngredients1 = ((ValueObjectTypeIngredients.ValueIngredients) res1).getRawValue().get();
         List<FluidStack> outputList1 = outputIngredients1.getInstances(IngredientComponent.FLUIDSTACK);
         TestHelpers.assertEqual(outputList1.size(), 2, "with_fluids(mix, fluids)[0]size = 2");
-        TestHelpers.assertEqual(outputList1.get(0), new FluidStack(Fluids.LAVA, 1000),
+        TestHelpers.assertEqual(FluidStack.matches(outputList1.get(0), new FluidStack(Fluids.LAVA, 1000)), true,
                 "with_fluids(mix, fluids)[0] = fluids[0]");
-        TestHelpers.assertEqual(outputList1.get(1), new FluidStack(Fluids.WATER, 125),
+        TestHelpers.assertEqual(FluidStack.matches(outputList1.get(1), new FluidStack(Fluids.WATER, 125)), true,
                 "with_fluids(mix, fluids)[1] = fluids[1]");
 
         TestHelpers.assertEqual(outputIngredients1.getInstances(IngredientComponent.ITEMSTACK), inputIngredients.getInstances(IngredientComponent.ITEMSTACK), "Item remains the same");

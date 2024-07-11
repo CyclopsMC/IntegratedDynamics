@@ -1,12 +1,15 @@
 package org.cyclops.integrateddynamics.item;
 
 import com.google.common.collect.Maps;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -24,12 +27,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The default wrench for this mod.
@@ -38,6 +43,7 @@ import java.util.Map;
 public class ItemWrench extends Item {
 
     private static final Map<String, Mode> NAMED_MODES = Maps.newHashMap();
+    private static final Map<Integer, Mode> INT_MODES = Maps.newHashMap();
 
     public ItemWrench(Properties properties) {
         super(properties);
@@ -66,14 +72,14 @@ public class ItemWrench extends Item {
             switch (getMode(itemStack)) {
                 case OFFSET -> {
                     // Save offset
-                    itemStack.getOrCreateTag().putLong("pos", context.getClickedPos().asLong());
+                    itemStack.set(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS, context.getClickedPos());
                     context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.saved", context.getClickedPos().toShortString()), true);
                     return InteractionResult.SUCCESS;
                 }
                 case OFFSET_SIDE -> {
                     // Save offset and side
-                    itemStack.getOrCreateTag().putLong("pos", context.getClickedPos().asLong());
-                    itemStack.getOrCreateTag().putLong("side", context.getClickedFace().ordinal());
+                    itemStack.set(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS, context.getClickedPos());
+                    itemStack.set(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION, context.getClickedFace());
                     context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.saved", context.getClickedPos().toShortString(), context.getClickedFace().getSerializedName()), true);
                     return InteractionResult.SUCCESS;
                 }
@@ -114,18 +120,11 @@ public class ItemWrench extends Item {
     }
 
     public Mode getMode(ItemStack itemStack) {
-        CompoundTag tag = itemStack.getTag();
-        if (tag != null) {
-            Mode mode = NAMED_MODES.get(tag.getString("mode"));
-            if (mode != null) {
-                return mode;
-            }
-        }
-        return Mode.DEFAULT;
+        return Objects.requireNonNullElse(itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_MODE), Mode.DEFAULT);
     }
 
     public void setMode(ItemStack itemStack, Mode mode) {
-        itemStack.getOrCreateTag().putString("mode", mode.getName());
+        itemStack.set(RegistryEntries.DATACOMPONENT_WRENCH_MODE, mode);
     }
 
     public void incrementMode(ItemStack itemStack) {
@@ -134,39 +133,32 @@ public class ItemWrench extends Item {
         Mode nextMode = Mode.values()[(modeId + 1) % Mode.values().length];
         setMode(itemStack, nextMode);
 
-        CompoundTag tag = itemStack.getTag();
-        if (tag != null) {
-            tag.remove("pos");
-            tag.remove("side");
-        }
+        itemStack.remove(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS);
+        itemStack.remove(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
-        super.appendHoverText(itemStack, world, list, flag);
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+        super.appendHoverText(itemStack, context, list, flag);
 
-        CompoundTag tag = itemStack.getTag();
         Mode mode = getMode(itemStack);
         list.add(Component.translatable("item.integrateddynamics.wrench.mode", Component.translatable(mode.getLabel())));
-        if (tag != null) {
-            if (tag.contains("pos")) {
-                list.add(Component.translatable("item.integrateddynamics.wrench.mode.offset.pos", BlockPos.of(tag.getLong("pos")).toShortString()).withStyle(ChatFormatting.GRAY));
-            }
-            if (tag.contains("side")) {
-                list.add(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.side", Direction.values()[tag.getInt("side")].getSerializedName()).withStyle(ChatFormatting.GRAY));
-            }
+        if (itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS)) {
+            list.add(Component.translatable("item.integrateddynamics.wrench.mode.offset.pos", itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS).toShortString()).withStyle(ChatFormatting.GRAY));
+        }
+        if (itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION)) {
+            list.add(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.side", itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION).getSerializedName()).withStyle(ChatFormatting.GRAY));
         }
         list.add(Component.translatable(mode.getLabel() + ".info").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
     }
 
     public <P extends IPartType<P, S>, S extends IPartState<P>> InteractionResult performPartAction(BlockHitResult hit, IPartType<P, S> partType, IPartState<P> partState, ItemStack itemStack, Player player, InteractionHand hand, PartPos center) {
         Mode mode = getMode(itemStack);
-        CompoundTag tag = itemStack.getTag();
         switch (mode) {
             case OFFSET -> {
-                if (tag.contains("pos")) {
-                    Vec3i offset = determineOffset(hit, tag);
+                if (itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS)) {
+                    Vec3i offset = determineOffset(hit, itemStack);
                     if (((IPartType) partType).setTargetOffset(partState, center, offset)) {
                         player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.success"), true);
                     } else {
@@ -178,9 +170,9 @@ public class ItemWrench extends Item {
                 return InteractionResult.SUCCESS;
             }
             case OFFSET_SIDE -> {
-                if (tag.contains("pos") && tag.contains("side")) {
-                    Vec3i offset = determineOffset(hit, tag);
-                    Direction side = Direction.values()[tag.getInt("side")];
+                if (itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS) && itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION)) {
+                    Vec3i offset = determineOffset(hit, itemStack);
+                    Direction side = itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION);
                     if (((IPartType) partType).setTargetOffset(partState, center, offset)) {
                         ((IPartType) partType).setTargetSideOverride(partState, side);
                         player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.success"), true);
@@ -196,16 +188,19 @@ public class ItemWrench extends Item {
         return InteractionResult.PASS;
     }
 
-    protected Vec3i determineOffset(BlockHitResult hit, CompoundTag tag) {
+    protected Vec3i determineOffset(BlockHitResult hit, ItemStack itemStack) {
         BlockPos source = hit.getBlockPos().relative(hit.getDirection());
-        BlockPos targetAbs = BlockPos.of(tag.getLong("pos"));
+        BlockPos targetAbs = itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS);
         return new Vec3i(targetAbs.getX() - source.getX(), targetAbs.getY() - source.getY(), targetAbs.getZ() - source.getZ());
     }
 
-    public static enum Mode {
+    public static enum Mode implements StringRepresentable {
         DEFAULT("integrateddynamics:default", "item.integrateddynamics.wrench.mode.default"),
         OFFSET("integrateddynamics:offset", "item.integrateddynamics.wrench.mode.offset"),
         OFFSET_SIDE("integrateddynamics:offset_side", "item.integrateddynamics.wrench.mode.offset_side");
+
+        public static final StringRepresentable.EnumCodec<Mode> CODEC = net.minecraft.util.StringRepresentable.fromEnum(Mode::values);
+        public static final StreamCodec<ByteBuf, Mode> STREAM_CODEC = ByteBufCodecs.idMapper(INT_MODES::get, Mode::ordinal);
 
         private final String name;
         private final String label;
@@ -214,6 +209,7 @@ public class ItemWrench extends Item {
             this.name = name;
             this.label = label;
             NAMED_MODES.put(name, this);
+            INT_MODES.put(ordinal(), this);
         }
 
         public String getName() {
@@ -222,6 +218,11 @@ public class ItemWrench extends Item {
 
         public String getLabel() {
             return label;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return getName();
         }
     }
 

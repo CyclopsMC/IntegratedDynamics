@@ -63,19 +63,19 @@ public class ValueTypeListProxyLazyBuilt<T extends IValueType<V>, V extends IVal
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "lazybuilt");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "lazybuilt");
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             tag.putString("valueType", value.value.getType().getUniqueName().toString());
-            tag.put("value", ValueHelpers.serializeRaw(value.value));
-            tag.put("operator", Operators.REGISTRY.serialize(value.operator));
+            tag.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, value.value));
+            tag.put("operator", Operators.REGISTRY.serialize(valueDeseralizationContext, value.operator));
         }
 
         @Override
         protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
-            IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
+            IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("valueType")));
             IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, tag.get("value"));
             IOperator operator = Operators.REGISTRY.deserialize(valueDeseralizationContext, tag.get("operator"));
             return new ValueTypeListProxyLazyBuilt<>(value, operator);

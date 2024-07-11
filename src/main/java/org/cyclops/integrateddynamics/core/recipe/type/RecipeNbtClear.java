@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -29,14 +29,14 @@ public class RecipeNbtClear extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer inv, Level worldIn) {
+    public boolean matches(CraftingInput inv, Level worldIn) {
         return !assemble(inv, worldIn.registryAccess()).isEmpty();
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
+    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registryAccess) {
         ItemStack ret = ItemStack.EMPTY;
-        for(int j = 0; j < inv.getContainerSize(); j++) {
+        for(int j = 0; j < inv.size(); j++) {
             ItemStack element = inv.getItem(j);
             if(!element.isEmpty()) {
                 if (this.inputIngredient.test(element)) {
@@ -59,7 +59,7 @@ public class RecipeNbtClear extends CustomRecipe {
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
         return getResultItem();
     }
 
@@ -68,8 +68,8 @@ public class RecipeNbtClear extends CustomRecipe {
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
-        return NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput inv) {
+        return NonNullList.withSize(inv.size(), ItemStack.EMPTY);
     }
 
     @Override

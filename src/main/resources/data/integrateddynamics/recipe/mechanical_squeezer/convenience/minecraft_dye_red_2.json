@@ -1,0 +1,29 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "minecraft:rose_bush"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:red_dye",
+        "count": 8
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:red_dye",
+        "count": 2
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:red_dye",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 5
+}

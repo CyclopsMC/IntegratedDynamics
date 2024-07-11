@@ -66,27 +66,27 @@ public class VariableModel implements UnbakedModel, IUnbakedGeometry<VariableMod
     }
 
     @Override
-    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
-        return bake(baker, spriteGetter, modelState, modelLocation);
+    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
+        return bake(baker, spriteGetter, modelState);
     }
 
     @Nullable
     @Override
-    public BakedModel bake(ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
+    public BakedModel bake(ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState) {
         Material textureName = base.getMaterial("layer0");
         BlockModel itemModel = ModelHelpers.MODEL_GENERATOR.generateBlockModel(spriteGetter, base);
         SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(itemModel, itemModel.getOverrides(bakery, itemModel, spriteGetter), false));
         itemModel.textureMap.put("layer0", Either.left(textureName));
         TextureAtlasSprite textureAtlasSprite = spriteGetter.apply(textureName);
         builder.particle(textureAtlasSprite);
-        for (BakedQuad bakedQuad : UnbakedGeometryHelper.bakeElements(UnbakedGeometryHelper.createUnbakedItemElements(0, textureAtlasSprite, ExtraFaceData.DEFAULT), $ -> textureAtlasSprite, modelState, modelLocation)) {
+        for (BakedQuad bakedQuad : UnbakedGeometryHelper.bakeElements(UnbakedGeometryHelper.createUnbakedItemElements(0, textureAtlasSprite, ExtraFaceData.DEFAULT), $ -> textureAtlasSprite, modelState)) {
             builder.addUnculledFace(bakedQuad);
         }
         BakedModel baseModel = builder.build();
         VariableModelBaked bakedModel = new VariableModelBaked(baseModel);
 
         for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
-            bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakery, spriteGetter, modelState, modelLocation));
+            bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakery, spriteGetter, modelState, this.base.getParentLocation()));
         }
 
         return bakedModel;

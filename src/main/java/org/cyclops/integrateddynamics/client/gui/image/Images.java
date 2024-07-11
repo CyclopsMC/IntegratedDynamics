@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class Images {
 
-    public static final ResourceLocation ICONS = new ResourceLocation(IntegratedDynamics._instance.getModId(),
+    public static final ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(IntegratedDynamics._instance.getModId(),
             IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "icons.png");
 
     public static final Image BUTTON_BACKGROUND_INACTIVE = new Image(ICONS, 0, 0, 18, 18);

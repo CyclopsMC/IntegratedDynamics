@@ -63,16 +63,16 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
 
         @Override
         public ResourceLocation getUniqueName() {
-            return new ResourceLocation(Reference.MOD_ID, "predicate");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "predicate");
         }
 
         @Override
-        public Tag serialize(PredicateOperator<IValueType<IValue>, IValue> operator) {
+        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, PredicateOperator<IValueType<IValue>, IValue> operator) {
             CompoundTag tag = new CompoundTag();
             tag.putString("valueType", operator.inputType.getTranslationKey());
             ListTag list = new ListTag();
             for (IValue rawValue : operator.rawValues) {
-                list.add(operator.inputType.serialize(rawValue));
+                list.add(operator.inputType.serialize(valueDeseralizationContext, rawValue));
             }
             tag.put("values", list);
             return tag;
@@ -82,7 +82,7 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         public PredicateOperator<IValueType<IValue>, IValue> deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException {
             try {
                 CompoundTag tag = (CompoundTag) value;
-                IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
+                IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("valueType")));
                 ListTag list = (ListTag) tag.get("values");
                 List<IValue> values = Lists.newArrayList();
                 for (Tag subTag : list) {

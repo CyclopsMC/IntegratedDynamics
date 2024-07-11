@@ -114,7 +114,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/logic_programmer.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/logic_programmer.png");
     }
 
     protected float colorSmoothener(float color, boolean hover) {
@@ -124,7 +124,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
-        subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().textureManager, font, partialTicks, mouseX, mouseY);
+        subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
 
         // Draw container name
         font.drawInBatch(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
@@ -175,7 +175,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().textureManager, font, mouseX, mouseY);
+        subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
         // Draw operator tooltips
         ContainerLogicProgrammerBase container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
@@ -222,7 +222,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     new LogicProgrammerActivateElementPacket(type.getUniqueName(), type.getName(newActive)));
         } else {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerActivateElementPacket(new ResourceLocation(""), new ResourceLocation("")));
+                    new LogicProgrammerActivateElementPacket(ResourceLocation.parse(""), ResourceLocation.parse("")));
         }
         return activate;
     }

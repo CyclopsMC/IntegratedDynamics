@@ -29,12 +29,12 @@ public class SingleLPElementType<E extends ILogicProgrammerElement> implements I
 
     @Override
     public ResourceLocation getName(E element) {
-        return new ResourceLocation("");
+        return ResourceLocation.parse("");
     }
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "single_" + id);
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "single_" + id);
     }
 
     @Override

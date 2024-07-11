@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -24,15 +25,15 @@ public abstract class ValueTypeListProxyPositioned<T extends IValueType<V>, V ex
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundTag tag) {
-        NBTClassType.writeNbt(DimPos.class, "pos", pos, tag);
-        NBTClassType.writeNbt(Direction.class, "side", side, tag);
+    public void writeGeneratedFieldsToNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
+        NBTClassType.writeNbt(DimPos.class, "pos", pos, tag, holderLookupProvider);
+        NBTClassType.writeNbt(Direction.class, "side", side, tag, holderLookupProvider);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundTag tag) {
-        this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag);
-        this.side = NBTClassType.readNbt(Direction.class, "side", tag);
+    public void readGeneratedFieldsFromNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
+        this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag, holderLookupProvider);
+        this.side = NBTClassType.readNbt(Direction.class, "side", tag, holderLookupProvider);
     }
 
     protected DimPos getPos() {

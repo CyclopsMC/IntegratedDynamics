@@ -30,10 +30,12 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
 
     /**
      * Set the variable facade for the given tag.
-     * @param tagCompound The tag that is used to write variable facade information to.
-     * @param variableFacade The facade to write.
+     *
+     * @param valueDeseralizationContext
+     * @param tagCompound                The tag that is used to write variable facade information to.
+     * @param variableFacade             The facade to write.
      */
-    public void setVariableFacade(CompoundTag tagCompound, F variableFacade);
+    public void setVariableFacade(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tagCompound, F variableFacade);
 
     /**
      * If the given facade is created by this handler.

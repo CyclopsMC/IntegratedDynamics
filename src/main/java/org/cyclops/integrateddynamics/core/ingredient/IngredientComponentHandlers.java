@@ -43,11 +43,11 @@ public class IngredientComponentHandlers {
         if (event.getRegistryKey().equals(IngredientComponent.REGISTRY.key())) {
             // Components are still loading here, so grab them by name
             IngredientComponent componentItem = IngredientComponent.REGISTRY.get(
-                    new ResourceLocation("minecraft:itemstack"));
+                    ResourceLocation.parse("minecraft:itemstack"));
             IngredientComponent componentFluid = IngredientComponent.REGISTRY.get(
-                    new ResourceLocation("minecraft:fluidstack"));
+                    ResourceLocation.parse("minecraft:fluidstack"));
             IngredientComponent componentEnergy = IngredientComponent.REGISTRY.get(
-                    new ResourceLocation("minecraft:energy"));
+                    ResourceLocation.parse("minecraft:energy"));
 
             REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeItemStack,
                     ValueObjectTypeItemStack.ValueItemStack, ItemStack, Integer>() {

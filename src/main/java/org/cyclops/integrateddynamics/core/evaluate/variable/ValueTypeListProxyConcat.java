@@ -50,14 +50,14 @@ public class ValueTypeListProxyConcat<T extends IValueType<V>, V extends IValue>
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "concat");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "concat");
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyConcat<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyConcat<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             ListTag list = new ListTag();
             for (IValueTypeListProxy<IValueType<IValue>, IValue> listProxy : value.lists) {
-                list.add(ValueTypeListProxyFactories.REGISTRY.serialize(listProxy));
+                list.add(ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, listProxy));
             }
             tag.put("sublists", list);
         }

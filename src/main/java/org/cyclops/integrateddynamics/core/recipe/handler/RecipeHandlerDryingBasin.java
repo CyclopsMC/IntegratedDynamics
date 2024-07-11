@@ -42,7 +42,7 @@ public class RecipeHandlerDryingBasin<T extends RecipeDryingBasin> extends Recip
     @Nullable
     @Override
     protected IInventoryFluid getRecipeInputContainer(IMixedIngredients input) {
-        IInventoryFluid inventory = new InventoryFluid(NonNullList.withSize(1, ItemStack.EMPTY), NonNullList.withSize(1, FluidStack.EMPTY));
+        InventoryFluid inventory = new InventoryFluid(NonNullList.withSize(1, ItemStack.EMPTY), NonNullList.withSize(1, FluidStack.EMPTY));
         if (!input.getInstances(IngredientComponent.ITEMSTACK).isEmpty()) {
             inventory.setItem(0, input.getInstances(IngredientComponent.ITEMSTACK).get(0));
         }

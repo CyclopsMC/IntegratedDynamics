@@ -1,0 +1,22 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "tag": "c:ores/redstone"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:redstone",
+        "count": 12
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:redstone",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 40
+}

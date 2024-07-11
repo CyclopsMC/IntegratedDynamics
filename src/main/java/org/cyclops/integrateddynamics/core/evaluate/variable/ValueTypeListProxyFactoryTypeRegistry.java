@@ -49,12 +49,12 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
     }
 
     @Override
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> Tag serialize(P proxy) throws SerializationException {
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P proxy) throws SerializationException {
         IProxyFactory<T, V, P> factory = getFactory(proxy.getName());
         if(factory == null) {
             throw new SerializationException(String.format("No serialization factory exists for the list proxy type name '%s'.", proxy.getName()));
         }
-        Tag serialized = factory.serialize(proxy);
+        Tag serialized = factory.serialize(valueDeseralizationContext, proxy);
         CompoundTag tag = new CompoundTag();
         tag.putString("proxyName", proxy.getName().toString());
         tag.put("serialized", serialized);
@@ -75,7 +75,7 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
         }
         String name = tag.getString("proxyName");
         Tag actualValue = tag.get("serialized");
-        IProxyFactory<T, V, P> factory = getFactory(new ResourceLocation(name));
+        IProxyFactory<T, V, P> factory = getFactory(ResourceLocation.parse(name));
         if(factory == null) {
             throw new SerializationException(String.format("No deserialization factory exists for the list proxy type name '%s'.", name));
         }

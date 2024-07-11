@@ -1,0 +1,43 @@
+modLoader="javafml"
+loaderVersion="[2,)"
+issueTrackerURL="https://github.com/CyclopsMC/IntegratedDynamics/issues"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/integrated-dynamics"
+license="MIT"
+logoFile="logo.png"
+authors="rubensworks (aka kroeser)"
+[[mods]]
+modId="integrateddynamics"
+version="${file.jarVersion}"
+displayName="IntegratedDynamics"
+updateJSONURL="https://raw.githubusercontent.com/CyclopsMC/Versions/master/forge_update/integrated-dynamics.json"
+description='''
+Take full and automated control of your appliances.
+'''
+[[accessTransformers]]
+    file="META-INF/accesstransformer.cfg"
+[[mixins]]
+    config="mixins.integrateddynamics.json"
+[[dependencies.integrateddynamics]]
+    modId="cyclopscore"
+    type="required"
+    versionRange="[1.19.1,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.integrateddynamics]]
+    modId="commoncapabilities"
+    type="required"
+    versionRange="[2.9.1,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.integrateddynamics]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.0.43-beta,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.integrateddynamics]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21,]"
+    ordering="NONE"
+    side="BOTH"

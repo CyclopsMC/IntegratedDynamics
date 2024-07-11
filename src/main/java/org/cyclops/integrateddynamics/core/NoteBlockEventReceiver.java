@@ -5,8 +5,8 @@ import com.google.common.collect.Multimap;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.level.NoteBlockEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 /**
  * Captures note block events for one tick.
@@ -37,13 +37,11 @@ public final class NoteBlockEventReceiver {
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent.ServerTickEvent event) {
-        if(event.phase == TickEvent.Phase.START) {
-            Multimap<NoteBlockInstrument, NoteBlockEvent.Play> tmp = previousEvents;
-            previousEvents.clear();
-            previousEvents = currentEvents;
-            currentEvents = tmp;
-        }
+    public void onTick(ServerTickEvent.Pre event) {
+        Multimap<NoteBlockInstrument, NoteBlockEvent.Play> tmp = previousEvents;
+        previousEvents.clear();
+        previousEvents = currentEvents;
+        currentEvents = tmp;
     }
 
     public Multimap<NoteBlockInstrument, NoteBlockEvent.Play> getEvents() {

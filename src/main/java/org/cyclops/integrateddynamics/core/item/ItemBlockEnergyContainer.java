@@ -3,9 +3,9 @@ package org.cyclops.integrateddynamics.core.item;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -14,7 +14,6 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
-import org.cyclops.integrateddynamics.block.IEnergyContainerBlock;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.capability.energystorage.EnergyStorageItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -31,18 +30,17 @@ import java.util.Optional;
  */
 public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
-    private IEnergyContainerBlock block;
+    private Block block;
 
     public ItemBlockEnergyContainer(Block block, Properties builder) {
         super(block, builder);
-        // Will crash if no valid instance of.
-        this.block = (IEnergyContainerBlock) block;
+        this.block = block;
     }
 
     /**
      * @return The energy container.
      */
-    public IEnergyContainerBlock get() {
+    public Block get() {
         return block;
     }
 
@@ -52,8 +50,8 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
-        super.appendHoverText(itemStack, world, list, flag);
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+        super.appendHoverText(itemStack, context, list, flag);
         getEnergyBattery(itemStack)
                 .ifPresent(energyStorage -> {
                     long amount = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getEnergyStoredLong();

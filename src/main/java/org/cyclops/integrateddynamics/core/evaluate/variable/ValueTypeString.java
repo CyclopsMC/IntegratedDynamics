@@ -33,7 +33,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
     }
 
     @Override
-    public Tag serialize(ValueString value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueString value) {
         return StringTag.valueOf(value.getRawValue());
     }
 

@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.network.packet;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +21,8 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
  */
 public class ActionLabelPacket extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "action_label");
+    public static final Type<ActionLabelPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "action_label"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ActionLabelPacket> CODEC = getCodec(ActionLabelPacket::new);
 
     @CodecField
     private int variableId;
@@ -27,11 +30,11 @@ public class ActionLabelPacket extends PacketCodec {
     private String label; // If null, this action is assumed to be a removal.
 
     public ActionLabelPacket() {
-        super(ID);
+        super(TYPE);
     }
 
     public ActionLabelPacket(int variableId, String label) {
-        super(ID);
+        super(TYPE);
         this.variableId = variableId;
         this.label = label;
     }

@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
@@ -98,7 +99,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         selectedOperator = operatorDropdownEntry == null ? null : operatorDropdownEntry.getValue();
         if (MinecraftHelpers.isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerValueTypeOperatorValueChangedPacket(
+                    new LogicProgrammerValueTypeOperatorValueChangedPacket(ValueDeseralizationContext.ofClient(),
                             ValueTypeOperator.ValueOperator.of(selectedOperator)));
         }
     }

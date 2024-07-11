@@ -133,7 +133,7 @@ public class OperatorBuilders {
     public static final IOperatorValuePropagator<OperatorBase.SafeVariablesGetter, Optional<SoundType>> BLOCK_SOUND = input -> {
         ValueObjectTypeBlock.ValueBlock block = input.getValue(0, ValueTypes.OBJECT_BLOCK);
         if(block.getRawValue().isPresent()) {
-            return Optional.of(block.getRawValue().get().getBlock().getSoundType(block.getRawValue().get()));
+            return Optional.of(block.getRawValue().get().getSoundType());
         }
         return Optional.empty();
     };

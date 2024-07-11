@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -40,18 +40,18 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer grid, Level world) {
+    public boolean matches(CraftingInput grid, Level world) {
         return !assemble(grid, world.registryAccess()).isEmpty();
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
         return this.batteryItem.getItems()[0];
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inventory) {
-        NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput inventory) {
+        NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.size(), ItemStack.EMPTY);
 
         for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getItem(i);
@@ -67,7 +67,7 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer grid, RegistryAccess registryAccess) {
+    public ItemStack assemble(CraftingInput grid, HolderLookup.Provider registryAccess) {
         ItemStack output = getResultItem(registryAccess).copy();
         IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(Capabilities.EnergyStorage.ITEM);
 
@@ -76,7 +76,7 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
         int inputItems = 0;
 
         // Loop over the grid and count the total contents and capacity + collect energy.
-        for(int j = 0; j < grid.getContainerSize(); j++) {
+        for(int j = 0; j < grid.size(); j++) {
             ItemStack element = grid.getItem(j).copy().split(1);
             if(!element.isEmpty()) {
                 if(this.batteryItem.test(element)) {

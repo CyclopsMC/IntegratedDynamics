@@ -20,11 +20,11 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
 
     @Override
     public ResourceLocation getName() {
-        return new ResourceLocation(Reference.MOD_ID, "materialized");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "materialized");
     }
 
     @Override
-    public Tag serialize(ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();
 
@@ -43,7 +43,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
 
         // Store values
         for (IValue value : values) {
-            Tag valueSerialized = ValueHelpers.serializeRaw(value);
+            Tag valueSerialized = ValueHelpers.serializeRaw(valueDeseralizationContext, value);
             if(heterogeneous) {
                 CompoundTag valueTag = new CompoundTag();
                 valueTag.putString("valueType", value.getType().getUniqueName().toString());
@@ -71,7 +71,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
         }
 
         String valueTypeName = tag.getString("valueType");
-        IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(valueTypeName));
+        IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueTypeName));
         if (valueType == null) {
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", valueTypeName));
         }
@@ -85,7 +85,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
             Tag valueSerialized;
             if (heterogeneous) {
                 String subValueTypeName = ((CompoundTag) valueTag).getString("valueType");
-                elementValueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(subValueTypeName));
+                elementValueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(subValueTypeName));
                 if (elementValueType == null) {
                     throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", subValueTypeName));
                 }

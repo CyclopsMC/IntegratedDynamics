@@ -57,12 +57,14 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
 
     /**
      * Set the type of the given tag and uses the corresponding handler to write the variable facade.
-     * @param tagCompound The tag that is used to write variable facade information to.
-     * @param variableFacade The facade to write.
-     * @param handler The handler for writing the facade.
-     * @param <F> The type of variable facade.
+     *
+     * @param <F>                        The type of variable facade.
+     * @param valueDeseralizationContext
+     * @param tagCompound                The tag that is used to write variable facade information to.
+     * @param variableFacade             The facade to write.
+     * @param handler                    The handler for writing the facade.
      */
-    public <F extends IVariableFacade> void write(CompoundTag tagCompound, F variableFacade, IVariableFacadeHandler<F> handler);
+    public <F extends IVariableFacade> void write(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tagCompound, F variableFacade, IVariableFacadeHandler<F> handler);
 
     /**
      * Write the given variable facade to the given itemstack.

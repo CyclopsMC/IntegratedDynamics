@@ -31,7 +31,7 @@ public class ProxyVariableFacadeHandler implements IVariableFacadeHandler<IProxy
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "proxy");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "proxy");
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ProxyVariableFacadeHandler implements IVariableFacadeHandler<IProxy
     }
 
     @Override
-    public void setVariableFacade(CompoundTag tag, IProxyVariableFacade variableFacade) {
+    public void setVariableFacade(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, IProxyVariableFacade variableFacade) {
         tag.putInt("partId", variableFacade.getProxyId());
     }
 

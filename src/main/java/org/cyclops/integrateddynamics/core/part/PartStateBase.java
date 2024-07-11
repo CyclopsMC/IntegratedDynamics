@@ -61,7 +61,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private IdentityHashMap<PartCapability<?>, Optional<Object>> volatileCapabilities = new IdentityHashMap<>();
 
     @Override
-    public void writeToNBT(CompoundTag tag) {
+    public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
         tag.putInt("updateInterval", this.updateInterval);
         tag.putInt("priority", this.priority);
         tag.putInt("channel", this.channel);
@@ -69,7 +69,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
             tag.putInt("targetSide", this.targetSide.ordinal());
         }
         tag.putInt("id", this.id);
-        writeAspectProperties("aspectProperties", tag);
+        writeAspectProperties(valueDeseralizationContext, "aspectProperties", tag);
         tag.putBoolean("enabled", this.enabled);
         tag.putInt("maxOffset", this.maxOffset);
         tag.putInt("offsetX", this.targetOffset.getX());
@@ -82,14 +82,14 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
             CompoundTag listEntry = new CompoundTag();
             listEntry.putString("tabName", entry.getKey());
             listEntry.putInt("itemCount", entry.getValue().size());
-            ContainerHelper.saveAllItems(listEntry, entry.getValue());
+            ContainerHelper.saveAllItems(listEntry, entry.getValue(), valueDeseralizationContext.holderLookupProvider());
             namedInventoriesList.add(listEntry);
         }
         tag.put("inventoriesNamed", namedInventoriesList);
 
         CompoundTag errorsTag = new CompoundTag();
         for (Int2ObjectMap.Entry<MutableComponent> entry : this.offsetHandler.offsetVariablesSlotMessages.int2ObjectEntrySet()) {
-            NBTClassType.writeNbt(MutableComponent.class, String.valueOf(entry.getIntKey()), entry.getValue(), errorsTag);
+            NBTClassType.writeNbt(MutableComponent.class, String.valueOf(entry.getIntKey()), entry.getValue(), errorsTag, valueDeseralizationContext.holderLookupProvider());
         }
         tag.put("offsetVariablesSlotMessages", errorsTag);
     }
@@ -113,26 +113,26 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         for (Tag listEntry : tag.getList("inventoriesNamed", Tag.TAG_COMPOUND)) {
             NonNullList<ItemStack> list = NonNullList.withSize(((CompoundTag) listEntry).getInt("itemCount"), ItemStack.EMPTY);
             String tabName = ((CompoundTag) listEntry).getString("tabName");
-            ContainerHelper.loadAllItems((CompoundTag) listEntry, list);
+            ContainerHelper.loadAllItems((CompoundTag) listEntry, list, valueDeseralizationContext.holderLookupProvider());
             this.inventoriesNamed.put(tabName, list);
         }
 
         this.offsetHandler.offsetVariablesSlotMessages.clear();
         CompoundTag errorsTag = tag.getCompound("offsetVariablesSlotMessages");
         for (String slot : errorsTag.getAllKeys()) {
-            MutableComponent unlocalizedString = NBTClassType.readNbt(MutableComponent.class, slot, errorsTag);
+            MutableComponent unlocalizedString = NBTClassType.readNbt(MutableComponent.class, slot, errorsTag, valueDeseralizationContext.holderLookupProvider());
             this.offsetHandler.offsetVariablesSlotMessages.put(Integer.parseInt(slot), unlocalizedString);
         }
     }
 
-    protected void writeAspectProperties(String name, CompoundTag tag) {
+    protected void writeAspectProperties(ValueDeseralizationContext valueDeseralizationContext, String name, CompoundTag tag) {
         CompoundTag mapTag = new CompoundTag();
         ListTag list = new ListTag();
         for(Map.Entry<IAspect, IAspectProperties> entry : aspectProperties.entrySet()) {
             CompoundTag entryTag = new CompoundTag();
             entryTag.putString("key", entry.getKey().getUniqueName().toString());
             if(entry.getValue() != null) {
-                entryTag.put("value", entry.getValue().toNBT());
+                entryTag.put("value", entry.getValue().toNBT(valueDeseralizationContext));
             }
             list.add(entryTag);
         }
@@ -146,7 +146,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         if(list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag entryTag = list.getCompound(i);
-                IAspect key = Aspects.REGISTRY.getAspect(new ResourceLocation(entryTag.getString("key")));
+                IAspect key = Aspects.REGISTRY.getAspect(ResourceLocation.parse(entryTag.getString("key")));
                 IAspectProperties value = null;
                 if (entryTag.contains("value")) {
                     value = new AspectProperties();
@@ -315,7 +315,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
      */
     public void gatherCapabilities(P partType) {
         AttachCapabilitiesEventPart event = new AttachCapabilitiesEventPart(partType, this);
-        ModLoader.get().postEventWrapContainerInModOrder(event);
+        ModLoader.postEventWrapContainerInModOrder(event);
     }
 
     @Override

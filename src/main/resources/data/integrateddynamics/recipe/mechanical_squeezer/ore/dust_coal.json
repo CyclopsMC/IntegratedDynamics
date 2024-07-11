@@ -1,0 +1,23 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "minecraft:coal"
+  },
+  "output_items": [
+    {
+      "tag": {
+        "tag": "c:dusts/coal"
+      }
+    }
+  ],
+  "duration": 10,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:dusts/coal"
+      }
+    }
+  ]
+}

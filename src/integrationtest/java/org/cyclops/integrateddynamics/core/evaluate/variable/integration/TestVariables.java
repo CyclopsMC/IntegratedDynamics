@@ -40,8 +40,13 @@ import java.util.Map;
 public class TestVariables {
 
     protected static Tag serializeStack(ItemStack itemStack) {
-        return ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, itemStack)
-                .getOrThrow(false, JsonParseException::new);
+        return ItemStack.OPTIONAL_CODEC.encodeStart(NbtOps.INSTANCE, itemStack)
+                .getOrThrow(JsonParseException::new);
+    }
+
+    protected static Tag serializeFluidStack(FluidStack fluidStack) {
+        return FluidStack.OPTIONAL_CODEC.encodeStart(NbtOps.INSTANCE, fluidStack)
+                .getOrThrow(JsonParseException::new);
     }
 
     @IntegrationTest
@@ -64,7 +69,7 @@ public class TestVariables {
         itemStacks.add(serializeStack(ItemStack.EMPTY));
         tag.put("minecraft:itemstack", itemStacks);
 
-        TestHelpers.assertEqual(i0.getType().serialize(i0.getValue()), tag, "Serialization is correct");
+        TestHelpers.assertEqual(i0.getType().serialize(ValueDeseralizationContext.ofClient(), i0.getValue()), tag, "Serialization is correct");
         TestHelpers.assertEqual(i0.getType().deserialize(ValueDeseralizationContext.ofClient(), tag), i0.getValue(), "Deserialization is correct");
     }
 
@@ -104,7 +109,7 @@ public class TestVariables {
         itemStacks.add(serializeStack(new ItemStack(Blocks.STONE)));
         output.put("minecraft:itemstack", itemStacks);
         ListTag fluidStacks = new ListTag();
-        fluidStacks.add(new FluidStack(Fluids.WATER, 123).writeToNBT(new CompoundTag()));
+        fluidStacks.add(serializeFluidStack(new FluidStack(Fluids.WATER, 123)));
         output.put("minecraft:fluidstack", fluidStacks);
 
         CompoundTag input = new CompoundTag();
@@ -153,7 +158,7 @@ public class TestVariables {
         tag.put("input", input);
         tag.put("inputReusable", inputReusable);
 
-        TestHelpers.assertEqual(r0.getType().serialize(r0.getValue()), tag, "Serialization is correct");
+        TestHelpers.assertEqual(r0.getType().serialize(ValueDeseralizationContext.ofClient(), r0.getValue()), tag, "Serialization is correct");
         TestHelpers.assertEqual(r0.getType().deserialize(ValueDeseralizationContext.ofClient(), tag), r0.getValue(), "Deserialization is correct");
     }
 

@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -94,8 +95,7 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
             public boolean isKeyEqual(Pair<ItemStack, FluidStack> cacheKey, Pair<ItemStack, FluidStack> newKey) {
                 return cacheKey == null || newKey == null ||
                         (ItemStack.matches(cacheKey.getLeft(), newKey.getLeft()) &&
-                                FluidStack.areFluidStackTagsEqual(cacheKey.getRight(), newKey.getRight())) &&
-                                FluidHelpers.getAmount(cacheKey.getRight()) == FluidHelpers.getAmount(newKey.getRight());
+                                FluidStack.matches(cacheKey.getRight(), newKey.getRight()));
             }
         };
     }
@@ -130,17 +130,17 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
     }
 
     @Override
-    public void read(CompoundTag tag) {
-        super.read(tag);
-        getTankInput().readFromNBT(tag.getCompound("tankIn"));
-        getTankOutput().readFromNBT(tag.getCompound("tankOut"));
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+        super.read(tag, provider);
+        getTankInput().readFromNBT(provider, tag.getCompound("tankIn"));
+        getTankOutput().readFromNBT(provider, tag.getCompound("tankOut"));
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        tag.put("tankIn", getTankInput().writeToNBT(new CompoundTag()));
-        tag.put("tankOut", getTankOutput().writeToNBT(new CompoundTag()));
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        tag.put("tankIn", getTankInput().writeToNBT(provider, new CompoundTag()));
+        tag.put("tankOut", getTankOutput().writeToNBT(provider, new CompoundTag()));
+        super.saveAdditional(tag, provider);
     }
 
     @Override

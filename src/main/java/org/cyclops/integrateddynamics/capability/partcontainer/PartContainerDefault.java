@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +16,7 @@ import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -147,7 +149,7 @@ public abstract class PartContainerDefault implements IPartContainer {
                 onPartsChanged();
                 return ret;
             } else if (dropMainElement) {
-                ItemStack itemStack = removed.getItemStack(partStateHolder.getState(), saveState);
+                ItemStack itemStack = removed.getItemStack(ValueDeseralizationContext.of(player.level()), partStateHolder.getState(), saveState);
                 if(player != null) {
                     if (!player.isCreative()) {
                         ItemStackHelpers.spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
@@ -200,13 +202,15 @@ public abstract class PartContainerDefault implements IPartContainer {
         return Optional.empty();
     }
 
-    public CompoundTag serializeNBT() {
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        PartHelpers.writePartsToNBT(getPos(), tag, this.partData);
+        PartHelpers.writePartsToNBT(ValueDeseralizationContext.of(provider), getPos(), tag, this.partData);
         return tag;
     }
 
-    public void deserializeNBT(CompoundTag tag) {
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         synchronized (this.partData) {
             PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getLevel());
         }

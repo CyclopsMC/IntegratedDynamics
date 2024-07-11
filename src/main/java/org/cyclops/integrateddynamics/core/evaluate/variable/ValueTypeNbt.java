@@ -41,7 +41,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
     }
 
     @Override
-    public Tag serialize(ValueNbt value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueNbt value) {
         CompoundTag tag = new CompoundTag();
         if (value.getRawValue().isPresent()) {
             tag.put("v", value.getRawValue().get());

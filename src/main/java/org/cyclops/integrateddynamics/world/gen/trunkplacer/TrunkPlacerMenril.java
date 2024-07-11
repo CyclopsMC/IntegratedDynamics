@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.world.gen.trunkplacer;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,7 +26,7 @@ import java.util.function.Function;
  * @author rubensworks
  */
 public class TrunkPlacerMenril extends TrunkPlacer {
-    public static final Codec<TrunkPlacerMenril> CODEC = RecordCodecBuilder.create((builder) -> trunkPlacerParts(builder)
+    public static final MapCodec<TrunkPlacerMenril> CODEC = RecordCodecBuilder.mapCodec((builder) -> trunkPlacerParts(builder)
             .and(Codec.intRange(0, 32).fieldOf("trunk_height_wider").forGetter((placer) -> placer.heightWider))
             .apply(builder, TrunkPlacerMenril::new));
 

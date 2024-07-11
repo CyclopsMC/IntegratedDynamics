@@ -47,9 +47,9 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public Tag serialize(ValueList value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueList value) {
         try {
-            return ValueTypeListProxyFactories.REGISTRY.serialize(value.getRawValue());
+            return ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.getRawValue());
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
             e.printStackTrace();
         }

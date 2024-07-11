@@ -1,0 +1,19 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "item": "minecraft:gravel"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:flint"
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:flint"
+      },
+      "chance": 0.5
+    }
+  ]
+}

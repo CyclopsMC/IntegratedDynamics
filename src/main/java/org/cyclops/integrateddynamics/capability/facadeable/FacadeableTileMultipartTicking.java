@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.capability.facadeable;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
@@ -30,7 +31,7 @@ public class FacadeableTileMultipartTicking implements IFacadeable {
         if(!hasFacade()) {
             return null;
         }
-        return BlockHelpers.deserializeBlockState(ValueDeseralizationContext.of(tile.getLevel()).holderGetter(), tile.getFacadeBlockTag());
+        return BlockHelpers.deserializeBlockState(ValueDeseralizationContext.of(tile.getLevel()).holderLookupProvider().lookupOrThrow(Registries.BLOCK), tile.getFacadeBlockTag());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.Lists;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
@@ -255,7 +256,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         ItemStack itemStack = writeSlot.getItem(0);
         if(canWriteActiveElement() && !itemStack.isEmpty()) {
             // If the variable has a vanilla custom name, make sure we inherit it as variable label
-            if (itemStack.hasCustomHoverName()) {
+            if (itemStack.has(DataComponents.CUSTOM_NAME)) {
                 this.lastLabel = itemStack.getHoverName().getString();
             }
 

@@ -1,12 +1,12 @@
 package org.cyclops.integrateddynamics.recipe;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -14,8 +14,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
-
-import javax.annotation.Nullable;
 
 /**
  * Recipe for combining facades with blocks.
@@ -35,7 +33,7 @@ public class ItemFacadeRecipe extends CustomRecipe {
         if (ingredients == null) {
             // Catch runtime errors if other mods call this method before items have been registered
             try {
-                ingredients = NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()), new BlocksIngredient());
+                ingredients = NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()), Ingredient.of(BuiltInRegistries.BLOCK.stream().map(ItemStack::new)));
             } catch (RuntimeException e) {
                 return NonNullList.create();
             }
@@ -44,12 +42,12 @@ public class ItemFacadeRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer grid, Level world) {
+    public boolean matches(CraftingInput grid, Level world) {
         return !assemble(grid, world.registryAccess()).isEmpty();
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
         return getResultItem();
     }
 
@@ -58,8 +56,8 @@ public class ItemFacadeRecipe extends CustomRecipe {
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inventory) {
-        NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput inventory) {
+        NonNullList<ItemStack> aitemstack = NonNullList.withSize(inventory.size(), ItemStack.EMPTY);
 
         for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getItem(i);
@@ -70,19 +68,19 @@ public class ItemFacadeRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer grid, RegistryAccess registryAccess) {
+    public ItemStack assemble(CraftingInput grid, HolderLookup.Provider registryAccess) {
         ItemStack output = getResultItem(registryAccess).copy();
 
         int facades = 0;
         ItemStack block = ItemStack.EMPTY;
 
-        for(int j = 0; j < grid.getContainerSize(); j++) {
+        for(int j = 0; j < grid.size(); j++) {
             ItemStack element = grid.getItem(j);
             if(!element.isEmpty()) {
                 if(element.getItem() == output.getItem()) {
                     facades++;
                 } else if(block.isEmpty() && element.getItem() instanceof BlockItem
-                        && !((BlockItem) element.getItem()).getBlock().useShapeForLightOcclusion(((BlockItem) element.getItem()).getBlock().defaultBlockState())) {
+                        && !((BlockItem) element.getItem()).getBlock().defaultBlockState().useShapeForLightOcclusion()) {
                     block = element;
                 } else {
                     return ItemStack.EMPTY;
@@ -111,18 +109,6 @@ public class ItemFacadeRecipe extends CustomRecipe {
     @Override
     public RecipeSerializer<?> getSerializer() {
         return RegistryEntries.RECIPESERIALIZER_FACADE.get();
-    }
-
-    public static class BlocksIngredient extends Ingredient {
-
-        protected BlocksIngredient() {
-            super(BuiltInRegistries.BLOCK.stream().map(ItemStack::new).map(Ingredient.ItemValue::new));
-        }
-
-        @Override
-        public boolean test(@Nullable ItemStack itemStack) {
-            return itemStack != null && !itemStack.isEmpty() && itemStack.getItem() instanceof BlockItem;
-        }
     }
 
 }

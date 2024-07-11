@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.Maps;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
@@ -52,7 +51,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     private final int valueId, colorId, enabledId, activeAspectId;
     private final Map<IAspectWrite, Integer> aspectErrorIds;
 
-    public ContainerPartWriter(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+    public ContainerPartWriter(int id, Inventory playerInventory, RegistryFriendlyByteBuf packetBuffer) {
         this(id, playerInventory, new SimpleInventory(packetBuffer.readInt(), 1),
                 PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }
@@ -185,7 +184,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         if (aspectName == null) {
             return null;
         }
-        return AspectRegistry.getInstance().getAspect(new ResourceLocation(aspectName));
+        return AspectRegistry.getInstance().getAspect(ResourceLocation.parse(aspectName));
     }
 
 }

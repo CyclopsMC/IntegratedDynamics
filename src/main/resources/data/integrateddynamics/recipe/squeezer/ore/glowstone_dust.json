@@ -1,0 +1,14 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "item": "minecraft:glowstone"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:glowstone_dust",
+        "count": 4
+      }
+    }
+  ]
+}

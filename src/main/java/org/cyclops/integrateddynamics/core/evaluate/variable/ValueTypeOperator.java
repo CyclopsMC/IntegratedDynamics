@@ -47,8 +47,8 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     }
 
     @Override
-    public Tag serialize(ValueOperator value) {
-        return Operators.REGISTRY.serialize(value.getRawValue());
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueOperator value) {
+        return Operators.REGISTRY.serialize(valueDeseralizationContext, value.getRawValue());
     }
 
     @Override

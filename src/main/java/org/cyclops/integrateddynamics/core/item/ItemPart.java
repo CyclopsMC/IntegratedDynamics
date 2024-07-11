@@ -105,8 +105,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                     (double) target.getY() + 0.5D + (double) targetSide.getStepY() * 0.5D,
                     (double) target.getZ() + 0.5D + (double) targetSide.getStepZ() * 0.5D),
                     targetSide, target, false);
-            if(world.getBlockState(target).getBlock().canBeReplaced(world.getBlockState(target),
-                    new BlockPlaceContext(world, player, hand, itemStack, targetRayTrace))) {
+            if(world.getBlockState(target).canBeReplaced(new BlockPlaceContext(world, player, hand, itemStack, targetRayTrace.withPosition(target)))) {
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.byBlock(RegistryEntries.BLOCK_CABLE.get());
                 itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
                 if (itemBlockCable.useOn(new UseOnContext(player, hand, targetRayTrace)).consumesAction()) {
@@ -164,9 +163,9 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
         getPart().loadTooltip(itemStack, list);
-        super.appendHoverText(itemStack, world, list, flag);
+        super.appendHoverText(itemStack, context, list, flag);
     }
 
     public static interface IUseAction {

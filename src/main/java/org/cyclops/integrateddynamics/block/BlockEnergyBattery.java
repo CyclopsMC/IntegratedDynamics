@@ -39,7 +39,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
     @OnlyIn(Dist.CLIENT)
     public void postTextureStitch(TextureAtlasStitchedEvent event) {
         if (event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS)) {
-            iconOverlay = event.getAtlas().getSprite(new ResourceLocation(Reference.MOD_ID, "block/energy_battery_overlay"));
+            iconOverlay = event.getAtlas().getSprite(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/energy_battery_overlay"));
         }
     }
 

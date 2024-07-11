@@ -18,9 +18,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.IFluidBlock;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
@@ -48,8 +48,8 @@ public final class Helpers {
         FluidStack fluidStack = FluidUtil.getFluidContained(itemStack).orElse(FluidStack.EMPTY);
         if (fluidStack.isEmpty()
                 && itemStack.getItem() instanceof BlockItem
-                && ((BlockItem) itemStack.getItem()).getBlock() instanceof IFluidBlock) {
-            fluidStack = new FluidStack(((IFluidBlock) ((BlockItem) itemStack.getItem()).getBlock()).getFluid(), FluidHelpers.BUCKET_VOLUME);
+                && ((BlockItem) itemStack.getItem()).getBlock() instanceof LiquidBlock) {
+            fluidStack = new FluidStack(((LiquidBlock) ((BlockItem) itemStack.getItem()).getBlock()).fluid, FluidHelpers.BUCKET_VOLUME);
         }
         return fluidStack;
     }
@@ -77,7 +77,7 @@ public final class Helpers {
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
         Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM
-                .getTag(TagKey.create(Registries.ITEM, new ResourceLocation(name)));
+                .getTag(TagKey.create(Registries.ITEM, ResourceLocation.parse(name)));
         return tag.stream().flatMap(named -> named.stream().map(ItemStack::new));
     }
 

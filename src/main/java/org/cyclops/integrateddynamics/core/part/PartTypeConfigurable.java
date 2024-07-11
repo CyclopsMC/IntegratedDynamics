@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -53,7 +53,7 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
     }
 
     @Override
-    public void writeExtraGuiDataSettings(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+    public void writeExtraGuiDataSettings(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
         PacketCodec.write(packetBuffer, pos);
         packetBuffer.writeUtf(this.getUniqueName().toString());
     }
@@ -78,7 +78,7 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
     }
 
     @Override
-    public void writeExtraGuiDataOffsets(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+    public void writeExtraGuiDataOffsets(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
         PacketCodec.write(packetBuffer, pos);
         packetBuffer.writeUtf(this.getUniqueName().toString());
     }

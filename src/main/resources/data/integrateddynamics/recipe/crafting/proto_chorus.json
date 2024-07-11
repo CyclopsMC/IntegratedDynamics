@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "integrateddynamics:menril_berries"
+    },
+    {
+      "item": "integrateddynamics:menril_berries"
+    },
+    {
+      "tag": "c:ender_pearls"
+    },
+    {
+      "tag": "c:ender_pearls"
+    }
+  ],
+  "result": {
+    "id": "integrateddynamics:proto_chorus",
+    "count": 1
+  }
+}

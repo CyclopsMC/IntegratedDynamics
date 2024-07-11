@@ -37,7 +37,7 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
-    public Tag serialize(ValueDouble value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueDouble value) {
         return DoubleTag.valueOf(value.getRawValue());
     }
 

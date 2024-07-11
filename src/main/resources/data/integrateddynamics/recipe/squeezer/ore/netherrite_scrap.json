@@ -1,0 +1,19 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item":  {
+    "item": "minecraft:ancient_debris"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:netherite_scrap"
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:netherite_scrap"
+      },
+      "chance": 0.75
+    }
+  ]
+}

@@ -83,7 +83,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
     @OnlyIn(Dist.CLIENT)
     protected void registerModelResourceLocation() {
         Aspects.REGISTRY.registerAspectModel(this,
-                new ResourceLocation(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
+                ResourceLocation.parse(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
     }
 
 }

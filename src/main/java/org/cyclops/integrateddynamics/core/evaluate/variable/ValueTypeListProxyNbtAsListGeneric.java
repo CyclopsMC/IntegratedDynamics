@@ -58,11 +58,11 @@ public abstract class ValueTypeListProxyNbtAsListGeneric<N extends Tag, T extend
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "nbt.list_as_value");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "nbt.list_as_value");
         }
 
         @Override
-        protected void serializeNbt(L value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, L value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             if (value.getTag().isPresent()) {
                 tag.put("tag", value.getTag().get());
             }

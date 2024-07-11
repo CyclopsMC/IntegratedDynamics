@@ -22,7 +22,7 @@ public class ContainerScreenCoalGenerator extends ContainerScreenExtended<Contai
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/coal_generator.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/coal_generator.png");
     }
 
     @Override

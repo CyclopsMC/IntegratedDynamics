@@ -23,7 +23,7 @@ import java.util.Optional;
 public class ProxyNetworkElement extends TileNetworkElement<BlockEntityProxy> implements
         IEventListenableNetworkElement<BlockEntityProxy>, IIdentifiableNetworkElement {
 
-    public static final ResourceLocation GROUP = new ResourceLocation(Reference.MOD_ID, "proxy");
+    public static final ResourceLocation GROUP = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "proxy");
 
     public ProxyNetworkElement(DimPos pos) {
         super(pos);

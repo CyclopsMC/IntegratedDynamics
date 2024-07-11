@@ -12,6 +12,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 
 /**
@@ -32,29 +33,42 @@ public class EntityItemTargetted extends ItemEntity {
         this.lifespan = Integer.MAX_VALUE;
     }
 
-    public EntityItemTargetted(Level world, double x, double y, double z) {
-        super(world, x, y, z, ItemStack.EMPTY);
-        this.lifespan = Integer.MAX_VALUE;
+    public EntityItemTargetted(Level p_32001_, double p_32002_, double p_32003_, double p_32004_, ItemStack p_32005_) {
+        this(p_32001_, p_32002_, p_32003_, p_32004_, p_32005_, p_32001_.random.nextDouble() * 0.2 - 0.1, 0.2, p_32001_.random.nextDouble() * 0.2 - 0.1);
     }
 
-    public EntityItemTargetted(Level world, double x, double y, double z, ItemStack itemStack) {
-        super(world, x, y, z, itemStack);
+    public EntityItemTargetted(
+            Level p_149663_, double p_149664_, double p_149665_, double p_149666_, ItemStack p_149667_, double p_149668_, double p_149669_, double p_149670_
+    ) {
+        this(RegistryEntries.ENTITYTYPE_ITEM_TARGETTED.get(), p_149663_);
+        this.setPos(p_149664_, p_149665_, p_149666_);
+        this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
+        this.setItem(p_149667_);
+        this.lifespan = (p_149667_.getItem() == null ? 6000 /*ItemEntity.LIFETIME*/ : p_149667_.getEntityLifespan(p_149663_));
+    }
+
+    public EntityItemTargetted(Level world, double x, double y, double z) {
+        this(world, x, y, z, ItemStack.EMPTY);
         this.lifespan = Integer.MAX_VALUE;
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.getEntityData().define(TARGET_X, (float) getY());
-        this.getEntityData().define(TARGET_Y, (float) getY());
-        this.getEntityData().define(TARGET_Z, (float) getY());
-        setNoGravity(true);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TARGET_X, (float) getY());
+        builder.define(TARGET_Y, (float) getY());
+        builder.define(TARGET_Z, (float) getY());
     }
 
     public void setTarget(float x, float y, float z) {
         this.getEntityData().set(TARGET_X, x);
         this.getEntityData().set(TARGET_Y, y);
         this.getEntityData().set(TARGET_Z, z);
+    }
+
+    @Override
+    public boolean isNoGravity() {
+        return true;
     }
 
     public void setTarget(LivingEntity targetEntity) {
@@ -98,7 +112,7 @@ public class EntityItemTargetted extends ItemEntity {
                 this.setDeltaMovement(this.getDeltaMovement().x, 0.3, this.getDeltaMovement().z);
             }
         }
-        if (random.nextInt(5) == 0) {
+        if (!getCommandSenderWorld().isClientSide() && random.nextInt(5) == 0) {
             showEntityMoved();
         }
     }

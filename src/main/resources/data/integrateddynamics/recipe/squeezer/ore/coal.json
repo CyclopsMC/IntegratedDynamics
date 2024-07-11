@@ -1,0 +1,26 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "tag": "c:ores/coal"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:coal",
+        "count": 4
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:coal"
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:coal"
+      },
+      "chance": 0.5
+    }
+  ]
+}

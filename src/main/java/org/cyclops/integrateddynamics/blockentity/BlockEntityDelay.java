@@ -5,6 +5,7 @@ import com.google.common.collect.Queues;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -171,18 +172,18 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
         ListTag valueList = new ListTag();
         for (IValue value : getValues()) {
-            valueList.add(ValueHelpers.serialize(value));
+            valueList.add(ValueHelpers.serialize(ValueDeseralizationContext.of(provider), value));
         }
         tag.put("values", valueList);
     }
 
     @Override
-    public void read(CompoundTag tag) {
-        super.read(tag);
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+        super.read(tag, provider);
         if (this.capacity <= 0) this.capacity = 1;
         values = Queues.newArrayBlockingQueue(this.capacity);
 

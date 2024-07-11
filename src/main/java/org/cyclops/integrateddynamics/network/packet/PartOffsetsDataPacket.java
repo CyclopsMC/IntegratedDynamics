@@ -3,7 +3,8 @@ package org.cyclops.integrateddynamics.network.packet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -24,12 +25,13 @@ import java.util.List;
  */
 public class PartOffsetsDataPacket extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "part_offsets_data");
+    public static final Type<PartOffsetsDataPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "part_offsets_data"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, PartOffsetsDataPacket> CODEC = getCodec(PartOffsetsDataPacket::new);
 
     static {
         PacketCodec.addCodedAction(PartOffsetsClientNotifier.Entry.class, new ICodecAction() {
             @Override
-            public void encode(Object object, FriendlyByteBuf output) {
+            public void encode(Object object, RegistryFriendlyByteBuf output) {
                 PartOffsetsClientNotifier.Entry entry = (PartOffsetsClientNotifier.Entry) object;
                 PacketCodec.getAction(BlockPos.class).encode(entry.source(), output);
                 PacketCodec.getAction(Direction.class).encode(entry.sourceSide(), output);
@@ -38,7 +40,7 @@ public class PartOffsetsDataPacket extends PacketCodec {
             }
 
             @Override
-            public Object decode(FriendlyByteBuf input) {
+            public Object decode(RegistryFriendlyByteBuf input) {
                 return new PartOffsetsClientNotifier.Entry(
                         (BlockPos) PacketCodec.getAction(BlockPos.class).decode(input),
                         (Direction) PacketCodec.getAction(Direction.class).decode(input),

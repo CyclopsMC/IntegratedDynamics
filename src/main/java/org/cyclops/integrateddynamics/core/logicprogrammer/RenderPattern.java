@@ -29,7 +29,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
     private final int x, y;
     protected final G gui;
     protected final C container;
-    protected ResourceLocation texture = new ResourceLocation(Reference.MOD_ID, "textures/gui/logic_programmer.png");
+    protected ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/logic_programmer.png");
 
     public RenderPattern(E element, int baseX, int baseY, int maxWidth, int maxHeight,
                          G gui, C container) {

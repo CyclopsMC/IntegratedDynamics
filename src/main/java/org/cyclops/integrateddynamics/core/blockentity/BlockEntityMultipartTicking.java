@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
@@ -136,7 +137,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         );
         registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.ValueInterface.BLOCK, Capabilities.ValueInterface.PART);
         registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.VariableContainer.BLOCK, Capabilities.VariableContainer.PART);
-        ModLoader.get().postEventWrapContainerInModOrder(new RegisterPartCapabilitiesEvent(event, blockEntityType));
+        ModLoader.postEventWrapContainerInModOrder(new RegisterPartCapabilitiesEvent(event, blockEntityType));
 
         for (Direction facing : Direction.values()) {
             event.registerBlockEntity(
@@ -167,22 +168,22 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
         forceLightCheckAtClient = false;
-        tag.put("partContainer", partContainer.serializeNBT());
+        tag.put("partContainer", partContainer.serializeNBT(provider));
         tag.putBoolean("realCable", cableFakeable.isRealCable());
     }
 
     @Override
-    public void read(CompoundTag tag) {
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
         EnumFacingMap<Boolean> lastConnected = EnumFacingMap.newMap(connected);
         Tag lastFacadeBlock = facadeBlockTag;
         boolean lastRealCable = cableFakeable.isRealCable();
-        partContainer.deserializeNBT(tag.getCompound("partContainer"));
+        partContainer.deserializeNBT(provider, tag.getCompound("partContainer"));
         boolean wasLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null);
 
-        super.read(tag);
+        super.read(tag, provider);
         cableFakeable.setRealCable(tag.getBoolean("realCable"));
         boolean isLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null);
         if (getLevel() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)

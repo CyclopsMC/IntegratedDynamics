@@ -56,7 +56,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     }
 
     @Override
-    public Tag serialize(ValueIngredients value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueIngredients value) {
         if(!value.getRawValue().isPresent()) return new CompoundTag();
         return IMixedIngredients.serialize(value.getRawValue().get());
     }

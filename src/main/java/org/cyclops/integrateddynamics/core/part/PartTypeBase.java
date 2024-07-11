@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -77,7 +77,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(getMod().getModId(), this.name);
+        return ResourceLocation.fromNamespaceAndPath(getMod().getModId(), this.name);
     }
 
     protected ModBase getMod() {
@@ -126,7 +126,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getBlockModelPath() {
-        return new ResourceLocation(getMod().getModId(), "part_" + this.name);
+        return ResourceLocation.fromNamespaceAndPath(getMod().getModId(), "part_" + this.name);
     }
 
     @Override
@@ -211,8 +211,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public void loadTooltip(ItemStack itemStack, List<Component> lines) {
-        if(itemStack.getTag() != null) {
-            CompoundTag tag = itemStack.getTag();
+        if(itemStack.has(RegistryEntries.DATACOMPONENT_PART_STATE)) {
+            CompoundTag tag = itemStack.get(RegistryEntries.DATACOMPONENT_PART_STATE);
             if(tag.contains("id", Tag.TAG_INT)) {
                 int id = tag.getInt("id");
                 lines.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
@@ -259,7 +259,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void writeExtraGuiData(FriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
+    public void writeExtraGuiData(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
         packetBuffer.writeUtf(this.getUniqueName().toString());
     }
 

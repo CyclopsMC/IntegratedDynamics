@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ICO",
+    "ICO",
+    " D "
+  ],
+  "key": {
+    "I": {
+      "item": "integrateddynamics:variable_transformer_input"
+    },
+    "O": {
+      "item": "integrateddynamics:variable_transformer_output"
+    },
+    "C": {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    },
+    "D": {
+      "tag": "c:gems/diamond"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:enhancement_offset",
+    "nbt": {
+      "value": 4
+    }
+  }
+}

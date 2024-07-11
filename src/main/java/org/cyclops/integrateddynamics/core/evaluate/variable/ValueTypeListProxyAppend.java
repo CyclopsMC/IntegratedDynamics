@@ -46,19 +46,19 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
 
         @Override
         public ResourceLocation getName() {
-            return new ResourceLocation(Reference.MOD_ID, "append");
+            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "append");
         }
 
         @Override
-        protected void serializeNbt(ValueTypeListProxyAppend<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyAppend<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
             tag.putString("valueType", value.value.getType().getUniqueName().toString());
-            tag.put("value", ValueHelpers.serializeRaw(value.value));
-            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(value.list));
+            tag.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, value.value));
+            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.list));
         }
 
         @Override
         protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            IValueType valueType = ValueTypes.REGISTRY.getValueType(new ResourceLocation(tag.getString("valueType")));
+            IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("valueType")));
             IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, tag.get("value"));
             IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, tag.get("sublist"));
             return new ValueTypeListProxyAppend<>(list, value);

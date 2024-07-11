@@ -8,11 +8,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.NeoForge;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
@@ -35,6 +37,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The variable facade handler registry.
@@ -65,10 +68,10 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Override
     public IVariableFacade handle(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
-        if(itemStack.isEmpty() || !itemStack.hasTag()) {
+        if(itemStack.isEmpty() || !itemStack.has(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE)) {
             return DUMMY_FACADE;
         }
-        return handle(valueDeseralizationContext, itemStack.getTag());
+        return handle(valueDeseralizationContext, itemStack.get(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE));
     }
 
     @Override
@@ -82,7 +85,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
         String type = tagCompound.getString("_type");
         int id = tagCompound.getInt("_id");
-        IVariableFacadeHandler handler = getHandler(new ResourceLocation(type));
+        IVariableFacadeHandler handler = getHandler(ResourceLocation.parse(type));
         if(handler != null) {
             return handler.getVariableFacade(valueDeseralizationContext, id, tagCompound);
         }
@@ -101,10 +104,10 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     }
 
     @Override
-    public <F extends IVariableFacade> void write(CompoundTag tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
+    public <F extends IVariableFacade> void write(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
         tagCompound.putString("_type", handler.getUniqueName().toString());
         tagCompound.putInt("_id", variableFacade.getId());
-        handler.setVariableFacade(tagCompound, variableFacade);
+        handler.setVariableFacade(valueDeseralizationContext, tagCompound, variableFacade);
     }
 
     @Override
@@ -113,8 +116,9 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
             return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
-        CompoundTag tag = itemStack.getOrCreateTag();
-        this.write(tag, variableFacade, variableFacadeHandler);
+        CompoundTag tag = new CompoundTag();
+        this.write(ValueDeseralizationContext.ofAllEnabled(), tag, variableFacade, variableFacadeHandler);
+        itemStack.set(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE, tag);
         return itemStack;
     }
 
@@ -124,12 +128,13 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
             return ItemStack.EMPTY;
         }
         itemStack = itemStack.copy();
-        CompoundTag tag = itemStack.getOrCreateTag();
+        CompoundTag tag = new CompoundTag();
         F variableFacade = writeVariableFacade(generateId, itemStack, variableFacadeHandler, variableFacadeFactory, ValueDeseralizationContext.of(level));
         if (player != null) {
             NeoForge.EVENT_BUS.post(new LogicProgrammerVariableFacadeCreatedEvent(player, variableFacade, blockState));
         }
-        this.write(tag, variableFacade, variableFacadeHandler);
+        this.write(ValueDeseralizationContext.of(level), tag, variableFacade, variableFacadeHandler);
+        itemStack.set(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE, tag);
         return itemStack;
     }
 
@@ -138,7 +143,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         if(itemStack.isEmpty()) {
             return null;
         }
-        CompoundTag tag = itemStack.getOrCreateTag();
+        CompoundTag tag = Objects.requireNonNullElseGet(itemStack.get(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE), CompoundTag::new).copy();
         IVariableFacade previousVariableFacade = this.handle(valueDeseralizationContext, tag);
         F variableFacade;
         if(generateId && previousVariableFacade.getId() > -1) {
@@ -146,6 +151,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         } else {
             variableFacade = variableFacadeFactory.create(generateId);
         }
+        itemStack.set(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE, tag);
         return variableFacade;
     }
 
@@ -153,7 +159,9 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     public <F extends IVariableFacade> ItemStack copy(boolean generateId, ItemStack itemStack) {
         ItemStack copy = itemStack.copy();
         int newId = generateId ? VariableFacadeBase.generateId() : -1;
-        copy.getTag().putInt("_id", newId);
+        CompoundTag tagCopy = itemStack.get(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE).copy();
+        tagCopy.putInt("_id", newId);
+        copy.set(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE, tagCopy);
         return copy;
     }
 
@@ -204,7 +212,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void appendHoverText(List<Component> list, Level world) {
+        public void appendHoverText(List<Component> list, Item.TooltipContext context) {
 
         }
 

@@ -1,0 +1,14 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "minecraft:stone_bricks"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:cracked_stone_bricks"
+      }
+    }
+  ],
+  "duration": 40
+}

@@ -1,0 +1,36 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "tag": "c:ores/diamond"
+  },
+  "output_items": [
+    {
+      "tag": {
+        "tag": "c:gems/diamond"
+      }
+    },
+    {
+      "tag": {
+        "tag": "c:gems/diamond"
+      },
+      "chance": 0.75
+    }
+  ],
+  "duration": 40,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:gems/diamond"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:ores/diamond"
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "item": "minecraft:nether_quartz_ore"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:quartz",
+        "count": 2
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:quartz"
+      },
+      "chance": 0.5
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:dusts/quartz"
+      }
+    }
+  ]
+}

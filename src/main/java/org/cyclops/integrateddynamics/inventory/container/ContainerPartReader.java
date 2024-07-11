@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Container;
@@ -53,7 +53,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     private final BiMap<Integer, IAspectRead> readValueIds = HashBiMap.create();
     private final BiMap<Integer, IAspectRead> readColorIds = HashBiMap.create();
 
-    public ContainerPartReader(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+    public ContainerPartReader(int id, Inventory playerInventory, RegistryFriendlyByteBuf packetBuffer) {
         this(id, playerInventory, new SimpleInventory(0, 1),
                 PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }

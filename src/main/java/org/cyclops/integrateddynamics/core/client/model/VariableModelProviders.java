@@ -15,8 +15,8 @@ public class VariableModelProviders {
 
     public static final ValueTypeVariableModelProvider VALUETYPE = REGISTRY.addProvider(new ValueTypeVariableModelProvider());
     public static final AspectVariableModelProvider ASPECT = REGISTRY.addProvider(new AspectVariableModelProvider());
-    public static final SingleVariableModelProvider PROXY = REGISTRY.addProvider(new SingleVariableModelProvider(new ResourceLocation(Reference.MOD_ID, "customoverlay/proxy")));
-    public static final SingleVariableModelProvider DELAY = REGISTRY.addProvider(new SingleVariableModelProvider(new ResourceLocation(Reference.MOD_ID, "customoverlay/delay")));
+    public static final SingleVariableModelProvider PROXY = REGISTRY.addProvider(new SingleVariableModelProvider(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "customoverlay/proxy")));
+    public static final SingleVariableModelProvider DELAY = REGISTRY.addProvider(new SingleVariableModelProvider(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "customoverlay/delay")));
 
     public static void load() {}
 

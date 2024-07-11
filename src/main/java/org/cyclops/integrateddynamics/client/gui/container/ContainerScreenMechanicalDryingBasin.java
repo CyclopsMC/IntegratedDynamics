@@ -21,7 +21,7 @@ public class ContainerScreenMechanicalDryingBasin extends ContainerScreenMechani
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/mechanical_drying_basin.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/mechanical_drying_basin.png");
     }
 
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {

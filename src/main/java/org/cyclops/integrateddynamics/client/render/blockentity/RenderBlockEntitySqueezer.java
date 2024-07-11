@@ -111,10 +111,10 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
                         float[][] c = coordinates[side.ordinal()];
                         float replacedMaxV = (side == Direction.UP || side == Direction.DOWN) ?
                                 icon.getV1() : ((icon.getV1() - icon.getV0()) * height + icon.getV0());
-                        vb.vertex(matrix, c[0][0], getHeight(side, c[0][1], height), c[0][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU0(), replacedMaxV).uv2(l2, i3).endVertex();
-                        vb.vertex(matrix, c[1][0], getHeight(side, c[1][1], height), c[1][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU0(), icon.getV0()).uv2(l2, i3).endVertex();
-                        vb.vertex(matrix, c[2][0], getHeight(side, c[2][1], height), c[2][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU1(), icon.getV0()).uv2(l2, i3).endVertex();
-                        vb.vertex(matrix, c[3][0], getHeight(side, c[3][1], height), c[3][2]).color(color.getLeft(), color.getMiddle(), color.getRight(), 1).uv(icon.getU1(), replacedMaxV).uv2(l2, i3).endVertex();
+                        vb.addVertex(matrix, c[0][0], getHeight(side, c[0][1], height), c[0][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU0(), replacedMaxV).setUv2(l2, i3);
+                        vb.addVertex(matrix, c[1][0], getHeight(side, c[1][1], height), c[1][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU0(), icon.getV0()).setUv2(l2, i3);
+                        vb.addVertex(matrix, c[2][0], getHeight(side, c[2][1], height), c[2][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU1(), icon.getV0()).setUv2(l2, i3);
+                        vb.addVertex(matrix, c[3][0], getHeight(side, c[3][1], height), c[3][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU1(), replacedMaxV).setUv2(l2, i3);
                     }
                 });
             }

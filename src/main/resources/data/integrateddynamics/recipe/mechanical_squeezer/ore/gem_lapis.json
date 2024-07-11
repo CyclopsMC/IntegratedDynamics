@@ -1,0 +1,38 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "tag": "c:ores/lapis"
+  },
+  "output_items": [
+    {
+      "tag": {
+        "tag": "c:gems/lapis"
+      },
+      "count": 12
+    },
+    {
+      "tag": {
+        "tag": "c:gems/lapis",
+        "count": 2
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 40,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:gems/lapis"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:ores/lapis"
+      }
+    }
+  ]
+}

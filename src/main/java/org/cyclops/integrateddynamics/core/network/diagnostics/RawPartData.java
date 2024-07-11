@@ -37,7 +37,7 @@ public class RawPartData implements IRawData {
     }
 
     public static RawPartData fromNbt(CompoundTag tag) {
-        return new RawPartData(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
+        return new RawPartData(ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString("dimension"))), BlockPos.of(tag.getLong("pos")),
                 Direction.values()[tag.getInt("side")], tag.getString("name"), tag.getLong("last20TicksDurationNs"));
     }
 

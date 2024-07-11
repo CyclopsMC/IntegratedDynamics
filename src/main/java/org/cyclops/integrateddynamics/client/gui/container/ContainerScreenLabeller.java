@@ -34,7 +34,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
 
     @Override
     protected ResourceLocation constructGuiTexture() {
-        return new ResourceLocation(Reference.MOD_ID, "textures/gui/labeller.png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/labeller.png");
     }
 
     @Override

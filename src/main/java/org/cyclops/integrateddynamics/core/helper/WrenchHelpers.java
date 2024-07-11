@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  */
 public final class WrenchHelpers {
 
-    public static final TagKey<Item> TAG_WRENCH = TagKey.create(Registries.ITEM, new ResourceLocation("forge", "tools/wrench"));
+    public static final TagKey<Item> TAG_WRENCH = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "tools/wrench"));
 
     /**
      * Checks if the given player can wrench something.

@@ -1,0 +1,17 @@
+{
+  "type": "integrateddynamics:mechanical_drying_basin",
+  "input_fluid": {
+    "id": "evilcraft:blood",
+    "amount": 1000
+  },
+  "duration": 40,
+  "output_item": {
+    "id": "evilcraft:hardened_blood"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "evilcraft"
+    }
+  ]
+}

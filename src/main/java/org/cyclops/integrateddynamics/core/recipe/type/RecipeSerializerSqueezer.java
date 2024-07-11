@@ -2,10 +2,12 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.ExtraCodecs;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -13,7 +15,6 @@ import org.cyclops.cyclopscore.codec.ListCodecStrict;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -28,12 +29,17 @@ public class RecipeSerializerSqueezer implements RecipeSerializer<RecipeSqueezer
                     RecipeSqueezer.IngredientChance::new,
                     RecipeSqueezer.IngredientChance::getIngredientChance
             );
+    public static final StreamCodec<RegistryFriendlyByteBuf, RecipeSqueezer.IngredientChance> STREAM_CODEC_INGREDIENT_CHANCE = RecipeSerializerHelpers.STREAM_CODEC_ITEMSTACK_OR_ITEMSTACKINGREDIENT_CHANCE
+            .map(
+                    RecipeSqueezer.IngredientChance::new,
+                    RecipeSqueezer.IngredientChance::getIngredientChance
+            );
 
-    public static final Codec<RecipeSqueezer> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<RecipeSqueezer> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
                             Ingredient.CODEC_NONEMPTY.fieldOf("input_item").forGetter(RecipeSqueezer::getInputIngredient),
-                            ExtraCodecs.strictOptionalField(new ListCodecStrict<>(RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE), "output_items").forGetter(r -> r.getOutputItems().isEmpty() ? Optional.empty() : Optional.of(r.getOutputItems().stream().toList())),
-                            ExtraCodecs.strictOptionalField(FluidStack.CODEC, "output_fluid").forGetter(RecipeSqueezer::getOutputFluid)
+                            new ListCodecStrict<>(RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE).optionalFieldOf("output_items").forGetter(r -> r.getOutputItems().isEmpty() ? Optional.empty() : Optional.of(r.getOutputItems().stream().toList())),
+                            FluidStack.CODEC.optionalFieldOf("output_fluid").forGetter(RecipeSqueezer::getOutputFluid)
                     )
                     .apply(builder, (inputIngredient, outputItemStacks, outputFluid) -> {
                         // Validation
@@ -44,41 +50,20 @@ public class RecipeSerializerSqueezer implements RecipeSerializer<RecipeSqueezer
                         return new RecipeSqueezer(inputIngredient, outputItemStacks.map(NonNullList::copyOf).orElseGet(NonNullList::create), outputFluid);
                     })
     );
+    public static final StreamCodec<RegistryFriendlyByteBuf, RecipeSqueezer> STREAM_CODEC = StreamCodec.composite(
+            Ingredient.CONTENTS_STREAM_CODEC, RecipeSqueezer::getInputIngredient,
+            STREAM_CODEC_INGREDIENT_CHANCE.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity)), RecipeSqueezer::getOutputItems,
+            ByteBufCodecs.optional(FluidStack.STREAM_CODEC), RecipeSqueezer::getOutputFluid,
+            RecipeSqueezer::new
+    );
 
     @Override
-    public Codec<RecipeSqueezer> codec() {
+    public MapCodec<RecipeSqueezer> codec() {
         return CODEC;
     }
 
-    @Nullable
     @Override
-    public RecipeSqueezer fromNetwork(FriendlyByteBuf buffer) {
-        // Input
-        Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
-
-        // Output
-        NonNullList<RecipeSqueezer.IngredientChance> outputItemStacks = NonNullList.create();
-        int outputItemStacksCount = buffer.readInt();
-        for (int i = 0; i < outputItemStacksCount; i++) {
-            outputItemStacks.add(new RecipeSqueezer.IngredientChance(
-                    RecipeSerializerHelpers.readItemStackOrItemStackIngredientChance(buffer)
-            ));
-        }
-        Optional<FluidStack> outputFluid = RecipeSerializerHelpers.readOptionalFromNetwork(buffer, FluidStack::readFromPacket);
-
-        return new RecipeSqueezer(inputIngredient, outputItemStacks, outputFluid);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer, RecipeSqueezer recipe) {
-        // Input
-        recipe.getInputIngredient().toNetwork(buffer);
-
-        // Output
-        buffer.writeInt(recipe.getOutputItems().size());
-        for (RecipeSqueezer.IngredientChance outputItem : recipe.getOutputItems()) {
-            RecipeSerializerHelpers.writeItemStackOrItemStackIngredientChance(buffer, outputItem.getIngredientChance());
-        }
-        RecipeSerializerHelpers.writeOptionalToNetwork(buffer, recipe.getOutputFluid(), (b, value) -> value.writeToPacket(b));
+    public StreamCodec<RegistryFriendlyByteBuf, RecipeSqueezer> streamCodec() {
+        return STREAM_CODEC;
     }
 }

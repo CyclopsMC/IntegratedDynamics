@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.network.packet;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +23,8 @@ import java.util.Map;
  */
 public class AllLabelsPacket extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "all_labels");
+    public static final Type<AllLabelsPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "all_labels"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, AllLabelsPacket> CODEC = getCodec(AllLabelsPacket::new);
 
     @CodecField
     private Map<Integer, String> labels;

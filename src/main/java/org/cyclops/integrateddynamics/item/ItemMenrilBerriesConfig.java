@@ -31,7 +31,7 @@ public class ItemMenrilBerriesConfig extends ItemConfig {
     protected static FoodProperties createFood() {
         FoodProperties.Builder builder = new FoodProperties.Builder()
                 .nutrition(4)
-                .saturationMod(0.3F)
+                .saturationModifier(0.3F)
                 .fast();
         if (nightVision) {
             builder = builder.effect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20, 1), 1);

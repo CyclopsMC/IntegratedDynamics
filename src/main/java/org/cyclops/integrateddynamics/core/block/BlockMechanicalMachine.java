@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.cyclops.cyclopscore.RegistryEntries;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMechanicalMachine;
@@ -18,8 +18,6 @@ import java.util.function.BiFunction;
  */
 public abstract class BlockMechanicalMachine extends BlockWithEntityGuiCabled {
 
-    public static final String NBT_ENERGY = "energy";
-
     public BlockMechanicalMachine(Properties properties, BiFunction<BlockPos, BlockState, CyclopsBlockEntity> blockEntitySupplier) {
         super(properties, blockEntitySupplier);
     }
@@ -29,8 +27,8 @@ public abstract class BlockMechanicalMachine extends BlockWithEntityGuiCabled {
         if (!world.isClientSide()) {
             BlockEntityHelpers.get(world, blockPos, BlockEntityMechanicalMachine.class)
                     .ifPresent(tile -> {
-                        if (itemStack.hasTag() && itemStack.getTag().contains(NBT_ENERGY, Tag.TAG_INT)) {
-                            tile.setEnergy(itemStack.getTag().getInt(NBT_ENERGY));
+                        if (itemStack.has(RegistryEntries.COMPONENT_ENERGY_STORAGE)) {
+                            tile.setEnergy(itemStack.get(RegistryEntries.COMPONENT_ENERGY_STORAGE));
                         }
                     });
         }

@@ -1,7 +1,9 @@
 package org.cyclops.integrateddynamics;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -145,8 +147,8 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
     }
 
     @Override
-    protected LiteralArgumentBuilder<CommandSourceStack> constructBaseCommand() {
-        LiteralArgumentBuilder<CommandSourceStack> root = super.constructBaseCommand();
+    protected LiteralArgumentBuilder<CommandSourceStack> constructBaseCommand(Commands.CommandSelection selection, CommandBuildContext context) {
+        LiteralArgumentBuilder<CommandSourceStack> root = super.constructBaseCommand(selection, context);
 
         root.then(CommandCrash.make());
         root.then(CommandNetworkDiagnostics.make());

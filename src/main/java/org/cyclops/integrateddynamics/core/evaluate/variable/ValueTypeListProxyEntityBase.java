@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -27,7 +28,7 @@ public abstract class ValueTypeListProxyEntityBase<T extends IValueType<V>, V ex
     }
 
     protected Entity getEntity() {
-        ServerLevel worldServer = ServerLifecycleHooks.getCurrentServer().getLevel(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(this.world)));
+        ServerLevel worldServer = ServerLifecycleHooks.getCurrentServer().getLevel(ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(this.world)));
         if(worldServer != null) {
             return worldServer.getEntity(entity);
         }
@@ -35,13 +36,13 @@ public abstract class ValueTypeListProxyEntityBase<T extends IValueType<V>, V ex
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundTag tag) {
+    public void writeGeneratedFieldsToNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
         tag.putString("world", world);
         tag.putInt("entity", entity);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundTag tag) {
+    public void readGeneratedFieldsFromNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
         this.world = tag.getString("world");
         this.entity = tag.getInt("entity");
     }

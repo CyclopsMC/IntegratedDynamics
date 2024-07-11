@@ -23,7 +23,7 @@ import java.util.Optional;
 public class BlockMenrilSaplingConfig extends BlockConfig {
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> MENTRIL_TREE = ResourceKey
-            .create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Reference.MOD_ID, "tree_menril"));
+            .create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "tree_menril"));
     public static final TreeGrower MENRIL_TREE_GROWER = new TreeGrower(
             Reference.MOD_ID + ":menril_sapling",
             Optional.empty(), // Mega tree

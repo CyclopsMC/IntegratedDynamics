@@ -33,14 +33,16 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
 
     /**
      * Serialize the given list proxy.
-     * @param <T> The list element type value type.
-     * @param <V> The list element type.
-     * @param <P> The proxy type.
-     * @param proxy The proxy to serialize.
+     *
+     * @param <T>                        The list element type value type.
+     * @param <V>                        The list element type.
+     * @param <P>                        The proxy type.
+     * @param valueDeseralizationContext
+     * @param proxy                      The proxy to serialize.
      * @return The serialized string.
      * @throws SerializationException If something goes wrong while serializing.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> Tag serialize(P proxy) throws SerializationException;
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P proxy) throws SerializationException;
 
     /**
      * Deserialize the given serialized list proxy to a list proxy instance.
@@ -69,11 +71,13 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
 
         /**
          * Serialize the given value.
-         * @param value The value to serialize.
+         *
+         * @param valueDeseralizationContext
+         * @param value                      The value to serialize.
          * @return The serialized value.
          * @throws SerializationException If something goes wrong while serializing.
          */
-        public Tag serialize(P value) throws SerializationException;
+        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P value) throws SerializationException;
 
         /**
          * Deserialize the given value.

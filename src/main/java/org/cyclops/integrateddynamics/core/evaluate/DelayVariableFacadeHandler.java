@@ -31,7 +31,7 @@ public class DelayVariableFacadeHandler implements IVariableFacadeHandler<IDelay
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(Reference.MOD_ID, "delay");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "delay");
     }
 
     @Override
@@ -43,7 +43,7 @@ public class DelayVariableFacadeHandler implements IVariableFacadeHandler<IDelay
     }
 
     @Override
-    public void setVariableFacade(CompoundTag tag, IDelayVariableFacade variableFacade) {
+    public void setVariableFacade(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, IDelayVariableFacade variableFacade) {
         tag.putInt("partId", variableFacade.getProxyId());
     }
 

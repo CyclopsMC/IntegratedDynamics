@@ -240,7 +240,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     protected ItemStack getFluidBucket(FluidStack fluidStack) {
         ItemStack itemStack = new ItemStack(Items.BUCKET);
         IFluidHandlerItem fluidHandler = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
-        fluidHandler.fill(new FluidStack(fluidStack, FluidHelpers.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+        fluidHandler.fill(new FluidStack(fluidStack.getFluid(), FluidHelpers.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
         return fluidHandler.getContainer();
     }
 
@@ -313,7 +313,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         for (ItemMatchProperties inputStack : inputStacks) {
             if (inputStack.getItemTag() != null) {
                 try {
-                    new ResourceLocation(inputStack.getItemTag());
+                    ResourceLocation.parse(inputStack.getItemTag());
                 } catch (ResourceLocationException e) {
                     return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputStack.getItemTag());
                 }
@@ -384,7 +384,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     String tagName = props.getItemTag();
                     if (tagName != null) {
                         try {
-                            Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, new ResourceLocation(tagName)));
+                            Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, ResourceLocation.parse(tagName)));
                             if (!tag.isEmpty()) {
                                 List<Item> items = tag.stream()
                                         .flatMap(holders -> holders.stream())
@@ -434,7 +434,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                 .collect(Collectors.toList());
         List<IPrototypedIngredientAlternatives<FluidStack, Integer>> fluids = !fluidStack.isEmpty()
                 ? Collections.singletonList(new PrototypedIngredientAlternativesList<>(
-                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.FLUID | FluidMatch.TAG))))
+                        Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.FLUIDSTACK, fluidStack, FluidMatch.FLUID | FluidMatch.DATA))))
                 : Collections.emptyList();
         List<IPrototypedIngredientAlternatives<Long, Boolean>> energies = energy > 0 ?
                 Collections.singletonList(new PrototypedIngredientAlternativesList<>(

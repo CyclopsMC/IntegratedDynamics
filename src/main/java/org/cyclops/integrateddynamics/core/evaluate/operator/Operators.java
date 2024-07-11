@@ -11,6 +11,8 @@ import com.google.re2j.PatternSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Lombok;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
@@ -21,6 +23,7 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -31,6 +34,7 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -43,15 +47,13 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.IPlantable;
 import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
@@ -1212,7 +1214,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                        return a.getRawValue().isPresent() ? BuiltInRegistries.BLOCK.getKey(a.getRawValue().get().getBlock()) : new ResourceLocation("");
+                        return a.getRawValue().isPresent() ? BuiltInRegistries.BLOCK.getKey(a.getRawValue().get().getBlock()) : ResourceLocation.parse("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1257,46 +1259,7 @@ public final class Operators {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
                         && a.getRawValue().get().getBlock() instanceof IShearable
-                        && ((IShearable) a.getRawValue().get().getBlock()).isShearable(ItemStack.EMPTY, null, null));
-            }).build());
-
-    /**
-     * If the block is plantable
-     */
-    public static final IOperator OBJECT_BLOCK_ISPLANTABLE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN)
-            .symbol("is_plantable").operatorName("isplantable").interactName("isPlantable")
-            .function(variables -> {
-                ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
-                        && a.getRawValue().get().getBlock() instanceof IPlantable);
-            }).build());
-
-    /**
-     * The block plant type
-     */
-    public static final IOperator OBJECT_BLOCK_PLANTTYPE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.STRING)
-            .symbol("plant_type").operatorName("planttype").interactName("plantType")
-            .function(variables -> {
-                ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                String type = "none";
-                if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
-                    type = ((IPlantable) a.getRawValue().get().getBlock()).getPlantType(null, null).getName();
-                }
-                return ValueTypeString.ValueString.of(type);
-            }).build());
-
-    /**
-     * The block when this block is planted
-     */
-    public static final IOperator OBJECT_BLOCK_PLANT = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_BLOCK).symbolOperator("plant").interactName("plant")
-            .function(variables -> {
-                ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                BlockState plant = null;
-                if (a.getRawValue().isPresent() && a.getRawValue().get().getBlock() instanceof IPlantable) {
-                    plant = ((IPlantable) a.getRawValue().get().getBlock()).getPlant(null, null);
-                }
-                return ValueObjectTypeBlock.ValueBlock.of(plant);
+                        && ((IShearable) a.getRawValue().get().getBlock()).isShearable(null, ItemStack.EMPTY, null, null));
             }).build());
 
     /**
@@ -1479,7 +1442,7 @@ public final class Operators {
             .output(ValueTypes.INTEGER)
             .symbol("repair_cost").operatorName("repaircost").interactName("repairCost")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
-                itemStack -> !itemStack.isEmpty() ? itemStack.getBaseRepairCost() : 0
+                itemStack -> !itemStack.isEmpty() ? itemStack.get(DataComponents.REPAIR_COST) : 0
             )).build());
 
     /**
@@ -1557,10 +1520,10 @@ public final class Operators {
             )).build());
 
     /**
-     * If the NBT tags of the given stacks are equal.
+     * If the data components of the given stacks are equal.
      */
-    public static final IOperator OBJECT_ITEMSTACK_ISNBTEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
-            .output(ValueTypes.BOOLEAN).symbol("=NBT=").operatorName("isnbtequal").interactName("isNbtEqual")
+    public static final IOperator OBJECT_ITEMSTACK_ISDATAEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=DATA=").operatorName("isdataequal").interactName("isDataEqual")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack valueStack0 = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeItemStack.ValueItemStack valueStack1 = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
@@ -1568,7 +1531,7 @@ public final class Operators {
                 ItemStack b = valueStack1.getRawValue();
                 boolean equal = false;
                 if(!a.isEmpty() && !b.isEmpty()) {
-                    equal = ItemStack.isSameItem(a, b) && ItemMatch.areItemStacksEqual(a, b, ItemMatch.TAG);
+                    equal = ItemStack.isSameItem(a, b) && ItemMatch.areItemStacksEqual(a, b, ItemMatch.DATA);
                 } else if(a.isEmpty() && b.isEmpty()) {
                     equal = true;
                 }
@@ -1576,10 +1539,10 @@ public final class Operators {
             }).build());
 
     /**
-     * If the raw items of the given stacks are equal, ignoring NBT but including damage value.
+     * If the raw items of the given stacks are equal, ignoring data components but including damage value.
      */
-    public static final IOperator OBJECT_ITEMSTACK_ISITEMEQUALNONBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
-            .output(ValueTypes.BOOLEAN).symbol("=NoNBT=").operatorName("isitemequalnonbt").interactName("isEqualNonNbt")
+    public static final IOperator OBJECT_ITEMSTACK_ISITEMEQUALNODATA = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
+            .output(ValueTypes.BOOLEAN).symbol("=NoData=").operatorName("isitemequalnodata").interactName("isEqualNonData")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack valueStack0 = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeItemStack.ValueItemStack valueStack1 = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
@@ -1595,7 +1558,7 @@ public final class Operators {
             }).build());
 
     /**
-     * If the raw items of the given stacks are equal, ignoring NBT and damage value.
+     * If the raw items of the given stacks are equal, ignoring data components and damage value.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwitemequal").interactName("isEqualRaw")
@@ -1621,7 +1584,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                        return !a.getRawValue().isEmpty() ? BuiltInRegistries.ITEM.getKey(a.getRawValue().getItem()) : new ResourceLocation("");
+                        return !a.getRawValue().isEmpty() ? BuiltInRegistries.ITEM.getKey(a.getRawValue().getItem()) : ResourceLocation.parse("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1636,7 +1599,7 @@ public final class Operators {
                 if (!itemStack.isEmpty()) {
                     int burnTime = itemStack.getBurnTime(null);
                     return EventHooks.getItemBurnTime(itemStack, burnTime == -1
-                            ? CommonHooks.getBurnTime(itemStack, null)
+                            ? itemStack.getBurnTime(RecipeType.SMELTING)
                             : burnTime, null);
                 }
                 return 0;
@@ -1750,19 +1713,6 @@ public final class Operators {
                 return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().getCapability(Capabilities.ItemHandler.ITEM) != null);
             }).build());
 
-    /**
-     * If the item is plantable
-     */
-    public static final IOperator OBJECT_ITEMSTACK_ISPLANTABLE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.BOOLEAN)
-            .symbol("is_plantable").operatorName("isplantable").interactName("isPlantable")
-            .function(variables -> {
-                ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty()
-                        && a.getRawValue().getItem() instanceof BlockItem
-                        && ((BlockItem) a.getRawValue().getItem()).getBlock() instanceof IPlantable);
-            }).build());
-
 
 
 
@@ -1776,22 +1726,6 @@ public final class Operators {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 IItemHandler itemHandler = a.getRawValue().getCapability(Capabilities.ItemHandler.ITEM);
                 return ValueTypeInteger.ValueInteger.of(itemHandler != null ? itemHandler.getSlots() : 0);
-            }).build());
-
-    /**
-     * The item plant type
-     */
-    public static final IOperator OBJECT_ITEMSTACK_PLANTTYPE = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.STRING)
-            .symbol("plant_type").operatorName("planttype").interactName("plantType")
-            .function(variables -> {
-                ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                String type = "none";
-                if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem
-                        && ((BlockItem) a.getRawValue().getItem()).getBlock() instanceof IPlantable) {
-                    type = ((IPlantable) ((BlockItem) a.getRawValue().getItem()).getBlock()).getPlantType(null, null).getName();
-                }
-                return ValueTypeString.ValueString.of(type);
             }).build());
 
     /**
@@ -1810,21 +1744,6 @@ public final class Operators {
                     return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
                 }
                 return ValueTypes.LIST.getDefault();
-            }).build());
-
-    /**
-     * The item when this item is planted
-     */
-    public static final IOperator OBJECT_ITEMSTACK_PLANT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.OBJECT_BLOCK).symbolOperatorInteract("plant")
-            .function(variables -> {
-                ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                BlockState plant = null;
-                if (!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem
-                        && ((BlockItem) a.getRawValue().getItem()).getBlock() instanceof IPlantable) {
-                    plant = ((BlockItem) a.getRawValue().getItem()).getBlock().defaultBlockState();
-                }
-                return ValueObjectTypeBlock.ValueBlock.of(plant);
             }).build());
 
     /**
@@ -1869,7 +1788,7 @@ public final class Operators {
                         if (!listValue.getRawValue().isEmpty()) {
                             ItemStack listItem = listValue.getRawValue();
                             if (!itemStack.isEmpty()) {
-                                if (ItemStack.isSameItemSameTags(itemStack, listItem)) {
+                                if (ItemStack.isSameItemSameComponents(itemStack, listItem)) {
                                     count += listItem.getCount();
                                 }
                             } else {
@@ -1885,21 +1804,23 @@ public final class Operators {
     /**
      * Item Stack size operator with one input itemstack and one output NBT tag.
      */
-    public static final IOperator OBJECT_ITEMSTACK_NBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt").interactName("nbt")
+    public static final IOperator OBJECT_ITEMSTACK_DATA = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.NBT).symbol("Data()").operatorName("data").interactName("data")
             .function(input -> {
                 ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 // Explicitly check for item emptiness first, because vanilla sometimes persists NBT when setting stacks to empty
-                return ValueTypeNbt.ValueNbt.of(itemStack.getRawValue().isEmpty() ? new CompoundTag() : itemStack.getRawValue().getTag());
+                return ValueTypeNbt.ValueNbt.of(itemStack.getRawValue().isEmpty() || itemStack.getRawValue().getComponents().isEmpty() ?
+                        Optional.empty() :
+                        Optional.of(DataComponentPatch.CODEC.encodeStart(ServerLifecycleHooks.getCurrentServer().registryAccess().createSerializationContext(NbtOps.INSTANCE), itemStack.getRawValue().getComponentsPatch()).getOrThrow()));
             }).build());
 
     /**
-     * Item Stack has_nbt operator with one input itemstack and one output boolean.
+     * Item Stack has_data operator with one input itemstack and one output boolean.
      */
-    public static final IOperator OBJECT_ITEMSTACK_HASNBT = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_PREFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("has_nbt").operatorName("hasnbt").interactName("hasNbt")
+    public static final IOperator OBJECT_ITEMSTACK_HASDATA = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_PREFIX_LONG
+            .output(ValueTypes.BOOLEAN).symbol("has_data").operatorName("hasdata").interactName("hasData")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
-                    itemStack -> !itemStack.isEmpty() && itemStack.hasTag()
+                    itemStack -> !itemStack.isEmpty() && itemStack.getComponents().stream().anyMatch(t -> !t.type().isTransient())
             )).build());
 
     /**
@@ -2069,7 +1990,7 @@ public final class Operators {
                             Entity entity = a.getRawValue().get();
                             return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
                         }
-                        return new ResourceLocation("");
+                        return ResourceLocation.parse("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             )))
@@ -2085,7 +2006,7 @@ public final class Operators {
                 BlockState blockState = null;
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
                     LivingEntity entity = (LivingEntity) a.getRawValue().get();
-                    AttributeInstance reachDistanceAttribute = entity.getAttribute(NeoForgeMod.BLOCK_REACH.value());
+                    AttributeInstance reachDistanceAttribute = entity.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
                     double eyeHeight = entity.getEyeHeight();
                     Vec3 lookVec = entity.getLookAngle();
@@ -2111,7 +2032,7 @@ public final class Operators {
                 Entity entityOut = null;
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
                     LivingEntity entity = (LivingEntity) a.getRawValue().get();
-                    AttributeInstance reachDistanceAttribute = entity.getAttribute(NeoForgeMod.ENTITY_REACH.value());
+                    AttributeInstance reachDistanceAttribute = entity.getAttribute(Attributes.ENTITY_INTERACTION_RANGE);
                     double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
                     // Copied and modified from GameRenderer#getMouseOver
@@ -2341,7 +2262,7 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent()
                         && a.getRawValue().get() instanceof IShearable
-                        && ((IShearable) a.getRawValue().get()).isShearable(ItemStack.EMPTY, null, null));
+                        && ((IShearable) a.getRawValue().get()).isShearable(null, ItemStack.EMPTY, null, null));
             }).build());
 
     /**
@@ -2353,7 +2274,7 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity entity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 try {
                     if (entity.getRawValue().isPresent()) {
-                        return ValueTypeNbt.ValueNbt.of(entity.getRawValue().get().serializeNBT());
+                        return ValueTypeNbt.ValueNbt.of(entity.getRawValue().get().serializeNBT(ServerLifecycleHooks.getCurrentServer().registryAccess()));
                     }
                 } catch (Exception e) {
                     // Catch possible errors during NBT writing
@@ -2578,7 +2499,7 @@ public final class Operators {
             .function(variables -> {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack0 = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack1 = variables.getValue(1, ValueTypes.OBJECT_FLUIDSTACK);
-                return ValueTypeBoolean.ValueBoolean.of(valueFluidStack0.getRawValue().isFluidEqual(valueFluidStack1.getRawValue()));
+                return ValueTypeBoolean.ValueBoolean.of(FluidStack.isSameFluid(valueFluidStack0.getRawValue(), valueFluidStack1.getRawValue()));
             }).build());
 
     /**
@@ -2597,11 +2518,14 @@ public final class Operators {
     /**
      * The tag of the given fluidstack.
      */
-    public static final IOperator OBJECT_FLUIDSTACK_NBT = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.NBT).symbol("NBT()").operatorInteract("nbt")
+    public static final IOperator OBJECT_FLUIDSTACK_DATA = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.NBT).symbol("Data()").operatorInteract("data")
             .function(input -> {
                 ValueObjectTypeFluidStack.ValueFluidStack fluidStack = input.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
-                return ValueTypeNbt.ValueNbt.of(fluidStack.getRawValue().getTag());
+                if (fluidStack.getRawValue().getComponentsPatch().isEmpty()) {
+                    return ValueTypeNbt.ValueNbt.of(Optional.empty());
+                }
+                return ValueTypeNbt.ValueNbt.of(DataComponentPatch.CODEC.encodeStart(ServerLifecycleHooks.getCurrentServer().registryAccess().createSerializationContext(NbtOps.INSTANCE), fluidStack.getRawValue().getComponentsPatch()).getOrThrow());
             }).build());
 
     /**

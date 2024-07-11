@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.ingredient;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
@@ -21,7 +21,7 @@ public class ItemMatchProperties {
     static {
         PacketCodec.addCodedAction(ItemMatchProperties.class, new PacketCodec.ICodecAction() {
             @Override
-            public void encode(Object o, FriendlyByteBuf packetBuffer) {
+            public void encode(Object o, RegistryFriendlyByteBuf packetBuffer) {
                 ItemMatchProperties props = ((ItemMatchProperties) o);
                 PacketCodec.getAction(ItemStack.class).encode(props.itemStack, packetBuffer);
                 packetBuffer.writeBoolean(props.nbt);
@@ -31,7 +31,7 @@ public class ItemMatchProperties {
             }
 
             @Override
-            public Object decode(FriendlyByteBuf packetBuffer) {
+            public Object decode(RegistryFriendlyByteBuf packetBuffer) {
                 ItemStack itemStack = (ItemStack) PacketCodec.getAction(ItemStack.class).decode(packetBuffer);
                 boolean nbt = packetBuffer.readBoolean();
                 String itemTag = packetBuffer.readUtf(32767);
@@ -108,12 +108,12 @@ public class ItemMatchProperties {
 
     public IPrototypedIngredientAlternatives<ItemStack, Integer> createPrototypedIngredient() {
         if (getItemTag() == null) {
-            int flags = isNbt() ? ItemMatch.ITEM | ItemMatch.TAG : ItemMatch.ITEM;
+            int flags = isNbt() ? ItemMatch.ITEM | ItemMatch.DATA : ItemMatch.ITEM;
             return new PrototypedIngredientAlternativesList<>(
                     Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, flags)));
         } else {
             return new PrototypedIngredientAlternativesItemStackTag(Collections.singletonList(getItemTag()),
-                    ItemMatch.ITEM | ItemMatch.TAG, getTagQuantity());
+                    ItemMatch.ITEM | ItemMatch.DATA, getTagQuantity());
         }
     }
 }

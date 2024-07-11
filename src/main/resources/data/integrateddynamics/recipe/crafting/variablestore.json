@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CBC",
+    "CWC",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "item": "integrateddynamics:crystalized_menril_chunk"
+    },
+    "B": {
+      "item": "integrateddynamics:crystalized_menril_block"
+    },
+    "W": {
+      "tag": "c:chests/wooden"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:variablestore"
+  }
+}

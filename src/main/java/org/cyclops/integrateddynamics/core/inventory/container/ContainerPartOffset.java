@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 import com.google.common.collect.Lists;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -51,7 +51,7 @@ public class ContainerPartOffset extends InventoryContainer {
     private final SimpleInventory offsetVariablesInventory;
     private boolean dirtyInv = false;
 
-    public ContainerPartOffset(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+    public ContainerPartOffset(int id, Inventory playerInventory, RegistryFriendlyByteBuf packetBuffer) {
         this(id, playerInventory, new SimpleContainer(0),
                 PartHelpers.readPartTarget(packetBuffer), Optional.empty(), PartHelpers.readPart(packetBuffer));
     }

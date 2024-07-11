@@ -1,11 +1,14 @@
 package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -20,7 +23,8 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class PlayerTeleportPacket extends PacketCodec {
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "player_teleport");
+    public static final Type<PlayerTeleportPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "player_teleport"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, PlayerTeleportPacket> CODEC = getCodec(PlayerTeleportPacket::new);
 
     @CodecField
     private String dimension;
@@ -62,9 +66,13 @@ public class PlayerTeleportPacket extends PacketCodec {
 
     @Override
     public void actionServer(Level world, ServerPlayer player) {
-        ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(this.dimension));
+        ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(this.dimension));
         if (!dimensionType.location().equals(player.level().dimension().location())) {
-            player.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType));
+            player.changeDimension(new DimensionTransition(
+                    ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType),
+                    player,
+                    DimensionTransition.DO_NOTHING
+            ));
         }
         player.connection.teleport(x + 0.5F, y + 0.5F, z + 0.5F, yaw, pitch);
     }

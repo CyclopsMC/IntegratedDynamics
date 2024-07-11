@@ -92,10 +92,12 @@ public interface IValueType<V extends IValue> {
 
     /**
      * Serialize the given value.
-     * @param value The value to serialize.
+     *
+     * @param valueDeseralizationContext
+     * @param value                      The value to serialize.
      * @return The serialized value.
      */
-    public Tag serialize(V value);
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, V value);
 
     /**
      * Check if the given value can be deserialized.

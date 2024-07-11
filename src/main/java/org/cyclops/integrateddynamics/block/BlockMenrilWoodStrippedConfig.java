@@ -9,8 +9,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
+import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.ToolActions;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -52,7 +52,7 @@ public class BlockMenrilWoodStrippedConfig extends BlockConfig {
     }
 
     public static void toolActionEvent(BlockEvent.BlockToolModificationEvent event) {
-        if (event.getToolAction() == ToolActions.AXE_STRIP && event.getState().getBlock() == RegistryEntries.BLOCK_MENRIL_WOOD.get()) {
+        if (event.getItemAbility() == ItemAbilities.AXE_STRIP && event.getState().getBlock() == RegistryEntries.BLOCK_MENRIL_WOOD.get()) {
             BlockState blockStateNew = RegistryEntries.BLOCK_MENRIL_WOOD_STRIPPED.get().defaultBlockState();
             for (Property property : event.getState().getProperties()) {
                 if(blockStateNew.hasProperty(property))

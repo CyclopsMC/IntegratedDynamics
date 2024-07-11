@@ -11,7 +11,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DataSlotSupplied;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -136,7 +135,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
     }
 
     public static int getFuelTime(ItemStack itemStack) {
-        return CommonHooks.getBurnTime(itemStack, RecipeType.SMELTING);
+        return itemStack.getBurnTime(RecipeType.SMELTING);
     }
 
     @Override

@@ -73,7 +73,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public Tag serialize(V value) {
+    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, V value) {
         throw new UnsupportedOperationException("This operation is not allowed");
     }
 

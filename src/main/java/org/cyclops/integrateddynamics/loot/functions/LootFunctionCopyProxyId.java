@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.loot.functions;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.cyclops.integrateddynamics.block.BlockProxy;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityProxy;
 
 import java.util.List;
@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class LootFunctionCopyProxyId extends LootItemConditionalFunction {
 
-    public static final Codec<LootFunctionCopyProxyId> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<LootFunctionCopyProxyId> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyProxyId::new)
     );
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyProxyId.CODEC);
+    public static final LootItemFunctionType<LootFunctionCopyProxyId> TYPE = new LootItemFunctionType<>(LootFunctionCopyProxyId.CODEC);
 
     protected LootFunctionCopyProxyId(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -33,7 +33,7 @@ public class LootFunctionCopyProxyId extends LootItemConditionalFunction {
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
         BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityProxy) {
-            itemStack.getOrCreateTag().putInt(BlockProxy.NBT_ID, ((BlockEntityProxy) tile).getProxyId());
+            itemStack.set(RegistryEntries.DATACOMPONENT_PROXY_ID, ((BlockEntityProxy) tile).getProxyId());
         }
         return itemStack;
     }

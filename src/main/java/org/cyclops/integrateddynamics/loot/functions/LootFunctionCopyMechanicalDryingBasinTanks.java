@@ -1,8 +1,7 @@
 package org.cyclops.integrateddynamics.loot.functions;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -10,7 +9,9 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.cyclops.integrateddynamics.block.BlockMechanicalDryingBasin;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
+import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalDryingBasin;
 
 import java.util.List;
@@ -21,10 +22,10 @@ import java.util.List;
  */
 public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditionalFunction {
 
-    public static final Codec<LootFunctionCopyMechanicalDryingBasinTanks> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<LootFunctionCopyMechanicalDryingBasinTanks> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalDryingBasinTanks::new)
     );
-    public static final LootItemFunctionType TYPE = new LootItemFunctionType(LootFunctionCopyMechanicalDryingBasinTanks.CODEC);
+    public static final LootItemFunctionType<LootFunctionCopyMechanicalDryingBasinTanks> TYPE = new LootItemFunctionType<>(LootFunctionCopyMechanicalDryingBasinTanks.CODEC);
 
     protected LootFunctionCopyMechanicalDryingBasinTanks(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -34,8 +35,10 @@ public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditio
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
         BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalDryingBasin) {
-            itemStack.getOrCreateTag().put(BlockMechanicalDryingBasin.NBT_TANK_IN, ((BlockEntityMechanicalDryingBasin) tile).getTankInput().writeToNBT(new CompoundTag()));
-            itemStack.getOrCreateTag().put(BlockMechanicalDryingBasin.NBT_TANK_OUT, ((BlockEntityMechanicalDryingBasin) tile).getTankOutput().writeToNBT(new CompoundTag()));
+            itemStack.set(RegistryEntries.DATACOMPONENT_FLUID_CONTENT_IN_OUT, Pair.of(
+                    SimpleFluidContent.copyOf(((BlockEntityMechanicalDryingBasin) tile).getTankInput().getFluid()),
+                    SimpleFluidContent.copyOf(((BlockEntityMechanicalDryingBasin) tile).getTankOutput().getFluid())
+            ));
         }
         return itemStack;
     }

@@ -32,9 +32,11 @@ public interface IPartState<P extends IPartType> {
 
     /**
      * Write a state to NBT.
-     * @param tag The tag to write to.
+     *
+     * @param valueDeseralizationContext
+     * @param tag                        The tag to write to.
      */
-    public void writeToNBT(CompoundTag tag);
+    public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag);
 
     /**
      * Read a state from NBT.

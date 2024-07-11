@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -151,12 +152,12 @@ public class PartHelpers {
      * @param partData The part data.
      * @return If the writing succeeded.
      */
-    public static boolean writePartToNBT(BlockPos pos, CompoundTag partTag, Pair<Direction, PartStateHolder<?, ?>> partData) {
+    public static boolean writePartToNBT(ValueDeseralizationContext valueDeseralizationContext, BlockPos pos, CompoundTag partTag, Pair<Direction, PartStateHolder<?, ?>> partData) {
         IPartType part = partData.getValue().getPart();
         IPartState partState = partData.getValue().getState();
         writePartTypeToNBT(partTag, partData.getKey(), part);
         try {
-            part.toNBT(partTag, partState);
+            part.toNBT(valueDeseralizationContext, partTag, partState);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,11 +173,11 @@ public class PartHelpers {
      * @param tag The tag to write to.
      * @param partData The part data.
      */
-    public static void writePartsToNBT(BlockPos pos, CompoundTag tag, Map<Direction, PartStateHolder<?, ?>> partData) {
+    public static void writePartsToNBT(ValueDeseralizationContext valueDeseralizationContext, BlockPos pos, CompoundTag tag, Map<Direction, PartStateHolder<?, ?>> partData) {
         ListTag partList = new ListTag();
         for(Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
             CompoundTag partTag = new CompoundTag();
-            if(writePartToNBT(pos, partTag, Pair.<Direction, PartStateHolder<?, ?>>of(entry.getKey(), entry.getValue()))) {
+            if(writePartToNBT(valueDeseralizationContext, pos, partTag, Pair.<Direction, PartStateHolder<?, ?>>of(entry.getKey(), entry.getValue()))) {
                 partList.add(partTag);
             }
         }
@@ -192,7 +193,7 @@ public class PartHelpers {
      */
     public static Pair<Direction, IPartType> readPartTypeFromNBT(@Nullable INetwork network, BlockPos pos, CompoundTag partTag) {
         String partTypeName = partTag.getString("__partType");
-        IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(new ResourceLocation(partTypeName)));
+        IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(ResourceLocation.parse(partTypeName)));
         if(partType != null) {
             Direction side = Direction.byName(partTag.getString("__side"));
             if (side != null) {
@@ -489,7 +490,7 @@ public class PartHelpers {
      * @param packetBuffer A packet buffer.
      * @return A part target.
      */
-    public static PartTarget readPartTarget(FriendlyByteBuf packetBuffer) {
+    public static PartTarget readPartTarget(RegistryFriendlyByteBuf packetBuffer) {
         return PartTarget.fromCenter(PacketCodec.read(packetBuffer, PartPos.class));
     }
 
@@ -502,7 +503,7 @@ public class PartHelpers {
      */
     public static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(FriendlyByteBuf packetBuffer) {
         String name = packetBuffer.readUtf();
-        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(new ResourceLocation(name)),
+        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(ResourceLocation.parse(name)),
                 String.format("Could not find a part by name %s", name));
     }
 

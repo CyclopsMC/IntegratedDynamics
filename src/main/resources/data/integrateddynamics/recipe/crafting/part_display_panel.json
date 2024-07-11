@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "PVP",
+    " B "
+  ],
+  "key": {
+    "B": {
+      "item": "integrateddynamics:menril_berries"
+    },
+    "P": {
+      "item": "integrateddynamics:part_static_light_panel"
+    },
+    "V": {
+      "item": "integrateddynamics:variable_transformer_output"
+    }
+  },
+  "result": {
+    "id": "integrateddynamics:part_display_panel"
+  }
+}

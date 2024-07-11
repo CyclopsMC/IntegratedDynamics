@@ -1,14 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderSet;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.Block;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author rubensworks
@@ -16,14 +14,14 @@ import java.util.Optional;
 public class ValueDeseralizationContextMocked {
 
     public static ValueDeseralizationContext get() {
-        return new ValueDeseralizationContext(new HolderGetter<Block>() {
+        return new ValueDeseralizationContext(new HolderLookup.Provider() {
             @Override
-            public Optional<Holder.Reference<Block>> get(ResourceKey<Block> p_255645_) {
-                return Optional.empty();
+            public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
+                return Stream.empty();
             }
 
             @Override
-            public Optional<HolderSet.Named<Block>> get(TagKey<Block> p_256283_) {
+            public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(ResourceKey<? extends Registry<? extends T>> p_256285_) {
                 return Optional.empty();
             }
         });

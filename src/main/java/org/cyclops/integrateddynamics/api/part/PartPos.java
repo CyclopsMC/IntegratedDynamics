@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -21,13 +21,13 @@ public class PartPos implements Comparable<PartPos> {
         PacketCodec.addCodedAction(PartPos.class, new PacketCodec.ICodecAction() {
 
             @Override
-            public void encode(Object object, FriendlyByteBuf packetBuffer) {
+            public void encode(Object object, RegistryFriendlyByteBuf packetBuffer) {
                 PacketCodec.write(packetBuffer, ((PartPos) object).getPos());
                 PacketCodec.write(packetBuffer, ((PartPos) object).getSide());
             }
 
             @Override
-            public Object decode(FriendlyByteBuf packetBuffer) {
+            public Object decode(RegistryFriendlyByteBuf packetBuffer) {
                 DimPos pos = PacketCodec.read(packetBuffer, DimPos.class);
                 Direction side = PacketCodec.read(packetBuffer, Direction.class);
                 return PartPos.of(pos, side);

@@ -1,8 +1,9 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
@@ -12,26 +13,24 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
  */
 public class RecipeSerializerNbtClear implements RecipeSerializer<RecipeNbtClear> {
 
-    public static final Codec<RecipeNbtClear> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<RecipeNbtClear> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
                             Ingredient.CODEC_NONEMPTY.fieldOf("item").forGetter(RecipeNbtClear::getInputIngredient)
                     )
                     .apply(builder, RecipeNbtClear::new)
     );
+    public static final StreamCodec<RegistryFriendlyByteBuf, RecipeNbtClear> STREAM_CODEC = StreamCodec.composite(
+            Ingredient.CONTENTS_STREAM_CODEC, RecipeNbtClear::getInputIngredient,
+            RecipeNbtClear::new
+    );
 
     @Override
-    public Codec<RecipeNbtClear> codec() {
+    public MapCodec<RecipeNbtClear> codec() {
         return CODEC;
     }
 
     @Override
-    public RecipeNbtClear fromNetwork(FriendlyByteBuf buffer) {
-        Ingredient inputIngredient = Ingredient.fromNetwork(buffer);
-        return new RecipeNbtClear(inputIngredient);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer, RecipeNbtClear recipe) {
-        recipe.getInputIngredient().toNetwork(buffer);
+    public StreamCodec<RegistryFriendlyByteBuf, RecipeNbtClear> streamCodec() {
+        return STREAM_CODEC;
     }
 }

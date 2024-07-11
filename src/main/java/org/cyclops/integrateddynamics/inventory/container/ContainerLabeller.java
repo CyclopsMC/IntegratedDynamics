@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -48,7 +49,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
                 IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
                 IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(inventory.player.level()), itemStack);
                 String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
-                if(label == null && !itemStack.isEmpty() && itemStack.hasCustomHoverName()) {
+                if(label == null && !itemStack.isEmpty() && itemStack.has(DataComponents.CUSTOM_NAME)) {
                     label = itemStack.getHoverName().getString();
                 }
                 if(label != null) {
@@ -92,9 +93,9 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         ItemStack itemStack = getItemStack();
         if(!itemStack.isEmpty()) {
             if (StringUtils.isBlank(name)) {
-                itemStack.resetHoverName();
+                itemStack.remove(DataComponents.CUSTOM_NAME);
             } else {
-                itemStack.setHoverName(Component.literal(name));
+                itemStack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
             }
         }
     }

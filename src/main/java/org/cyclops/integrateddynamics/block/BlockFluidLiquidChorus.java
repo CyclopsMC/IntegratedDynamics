@@ -19,7 +19,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 public class BlockFluidLiquidChorus extends LiquidBlock {
 
     public BlockFluidLiquidChorus(Block.Properties builder) {
-        super(RegistryEntries.FLUID_LIQUID_CHORUS::get, builder);
+        super(RegistryEntries.FLUID_LIQUID_CHORUS.get(), builder);
     }
 
     @Override

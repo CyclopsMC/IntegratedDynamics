@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -111,16 +112,16 @@ public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockE
 
 
     @Override
-    public void read(CompoundTag tag) {
-        super.read(tag);
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+        super.read(tag, provider);
         connected.clear();
-        inventory.readFromNBT(tag, "inventory");
+        inventory.readFromNBT(provider, tag, "inventory");
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        inventory.writeToNBT(tag, "inventory");
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        inventory.writeToNBT(provider, tag, "inventory");
+        super.saveAdditional(tag, provider);
     }
 
     /**

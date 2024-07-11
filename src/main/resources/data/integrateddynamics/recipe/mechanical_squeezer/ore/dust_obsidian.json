@@ -1,0 +1,24 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": {
+    "item": "minecraft:obsidian"
+  },
+  "output_items": [
+    {
+      "tag": {
+        "tag": "c:dusts/obsidian",
+        "count": 2
+      }
+    }
+  ],
+  "duration": 60,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:dusts/obsidian"
+      }
+    }
+  ]
+}

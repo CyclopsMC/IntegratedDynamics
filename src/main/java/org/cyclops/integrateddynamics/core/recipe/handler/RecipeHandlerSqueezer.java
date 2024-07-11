@@ -3,9 +3,8 @@ package org.cyclops.integrateddynamics.core.recipe.handler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * @author rubensworks
  */
-public class RecipeHandlerSqueezer<T extends RecipeSqueezer> extends RecipeHandlerRecipeType<Container, T> {
+public class RecipeHandlerSqueezer<T extends RecipeSqueezer> extends RecipeHandlerRecipeType<CraftingInput, T> {
 
     public RecipeHandlerSqueezer(Supplier<Level> worldSupplier, RecipeType<T> recipeType) {
         super(worldSupplier,
@@ -36,10 +35,8 @@ public class RecipeHandlerSqueezer<T extends RecipeSqueezer> extends RecipeHandl
 
     @Nullable
     @Override
-    protected Container getRecipeInputContainer(IMixedIngredients input) {
-        Container inventory = new SimpleContainer(1);
-        inventory.setItem(0, input.getInstances(IngredientComponent.ITEMSTACK).get(0));
-        return inventory;
+    protected CraftingInput getRecipeInputContainer(IMixedIngredients input) {
+        return CraftingInput.of(1, 1, Lists.newArrayList(input.getInstances(IngredientComponent.ITEMSTACK).get(0)));
     }
 
     @Nullable

@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -95,8 +96,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
             public boolean isKeyEqual(Pair<ItemStack, FluidStack> cacheKey, Pair<ItemStack, FluidStack> newKey) {
                 return cacheKey == null || newKey == null ||
                         (ItemStack.matches(cacheKey.getLeft(), newKey.getLeft()) &&
-                                FluidStack.areFluidStackTagsEqual(cacheKey.getRight(), newKey.getRight())) &&
-                                FluidHelpers.getAmount(cacheKey.getRight()) == FluidHelpers.getAmount(newKey.getRight());
+                                FluidStack.matches(cacheKey.getRight(), newKey.getRight()));
             }
         });
     }
@@ -152,17 +152,17 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
     }
 
     @Override
-    public void read(CompoundTag tag) {
-        inventory.readFromNBT(tag, "inventory");
-        tank.readFromNBT(tag, "tank");
-        super.read(tag);
+    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+        inventory.readFromNBT(provider, tag, "inventory");
+        tank.readFromNBT(provider, tag, "tank");
+        super.read(tag, provider);
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        inventory.writeToNBT(tag, "inventory");
-        tank.writeToNBT(tag, "tank");
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        inventory.writeToNBT(provider, tag, "inventory");
+        tank.writeToNBT(provider, tag, "tank");
+        super.saveAdditional(tag, provider);
     }
 
     protected RecipeType<RecipeDryingBasin> getRegistry() {

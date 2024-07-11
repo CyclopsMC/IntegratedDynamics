@@ -17,7 +17,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -164,7 +163,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     @OnlyIn(Dist.CLIENT)
     public void postTextureStitch(TextureAtlasStitchedEvent event) {
         if (event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS)) {
-            texture = event.getAtlas().getSprite(new ResourceLocation(Reference.MOD_ID, "block/cable"));
+            texture = event.getAtlas().getSprite(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/cable"));
         }
     }
 
@@ -249,7 +248,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         /*
             Wrench: sneak + right-click anywhere on cable to remove cable
                     right-click on a cable side to disconnect on that side
@@ -261,13 +260,13 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
             BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, CollisionContext.of(player))
                     .rayTrace(pos, player);
             if(rayTraceResult != null) {
-                InteractionResult actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, hand, rayTraceResult);
+                InteractionResult actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, player.getUsedItemHand(), rayTraceResult);
                 if (actionResultType.consumesAction()) {
                     return actionResultType;
                 }
             }
         }
-        return super.use(state, world, pos, player, hand, hit);
+        return super.useWithoutItem(state, world, pos, player, hit);
     }
 
     @Override
