@@ -66,7 +66,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         CompoundTag tag = new CompoundTag();
         ItemStack itemStack = value.getRawValue();
         if(!itemStack.isEmpty()) {
-            tag.putInt("Count", itemStack.getCount());
+            tag.putInt("count", itemStack.getCount());
             return itemStack.save(valueDeseralizationContext.holderLookupProvider(), tag);
         }
         return tag;
@@ -78,10 +78,10 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             CompoundTag tag = (CompoundTag) value;
             // Forge returns air for tags with negative count,
             // so we set it to 1 for deserialization and fix it afterwards.
-            int realCount = tag.getInt("Count");
+            int realCount = tag.getInt("count");
             // Consider the tag immutable, to avoid changes elsewhere
             tag = tag.copy();
-            tag.putByte("Count", (byte)1);
+            tag.putInt("count", 1);
             ItemStack itemStack = ItemStack.parseOptional(valueDeseralizationContext.holderLookupProvider(), tag);
             if (!itemStack.isEmpty()) {
                 itemStack.setCount(realCount);
