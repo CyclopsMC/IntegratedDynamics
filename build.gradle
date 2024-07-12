@@ -398,3 +398,13 @@ compileJava.dependsOn updateGitHooks
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+// The following is required to fix running unit tests during build phase
+tasks.configureEach { task ->
+    if (task.name.startsWith("test")) {
+        task.enabled = true
+    }
+    if (task.name.startsWith("testJunit")) {
+        task.enabled = false
+    }
+}
