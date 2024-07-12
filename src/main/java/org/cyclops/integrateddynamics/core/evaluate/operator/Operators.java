@@ -1523,7 +1523,7 @@ public final class Operators {
      * If the data components of the given stacks are equal.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISDATAEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
-            .output(ValueTypes.BOOLEAN).symbol("=DATA=").operatorName("isdataequal").interactName("isDataEqual")
+            .output(ValueTypes.BOOLEAN).symbol("=NBT=").operatorName("isnbtequal").interactName("isNbtEqual")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack valueStack0 = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeItemStack.ValueItemStack valueStack1 = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
@@ -1542,7 +1542,7 @@ public final class Operators {
      * If the raw items of the given stacks are equal, ignoring data components but including damage value.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISITEMEQUALNODATA = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
-            .output(ValueTypes.BOOLEAN).symbol("=NoData=").operatorName("isitemequalnodata").interactName("isEqualNonData")
+            .output(ValueTypes.BOOLEAN).symbol("=NoNBT=").operatorName("isitemequalnonbt").interactName("isEqualNonNbt")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack valueStack0 = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ValueObjectTypeItemStack.ValueItemStack valueStack1 = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
@@ -1805,7 +1805,7 @@ public final class Operators {
      * Item Stack size operator with one input itemstack and one output NBT tag.
      */
     public static final IOperator OBJECT_ITEMSTACK_DATA = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.NBT).symbol("Data()").operatorName("data").interactName("data")
+            .output(ValueTypes.NBT).symbol("NBT()").operatorName("nbt").interactName("nbt")
             .function(input -> {
                 ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 // Explicitly check for item emptiness first, because vanilla sometimes persists NBT when setting stacks to empty
@@ -1815,10 +1815,10 @@ public final class Operators {
             }).build());
 
     /**
-     * Item Stack has_data operator with one input itemstack and one output boolean.
+     * Item Stack has_nbt operator with one input itemstack and one output boolean.
      */
     public static final IOperator OBJECT_ITEMSTACK_HASDATA = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_PREFIX_LONG
-            .output(ValueTypes.BOOLEAN).symbol("has_data").operatorName("hasdata").interactName("hasData")
+            .output(ValueTypes.BOOLEAN).symbol("has_nbt").operatorName("hasnbt").interactName("hasNbt")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                     itemStack -> !itemStack.isEmpty() && itemStack.getComponents().stream().anyMatch(t -> !t.type().isTransient())
             )).build());
@@ -2519,7 +2519,7 @@ public final class Operators {
      * The tag of the given fluidstack.
      */
     public static final IOperator OBJECT_FLUIDSTACK_DATA = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.NBT).symbol("Data()").operatorInteract("data")
+            .output(ValueTypes.NBT).symbol("NBT()").operatorInteract("nbt")
             .function(input -> {
                 ValueObjectTypeFluidStack.ValueFluidStack fluidStack = input.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 if (fluidStack.getRawValue().getComponentsPatch().isEmpty()) {
