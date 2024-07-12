@@ -15,7 +15,7 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 public record ValueDeseralizationContext(HolderLookup.Provider holderLookupProvider) {
     public static ValueDeseralizationContext of(Level level) {
         if (level == null) {
-            return ofAllEnabled();
+            return new ValueDeseralizationContext(ServerLifecycleHooks.getCurrentServer().registryAccess());
         }
         return new ValueDeseralizationContext(level.registryAccess());
     }
