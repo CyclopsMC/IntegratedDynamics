@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:squeezer"
+      "id": "integrateddynamics:squeezer"
     },
     "title": {
       "translate": "advancement.integrateddynamics.squeezing"

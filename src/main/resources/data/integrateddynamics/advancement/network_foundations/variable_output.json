@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:variable_transformer_output"
+      "id": "integrateddynamics:variable_transformer_output"
     },
     "title": {
       "translate": "advancement.integrateddynamics.variable_output"

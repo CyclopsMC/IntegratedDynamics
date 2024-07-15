@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:crystalized_menril_block"
+      "id": "integrateddynamics:crystalized_menril_block"
     },
     "title": {
       "translate": "advancement.integrateddynamics.menril_production"

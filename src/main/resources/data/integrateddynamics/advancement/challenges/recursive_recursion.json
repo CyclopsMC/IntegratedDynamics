@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:variable",
+      "id": "integrateddynamics:variable",
       "nbt": "{_type:\"integrateddynamics:valuetype\",typeName:\"integrateddynamics:list\",_id:1,value:{proxyName:\"integrateddynamics:materialized\",serialized:{valueType:\"integrateddynamics:integer\",values:[1,10,100]}}}"
     },
     "title": {

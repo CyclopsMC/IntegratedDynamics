@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:variable_transformer_input"
+      "id": "integrateddynamics:variable_transformer_input"
     },
     "title": {
       "translate": "advancement.integrateddynamics.variable_input"

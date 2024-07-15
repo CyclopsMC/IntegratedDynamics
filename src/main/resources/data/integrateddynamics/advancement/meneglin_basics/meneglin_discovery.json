@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:menril_log_filled"
+      "id": "integrateddynamics:menril_log_filled"
     },
     "title": {
       "translate": "advancement.integrateddynamics.meneglin_discovery"

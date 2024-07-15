@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:wet_sponge"
+      "id": "minecraft:wet_sponge"
     },
     "title": {
       "translate": "advancement.integrateddynamics.sponge_step_sound"

@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:obsidian"
+      "id": "minecraft:obsidian"
     },
     "title": {
       "translate": "advancement.integrateddynamics.tool_for_obsidian"

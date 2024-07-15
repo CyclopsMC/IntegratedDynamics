@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:variable",
+      "id": "integrateddynamics:variable",
       "nbt": "{_type:\"integrateddynamics:valuetype\",typeName:\"integrateddynamics:recipe\",_id:1,value:{output:{\"minecraft:itemstack\":[{id:\"minecraft:stone\",Count:1b}]},input:{\"minecraft:itemstack\":[{val:[{prototype:{id:\"minecraft:stone\",Count:1b},condition:1}],type:0b}]}}}"
     },
     "title": {

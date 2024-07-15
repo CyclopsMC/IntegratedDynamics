@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:materializer"
+      "id": "integrateddynamics:materializer"
     },
     "title": {
       "translate": "advancement.integrateddynamics.variable_materialization"

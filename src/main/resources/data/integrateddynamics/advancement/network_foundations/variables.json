@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:variable"
+      "id": "integrateddynamics:variable"
     },
     "title": {
       "translate": "advancement.integrateddynamics.variables"

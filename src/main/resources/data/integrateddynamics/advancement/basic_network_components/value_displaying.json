@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:part_display_panel"
+      "id": "integrateddynamics:part_display_panel"
     },
     "title": {
       "translate": "advancement.integrateddynamics.value_displaying"

@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:part_block_reader"
+      "id": "integrateddynamics:part_block_reader"
     },
     "title": {
       "translate": "advancement.integrateddynamics.block_reading"

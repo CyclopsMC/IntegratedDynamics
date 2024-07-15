@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:part_inventory_reader"
+      "id": "integrateddynamics:part_inventory_reader"
     },
     "title": {
       "translate": "advancement.integrateddynamics.inventory_reading"

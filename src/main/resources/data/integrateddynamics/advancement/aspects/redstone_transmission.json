@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:variable",
+      "id": "integrateddynamics:variable",
       "nbt": "{aspectName:\"integrateddynamics:write_integer_redstone\",partId:1,_type:\"integrateddynamics:aspect\",_id:1}"
     },
     "title": {

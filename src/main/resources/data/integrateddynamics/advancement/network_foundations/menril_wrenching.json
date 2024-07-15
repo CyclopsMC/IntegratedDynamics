@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:wrench"
+      "id": "integrateddynamics:wrench"
     },
     "title": {
       "translate": "advancement.integrateddynamics.menril_wrenching"

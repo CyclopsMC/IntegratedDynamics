@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:logic_programmer"
+      "id": "integrateddynamics:logic_programmer"
     },
     "title": {
       "translate": "advancement.integrateddynamics.logic_programming"

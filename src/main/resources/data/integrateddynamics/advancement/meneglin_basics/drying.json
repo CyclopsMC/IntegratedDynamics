@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:drying_basin"
+      "id": "integrateddynamics:drying_basin"
     },
     "title": {
       "translate": "advancement.integrateddynamics.drying"

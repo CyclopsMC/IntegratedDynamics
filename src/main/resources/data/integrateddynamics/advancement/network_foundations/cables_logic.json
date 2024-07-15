@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:cable"
+      "id": "integrateddynamics:cable"
     },
     "title": {
       "translate": "advancement.integrateddynamics.cables_logic"

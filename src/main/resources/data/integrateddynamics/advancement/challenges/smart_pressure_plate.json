@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "integrateddynamics:variable",
+      "id": "integrateddynamics:variable",
       "nbt": "{_type:\"integrateddynamics:aspect\",aspectName:\"integrateddynamics:read_entity_entity\",_id:1,partIds:1}"
     },
     "title": {
