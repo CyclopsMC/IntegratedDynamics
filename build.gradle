@@ -259,7 +259,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 shadowJar {
     configurations = [project.configurations.shadow]
     archiveClassifier.set('') // Replace the default JAR
-    append 'META-INF/mods.toml'
+    append 'META-INF/neoforge.mods.toml'
     relocate 'com.google.re2j', 'vendors.com.google.re2j' // Because Forge blocks all com.google.* class loading...
     // To avoid clashes with other mods
     relocate 'io.netty.handler.codec.http', 'org.cyclops.integrateddynamics.vendors.io.netty.handler.codec.http'
