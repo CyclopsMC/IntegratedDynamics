@@ -141,6 +141,13 @@ minecraft {
 	}
 }
 
+subsystems {
+    parchment {
+        minecraftVersion = "${project.minecraft_version}"
+        mappingsVersion = "${project.parchment_version}"
+    }
+}
+
 runs {
     configureEach {
 		systemProperty 'forge.logging.markers', 'REGISTRIES'
