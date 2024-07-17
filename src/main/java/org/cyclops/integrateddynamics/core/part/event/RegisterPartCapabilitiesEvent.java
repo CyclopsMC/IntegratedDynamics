@@ -38,10 +38,13 @@ public class RegisterPartCapabilitiesEvent extends Event implements IModBusEvent
                 blockEntityType,
                 (blockEntity, context) -> {
                     INetwork network = blockEntity.getNetwork();
-                    IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
-                    return blockEntity.getPartContainer()
-                            .getCapability(partCapability, network, partNetwork, PartTarget.fromCenter(PartPos.of(blockEntity.getLevel(), blockEntity.getBlockPos(), context)))
-                            .orElse(null);
+                    if (network != null) {
+                        IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
+                        return blockEntity.getPartContainer()
+                                .getCapability(partCapability, network, partNetwork, PartTarget.fromCenter(PartPos.of(blockEntity.getLevel(), blockEntity.getBlockPos(), context)))
+                                .orElse(null);
+                    }
+                    return null;
                 }
         );
     }
