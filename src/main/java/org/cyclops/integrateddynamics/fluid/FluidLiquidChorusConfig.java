@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.fluid;
 
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Rarity;
+import net.neoforged.neoforge.common.SoundActions;
 import org.cyclops.cyclopscore.config.extendedconfig.FluidConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -22,6 +24,10 @@ public class FluidLiquidChorusConfig extends FluidConfig {
                                 .density(1500)
                                 .viscosity(3000)
                                 .rarity(Rarity.EPIC)
+                                .supportsBoating(true)
+                                .canHydrate(true)
+                                .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                                .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
                                 .descriptionId("block.integrateddynamics.block_liquid_chorus"))
                         .bucket(RegistryEntries.ITEM_BUCKET_LIQUID_CHORUS::get)
                         .block(RegistryEntries.BLOCK_FLUID_LIQUID_CHORUS::get)
