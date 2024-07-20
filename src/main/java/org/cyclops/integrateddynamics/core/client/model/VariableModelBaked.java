@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.client.model;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -93,7 +94,7 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
             @Nullable
             @Override
             public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity, int id) {
-                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.of(world), stack);
+                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.of(world == null ? Minecraft.getInstance().level : world), stack);
                 BakedModel overrideModel = variableFacade.getVariableItemOverrideModel(model, stack, world, livingEntity);
                 if (overrideModel != null) {
                     return overrideModel;
