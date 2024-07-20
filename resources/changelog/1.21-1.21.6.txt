@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.19.1 or higher.
+
+Fixes:
+* Fix incorrect Menril Leaves and Enriched Logs loot tables, Closes #1365
+* Fix missing fluid interaction sounds, Closes #1363
+* Fix variable model render crash when level is null, Closes #1366
+
