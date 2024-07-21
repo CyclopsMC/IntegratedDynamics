@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.19.1 or higher.
+
+Fixes:
+* Interrupt speech before sending a new one to the narrator, Closes #1356
+
