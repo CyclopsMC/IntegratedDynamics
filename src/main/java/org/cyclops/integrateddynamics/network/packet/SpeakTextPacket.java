@@ -50,7 +50,7 @@ public class SpeakTextPacket extends PacketCodec {
     public void actionClient(Level world, Player player) {
         if (new Date().getTime() >= lastSay + GeneralConfig.speachMaxFrequency) {
             Narrator.getNarrator().clear();
-            Narrator.getNarrator().say(this.text, false);
+            Narrator.getNarrator().say(this.text, true);
             lastSay = new Date().getTime();
         }
     }
