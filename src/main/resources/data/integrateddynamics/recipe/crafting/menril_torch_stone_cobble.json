@@ -3,10 +3,10 @@
   "group": "integrateddynamics:menril_torch_stone",
   "ingredients": [
     {
-      "tag": "c:cobblestone"
+      "tag": "c:cobblestones"
     },
     {
-      "tag": "c:cobblestone"
+      "tag": "c:cobblestones"
     },
     {
       "item": "integrateddynamics:menril_berries"

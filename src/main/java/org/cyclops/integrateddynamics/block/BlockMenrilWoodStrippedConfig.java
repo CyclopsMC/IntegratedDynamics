@@ -46,11 +46,6 @@ public class BlockMenrilWoodStrippedConfig extends BlockConfig {
         NeoForge.EVENT_BUS.addListener(BlockMenrilWoodStrippedConfig::toolActionEvent);
     }
 
-    @Override
-    public void onRegistered() {
-
-    }
-
     public static void toolActionEvent(BlockEvent.BlockToolModificationEvent event) {
         if (event.getItemAbility() == ItemAbilities.AXE_STRIP && event.getState().getBlock() == RegistryEntries.BLOCK_MENRIL_WOOD.get()) {
             BlockState blockStateNew = RegistryEntries.BLOCK_MENRIL_WOOD_STRIPPED.get().defaultBlockState();

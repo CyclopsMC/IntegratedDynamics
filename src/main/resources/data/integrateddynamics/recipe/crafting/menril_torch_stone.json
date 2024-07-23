@@ -3,10 +3,10 @@
   "group": "integrateddynamics:menril_torch_stone",
   "ingredients": [
     {
-      "tag": "c:stone"
+      "tag": "c:stones"
     },
     {
-      "tag": "c:stone"
+      "tag": "c:stones"
     },
     {
       "item": "integrateddynamics:menril_berries"
