@@ -66,7 +66,7 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         quads.addAll(this.baseModel.getQuads(null, getRenderingSide(), this.rand, this.modelData, null));
 
         // Add variable type overlay
-        IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.of(world), itemStack);
+        IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.of(world == null ? Minecraft.getInstance().level : world), itemStack);
         variableFacade.addModelOverlay(this, quads, this.rand, this.modelData);
 
         return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.useAmbientOcclusion(), this.usesBlockLight(), this.isGui3d(),
