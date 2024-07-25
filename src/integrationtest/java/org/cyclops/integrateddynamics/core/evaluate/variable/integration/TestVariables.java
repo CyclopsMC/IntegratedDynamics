@@ -69,8 +69,8 @@ public class TestVariables {
         itemStacks.add(serializeStack(ItemStack.EMPTY));
         tag.put("minecraft:itemstack", itemStacks);
 
-        TestHelpers.assertEqual(i0.getType().serialize(ValueDeseralizationContext.ofClient(), i0.getValue()), tag, "Serialization is correct");
-        TestHelpers.assertEqual(i0.getType().deserialize(ValueDeseralizationContext.ofClient(), tag), i0.getValue(), "Deserialization is correct");
+        TestHelpers.assertEqual(i0.getType().serialize(ValueDeseralizationContext.ofAllEnabled(), i0.getValue()), tag, "Serialization is correct");
+        TestHelpers.assertEqual(i0.getType().deserialize(ValueDeseralizationContext.ofAllEnabled(), tag), i0.getValue(), "Deserialization is correct");
     }
 
     @IntegrationTest
@@ -158,8 +158,8 @@ public class TestVariables {
         tag.put("input", input);
         tag.put("inputReusable", inputReusable);
 
-        TestHelpers.assertEqual(r0.getType().serialize(ValueDeseralizationContext.ofClient(), r0.getValue()), tag, "Serialization is correct");
-        TestHelpers.assertEqual(r0.getType().deserialize(ValueDeseralizationContext.ofClient(), tag), r0.getValue(), "Deserialization is correct");
+        TestHelpers.assertEqual(r0.getType().serialize(ValueDeseralizationContext.ofAllEnabled(), r0.getValue()), tag, "Serialization is correct");
+        TestHelpers.assertEqual(r0.getType().deserialize(ValueDeseralizationContext.ofAllEnabled(), tag), r0.getValue(), "Deserialization is correct");
     }
 
 }

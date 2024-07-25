@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class CommandTest implements Command<CommandSourceStack> {
 
-    private static final String P = "org.cyclops.integrateddynamics.core.evaluate.variable.integration.";
+    public static final String P = "org.cyclops.integrateddynamics.core.evaluate.variable.integration.";
     public static final List<String> CLASSES = ImmutableList.of(
             P + "TestVariables",
             P + "TestBlockOperators",

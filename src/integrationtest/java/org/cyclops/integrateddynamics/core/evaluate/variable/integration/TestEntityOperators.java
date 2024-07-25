@@ -1,8 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -18,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -33,6 +37,8 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
+
+import java.util.UUID;
 
 /**
  * Test the different logical operators.
@@ -105,7 +111,16 @@ public class TestEntityOperators {
         eChicken = new DummyVariableEntity(makeEntity(new Chicken(EntityType.CHICKEN, world)));
         eItem = new DummyVariableEntity(makeEntity(new ItemEntity(world, 0, 0, 0, ItemStack.EMPTY)));
         eItemFrame = new DummyVariableEntity(makeEntity(new ItemFrame(world, new BlockPos(0, 0, 0), Direction.NORTH)));
-        ePlayer = new DummyVariableEntity(makeEntity(world.players().get(0)));
+        if (MinecraftHelpers.isClientSide()) {
+            ePlayer = new DummyVariableEntity(makeEntity(world.players().get(0)));
+        } else {
+            ePlayer = new DummyVariableEntity(makeEntity(new ServerPlayer(
+                    ServerLifecycleHooks.getCurrentServer(),
+                    ServerLifecycleHooks.getCurrentServer().overworld(),
+                    new GameProfile(UUID.randomUUID(), "test"),
+                    ClientInformation.createDefault()
+            )));
+        }
         Zombie zombieHeldItems = new Zombie(world);
         zombieHeldItems.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.APPLE));
         zombieHeldItems.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.POTATO));
