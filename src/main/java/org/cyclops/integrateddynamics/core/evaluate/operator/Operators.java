@@ -12,7 +12,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Lombok;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
@@ -1824,6 +1826,90 @@ public final class Operators {
             )).build());
 
     /**
+     * Get the data component keys of an itemstack.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_DATA_KEYS = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbol("data_keys").operatorName("datakeys").interactName("dataKeys")
+            .function(input -> {
+                ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
+                // Explicitly check for item emptiness first, because vanilla sometimes persists NBT when setting stacks to empty
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
+                        itemStack.getRawValue().isEmpty() ?
+                                Lists.newArrayList() :
+                                itemStack.getRawValue().getComponents().keySet().stream()
+                                        .filter(c -> !c.isTransient())
+                                        .map(c -> ValueTypeString.ValueString.of(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c).toString()))
+                                        .sorted((o1, o2) -> o1.getRawValue().compareTo(o2.getRawValue()))
+                                        .toList());
+            }).build());
+
+    /**
+     * Get the data component value by key
+     */
+    public static final IOperator OBJECT_ITEMSTACK_DATA_VALUE = REGISTRY.register(OperatorBuilders.ITEMSTACK_2_LONG
+            .inputTypes(ValueTypes.OBJECT_ITEMSTACK, ValueTypes.STRING)
+            .output(ValueTypes.NBT).symbol("data_value").operatorName("datavalue").interactName("dataValue")
+            .function(input -> {
+                ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
+
+                // Determine data component type
+                DataComponentType<?> dataComponentType;
+                try {
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                } catch (ResourceLocationException e) {
+                    throw new EvaluationException(Component.literal(e.getMessage()));
+                }
+
+                // Fetch component value
+                TypedDataComponent<?> typedComponent = itemStack.getRawValue().getComponents().getTyped(dataComponentType);
+                if (typedComponent == null) {
+                    return ValueTypeNbt.ValueNbt.of((Tag) null);
+                }
+
+                // Encode component value
+                try {
+                    Tag tag = typedComponent.encodeValue(ServerLifecycleHooks.getCurrentServer().registryAccess().createSerializationContext(NbtOps.INSTANCE)).getOrThrow();
+                    return ValueTypeNbt.ValueNbt.of(tag);
+                } catch (IllegalStateException e) {
+                    return ValueTypeNbt.ValueNbt.of((Tag) null);
+                }
+            }).build());
+
+    /**
+     * Get the data component value by key
+     */
+    public static final IOperator OBJECT_ITEMSTACK_WITH_DATA = REGISTRY.register(OperatorBuilders.ITEMSTACK_3
+            .inputTypes(ValueTypes.OBJECT_ITEMSTACK, ValueTypes.STRING, ValueTypes.NBT)
+            .output(ValueTypes.NBT).symbol("with_data").operatorName("withdata").interactName("withData")
+            .function(input -> {
+                ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
+
+                // Skip further processing if input value is empty
+                Optional<Tag> tagOptional = input.getValue(2, ValueTypes.NBT).getRawValue();
+                if (!tagOptional.isPresent()) {
+                    return itemStack;
+                }
+
+                // Determine data component type
+                DataComponentType<?> dataComponentType;
+                try {
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                } catch (ResourceLocationException e) {
+                    throw new EvaluationException(Component.literal(e.getMessage()));
+                }
+
+                // Encode component value
+                try {
+                    Object value = dataComponentType.codec().decode(ServerLifecycleHooks.getCurrentServer().registryAccess().createSerializationContext(NbtOps.INSTANCE), tagOptional.get()).getOrThrow().getFirst();
+                    itemStack = ValueObjectTypeItemStack.ValueItemStack.of(itemStack.getRawValue().copy());
+                    itemStack.getRawValue().set((DataComponentType) dataComponentType, value);
+                    return itemStack;
+                } catch (IllegalStateException e) {
+                    throw new EvaluationException(Component.literal(e.getMessage()));
+                }
+            }).build());
+
+    /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
      */
 
@@ -2540,6 +2626,90 @@ public final class Operators {
                 FluidStack fluidStack = valueFluidStack.getRawValue().copy();
                 fluidStack.setAmount(valueInteger.getRawValue());
                 return ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack);
+            }).build());
+
+    /**
+     * Get the data component keys of an fluidstack.
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_DATA_KEYS = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbol("data_keys").operatorName("datakeys").interactName("dataKeys")
+            .function(input -> {
+                ValueObjectTypeFluidStack.ValueFluidStack fluidStack = input.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+                // Explicitly check for fluid emptiness first, because vanilla sometimes persists NBT when setting stacks to empty
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
+                        fluidStack.getRawValue().isEmpty() ?
+                                Lists.newArrayList() :
+                                fluidStack.getRawValue().getComponents().keySet().stream()
+                                        .filter(c -> !c.isTransient())
+                                        .map(c -> ValueTypeString.ValueString.of(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c).toString()))
+                                        .sorted((o1, o2) -> o1.getRawValue().compareTo(o2.getRawValue()))
+                                        .toList());
+            }).build());
+
+    /**
+     * Get the data component value by key
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_DATA_VALUE = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2_LONG
+            .inputTypes(ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.STRING)
+            .output(ValueTypes.NBT).symbol("data_value").operatorName("datavalue").interactName("dataValue")
+            .function(input -> {
+                ValueObjectTypeFluidStack.ValueFluidStack fluidStack = input.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+
+                // Determine data component type
+                DataComponentType<?> dataComponentType;
+                try {
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                } catch (ResourceLocationException e) {
+                    throw new EvaluationException(Component.literal(e.getMessage()));
+                }
+
+                // Fetch component value
+                TypedDataComponent<?> typedComponent = fluidStack.getRawValue().getComponents().getTyped(dataComponentType);
+                if (typedComponent == null) {
+                    return ValueTypeNbt.ValueNbt.of((Tag) null);
+                }
+
+                // Encode component value
+                try {
+                    Tag tag = typedComponent.encodeValue(ServerLifecycleHooks.getCurrentServer().registryAccess().createSerializationContext(NbtOps.INSTANCE)).getOrThrow();
+                    return ValueTypeNbt.ValueNbt.of(tag);
+                } catch (IllegalStateException e) {
+                    return ValueTypeNbt.ValueNbt.of((Tag) null);
+                }
+            }).build());
+
+    /**
+     * Get the data component value by key
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_WITH_DATA = REGISTRY.register(OperatorBuilders.FLUIDSTACK_3
+            .inputTypes(ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.STRING, ValueTypes.NBT)
+            .output(ValueTypes.NBT).symbol("with_data").operatorName("withdata").interactName("withData")
+            .function(input -> {
+                ValueObjectTypeFluidStack.ValueFluidStack fluidStack = input.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+
+                // Skip further processing if input value is empty
+                Optional<Tag> tagOptional = input.getValue(2, ValueTypes.NBT).getRawValue();
+                if (!tagOptional.isPresent()) {
+                    return fluidStack;
+                }
+
+                // Determine data component type
+                DataComponentType<?> dataComponentType;
+                try {
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                } catch (ResourceLocationException e) {
+                    throw new EvaluationException(Component.literal(e.getMessage()));
+                }
+
+                // Encode component value
+                try {
+                    Object value = dataComponentType.codec().decode(ServerLifecycleHooks.getCurrentServer().registryAccess().createSerializationContext(NbtOps.INSTANCE), tagOptional.get()).getOrThrow().getFirst();
+                    fluidStack = ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack.getRawValue().copy());
+                    fluidStack.getRawValue().set((DataComponentType) dataComponentType, value);
+                    return fluidStack;
+                } catch (IllegalStateException e) {
+                    throw new EvaluationException(Component.literal(e.getMessage()));
+                }
             }).build());
 
     /**

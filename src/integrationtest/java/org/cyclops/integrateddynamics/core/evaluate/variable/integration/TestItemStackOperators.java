@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
@@ -63,6 +64,7 @@ public class TestItemStackOperators {
     private DummyVariableBlock bObsidian;
 
     private DummyVariable<ValueTypeString.ValueString> sPlankWood;
+    private DummyVariable<ValueTypeString.ValueString> sMaxStackSize;
 
     private DummyVariable<ValueTypeInteger.ValueInteger> int100;
     private DummyVariable<ValueTypeInteger.ValueInteger> int200;
@@ -70,6 +72,8 @@ public class TestItemStackOperators {
     private DummyVariable<ValueTypeString.ValueString> sApple;
 
     private DummyVariable<ValueTypeList.ValueList> lApples;
+
+    private DummyVariable<ValueTypeNbt.ValueNbt> t4;
 
     @IntegrationBefore
     public void before() {
@@ -117,6 +121,7 @@ public class TestItemStackOperators {
         bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.defaultBlockState()));
 
         sPlankWood = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:planks"));
+        sMaxStackSize = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:max_stack_size"));
 
         int100 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(100));
         int200 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(200));
@@ -133,6 +138,8 @@ public class TestItemStackOperators {
                 iHoe100.getValue(),
                 iApple2.getValue()
         ));
+
+        t4 = new DummyVariable<>(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(IntTag.valueOf(4)));
     }
 
     /**
@@ -1176,6 +1183,107 @@ public class TestItemStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeHasNbt() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_HASDATA.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- DATA_KEYS -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackDataKeys() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_DATA_KEYS.evaluate(new IVariable[]{iAppleNoData});
+        Asserts.check(res1 instanceof ValueTypeList.ValueList<?,?>, "result is a list");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res1).getRawValue().getLength(), 0, "datakeys(apple) = []");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_DATA_KEYS.evaluate(new IVariable[]{iAppleTag});
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res2).getRawValue().getLength(), 8, "datakeys(appleTag).length = 8");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(0))).getRawValue(), "minecraft:attribute_modifiers", "datakeys(appleTag)[0] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(1))).getRawValue(), "minecraft:enchantments", "datakeys(appleTag)[1] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(2))).getRawValue(), "minecraft:food", "datakeys(appleTag)[2] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(3))).getRawValue(), "minecraft:lore", "datakeys(appleTag)[3] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(4))).getRawValue(), "minecraft:max_stack_size", "datakeys(appleTag)[4] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(5))).getRawValue(), "minecraft:ominous_bottle_amplifier", "datakeys(appleTag)[5] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(6))).getRawValue(), "minecraft:rarity", "datakeys(appleTag)[6] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(7))).getRawValue(), "minecraft:repair_cost", "datakeys(appleTag)[7] == ...");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputDataKeysDataKeysLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_DATA_KEYS.evaluate(new IVariable[]{iApple, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputDataKeysDataKeysSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_DATA_KEYS.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeDataKeys() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_DATA_KEYS.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- DATA_VALUE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackDataValue() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_DATA_VALUE.evaluate(new IVariable[]{iAppleNoData, sMaxStackSize});
+        Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an empty tag");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().isEmpty(), true, "datavalue(apple, maxstacksize) = empty");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_DATA_VALUE.evaluate(new IVariable[]{iAppleTag, sMaxStackSize});
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), IntTag.valueOf(64), "datavalue(appleTag, maxstacksize).length = 64");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputDataValueDataValueLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_DATA_VALUE.evaluate(new IVariable[]{iApple, sMaxStackSize, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputDataValueDataValueSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_DATA_VALUE.evaluate(new IVariable[]{iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeDataValue() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_DATA_VALUE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_DATA -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testItemStackWithData() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_WITH_DATA.evaluate(new IVariable[]{iAppleNoData, sMaxStackSize, t4});
+        Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
+        ItemStack outItem1 = ((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue();
+        TestHelpers.assertEqual(outItem1.getItem(), iAppleNoData.getValue().getRawValue().getItem(), "withdata(apple, maxstacksize, 4) = apple");
+        TestHelpers.assertNonEqual(outItem1.getComponents(), iAppleNoData.getValue().getRawValue().getComponents(), "withdata(apple, maxstacksize, 4) !=components apple");
+        TestHelpers.assertEqual(outItem1.get(DataComponents.MAX_STACK_SIZE), 4, "withdata(apple, maxstacksize, 4).maxstacksize = 4");
+
+        IValue res2 = Operators.OBJECT_ITEMSTACK_WITH_DATA.evaluate(new IVariable[]{iAppleTag, sMaxStackSize, t4});
+        ItemStack outItem2 = ((ValueObjectTypeItemStack.ValueItemStack) res2).getRawValue();
+        TestHelpers.assertEqual(outItem2.getItem(), iAppleNoData.getValue().getRawValue().getItem(), "withdata(appleTag, maxstacksize, 4) = apple");
+        TestHelpers.assertNonEqual(outItem2.getComponents(), iAppleNoData.getValue().getRawValue().getComponents(), "withdata(appleTag, maxstacksize, 4) !=components apple");
+        TestHelpers.assertEqual(outItem2.get(DataComponents.MAX_STACK_SIZE), 4, "withdata(appleTag, maxstacksize, 4).maxstacksize = 4");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputWithDataWithDataLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_DATA.evaluate(new IVariable[]{iApple, sMaxStackSize, t4, iApple});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputWithDataWithDataSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_DATA.evaluate(new IVariable[]{iApple, sMaxStackSize});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeWithData() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_DATA.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }

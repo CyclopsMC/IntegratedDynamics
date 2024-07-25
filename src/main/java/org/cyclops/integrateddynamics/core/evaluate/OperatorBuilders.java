@@ -145,6 +145,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_2 = ITEMSTACK.inputTypes(2, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.INFIX);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_2_LONG = ITEMSTACK.inputTypes(2, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.INFIX_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_1_INTEGER_1 = ITEMSTACK.inputTypes(new IValueType[]{ValueTypes.OBJECT_ITEMSTACK, ValueTypes.INTEGER}).renderPattern(IConfigRenderPattern.INFIX);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ITEMSTACK_3 = ITEMSTACK.inputTypes(3, ValueTypes.OBJECT_ITEMSTACK).renderPattern(IConfigRenderPattern.PREFIX_3_LONG);
     public static final IterativeFunction.PrePostBuilder<ItemStack, IValue> FUNCTION_ITEMSTACK = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueObjectTypeItemStack.ValueItemStack value = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
@@ -186,6 +187,8 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK = OperatorBuilder.forType(ValueTypes.OBJECT_FLUIDSTACK).appendKind("fluidstack");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_1_SUFFIX_LONG = FLUIDSTACK.inputTypes(1, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_2 = FLUIDSTACK.inputTypes(2, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.INFIX);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_2_LONG = ITEMSTACK.inputTypes(2, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.INFIX_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_3 = ITEMSTACK.inputTypes(3, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.PREFIX_3_LONG);
     public static final IterativeFunction.PrePostBuilder<FluidStack, IValue> FUNCTION_FLUIDSTACK = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueObjectTypeFluidStack.ValueFluidStack a = input.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);

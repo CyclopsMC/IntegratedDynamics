@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
@@ -18,6 +19,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFlui
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -40,6 +42,8 @@ public class TestFluidStackOperators {
     private DummyVariableFluidStack eWater100;
     private DummyVariableFluidStack eWater100Tag;
     private DummyVariable<ValueTypeInteger.ValueInteger> i99;
+    private DummyVariable<ValueTypeString.ValueString> sDamage;
+    private DummyVariable<ValueTypeNbt.ValueNbt> t4;
 
     @IntegrationBefore
     public void before() {
@@ -49,6 +53,8 @@ public class TestFluidStackOperators {
         eWater100Tag = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 100)));
         eWater100Tag.getValue().getRawValue().set(DataComponents.DAMAGE, 3);
         i99 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(99));
+        sDamage = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:damage"));
+        t4 = new DummyVariable<>(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(IntTag.valueOf(4)));
     }
 
     /**
@@ -519,6 +525,100 @@ public class TestFluidStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeWithAmount() throws EvaluationException {
         Operators.OBJECT_FLUIDSTACK_WITH_AMOUNT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- DATA_KEYS -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testFluidStackDataKeys() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_FLUIDSTACK_DATA_KEYS.evaluate(new IVariable[]{eWater100});
+        Asserts.check(res1 instanceof ValueTypeList.ValueList<?,?>, "result is a list");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res1).getRawValue().getLength(), 0, "datakeys(water) = []");
+
+        IValue res2 = Operators.OBJECT_FLUIDSTACK_DATA_KEYS.evaluate(new IVariable[]{eWater100Tag});
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res2).getRawValue().getLength(), 1, "datakeys(waterTag).length = 1");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(0))).getRawValue(), "minecraft:damage", "datakeys(waterTag)[0] == ...");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputDataKeysDataKeysLarge() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_DATA_KEYS.evaluate(new IVariable[]{eWater100Tag, eWater100Tag});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputDataKeysDataKeysSmall() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_DATA_KEYS.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeDataKeys() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_DATA_KEYS.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- DATA_VALUE -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testFluidStackDataValue() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_FLUIDSTACK_DATA_VALUE.evaluate(new IVariable[]{eWater100, sDamage});
+        Asserts.check(res1 instanceof ValueTypeNbt.ValueNbt, "result is an empty tag");
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res1).getRawValue().isEmpty(), true, "datavalue(water, damage) = empty");
+
+        IValue res2 = Operators.OBJECT_FLUIDSTACK_DATA_VALUE.evaluate(new IVariable[]{eWater100Tag, sDamage});
+        TestHelpers.assertEqual(((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), IntTag.valueOf(3), "datavalue(waterTag, damage).length = 3");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputDataValueDataValueLarge() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_DATA_VALUE.evaluate(new IVariable[]{eWater100Tag, sDamage, eWater100Tag});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputDataValueDataValueSmall() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_DATA_VALUE.evaluate(new IVariable[]{eWater100Tag});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeDataValue() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_DATA_VALUE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITH_DATA -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testFluidStackWithData() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_FLUIDSTACK_WITH_DATA.evaluate(new IVariable[]{eWater100, sDamage, t4});
+        Asserts.check(res1 instanceof ValueObjectTypeFluidStack.ValueFluidStack, "result is an fluid");
+        FluidStack outFluid1 = ((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue();
+        TestHelpers.assertEqual(outFluid1.getFluid(), eWater100.getValue().getRawValue().getFluid(), "withdata(water, damage, 4) = water");
+        TestHelpers.assertNonEqual(outFluid1.getComponents(), eWater100.getValue().getRawValue().getComponents(), "withdata(water, damage, 4) !=components water");
+        TestHelpers.assertEqual(outFluid1.get(DataComponents.DAMAGE), 4, "withdata(water, damage, 4).damage = 4");
+
+        IValue res2 = Operators.OBJECT_FLUIDSTACK_WITH_DATA.evaluate(new IVariable[]{eWater100Tag, sDamage, t4});
+        FluidStack outFluid2 = ((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue();
+        TestHelpers.assertEqual(outFluid2.getFluid(), eWater100.getValue().getRawValue().getFluid(), "withdata(waterTag, damage, 4) = water");
+        TestHelpers.assertNonEqual(outFluid2.getComponents(), eWater100.getValue().getRawValue().getComponents(), "withdata(waterTag, damage, 4) !=components water");
+        TestHelpers.assertEqual(outFluid2.get(DataComponents.DAMAGE), 4, "withdata(waterTag, damage, 4).damage = 4");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputWithDataWithDataLarge() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_DATA.evaluate(new IVariable[]{eWater100Tag, sDamage, t4, eWater100Tag});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputWithDataWithDataSmall() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_DATA.evaluate(new IVariable[]{eWater100Tag, sDamage});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeWithData() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_DATA.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
     }
 
 }
