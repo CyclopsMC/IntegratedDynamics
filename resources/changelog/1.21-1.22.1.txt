@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.19.1 or higher.
+
+Fixes:
+* Fix crash when using referenced variables in store, Closes #1370
