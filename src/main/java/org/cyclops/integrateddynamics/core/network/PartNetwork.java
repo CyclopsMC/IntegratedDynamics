@@ -28,7 +28,6 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
-import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import java.util.Iterator;
@@ -135,11 +134,10 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
                 }
             }
             // Also check parts
-            IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
             for(PartPos partPos : partPositions.values()) {
                 if (partPos.getPos().isLoaded()) {
                     IPartContainer partContainer = PartHelpers.getPartContainerChecked(partPos.getPos(), partPos.getSide());
-                    partContainer.getCapability(Capabilities.VariableContainer.PART, network, partNetwork, PartTarget.fromCenter(partPos))
+                    partContainer.getCapability(Capabilities.VariableContainer.PART, network, this, PartTarget.fromCenter(partPos))
                             .ifPresent(variableContainer -> compositeMap.addElement(variableContainer.getVariableCache()));
                 }
             }
