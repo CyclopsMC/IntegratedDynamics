@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.19.0 or higher.
+
+Fixes:
+* Fix crash when printing squeezer and drying basin recipes, Closes CyclopsMC/IntegratedTunnels#296
+* Fix crash with Sodium when placing parts, Closes CyclopsMC/IntegratedTunnels#296
+
