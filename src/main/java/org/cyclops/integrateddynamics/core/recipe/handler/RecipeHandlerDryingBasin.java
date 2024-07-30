@@ -74,7 +74,7 @@ public class RecipeHandlerDryingBasin<T extends RecipeDryingBasin> extends Recip
             outputIngredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(recipe.getOutputItemFirst()));
         }
         if (!recipe.getOutputFluid().isEmpty()) {
-            outputIngredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(recipe.getOutputFluid()));
+            outputIngredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(recipe.getOutputFluid().get()));
         }
 
         // Validate output
