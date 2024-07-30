@@ -208,7 +208,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     @Override
     public boolean canPlaceLiquid(@org.jetbrains.annotations.Nullable Player player, BlockGetter worldIn, BlockPos pos, BlockState blockState, Fluid fluidIn) {
         return !blockState.getValue(BlockStateProperties.WATERLOGGED) && fluidIn == Fluids.WATER
-                && !CableHelpers.hasFacade((Level) worldIn, pos);
+                && !(worldIn instanceof ILevelExtension levelExtension && CableHelpers.hasFacade(levelExtension, pos));
     }
 
     @Override
@@ -426,7 +426,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     @Override
     public boolean shouldDisplayFluidOverlay(BlockState state, BlockAndTintGetter world, BlockPos pos, FluidState fluidState) {
-        return CableHelpers.getFacade((Level) world, pos).isPresent();
+        return world instanceof ILevelExtension levelExtension && CableHelpers.getFacade(levelExtension, pos).isPresent();
     }
 
     /* --------------- Start IDynamicRedstone --------------- */
