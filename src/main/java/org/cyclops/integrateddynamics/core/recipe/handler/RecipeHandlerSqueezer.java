@@ -59,7 +59,7 @@ public class RecipeHandlerSqueezer<T extends RecipeSqueezer> extends RecipeHandl
             outputIngredients.put(IngredientComponent.ITEMSTACK, outputItems);
         }
         if (!recipe.getOutputFluid().isEmpty()) {
-            outputIngredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(recipe.getOutputFluid()));
+            outputIngredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(recipe.getOutputFluid().get()));
         }
 
         // Validate output
