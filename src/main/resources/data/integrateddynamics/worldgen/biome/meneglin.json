@@ -89,7 +89,8 @@
       "minecraft:patch_sugar_cane",
       "minecraft:patch_pumpkin",
 
-      "integrateddynamics:trees_meneglin",
+      "minecraft:trees_badlands",
+      "integrateddynamics:tree_menril_meneglin",
       "integrateddynamics:flowers_meneglin"
     ],
     [
