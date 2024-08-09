@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.19.11 or higher.
+
+Changes:
+* Update to updated CommonCapabilities API
+  Required for CyclopsMC/IntegratedDynamics#1375
