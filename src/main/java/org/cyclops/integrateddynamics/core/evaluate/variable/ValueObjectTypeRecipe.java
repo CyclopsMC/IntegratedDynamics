@@ -91,7 +91,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     @Override
     public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueRecipe value) {
         if(!value.getRawValue().isPresent()) return new CompoundTag();
-        return IRecipeDefinition.serialize(value.getRawValue().get());
+        return IRecipeDefinition.serialize(valueDeseralizationContext.holderLookupProvider(), value.getRawValue().get());
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
             return ValueRecipe.of(null);
         }
         try {
-            return ValueRecipe.of(IRecipeDefinition.deserialize((CompoundTag) value));
+            return ValueRecipe.of(IRecipeDefinition.deserialize(valueDeseralizationContext.holderLookupProvider(), (CompoundTag) value));
         } catch (IllegalArgumentException e) {
             return ValueRecipe.of(null);
         }

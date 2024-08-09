@@ -58,7 +58,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     @Override
     public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueIngredients value) {
         if(!value.getRawValue().isPresent()) return new CompoundTag();
-        return IMixedIngredients.serialize(value.getRawValue().get());
+        return IMixedIngredients.serialize(valueDeseralizationContext.holderLookupProvider(), value.getRawValue().get());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
             return ValueIngredients.of(null);
         }
         try {
-            return ValueIngredients.of(IMixedIngredients.deserialize((CompoundTag) value));
+            return ValueIngredients.of(IMixedIngredients.deserialize(valueDeseralizationContext.holderLookupProvider(), (CompoundTag) value));
         } catch (IllegalArgumentException e) {
             return ValueIngredients.of(null);
         }

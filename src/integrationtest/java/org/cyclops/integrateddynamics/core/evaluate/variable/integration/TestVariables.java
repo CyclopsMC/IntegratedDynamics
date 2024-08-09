@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
@@ -120,25 +121,25 @@ public class TestVariables {
         itemStacksIn.add(new CompoundTag());
 
         ListTag val0 = new ListTag();
-        val0.add(IPrototypedIngredient.serialize(ingredientsIn.get(0).get(0)));
+        val0.add(IPrototypedIngredient.serialize(ServerLifecycleHooks.getCurrentServer().registryAccess(), ingredientsIn.get(0).get(0)));
         val0.getCompound(0).remove("ingredientComponent");
         itemStacksIn.getCompound(0).put("val", val0);
         itemStacksIn.getCompound(0).putByte("type", (byte) 0);
 
         ListTag val1 = new ListTag();
-        val1.add(IPrototypedIngredient.serialize(ingredientsIn.get(1).get(0)));
+        val1.add(IPrototypedIngredient.serialize(ServerLifecycleHooks.getCurrentServer().registryAccess(), ingredientsIn.get(1).get(0)));
         val1.getCompound(0).remove("ingredientComponent");
         itemStacksIn.getCompound(1).put("val", val1);
         itemStacksIn.getCompound(1).putByte("type", (byte) 0);
 
         ListTag val2 = new ListTag();
-        val2.add(IPrototypedIngredient.serialize(ingredientsIn.get(2).get(0)));
+        val2.add(IPrototypedIngredient.serialize(ServerLifecycleHooks.getCurrentServer().registryAccess(), ingredientsIn.get(2).get(0)));
         val2.getCompound(0).remove("ingredientComponent");
         itemStacksIn.getCompound(2).put("val", val2);
         itemStacksIn.getCompound(2).putByte("type", (byte) 0);
 
         ListTag val3 = new ListTag();
-        val3.add(IPrototypedIngredient.serialize(ingredientsIn.get(3).get(0)));
+        val3.add(IPrototypedIngredient.serialize(ServerLifecycleHooks.getCurrentServer().registryAccess(), ingredientsIn.get(3).get(0)));
         val3.getCompound(0).remove("ingredientComponent");
         itemStacksIn.getCompound(3).put("val", val3);
         itemStacksIn.getCompound(3).putByte("type", (byte) 0);
