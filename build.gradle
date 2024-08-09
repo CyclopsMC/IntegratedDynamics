@@ -98,17 +98,18 @@ dependencies {
     } else {
         implementation "org.cyclops.cyclopscore:cyclopscore-${project.minecraft_version}-neoforge:${project.cyclopscore_version}:deobf"
     }
-	
-    // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local Integrated Dynamics Compat version.
-    if(secrets.integrateddynamicscompat_version_local) {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
-            transitive = false
-        }
-    } else {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${project.integrateddynamicscompat_version}") {
-            transitive = false
-        }
-    }
+
+// TODO	
+//    // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local Integrated Dynamics Compat version.
+//    if(secrets.integrateddynamicscompat_version_local) {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
+//            transitive = false
+//        }
+//    } else {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${project.integrateddynamicscompat_version}") {
+//            transitive = false
+//        }
+//    }
 
     if(secrets.commoncapabilities_version_local) {
         implementation "org.cyclops.commoncapabilities:commoncapabilities-${project.minecraft_version}-neoforge:${secrets.commoncapabilities_version_local}:deobf"
@@ -143,7 +144,7 @@ minecraft {
 
 subsystems {
     parchment {
-        minecraftVersion = "${project.minecraft_version}"
+        minecraftVersion = "${project.parchment_minecraft_version}"
         mappingsVersion = "${project.parchment_version}"
     }
 }
