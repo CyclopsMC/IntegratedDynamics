@@ -6,6 +6,8 @@ import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
+import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -24,6 +26,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestVariables {
 
+    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
     public static final ValueDeseralizationContext context = ValueDeseralizationContextMocked.get();
 
     @Test

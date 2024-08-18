@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
+import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -20,6 +22,8 @@ import static org.junit.Assert.assertThat;
  * @author rubensworks
  */
 public class TestValueTypeListProxyFactories {
+
+    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
 
     @BeforeClass
     public static void before() {

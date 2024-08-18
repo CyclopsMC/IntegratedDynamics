@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
+import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -24,6 +26,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestStringOperators {
 
+    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<>(DUMMY_TYPE, DummyValueType.DummyValue.of());

@@ -4,6 +4,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.TagParser;
+import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
+import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -21,6 +23,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestParseOperators {
 
+    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
     private static IVariable[] s(String v){
         IVariable[] ret = new IVariable[1];
         ret[0] = new DummyVariableString(ValueTypeString.ValueString.of(v));

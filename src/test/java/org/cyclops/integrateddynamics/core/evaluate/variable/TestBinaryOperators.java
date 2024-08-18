@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
+import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -17,6 +19,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestBinaryOperators {
 
+    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
