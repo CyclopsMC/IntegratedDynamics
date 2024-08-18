@@ -9,7 +9,7 @@ authors="rubensworks (aka kroeser)"
 modId="integrateddynamics"
 version="${file.jarVersion}"
 displayName="IntegratedDynamics"
-updateJSONURL="https://raw.githubusercontent.com/CyclopsMC/Versions/master/forge_update/integrated-dynamics.json"
+updateJSONURL="https://raw.githubusercontent.com/CyclopsMC/Versions/master/neoforge_update/integrated-dynamics.json"
 description='''
 Take full and automated control of your appliances.
 '''
