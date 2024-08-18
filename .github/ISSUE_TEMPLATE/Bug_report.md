@@ -36,7 +36,7 @@ ____
 
 - This mod: 
 - Minecraft: 
-- Forge: 
+- Mod loader version: <!-- For example, "NeoForge 21.1.18", "Forge 50.1.12", or "Fabric 0.102.1" -->
 
 <!--WHEN USING MODPACKS: First report this bug to the modpack author! As it could be a configuration or mod conflict issue.-->
 <!--Before reporting, make sure to try reproducing without any other mods installed.-->
