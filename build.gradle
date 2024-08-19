@@ -323,10 +323,7 @@ modrinth {
     versionType = project.release_type
     uploadFile = shadowJar
     gameVersions = [ project.minecraft_version ]
-    changelog = ""
-    if (new File("resources/changelog/${project.version}.txt").exists()) {
-		changelog = provider { file("resources/changelog/${project.version}.txt").getText() }
-    }
+    changelog = provider { file("resources/changelog/${project.minecraft_version}-${project.version}.txt").getText() }
     dependencies { // A special DSL for creating dependencies
       required.project "Z9DM0LJ4" // Cyclops Core
       required.project "oFXrCkDI" // Common Capabilities
