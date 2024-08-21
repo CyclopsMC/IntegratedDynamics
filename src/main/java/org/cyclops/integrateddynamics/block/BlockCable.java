@@ -504,8 +504,8 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         @Override
         public int getColor(BlockState blockState, @Nullable BlockAndTintGetter world, @Nullable BlockPos blockPos, int color) {
             // Only modify color if we have a facade
-            return world == null || blockPos == null ?
-                -1 : CableHelpers.getFacade((ILevelExtension) world, blockPos)
+            return blockPos == null || (!(world instanceof ILevelExtension levelExtension)) ?
+                -1 : CableHelpers.getFacade(levelExtension, blockPos)
                     .map(facadeState -> Minecraft.getInstance().getBlockColors().getColor(facadeState, world, blockPos, color))
                     .orElse(-1);
         }
