@@ -2942,12 +2942,17 @@ public final class Operators {
             .symbol("op_by_name").operatorName("by_name").interactName("operatorByName")
             .function(input -> {
                 ValueTypeString.ValueString name = input.getValue(0, ValueTypes.STRING);
-                IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.tryParse(name.getRawValue()));
-                if (operator == null) {
-                    throw new EvaluationException(Component.translatable(
-                            L10NValues.OPERATOR_ERROR_OPERATORNOTFOUND, name.getRawValue()));
+                try {
+                    ResourceLocation id = new ResourceLocation(name.getRawValue());
+                    IOperator operator = Operators.REGISTRY.getOperator(id);
+                    if (operator == null) {
+                        throw new EvaluationException(Component.translatable(
+                                L10NValues.OPERATOR_ERROR_OPERATORNOTFOUND, name.getRawValue()));
+                    }
+                    return ValueTypeOperator.ValueOperator.of(operator);
+                } catch (ResourceLocationException e) {
+                    throw new EvaluationException(Component.literal(e.getMessage()));
                 }
-                return ValueTypeOperator.ValueOperator.of(operator);
             }).build());
 
     /**
