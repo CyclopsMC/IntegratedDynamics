@@ -702,7 +702,10 @@ public final class Operators {
                 Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
                 List<ValueTypeString.ValueString> values = Lists.newArrayList();
                 while (m.find()) {
-                    values.add(ValueTypeString.ValueString.of(m.group(group.getRawValue())));
+                    String match = m.group(group.getRawValue());
+                    if (match != null) {
+                        values.add(ValueTypeString.ValueString.of(match));
+                    }
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
             } catch (PatternSyntaxException e) {
