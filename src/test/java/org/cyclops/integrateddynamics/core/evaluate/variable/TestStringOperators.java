@@ -627,6 +627,18 @@ public class TestStringOperators {
         assertThat("hello world regex_scan ('(\\S)\\S*', 1).size = 2", list2.getLength(), is(2));
     }
 
+    @Test
+    public void testStringRegexScanComplex() throws EvaluationException {
+        DummyVariableString regex = new DummyVariableString(ValueTypeString.ValueString.of("(?:.*?([^\\(\\s]*\\([^\\(]*?\\)).*?)?"));
+        DummyVariableString haystack = new DummyVariableString(ValueTypeString.ValueString.of("test1(test2(test3, test4), test5(test6, test7))"));
+        IValue res1 = Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{regex, i1, haystack});
+        assertThat("result is a list", res1, instanceOf(ValueTypeList.ValueList.class));
+        IValueTypeListProxy<ValueTypeString, ValueTypeString.ValueString> list1 = ((ValueTypeList.ValueList) res1).getRawValue();
+        assertThat("(...).size = 2", list1.getLength(), is(2));
+        assertThat("...[0] = ...", list1.get(0).getRawValue(), is("test2(test3, test4)"));
+        assertThat("...[1] = ...", list1.get(1).getRawValue(), is("test5(test6, test7)"));
+    }
+
     @Test(expected = EvaluationException.class)
     public void testInvalidPatternRegexScan() throws EvaluationException {
         Operators.STRING_REGEX_SCAN.evaluate(new IVariable[]{sbrokenRegex, i0, sabc});

@@ -64,6 +64,7 @@ public class TestOperatorOperators {
     private DummyVariableList lbooleans;
 
     private DummyVariableString sAnd;
+    private DummyVariableString sOther;
 
     @Before
     public void before() {
@@ -110,6 +111,7 @@ public class TestOperatorOperators {
         lbooleans = new DummyVariableList(ValueTypeList.ValueList.ofAll(bFalse.getValue(), bTrue.getValue(), bFalse.getValue(), bTrue.getValue()));
 
         sAnd = new DummyVariableString(ValueTypeString.ValueString.of("integrateddynamics:logical_and"));
+        sOther = new DummyVariableString(ValueTypeString.ValueString.of("integrateddynamics:other"));
     }
 
     /**
@@ -1129,6 +1131,11 @@ public class TestOperatorOperators {
         IValue res1 = Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{sAnd});
         assertThat("result is a list", res1, instanceOf(ValueTypeOperator.ValueOperator.class));
         assertThat("operator_by_name(and) == and", ((ValueTypeOperator.ValueOperator) res1).getRawValue(), is(Operators.LOGICAL_AND));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testByNameNonExisting() throws EvaluationException {
+        Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{sOther});
     }
 
     @Test(expected = EvaluationException.class)

@@ -660,7 +660,10 @@ public final class Operators {
                 Matcher m = Pattern.compile(pattern.getRawValue()).matcher(str.getRawValue());
                 List<ValueTypeString.ValueString> values = Lists.newArrayList();
                 while (m.find()) {
-                    values.add(ValueTypeString.ValueString.of(m.group(group.getRawValue())));
+                    String match = m.group(group.getRawValue());
+                    if (match != null) {
+                        values.add(ValueTypeString.ValueString.of(match));
+                    }
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING, values);
             } catch (PatternSyntaxException e) {
@@ -2982,12 +2985,17 @@ public final class Operators {
             .symbol("op_by_name").operatorName("by_name").interactName("operatorByName")
             .function(input -> {
                 ValueTypeString.ValueString name = input.getValue(0, ValueTypes.STRING);
-                IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.tryParse(name.getRawValue()));
-                if (operator == null) {
-                    throw new EvaluationException(Component.translatable(
-                            L10NValues.OPERATOR_ERROR_OPERATORNOTFOUND, name.getRawValue()));
+                try {
+                    ResourceLocation id = ResourceLocation.parse(name.getRawValue());
+                    IOperator operator = Operators.REGISTRY.getOperator(id);
+                    if (operator == null) {
+                        throw new EvaluationException(Component.translatable(
+                                L10NValues.OPERATOR_ERROR_OPERATORNOTFOUND, name.getRawValue()));
+                    }
+                    return ValueTypeOperator.ValueOperator.of(operator);
+                } catch (ResourceLocationException e) {
+                    throw new EvaluationException(Component.literal(e.getMessage()));
                 }
-                return ValueTypeOperator.ValueOperator.of(operator);
             }).build());
 
     /**
