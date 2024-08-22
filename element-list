@@ -49,7 +49,6 @@ org.cyclops.integrateddynamics.client.render.model
 org.cyclops.integrateddynamics.client.render.part
 org.cyclops.integrateddynamics.client.render.valuetype
 org.cyclops.integrateddynamics.command
-org.cyclops.integrateddynamics.component
 org.cyclops.integrateddynamics.core
 org.cyclops.integrateddynamics.core.block
 org.cyclops.integrateddynamics.core.blockentity
