@@ -139,18 +139,16 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         registerPartCapabilityAsBlockCapability(event, blockEntityType, Capabilities.VariableContainer.BLOCK, Capabilities.VariableContainer.PART);
         ModLoader.postEventWrapContainerInModOrder(new RegisterPartCapabilitiesEvent(event, blockEntityType));
 
-        for (Direction facing : Direction.values()) {
-            event.registerBlockEntity(
-                    Capabilities.DynamicLight.BLOCK,
-                    blockEntityType,
-                    (blockEntity, context) -> new DynamicLightTileMultipartTicking(blockEntity, facing)
-            );
-            event.registerBlockEntity(
-                    Capabilities.DynamicRedstone.BLOCK,
-                    blockEntityType,
-                    (blockEntity, context) -> new DynamicRedstoneTileMultipartTicking(blockEntity, facing)
-            );
-        }
+        event.registerBlockEntity(
+                Capabilities.DynamicLight.BLOCK,
+                blockEntityType,
+                DynamicLightTileMultipartTicking::new
+        );
+        event.registerBlockEntity(
+                Capabilities.DynamicRedstone.BLOCK,
+                blockEntityType,
+                DynamicRedstoneTileMultipartTicking::new
+        );
     }
 
     public static <T> void registerPartCapabilityAsBlockCapability(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityMultipartTicking> blockEntityType, BlockCapability<T, Direction> blockCapability, PartCapability<T> partCapability) {
