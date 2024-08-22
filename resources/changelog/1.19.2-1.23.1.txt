@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Fixes:
+* Fix op_by_name crashing if ResourceLocation is invalid, Closes #1381
+* Fix regex scan producing illegal lists for non-zero groups, Closes #1378
+
