@@ -341,6 +341,11 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         return voxelShapeComponentsFactory.createShape(blockState, world, pos, selectionContext);
     }
 
+    private final Cache<String, VoxelShape> CACHE_COLLISION_SHAPES = CacheBuilder.newBuilder()
+            .expireAfterAccess(1, TimeUnit.MINUTES)
+            .build();
+
+    @SneakyThrows
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
         VoxelShapeComponents selectedShape = getSelectedShape(state, world, pos, selectionContext);
@@ -348,29 +353,15 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         if (rayTraceResult != null) {
             return rayTraceResult.getComponent().getShape(state, world, pos, selectionContext);
         }
-        return selectedShape;
-    }
 
-    private final Cache<String, VoxelShape> CACHE_COLLISION_SHAPES = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.MINUTES)
-            .build();
-
-    @SneakyThrows
-    @Override
-    public VoxelShape getCollisionShape(BlockState blockState, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
-        if(disableCollisionBox) {
-            return Shapes.empty();
-        }
-
-        VoxelShapeComponents voxelShapeComponents = (VoxelShapeComponents) super.getCollisionShape(blockState, world, pos, selectionContext);
-        String cableState = voxelShapeComponents.getStateId();
+        String cableState = selectedShape.getStateId();
 
         // Cache the operations below, as they are too expensive to execute each render tick
         return CACHE_COLLISION_SHAPES.get(cableState, () -> {
             // Combine all VoxelShapes using IBooleanFunction.OR,
             // because for some reason our VoxelShapeComponents aggregator does not handle collisions properly.
             // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
-            Iterator<VoxelShape> it = voxelShapeComponents.iterator();
+            Iterator<VoxelShape> it = selectedShape.iterator();
             if (!it.hasNext()) {
                 return Shapes.empty();
             }
@@ -380,6 +371,11 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
             }
             return shape.optimize();
         });
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState blockState, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
+        return disableCollisionBox ? Shapes.empty() : super.getCollisionShape(blockState, world, pos, selectionContext);
     }
 
     @Override
