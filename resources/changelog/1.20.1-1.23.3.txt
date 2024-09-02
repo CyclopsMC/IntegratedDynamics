@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.4 or higher.
+
+Fixes:
+* Delay Terrablender registration
+  This fixes rare crashes when Terrablender was not yet fully initialized.
+  CyclopsMC/IntegratedDynamics#1385
+  Closes CyclopsMC/IntegratedDynamics#1388
+
