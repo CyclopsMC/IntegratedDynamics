@@ -71,7 +71,7 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
     }
 
     protected InventoryVariableEvaluator<IValue> createEvaluator() {
-        return new InventoryVariableEvaluator<>(this.getInventory(), getSlotRead(), ValueDeseralizationContext.of(getLevel()), ValueTypes.CATEGORY_ANY);
+        return new InventoryVariableEvaluator<>(this.getInventory(), getSlotRead(), () -> ValueDeseralizationContext.of(getLevel()), ValueTypes.CATEGORY_ANY);
     }
 
     public InventoryVariableEvaluator getEvaluator() {

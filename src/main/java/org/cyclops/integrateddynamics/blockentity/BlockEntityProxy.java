@@ -127,7 +127,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
 
     @Override
     protected InventoryVariableEvaluator<IValue> createEvaluator() {
-        return new InventoryVariableEvaluator<IValue>(this.getInventory(), getSlotRead(), ValueDeseralizationContext.of(getLevel()), ValueTypes.CATEGORY_ANY) {
+        return new InventoryVariableEvaluator<IValue>(this.getInventory(), getSlotRead(), () -> ValueDeseralizationContext.of(getLevel()), ValueTypes.CATEGORY_ANY) {
             @Override
             protected void preValidate() {
                 super.preValidate();

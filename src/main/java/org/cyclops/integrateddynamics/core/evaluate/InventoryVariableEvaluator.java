@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdated
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * A convenience holder class for getting variables from variable cards in a certain inventory slot.
@@ -32,17 +33,21 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
             .getRegistry(IVariableFacadeHandlerRegistry.class);
     private final Container inventory;
     private final int slot;
-    private final ValueDeseralizationContext valueDeseralizationContext;
+    private final Supplier<ValueDeseralizationContext> valueDeseralizationContext;
     private final IValueType containingValueType;
 
     private IVariableFacade variableStored = null;
     private List<MutableComponent> errors = Lists.newLinkedList();
 
-    public InventoryVariableEvaluator(Container inventory, int slot, ValueDeseralizationContext valueDeseralizationContext, IValueType<V> containingValueType) {
+    public InventoryVariableEvaluator(Container inventory, int slot, Supplier<ValueDeseralizationContext> valueDeseralizationContext, IValueType<V> containingValueType) {
         this.inventory = inventory;
         this.slot = slot;
         this.valueDeseralizationContext = valueDeseralizationContext;
         this.containingValueType = containingValueType;
+    }
+
+    public InventoryVariableEvaluator(Container inventory, int slot, ValueDeseralizationContext valueDeseralizationContext, IValueType<V> containingValueType) {
+        this(inventory, slot, () -> valueDeseralizationContext, containingValueType);
     }
 
     /**
@@ -67,7 +72,7 @@ public class InventoryVariableEvaluator<V extends IValue> implements IVariableFa
         if (!inventory.getItem(slot).isEmpty() && NetworkHelpers.shouldWork()) {
             // Update proxy input
             ItemStack itemStack = inventory.getItem(slot);
-            this.variableStored = handler.handle(valueDeseralizationContext, itemStack);
+            this.variableStored = handler.handle(valueDeseralizationContext.get(), itemStack);
             if(this.variableStored != null) {
                 variableId = this.variableStored.getId();
             }
