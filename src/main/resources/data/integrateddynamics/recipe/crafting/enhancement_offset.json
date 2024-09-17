@@ -21,8 +21,8 @@
   },
   "result": {
     "id": "integrateddynamics:enhancement_offset",
-    "nbt": {
-      "value": 4
+    "components": {
+      "integrateddynamics:part_enhancement": 4
     }
   }
 }
