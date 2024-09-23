@@ -85,6 +85,7 @@ public class RegistryEntries {
     public static final DeferredHolder<Block, Block> BLOCK_DELAY = DeferredHolder.create(Registries.BLOCK, ResourceLocation.parse("integrateddynamics:delay"));
     public static final DeferredHolder<Block, BlockDryingBasin> BLOCK_DRYING_BASIN = DeferredHolder.create(Registries.BLOCK, ResourceLocation.parse("integrateddynamics:drying_basin"));
     public static final DeferredHolder<Block, BlockEnergyBattery> BLOCK_ENERGY_BATTERY = DeferredHolder.create(Registries.BLOCK, ResourceLocation.parse("integrateddynamics:energy_battery"));
+    public static final DeferredHolder<Block, BlockEnergyBattery> BLOCK_ENERGY_BATTERY_CREATIVE = DeferredHolder.create(Registries.BLOCK, ResourceLocation.parse("integrateddynamics:energy_battery_creative"));
     public static final DeferredHolder<Block, BlockFluidLiquidChorus> BLOCK_FLUID_LIQUID_CHORUS = DeferredHolder.create(Registries.BLOCK, ResourceLocation.parse("integrateddynamics:block_liquid_chorus"));
     public static final DeferredHolder<Block, BlockFluidMenrilResin> BLOCK_FLUID_MENRIL_RESIN = DeferredHolder.create(Registries.BLOCK, ResourceLocation.parse("integrateddynamics:block_menril_resin"));
     public static final DeferredHolder<Block, Block> BLOCK_INVISIBLE_LIGHT = DeferredHolder.create(Registries.BLOCK, ResourceLocation.parse("integrateddynamics:invisible_light"));

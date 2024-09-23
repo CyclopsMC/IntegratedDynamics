@@ -21,7 +21,7 @@ public class BlockEntityEnergyBatteryConfig extends BlockEntityConfig<BlockEntit
                 IntegratedDynamics._instance,
                 "energy_battery",
                 (eConfig) -> new BlockEntityType<>(BlockEntityEnergyBattery::new,
-                        Sets.newHashSet(RegistryEntries.BLOCK_ENERGY_BATTERY.get()), null)
+                        Sets.newHashSet(RegistryEntries.BLOCK_ENERGY_BATTERY.get(), RegistryEntries.BLOCK_ENERGY_BATTERY_CREATIVE.get()), null)
         );
         IntegratedDynamics._instance.getModEventBus().addListener(new BlockEntityEnergyBattery.CapabilityRegistrar(this::getInstance)::register);
     }

@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.Block;
  */
 public class BlockCreativeEnergyBattery extends BlockEnergyBatteryBase {
 
-    public static final MapCodec<BlockCoalGenerator> CODEC = simpleCodec(BlockCoalGenerator::new);
+    public static final MapCodec<BlockCreativeEnergyBattery> CODEC = simpleCodec(BlockCreativeEnergyBattery::new);
 
     public BlockCreativeEnergyBattery(Block.Properties properties) {
         super(properties);
