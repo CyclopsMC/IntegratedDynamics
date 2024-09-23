@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.20.0 or higher.
+
+Fixes:
+* Fix errors in conditional squeezer recipes, Closes CyclopsMC/CyclopsCore#191
+* Fix crash when placing creative energy battery, Closes #1397
+
