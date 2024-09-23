@@ -5,13 +5,13 @@
   },
   "output_items": [
     {
-      "item": {
+      "tag": {
         "tag": "c:raw_materials/zinc",
         "count": 2
       }
     },
     {
-      "item": {
+      "tag": {
         "tag": "c:raw_materials/zinc"
       },
       "chance": 0.75
