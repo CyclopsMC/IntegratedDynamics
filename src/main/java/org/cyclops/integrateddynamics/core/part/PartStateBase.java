@@ -12,7 +12,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.fml.ModLoader;
+import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -315,7 +315,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
      */
     public void gatherCapabilities(P partType) {
         AttachCapabilitiesEventPart event = new AttachCapabilitiesEventPart(partType, this);
-        ModLoader.postEventWrapContainerInModOrder(event);
+        NeoForge.EVENT_BUS.post(event);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.api.part;
 
 import net.neoforged.bus.api.Event;
-import net.neoforged.fml.event.IModBusEvent;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.Objects;
  * Event for when an {@link IPartState} is being constructed.
  * @author rubensworks
  */
-public class AttachCapabilitiesEventPart extends Event implements IModBusEvent {
+public class AttachCapabilitiesEventPart extends Event {
 
     private final IPartType partType;
     private final IPartState partState;
