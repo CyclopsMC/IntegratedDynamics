@@ -168,6 +168,7 @@ public class RegistryEntries {
 
     public static final DeferredHolder<EntityType<?>, EntityType<? extends EntityItemTargetted>> ENTITYTYPE_ITEM_TARGETTED = DeferredHolder.create(Registries.ENTITY_TYPE, ResourceLocation.parse("integrateddynamics:item_targetted"));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> DATACOMPONENT_ACTIVATED = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, ResourceLocation.parse("integrateddynamics:activated"));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockState>> DATACOMPONENT_FACADE_BLOCK = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, ResourceLocation.parse("integrateddynamics:facade_block"));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Pair<SimpleFluidContent, SimpleFluidContent>>> DATACOMPONENT_FLUID_CONTENT_IN_OUT = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, ResourceLocation.parse("integrateddynamics:fluid_content_in_out"));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> DATACOMPONENT_OMNIDIRECTIONAL_GROUP = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, ResourceLocation.parse("integrateddynamics:omnidirectional_group"));

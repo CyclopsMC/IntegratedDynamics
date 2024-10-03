@@ -192,6 +192,7 @@ public class Configs {
         configHandler.addConfigurable(new SoundEventEffectPageFlipSingleConfig());
 
         // Data components
+        configHandler.addConfigurable(new DataComponentActivatedConfig());
         configHandler.addConfigurable(new DataComponentFacadeBlockConfig());
         configHandler.addConfigurable(new DataComponentFluidContentInOutConfig());
         configHandler.addConfigurable(new DataComponentOmnidirectionalGroupConfig());

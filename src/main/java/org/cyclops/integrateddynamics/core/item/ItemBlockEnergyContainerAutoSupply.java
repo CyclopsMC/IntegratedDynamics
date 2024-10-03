@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
         if(player.isSecondaryUseActive()) {
             if(!world.isClientSide()) {
                 ItemStack activated = itemStack.copy();
-                activated.setDamageValue(1 - activated.getDamageValue());
+                activated.set(RegistryEntries.DATACOMPONENT_ACTIVATED, !activated.getOrDefault(RegistryEntries.DATACOMPONENT_ACTIVATED, false));
                 return activated;
             }
             return itemStack;
@@ -88,7 +89,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     }
 
     public boolean isActivated(ItemStack itemStack) {
-        return itemStack.getDamageValue() == 1;
+        return itemStack.getOrDefault(RegistryEntries.DATACOMPONENT_ACTIVATED, false);
     }
 
     @Override
