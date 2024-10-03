@@ -72,6 +72,7 @@ public class PartPosIteratorHandlerRoundRobin implements IPartPosIteratorHandler
                 return true;
             } else if (!countdownAllowedRemaining) {
                 countdownAllowedRemaining = true;
+                handler.offset = 0;
                 if (allowedRemaining > 0) {
                     innerIt = iteratorSupplier.get();
                     return innerIt.hasNext();
@@ -92,7 +93,6 @@ public class PartPosIteratorHandlerRoundRobin implements IPartPosIteratorHandler
                     // Set to empty iterator if we are not allowed to progress anymore.
                     innerIt = Iterators.forArray();
                 }
-
             }
 
             return next;
