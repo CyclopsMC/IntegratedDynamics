@@ -61,7 +61,7 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
                 .getSelectedShape(world.getBlockState(pos), world, pos, CollisionContext.of(player))
                 .rayTrace(pos, player);
         if(rayTraceResult != null) {
-            return rayTraceResult.getDirection();
+            return rayTraceResult.getComponent().getRaytraceDirection();
         }
         return null;
     }
