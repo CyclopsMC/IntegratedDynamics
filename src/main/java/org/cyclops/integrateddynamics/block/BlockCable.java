@@ -434,31 +434,40 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
 
     @Override
     public boolean canConnectRedstone(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
-        if(side == null) {
-            for(Direction dummySide : Direction.values()) {
-                IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((ILevelExtension) world, pos, dummySide, Capabilities.DynamicRedstone.BLOCK).orElse(null);
-                if(dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput())) {
-                    return true;
+        if (world instanceof ILevelExtension levelExtension) {
+            if (side == null) {
+                for (Direction dummySide : Direction.values()) {
+                    IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(levelExtension, pos, dummySide, Capabilities.DynamicRedstone.BLOCK).orElse(null);
+                    if (dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput())) {
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
+            IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+            return dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput());
         }
-        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((ILevelExtension) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
-        return dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput());
+        return false;
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public int getDirectSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
-        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((ILevelExtension) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
-        return dynamicRedstone != null && dynamicRedstone.isDirect() ? dynamicRedstone.getRedstoneLevel() : 0;
+        if (world instanceof ILevelExtension levelExtension) {
+            IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+            return dynamicRedstone != null && dynamicRedstone.isDirect() ? dynamicRedstone.getRedstoneLevel() : 0;
+        }
+        return 0;
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public int getSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
-        IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability((ILevelExtension) world, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
-        return dynamicRedstone != null ? dynamicRedstone.getRedstoneLevel() : 0;
+        if (world instanceof ILevelExtension levelExtension) {
+            IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+            return dynamicRedstone != null ? dynamicRedstone.getRedstoneLevel() : 0;
+        }
+        return 0;
     }
 
     /* --------------- Start IDynamicLight --------------- */
