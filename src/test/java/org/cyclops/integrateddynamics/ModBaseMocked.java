@@ -8,7 +8,9 @@ import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.LoggerHelper;
 import org.cyclops.cyclopscore.helper.ModHelpersNeoForge;
 import org.cyclops.cyclopscore.init.IModBase;
+import org.cyclops.cyclopscore.init.RegistryManager;
 import org.cyclops.cyclopscore.modcompat.ModCompatLoader;
+import org.cyclops.cyclopscore.network.IPacketHandler;
 import org.cyclops.cyclopscore.proxy.ICommonProxyCommon;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,12 +31,22 @@ public class ModBaseMocked implements IModBase {
     }
 
     @Override
+    public IPacketHandler getPacketHandlerCommon() {
+        return null;
+    }
+
+    @Override
     public ConfigHandlerCommon getConfigHandler() {
         return null;
     }
 
     @Override
     public LoggerHelper getLoggerHelper() {
+        return null;
+    }
+
+    @Override
+    public RegistryManager getRegistryManager() {
         return null;
     }
 
