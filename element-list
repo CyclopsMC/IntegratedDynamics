@@ -49,7 +49,6 @@ org.cyclops.integrateddynamics.client.render.model
 org.cyclops.integrateddynamics.client.render.part
 org.cyclops.integrateddynamics.client.render.valuetype
 org.cyclops.integrateddynamics.command
-org.cyclops.integrateddynamics.component
 org.cyclops.integrateddynamics.core
 org.cyclops.integrateddynamics.core.block
 org.cyclops.integrateddynamics.core.blockentity
@@ -64,7 +63,6 @@ org.cyclops.integrateddynamics.core.evaluate.expression
 org.cyclops.integrateddynamics.core.evaluate.operator
 org.cyclops.integrateddynamics.core.evaluate.variable
 org.cyclops.integrateddynamics.core.evaluate.variable.gui
-org.cyclops.integrateddynamics.core.event
 org.cyclops.integrateddynamics.core.helper
 org.cyclops.integrateddynamics.core.ingredient
 org.cyclops.integrateddynamics.core.inventory.container
@@ -110,6 +108,8 @@ org.cyclops.integrateddynamics.part.aspect.write
 org.cyclops.integrateddynamics.part.aspect.write.redstone
 org.cyclops.integrateddynamics.proxy
 org.cyclops.integrateddynamics.recipe
-org.cyclops.integrateddynamics.sound
+org.cyclops.integrateddynamics.world.biome
+org.cyclops.integrateddynamics.world.gen
+org.cyclops.integrateddynamics.world.gen.feature
 org.cyclops.integrateddynamics.world.gen.foliageplacer
 org.cyclops.integrateddynamics.world.gen.trunkplacer
