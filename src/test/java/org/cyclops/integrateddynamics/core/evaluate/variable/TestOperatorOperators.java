@@ -1079,6 +1079,27 @@ public class TestOperatorOperators {
         assertThat("reduce1([0, 1, 2, 3], +) == 6", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(6));
     }
 
+    @Test
+    public void testReduce1Complex() throws EvaluationException {
+        // This is equivalent to `function reducer(a, b) { return choice(a > b, a, b) }`
+        DummyVariableOperator reducer = new DummyVariableOperator((ValueTypeOperator.ValueOperator) Operators.OPERATOR_PIPE2.evaluate(
+                new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_GT)),
+                new DummyVariableOperator((ValueTypeOperator.ValueOperator) Operators.OPERATOR_PIPE.evaluate(
+                        new DummyVariableOperator((ValueTypeOperator.ValueOperator) Operators.OPERATOR_FLIP.evaluate(new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE)))),
+                        new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_FLIP))
+                )),
+                new DummyVariableOperator((ValueTypeOperator.ValueOperator) Operators.OPERATOR_APPLY.evaluate(
+                        new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_PIPE2)),
+                        new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY))
+                ))
+        ));
+
+
+        IValue res1 = Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{reducer, lintegers});
+        assertThat("result is an integer", res1, instanceOf(ValueTypeInteger.ValueInteger.class));
+        assertThat("reduce1(reducer, [0, 1, 2, 3]) == 3", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(3));
+    }
+
     @Test(expected = EvaluationException.class)
     public void testInvalidInputSizeReduce1Large() throws EvaluationException {
         Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, lintegers, i0});
