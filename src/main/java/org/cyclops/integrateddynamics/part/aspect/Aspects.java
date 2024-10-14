@@ -189,7 +189,9 @@ public class Aspects {
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_BIOME =
                     AspectReadBuilders.Block.BUILDER_STRING
                             .handle(
-                                    dimPos -> ForgeRegistries.BIOMES.getKey(dimPos.getLevel(true).getBiome(dimPos.getBlockPos()).value()).toString()
+                                    // Copied from DebugScreenOverlay#printBiome
+                                    dimPos -> dimPos.getLevel(true).getBiome(dimPos.getBlockPos())
+                                            .unwrap().map(key -> key.location().toString(), biome -> "[unregistered " + biome + "]")
                             ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHT =
