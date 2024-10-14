@@ -240,7 +240,12 @@ public class CombinedOperator extends OperatorBase {
                             ArrayUtils.subarray(operatorInputTypes, firstInputRange, operatorInputTypes.length));
                 }
             }
-            return Pair.of(inputTypes, operators[operators.length - 1].getOutputType());
+            IValueType lastOutputType = operators[operators.length - 1].getOutputType();
+            if (lastOutputType == ValueTypes.OPERATOR) {
+                // If output type is an operator, make it ANY, as we don't know yet what we will pipe with.
+                lastOutputType = ValueTypes.CATEGORY_ANY;
+            }
+            return Pair.of(inputTypes, lastOutputType);
 
         }
 
