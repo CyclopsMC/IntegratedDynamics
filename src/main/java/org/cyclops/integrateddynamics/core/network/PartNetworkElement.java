@@ -89,7 +89,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     public Optional<IPartContainer> getPartContainerOptional() {
-        return PartHelpers.getPartContainer(getCenterPos(getTarget()), getTarget().getCenter().getSide());
+        return PartHelpers.getPartContainer(this.center.getPos(), this.center.getSide());
     }
 
     @Override
