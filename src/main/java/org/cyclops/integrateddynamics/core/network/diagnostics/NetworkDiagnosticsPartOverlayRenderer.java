@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
@@ -73,7 +74,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
                     PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
                     final VoxelShape shape;
                     if (partStateHolder != null) {
-                        shape = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide());
+                        shape = partStateHolder.getPart().getPartRenderPosition().getBoundingBox(partPos.getSide(), CollisionContext.empty());
                     } else {
                         shape = Shapes.BLOCK;
                     }

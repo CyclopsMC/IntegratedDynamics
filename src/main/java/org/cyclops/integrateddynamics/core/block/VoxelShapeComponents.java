@@ -28,6 +28,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.block.shapes.CollisionContextBlockSupport;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -74,6 +75,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
             stateIdBuilder.append(component.getStateId(blockState, world, blockPos));
             stateIdBuilder.append(";");
         }
+        stateIdBuilder.append(selectionContext instanceof CollisionContextBlockSupport);
 
         return new VoxelShapeComponents(entries, stateIdBuilder.toString());
     }

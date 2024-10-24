@@ -74,6 +74,7 @@ import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
+import org.cyclops.integrateddynamics.block.shapes.CollisionContextBlockSupport;
 import org.cyclops.integrateddynamics.block.shapes.VoxelShapeComponentsFactoryHandlerCableCenter;
 import org.cyclops.integrateddynamics.block.shapes.VoxelShapeComponentsFactoryHandlerCableConnections;
 import org.cyclops.integrateddynamics.block.shapes.VoxelShapeComponentsFactoryHandlerFacade;
@@ -399,6 +400,11 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     @Override
     public RenderShape getRenderShape(BlockState blockState) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    protected VoxelShape getBlockSupportShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
+        return this.getShape(pState, pLevel, pPos, new CollisionContextBlockSupport());
     }
 
     @Override

@@ -45,7 +45,7 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
     private static final VoxelShapeComponentsFactoryHandlerFacade.Component COMPONENT = new Component();
 
     @Override
-    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
+    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
         if (world instanceof ILevelExtension level) {
             if (CableHelpers.hasFacade(level, blockPos)) {
                 return Collections.singletonList(COMPONENT);

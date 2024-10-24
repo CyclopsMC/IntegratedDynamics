@@ -2,10 +2,12 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.MatrixHelpers;
+import org.cyclops.integrateddynamics.block.shapes.CollisionContextBlockSupport;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 
 import java.util.Arrays;
@@ -25,6 +27,7 @@ public class PartRenderPosition {
     private final float heightFactorSide;
     private final EnumFacingMap<VoxelShape> sidedCableCollisionBoxes;
     private final EnumFacingMap<VoxelShape> collisionBoxes;
+    private final EnumFacingMap<VoxelShape> collisionBoxesBlockSupport;
 
     public PartRenderPosition(float selectionDepthFactor, float depthFactor, float widthFactor, float heightFactor) {
         this(selectionDepthFactor, depthFactor, widthFactor, heightFactor, widthFactor, heightFactor);
@@ -57,7 +60,11 @@ public class PartRenderPosition {
         float[][] collisionBoxesRaw = new float[][]{
                 {min, max}, {0.005F, selectionDepthFactor}, {min, max}
         };
+        float[][] collisionBoxesBlockSupportRaw = new float[][]{
+                {0, 1}, {0, selectionDepthFactor}, {0, 1}
+        };
         collisionBoxes = EnumFacingMap.newMap();
+        collisionBoxesBlockSupport = EnumFacingMap.newMap();
         for (Direction side : Direction.values()) {
             // Copy bounds
             float[][] bounds = new float[collisionBoxesRaw.length][collisionBoxesRaw[0].length];
@@ -67,6 +74,15 @@ public class PartRenderPosition {
             // Transform bounds
             MatrixHelpers.transform(bounds, side);
             collisionBoxes.put(side, Shapes.create(new AABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1])));
+
+            // Copy bounds block support
+            float[][] boundsBS = new float[collisionBoxesBlockSupportRaw.length][collisionBoxesBlockSupportRaw[0].length];
+            for (int i = 0; i < boundsBS.length; i++)
+                boundsBS[i] = Arrays.copyOf(collisionBoxesBlockSupportRaw[i], collisionBoxesBlockSupportRaw[i].length);
+
+            // Transform bounds block support
+            MatrixHelpers.transform(boundsBS, side);
+            collisionBoxesBlockSupport.put(side, Shapes.create(new AABB(boundsBS[0][0], boundsBS[1][0], boundsBS[2][0], boundsBS[0][1], boundsBS[1][1], boundsBS[2][1])));
         }
     }
 
@@ -86,8 +102,16 @@ public class PartRenderPosition {
         return sidedCableCollisionBoxes.get(side);
     }
 
-    public VoxelShape getBoundingBox(Direction side) {
+    public VoxelShape getBoundingBox(Direction side, CollisionContext context) {
+        if (context instanceof CollisionContextBlockSupport) {
+            return collisionBoxesBlockSupport.get(side);
+        }
         return collisionBoxes.get(side);
+    }
+
+    @Deprecated // TODO: rm in next major
+    public VoxelShape getBoundingBox(Direction side) {
+        return this.getBoundingBox(side, CollisionContext.empty());
     }
 
     public float getWidthFactorSide() {

@@ -44,7 +44,7 @@ public class VoxelShapeComponentsFactoryHandlerCableConnections implements Voxel
     );
 
     @Override
-    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
+    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
         Collection<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
         if (world instanceof ILevelExtension level) {
             if (CableHelpers.isNoFakeCable(level, blockPos, null)) {

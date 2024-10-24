@@ -39,7 +39,7 @@ import java.util.Optional;
 public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeComponentsFactory.IHandler {
 
     @Override
-    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos) {
+    public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
         Collection<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
         if (world instanceof ILevelExtension level) {
             for (Direction direction : Direction.values()) {
@@ -76,7 +76,7 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         @Override
         public VoxelShape getShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
             return getPart()
-                    .map(part -> part.getPartRenderPosition().getBoundingBox(direction))
+                    .map(part -> part.getPartRenderPosition().getBoundingBox(direction, selectionContext))
                     .orElse(Shapes.empty());
         }
 

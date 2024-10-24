@@ -32,13 +32,13 @@ public class VoxelShapeComponentsFactory {
     public VoxelShapeComponents createShape(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext) {
         List<VoxelShapeComponents.IComponent> components = Lists.newArrayList();
         for (IHandler handler : handlers) {
-            components.addAll(handler.createComponents(blockState, world, blockPos));
+            components.addAll(handler.createComponents(blockState, world, blockPos, selectionContext));
         }
         return VoxelShapeComponents.create(blockState, world, blockPos, selectionContext, components);
     }
 
     public static interface IHandler {
-        public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos);
+        public Collection<VoxelShapeComponents.IComponent> createComponents(BlockState blockState, BlockGetter world, BlockPos blockPos, CollisionContext selectionContext);
     }
 
 }
