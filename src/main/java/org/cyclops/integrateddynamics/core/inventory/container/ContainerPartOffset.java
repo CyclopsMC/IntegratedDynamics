@@ -69,8 +69,6 @@ public class ContainerPartOffset extends InventoryContainer {
         this.partType = partType;
         this.world = player.getCommandSenderWorld();
 
-        addPlayerInventory(player.getInventory(), 27, getPlayerInventoryOffsetY());
-
         lastXValueId = getNextValueId();
         lastYValueId = getNextValueId();
         lastZValueId = getNextValueId();
@@ -96,6 +94,8 @@ public class ContainerPartOffset extends InventoryContainer {
         addSlot(new SlotVariable(offsetVariablesInventory, 0, 45, 51));
         addSlot(new SlotVariable(offsetVariablesInventory, 1, 99, 51));
         addSlot(new SlotVariable(offsetVariablesInventory, 2, 153, 51));
+
+        addPlayerInventory(player.getInventory(), 27, getPlayerInventoryOffsetY());
     }
 
     public IPartType getPartType() {
