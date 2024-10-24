@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Fixes:
+* Fix crash when invalidating invalid network elements
+  This could occur when using AE2's Spatial IO.
+  Closes #1410
+
