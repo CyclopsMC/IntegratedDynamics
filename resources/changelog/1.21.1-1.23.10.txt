@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.1 or higher.
+
+Fixes:
+* Restore placement of levers on parts, Closes #1408
+* Fix crash when invalidating invalid network elements
+  This could occur when using AE2's Spatial IO.
+  Closes #1410
+* Fix unable to insert into part offset slots, Closes #1409
