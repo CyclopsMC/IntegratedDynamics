@@ -1,15 +1,11 @@
 {
-    "_comment": "General",
     "itemGroup.integrateddynamics": "Integerated Dynamics",
     "general.integrateddynamics.description": "기계를 완전 자동으로 제어하세요.",
     "general.integrateddynamics.info.none": "없음",
     "general.integrateddynamics.energy": "에너지",
-    "general.integrateddynamics.energy_unit": "RF",
     "general.integrateddynamics.error.no_network": "유효한 네트워크를 찾을 수 없습니다.",
     "general.integrateddynamics.true": "참",
     "general.integrateddynamics.false": "거짓",
-
-    "_comment": "Gui",
     "gui.integrateddynamics.part_settings": "파트 설정",
     "gui.integrateddynamics.aspect_settings": "측면 설정",
     "gui.integrateddynamics.keybinding": "키 설정",
@@ -41,11 +37,9 @@
     "gui.integrateddynamics.output_short": "출력",
     "gui.integrateddynamics.recipe.strictnbt": "엄격한 NBT",
     "gui.integrateddynamics.recipe.tagvariants": "아이템 태그 변수",
-
-    "_comment": "Diagnostics",
+    "gui.integrateddynamics.diagnostics.title": "네트워크 진단",
     "gui.integrateddynamics.diagnostics.parts": "부품",
     "gui.integrateddynamics.diagnostics.observers": "저장고 관측기",
-    "gui.integrateddynamics.diagnostics.title": "네트워크 진단",
     "gui.integrateddynamics.diagnostics.table.network": "네트워크",
     "gui.integrateddynamics.diagnostics.table.cables": "케이블",
     "gui.integrateddynamics.diagnostics.table.part": "부품",
@@ -53,17 +47,11 @@
     "gui.integrateddynamics.diagnostics.table.dimension": "차원",
     "gui.integrateddynamics.diagnostics.table.position": "위치",
     "gui.integrateddynamics.diagnostics.table.side": "면",
-
-    "_comment": "Keybindings",
     "key.categories.integrateddynamics": "통합 역학",
     "key.integrateddynamics.logic_programmer_focus_search": "논리 프로그래머 : 집중 검색",
     "key.integrateddynamics.logic_programmer_open_rename": "논리 프로그래머 : 변수 이름 재설정",
-
-    "_comment": "Sound names",
     "subtitles.integrateddynamics.effect.page.flipsingle": "페이지 넘기기",
     "subtitles.integrateddynamics.effect.page.flipmultiple": "여러 페이지 넘기기",
-
-    "_comment": "Blocks",
     "block.integrateddynamics.cable": "논리 케이블",
     "block.integrateddynamics.variablestore": "변수 저장소",
     "block.integrateddynamics.energy_battery": "에너지 배터리",
@@ -118,9 +106,6 @@
     "block.integrateddynamics.crystalized_menril_brick_slab": "결정화된 멘릴 벽돌 반 블록",
     "block.integrateddynamics.crystalized_chorus_block_slab": "결정화된 후렴과 반 블록",
     "block.integrateddynamics.crystalized_chorus_brick_slab": "결정화된 후렴과 벽돌 반 블록",
-
-    "_comment": "Items",
-    "item.integrateddynamics.general.id": "§e§lID: §r%s",
     "item.integrateddynamics.wrench": "렌치",
     "item.integrateddynamics.variable": "변수 카드",
     "item.integrateddynamics.variable.info": "조합창에서 초기화 또는 복사",
@@ -145,15 +130,7 @@
     "item.integrateddynamics.crystalized_chorus_chunk": "결정화된 후렴과 덩어리",
     "item.integrateddynamics.logic_director": "논리 디렉터",
     "item.integrateddynamics.proto_chorus": "프로토 후렴과",
-
-    "_comment": "Fluids",
-    "fluid.fluids.integrateddynamics.menrilresin": "멘릴 수지",
-    "fluid.fluids.integrateddynamics.liquidchorus": "액체 후렴과",
-
-    "_comment": "Biomes",
     "biome.integrateddynamics.meneglin": "메네글린",
-
-    "_comment": "Advancements",
     "advancement.integrateddynamics.meneglin_discovery": "메네글린 발견",
     "advancement.integrateddynamics.meneglin_discovery.desc": "메네글린 생물 군계에서 가장 쉽게 찾을 수 있는 멘릴 나무를 베어내세요.",
     "advancement.integrateddynamics.squeezing": "상사처럼 쥐어 짜기",
@@ -202,7 +179,6 @@
     "advancement.integrateddynamics.lectern_book.desc": "블록 판독기에서 독서대 안의 책의 NBT 필드를 독서대의 NBT 태그에서 읽으세요.",
     "advancement.integrateddynamics.lectern_book_name": "독서대 NBT 책 이름",
     "advancement.integrateddynamics.lectern_book_name.desc": "블록 판독기에서 독서대 안의 책의 이름(id)를 NBT 경로 표현을 적용하여 독서대의 NBT 태그에서 읽으세요.",
-
     "advancement.integrateddynamics.logic_programming": "논리 프로그래밍",
     "advancement.integrateddynamics.logic_programming.desc": "논리 프로그래머의 GUI를 여세요.",
     "advancement.integrateddynamics.constant_definition": "상수 정의",
@@ -233,8 +209,6 @@
     "advancement.integrateddynamics.tool_for_obsidian.desc": "돌 곡괭이가 옵시디언을 부술 수 있는지 확인하고, 디스플레이 패널에 결과를 표시하세요.",
     "advancement.integrateddynamics.smart_pressure_plate": "스마트 감압판",
     "advancement.integrateddynamics.smart_pressure_plate.desc": "문을 직접 가리키는 레드스톤 작성기를 사용하여 개체 이름 매칭을 기반으로 개체 판독기를 지나갈 때 자동으로 문을 여는 시스템을 만드세요. (힌트: 등호 연산자에 개체 이름을 첫 번째 인수로 전달하세요.)",
-
-    "_comment": "Value types",
     "valuetype.integrateddynamics.error.value": "유효하지 않은 값",
     "valuetype.integrateddynamics.value_type": "유효한 값",
     "valuetype.integrateddynamics.tooltip.type_name": "§e자료형: §r%s",
@@ -250,35 +224,11 @@
     "valuetype.integrateddynamics.error.fluid.no_fluid": "들어간 아이템이 액체를 포함하고 있지 않습니다.",
     "valuetype.integrateddynamics.error.no_light_calculator": "자료형 %s (은)는 밝기 레벨에 쓰이지 않습니다.",
     "valuetype.integrateddynamics.error.deserialize": "역직렬화 도중 문제가 발생 '%s': %s",
-
-    "valuetype.integrateddynamics.any": "Any",
     "valuetype.integrateddynamics.any.info": "어떤 타입의 자료형이라도 받아들입니다.",
-    "valuetype.integrateddynamics.number": "Number",
     "valuetype.integrateddynamics.number.info": "모든 숫자 자료형을 받아들입니다.",
-    "valuetype.integrateddynamics.named": "Named",
     "valuetype.integrateddynamics.named.info": "아이템과 블록의 표시되는 이름과 같은 모든 이름이 있는 것들을 받아들입니다.",
-    "valuetype.integrateddynamics.uniquely_named": "Uniquely Named",
     "valuetype.integrateddynamics.uniquely_named.info": "아이템과 블록과 같은 고유한 이름이 있는 것들을 받아들입니다.",
-
-    "valuetype.integrateddynamics.boolean": "Boolean",
-    "valuetype.integrateddynamics.integer": "Integer",
-    "valuetype.integrateddynamics.double": "Double",
-    "valuetype.integrateddynamics.long": "Long",
-    "valuetype.integrateddynamics.string": "String",
-    "valuetype.integrateddynamics.operator": "Operator",
-    "valuetype.integrateddynamics.nbt": "NBT",
-
-    "valuetype.integrateddynamics.list": "List",
-    "valuetype.integrateddynamics.block": "Block",
-    "valuetype.integrateddynamics.itemstack": "Item",
-    "valuetype.integrateddynamics.entity": "Entity",
-    "valuetype.integrateddynamics.fluidstack": "Fluid",
-    "valuetype.integrateddynamics.ingredients": "Ingredients",
-    "valuetype.integrateddynamics.recipe": "Recipe",
-
     "valuetype.integrateddynamics.ingredients.slot.info": "쉬프트 클릭하여 구성",
-
-    "_comment": "Part types",
     "parttype.integrateddynamics.error.low_energy": "에너지 부족",
     "parttype.integrateddynamics.tooltip.disabled": "에너지 없음",
     "parttype.integrateddynamics.tooltip.inactive": "비활성화",
@@ -287,7 +237,6 @@
     "parttype.integrateddynamics.tooltip.display.active_value": "값: %s (%s)",
     "parttype.integrateddynamics.tooltip.monodirectionalconnector.group": "그룹: %s",
     "parttype.integrateddynamics.tooltip.noaspects": "주의: 사용가능한 기능이 없습니다. 다른 모드가 설치되면 사용가능하게 될 수 있습니다.",
-
     "parttype.integrateddynamics.audio_reader": "오디오 판독기",
     "parttype.integrateddynamics.audio_reader.info": "오디오 정보를 읽습니다.",
     "parttype.integrateddynamics.block_reader": "블록 판독기",
@@ -308,7 +257,6 @@
     "parttype.integrateddynamics.redstone_reader.info": "레드스톤 값을 읽습니다.",
     "parttype.integrateddynamics.world_reader": "세계 판독기",
     "parttype.integrateddynamics.world_reader.info": "세계, 블록 및 개체에 관련된 것을 읽습니다.",
-
     "parttype.integrateddynamics.audio_writer": "오디오 작성기",
     "parttype.integrateddynamics.audio_writer.info": "오디오와 음악을 출력합니다.",
     "parttype.integrateddynamics.effect_writer": "효과 작성기",
@@ -321,7 +269,6 @@
     "parttype.integrateddynamics.inventory_writer.info": "보관함에 작성합니다.",
     "parttype.integrateddynamics.redstone_writer": "레드스톤 작성기",
     "parttype.integrateddynamics.redstone_writer.info": "레드스톤에 작성합니다.",
-
     "parttype.integrateddynamics.data_driven_panel.error.invalid_type": "이 패널은 %s 을(를) 받지 않습니다.",
     "parttype.integrateddynamics.static_light_panel": "고정 밝기 패널",
     "parttype.integrateddynamics.static_light_panel.info": "항상 활성화되어 있는 단순한 밝기 패널",
@@ -329,30 +276,21 @@
     "parttype.integrateddynamics.dynamic_light_panel.info": "변수 값을 시각적인 밝기 레벨로 세계에 표시합니다.",
     "parttype.integrateddynamics.display_panel": "디스플레이 패널",
     "parttype.integrateddynamics.display_panel.info": "변수 값을 시각적인 텍스트로 표시합니다.",
-
     "parttype.integrateddynamics.connector_mono_directional": "단방향 커넥터",
     "parttype.integrateddynamics.connector_mono_directional.info": "직선 거리에 있는 다른 단방향 커넥터와 연결할 수 있습니다.",
     "parttype.integrateddynamics.connector_omni_directional": "전방향 커넥터",
     "parttype.integrateddynamics.connector_omni_directional.info": "다른 차원을 포함하여 어디서나 다른 전방향 커넥터에 연결할 수 있습니다.",
-
-    "_comment": "Variables facades",
     "variable.integrateddynamics.error.invalid_item": "현재 변수는 이 측면에 쓰일 수 없습니다.",
     "variable.integrateddynamics.error.part_not_in_network": "id가 %s인 부품을 현재 네트워크에서 찾을 수 없습니다.",
     "variable.integrateddynamics.error.recursion": "id가 %s인 변수가 자기 자신을 참조하고 있습니다.",
-
-    "_comment": "Proxy",
     "proxy.integrateddynamics.tooltip.proxy_id": "§e§o프록시 ID: §r§o%s",
     "proxy.integrateddynamics.error.proxy_not_in_network": "id가 %s인 프록시를 현재 네트워크에서 찾을 수 없습니다.",
     "proxy.integrateddynamics.error.proxy_invalid": "id가 %s인 프록시가 변수를 노출하고 있지 않습니다.",
     "proxy.integrateddynamics.error.proxy_invalid_type": "id가 %s인 프록시는 자료형이 %s인 변수를 노출하기를 예상했지만 %s 이(가) 발견되었습니다.",
-
-    "_comment": "Delay",
     "delay.integrateddynamics.tooltip.delay_id": "§e§o지연기 ID: §r§o%s",
     "delay.integrateddynamics.error.delay_not_in_network": "id가 %s인 지연기를 현재 네트워크에서 찾을 수 없습니다.",
     "delay.integrateddynamics.error.delay_invalid": "id가 %s인 지연기가 변수를 노출하고 있지 않습니다.",
     "delay.integrateddynamics.error.delay_invalid_type": "id가 %s인 프록시는 자료형이 %s인 변수를 노출하기를 예상했지만 %s 이(가) 발견되었습니다.",
-
-    "_comment": "Aspects",
     "aspect.integrateddynamics.tooltip.aspect_name": "§e기능: §r%s",
     "aspect.integrateddynamics.tooltip.value_type_name": "§e자료형: §r%s",
     "aspect.integrateddynamics.tooltip.part_id": "부품 ID: §r§o%s",
@@ -361,8 +299,6 @@
     "aspect.integrateddynamics.error.no_value_interface": "유효한 값 인터페이스가 발견되지 않았습니다.",
     "aspect.integrateddynamics.error.no_value_interface_value": "유효한 값 인터페이스의 값이 발견되지 않았습니다.",
     "aspect.integrateddynamics.name": "기능",
-
-    "_comment": "# Audio aspects",
     "aspect.integrateddynamics.read.integer.audio.instrument.harp": "하프 음",
     "aspect.integrateddynamics.read.integer.audio.instrument.harp.info": "하프 음을 읽습니다. 예상 범위 [0, 24]",
     "aspect.integrateddynamics.read.integer.audio.instrument.basedrum": "베이스 드럼 음",
@@ -395,8 +331,6 @@
     "aspect.integrateddynamics.read.integer.audio.instrument.banjo.info": "반조 음을 읽습니다. 예상 범위 [0, 24]",
     "aspect.integrateddynamics.read.integer.audio.instrument.pling": "플링 음",
     "aspect.integrateddynamics.read.integer.audio.instrument.pling.info": "플링 음을 읽습니다. 예상 범위 [0, 24]",
-
-
     "aspect.integrateddynamics.write.integer.audio.instrument.harp": "하프 음",
     "aspect.integrateddynamics.write.integer.audio.instrument.harp.info": "하프 음을 출력합니다. 예상 범위 [0, 24]",
     "aspect.integrateddynamics.write.integer.audio.instrument.basedrum": "베이스 드럼 음",
@@ -429,15 +363,10 @@
     "aspect.integrateddynamics.write.integer.audio.instrument.banjo.info": "반조 음을 출력합니다. 예상 범위 [0, 24]",
     "aspect.integrateddynamics.write.integer.audio.instrument.pling": "플링 음",
     "aspect.integrateddynamics.write.integer.audio.instrument.pling.info": "플링 음을 출력합니다. 예상 범위 [0, 24]",
-
     "aspect.integrateddynamics.write.string.audio.sound": "소리",
     "aspect.integrateddynamics.write.string.audio.sound.info": "주어진 소리의 이름",
     "aspect.integrateddynamics.write.string.audio.text": "텍스트",
     "aspect.integrateddynamics.write.string.audio.text.info": "주어진 텍스트를 음성으로 변환합니다",
-
-    "_comment": "# Effect aspects",
-    "aspect.integrateddynamics.write.double.effect.particle.minecraft_ambient_entity_effect": "입자: 주변 개체",
-    "aspect.integrateddynamics.write.double.effect.particle.minecraft_ambient_entity_effect.info": "특정 속도로 주변 개체 입자를 방출합니다.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_angry_villager": "입자: 화난 주민",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_angry_villager.info": "특정 속도로 화난 주민 입자를 방출합니다.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_bubble": "입자: 거품",
@@ -470,8 +399,6 @@
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_enchant.info": "특정 속도로 마법부여된 입자를 방출합니다.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_end_rod": "입자: 엔드 막대",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_end_rod.info": "특정 속도로 엔드 막대 입자를 방출합니다.",
-    "aspect.integrateddynamics.write.double.effect.particle.minecraft_entity_effect": "입자: 개체",
-    "aspect.integrateddynamics.write.double.effect.particle.minecraft_entity_effect.info": "특정 속도로 개체 입자를 방출합니다.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_explosion_emitter": "입자: 폭발 방출기",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_explosion_emitter.info": "특정 속도로 폭발 방출기 입자를 방출합니다.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_explosion": "입자: 폭발",
@@ -598,11 +525,8 @@
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_electric_spark.info": "특정 속도로 전기 스파크 입자를 방출합니다.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_scrape": "입자: 긁기",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_scrape.info": "특정 속도로 긁기 입자를 방출합니다.",
-
-    "_comment": "# Block aspects",
     "aspect.integrateddynamics.read.boolean.block.block": "블록 있음",
     "aspect.integrateddynamics.read.boolean.block.block.info": "대상 공간에 블록이 있는가",
-
     "aspect.integrateddynamics.read.string.block.dimension": "차원",
     "aspect.integrateddynamics.read.string.block.dimension.info": "대상 세계 차원",
     "aspect.integrateddynamics.read.integer.block.posx": "X 좌표",
@@ -617,38 +541,27 @@
     "aspect.integrateddynamics.read.string.block.biome.info": "대상이 있는 생물 군계의 이름",
     "aspect.integrateddynamics.read.integer.block.light": "밝기",
     "aspect.integrateddynamics.read.integer.block.light.info": "대상이 있는 곳의 밝기",
-
     "aspect.integrateddynamics.read.block.block": "블록",
     "aspect.integrateddynamics.read.block.block.info": "대상 블록",
-
-    "_comment": "# Entity aspects",
     "aspect.integrateddynamics.read.integer.entity.itemframerotation": "아이템 액자 회전",
     "aspect.integrateddynamics.read.integer.entity.itemframerotation.info": "부착된 아이템 액자 안에 있는 아이템의 회전 수.",
-
     "aspect.integrateddynamics.read.list.entity.entities": "개체 리스트",
     "aspect.integrateddynamics.read.list.entity.entities.info": "대상 공간에 있는 개체 리스트",
     "aspect.integrateddynamics.read.list.entity.players": "플레이어 리스트",
     "aspect.integrateddynamics.read.list.entity.players.info": "이 세계에 있는 플레이어 리스트",
-
     "aspect.integrateddynamics.read.entity.entity": "개체",
     "aspect.integrateddynamics.read.entity.entity.info": "대상 공간 안에 선택된 개체",
-
     "aspect.integrateddynamics.read.itemstack.entity.itemframecontents": "아이템 액자",
     "aspect.integrateddynamics.read.itemstack.entity.itemframecontents.info": "판독기에 부착된 아이템 액자 안의 아이템",
-
-    "_comment": "# Extra-Dimensional aspects",
     "aspect.integrateddynamics.read.integer.extradimensional.random": "무작위",
     "aspect.integrateddynamics.read.integer.extradimensional.random.info": "무작위 정수값",
     "aspect.integrateddynamics.read.integer.extradimensional.playercount": "플레이어 수",
     "aspect.integrateddynamics.read.integer.extradimensional.playercount.info": "서버에 있는 플레이어 수",
     "aspect.integrateddynamics.read.integer.extradimensional.ticktime": "틱 시간",
     "aspect.integrateddynamics.read.integer.extradimensional.ticktime.info": "나노초로 나타낸 서버의 평균 틱 시간",
-    "aspect.integrateddynamics.read.double.extradimensional.tps": "TPS",
     "aspect.integrateddynamics.read.double.extradimensional.tps.info": "모든 세계의 평균 TPS",
     "aspect.integrateddynamics.read.list.extradimensional.players": "플레이어 리스트",
     "aspect.integrateddynamics.read.list.extradimensional.players.info": "이 서버에 있는 플레이어 리스트",
-
-    "_comment": "# Fluid aspects",
     "aspect.integrateddynamics.read.boolean.fluid.empty": "탱크 비어있음",
     "aspect.integrateddynamics.read.boolean.fluid.empty.info": "대상 유체 탱크가 비어있는가",
     "aspect.integrateddynamics.read.boolean.fluid.full": "탱크 가득 참",
@@ -657,7 +570,6 @@
     "aspect.integrateddynamics.read.boolean.fluid.nonempty.info": "대상 유체 탱크가 비어있지 않은가",
     "aspect.integrateddynamics.read.boolean.fluid.applicable": "탱크 여부",
     "aspect.integrateddynamics.read.boolean.fluid.applicable.info": "대상 블록이 탱크인가",
-
     "aspect.integrateddynamics.read.integer.fluid.amount": "유체 양",
     "aspect.integrateddynamics.read.integer.fluid.amount.info": "mB로 나타낸 활성화된 탱크 안의 유체 양",
     "aspect.integrateddynamics.read.integer.fluid.totalamount": "총 유체 양",
@@ -668,21 +580,16 @@
     "aspect.integrateddynamics.read.integer.fluid.totalcapacity.info": "탱크의 총 유체 용량",
     "aspect.integrateddynamics.read.integer.fluid.tanks": "탱크 수",
     "aspect.integrateddynamics.read.integer.fluid.tanks.info": "대상에서 찾은 탱크에 수",
-
     "aspect.integrateddynamics.read.double.fluid.fillratio": "유체 비율",
     "aspect.integrateddynamics.read.double.fluid.fillratio.info": "활성화된 탱크 안의 유체의 양을 그 탱크의 용량으로 나눈 값",
-
     "aspect.integrateddynamics.read.list.fluid.fluidstacks": "탱크 유체 리스트",
     "aspect.integrateddynamics.read.list.fluid.fluidstacks.info": "모든 탱크에 들어있는 유체의 리스트",
     "aspect.integrateddynamics.read.list.fluid.capacities": "탱크 용량 리스트",
     "aspect.integrateddynamics.read.list.fluid.capacities.info": "모든 탱크의 용량의 리스트",
-
     "aspect.integrateddynamics.read.fluidstack.fluid": "탱크 유체",
     "aspect.integrateddynamics.read.fluidstack.fluid.info": "대상 탱크에 들어있는 유체",
     "aspect.integrateddynamics.read.fluidstack.block": "블록 유체",
     "aspect.integrateddynamics.read.fluidstack.block.info": "대상 블록에 들어있는 유체",
-
-    "_comment": "# Inventory aspects",
     "aspect.integrateddynamics.read.boolean.inventory.full": "인벤토리 가득 참",
     "aspect.integrateddynamics.read.boolean.inventory.full.info": "모든 슬록이 적어도 하나의 아이템을 가지고 있는가",
     "aspect.integrateddynamics.read.boolean.inventory.empty": "인벤토리 비어있음",
@@ -691,7 +598,6 @@
     "aspect.integrateddynamics.read.boolean.inventory.nonempty.info": "적어도 하나의 아이템이 있는가",
     "aspect.integrateddynamics.read.boolean.inventory.applicable": "인벤토리 여부",
     "aspect.integrateddynamics.read.boolean.inventory.applicable.info": "대상에 인벤토리가 있는가",
-
     "aspect.integrateddynamics.read.integer.inventory.count": "인벤토리 수",
     "aspect.integrateddynamics.read.integer.inventory.count.info": "아이템의 총량",
     "aspect.integrateddynamics.read.integer.inventory.countslot": "슬롯 스택 크기",
@@ -700,17 +606,12 @@
     "aspect.integrateddynamics.read.integer.inventory.slots.info": "인벤토리 안의 슬롯 수",
     "aspect.integrateddynamics.read.integer.inventory.slotsfilled": "차 있는 슬롯 수",
     "aspect.integrateddynamics.read.integer.inventory.slotsfilled.info": "아이템을 가진 슬롯 수",
-
     "aspect.integrateddynamics.read.double.inventory.fillratio": "아이템 비율",
     "aspect.integrateddynamics.read.double.inventory.fillratio.info": "비어있지 않은 슬롯 수를 총 슬롯 수로 나눈 값",
-
     "aspect.integrateddynamics.read.list.inventory.itemstacks": "아이템 리스트",
     "aspect.integrateddynamics.read.list.inventory.itemstacks.info": "인벤토리 안의 아이템의 리스트",
-
     "aspect.integrateddynamics.read.itemstack.inventory": "슬롯 아이템",
     "aspect.integrateddynamics.read.itemstack.inventory.info": "활성화된 슬롯의 아이템",
-
-    "_comment": "# Machine aspects",
     "aspect.integrateddynamics.read.boolean.machine.isworker": "작업기 여부",
     "aspect.integrateddynamics.read.boolean.machine.isworker.info": "대상이 작업을 하는 기계인가",
     "aspect.integrateddynamics.read.boolean.machine.haswork": "작업 여부",
@@ -767,8 +668,6 @@
     "aspect.integrateddynamics.read.integer.fe.capacity.info": "대상의 FE 용량",
     "aspect.integrateddynamics.read.double.fe.fillratio": "FE 비율",
     "aspect.integrateddynamics.read.double.fe.fillratio.info": "대상에 저장된 FE의 양을 FE 용량으로 나눈 값",
-
-    "_comment": "# Network aspects",
     "aspect.integrateddynamics.read.boolean.network.applicable": "네트워크 여부",
     "aspect.integrateddynamics.read.boolean.network.applicable.info": "대상이 네트워크를 가지고 있는가",
     "aspect.integrateddynamics.read.integer.network.elementcount": "요소 수",
@@ -783,8 +682,6 @@
     "aspect.integrateddynamics.read.integer.network.energy.consumptionrate.info": "대상 네트워크의 현재 틱 당 에너지 소비 속도",
     "aspect.integrateddynamics.read.any.network.value": "값",
     "aspect.integrateddynamics.read.any.network.value.info": "대상이 노출하고 있는 값",
-
-    "_comment": "# Redstone aspects",
     "aspect.integrateddynamics.read.boolean.redstone.high": "레드스톤 신호 높음",
     "aspect.integrateddynamics.read.boolean.redstone.high.info": "레드스톤 신호의 세기가 최대인가",
     "aspect.integrateddynamics.read.boolean.redstone.low": "레드스톤 신호 없음",
@@ -797,18 +694,14 @@
     "aspect.integrateddynamics.read.integer.redstone.value.info": "정확한 레드스톤 신호의 세기",
     "aspect.integrateddynamics.read.integer.redstone.comparator": "비교기",
     "aspect.integrateddynamics.read.integer.redstone.comparator.info": "비교기의 값",
-
     "aspect.integrateddynamics.write.boolean.redstone": "레드스톤 신호",
     "aspect.integrateddynamics.write.boolean.redstone.info": "참이라면 레드스톤 신호 최대로 방출",
     "aspect.integrateddynamics.write.boolean.redstone.pulse": "레드스톤 펄스",
     "aspect.integrateddynamics.write.boolean.redstone.pulse.info": "만약 주어진 값이 변했다면 구성된 세기의 레드스톤 펄스를 방출.",
-
     "aspect.integrateddynamics.write.integer.redstone": "레드스톤 신호",
     "aspect.integrateddynamics.write.integer.redstone.info": "정확한 세기의 레드스톤 신호 방출",
     "aspect.integrateddynamics.write.integer.redstone.pulse": "레드스톤 펄스",
     "aspect.integrateddynamics.write.integer.redstone.pulse.info": "만약 주어진 값이 변했다면 구성된 세기의 레드스톤 펄스를 방출.",
-
-    "_comment": "# World aspects",
     "aspect.integrateddynamics.read.boolean.world.entity": "개체 여부",
     "aspect.integrateddynamics.read.boolean.world.entity.info": "대상 공간에 개체가 있는가",
     "aspect.integrateddynamics.read.boolean.world.mob": "몹 여부",
@@ -829,7 +722,6 @@
     "aspect.integrateddynamics.read.boolean.world.isday.info": "대상 세계가 낮인가",
     "aspect.integrateddynamics.read.boolean.world.isnight": "밤",
     "aspect.integrateddynamics.read.boolean.world.isnight.info": "대상 세계가 밤인가",
-
     "aspect.integrateddynamics.read.integer.world.entity": "개체 수",
     "aspect.integrateddynamics.read.integer.world.entity.info": "대상 공간에 있는 개체의 수",
     "aspect.integrateddynamics.read.integer.world.raincountdown": "비 시간",
@@ -842,37 +734,25 @@
     "aspect.integrateddynamics.read.integer.world.lightlevel.info": "대상의 밝기",
     "aspect.integrateddynamics.read.integer.world.players": "플레이어 수",
     "aspect.integrateddynamics.read.integer.world.players.info": "이 세계에 온라인인 플레이어의 수",
-
-    "aspect.integrateddynamics.read.double.world.tps": "TPS",
     "aspect.integrateddynamics.read.double.world.tps.info": "이 세계의 TPS",
-
     "aspect.integrateddynamics.read.long.world.time": "시간",
     "aspect.integrateddynamics.read.long.world.time.info": "set time 명령어에 관련된 세계 시간",
     "aspect.integrateddynamics.read.long.world.totaltime": "총 시간",
     "aspect.integrateddynamics.read.long.world.totaltime.info": "set time 명령어에 관련 없는 세계 시간",
-
     "aspect.integrateddynamics.read.string.world.worldname": "세계 이름",
     "aspect.integrateddynamics.read.string.world.worldname.info": "대상 세계의 이름",
-
     "aspect.integrateddynamics.read.list.world.players": "플레이어 리스트",
     "aspect.integrateddynamics.read.list.world.players.info": "이 세계에 있는 플레이어의 리스트",
-
-    "_comment": "Aspect property types",
     "aspect.aspecttypes.integrateddynamics.integer.tankid": "탱크 ID",
     "aspect.aspecttypes.integrateddynamics.integer.slotid": "슬롯 ID",
     "aspect.aspecttypes.integrateddynamics.integer.listindex": "리스트 요소",
     "aspect.aspecttypes.integrateddynamics.integer.range": "범위",
-
     "aspect.aspecttypes.integrateddynamics.integer.channel": "채널",
-
     "aspect.aspecttypes.integrateddynamics.integer.interval": "펄스 간격",
     "aspect.aspecttypes.integrateddynamics.integer.length": "펄스 길이",
     "aspect.aspecttypes.integrateddynamics.integer.offset": "펄스 시간 오프셋",
-
     "aspect.aspecttypes.integrateddynamics.double.volume": "볼륨",
     "aspect.aspecttypes.integrateddynamics.double.frequency": "주파수",
-    "aspect.aspecttypes.integrateddynamics.integer.range": "범위",
-
     "aspect.aspecttypes.integrateddynamics.double.offset_x": "X 오프셋",
     "aspect.aspecttypes.integrateddynamics.double.offset_y": "Y 오프셋",
     "aspect.aspecttypes.integrateddynamics.double.offset_z": "Z 오프셋",
@@ -880,14 +760,10 @@
     "aspect.aspecttypes.integrateddynamics.double.spread_x": "X 퍼짐",
     "aspect.aspecttypes.integrateddynamics.double.spread_y": "Y 퍼짐",
     "aspect.aspecttypes.integrateddynamics.double.spread_z": "Z 퍼짐",
-
     "aspect.aspecttypes.integrateddynamics.boolean.strong_power": "센 힘",
     "aspect.aspecttypes.integrateddynamics.boolean.strong_power.info": "일반적인 레드스톤 가루 대신 레드스톤 횃불을 흉내내야하는가",
     "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value": "펄스 세기",
     "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value.info": "방출되어야하는 펄스의 세기.",
-
-    "_comment": "Operators",
-    "_comment_translator": "It's too hard because of the word order. I don't know I could use format with order. (e.g. %1s, %2s)",
     "operator.integrateddynamics": "연산자",
     "operator.integrateddynamics.applied.operator_name": "적용됨 %s [%s]",
     "operator.integrateddynamics.applied.type": "§e적용됨: §r%s",
@@ -931,15 +807,8 @@
     "operator.integrateddynamics.error.slice.index_negative": "부분인덱스는 음수가 될 수 없습니다.",
     "operator.integrateddynamics.error.reduce.empty": "reduce1 연산자가 빈 리스트의 머리를 가져오려고 시도했습니다. 대신에 reduce 연산자를 사용하여 빈 리스트에 대해 기본값을 제공하세요.",
     "operator.integrateddynamics.error.operator_not_found": "이름이 \"%s\"인 연산자를 찾을 수 없습니다.",
-
     "operator.integrateddynamics.logical": "논리",
     "operator.integrateddynamics.logical.basename": "논리 %s",
-    "operator.integrateddynamics.logical.and": "And",
-    "operator.integrateddynamics.logical.or": "Or",
-    "operator.integrateddynamics.logical.not": "Not",
-    "operator.integrateddynamics.logical.nand": "Nand",
-    "operator.integrateddynamics.logical.nor": "Nor",
-
     "operator.integrateddynamics.arithmetic": "산수",
     "operator.integrateddynamics.arithmetic.basename": "산수 %s",
     "operator.integrateddynamics.arithmetic.addition": "덧셈",
@@ -953,13 +822,9 @@
     "operator.integrateddynamics.arithmetic.modulus": "계수",
     "operator.integrateddynamics.arithmetic.increment": "증가",
     "operator.integrateddynamics.arithmetic.decrement": "감소",
-
-    "operator.integrateddynamics.integer": "Integer",
-    "operator.integrateddynamics.integer.basename": "Integer %s",
     "operator.integrateddynamics.integer.modulus": "계수",
     "operator.integrateddynamics.integer.increment": "증가",
     "operator.integrateddynamics.integer.decrement": "감소",
-
     "operator.integrateddynamics.relational": "관계",
     "operator.integrateddynamics.relational.basename": "관계 %s",
     "operator.integrateddynamics.relational.equals": "같음",
@@ -970,21 +835,14 @@
     "operator.integrateddynamics.relational.notequals.info": "첫번째와 두번째의 자료형은 같아야만합니다.",
     "operator.integrateddynamics.relational.ge": "크거나 같음",
     "operator.integrateddynamics.relational.le": "작거나 같음",
-
     "operator.integrateddynamics.binary": "이진수",
     "operator.integrateddynamics.binary.basename": "이진수 %s",
-    "operator.integrateddynamics.binary.and": "And",
-    "operator.integrateddynamics.binary.or": "Or",
-    "operator.integrateddynamics.binary.xor": "Xor",
     "operator.integrateddynamics.binary.complement": "보수",
     "operator.integrateddynamics.binary.rshift": "오른쪽 시프트",
     "operator.integrateddynamics.binary.rshift.info": "오른쪽으로 시프트하고 1이 채워집니다",
     "operator.integrateddynamics.binary.lshift": "왼족 시프트",
     "operator.integrateddynamics.binary.rzshift": "오른쪽 0 시프트",
     "operator.integrateddynamics.binary.rzshift.info": "오른쪽으로 시프트하고 0이 채워집니다",
-
-    "operator.integrateddynamics.string": "String",
-    "operator.integrateddynamics.string.basename": "String %s",
     "operator.integrateddynamics.string.length": "길이",
     "operator.integrateddynamics.string.length.info": "주어진 문자열의 길이",
     "operator.integrateddynamics.string.concat": "연결",
@@ -1025,21 +883,12 @@
     "operator.integrateddynamics.string.name.info": "문자열이나 이름있는 오브젝트의 이름을 얻거나 그것을 문자열로 변환합니다.",
     "operator.integrateddynamics.string.unique_name": "고유 이름",
     "operator.integrateddynamics.string.unique_name.info": "오브젝트의 고유 이름을 가져옵니다.",
-
-    "operator.integrateddynamics.double": "Double",
-    "operator.integrateddynamics.double.basename": "Double %s",
-
-    "operator.integrateddynamics.number": "Number",
-    "operator.integrateddynamics.number.basename": "Number %s",
     "operator.integrateddynamics.number.round": "반올림",
     "operator.integrateddynamics.number.round.info": "가장 가까운 정수로 반올림",
     "operator.integrateddynamics.number.ceil": "올림",
     "operator.integrateddynamics.number.ceil.info": "가장 가까운 정수로 올림",
     "operator.integrateddynamics.number.floor": "내림",
     "operator.integrateddynamics.number.floor.info": "가장 가까운 정수로 내림",
-
-    "operator.integrateddynamics.list": "List",
-    "operator.integrateddynamics.list.basename": "List %s",
     "operator.integrateddynamics.list.length": "길이",
     "operator.integrateddynamics.list.length.info": "주어진 리스트의 길이",
     "operator.integrateddynamics.list.empty": "비어있음",
@@ -1074,7 +923,6 @@
     "operator.integrateddynamics.list.uniq.info": "리스트의 모든 요소에서 중복을 제거합니다.",
     "operator.integrateddynamics.list.slice": "분할",
     "operator.integrateddynamics.list.slice.info": "주어진 리스트를 주어진 인덱스(포함)에서부터 주어진 인덱스(미포함)까지 자른 부분 집합을 가져옵니다.",
-
     "operator.integrateddynamics.block": "블록",
     "operator.integrateddynamics.block.basename": "블록 %s",
     "operator.integrateddynamics.block.opaque": "불투명",
@@ -1091,12 +939,6 @@
     "operator.integrateddynamics.block.stepsound.info": "주어진 블록을 밟는 소리",
     "operator.integrateddynamics.block.isshearable": "깎을 수 있는 블록",
     "operator.integrateddynamics.block.isshearable.info": "주어진 블록이 깎을 수 있는가",
-    "operator.integrateddynamics.block.isplantable": "식물인 블록",
-    "operator.integrateddynamics.block.isplantable.info": "주어진 블록이 식물인가",
-    "operator.integrateddynamics.block.planttype": "블록 식물 유형",
-    "operator.integrateddynamics.block.planttype.info": "주어진 블록의 식물 유형",
-    "operator.integrateddynamics.block.plant": "심은 블록",
-    "operator.integrateddynamics.block.plant.info": "이 블록을 심은 결과",
     "operator.integrateddynamics.block.cansustainplantblock": "블록 식물을 유지할 수 있는 블록",
     "operator.integrateddynamics.block.cansustainplantblock.info": "주어진 블록이 주어진 블록 식물을 유지할 수 있는가",
     "operator.integrateddynamics.block.cansustainplantitem": "아이템 식물을 유지할 수 있는 블록",
@@ -1111,7 +953,6 @@
     "operator.integrateddynamics.block.blockfromproperties.info": "주어진 속성이 적용된 주어진 블록을 가져옵니다.",
     "operator.integrateddynamics.block.blockpossibleproperties": "가능한 블록 속성 리스트",
     "operator.integrateddynamics.block.blockpossibleproperties.info": "가능한 모든 블록 속성들을 NBT 복합 태그로 리스트에 담아서 가져옵니다.",
-
     "operator.integrateddynamics.itemstack": "아이템",
     "operator.integrateddynamics.itemstack.basename": "아이템 %s",
     "operator.integrateddynamics.itemstack.size": "크기",
@@ -1170,12 +1011,6 @@
     "operator.integrateddynamics.itemstack.inventory.info": "주어진 아이템 핸들러의 인벤토리를 검색합니다.",
     "operator.integrateddynamics.itemstack.withsize": "아이템 스택 크기",
     "operator.integrateddynamics.itemstack.withsize.info": "주어진 아이템의 스택 크기를 설정합니다.",
-    "operator.integrateddynamics.itemstack.isplantable": "아이템 식물 여부",
-    "operator.integrateddynamics.itemstack.isplantable.info": "주어진 아이템이 식물인가",
-    "operator.integrateddynamics.itemstack.planttype": "아이템 식물 유형",
-    "operator.integrateddynamics.itemstack.planttype.info": "주어진 아이템의 식물 유형",
-    "operator.integrateddynamics.itemstack.plant": "심은 아이템",
-    "operator.integrateddynamics.itemstack.plant.info": "이 아이템을 심은 결과 블록",
     "operator.integrateddynamics.itemstack.itembyname": "이름에 대한 아이템",
     "operator.integrateddynamics.itemstack.itembyname.info": "주어진 고유 이름에 대응하는 아이템을 가져옵니다. 스페이스+숫자로 메타데이터를 나타내세요.",
     "operator.integrateddynamics.itemstack.itemlistcount": "리스트 아이템 수",
@@ -1184,7 +1019,6 @@
     "operator.integrateddynamics.itemstack.nbt.info": "주어진 아이템의 NBT 태그를 가져옵니다.",
     "operator.integrateddynamics.itemstack.hasnbt": "NBT 여부",
     "operator.integrateddynamics.itemstack.hasnbt.info": "주어진 아이템 스택이 NBT 태그를 가지고 있는가.",
-
     "operator.integrateddynamics.entity": "개체",
     "operator.integrateddynamics.entity.basename": "개체 %s",
     "operator.integrateddynamics.entity.ismob": "몹 여부",
@@ -1263,28 +1097,22 @@
     "operator.integrateddynamics.entity.entityenergystored.info": "이 개체에 저장된 에너지의 양",
     "operator.integrateddynamics.entity.entityenergycapacity": "개체 에너지 용량",
     "operator.integrateddynamics.entity.entityenergycapacity.info": "이 개체의 에너지 용량.",
-
     "operator.integrateddynamics.itemstack.isfecontainer": "FE 저장고 여부",
     "operator.integrateddynamics.itemstack.isfecontainer.info": "주어진 아이템이 FE를 저장할 수 있는가",
     "operator.integrateddynamics.itemstack.storedfe": "저장된 FE",
     "operator.integrateddynamics.itemstack.storedfe.info": "이 아이템에 저장된 FE의 양",
     "operator.integrateddynamics.itemstack.fecapacity": "FE 용량",
     "operator.integrateddynamics.itemstack.fecapacity.info": "이 아이템이 저장할 수 있는 최대 FE의 양",
-
     "operator.integrateddynamics.fluidstack": "유체",
     "operator.integrateddynamics.fluidstack.basename": "유체 %s",
     "operator.integrateddynamics.fluidstack.amount": "양",
     "operator.integrateddynamics.fluidstack.amount.info": "mB로 나타낸 양",
     "operator.integrateddynamics.fluidstack.block": "블록",
     "operator.integrateddynamics.fluidstack.block.info": "유체의 블록",
-    "operator.integrateddynamics.fluidstack.luminosity": "밝기",
-    "operator.integrateddynamics.fluidstack.luminosity.info": "유체의 밝기",
     "operator.integrateddynamics.fluidstack.density": "밀도",
     "operator.integrateddynamics.fluidstack.density.info": "유체의 밀도",
     "operator.integrateddynamics.fluidstack.viscosity": "점도",
     "operator.integrateddynamics.fluidstack.viscosity.info": "유체의 점도",
-    "operator.integrateddynamics.fluidstack.isgaseous": "기체 여부",
-    "operator.integrateddynamics.fluidstack.isgaseous.info": "유체가 기체인가",
     "operator.integrateddynamics.fluidstack.rarity": "희귀도",
     "operator.integrateddynamics.fluidstack.rarity.info": "유체의 희귀도",
     "operator.integrateddynamics.fluidstack.israwfluidequal": "원시 유체 같음",
@@ -1295,9 +1123,6 @@
     "operator.integrateddynamics.fluidstack.nbt.info": "주어진 유체의 NBT 태그를 가져옵니다.",
     "operator.integrateddynamics.fluidstack.with_amount": "양만큼의 유체",
     "operator.integrateddynamics.fluidstack.with_amount.info": "주어진 유체를 주어진 양만큼 복사해옵니다.",
-
-    "operator.integrateddynamics.nbt": "NBT",
-    "operator.integrateddynamics.nbt.basename": "NBT %s",
     "operator.integrateddynamics.nbt.compound_size": "NBT 복합 크기",
     "operator.integrateddynamics.nbt.compound_size.info": "주어진 NBT 복합 태그 내의 항목 수",
     "operator.integrateddynamics.nbt.compound_keys": "NBT 복합 키 리스트",
@@ -1416,7 +1241,6 @@
     "operator.integrateddynamics.nbt.path_match_all.info": "주어진 NBT 값에 주어진 NBT 경로 표현식을 적용하고 일치하는 모든 것을 리스트로 반환합니다.",
     "operator.integrateddynamics.nbt.path_test": "NBT 경로 테스트",
     "operator.integrateddynamics.nbt.path_test.info": "주어진 NBT 경로 표현식이 주어진 NBT 값과 일치하는지 테스트합니다.",
-
     "operator.integrateddynamics.operator": "연산자",
     "operator.integrateddynamics.operator.basename": "연산자 %s",
     "operator.integrateddynamics.operator.apply": "적용",
@@ -1452,7 +1276,6 @@
     "operator.integrateddynamics.virtual.recipeinputsbyoutput": "출력에 대한 레시피의 입력",
     "operator.integrateddynamics.virtual.recipesbyinput": "입력에 대한 레시피 리스트",
     "operator.integrateddynamics.virtual.recipesbyoutput": "출력에 대한 레시피 리스트",
-
     "operator.integrateddynamics.ingredients": "재료",
     "operator.integrateddynamics.ingredients.basename": "재료 %s",
     "operator.integrateddynamics.ingredients.items": "재료 아이템",
@@ -1473,7 +1296,6 @@
     "operator.integrateddynamics.ingredients.with_fluids.info": "주어진 재료 위치에서 주어진 유체 리스트로 주어진 재료의 사본을 가져옵니다.",
     "operator.integrateddynamics.ingredients.with_energies": "에너지 요소로 재료",
     "operator.integrateddynamics.ingredients.with_energies.info": "주어진 재료 위치에서 주어진 에너지 요소 리스트로 주어진 재료의 사본을 가져옵니다.",
-
     "operator.integrateddynamics.recipe": "레시피",
     "operator.integrateddynamics.recipe.basename": "레시피 %s",
     "operator.integrateddynamics.recipe.input": "레시피 입력 재료",
@@ -1486,7 +1308,6 @@
     "operator.integrateddynamics.recipe.with_output.info": "주어진 재료를 출력으로 주어진 레시피의 사본을 가져옵니다.",
     "operator.integrateddynamics.recipe.with_input_output": "입력과 출력 재료로 레시피",
     "operator.integrateddynamics.recipe.with_input_output.info": "첫번째 재료를 입력으로하고 두번째 재료를 출력으로하여 주어진 레시피의 사본을 가져옵니다.",
-
     "operator.integrateddynamics.general": "기본",
     "operator.integrateddynamics.general.basename": "기본 %s",
     "operator.integrateddynamics.general.choice": "선택",
@@ -1499,7 +1320,6 @@
     "operator.integrateddynamics.general.isnull.info": "주어진 값이 null 인가",
     "operator.integrateddynamics.general.isnotnull": "null 아님",
     "operator.integrateddynamics.general.isnotnull.info": "주어진 값이 null이 아닌가",
-
     "operator.integrateddynamics.virtual": "가상 연산자",
     "operator.integrateddynamics.virtual.basename": "가상 %s",
     "operator.integrateddynamics.virtual.p_conjunction": "술어 논리곱",
@@ -1512,51 +1332,38 @@
     "operator.integrateddynamics.virtual.piped.info": "연결된 연산자",
     "operator.integrateddynamics.virtual.piped2": "파이프 2 연산자",
     "operator.integrateddynamics.virtual.piped2.info": "2개의 연결된 연산자",
-
     "operator.integrateddynamics.cast": "캐스팅",
     "operator.integrateddynamics.cast.basename": "캐스팅",
     "operator.integrateddynamics.cast.tooltip": "%s을(를) %s로 캐스팅",
-
     "operator.integrateddynamics.parse": "파싱",
     "operator.integrateddynamics.parse.basename": "파싱",
     "operator.integrateddynamics.parse.tooltip": "%s 파싱",
-
-    "_comment": "------ On the Dynamics of Integration contents ------",
-
     "info_book.integrateddynamics.section.main": "통합의 역학에 대하여",
     "info_book.integrateddynamics.tag_index": "&o인덱스&r",
-
     "info_book.integrateddynamics.introduction": "서론",
     "info_book.integrateddynamics.introduction.text1": "오랜 시간 동안, 자동화 가능성은 너무 제한되어있었습니다. &1Integrated Dynamics&0 는 논리 시스템 자동화를 위한 필수 모드가 되는 것을 목표로 합니다. 이를 수행하기 위해 &l마인크래프트&r 및 그 모드의 대부분의 요소에 대한 인용 및 지원을 통해 표현형 몰입형 논리 프로그래밍 경험을 제공합니다.",
     "info_book.integrateddynamics.introduction.text2": "레드스톤 회로는 항상 매우 기본적이었지만 실행 가능하고 쉽게 이해할 수 있는 자동화 방법이었습니다. 그러나 레드스톤의 기본성은 또한 불편한 점이기도 합니다. 복잡성이 더 높은 자동화 네트워크의 경우 레드스톤 회로가 매우 커질 수 있으며 결과적으로 관리하기 어려울 수 있습니다. 또한, 작은 누수 하나가 모든 레드스톤 사용자에게 심각한 두통을 유발할 수 있습니다.",
     "info_book.integrateddynamics.introduction.text3": "이 책의 목적은 두 가지입니다. 먼저 &l튜토리얼&r은 이 모드의 가장 중요한 개념에 대한 배움을 제공합니다. 둘째로, 튜토리얼에 관심이 없는 플레이어를 위해 모든 요소와 메커니즘에 대한 자세한 &l매뉴얼&r이 설명되어 있습니다.",
     "info_book.integrateddynamics.introduction.text4": "하단에 있는 화살표를 클릭하여 이 책을 탐색할 수 있으며, Shift 키를 클릭하면 한 페이지가 아닌 전체 섹션으로 넘어갈 수 있습니다. 큰 섹션이 시작되면 더 빠른 탐색을 위해 하위 섹션에 대한 하이퍼링크가 포함된 콘텐츠 테이블이 표시됩니다. 레시피를 발견했을 때 이 책에 설명된 아이템을 클릭하면 해당 아이템이 설명된 섹션으로 빠르게 참조할 수 있습니다. 또한 이 책의 왼쪽 상단에 있는 버튼을 누르면 당신의 현재 것의 위의 섹션으로 이동할 수 있습니다. 오른쪽 상단 모서리에 있는 버튼은 클릭할 때마다 이전에 방문한 페이지로 돌아갑니다.",
-
     "info_book.integrateddynamics.tutorials": "튜토리얼",
-
     "info_book.integrateddynamics.tutorials.introduction": "서론",
     "info_book.integrateddynamics.tutorials.introduction.text1": "책의 이 부분에는 모드의 기본 사항을 이해하는 데 도움이 되는 여러 튜토리얼이 포함되어 있습니다. 또한 각 튜토리얼의 업적을 달성하면 일부 &l보상&r을 얻을 수 있습니다.",
-
     "info_book.integrateddynamics.tutorials.menrilBasics": "멘릴의 기본",
     "info_book.integrateddynamics.tutorials.menrilBasics.text1": "이 모드를 시작하려면 &l메네글린 생물군계&r에서 가장 쉽게 찾을 수 있는 &l멘릴 나무&r를 찾아야 합니다.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text2": "그런 다음 &l멘릴 통나무&r를 처리하기 위해 &l압착기&r 및 &l건조대&r를 만들어야 합니다. &l압착기&r에 나무 블록을 놓고 평평해질 때까지 점프하면 처리할 수 있습니다. 완료되면 &l멘릴 수지&r는 &l압착기&r의 양쪽으로 가려고 할 것입니다. 다음으로, &l건조대&r를 &l압착기&r 옆에 놓아서 방금 짜낸 &l멘릴 수지&r로 채우세요.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text3": "이 과정을 반복하려면 레드스톤 펄스를 적용하여 &l압착기&r를 초기화할 수 있습니다.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text4": "앞으로 더 쉽게 자동화할 수 있지만 비용이 더 많이 드는 &l기계식 압착기&r 및 &l기계식 건조대&r과 같은 업그레이드를 제작할 수도 있습니다.",
-
     "info_book.integrateddynamics.tutorials.networkFoundations": "네트워크 기초",
     "info_book.integrateddynamics.tutorials.networkFoundations.text1": "이 모드의 주요 목표는 자동화를 위한 제어 네트워크를 구축하는 것입니다. &l논리 케이블&r을 사용하여 수행할 수 있습니다. 그 케이블 10개로 네트워크를 만들어 보세요.",
     "info_book.integrateddynamics.tutorials.networkFoundations.text2": "다음 단계는 &l변수 카드&r 및 &l변수 변환기&r를 만드는 것입니다. &l변수 카드&r는 네트워크의 값에 대한 참조를 저장하는 데 사용합니다. &l변수 변환기&r는 이러한 값을 읽고 쓰기 위해 &l논리 케이블&r에 배치할 수 있는 구성 요소를 만드는 요소입니다.",
-
     "info_book.integrateddynamics.tutorials.basicNetworkComponents": "기본 네트워크 구성 요소",
     "info_book.integrateddynamics.tutorials.basicNetworkComponents.text1": "&l변수 카드&r를 특정 값에 바인딩하는 방법 중 하나는 &l판독기&r에서 값을 읽는 것입니다. 몇 가지 기본 판독기를 만드는 것으로 시작하겠습니다. 그런 다음 &l변수 카드&r의 값을 표시하는 데 유용한 &l디스플레이 패널&r을 만드세요.",
-
     "info_book.integrateddynamics.tutorials.aspects": "기능",
     "info_book.integrateddynamics.tutorials.aspects.text1": "간단한 예로 레드스톤 값을 읽어서 표시해 보겠습니다.",
     "info_book.integrateddynamics.tutorials.aspects.text2": "&l레드스톤 판독기&r를 세계의 &l논리 케이블&r에 연결하여 이를 수행하세요. 판독값이 &l레드스톤 횃불&r과 같은 레드스톤 값을 가진 대상을 대상으로 하는지 확인하세요.",
     "info_book.integrateddynamics.tutorials.aspects.text3": "그런 다음 &l레드스톤 판독기&r를 우클릭하여 GUI를 연 다음 &l변수 카드&r를 &6Integer&0 &l레드스톤 값&r 기능에 삽입하여 대상의 레드스톤 값을 해당 &l변수 카드&r에 바인딩해야 합니다.",
     "info_book.integrateddynamics.tutorials.aspects.text4": "다음으로 &l레드스톤 판독기&r와 동일한 네트워크에 &l디스플레이 패널&r을 배치하고 바인딩된 &l변수 카드&r를 삽입하여 값을 표시합니다.",
     "info_book.integrateddynamics.tutorials.aspects.text5": "다음 단계로 &l레드스톤 작성기&r를 만들고 레드스톤 판독기가 읽은 최대 정수 레드스톤 값을 쓰도록 하세요.",
-
     "info_book.integrateddynamics.tutorials.logicOperations": "논리 연산",
     "info_book.integrateddynamics.tutorials.logicOperations.text1": "판독기의 값을 표시하는 것이 유용할 수 있지만 &2연산자&0를 사용하여 특정 값을 다른 값과 결합하기 시작하면 상황이 매우 흥미로워집니다. 모든 &2연산자&0는 &l논리 프로그래머&r에서 찾을 수 있습니다.",
     "info_book.integrateddynamics.tutorials.logicOperations.text2": "항목과 블록 모습으로 존재하는 &l논리 프로그래머&r를 만드는 것으로 시작하세요. 모든 &l연산자&r의 목록을 보려면 GUI를 여세요.",
@@ -1565,7 +1372,6 @@
     "info_book.integrateddynamics.tutorials.logicOperations.text5": "&1Integrated Dynamics&0는 &o느긋한&r 방식으로 변수를 평가하므로 이 &l덧셈&r &l변수 카드&r에는 이러한 &6Integers&0의 덧셈이 직접 포함되지 않지만 덧셈은 변수 참조를 기반으로 네트워크에서 값이 필요할 때만 수행됩니다. 이를 위해 네트워크는 참조된 &l변수 카드&r를 찾을 수 있어야 합니다. 이를 위해서는 &l변수 저장소&r을 만들고 배치해야 합니다. 두 개의 &6Integer&0 &l변수 카드&r를 이 저장소에 삽입하여 네트워크에서 사용할 수 있도록 합니다.",
     "info_book.integrateddynamics.tutorials.logicOperations.text6": "마지막으로, 이제 케이블을 &l변수 저장소&r에 연결하고 &l디스플레이 패널&r을 부착하고 &l덧셈&r &l변수 카드&r를 삽입하여 덧셈을 표시할 수 있습니다.",
     "info_book.integrateddynamics.tutorials.logicOperations.text7": "&l논리 프로그래머&r 및 &l변수 저장소&r는 보다 복잡한 자동화를 수행하려는 경우 가장 친한 친구가 될 것입니다.",
-
     "info_book.integrateddynamics.tutorials.recipe_handling": "레시피 다루기",
     "info_book.integrateddynamics.tutorials.recipe_handling.text1": "&o레시피&r는 &l마인크래프트&r의 큰 부분입니다. 이것이 이 모드가 &8레시피&0 값과 입력 및 출력 컬렉션을 나타내는 &l재료&r 값을 통해 최상의 지원을 제공하는 이유입니다. 이 튜토리얼에서는 레시피를 얻고 사용하는 방법을 살펴보겠습니다.",
     "info_book.integrateddynamics.tutorials.recipe_handling.text2": "&8레시피&0를 얻는 가장 쉬운 방법은 레시피를 처리할 수 있는 기계에서 읽는 것입니다. 먼저 &l기계 판독기&r를 &l제작대&r에 놓고 레시피 목록을 읽어 모든 제작 레시피를 읽어보겠습니다.",
@@ -1573,86 +1379,62 @@
     "info_book.integrateddynamics.tutorials.recipe_handling.text4": "이 튜토리얼의 마지막 부분에서 우리는 한 단계 더 나아가 레시피를 읽을 것입니다. &l출력에 대한 레시피&r 기능을 사용하여 &8재료&0 인스턴스에 적용하면 지정된 &8재료&0를 출력으로 하는 첫 번째 &8레시피&0를 반환하는 연산자를 검색할 수 있습니다. 우리는 이것을 사용하여 &l상자&r의 레시피를 찾을 것입니다.",
     "info_book.integrateddynamics.tutorials.recipe_handling.text5": "&l논리 프로그래머&r에서 단일 &8상자&0가 있는 &8재료&0 인스턴스를 만드는 것으로 시작하겠습니다. 다음으로 &l제작대&r를 대상으로 하는 &l기계 판독기&r에서 &l출력에 대한 레시피&r 측면을 읽습니다. 그런 다음 &o적용&r 연산자를 사용하여 &l기계 판독기&r에서 가져온 연산자에 &l상자&r &8재료&0를 적용합니다. 마지막으로 결과 변수를 &l디스플레이 패널&r에 삽입하여 &l상자&r의 레시피를 확인하세요. (사용한 모든 변수를 &l변수 저장소&r에 삽입하는 것을 잊지 마세요).",
     "info_book.integrateddynamics.tutorials.recipe_handling.text6": "분명히 &8레시피&0 및 &8재료&0로 할 수 있는 일은 훨씬 더 많습니다. 사용 가능한 다른 고급 기능을 알아보려면 &l기계 판독기&r 및 &l논리 프로그래머&r를 살펴보십시오.",
-
-    "info_book.integrateddynamics.tutorials.nbt": "NBT",
     "info_book.integrateddynamics.tutorials.nbt.text1": "&4NBT&0 태그는 복잡한 데이터 구조를 나타내는 데 사용됩니다. 이것들은 일반적으로 마인크래프트에서 내부적으로 기계 및 개체 정보를 저장하는 데 사용됩니다. 이 튜토리얼에서는 간단한 NBT 태그 읽기 및 조작에 대해 알아보겠습니다.",
     "info_book.integrateddynamics.tutorials.nbt.text2": "첫 번째 단계로 독서대에 &l블록 판독기&r를 사용하고 &4NBT&0 데이터를 읽어 &l디스플레이 패널&r에서 시각화합니다.",
     "info_book.integrateddynamics.tutorials.nbt.text3": "다음으로 읽은 &l독서대&r &4NBT&0 태그에서 &3책&0 하위 태그를 복합 태그로 읽고 시각화합니다.",
     "info_book.integrateddynamics.tutorials.nbt.text4": "마지막 단계로 이 &3책&0 하위 태그에서 &3ID&0 필드를 읽습니다. 그러나 마지막으로 읽은 하위 태그에서 시작하는 대신 루트에서 시작하여 &lNBT 경로&r 표현식을 적용합니다. 이러한 표현식은 깊이 중첩된 &4NBT&0 값을 얻는 데 유용합니다. 예를 들어 &4”.root.child1.child2”&0 표현식을 &3NBT&0 태그 &3{ root: { child1: { child2: ”어떤 값” } }}&0에 적용하면 &3”어떤 값”&0이 출력됩니다. &lNBT 경로&r의 고급 기능은 나중에 설명서의 고급 부분에서 설명합니다.",
     "info_book.integrateddynamics.tutorials.nbt.text5": "최종 발전과제를 달성하려면 &3책&0/&3ID&0 필드를 선택하는 &lNBT 경로&r 표현식을 만들고 이를 &l독서대&r 태그에 적용하고 &l디스플레이 패널&r에서 시각화합니다.",
-
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents": "고급 네트워크 구성 요소",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text1": "이제 기본적인 논리에 익숙해졌으므로 더 고급 네트워크 구성요소인 &l구체화장치&r 및 &l프록시&r를 살펴보겠습니다.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text2": "기억하시겠지만 &l논리 프로그래머&r를 사용하면 &o정적인&r 값으로 변수를 만들거나 &o동적인&r 값 평가를 기반으로 더 복잡한 변수를 만들 수 있습니다.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text3": "&l구체화장치&r는 &o동적인&r 값을 &o정적인&r 값으로 변환하는 데 사용할 수 있습니다. 이것은 &l구체화장치&r의 상단 슬롯에 &o동적인&r &l변수 카드&r를 삽입하여 수행할 수 있습니다. 왼쪽 슬롯에 삽입된 모든 &l변수 카드&r는 해당 시점의 상단 변수 값으로 설정됩니다.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text4": "&l프록시&r를 사용하면 변수에 대한 간접적인 참조 레벨을 추가할 수 있습니다. 예를 들어 &o정적인&r 값이 필요한 논리 프로그램 있다고 합시다. 미래의 어느 시점에서든 해당 값을 변경하려면 해당 값이 &o프록시&r되어있지 않는 한 프로그램을 다시 작성해야 합니다. 이 경우 &l프록시&r의 값을 업데이트하기만 하면 됩니다.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text5": "이 튜토리얼에서는 구체화되고 프록시된 &l변수 카드&r를 만듭니다.",
-
     "info_book.integrateddynamics.tutorials.advancedOperations": "고급 연산",
     "info_book.integrateddynamics.tutorials.advancedOperations.text1": "지난 튜토리얼에서 눈치채셨겠지만 &l논리 프로그래머&r를 사용하면 단순히 숫자를 추가하는 것 이상의 작업을 수행할 수 있습니다. 이 튜토리얼에서 우리는 더 고급인 데이터 구조와 연산자의 연결을 살펴볼 것입니다.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text2": "&6Integer&0인 &61&0, &610&0 과 &6100&0이 들어있는 정적 &7리스트&0를 생성하여 시작하고 &l디스플레이 패널&r에서 시각화해 보겠습니다.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text3": "&7아이템&0은 이 모드에서 가능한 자료형 중 하나입니다. 정적 &7아이템&0 &l변수 카드&r를 만들고 해당 아이템에서 모드 이름을 동적으로 검색하고 &l디스플레이 패널&r에서 시각화해 보겠습니다.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text4": "참조된 변수를 저장하려면 &l변수 저장소&r를 사용해야 한다는 것을 기억하세요.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text5": "이 튜토리얼의 마지막 부분에서는 동적 변수를 연산자와 결합합니다. &l개체 판독기&r를 네트워크에 연결하고, 대상 &7개체&0를 읽고, 대상 &7개체&0가 보고 있는 &7블록&0을 검색하고, &l디스플레이 패널&r에서 &7블록&0을 시각화합니다.",
-
     "info_book.integrateddynamics.tutorials.theValueOfOperators": "연산자 값",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text1": "&1Integrated Dynamics&0에서 &2연산자&0는 최상위 시민입니다. 지금까지는 &l로직 프로그래머&r를 사용하여 수동적으로만 사용했지만 이 튜토리얼에서는 &l변수 카드&r에 &2연산자&0를 저장하고 동적으로 호출하여 보다 동적으로 사용하는 방법을 살펴보겠습니다.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text2": "첫 번째 단계로 &l논리 프로그래머&r로 이동하여 자동 완성 드롭다운 목록에 &o산수 덧셈&r &2연산자&0를 입력하고 클릭하여 &l변수 카드&r에 작성하여 새로운 정적 &2연산자&0를 만듭니다. 그런 다음 두 개의 &6Integer&0 변수를 만듭니다. 다음으로 &o적용&r 연산자를 찾고 첫 번째 &6Integer&0를 &2연산자&0에 적용하면 추가 &2연산자&0의 첫 번째 입력 인수가 &6Integer&0에 &o바인딩&r되고 하나의 나머지 입력 인수와 함께 새 &2연산자&0가 출력됩니다. 다음으로 &o적용&r 연산자를 다시 사용하여 새로 생성된 &2연산자&0의 최종 입력 인수를 &o바인딩&r합니다. 마지막으로 &l디스플레이 패널&r을 사용하여 동적으로 호출된 덧셈을 시각화합니다.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text3": "&2연산자&0를 적용하는 것 외에 다른 많은 고급 &2연산자&0 작업이 있습니다. 이제 &7리스트&0, 보다 구체적으로 &7리스트&0 및 &o술어&r(하나의 입력 인수와 &9Boolean&0 출력 값이 있는 &2연산자&0)을 사용하는 &o필터&r &2연산자&0에서 &2연산자&0를 사용하는 방법을 살펴보겠습니다. &6Integer&0인 &61&0, &610&0 과 &6100&0의 &7리스트&0를 작성하여 시작하세요. 다음으로 &o관계 같음&r &2연산자&0를 변수에 저장합니다. 다음으로 이 연산자를 &6Integer&0 &610&0에 적용합니다. 다음으로 &7리스트&0 및 적용된 &2연산자&0와 함께 &o필터&r &2연산자&0를 사용합니다. 이것은 주어진 연산자에 적용하면 &9거짓&0을 반환하는 &7리스트&0의 모든 항목을 걸러냅니다. 이 경우 &610&0과 같지 않은 모든 요소가 목록에서 제거됨을 의미합니다. &l디스플레이 패널&r에서 결과를 시각화합니다.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text4": "&o술어&r 결합, &2연산자&0 인수 뒤집기 및 &7리스트&0에 대한 추가 작업과 같이 &2연산자&0에 대한 많은 다른 작업이 있습니다.",
-
     "info_book.integrateddynamics.tutorials.challenges": "도전",
     "info_book.integrateddynamics.tutorials.challenges.text1": "이 마지막 튜토리얼 섹션에는 &1Integrated Dynamics&0의 기본 사항을 이해하고 있음을 보여주기 위한 몇 가지 작은 문제가 포함되어 있습니다. 각 도전에 대한 추가 정보는 제공되지 않으므로 행운을 빕니다!",
-
     "info_book.integrateddynamics.manual": "매뉴얼",
-
     "info_book.integrateddynamics.manual.introduction": "소개",
     "info_book.integrateddynamics.manual.introduction.text1": "책의 이 부분에는 모드의 모든 부분에 대한 자세한 설명이 포함되어 있습니다..",
-
     "info_book.integrateddynamics.manual.prerequisites": "필요한 것",
-
     "info_book.integrateddynamics.manual.prerequisites.menril_trees": "멘릴 나무",
     "info_book.integrateddynamics.manual.prerequisites.menril_trees.text1": "때때로 키가 큰 푸른 나무를 만날 수 있습니다. 이러한 나무는 &l멘릴 나무&r라고 하며 몇 가지 매우 흥미로운 속성을 가지고 있습니다. 먼저 잎에서 빛이 납니다. 이것은 매우 맛있는 빛나는 열매로 인해 발생합니다! 둘째, 멋지게 보이는 나무에는 이 모드에서 대부분의 것을 만드는 데 사용할 수 있는 많은 수지가 포함되어 있습니다.",
-
     "info_book.integrateddynamics.manual.prerequisites.meneglin_biome": "메네글린 생물군계",
     "info_book.integrateddynamics.manual.prerequisites.meneglin_biome.text1": "&l멘릴 나무&r는 불행히도 찾기가 매우 어렵습니다. 운 좋게도 이 나무가 번성하는 &l메네글린 생물군계&r라는 생물군계가 있습니다. 많은 양의 &l멘릴 나무&r는 이 생물 군계의 일부를 파란색으로 만듭니다. 이는 이 나무가 환경에 방출하는 &l멘릴 수지&r 때문입니다.",
-
     "info_book.integrateddynamics.manual.prerequisites.squeezer": "압착기",
     "info_book.integrateddynamics.manual.prerequisites.squeezer.text1": "&l압착기&r는 블록과 아이템을 짓눌러 부수거나 짜낼 수 있는 게임 초기의 기계입니다. 플레이어뿐만 아니라 모든 종류의 개체가 점프하거나 떨어지면 압착 과정을 수행할 수 있습니다. 결과 아이템은 인접한 인벤토리 또는 지상에 떨어집니다. 결과 유체는 기계에 남아 있고 대상이 될 탱크가 있는 경우 양쪽 중 하나로 흐릅니다. 기계에는 레드스톤 펄스로 리셋할 수 있는 작은 서스펜션이 포함되어 있습니다. 가장 주목할 만한 점은 이 기계를 사용하여 &l멘릴 통나무&r에서 수지를 짜낼 수 있다는 것입니다.",
-
     "info_book.integrateddynamics.manual.prerequisites.drying_basin": "건조대",
     "info_book.integrateddynamics.manual.prerequisites.drying_basin.text1": "&l건조대&r를 사용하여 블록과 아이템을 건조시킬 수 있습니다. 이것은 예를 들어 &l멘릴 수지&r를 &l결정화된 멘릴&r로 건조시키려는 경우에 유용할 수 있습니다.",
     "info_book.integrateddynamics.manual.prerequisites.drying_basin.text2": "뭘 하든, 뜨거운 유체를 넣지 마세요!",
-
     "info_book.integrateddynamics.manual.networks": "네트워크",
     "info_book.integrateddynamics.manual.networks.text1": "&lIntegerated Dynamics&r의 &l네트워크&r는 모든 우수한 자동화 시스템의 기초입니다. 네트워크는 연결된 &l논리 케이블&r의 모음으로 구성되며 여기에 부품을 배치할 수 있습니다. 이러한 케이블은 &l렌치&r을 사용하여 관리해야 합니다. 렌치를 들고 케이블이나 부품을 Shift 키를 누른 상태에서 우클릭하면 제거되고 그냥 우클릭하면 다른 케이블과의 연결이 끊어집니다.",
     "info_book.integrateddynamics.manual.networks.text2": "&l논리 케이블&r이 멋지게 보일 수 있지만 어떤 경우에는 숨기고 싶을 수도 있습니다. 모든 물질을 흉내낼 수 있는 &l덮개&r를 사용하여 이 작업을 수행할 수 있습니다. 또한 이 케이블은 &lMC MultiPart&r과도 호환되므로 보다 복잡한 외관 구조에서 케이블을 숨길 수 있습니다.",
-
     "info_book.integrateddynamics.manual.logic": "논리",
-
     "info_book.integrateddynamics.manual.logic.value_types": "자료형",
-
-    "info_book.integrateddynamics.manual.logic.value_types.boolean": "Boolean",
     "info_book.integrateddynamics.manual.logic.value_types.boolean.text1": "가장 단순한 자료형인 해당 값은 &9참&0 또는 &9거짓&0이 될 수 있습니다.",
-    "info_book.integrateddynamics.manual.logic.value_types.integer": "Integer",
     "info_book.integrateddynamics.manual.logic.value_types.integer.text1": "양수 및 음수인 정수를 나타내는 자료형입니다. 예: &6-20&0, &60&0, &61000&0, &6333&0, ...",
     "info_book.integrateddynamics.manual.logic.value_types.integer.text2": "값의 범위는 &6–2147483648&0에서 &62147483647&0입니다.",
     "info_book.integrateddynamics.manual.logic.value_types.integer.text3": "이 자료형은 &lNumber&r 카테고리의 일부입니다.",
-    "info_book.integrateddynamics.manual.logic.value_types.double": "Double",
     "info_book.integrateddynamics.manual.logic.value_types.double.text1": "양수 또는 음수일 수도 있는 실수입니다. 예: &e3.1415&0, &e4815162342&0, &e3.33333333&0, ...",
     "info_book.integrateddynamics.manual.logic.value_types.double.text2": "이 자료형은 &lNumber&r 카테고리의 일부입니다.",
-    "info_book.integrateddynamics.manual.logic.value_types.long": "Long",
     "info_book.integrateddynamics.manual.logic.value_types.long.text1": "&6Integer&0와 동일하지만 &e-9223372036854775808&0에서 &e9223372036854775807&0까지로 값 범위가 더 큽니다.",
     "info_book.integrateddynamics.manual.logic.value_types.long.text2": "이 자료형은 &lNumber&r 카테고리의 일부입니다.",
-    "info_book.integrateddynamics.manual.logic.value_types.string": "String",
     "info_book.integrateddynamics.manual.logic.value_types.string.text1": "일련의 문자. 예: &4”aaa”&0, &4“Hi!”&0, &4“x!(àà)ç”&0, ...",
-    "info_book.integrateddynamics.manual.logic.value_types.list": "List",
     "info_book.integrateddynamics.manual.logic.value_types.list.text1": "특정 &l자료형&r의 값을 포함하는 목록입니다. 동일한 자료형의 값만 포함할 수 있습니다. 예: &8(0, 1, 2, 3)&0, &8(“a”, “b”, “c”)&0, &8(3,33, 1,14, 5, 6)&0",
     "info_book.integrateddynamics.manual.logic.value_types.operator": "연산자",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text1": "&2연산자&0에 대한 참조를 포함하는 값. 연산자는 &l커링&r의 개념을 기반으로 보다 유연한 평가를 위해 부분적으로 적용될 수 있습니다. 이것은 연산자가 다른 연산자에 의해 데이터로 취급되는 &l메타프로그래밍&r 개념의 일부입니다. 이를 통해 기본적으로 새로운 연산자를 직접 생성할 수 있으며 더 복잡한 작업에 사용할 수 있습니다.",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text2": "예를 들어 덧셈 &2연산자&0를 변수 카드에 저장할 수 있습니다. 연산자 이름 입력을 시작하고 자동 완성 드롭다운 목록에서 선택하고 클릭하면 됩니다. 그런 다음 하나의 &6Integer&0 &l변수 카드&r로 이를 부분적으로 적용할 수 있습니다. 그러면 하나의 입력 유형과 하나의 출력 유형이 있는 새 가상 연산자가 생성되며, 여기에는 적용된 &6Integer&0에 대한 참조가 내부적으로 포함됩니다. 다른 &6Integer&0를 적용하면 &6Integer&0가 됩니다.",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text3": "목록을 단일 값으로 축소하거나 &l술어&r를 기반으로하는 리스트 필터링과 같은 고급 평가를 위한 다른 작업의 &2연산자&0가 &l논리 프로그래머&r에 있습니다.",
-    "info_book.integrateddynamics.manual.logic.value_types.nbt": "NBT",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text1": "&l마인크래프트&r의 특정 아이템은 내부적으로 &3NBT&0 데이터 구조를 사용합니다. &3NBT&0 태그는 다른 자료형의 여러 값을 보유할 수 있는 특수한 종류의 개체입니다. 예를 들어 모든 아이템을 포함하는 &8상자&0의 NBT 표현, &8곡괭이&0의 마법 부여 정보, ...",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text2": "변수는 이러한 &3NBT&0 태그에 대한 참조를 보유할 수 있으며 해당 연산자는 이러한 태그를 읽거나 확장하기 위해 존재합니다.",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text3": "&3NBT&0 태그는 일반적으로 전용 연산자를 사용하여 특정 정보를 읽을 수 없는 경우에 대비하여 이 모드에서 낮은 수준의 대체 메커니즘으로 사용됩니다.",
@@ -1671,20 +1453,15 @@
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text2": "레시피는 &l논리 프로그래머&r를 사용하여 시각적으로 만들거나 &l기계 판독기&r를 사용하여 (지원되는) 기계에서 읽을 수 있습니다.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text3": "이 조리법은 &lIntegerated Crafting&r과 같은 자동 제작 모드에 사용할 수 있습니다.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text4": "GUI 내 기존 &l변수 카드&r 중에서 특정 레시피를 빠르게 찾으려면 Shift 키를 누른 상태에서 레시피의 출력 아이템이 무엇인지 일시적으로 표시할 수 있습니다.",
-
     "info_book.integrateddynamics.manual.logic.variables": "변수",
-
     "info_book.integrateddynamics.manual.logic.variables.variable_card": "변수 카드",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text1": "&l변수 카드&r는 이 모드에서 논리 전송의 기본 양식입니다. 변수에는 특정 &l자료형&r이 있는 특정 &l값&r에 대한 참조가 포함되어 있습니다.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text2": "변수는 정적이거나 동적일 수 있습니다. 정적 변수는 한 번 정의된 이후에는 변경되지 않습니다. 동적 변수는 &l연산자&r 또는 &l판독기 기능&r에 의해 수행되는 일부 형태의 &l논리 평가&r의 결과입니다. 동적 변수의 예는 &lMinecraft&r 세계의 시간이며 지속적으로 변경됩니다.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text3": "동적 변수는 &l디스플레이 패널&r에 값을 표시하거나 다른 동적 변수 평가의 일부로 요청되는 것과 같은 방식으로 값이 요청될 때만 평가됩니다.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text4": "각 &l변수 카드&r에는 고유 ID가 있으며, 이는 &l논리 평가&r용 네트워크에서 내부적으로 사용됩니다. 네트워크에서 오류가 발생하면 이러한 ID가 플레이어에게 표시되어 디버깅에 도움이 됩니다. 더 나은 사용성을 위해 플레이어가 ID 대신 라벨을 볼 수 있도록 &l라벨러&r를 사용하여 &l변수 카드&r에 라벨을 지정할 수 있습니다.",
-
     "info_book.integrateddynamics.manual.logic.variables.variable_store": "변수 저장소",
     "info_book.integrateddynamics.manual.logic.variables.variable_store.text1": "일부 동적 변수는 참조된 변수에 접근할 수 있어야 하는 다른 변수를 기반으로 평가됩니다. 두 개의 다른 변수의 덧셈을 나타내는 동적 변수는 평가될 때 해당 두 개의 다른 변수에 접근할 수 있어야 합니다. 다른 변수에 대한 접근은 동적 변수가 평가되는 것과 동일한 네트워크 내에서 가능해야 하며, 이는 다른 변수 카드를 &l변수 저장소&r에 배치하여 수행할 수 있습니다. 네트워크에 여러 &l변수 저장소&r이 있을 수 있습니다. 이러한 다른 변수는 동일한 네트워크에도 있어야 하는 특정 변수를 참조할 수도 있습니다.",
-
     "info_book.integrateddynamics.manual.logic.advanced": "고급",
-
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path": "NBT 경로",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text1": "복잡한 &3NBT&0 태그로 작업할 때 깊이 중첩된 NBT 값을 읽기 위해 복잡한 연산자 체인이 빠르게 필요할 수 있습니다. 이 작업을 단순화하기 위해 &4String&0 기반 &lNBT 경로 표현식&r을 사용하여 &3NBT&0 태그 내의 경로를 결정할 수 있습니다.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text2": "가장 간단한 NBT 경로 표현식은 &4.fieldName&0 또는 &4.[”fieldName”]&0과 같은 &l필드 선택자&r 체인으로 구성됩니다.",
@@ -1697,19 +1474,15 @@
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text9": "예를 들어 &4”.a[1:4:2]”&0 표현식을 &3NBT&0 태그 &3{ a: [0,1,2,3,4,5] }&0에 적용하면 &3[1,3]이 출력됩니다. &0.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text10": "&4[?(@.childName < 10)]&0(@은 현재 태그, ..는 상위 태그, $는 루트 태그를 나타냄)와 같은 필터 구문을 사용하여 고급 필터 표현식을 사용할 수도 있습니다.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text11": "예를 들어 &4”$.a[?(@ == 3)]”&0 표현식을 &3NBT&0 태그 &3{ a: [0,1,2,3,4,5] }&0에 적용하면 &3[3 ]&0.",
-
     "info_book.integrateddynamics.manual.parts": "부품",
-
     "info_book.integrateddynamics.manual.parts.introduction": "소개",
     "info_book.integrateddynamics.manual.parts.introduction.text1": "부품은 &l논리 케이블&r의 양쪽에 배치할 수 있습니다. 이 섹션에서는 &l값&r을 읽고 &l변수 카드&r에 쓸 수 있는 부품과 &l변수 카드&r 내의 &l변수&r를 기반으로 작업을 수행할 수 있는 부품에 대해 설명합니다.",
     "info_book.integrateddynamics.manual.parts.introduction.text2": "대부분의 부품에는 구성 가능한 설정이 있으며 부품의 GUI에서 오른쪽 상단 버튼을 사용하여 접근할 수 있습니다. 이를 통해 부품 &l틱/작업&r, 즉 이 부품이 해당 작업을 수행해야 하는 틱 수를 변경할 수 있습니다. 둘째, 부품의 &l우선 순위&r가 변경될 수 있습니다. 이는 이 부품이 동일한 틱에서 동일한 네트워크의 다른 부품에 대해 상대적으로 작동할 수 있는 순서를 나타냅니다. 파트 A의 우선순위가 -1이고 파트 B의 우선순위가 1인 경우 파트 B는 항상 파트 A보다 먼저 작업을 수행합니다. 파트의 우선순위가 동일한 경우 상대적 순서는 무작위입니다.",
     "info_book.integrateddynamics.manual.parts.introduction.text3": "부품의 &l에너지 채널&r은 부품이 에너지를 끌어올 수 있는 위치를 결정합니다. -1은 와일드카드 채널(모든 채널과 일치함)이고 0은 기본 채널(채널 설정이 없는 에너지 셀과 같은 부분에서 사용됨)입니다. 마지막으로 &l대상 면&r은 대상 블록의 어느 면과 상호 작용할지 결정합니다. 이것은 실제로 배치되는 면으로 기본 설정됩니다.",
     "info_book.integrateddynamics.manual.parts.introduction.text4": "일부 판독기 및 작성기 부품에는 특정 다른 모드가 있는 경우에만 기능이 포함됩니다. 특정 부품에 대한 기능이 없으면 제작을 시도할 때마다 아이템 툴팁에 경고가 추가됩니다.",
-
     "info_book.integrateddynamics.manual.parts.reader": "작성기",
     "info_book.integrateddynamics.manual.parts.reader.introduction": "소개",
     "info_book.integrateddynamics.manual.parts.reader.introduction.text1": "동적 변수를 만드는 가장 간단한 방법은 &l작성기&r를 사용하는 것입니다. &l변수 카드&r 내부에 저장하여 세계에서 정보를 읽기 위한 다양한 유형의 작성기가 존재합니다. 각 &l작성기&r에는 서로 다른 &l자료형&r이 있는 다른 항목을 읽기 위한 하나 이상의 &l기능&r이 포함되어 있습니다.",
-
     "info_book.integrateddynamics.manual.parts.reader.audio": "소리",
     "info_book.integrateddynamics.manual.parts.reader.audio.text1": "환경에서 재생되는 음악 및 소리에 대한 정보입니다.",
     "info_book.integrateddynamics.manual.parts.reader.block": "블록",
@@ -1730,7 +1503,6 @@
     "info_book.integrateddynamics.manual.parts.reader.redstone.text1": "향하고 있는 블록에서 레드스톤 정보를 읽습니다.",
     "info_book.integrateddynamics.manual.parts.reader.world": "세계",
     "info_book.integrateddynamics.manual.parts.reader.world.text1": "현재 날씨 및 시간과 같은 이 부품이 속한 세계에 대한 정보입니다.",
-
     "info_book.integrateddynamics.manual.parts.writer": "작성기",
     "info_book.integrateddynamics.manual.parts.writer.audio": "소리",
     "info_book.integrateddynamics.manual.parts.writer.audio.text1": "소리와 음악을 재생합니다.",
@@ -1744,7 +1516,6 @@
     "info_book.integrateddynamics.manual.parts.writer.inventory.text1": "인벤토리 및 파이프와 관련된 작업을 수행합니다. 이것은 아이템 자체를 전송하지 않습니다.",
     "info_book.integrateddynamics.manual.parts.writer.redstone": "레드스톤",
     "info_book.integrateddynamics.manual.parts.writer.redstone.text1": "특정 레드스톤 세기를 출력합니다.",
-
     "info_book.integrateddynamics.manual.parts.other": "나머지",
     "info_book.integrateddynamics.manual.parts.other.light": "밝기",
     "info_book.integrateddynamics.manual.parts.other.light.text1": "항상 켜져 있거나 &1Boolean&0 또는 &6Integer&0 &l변수 카드&r를 사용하여 제어할 수 있는 간단한 조명.",
@@ -1759,39 +1530,30 @@
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text2": "예를 들어 단일 커넥터를 사용하여 두 개 이상의 네트워크를 함께 연결하거나 다른 차원의 네트워크와 연결할 수는 없습니다. 이러한 경우 &l전방향&r 커넥터를 사용할 수 있습니다.",
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text3": "이러한 커넥터는 처음 제작될 때 네트워크를 연결할 수 있는 그룹을 식별하는 고유한 그룹 ID를 갖습니다. 각 커넥터 그룹은 월드에 배치될 때 고유한 입자 색상을 가지며 그룹 ID는 아이템 툴팁에서 또는 배치된 후 커넥터를 우클릭하여 볼 수 있습니다. 그룹 내의 기존 커넥터를 사용하여 새 커넥터를 만들어 그룹에 커넥터를 추가할 수 있습니다.",
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text4": "두 가지 방법으로 기존 커넥터 그룹을 변경할 수도 있습니다. 제작대에서 하나만 제작하면 다른 구성원이 없는 새 그룹에 할당되고 두 개를 함께 제작하면 첫 번째 그룹의 그룹이 두 번째 그룹에 복사됩니다.",
-
     "info_book.integrateddynamics.manual.machines": "기계",
-
     "info_book.integrateddynamics.manual.machines.materializer": "구체화장치",
     "info_book.integrateddynamics.manual.machines.materializer.text1": "동적 &l변수 카드&r를 정적으로 만들기 위해 &l구체화장치&r를 사용할 수 있습니다. 동적 &l변수 카드&r를 삽입해야 하고 새로운 빈 &l변수 카드&r를 삽입해야 동적 &l변수 카드&r의 현재 값을 정적 값으로 포함하게 됩니다.",
     "info_book.integrateddynamics.manual.machines.materializer.text2": "이것은 특정 동적 &l변수 카드&r의 값을 기록하려는 상황이나 &l변수 카드&r의 동적 평가가 더 이상 필요하지 않은 상황에서 유용할 수 있습니다.",
     "info_book.integrateddynamics.manual.machines.materializer.text3": "&l변수 카드&r는 &l구체화장치&r에서 파이프로 연결 및 제거할 수 있습니다.",
-
     "info_book.integrateddynamics.manual.machines.proxy": "프록시",
     "info_book.integrateddynamics.manual.machines.proxy.text1": "&l프록시&r는 특정 &l변수 카드&r에 대한 동적 참조를 만드는 데 사용할 수 있습니다. 이를 통해 상단 슬롯에 &l변수 카드&r를 삽입하고 프록시에 있는 &l변수 카드&r 값을 동적으로 사용하는 새 &l변수 카드&r를 작성할 수 있습니다. 참조된(또는 다른) &l변수 카드&r는 프록시가 작동하려면 맨 위 슬롯에 남아 있어야 합니다.",
     "info_book.integrateddynamics.manual.machines.proxy.text2": "이것은 &l변수 카드&r 체인이 있지만 여전히 하나의 값을 수동으로 변경할 수 있기를 원하는 상황에서 유용합니다. 그런 다음 해당 변수를 프록시하여 언제든지 다른 변수와 교환할 수 있습니다.",
     "info_book.integrateddynamics.manual.machines.proxy.text3": "&l구체화장치&r와 마찬가지로 &l변수 카드&r는 파이프로 연결되거나 빠져나갈 수 있습니다.",
-
     "info_book.integrateddynamics.manual.machines.delay": "지연기",
     "info_book.integrateddynamics.manual.machines.delay.text1": "어떤 상황에서는 일종의 변수 값 기록을 유지해야 할 수도 있습니다. 예를 들어 이전 값에 대한 평균 또는 차이를 구하려는 경우.",
     "info_book.integrateddynamics.manual.machines.delay.text2": "이를 위해 주어진 변수 값의 기록을 유지할 수 있는 &l지연기&r를 사용할 수 있습니다. 상단 슬롯에 기록을 유지하려는 &l변수 카드&r를 삽입하여 이를 수행할 수 있습니다. 이제 기록할 값 목록을 참조하는 &l변수 카드&r를 만들 수 있습니다. 참조된(또는 다른) &l변수 카드&r는 지연기가 작동하도록 맨 위 슬롯에 남아 있어야 합니다.",
     "info_book.integrateddynamics.manual.machines.delay.text3": "가장 오래된 값은 목록의 마지막 요소에 해당합니다. GUI 내에서 기록의 최대 길이를 선택할 수 있습니다.",
-
     "info_book.integrateddynamics.manual.machines.energy_battery": "에너지 배터리",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "&lIntegrated Dynamics&r 네트워크는 에너지를 소비하도록 구성할 수 있습니다. 이를 위해 &l에너지 배터리&r를 네트워크에 연결하여 에너지 저장 용량을 추가할 수 있습니다.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text2": "이 배터리는 &lRF&r 및 &lTesla&r 전원을 모두 수용합니다.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "레드스톤 신호를 적용하면 모든 면으로 에너지 자동 내보내기 모드가 활성화됩니다.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "이 배터리가 인벤토리에 있을 때 Shift+우클릭으로 &la자동 공급&r 모드를 활성화할 수 있습니다. 활성화되면 이 배터리는 자동으로 두 손에 들고 있는 아이템을 에너지로 채우려고 시도합니다.",
-
     "info_book.integrateddynamics.manual.machines.generator": "발전기",
     "info_book.integrateddynamics.manual.machines.generator.text1": "&lRF&r 또는 &lTesla&r 에너지가 필요할 때 &l발전기&r를 사용하여 &o태울 수 있는&r 아이템에서 에너지를 생성할 수 있습니다.",
-
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "기계식 압착기",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer.text1": "&압착기&r에서 점프를 충분히 많이 한 때가 올 것입니다. 그때까지 &l압착기&r을 자동화하지 않았다면 &l기계식 압착기&r를 만드는 방법을 알아볼 시간입니다. 수동 작업이 필요하지 않지만 실행하는 데 에너지가 필요합니다. 이것은 또한 일반 &l압착기&r보다 훨씬 빠르며 더 많은 것을 더 높은 생산률로 짜낼 수 있습니다.",
-
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin": "기계식 건조대",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1": "&l건조대&r로 건조하는 데 시간이 걸릴 수 있습니다. 더 빨리 진행하고 싶거나 더 많은 것을 말리고 싶다면 &l기계식 건조대&r를 사용할 수 있습니다. 이는 작동하는 데 에너지가 필요합니다.",
-
     "info_book.integrateddynamics.manual.logic_programming": "논리 프로그래밍",
     "info_book.integrateddynamics.manual.logic_programming.text1": "동적 변수 카드를 만드는 또 다른 방법은 하나 이상의 &l변수 카드&r에 &l연산자&r를 적용하여 새로운 &l변수 카드&r를 생성하는 것입니다. &l연산자&r의 예는 두 개의 &lNumber&r를 더하여 새로운 &lNumber&r을 생성하는 것입니다.",
     "info_book.integrateddynamics.manual.logic_programming.text2": "&l연산자&r는 하나 이상의 입력 값을 가질 수 있고 하나의 출력 값을 가질 수 있습니다. 대부분의 경우 입력 및 출력에는 특정 &l자료형&r이 있고, 그렇지 않으면 &lany&r 자료형이 됩니다. 단일 입력 및 하나의 출력 &lBoolean&r이 있는 &l연산자&r를 &l술어&r라고 합니다.",
