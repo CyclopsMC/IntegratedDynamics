@@ -780,4 +780,18 @@ public class TestStringOperators {
         Operators.NAMED_NAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- STRING_ERROR -----------------------------------
+     */
+
+    @Test(expected = EvaluationException.class)
+    public void testSymbolsError() throws EvaluationException {
+        Operators.STRING_ERROR.evaluate(sregex);
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testSpacesError() throws EvaluationException {
+        Operators.STRING_ERROR.evaluate(shelloWorld);
+    }
+
 }
