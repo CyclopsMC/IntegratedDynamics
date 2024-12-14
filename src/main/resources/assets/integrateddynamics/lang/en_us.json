@@ -1060,6 +1060,8 @@
     "operator.integrateddynamics.string.name.info": "Get the string or name of a named object or converts it to a string",
     "operator.integrateddynamics.string.unique_name": "Unique Name",
     "operator.integrateddynamics.string.unique_name.info": "Get the unique name of an object",
+	"operator.integrateddynamics.string.string_error": "Error",
+	"operator.integrateddynamics.string.string_error.info": "Throw a custom error",
 
     "operator.integrateddynamics.double": "Double",
     "operator.integrateddynamics.double.basename": "Double %s",
