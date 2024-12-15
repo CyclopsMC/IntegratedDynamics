@@ -807,7 +807,7 @@ public class TestStringOperators {
     }
 
     @Test(expected = EvaluationException.class)
-    public void testInvalidInputSizeLong() throws EvaluationException {
+    public void testInvalidInputSizeErrorLong() throws EvaluationException {
         Operators.STRING_ERROR.evaluate(new IVariable[]{sabc, sabc});
     }
 
