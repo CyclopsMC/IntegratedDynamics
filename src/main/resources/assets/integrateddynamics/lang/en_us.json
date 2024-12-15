@@ -293,6 +293,9 @@
     "valuetype.integrateddynamics.named.info": "Something that has a name, such as display names of items and blocks.",
     "valuetype.integrateddynamics.uniquely_named": "Uniquely Named",
     "valuetype.integrateddynamics.uniquely_named.info": "Something that has a unique name, such as items and blocks.",
+    "operator.integrateddynamics.string.string_error": "Error",
+    "operator.integrateddynamics.string.string_error.info": "Throw a custom error", 
+
 
     "valuetype.integrateddynamics.boolean": "Boolean",
     "valuetype.integrateddynamics.integer": "Integer",
