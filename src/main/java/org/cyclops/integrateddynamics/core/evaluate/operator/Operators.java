@@ -203,6 +203,7 @@ public final class Operators {
             .function(
                 variables -> ValueTypes.CATEGORY_NUMBER.divide(variables.getVariables()[0], variables.getVariables()[1])
             ).build());
+
     /**
      * Arithmetic MAX operator with two input numbers and one output number.
      */
