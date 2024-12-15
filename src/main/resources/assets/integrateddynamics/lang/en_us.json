@@ -1781,7 +1781,7 @@
 
     "info_book.integrateddynamics.manual.parts.reader": "Readers",
     "info_book.integrateddynamics.manual.parts.reader.introduction": "Introduction",
-    "info_book.integrateddynamics.manual.parts.reader.introduction.text1": "The simplest method for creating a dynamic variable is done using &lReaders&r. Different types of readers exist for reading information from the world as storing it inside a &lVariable Card&r. Each &lReader&r contains one or more &lAspects&r for reading different things with different &lValue Types&r.",
+    "info_book.integrateddynamics.manual.parts.reader.introduction.text1": "The simplest method for creating a dynamic variable is done using &lReaders&r. Different types of readers exist for reading information from the world and storing it inside a &lVariable Card&r. Each &lReader&r contains one or more &lAspects&r for reading different things with different &lValue Types&r.",
 
     "info_book.integrateddynamics.manual.parts.reader.audio": "Audio",
     "info_book.integrateddynamics.manual.parts.reader.audio.text1": "Information about music and audio that is playing in the enviroment.",
