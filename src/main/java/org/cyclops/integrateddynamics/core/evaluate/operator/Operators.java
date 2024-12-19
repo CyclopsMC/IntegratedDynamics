@@ -824,7 +824,7 @@ public final class Operators {
      * Throw a custom error
      */
     public static final IOperator STRING_ERROR  = REGISTRY.register(OperatorBuilders.STRING_2.symbol("error").operatorName("string_error").interactName("stringError")
-            .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG).output(ValueTypes.CATEGORY_ANY)
             .function(
                 (variables) -> {
                     throw new EvaluationException(Component.translatable(variables.getValue(0, ValueTypes.STRING).getRawValue()));
