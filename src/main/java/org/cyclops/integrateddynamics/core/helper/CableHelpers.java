@@ -34,6 +34,7 @@ import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -234,6 +235,8 @@ public class CableHelpers {
         return InteractionResult.PASS;
     }
 
+    private static WeakReference<LivingEntity> CABLE_PLACER_SNAPSHOT = new WeakReference<>(null);
+
     /**
      * This should be called when a cable is added.
      * This method automatically notifies the neighbours and (re-)initializes the network if this cable carries one.
@@ -242,10 +245,16 @@ public class CableHelpers {
      * @param pos The position.
      */
     public static void onCableAdded(Level world, BlockPos pos) {
-        CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
-        if(!world.isClientSide()) {
-            NetworkHelpers.initNetwork(world, pos, null)
-                    .ifPresent(network -> MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, null)));
+        LivingEntity placer = CABLE_PLACER_SNAPSHOT.get();
+        if (placer != null) {
+            CableHelpers.onCableAddedByPlayer(world, pos, placer);
+            CABLE_PLACER_SNAPSHOT = new WeakReference<>(null);
+        } else {
+            CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
+            if (!world.isClientSide()) {
+                NetworkHelpers.initNetwork(world, pos, null)
+                        .ifPresent(network -> MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, null)));
+            }
         }
     }
 
@@ -258,10 +267,14 @@ public class CableHelpers {
      * @param placer The entity who placed the cable.
      */
     public static void onCableAddedByPlayer(Level world, BlockPos pos, @Nullable LivingEntity placer) {
-        CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
-        if(!world.isClientSide()) {
-            NetworkHelpers.initNetwork(world, pos, null)
-                    .ifPresent(network -> MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer)));
+        if (world.captureBlockSnapshots) {
+            CABLE_PLACER_SNAPSHOT = new WeakReference<>(placer);
+        } else {
+            CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
+            if(!world.isClientSide()) {
+                NetworkHelpers.initNetwork(world, pos, null)
+                        .ifPresent(network -> MinecraftForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer)));
+            }
         }
     }
 
