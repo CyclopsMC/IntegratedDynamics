@@ -45,11 +45,13 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
     /**
      * Indicate that this state should eventually recheck its aspect info because something might have changed what can
      * cause the active variable to be referring to something else.
-     * @param partType The part type.
-     * @param target The target.
-     * @param newAspect The new active aspect, can be null.
+     *
+     * @param partType              The part type.
+     * @param target                The target.
+     * @param newAspect             The new active aspect, can be null.
+     * @param isNetworkInitializing If this method is being invoked during network (de)initializing.
      */
-    public void triggerAspectInfoUpdate(P partType, PartTarget target, IAspectWrite newAspect);
+    public void triggerAspectInfoUpdate(P partType, PartTarget target, IAspectWrite newAspect, boolean isNetworkInitializing);
 
     /**
      * Called when this part should refresh its state.

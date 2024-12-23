@@ -37,7 +37,6 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
-import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
@@ -73,7 +72,6 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
         IEventAction<P, S, INetworkEvent> updateEventListener = (network, target, state, event) -> NetworkHelpers
                 .getPartNetwork(network).ifPresent(partNetwork -> onVariableContentsUpdated(partNetwork, target, state));
         actions.put(VariableContentsUpdatedEvent.class, updateEventListener);
-        actions.put(NetworkElementAddEvent.Post.class, updateEventListener);
         return actions;
     }
 
@@ -113,14 +111,14 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
             }
         }
         state.getInventory().clearContent();
-        state.triggerAspectInfoUpdate((P) this, target, null);
+        state.triggerAspectInfoUpdate((P) this, target, null, false);
         super.addDrops(target, state, itemStacks, dropMainElement, saveState);
     }
 
     @Override
     public void beforeNetworkKill(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
         super.beforeNetworkKill(network, partNetwork, target, state);
-        state.triggerAspectInfoUpdate((P) this, target, null);
+        state.triggerAspectInfoUpdate((P) this, target, null, true);
     }
 
     @Override
@@ -154,6 +152,8 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
 
     @Override
     public void updateActivation(PartTarget target, S partState, @Nullable Player player) {
+        boolean isNetworkInitializing = player == null; // TODO: in next major, also add isNetworkInitializing param to updateActivation so we don't need this hack!
+
         // Check inside the inventory for a variable item and determine everything with that.
         int activeIndex = -1;
         for(int i = 0 ; i < partState.getInventory().getContainerSize(); i++) {
@@ -163,7 +163,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
             }
         }
         IAspectWrite aspect = activeIndex == -1 ? null : getWriteAspects().get(activeIndex);
-        partState.triggerAspectInfoUpdate((P) this, target, aspect);
+        partState.triggerAspectInfoUpdate((P) this, target, aspect, isNetworkInitializing);
 
         INetwork network = NetworkHelpers.getNetwork(target.getCenter()).orElse(null);
         if (network != null && aspect != null) {
@@ -173,7 +173,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
                         partState, player, aspect, partState.getInventory().getItem(activeIndex)));
             }
         }
-        if (network != null) {
+        if (network != null && !isNetworkInitializing) {
             network.getEventBus().post(new VariableContentsUpdatedEvent(network));
         }
     }
