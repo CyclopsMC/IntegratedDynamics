@@ -34,6 +34,7 @@ import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostic
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkElementRemoveEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkEventBus;
+import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
@@ -325,6 +326,9 @@ public class Network implements INetwork {
             }
             element.afterNetworkReAlive(this);
         }
+
+        // Once all elements are alive, send a single variable contents updated event.
+        this.getEventBus().post(new VariableContentsUpdatedEvent(this));
     }
 
     @Override
