@@ -280,6 +280,52 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsDisplayPanelAsVariableStore(GameTestHelper helper) {
+        // Place cable
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
+
+        // Place redstone readers
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.SOUTH, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+
+        // Place display panel
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST, PartTypes.DISPLAY_PANEL, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()));
+
+        // Place two display panels that will act as variable stores
+        helper.setBlock(POS.north(), RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.north()), Direction.NORTH, PartTypes.DISPLAY_PANEL, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()));
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.north()), Direction.EAST, PartTypes.DISPLAY_PANEL, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()));
+
+        // Produce a redstone signals
+        helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
+        helper.setBlock(POS.south(), Blocks.REDSTONE_BLOCK);
+
+        // Writer redstone signal from redstone readers to variable card
+        ItemStack variableAspect1 = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
+        ItemStack variableAspect2 = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.SOUTH), Aspects.Read.Redstone.INTEGER_VALUE);
+
+        // Insert redstone signal variable in display panels
+        placeVariableInDisplayPanel(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.north()), Direction.NORTH), variableAspect1);
+        placeVariableInDisplayPanel(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.north()), Direction.EAST), variableAspect2);
+
+        // Create variable card for + operator on variable aspect
+        ItemStack variableAdded = createVariableForOperator(helper.getLevel(), Operators.ARITHMETIC_ADDITION, new int[]{
+                getVariableFacade(helper.getLevel(), variableAspect1).getId(),
+                getVariableFacade(helper.getLevel(), variableAspect2).getId()
+        });
+
+        // Place variable in writer
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = placeVariableInDisplayPanel(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), variableAdded);
+
+        helper.succeedWhen(() -> {
+            assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(29));
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsRedstoneReaderAddOperatorToDisplayIncompleteVariableStore(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
