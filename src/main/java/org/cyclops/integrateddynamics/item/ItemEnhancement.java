@@ -41,9 +41,9 @@ public class ItemEnhancement extends Item {
                     if (newValue <= GeneralConfig.maxPartOffset) {
                         if (!player.level.isClientSide()) {
                             partState.setMaxOffset(newValue);
+                            itemStack.shrink(1);
+                            player.displayClientMessage(Component.translatable("item.integrateddynamics.enhancement_offset.increased", newValue), true);
                         }
-                        itemStack.shrink(1);
-                        player.displayClientMessage(Component.translatable("item.integrateddynamics.enhancement_offset.increased", newValue), true);
                         return InteractionResult.SUCCESS;
                     }
                     player.displayClientMessage(Component.translatable("item.integrateddynamics.enhancement_offset.limit", GeneralConfig.maxPartOffset), true);
