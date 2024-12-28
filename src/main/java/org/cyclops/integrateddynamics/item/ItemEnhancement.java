@@ -38,7 +38,7 @@ public class ItemEnhancement extends Item {
                 if (partType.supportsOffsets()) {
                     int value = getEnhancementValue(itemStack);
                     int newValue = partState.getMaxOffset() + value;
-                    if (newValue < GeneralConfig.maxPartOffset) {
+                    if (newValue <= GeneralConfig.maxPartOffset) {
                         if (!player.level.isClientSide()) {
                             partState.setMaxOffset(newValue);
                         }
