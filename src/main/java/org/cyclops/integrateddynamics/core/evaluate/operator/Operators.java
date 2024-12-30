@@ -1968,16 +1968,34 @@ public final class Operators {
             )).build());
 
     /**
-     * Get the tooltip lines of an itemstack.
+     * Get the tooltip of an itemstack in list form.
      */
-    public static final IOperator OBJECT_ITEMSTACK_TOOLTIP_LINES = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.LIST).symbol("tooltip_lines").operatorName("tooltiplines").interactName("tooltipLines")
+    public static final IOperator OBJECT_ITEMSTACK_TOOLTIP = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbol("tooltip").operatorName("tooltip").interactName("tooltip")
             .function(input -> {
                 ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
-                        itemStack.getRawValue().getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL).stream()
+                        itemStack.getRawValue().getTooltipLines(null, TooltipFlag.Default.NORMAL).stream()
                             .map(c -> ValueTypeString.ValueString.of(c.getString()))
                             .toList());
+            }).build());
+    /**
+     * Get the tooltip of an itemstack in list form, using the provided player entity as the player context.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_ENTITY_TOOLTIP = REGISTRY.register(OperatorBuilders.ENTITY_1_ITEMSTACK_1
+            .inputTypes(ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK)
+            .output(ValueTypes.LIST).symbol("Entity.itemTooltip").operatorName("entityitemtooltip").interactName("entityItemTooltip")
+            .function(variables -> {
+                ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
+                ValueObjectTypeItemStack.ValueItemStack itemStack = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
+                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof Player) {
+                    Player entity = (Player) a.getRawValue().get();
+                    return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
+                            itemStack.getRawValue().getTooltipLines(entity, TooltipFlag.Default.NORMAL).stream()
+                                    .map(c -> ValueTypeString.ValueString.of(c.getString()))
+                                    .toList());
+                }
+                return ValueTypes.LIST.getDefault();
             }).build());
 
     /**

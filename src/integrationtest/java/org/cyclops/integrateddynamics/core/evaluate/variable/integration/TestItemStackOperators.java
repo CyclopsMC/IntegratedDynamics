@@ -1260,28 +1260,28 @@ public class TestItemStackOperators {
      */
 
     @IntegrationTest
-    public void testItemStackTooltipLines() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_TOOLTIP_LINES.evaluate(new IVariable[]{iPickaxe});
+    public void testItemStackTooltip() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_TOOLTIP.evaluate(new IVariable[]{iPickaxe});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 5, "size(tooltiplines(pickaxe)) = 5");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 5, "size(tooltip(pickaxe)) = 5");
 
-        IValue res2 = Operators.OBJECT_ITEMSTACK_TOOLTIP_LINES.evaluate(new IVariable[]{iApple});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 1, "size(tooltiplines(apple)) = 1");
+        IValue res2 = Operators.OBJECT_ITEMSTACK_TOOLTIP.evaluate(new IVariable[]{iApple});
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 1, "size(tooltip(apple)) = 1");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeTooltipLinesLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_TOOLTIP_LINES.evaluate(new IVariable[]{iPickaxe, iPickaxe});
+    public void testInvalidInputSizeTooltipLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_TOOLTIP.evaluate(new IVariable[]{iPickaxe, iPickaxe});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeTooltipLinesSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_TOOLTIP_LINES.evaluate(new IVariable[]{});
+    public void testInvalidInputSizeTooltipSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_TOOLTIP.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypeTooltipLines() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_TOOLTIP_LINES.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    public void testInvalidInputTypeTooltip() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_TOOLTIP.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }
