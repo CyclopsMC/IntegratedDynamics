@@ -11,6 +11,7 @@ import com.google.re2j.PatternSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Lombok;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -31,6 +32,7 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -1964,6 +1966,19 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                     itemStack -> !itemStack.isEmpty() && itemStack.hasTag()
             )).build());
+
+    /**
+     * Get the tooltip lines of an itemstack.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_TOOLTIP_LINES = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbol("tooltip_lines").operatorName("tooltiplines").interactName("tooltipLines")
+            .function(input -> {
+                ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
+                        itemStack.getRawValue().getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL).stream()
+                            .map(c -> ValueTypeString.ValueString.of(c.getString()))
+                            .toList());
+            }).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
