@@ -161,9 +161,10 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                     Optional<RecipeSqueezer> recipeOptional = blockEntity.getCurrentRecipe();
                     if (recipeOptional.isPresent()) {
                         RecipeSqueezer recipe = recipeOptional.get();
+                        ItemStack oldItem = blockEntity.getInventory().getItem(0);
                         blockEntity.getInventory().setItem(0, ItemStack.EMPTY);
-                        for (RecipeSqueezer.IngredientChance itemStackChance : recipe.getOutputItems()) {
-                            if (itemStackChance.getChance() == 1.0F || itemStackChance.getChance() >= level.random.nextFloat()) {
+                        for (RecipeSqueezer.IngredientChance itemStackChance : recipe.assemble(oldItem)) {
+                        if (itemStackChance.getChance() == 1.0F || itemStackChance.getChance() >= level.random.nextFloat()) {
                                 ItemStack resultStack = itemStackChance.getIngredientFirst().copy();
                                 for (Direction side : Direction.values()) {
                                     if (!resultStack.isEmpty() && side != Direction.UP) {

@@ -61,6 +61,11 @@ public class RecipeSqueezer implements Recipe<Container> {
         return this.outputItems.get(0).getIngredientFirst().copy();
     }
 
+    public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
+        if (!inputItem.is(RegistryEntries.ITEM_FACADE.asItem())) return getOutputItems();
+        return FacadeSqueezeCalculator.getOutputItems(inputItem);
+    }
+
     @Override
     public boolean canCraftInDimensions(int width, int height) {
         return width * height <= 1;

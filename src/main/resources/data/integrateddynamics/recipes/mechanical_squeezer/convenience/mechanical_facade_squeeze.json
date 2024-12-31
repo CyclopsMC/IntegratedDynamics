@@ -1,0 +1,19 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": "integrateddynamics:facade",
+  "result": {
+	"items": [
+	      {
+	        "item": "integrateddynamics:facade",
+			"chance": 1,
+			"count": 1
+	      },
+		  {
+		    "item": "integrateddynamics:facade",
+		    "chance": 1,
+		    "count": 1
+		  }
+	    ]
+  },
+  "duration": 20
+}
