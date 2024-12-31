@@ -668,7 +668,7 @@
     "aspect.integrateddynamics.read.list.entity.entities": "Entities",
     "aspect.integrateddynamics.read.list.entity.entities.info": "The entities in the target space",
     "aspect.integrateddynamics.read.list.entity.players": "Players",
-    "aspect.integrateddynamics.read.list.entity.players.info": "The players that are in this world",
+    "aspect.integrateddynamics.read.list.entity.players.info": "The players that are in the target space",
 
     "aspect.integrateddynamics.read.entity.entity": "Entity",
     "aspect.integrateddynamics.read.entity.entity.info": "The selected entity in the target space",
