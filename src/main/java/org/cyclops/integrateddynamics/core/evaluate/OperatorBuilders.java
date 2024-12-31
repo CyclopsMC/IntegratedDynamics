@@ -172,6 +172,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY = OperatorBuilder.forType(ValueTypes.OBJECT_ENTITY).appendKind("entity");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_SUFFIX = ENTITY.inputTypes(1, ValueTypes.OBJECT_ENTITY).renderPattern(IConfigRenderPattern.SUFFIX_1);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_SUFFIX_LONG = ENTITY.inputTypes(1, ValueTypes.OBJECT_ENTITY).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_ITEMSTACK_1 = ENTITY.inputTypes(new IValueType[]{ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK}).renderPattern(IConfigRenderPattern.INFIX_LONG);
     public static final IterativeFunction.PrePostBuilder<Entity, IValue> FUNCTION_ENTITY = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueObjectTypeEntity.ValueEntity a = input.getValue(0, ValueTypes.OBJECT_ENTITY);
