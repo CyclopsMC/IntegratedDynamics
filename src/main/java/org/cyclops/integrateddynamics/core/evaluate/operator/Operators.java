@@ -1983,7 +1983,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_ENTITY_TOOLTIP = REGISTRY.register(OperatorBuilders.ENTITY_1_ITEMSTACK_1
             .inputTypes(ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK)
-            .output(ValueTypes.LIST).symbol("Entity.itemTooltip").operatorName("entityitemtooltip").interactName("entityItemTooltip")
+            .output(ValueTypes.LIST).symbol("entity_item_tooltip").operatorName("entityitemtooltip").interactName("entityItemTooltip")
             .function(variables -> {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 ValueObjectTypeItemStack.ValueItemStack itemStack = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
