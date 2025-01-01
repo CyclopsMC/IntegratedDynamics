@@ -1,18 +1,24 @@
 {
-  "type": "integrateddynamics:squeezer",
-  "item": "integrateddynamics:facade",
+  "type": "integrateddynamics:mechanical_squeezer",
+  "item": {
+    "item": "integrateddynamics:facade"
+  },
   "result": {
     "items": [
       {
-        "item": "integrateddynamics:facade",
-		"chance": 1,
-		"count": 1
+        "item": {
+          "item": "integrateddynamics:facade",
+		  "chance": 1,
+          "count": 1
+        }
       },
 	  {
-	    "item": "integrateddynamics:facade",
-	    "chance": 1,
-	    "count": 1
-	  }
-    ]
+        "item": {
+          "item": "integrateddynamics:facade",
+		  "chance": 1,
+          "count": 5
+        }
+      }
+     ]
   }
 }
