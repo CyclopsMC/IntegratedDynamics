@@ -1,10 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
@@ -36,6 +32,7 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
@@ -43,11 +40,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.common.SoundActions;
@@ -63,11 +56,7 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIn
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
-import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
-import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
+import org.cyclops.commoncapabilities.api.ingredient.*;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
@@ -77,11 +66,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
@@ -1921,6 +1906,37 @@ public final class Operators {
                 } catch (IllegalStateException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
+            }).build());
+
+    /**
+     * Get the tooltip of an itemstack in list form.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_TOOLTIP = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbol("tooltip").operatorName("tooltip").interactName("tooltip")
+            .function(input -> {
+                ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
+                        itemStack.getRawValue().getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.Default.NORMAL).stream()
+                                .map(c -> ValueTypeString.ValueString.of(c.getString()))
+                                .toList());
+            }).build());
+    /**
+     * Get the tooltip of an itemstack in list form, using the provided player entity as the player context.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_ENTITY_TOOLTIP = REGISTRY.register(OperatorBuilders.ENTITY_1_ITEMSTACK_1
+            .inputTypes(ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK)
+            .output(ValueTypes.LIST).symbol("entity_item_tooltip").operatorName("entityitemtooltip").interactName("entityItemTooltip")
+            .function(variables -> {
+                ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
+                ValueObjectTypeItemStack.ValueItemStack itemStack = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
+                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof Player) {
+                    Player entity = (Player) a.getRawValue().get();
+                    return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
+                            itemStack.getRawValue().getTooltipLines(Item.TooltipContext.of(entity.level()), entity, TooltipFlag.Default.NORMAL).stream()
+                                    .map(c -> ValueTypeString.ValueString.of(c.getString()))
+                                    .toList());
+                }
+                return ValueTypes.LIST.getDefault();
             }).build());
 
     /**
