@@ -1312,6 +1312,11 @@
     "operator.integrateddynamics.entity.entityenergycapacity": "Entity Energy Capacity",
     "operator.integrateddynamics.entity.entityenergycapacity.info": "The energy capacity of this entity.",
 
+    "operator.integrateddynamics.entity.entityitemtooltip": "Entity Tooltip",
+    "operator.integrateddynamics.entity.entityitemtooltip.info": "In the context of the given Player Entity, get the tooltip of the given item as a list of strings.",
+    "operator.integrateddynamics.itemstack.tooltip": "Tooltip",
+    "operator.integrateddynamics.itemstack.tooltip.info": "Get the tooltip of the given item as a list of strings.",
+
     "operator.integrateddynamics.itemstack.isfecontainer": "Is FE Container",
     "operator.integrateddynamics.itemstack.isfecontainer.info": "If the given item can hold FE",
     "operator.integrateddynamics.itemstack.storedfe": "FE Stored",

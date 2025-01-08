@@ -30,6 +30,7 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -1962,6 +1963,37 @@ public final class Operators {
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN.build(
                     itemStack -> !itemStack.isEmpty() && itemStack.hasTag()
             )).build());
+
+    /**
+     * Get the tooltip of an itemstack in list form.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_TOOLTIP = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST).symbol("tooltip").operatorName("tooltip").interactName("tooltip")
+            .function(input -> {
+                ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
+                        itemStack.getRawValue().getTooltipLines(null, TooltipFlag.Default.NORMAL).stream()
+                            .map(c -> ValueTypeString.ValueString.of(c.getString()))
+                            .toList());
+            }).build());
+    /**
+     * Get the tooltip of an itemstack in list form, using the provided player entity as the player context.
+     */
+    public static final IOperator OBJECT_ITEMSTACK_ENTITY_TOOLTIP = REGISTRY.register(OperatorBuilders.ENTITY_1_ITEMSTACK_1
+            .inputTypes(ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK)
+            .output(ValueTypes.LIST).symbol("entity_item_tooltip").operatorName("entityitemtooltip").interactName("entityItemTooltip")
+            .function(variables -> {
+                ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
+                ValueObjectTypeItemStack.ValueItemStack itemStack = variables.getValue(1, ValueTypes.OBJECT_ITEMSTACK);
+                if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof Player) {
+                    Player entity = (Player) a.getRawValue().get();
+                    return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
+                            itemStack.getRawValue().getTooltipLines(entity, TooltipFlag.Default.NORMAL).stream()
+                                    .map(c -> ValueTypeString.ValueString.of(c.getString()))
+                                    .toList());
+                }
+                return ValueTypes.LIST.getDefault();
+            }).build());
 
     /**
      * ----------------------------------- ENTITY OBJECT OPERATORS -----------------------------------
