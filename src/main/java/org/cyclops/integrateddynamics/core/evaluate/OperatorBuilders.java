@@ -22,11 +22,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
@@ -550,7 +546,8 @@ public class OperatorBuilders {
         if (list.getRawValue().getValueType() != componentHandler.getValueType()) {
             throw new EvaluationException(Component.translatable(
                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                    list.getRawValue().getValueType(), componentHandler.getValueType()));
+                    Component.translatable(componentHandler.getValueType().getTranslationKey()),
+                    Component.translatable(list.getRawValue().getValueType().getTranslationKey())));
         }
         List<T> listTransformed = Lists.newArrayListWithExpectedSize(list.getRawValue().getLength());
         for (V value : list.getRawValue()) {

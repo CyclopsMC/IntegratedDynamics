@@ -151,7 +151,7 @@ public class OperatorRegistry implements IOperatorRegistry {
             IOperatorSerializer serializer = namedSerializers.get(serializerName);
             if (serializer == null) {
                 throw new EvaluationException(
-                        Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value));
+                        Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value.toString()));
             }
             return serializer.deserialize(valueDeseralizationContext, tag.get("value"));
         }

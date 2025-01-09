@@ -106,7 +106,7 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | ClassCastException | IllegalAccessException e) {
                 e.printStackTrace();
                 throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
-                        value, e.getMessage()));
+                        value.toString(), e.getMessage()));
             }
         }
     }
