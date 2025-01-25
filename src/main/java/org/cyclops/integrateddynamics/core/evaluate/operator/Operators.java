@@ -1,10 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
@@ -40,14 +36,9 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.common.SoundActions;
@@ -63,13 +54,8 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIn
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
-import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
-import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.commoncapabilities.api.ingredient.*;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
 import org.cyclops.cyclopscore.nbt.path.NbtParseException;
 import org.cyclops.cyclopscore.nbt.path.NbtPath;
@@ -77,11 +63,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
@@ -106,7 +88,7 @@ public final class Operators {
 
     private static IOperatorRegistry constructRegistry() {
         // This also allows this registry to be used outside of a minecraft environment.
-        if(MinecraftHelpers.isModdedEnvironment()) {
+        if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment()) {
             return IntegratedDynamics._instance.getRegistryManager().getRegistry(IOperatorRegistry.class);
         } else {
             return OperatorRegistry.getInstance();
@@ -1211,7 +1193,7 @@ public final class Operators {
     public static final IOperator OBJECT_BLOCK_OPAQUE = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.BOOLEAN).symbolOperator("opaque").interactName("isOpaque")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && a.getRawValue().get().isSolidRender(null, null));
+                return ValueTypeBoolean.ValueBoolean.of(a.getRawValue().isPresent() && a.getRawValue().get().isSolidRender());
             }).build());
 
     /**
@@ -1220,7 +1202,7 @@ public final class Operators {
     public static final IOperator OBJECT_BLOCK_ITEMSTACK = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG.output(ValueTypes.OBJECT_ITEMSTACK).symbolOperator("itemstack").interactName("itemStack")
             .function(variables -> {
                 ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                return ValueObjectTypeItemStack.ValueItemStack.of(a.getRawValue().isPresent() ? BlockHelpers.getItemStackFromBlockState(a.getRawValue().get()) : ItemStack.EMPTY);
+                return ValueObjectTypeItemStack.ValueItemStack.of(a.getRawValue().isPresent() ? IModHelpers.get().getBlockHelpers().getItemStackFromBlockState(a.getRawValue().get()) : ItemStack.EMPTY);
             }).build());
 
     /**
@@ -1242,7 +1224,7 @@ public final class Operators {
             .symbol("break_sound").operatorName("breaksound").interactName("breakSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getBreakSound().getLocation().toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getBreakSound().location().toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
     /**
@@ -1252,7 +1234,7 @@ public final class Operators {
             .symbol("place_sound").operatorName("placesound").interactName("placeSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getPlaceSound().getLocation().toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getPlaceSound().location().toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
     /**
@@ -1262,7 +1244,7 @@ public final class Operators {
             .symbol("step_sound").operatorName("stepsound").interactName("stepSound")
             .function(new IterativeFunction(Lists.newArrayList(
                     OperatorBuilders.BLOCK_SOUND,
-                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getStepSound().getLocation().toString() : "",
+                    (Optional<SoundType> sound) -> sound.isPresent() ? sound.get().getStepSound().location().toString() : "",
                     OperatorBuilders.PROPAGATOR_STRING_VALUE
             ))).build());
 
@@ -1304,7 +1286,7 @@ public final class Operators {
             .symbol("block_by_name").operatorName("blockbyname").interactName("blockByName")
             .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
                     .build(input -> {
-                        Block block = BuiltInRegistries.BLOCK.get(input);
+                        Block block = BuiltInRegistries.BLOCK.getValue(input);
                         return ValueObjectTypeBlock.ValueBlock.of(block.defaultBlockState());
                     })).build());
 
@@ -1502,7 +1484,7 @@ public final class Operators {
             .output(ValueTypes.OBJECT_BLOCK).symbolOperatorInteract("block")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueObjectTypeBlock.ValueBlock.of((!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem) ? BlockHelpers.getBlockStateFromItemStack(a.getRawValue()) : null);
+                return ValueObjectTypeBlock.ValueBlock.of((!a.getRawValue().isEmpty() && a.getRawValue().getItem() instanceof BlockItem) ? IModHelpers.get().getBlockHelpers().getBlockStateFromItemStack(a.getRawValue()) : null);
             }).build());
 
     /**
@@ -1613,10 +1595,10 @@ public final class Operators {
             .symbol("burn_time").operatorName("burntime").interactName("burnTime")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(itemStack -> {
                 if (!itemStack.isEmpty()) {
-                    int burnTime = itemStack.getBurnTime(null);
+                    int burnTime = itemStack.getBurnTime(null, ServerLifecycleHooks.getCurrentServer().fuelValues());
                     return EventHooks.getItemBurnTime(itemStack, burnTime == -1
-                            ? itemStack.getBurnTime(RecipeType.SMELTING)
-                            : burnTime, null);
+                            ? itemStack.getBurnTime(RecipeType.SMELTING, ServerLifecycleHooks.getCurrentServer().fuelValues())
+                            : burnTime, null, ServerLifecycleHooks.getCurrentServer().fuelValues());
                 }
                 return 0;
             })).build());
@@ -1628,7 +1610,7 @@ public final class Operators {
             .output(ValueTypes.BOOLEAN)
             .symbol("can_burn").operatorName("canburn").interactName("canBurn")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN
-                    .build(AbstractFurnaceBlockEntity::isFuel))
+                    .build(stack -> stack.getBurnTime(null, ServerLifecycleHooks.getCurrentServer().fuelValues()) > 0))
             .build());
 
     /**
@@ -1770,7 +1752,7 @@ public final class Operators {
             .symbol("item_by_name").operatorName("itembyname").interactName("itemByName")
             .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
                     .build(input -> {
-                        Item item = BuiltInRegistries.ITEM.get(input);
+                        Item item = BuiltInRegistries.ITEM.getValue(input);
                         ItemStack itemStack = ItemStack.EMPTY;
                         if (item != null) {
                             itemStack = new ItemStack(item);
@@ -1869,7 +1851,7 @@ public final class Operators {
                 // Determine data component type
                 DataComponentType<?> dataComponentType;
                 try {
-                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
                 } catch (ResourceLocationException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
@@ -1907,7 +1889,7 @@ public final class Operators {
                 // Determine data component type
                 DataComponentType<?> dataComponentType;
                 try {
-                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
                 } catch (ResourceLocationException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
@@ -2254,7 +2236,7 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 String hurtSound = "";
                 if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
-                    String sound = ((LivingEntity) a.getRawValue().get()).getHurtSound(a.getRawValue().get().damageSources().generic()).getLocation().toString();
+                    String sound = ((LivingEntity) a.getRawValue().get()).getHurtSound(a.getRawValue().get().damageSources().generic()).location().toString();
                     if (sound != null) {
                         hurtSound = sound;
                     }
@@ -2271,7 +2253,7 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity a = variables.getValue(0, ValueTypes.OBJECT_ENTITY);
                 String hurtSound = "";
                 if (a.getRawValue().isPresent() && a.getRawValue().get() instanceof LivingEntity) {
-                    String sound = ((LivingEntity) a.getRawValue().get()).getDeathSound().getLocation().toString();
+                    String sound = ((LivingEntity) a.getRawValue().get()).getDeathSound().location().toString();
                     if (sound != null) {
                         hurtSound = sound;
                     }
@@ -2550,7 +2532,7 @@ public final class Operators {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
                 return ValueTypeString.ValueString.of(Optional.ofNullable(a.getFluid().getFluidType().getSound(a, SoundActions.BUCKET_EMPTY))
-                        .map(soundEvent -> soundEvent.getLocation().toString())
+                        .map(soundEvent -> soundEvent.location().toString())
                         .orElse(""));
             }).build());
 
@@ -2563,7 +2545,7 @@ public final class Operators {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
                 return ValueTypeString.ValueString.of(Optional.ofNullable(a.getFluid().getFluidType().getSound(a, SoundActions.FLUID_VAPORIZE))
-                        .map(soundEvent -> soundEvent.getLocation().toString())
+                        .map(soundEvent -> soundEvent.location().toString())
                         .orElse(""));
             }).build());
 
@@ -2576,7 +2558,7 @@ public final class Operators {
                 ValueObjectTypeFluidStack.ValueFluidStack valueFluidStack = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
                 FluidStack a = valueFluidStack.getRawValue();
                 return ValueTypeString.ValueString.of(Optional.ofNullable(a.getFluid().getFluidType().getSound(a, SoundActions.BUCKET_FILL))
-                        .map(soundEvent -> soundEvent.getLocation().toString())
+                        .map(soundEvent -> soundEvent.location().toString())
                         .orElse(""));
             }).build());
 
@@ -2672,7 +2654,7 @@ public final class Operators {
                 // Determine data component type
                 DataComponentType<?> dataComponentType;
                 try {
-                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
                 } catch (ResourceLocationException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
@@ -2710,7 +2692,7 @@ public final class Operators {
                 // Determine data component type
                 DataComponentType<?> dataComponentType;
                 try {
-                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
                 } catch (ResourceLocationException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }

@@ -9,7 +9,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
@@ -53,7 +53,7 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
                 .ifPresent(energyStorage -> {
                     long amount = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getEnergyStoredLong();
                     long capacity = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getMaxEnergyStoredLong();
-                    String line = String.format(Locale.ROOT, "%,d", amount) + " / " + String.format(Locale.ROOT, "%,d", capacity) + " " + L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT);
+                    String line = String.format(Locale.ROOT, "%,d", amount) + " / " + String.format(Locale.ROOT, "%,d", capacity) + " " + IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT);
                     list.add(Component.literal(IInformationProvider.ITEM_PREFIX + line));
                 });
     }

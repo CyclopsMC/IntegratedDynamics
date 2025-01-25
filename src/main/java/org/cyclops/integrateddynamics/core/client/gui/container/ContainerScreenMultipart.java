@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -77,8 +76,7 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
         // Draw part name
-        font.drawInBatch(getTitle(), leftPos + 8, topPos + 6, 4210752, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(font, getTitle(), leftPos + 8, topPos + 6, 4210752, false);
     }
 
     @Override

@@ -5,10 +5,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -16,13 +15,13 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class BlockMenrilWoodConfig extends BlockConfig {
+public class BlockMenrilWoodConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockMenrilWoodConfig() {
         super(
                 IntegratedDynamics._instance,
                 "menril_wood",
-                eConfig -> new RotatedPillarBlock(BlockBehaviour.Properties.of()
+                (eConfig, properties) -> new RotatedPillarBlock(properties
                         .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F)
                         .sound(SoundType.WOOD)) {

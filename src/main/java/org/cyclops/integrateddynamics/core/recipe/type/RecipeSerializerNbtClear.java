@@ -15,7 +15,7 @@ public class RecipeSerializerNbtClear implements RecipeSerializer<RecipeNbtClear
 
     public static final MapCodec<RecipeNbtClear> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                            Ingredient.CODEC_NONEMPTY.fieldOf("item").forGetter(RecipeNbtClear::getInputIngredient)
+                            Ingredient.CODEC.fieldOf("item").forGetter(RecipeNbtClear::getInputIngredient)
                     )
                     .apply(builder, RecipeNbtClear::new)
     );

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Sets;
-import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -21,11 +21,11 @@ public class NetworkWorldStorage extends WorldStorage {
     @NBTPersist
     private Set<INetwork> networks = Sets.newHashSet();
 
-    private NetworkWorldStorage(ModBase mod) {
+    private NetworkWorldStorage(ModBaseNeoForge mod) {
         super(mod);
     }
 
-    public static NetworkWorldStorage getInstance(ModBase mod) {
+    public static NetworkWorldStorage getInstance(ModBaseNeoForge mod) {
         if(INSTANCE == null) {
             INSTANCE = new NetworkWorldStorage(mod);
         }

@@ -9,7 +9,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -59,7 +59,7 @@ public final class AspectRegistry implements IAspectRegistry {
 
     private AspectRegistry() {
         IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
-        if(MinecraftHelpers.isClientSide()) {
+        if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             aspectModels = new IdentityHashMap<>();
         }
     }

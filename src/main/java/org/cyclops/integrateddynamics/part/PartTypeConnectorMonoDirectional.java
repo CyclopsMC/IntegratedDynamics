@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -147,7 +147,7 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         public Set<ISidedPathElement> getReachableElements() {
             if (getPartPos() != null) {
                 Direction targetSide = getPartPos().getSide().getOpposite();
-                IPathElement pathElement = BlockEntityHelpers.getCapability(State.getTargetPos(getPartPos(), offset),
+                IPathElement pathElement = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(State.getTargetPos(getPartPos(), offset),
                         targetSide, Capabilities.PathElement.BLOCK).orElse(null);
                 if (pathElement != null) {
                     return Sets.newHashSet(SidedPathElement.of(pathElement, targetSide));

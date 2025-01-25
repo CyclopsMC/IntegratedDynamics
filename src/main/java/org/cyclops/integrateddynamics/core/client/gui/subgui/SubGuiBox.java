@@ -5,12 +5,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.init.ModBase;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 
@@ -23,8 +22,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public abstract class SubGuiBox implements ISubGuiBox {
 
-    protected static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID,
-            IntegratedDynamics._instance.getReferenceValue(ModBase.REFKEY_TEXTURE_PATH_GUI) + "sub_gui.png");
+    protected static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/sub_gui.png");
 
     private final Box type;
 
@@ -65,10 +63,10 @@ public abstract class SubGuiBox implements ISubGuiBox {
             int ty = type.getY();
 
             // Corners
-            guiGraphics.blit(TEXTURE, x, y, tx, tx, 1, 1); // top left
-            guiGraphics.blit(TEXTURE, x + width - 1, y, tx + textureWidth - 1, ty, 1, 1); // top right
-            guiGraphics.blit(TEXTURE, x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1); // bottom left
-            guiGraphics.blit(TEXTURE, x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1); // bottom right
+            guiGraphics.blit(RenderType::guiTextured, TEXTURE, x, y, tx, tx, 1, 1, 256, 256); // top left
+            guiGraphics.blit(RenderType::guiTextured, TEXTURE, x + width - 1, y, tx + textureWidth - 1, ty, 1, 1, 256, 256); // top right
+            guiGraphics.blit(RenderType::guiTextured, TEXTURE, x, y + height - 1, 0, tx + textureHeight - 1, ty + 1, 1, 256, 256); // bottom left
+            guiGraphics.blit(RenderType::guiTextured, TEXTURE, x + width - 1, y + height - 1, tx + textureWidth - 1, ty + textureHeight - 1, 1, 1, 256, 256); // bottom right
 
             int i, j;
 
@@ -76,16 +74,16 @@ public abstract class SubGuiBox implements ISubGuiBox {
             i = 1;
             while (i < width - 1) {
                 int currentWidth = Math.max(1, Math.min(width - i, textureWidth - 2) - 1);
-                guiGraphics.blit(TEXTURE, x + i, y, tx + 1, ty, currentWidth, 1);
-                guiGraphics.blit(TEXTURE, x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1);
+                guiGraphics.blit(RenderType::guiTextured, TEXTURE, x + i, y, tx + 1, ty, currentWidth, 1, 256, 256);
+                guiGraphics.blit(RenderType::guiTextured, TEXTURE, x + i, y + height - 1, tx + 1, ty + textureHeight - 1, currentWidth, 1, 256, 256);
                 i += currentWidth;
             }
 
             i = 1;
             while (i < height - 1) {
                 int currentHeight = Math.max(1, Math.min(height - i, textureHeight - 2) - 1);
-                guiGraphics.blit(TEXTURE, x, y + i, tx, ty + 1, 1, currentHeight);
-                guiGraphics.blit(TEXTURE, x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight);
+                guiGraphics.blit(RenderType::guiTextured, TEXTURE, x, y + i, tx, ty + 1, 1, currentHeight, 256, 256);
+                guiGraphics.blit(RenderType::guiTextured, TEXTURE, x + width - 1, y + i, tx + textureWidth - 1, ty + 1, 1, currentHeight, 256, 256);
                 i += currentHeight;
             }
 
@@ -96,7 +94,7 @@ public abstract class SubGuiBox implements ISubGuiBox {
                 j = 1;
                 while (j < height - 1) {
                     int currentHeight = Math.max(1, Math.min(height - j, textureHeight - 2) - 1);
-                    guiGraphics.blit(TEXTURE, x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight);
+                    guiGraphics.blit(RenderType::guiTextured, TEXTURE, x + i, y + j, tx + 1, ty + 1, currentWidth, currentHeight, 256, 256);
                     j += currentHeight;
                 }
                 i += currentWidth;

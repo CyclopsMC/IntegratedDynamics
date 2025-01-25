@@ -1,0 +1,8 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": {
+      "type": "integrateddynamics:energy_battery"
+    }
+  }
+}

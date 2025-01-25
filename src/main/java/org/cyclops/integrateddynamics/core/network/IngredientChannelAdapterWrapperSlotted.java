@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageSlotted;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.network.PositionedAddonsNetworkIngredientsFilter;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -64,7 +64,7 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
             }
             network.disablePosition(pos);
             IIngredientComponentStorage<T, M> storage = network.getPositionedStorage(pos);
-            slots = Helpers.addSafe(slots, getIngredientComponentStorageSize(storage));
+            slots = IModHelpers.get().getBaseHelpers().addSafe(slots, getIngredientComponentStorageSize(storage));
             network.enablePosition(pos);
         }
 
@@ -134,7 +134,7 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
         if (storage instanceof IIngredientComponentStorageSlotted) {
             return ((IIngredientComponentStorageSlotted<T, M>) storage).getMaxQuantity(slotRelative);
         } else {
-            return Helpers.castSafe(getComponent().getMatcher().getMaximumQuantity());
+            return IModHelpers.get().getBaseHelpers().castSafe(getComponent().getMatcher().getMaximumQuantity());
         }
     }
 

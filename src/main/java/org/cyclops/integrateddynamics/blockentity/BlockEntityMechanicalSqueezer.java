@@ -22,10 +22,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.CraftingHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.InventoryHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockMechanicalSqueezer;
@@ -51,7 +49,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
 
     private static final int SLOT_INPUT = 0;
     private static final int[] SLOTS_OUTPUT = {1, 2, 3, 4};
-    private static final int TANK_SIZE = FluidHelpers.BUCKET_VOLUME * 100;
+    private static final int TANK_SIZE = IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() * 100;
 
     @NBTPersist
     private boolean autoEjectFluids = false;
@@ -90,7 +88,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         return new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeHolder<RecipeMechanicalSqueezer>>>() {
             @Override
             public Optional<RecipeHolder<RecipeMechanicalSqueezer>> getNewValue(ItemStack key) {
-                return CraftingHelpers.findServerRecipe(getRecipeRegistry(), CraftingInput.of(1, 1, Lists.newArrayList(key)), getLevel());
+                return IModHelpers.get().getCraftingHelpers().findRecipe(getRecipeRegistry(), CraftingInput.of(1, 1, Lists.newArrayList(key)), getLevel());
             }
 
             @Override
@@ -160,17 +158,17 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
             ItemStack outputStack = itemStackChance.getIngredientFirst().copy();
             if (!outputStack.isEmpty() && (simulate || itemStackChance.getChance() == 1.0F
                     || itemStackChance.getChance() >= getLevel().random.nextFloat())) {
-                InventoryHelpers.addStackToList(outputStacks, outputStack);
+                IModHelpers.get().getInventoryHelpers().addStackToList(outputStacks, outputStack);
             }
         }
-        if (!InventoryHelpers.addToInventory(getInventory(), SLOTS_OUTPUT, outputStacks, simulate).isEmpty()) {
+        if (!IModHelpers.get().getInventoryHelpers().addToInventory(getInventory(), SLOTS_OUTPUT, outputStacks, simulate).isEmpty()) {
             return false;
         }
 
         // Output fluid
         Optional<FluidStack> outputFluid = recipe.getOutputFluid();
         if (outputFluid.isPresent()) {
-            if (getTank().fill(outputFluid.get().copy(), FluidHelpers.simulateBooleanToAction(simulate)) != outputFluid.get().getAmount()) {
+            if (getTank().fill(outputFluid.get().copy(), IModHelpersNeoForge.get().getFluidHelpers().simulateBooleanToAction(simulate)) != outputFluid.get().getAmount()) {
                 return false;
             }
         }
@@ -221,7 +219,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
             // Auto-eject fluid
             if (blockEntity.isAutoEjectFluids() && !blockEntity.getTank().isEmpty()) {
                 for (Direction side : Direction.values()) {
-                    IFluidHandler handler = BlockEntityHelpers.getCapability(level, pos.relative(side),
+                    IFluidHandler handler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side),
                             side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK).orElse(null);
                     if(handler != null) {
                         FluidStack fluidStack = blockEntity.getTank().getFluid().copy();

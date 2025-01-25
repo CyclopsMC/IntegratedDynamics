@@ -23,8 +23,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 
 import java.util.List;
 import java.util.Locale;
@@ -49,7 +49,7 @@ public final class Helpers {
         if (fluidStack.isEmpty()
                 && itemStack.getItem() instanceof BlockItem
                 && ((BlockItem) itemStack.getItem()).getBlock() instanceof LiquidBlock) {
-            fluidStack = new FluidStack(((LiquidBlock) ((BlockItem) itemStack.getItem()).getBlock()).fluid, FluidHelpers.BUCKET_VOLUME);
+            fluidStack = new FluidStack(((LiquidBlock) ((BlockItem) itemStack.getItem()).getBlock()).fluid, IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume());
         }
         return fluidStack;
     }
@@ -77,7 +77,7 @@ public final class Helpers {
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
         Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM
-                .getTag(TagKey.create(Registries.ITEM, ResourceLocation.parse(name)));
+                .get(TagKey.create(Registries.ITEM, ResourceLocation.parse(name)));
         return tag.stream().flatMap(named -> named.stream().map(ItemStack::new));
     }
 
@@ -117,7 +117,12 @@ public final class Helpers {
 
     private static final List<IInterfaceRetriever> INTERFACE_RETRIEVERS = Lists.newArrayList();
     static {
-        addInterfaceRetriever(BlockEntityHelpers::get);
+        addInterfaceRetriever(new IInterfaceRetriever() {
+            @Override
+            public <C> Optional<C> getInterface(BlockGetter world, BlockPos pos, Class<C> clazz) {
+                return IModHelpers.get().getBlockEntityHelpers().get(world, pos, clazz);
+            }
+        });
     }
 
     /**

@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.level.portal.TeleportTransition;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -68,10 +68,10 @@ public class PlayerTeleportPacket extends PacketCodec {
     public void actionServer(Level world, ServerPlayer player) {
         ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(this.dimension));
         if (!dimensionType.location().equals(player.level().dimension().location())) {
-            player.changeDimension(new DimensionTransition(
+            player.teleport(new TeleportTransition(
                     ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType),
                     player,
-                    DimensionTransition.DO_NOTHING
+                    TeleportTransition.DO_NOTHING
             ));
         }
         player.connection.teleport(x + 0.5F, y + 0.5F, z + 0.5F, yaw, pitch);

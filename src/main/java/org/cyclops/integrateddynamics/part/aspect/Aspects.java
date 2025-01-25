@@ -34,10 +34,9 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.LocationHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
+import org.cyclops.cyclopscore.network.IPacketHandler;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -53,14 +52,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
-import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperator;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerInputs;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerOutput;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipeByInput;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipeByOutput;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipesByInput;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipesByOutput;
+import org.cyclops.integrateddynamics.core.evaluate.operator.*;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
@@ -71,11 +63,7 @@ import org.cyclops.integrateddynamics.network.packet.SpeakTextPacket;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Collection of all aspects.
@@ -361,7 +349,7 @@ public class Aspects {
                                 BlockState blockState = dimPos.getLevel(true).getBlockState(dimPos.getBlockPos());
                                 net.minecraft.world.level.block.Block block = blockState.getBlock();
                                 if (block instanceof LiquidBlock) {
-                                    return new FluidStack(((LiquidBlock) block).fluid, FluidHelpers.BUCKET_VOLUME);
+                                    return new FluidStack(((LiquidBlock) block).fluid, IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume());
                                 }
                                 return FluidStack.EMPTY;
                             })
@@ -671,7 +659,7 @@ public class Aspects {
                     AspectReadBuilders.BUILDER_ANY.appendKind("network").handle(
                             data -> {
                                 PartPos target = data.getLeft().getTarget();
-                                IValueInterface valueInterface = BlockEntityHelpers
+                                IValueInterface valueInterface = IModHelpersNeoForge.get().getCapabilityHelpers()
                                         .getCapability(target.getPos(), target.getSide(), Capabilities.ValueInterface.BLOCK)
                                         .orElseThrow(() -> {
                                             EvaluationException error = new EvaluationException(Component.translatable(
@@ -749,7 +737,7 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> (int) (world.getDayTime() % MinecraftHelpers.MINECRAFT_DAY)
+                        world -> (int) (world.getDayTime() % IModHelpers.get().getMinecraftHelpers().getDayLength())
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "daytime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHTLEVEL =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(
@@ -885,9 +873,9 @@ public class Aspects {
                                 BlockPos pos = input.getLeft().getTarget().getPos().getBlockPos();
                                 if(!StringUtil.isNullOrEmpty(input.getRight())) {
                                     int range = properties.getValue(AspectWriteBuilders.Audio.PROP_RANGE).getRawValue();
-                                    IntegratedDynamics._instance.getPacketHandler().sendToAllAround(
+                                    IntegratedDynamics._instance.getPacketHandler().sendToAllAroundPoint(
                                             new SpeakTextPacket(input.getRight()),
-                                            LocationHelpers.createTargetPointFromLocation((ServerLevel) world, pos, range));
+                                            IPacketHandler.createTargetPointFromLocation((ServerLevel) world, pos, range));
                                 }
                                 return null;
                             }, "text").buildWrite();

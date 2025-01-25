@@ -17,7 +17,7 @@ public class RecipeSerializerEnergyContainerCombination implements RecipeSeriali
 
     public static final MapCodec<RecipeEnergyContainerCombination> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                            Ingredient.CODEC_NONEMPTY.fieldOf("item").forGetter(RecipeEnergyContainerCombination::getBatteryItem),
+                            Ingredient.CODEC.fieldOf("item").forGetter(RecipeEnergyContainerCombination::getBatteryItem),
                             Codec.INT.fieldOf("maxCapacity").forGetter(RecipeEnergyContainerCombination::getMaxCapacity)
                     )
                     .apply(builder, RecipeEnergyContainerCombination::new)

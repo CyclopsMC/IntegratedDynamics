@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.item;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -13,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 import java.util.List;
@@ -30,12 +29,12 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(itemStack, context, list, flag);
-        L10NHelpers.addStatusInfo(list, isActivated(itemStack), getDescriptionId() + ".info.auto_supply");
+        IModHelpers.get().getL10NHelpers().addStatusInfo(list, isActivated(itemStack), getDescriptionId() + ".info.auto_supply");
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
-        return new InteractionResultHolder<>(InteractionResult.PASS, toggleActivation(player.getItemInHand(hand), world, player));
+    public InteractionResult use(Level world, Player player, InteractionHand hand) {
+        return InteractionResult.SUCCESS.heldItemTransformedTo(toggleActivation(player.getItemInHand(hand), world, player));
     }
 
     public static void autofill(IEnergyStorage source, Level world, Entity entity) {

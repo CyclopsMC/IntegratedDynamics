@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -52,7 +52,7 @@ public final class TickHandler {
         if (NetworkHelpers.shouldWork()) {
             boolean isBeingDiagnozed = NetworkDiagnostics.getInstance().isBeingDiagnozed();
             if (isBeingDiagnozed) {
-                tick = (tick + 1) % MinecraftHelpers.SECOND_IN_TICKS;
+                tick = (tick + 1) % IModHelpers.get().getMinecraftHelpers().getSecondInTicks();
             }
             boolean shouldSendTickDurationInfo = isBeingDiagnozed && tick == 0;
             for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {

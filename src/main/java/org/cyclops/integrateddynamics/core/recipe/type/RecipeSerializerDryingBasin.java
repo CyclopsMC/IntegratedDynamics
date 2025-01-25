@@ -21,7 +21,7 @@ public class RecipeSerializerDryingBasin implements RecipeSerializer<RecipeDryin
 
     public static final MapCodec<RecipeDryingBasin> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                            Ingredient.CODEC_NONEMPTY.optionalFieldOf("input_item").forGetter(RecipeDryingBasin::getInputIngredient),
+                            Ingredient.CODEC.optionalFieldOf("input_item").forGetter(RecipeDryingBasin::getInputIngredient),
                             FluidStack.CODEC.optionalFieldOf("input_fluid").forGetter(RecipeDryingBasin::getInputFluid),
                             RecipeSerializerHelpers.getCodecItemStackOrTag(() -> GeneralConfig.recipeTagOutputModPriorities).optionalFieldOf("output_item").forGetter(RecipeDryingBasin::getOutputItem),
                             FluidStack.CODEC.optionalFieldOf("output_fluid").forGetter(RecipeDryingBasin::getOutputFluid),

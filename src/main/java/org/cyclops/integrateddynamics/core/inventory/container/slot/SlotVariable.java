@@ -1,9 +1,8 @@
 package org.cyclops.integrateddynamics.core.inventory.container.slot;
 
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -26,8 +25,8 @@ public class SlotVariable extends SlotSingleItem {
      */
     public SlotVariable(Container inventory, int index, int x, int y) {
         super(inventory, index, x, y, RegistryEntries.ITEM_VARIABLE.get());
-        if (MinecraftHelpers.isClientSide()) {
-            setBackground(TextureAtlas.LOCATION_BLOCKS, SlotVariable.VARIABLE_EMPTY);
+        if (IModHelpers.get().getMinecraftHelpers().isClientSide()) {
+            setBackground(SlotVariable.VARIABLE_EMPTY);
         }
     }
 }

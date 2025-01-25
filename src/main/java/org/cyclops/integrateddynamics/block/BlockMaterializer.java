@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMaterializer;
 import org.cyclops.integrateddynamics.core.block.BlockWithEntityGuiCabled;
@@ -27,7 +27,7 @@ public class BlockMaterializer extends BlockWithEntityGuiCabled {
 
     public static final MapCodec<BlockMaterializer> CODEC = simpleCodec(BlockMaterializer::new);
 
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public BlockMaterializer(Properties properties) {
         super(properties, BlockEntityMaterializer::new);

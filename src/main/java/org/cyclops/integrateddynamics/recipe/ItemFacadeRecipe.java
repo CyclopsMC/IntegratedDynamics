@@ -2,17 +2,12 @@ package org.cyclops.integrateddynamics.recipe;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.CommonHooks;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
@@ -27,28 +22,9 @@ public class ItemFacadeRecipe extends CustomRecipe {
     public ItemFacadeRecipe(CraftingBookCategory craftingBookCategory) {
         super(craftingBookCategory);
     }
-
-    @Override
-    public NonNullList<Ingredient> getIngredients() {
-        if (ingredients == null) {
-            // Catch runtime errors if other mods call this method before items have been registered
-            try {
-                ingredients = NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()), Ingredient.of(BuiltInRegistries.BLOCK.stream().map(ItemStack::new)));
-            } catch (RuntimeException e) {
-                return NonNullList.create();
-            }
-        }
-        return ingredients;
-    }
-
     @Override
     public boolean matches(CraftingInput grid, Level world) {
         return !assemble(grid, world.registryAccess()).isEmpty();
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
-        return getResultItem();
     }
 
     public ItemStack getResultItem() {
@@ -61,7 +37,7 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
         for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getItem(i);
-            aitemstack.set(i, CommonHooks.getCraftingRemainingItem(itemstack));
+            aitemstack.set(i, CommonHooks.getCraftingRemainder(itemstack));
         }
 
         return aitemstack;
@@ -69,7 +45,7 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput grid, HolderLookup.Provider registryAccess) {
-        ItemStack output = getResultItem(registryAccess).copy();
+        ItemStack output = getResultItem().copy();
 
         int facades = 0;
         ItemStack block = ItemStack.EMPTY;
@@ -92,13 +68,8 @@ public class ItemFacadeRecipe extends CustomRecipe {
             return ItemStack.EMPTY;
         }
 
-        RegistryEntries.ITEM_FACADE.get().writeFacadeBlock(output, BlockHelpers.getBlockStateFromItemStack(block));
+        RegistryEntries.ITEM_FACADE.get().writeFacadeBlock(output, IModHelpers.get().getBlockHelpers().getBlockStateFromItemStack(block));
         return output;
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 2;
     }
 
     @Override
@@ -107,7 +78,7 @@ public class ItemFacadeRecipe extends CustomRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return RegistryEntries.RECIPESERIALIZER_FACADE.get();
     }
 

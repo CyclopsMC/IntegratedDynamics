@@ -1,10 +1,8 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Data;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -76,8 +74,7 @@ public abstract class NetworkElementBase implements INetworkElement {
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, Block neighbourBlock,
-                                      BlockPos neighbourBlockPos) {
+    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world) {
 
     }
 

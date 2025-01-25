@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.client.render.blockentity.RenderBlockEntitySqueezer;
@@ -14,14 +14,14 @@ import org.cyclops.integrateddynamics.client.render.blockentity.RenderBlockEntit
  * @author rubensworks
  *
  */
-public class BlockEntitySqueezerConfig extends BlockEntityConfig<BlockEntitySqueezer> {
+public class BlockEntitySqueezerConfig extends BlockEntityConfigCommon<BlockEntitySqueezer, IntegratedDynamics> {
 
     public BlockEntitySqueezerConfig() {
         super(
                 IntegratedDynamics._instance,
                 "squeezer",
                 (eConfig) -> new BlockEntityType<>(BlockEntitySqueezer::new,
-                        Sets.newHashSet(RegistryEntries.BLOCK_SQUEEZER.get()), null)
+                        Sets.newHashSet(RegistryEntries.BLOCK_SQUEEZER.get()))
         );
         IntegratedDynamics._instance.getModEventBus().addListener(new BlockEntitySqueezer.CapabilityRegistrar(this::getInstance)::register);
     }

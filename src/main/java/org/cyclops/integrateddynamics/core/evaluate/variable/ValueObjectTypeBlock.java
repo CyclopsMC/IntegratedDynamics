@@ -11,7 +11,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -45,7 +45,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     public MutableComponent toCompactString(ValueBlock value) {
         if (value.getRawValue().isPresent()) {
             BlockState blockState = value.getRawValue().get();
-            ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockState);
+            ItemStack itemStack = IModHelpers.get().getBlockHelpers().getItemStackFromBlockState(blockState);
             if (!itemStack.isEmpty()) {
                 return ValueObjectTypeItemStack.getItemStackDisplayNameSafe(itemStack);
             }
@@ -57,7 +57,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     @Override
     public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueBlock value) {
         if(!value.getRawValue().isPresent()) return new CompoundTag();
-        return BlockHelpers.serializeBlockState(value.getRawValue().get());
+        return IModHelpers.get().getBlockHelpers().serializeBlockState(value.getRawValue().get());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
             return ValueBlock.of(Blocks.AIR.defaultBlockState());
         }
-        return ValueBlock.of(BlockHelpers.deserializeBlockState(valueDeseralizationContext.holderLookupProvider().lookupOrThrow(Registries.BLOCK), (CompoundTag) value));
+        return ValueBlock.of(IModHelpers.get().getBlockHelpers().deserializeBlockState(valueDeseralizationContext.holderLookupProvider().lookupOrThrow(Registries.BLOCK), (CompoundTag) value));
     }
 
     @Override
@@ -97,7 +97,7 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
             @Override
             public ValueObjectTypeBlock.ValueBlock getValue(ItemStack itemStack) {
                 return ValueObjectTypeBlock.ValueBlock.of(
-                        itemStack.isEmpty() ? Blocks.AIR.defaultBlockState() : BlockHelpers.getBlockStateFromItemStack(itemStack));
+                        itemStack.isEmpty() ? Blocks.AIR.defaultBlockState() : IModHelpers.get().getBlockHelpers().getBlockStateFromItemStack(itemStack));
             }
         });
     }

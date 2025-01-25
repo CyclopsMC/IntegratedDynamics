@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -64,7 +64,7 @@ public class ListValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         int offset = 0;
         for(Pair<String, Integer> line : lines) {
-            int color = Helpers.addAlphaToColor(line.getRight(), alpha);
+            int color = IModHelpers.get().getBaseHelpers().addAlphaToColor(line.getRight(), alpha);
             context.getFont().drawInBatch(line.getLeft(), 0, offset, color,
                     false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             offset += singleHeight;

@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalSqueezer;
 import org.cyclops.integrateddynamics.core.block.BlockMechanicalMachine;
@@ -71,7 +71,7 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
     @Override
     public void setPlacedBy(Level world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (!world.isClientSide()) {
-            BlockEntityHelpers.get(world, blockPos, BlockEntityMechanicalSqueezer.class)
+            IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityMechanicalSqueezer.class)
                     .ifPresent(tile -> {
                         if (itemStack.has(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_FLUID_CONTENT)) {
                             tile.getTank().setFluidInTank(0, itemStack.get(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_FLUID_CONTENT).copy());

@@ -16,11 +16,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -37,12 +38,7 @@ import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.item.ItemEnhancement;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * An abstract {@link IPartType} with a default implementation for creating
@@ -75,7 +71,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
         return ResourceLocation.fromNamespaceAndPath(getMod().getModId(), this.name);
     }
 
-    protected ModBase getMod() {
+    protected ModBaseNeoForge getMod() {
         return IntegratedDynamics._instance;
     }
 
@@ -84,8 +80,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * This is mainly used for the block model.
      */
     protected void registerBlock() {
-        BlockConfig blockConfig = new BlockConfig(getMod(), "part_" + this.name,
-                (eConfig)        -> block = createBlock(eConfig),
+        BlockConfigCommon blockConfig = new BlockConfigCommon<>(getMod(), "part_" + this.name,
+                (eConfig, properties) -> block = createBlock(eConfig, properties),
                 (eConfig, block) -> item  = createItem(eConfig, block)) {
             @Override
             public String getFullTranslationKey() {
@@ -93,7 +89,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             }
 
             @Override
-            protected Collection<ItemStack> defaultCreativeTabEntries() {
+            public Collection<ItemStack> getDefaultCreativeTabEntries() {
                 return Collections.singleton(new ItemStack(getItemInstance()));
             }
         };
@@ -102,11 +98,13 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     /**
      * Factory method for creating a block instance.
+     *
      * @param blockConfig The config to register the block for.
+     * @param properties
      * @return The block instance.
      */
-    protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlock();
+    protected Block createBlock(BlockConfigCommon<?> blockConfig, BlockBehaviour.Properties properties) {
+        return new IgnoredBlock(properties);
     }
 
     /**
@@ -115,8 +113,9 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
      * @param block The block corresponding to the item.
      * @return The item instance.
      */
-    protected Item createItem(BlockConfig blockConfig, Block block) {
-        return new ItemPart<>(new Item.Properties(), this);
+    protected Item createItem(BlockConfigCommon<?> blockConfig, Block block) {
+        return new ItemPart<>(blockConfig.createDefaultItemProperties()
+                .overrideDescription(this.getTranslationKey()), this);
     }
 
     @Override

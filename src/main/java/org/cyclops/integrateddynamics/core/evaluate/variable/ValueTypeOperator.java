@@ -6,7 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -33,7 +33,7 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     private static final String SIGNATURE_LINK = "->";
 
     public ValueTypeOperator() {
-        super("operator", Helpers.RGBToInt(43, 231, 47), ChatFormatting.DARK_GREEN, ValueTypeOperator.ValueOperator.class);
+        super("operator", IModHelpers.get().getBaseHelpers().RGBToInt(43, 231, 47), ChatFormatting.DARK_GREEN, ValueTypeOperator.ValueOperator.class);
     }
 
     @Override

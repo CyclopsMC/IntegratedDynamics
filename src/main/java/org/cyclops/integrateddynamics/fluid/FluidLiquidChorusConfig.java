@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.fluid;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.common.SoundActions;
-import org.cyclops.cyclopscore.config.extendedconfig.FluidConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.FluidConfigNeoForge;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -12,7 +12,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  * @author rubensworks
  *
  */
-public class FluidLiquidChorusConfig extends FluidConfig {
+public class FluidLiquidChorusConfig extends FluidConfigNeoForge {
 
     public FluidLiquidChorusConfig() {
         super(

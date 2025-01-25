@@ -14,8 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
@@ -124,7 +123,7 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
 
     @Override
     public String getSymbol() {
-        return L10NHelpers.localize(getValueType().getTranslationKey());
+        return IModHelpers.get().getL10NHelpers().localize(getValueType().getTranslationKey());
     }
 
     @Override
@@ -168,7 +167,7 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
             int y = guiTop + getY();
 
             if (this.shouldRenderElementName()) {
-                fontRenderer.drawInBatch(element.getName(), x + 2, y + 6, Helpers.RGBToInt(240, 240, 240), true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+                guiGraphics.drawString(fontRenderer, element.getName(), x + 2, y + 6, IModHelpers.get().getBaseHelpers().RGBToInt(240, 240, 240), true);
             }
 
             if(showError()) {
@@ -195,7 +194,7 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
             if(showError()) {
                 Component lastError = getLastError();
                 if (lastError != null && gui.isHovering(x + getSignalX(), y + getSignalY() - 1, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
-                    List<Component> lines = StringHelpers.splitLines(lastError.getString(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
+                    List<Component> lines = StringHelpers.splitLines(lastError.getString(), IModHelpers.get().getL10NHelpers().getMaxTooltipLineLength(),
                             ChatFormatting.RED.toString())
                             .stream()
                             .map(Component::literal)

@@ -31,7 +31,7 @@ public class LootFunctionCopyMechanicalSqueezerTank extends LootItemConditionalF
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalSqueezer) {
             itemStack.set(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_FLUID_CONTENT, SimpleFluidContent.copyOf(((BlockEntityMechanicalSqueezer) tile).getTank().getFluid()));
         }

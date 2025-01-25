@@ -17,7 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
@@ -79,7 +79,7 @@ public class VoxelShapeComponentsFactoryHandlerCableCenter implements VoxelShape
         @Override
         @OnlyIn(Dist.CLIENT)
         public BakedModel getBreakingBaseModel(Level world, BlockPos pos) {
-            return RenderHelpers.getDynamicBakedModel(world, pos);
+            return IModHelpers.get().getRenderHelpers().getDynamicBakedModel(world, pos);
         }
 
         @Override

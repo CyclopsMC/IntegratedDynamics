@@ -31,7 +31,7 @@ public class ModBaseMocked implements IModBase {
     }
 
     @Override
-    public IPacketHandler getPacketHandlerCommon() {
+    public IPacketHandler getPacketHandler() {
         return null;
     }
 

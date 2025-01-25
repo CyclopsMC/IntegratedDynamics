@@ -6,10 +6,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
@@ -127,7 +127,7 @@ public class PartOffsetsOverlayRenderer {
                 .move(-offsetX, -offsetY, -offsetZ)
                 .inflate(0.05, 0.05, 0.05)
                 .inflate(-0.05, -0.05, -0.05);
-        LevelRenderer.renderLineBox(matrixStack, renderTypeBuffer.getBuffer(RenderType.lines()),
+        ShapeRenderer.renderLineBox(matrixStack, renderTypeBuffer.getBuffer(RenderType.lines()),
                 bb, r, g, b, a);
     }
 

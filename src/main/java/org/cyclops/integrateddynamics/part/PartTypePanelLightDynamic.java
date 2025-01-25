@@ -6,9 +6,10 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -40,8 +41,8 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
     }
 
     @Override
-    protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus();
+    protected Block createBlock(BlockConfigCommon<?> blockConfig, BlockBehaviour.Properties properties) {
+        return new IgnoredBlockStatus(properties);
     }
 
     @Override
@@ -99,8 +100,8 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, State state,
-                                      BlockGetter world, Block neighbourBlock, BlockPos neighbourPos) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourPos);
+                                      BlockGetter world) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world);
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }
 
@@ -123,11 +124,11 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
                     world.setBlockAndUpdate(pos, RegistryEntries.BLOCK_INVISIBLE_LIGHT.get().defaultBlockState()
                             .setValue(BlockInvisibleLight.LIGHT, lightLevel));
                 } else {
-                    world.setBlock(pos, Blocks.AIR.defaultBlockState(), MinecraftHelpers.BLOCK_NOTIFY_CLIENT);
+                    world.setBlock(pos, Blocks.AIR.defaultBlockState(), IModHelpers.get().getMinecraftHelpers().getBlockNotifyClient());
                 }
             }
         } else {
-            BlockEntityHelpers.getCapability(target.getCenter().getPos(), target.getCenter().getSide(), Capabilities.DynamicLight.BLOCK)
+            IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(target.getCenter().getPos(), target.getCenter().getSide(), Capabilities.DynamicLight.BLOCK)
                     .ifPresent(dynamicLight -> dynamicLight.setLightLevel(lightLevel));
         }
     }

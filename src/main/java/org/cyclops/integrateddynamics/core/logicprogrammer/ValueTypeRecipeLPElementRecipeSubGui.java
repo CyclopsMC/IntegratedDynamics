@@ -7,13 +7,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
@@ -101,15 +102,13 @@ class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipe
         super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         // Draw crafting arrow
-        guiGraphics.blit(SubGuiBox.TEXTURE, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15);
+        guiGraphics.blit(RenderType::guiTextured, SubGuiBox.TEXTURE, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15, 256, 256);
 
         inputFluidAmountBox.render(guiGraphics, mouseX, mouseY, partialTicks);
-        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, 0, false);
         inputEnergyBox.render(guiGraphics, mouseX, mouseY, partialTicks);
         outputFluidAmountBox.render(guiGraphics, mouseX, mouseY, partialTicks);
-        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, 0, false);
         outputEnergyBox.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 

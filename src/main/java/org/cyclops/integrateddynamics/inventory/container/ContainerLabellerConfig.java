@@ -1,22 +1,17 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.world.flag.FeatureFlags;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
-import org.cyclops.cyclopscore.config.extendedconfig.GuiConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigCommon;
+import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigScreenFactoryProvider;
+import org.cyclops.cyclopscore.init.IModBase;
 import org.cyclops.cyclopscore.inventory.container.ContainerTypeData;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLabeller;
 
 /**
  * Config for {@link ContainerLabeller}.
  * @author rubensworks
  */
-public class ContainerLabellerConfig extends GuiConfig<ContainerLabeller> {
+public class ContainerLabellerConfig extends GuiConfigCommon<ContainerLabeller, IModBase> {
 
     public ContainerLabellerConfig() {
         super(IntegratedDynamics._instance,
@@ -24,10 +19,8 @@ public class ContainerLabellerConfig extends GuiConfig<ContainerLabeller> {
                 eConfig -> new ContainerTypeData<>(ContainerLabeller::new, FeatureFlags.VANILLA_SET));
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & MenuAccess<ContainerLabeller>> MenuScreens.ScreenConstructor<ContainerLabeller, U> getScreenFactory() {
-        return new ScreenFactorySafe<>(ContainerScreenLabeller::new);
+    public GuiConfigScreenFactoryProvider<ContainerLabeller> getScreenFactoryProvider() {
+        return new ContainerLabellerConfigScreenFactoryProvider();
     }
-
 }

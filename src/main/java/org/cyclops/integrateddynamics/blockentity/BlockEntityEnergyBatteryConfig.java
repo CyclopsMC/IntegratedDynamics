@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.client.render.blockentity.RenderBlockEntityEnergyBattery;
@@ -14,14 +14,14 @@ import org.cyclops.integrateddynamics.client.render.blockentity.RenderBlockEntit
  * @author rubensworks
  *
  */
-public class BlockEntityEnergyBatteryConfig extends BlockEntityConfig<BlockEntityEnergyBattery> {
+public class BlockEntityEnergyBatteryConfig extends BlockEntityConfigCommon<BlockEntityEnergyBattery, IntegratedDynamics> {
 
     public BlockEntityEnergyBatteryConfig() {
         super(
                 IntegratedDynamics._instance,
                 "energy_battery",
                 (eConfig) -> new BlockEntityType<>(BlockEntityEnergyBattery::new,
-                        Sets.newHashSet(RegistryEntries.BLOCK_ENERGY_BATTERY.get(), RegistryEntries.BLOCK_ENERGY_BATTERY_CREATIVE.get()), null)
+                        Sets.newHashSet(RegistryEntries.BLOCK_ENERGY_BATTERY.get(), RegistryEntries.BLOCK_ENERGY_BATTERY_CREATIVE.get()))
         );
         IntegratedDynamics._instance.getModEventBus().addListener(new BlockEntityEnergyBattery.CapabilityRegistrar(this::getInstance)::register);
     }

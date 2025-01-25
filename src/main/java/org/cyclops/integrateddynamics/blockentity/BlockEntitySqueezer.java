@@ -17,15 +17,14 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.capability.registrar.BlockEntityCapabilityRegistrar;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.CraftingHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.SimpleInventoryState;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -71,7 +70,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                 sendUpdate();
             }
         };
-        this.tank = new SingleUseTank(FluidHelpers.BUCKET_VOLUME);
+        this.tank = new SingleUseTank(IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume());
 
         // Add dirty mark listeners to inventory and tank
         this.inventory.addDirtyMarkListener(this::sendUpdate);
@@ -82,7 +81,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                 new SingleCache.ICacheUpdater<ItemStack, Optional<RecipeHolder<RecipeSqueezer>>>() {
                     @Override
                     public Optional<RecipeHolder<RecipeSqueezer>> getNewValue(ItemStack key) {
-                        return CraftingHelpers.findServerRecipe(getRegistry(), CraftingInput.of(1, 1, Lists.newArrayList(key)), getLevel());
+                        return IModHelpers.get().getCraftingHelpers().findRecipe(getRegistry(), CraftingInput.of(1, 1, Lists.newArrayList(key)), getLevel());
                     }
 
                     @Override
@@ -101,7 +100,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
         public void populate() {
             add(
                     net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                    (blockEntity, direction) -> blockEntity.getInventory().getItemHandler()
+                    (blockEntity, direction) -> new InvWrapper(blockEntity.getInventory())
             );
             add(
                     org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
@@ -165,7 +164,7 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                         .map(axisDirection -> Direction.get(axisDirection, axis))
                         .forEach(side -> {
                             if (!blockEntity.getTank().isEmpty()) {
-                                BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK)
+                                IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK)
                                         .ifPresent(handler -> {
                                             FluidStack fluidStack = new FluidStack(blockEntity.getTank().getFluid().getFluid(),
                                                     Math.min(100, blockEntity.getTank().getFluidAmount()));
@@ -187,14 +186,14 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                                 ItemStack resultStack = itemStackChance.getIngredientFirst().copy();
                                 for (Direction side : Direction.values()) {
                                     if (!resultStack.isEmpty() && side != Direction.UP) {
-                                        IItemHandler itemHandler = BlockEntityHelpers.getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
+                                        IItemHandler itemHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
                                         if (itemHandler != null) {
                                             resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
                                         }
                                     }
                                 }
                                 if (!resultStack.isEmpty()) {
-                                    ItemStackHelpers.spawnItemStack(level, pos, resultStack);
+                                    IModHelpers.get().getItemStackHelpers().spawnItemStack(level, pos, resultStack);
                                 }
                             }
                         }

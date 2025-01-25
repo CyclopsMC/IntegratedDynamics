@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.block.BlockDelayConfig;
@@ -133,17 +132,14 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.render(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
         numberFieldCapacity.render(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
         // MCP: drawString
-        font.drawInBatch(Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, Helpers.RGBToInt(0, 0, 0), false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
-        font.drawInBatch(Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, Helpers.RGBToInt(0, 0, 0), false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
+        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
     }
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        this.font.drawInBatch(this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
         displayErrors.drawForeground(guiGraphics.pose(), getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 

@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.*;
@@ -36,7 +37,8 @@ import net.neoforged.neoforge.client.model.data.ModelProperty;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.block.BlockWithEntity;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
@@ -141,12 +143,14 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
-        if (stateIn.getValue(WATERLOGGED)) {
-            worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        if (level instanceof ServerLevel serverLevel) {
+            if (state.getValue(WATERLOGGED)) {
+                serverLevel.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            }
+            NetworkHelpers.onElementProviderBlockNeighborChange(serverLevel, pos, direction);
         }
-        NetworkHelpers.onElementProviderBlockNeighborChange((Level) worldIn, currentPos, facingState.getBlock(), facing, facingPos);
-        return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override
@@ -167,7 +171,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public void onBlockExploded(BlockState state, Level world, BlockPos blockPos, Explosion explosion) {
+    public void onBlockExploded(BlockState state, ServerLevel world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.setRemovingCable(true);
         CableHelpers.onCableRemoving(world, blockPos, true, false, state);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
@@ -211,7 +215,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
                     sneak + right-click on part to remove that part
             No wrench: right-click to open GUI
          */
-        BlockEntityMultipartTicking tile = BlockEntityHelpers.get(world, pos, BlockEntityMultipartTicking.class).orElse(null);
+        BlockEntityMultipartTicking tile = IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityMultipartTicking.class).orElse(null);
         if(tile != null) {
             BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, CollisionContext.of(player))
                     .rayTrace(pos, player);
@@ -245,35 +249,33 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, net.minecraft.world.phys.HitResult target, LevelReader world,
-                                  BlockPos blockPos, Player player) {
-        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, blockPos, CollisionContext.of(player))
-                .rayTrace(blockPos, player);
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
+        BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, level, pos, CollisionContext.of(player))
+                .rayTrace(pos, player);
         if(rayTraceResult != null) {
-            return rayTraceResult.getComponent().getCloneItemStack((Level) world, blockPos);
+            return rayTraceResult.getComponent().getCloneItemStack((Level) level, pos);
         }
-        return getCloneItemStack(world, blockPos, state);
+        return super.getCloneItemStack(level, pos, state, includeData, player);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
-        super.neighborChanged(state, world, pos, neighborBlock, fromPos, isMoving);
-        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null, fromPos);
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @org.jetbrains.annotations.Nullable Orientation orientation, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
+        NetworkHelpers.onElementProviderBlockNeighborChange(level, pos, null);
     }
 
     @Override
     public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(state, world, pos, neighbor);
         if (world instanceof Level level) {
-            NetworkHelpers.onElementProviderBlockNeighborChange(level, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
+            NetworkHelpers.onElementProviderBlockNeighborChange(level, pos, null);
         }
     }
 
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand) {
         super.tick(state, world, pos, rand);
-        BlockEntityHelpers.get(world, pos, BlockEntityMultipartTicking.class)
+        IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityMultipartTicking.class)
                 .ifPresent(tile -> {
                     for (Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : tile
                             .getPartContainer().getPartData().entrySet()) {
@@ -343,19 +345,6 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public int getLightBlock(BlockState blockState, BlockGetter world, BlockPos pos) {
-        if (world instanceof Level level) {
-            if (CableHelpers.isLightTransparent(level, pos, null, blockState)) {
-                return 0;
-            }
-            return CableHelpers.getFacade(level, pos, blockState)
-                    .map(facade -> facade.getLightBlock(world, pos))
-                    .orElse(0);
-        }
-        return 0;
-    }
-
-    @Override
     public RenderShape getRenderShape(BlockState blockState) {
         return RenderShape.MODEL;
     }
@@ -383,14 +372,14 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         if (world instanceof ILevelExtension levelExtension) {
             if (side == null) {
                 for (Direction dummySide : Direction.values()) {
-                    IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(levelExtension, pos, dummySide, Capabilities.DynamicRedstone.BLOCK).orElse(null);
+                    IDynamicRedstone dynamicRedstone = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(levelExtension, pos, dummySide, Capabilities.DynamicRedstone.BLOCK).orElse(null);
                     if (dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput())) {
                         return true;
                     }
                 }
                 return false;
             }
-            IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+            IDynamicRedstone dynamicRedstone = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
             return dynamicRedstone != null && (dynamicRedstone.getRedstoneLevel() >= 0 || dynamicRedstone.isAllowRedstoneInput());
         }
         return false;
@@ -400,7 +389,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Override
     public int getDirectSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
         if (world instanceof ILevelExtension levelExtension) {
-            IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+            IDynamicRedstone dynamicRedstone = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
             return dynamicRedstone != null && dynamicRedstone.isDirect() ? dynamicRedstone.getRedstoneLevel() : 0;
         }
         return 0;
@@ -410,7 +399,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Override
     public int getSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
         if (world instanceof ILevelExtension levelExtension) {
-            IDynamicRedstone dynamicRedstone = BlockEntityHelpers.getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
+            IDynamicRedstone dynamicRedstone = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(levelExtension, pos, side.getOpposite(), Capabilities.DynamicRedstone.BLOCK).orElse(null);
             return dynamicRedstone != null ? dynamicRedstone.getRedstoneLevel() : 0;
         }
         return 0;
@@ -431,5 +420,19 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         }
         return light;
     }
+
+    // TODO: rm if not needed
+//    @Override
+//    public int getLightBlock(BlockState blockState, BlockGetter world, BlockPos pos) {
+//        if (world instanceof Level level) {
+//            if (CableHelpers.isLightTransparent(level, pos, null, blockState)) {
+//                return 0;
+//            }
+//            return CableHelpers.getFacade(level, pos, blockState)
+//                    .map(facade -> facade.getLightBlock(world, pos))
+//                    .orElse(0);
+//        }
+//        return 0;
+//    }
 
 }

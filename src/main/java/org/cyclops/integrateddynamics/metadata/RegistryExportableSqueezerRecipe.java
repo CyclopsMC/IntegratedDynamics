@@ -2,7 +2,9 @@ package org.cyclops.integrateddynamics.metadata;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -13,6 +15,7 @@ import org.cyclops.cyclopscore.metadata.RegistryExportableRecipeAbstract;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeSqueezer;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,10 +31,10 @@ public class RegistryExportableSqueezerRecipe extends RegistryExportableRecipeAb
         JsonObject object = new JsonObject();
 
         // Inputs
-        ItemStack[] inputs = recipe.getInputIngredient().getItems();
+        List<Holder<Item>> inputs = recipe.getInputIngredient().items().toList();
         JsonArray arrayInputs = new JsonArray();
-        for (ItemStack input : inputs) {
-            arrayInputs.add(IRegistryExportable.serializeItemStack(input));
+        for (Holder<Item> input : inputs) {
+            arrayInputs.add(IRegistryExportable.serializeItemStack(new ItemStack(input)));
         }
 
         // Outputs

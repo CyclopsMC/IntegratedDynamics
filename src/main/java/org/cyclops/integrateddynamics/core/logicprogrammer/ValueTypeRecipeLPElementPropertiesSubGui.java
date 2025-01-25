@@ -20,8 +20,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonCheckbox;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.image.Images;
-import org.cyclops.cyclopscore.helper.GuiHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
@@ -125,7 +124,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
     private Set<IDropdownEntry<ResourceLocation>> getDropdownEntries() {
         LinkedHashSet<IDropdownEntry<ResourceLocation>> set = Sets.newLinkedHashSet();
         if (getSlotContents().isEmpty()) {
-            BuiltInRegistries.ITEM.getTagNames()
+            BuiltInRegistries.ITEM.listTagIds()
                     .forEach(registeredTag -> set.add(new DropdownEntry(registeredTag.location())));
 
         } else {
@@ -184,14 +183,11 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
         drawSlot(guiGraphics, getX() + guiLeft + 116, getY() + guiTop + 2);
 
         this.inputNbt.render(guiGraphics, mouseX, mouseY, partialTicks);
-        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, 0, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, 0, false);
         this.inputReusable.render(guiGraphics, mouseX, mouseY, partialTicks);
-        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GUI_RECIPE_REUSABLE), guiLeft + getX() + 24, guiTop + getY() + 13, 0, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_REUSABLE), guiLeft + getX() + 24, guiTop + getY() + 13, 0, false);
         this.inputTags.render(guiGraphics, mouseX, mouseY, partialTicks);
-        fontRenderer.drawInBatch(L10NHelpers.localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 23, 0, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 23, 0, false);
         this.inputSave.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.inputTagsDropdown.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
@@ -204,7 +200,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
             int i = this.inputTagsDropdown.getHoveredVisiblePossibility(mouseX, mouseY);
             if (i >= 0) {
                 IDropdownEntry<ResourceLocation> hoveredPossibility = this.inputTagsDropdown.getVisiblePossibility(i);
-                drawTagsTooltip(guiGraphics, hoveredPossibility, guiLeft, guiTop, mouseX + 10, mouseY - 20, 6, GuiHelpers.SLOT_SIZE);
+                drawTagsTooltip(guiGraphics, hoveredPossibility, guiLeft, guiTop, mouseX + 10, mouseY - 20, 6, IModHelpers.get().getGuiHelpers().getSlotSize());
             }
         }
     }
@@ -213,14 +209,14 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
                                    int mouseX, int mouseY, int columns, int offset) {
         int x = mouseX - guiLeft;
         int y = mouseY - guiTop;
-        List<Item> items = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, hoveredPossibility.getValue()))
+        List<Item> items = BuiltInRegistries.ITEM.get(TagKey.create(Registries.ITEM, hoveredPossibility.getValue()))
                 .stream()
                 .flatMap(HolderSet.ListBacked::stream)
                 .map(Holder::value)
                 .toList();
 
         // Draw background
-        GuiHelpers.drawTooltipBackground(guiGraphics.pose(), x, y, Math.min(items.size(), columns) * offset,
+        IModHelpers.get().getGuiHelpers().drawTooltipBackground(guiGraphics.pose(), x, y, Math.min(items.size(), columns) * offset,
                 ((items.size() % columns == 0 ? 0 : 1) + (items.size() / columns)) * offset);
 
         // Draw item grid

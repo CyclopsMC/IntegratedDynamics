@@ -8,8 +8,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -39,10 +39,10 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     private final IAspectProperties defaultProperties;
 
-    private final ModBase mod;
+    private final ModBaseNeoForge mod;
     private String translationKey = null;
 
-    public AspectBase(ModBase mod, IAspectProperties defaultProperties) {
+    public AspectBase(ModBaseNeoForge mod, IAspectProperties defaultProperties) {
         this.mod = mod;
         this.defaultProperties = defaultProperties == null ? createDefaultProperties() : defaultProperties;
     }
@@ -71,7 +71,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         lines.add(Component.translatable(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
                 .withStyle(getValueType().getDisplayColorFormat()));
         if(appendOptionalInfo) {
-            L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(lines, getUnlocalizedPrefix());
         }
     }
 
@@ -133,7 +133,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         return null;
     }
 
-    protected ModBase getMod() {
+    protected ModBaseNeoForge getMod() {
         return mod;
     }
 

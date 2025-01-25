@@ -3,11 +3,7 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -53,18 +49,8 @@ public class RecipeNbtClear extends CustomRecipe {
         return ret;
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 1;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
-        return getResultItem();
-    }
-
     public ItemStack getResultItem() {
-        return inputIngredient.getItems()[0]; // This is just a dummy item!
+        return new ItemStack(inputIngredient.items().findFirst().get()); // This is just a dummy item!
     }
 
     @Override
@@ -73,17 +59,12 @@ public class RecipeNbtClear extends CustomRecipe {
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
-        return NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()));
-    }
-
-    @Override
     public boolean isSpecial() {
         return true;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return RegistryEntries.RECIPESERIALIZER_NBT_CLEAR.get();
     }
 }

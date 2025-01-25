@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class RecipeSerializerMechanicalDryingBasinConfig extends RecipeConfig<RecipeMechanicalDryingBasin> {
+public class RecipeSerializerMechanicalDryingBasinConfig extends RecipeConfigCommon<RecipeMechanicalDryingBasin, IntegratedDynamics> {
 
     public RecipeSerializerMechanicalDryingBasinConfig() {
         super(

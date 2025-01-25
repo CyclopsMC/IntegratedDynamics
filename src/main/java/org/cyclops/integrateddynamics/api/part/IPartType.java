@@ -15,12 +15,10 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -359,19 +357,18 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     /**
      * Called when a neighbouring block is updated, more specifically when
-     * {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, BlockPos, boolean)},
+     * {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, Orientation, boolean)},
      * {@link Block#onNeighborChange(BlockState, LevelReader, BlockPos, BlockPos)}
-     * or {@link Block#updateShape(BlockState, Direction, BlockState, LevelAccessor, BlockPos, BlockPos)} is called.
-     * @param network The network to update in.
+     * or {@link Block#updateShape(BlockState, LevelReader, ScheduledTickAccess, BlockPos, Direction, BlockPos, BlockState, RandomSource)} is called.
+     *
+     * @param network     The network to update in.
      * @param partNetwork The part network to update in.
-     * @param target The target block.
-     * @param state The state
-     * @param world The world in which the neighbour was updated.
-     * @param neighbourBlock The block type of the neighbour that was updated.
-     * @param neighbourBlockPos The position of the neighbour that was updated.
+     * @param target      The target block.
+     * @param state       The state
+     * @param world       The world in which the neighbour was updated.
      */
     public void onBlockNeighborChange(@Nullable INetwork network, @Nullable IPartNetwork partNetwork, PartTarget target,
-                                      S state, BlockGetter world, Block neighbourBlock, BlockPos neighbourBlockPos);
+                                      S state, BlockGetter world);
 
     /**
      * @param state The state

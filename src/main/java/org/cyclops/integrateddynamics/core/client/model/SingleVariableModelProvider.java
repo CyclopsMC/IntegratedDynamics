@@ -1,9 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +9,6 @@ import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Variable model provider for a single model.
@@ -26,11 +23,11 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter,
-                                                              ModelState transform, ResourceLocation location) {
+    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBaker modelBaker,
+                                                              ModelState transform) {
         BakedModel bakedModel = null;
         try {
-            bakedModel = modelBaker.bake(this.model, transform, spriteGetter);
+            bakedModel = modelBaker.bake(this.model, transform);
         } catch (Exception e) {
             e.printStackTrace();
         }

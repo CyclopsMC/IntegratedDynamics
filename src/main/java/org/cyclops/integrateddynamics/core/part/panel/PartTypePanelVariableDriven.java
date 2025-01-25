@@ -22,11 +22,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -72,8 +73,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     }
 
     @Override
-    protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus();
+    protected Block createBlock(BlockConfigCommon<?> blockConfig, BlockBehaviour.Properties properties) {
+        return new IgnoredBlockStatus(properties);
     }
 
     @Override
@@ -160,7 +161,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             // tick-1: Part tick: update the value again, the old value has still not been sent here!
             // tick-1: -- send all block updates to client --- This will contain the value that was set in tick-1.
             state.onDirty();
-            BlockHelpers.markForUpdate(level, target.getCenter().getPos().getBlockPos());
+            IModHelpers.get().getBlockHelpers().markForUpdate(level, target.getCenter().getPos().getBlockPos());
         }
     }
 

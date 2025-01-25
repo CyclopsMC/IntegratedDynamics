@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.core.block.BlockContainerCabled;
@@ -51,8 +51,8 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled {
         }
 
         if (player.getItemInHand(player.getUsedItemHand()).isEmpty()) {
-            return BlockEntityHelpers.get(world, pos, BlockEntityEnergyBattery.class)
-                    .map(tile -> {
+            return IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityEnergyBattery.class)
+                    .<InteractionResult>map(tile -> {
                         player.displayClientMessage(Helpers.getLocalizedEnergyLevel(
                                 tile.getEnergyStored(), tile.getMaxEnergyStored()), true);
                         return InteractionResult.SUCCESS;
@@ -78,7 +78,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled {
     @Override
     public void setPlacedBy(Level world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (!world.isClientSide()) {
-            BlockEntityHelpers.get(world, blockPos, BlockEntityEnergyBattery.class)
+            IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityEnergyBattery.class)
                     .ifPresent(tile -> itemStackToTile(itemStack.copy().split(1), tile));
         }
         super.setPlacedBy(world, blockPos, state, placer, itemStack);

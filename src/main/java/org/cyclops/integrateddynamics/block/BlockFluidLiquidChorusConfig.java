@@ -1,11 +1,8 @@
 package org.cyclops.integrateddynamics.block;
 
 
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 import java.util.Collection;
@@ -16,21 +13,21 @@ import java.util.Collections;
  * @author rubensworks
  *
  */
-public class BlockFluidLiquidChorusConfig extends BlockConfig {
+public class BlockFluidLiquidChorusConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockFluidLiquidChorusConfig() {
         super(
                 IntegratedDynamics._instance,
                 "block_liquid_chorus",
-                eConfig -> new BlockFluidLiquidChorus(Block.Properties.of()
+                (eConfig, properties) -> new BlockFluidLiquidChorus(properties
                         .noCollission()
                         .strength(100.0F)),
-                (eConfig, block) -> new BlockItem(block, new Item.Properties())
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 
     @Override
-    protected Collection<ItemStack> defaultCreativeTabEntries() {
+    public Collection<ItemStack> getDefaultCreativeTabEntries() {
         return Collections.emptyList();
     }
 

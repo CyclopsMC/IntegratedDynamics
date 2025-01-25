@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.capability.facadeable;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.state.BlockState;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
@@ -31,7 +31,7 @@ public class FacadeableTileMultipartTicking implements IFacadeable {
         if(!hasFacade()) {
             return null;
         }
-        return BlockHelpers.deserializeBlockState(ValueDeseralizationContext.of(tile.getLevel()).holderLookupProvider().lookupOrThrow(Registries.BLOCK), tile.getFacadeBlockTag());
+        return IModHelpers.get().getBlockHelpers().deserializeBlockState(ValueDeseralizationContext.of(tile.getLevel()).holderLookupProvider().lookupOrThrow(Registries.BLOCK), tile.getFacadeBlockTag());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class FacadeableTileMultipartTicking implements IFacadeable {
         if(blockState == null) {
             tile.setFacadeBlockTag(null);
         } else {
-            tile.setFacadeBlockTag(BlockHelpers.serializeBlockState(blockState));
+            tile.setFacadeBlockTag(IModHelpers.get().getBlockHelpers().serializeBlockState(blockState));
         }
         tile.setForceLightCheckAtClient(true);
         tile.sendUpdate();

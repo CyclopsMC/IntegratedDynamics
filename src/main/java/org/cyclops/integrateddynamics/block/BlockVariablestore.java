@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.block.BlockWithEntityGuiCabled;
@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 public class BlockVariablestore extends BlockWithEntityGuiCabled {
 
     public static final MapCodec<BlockVariablestore> CODEC = simpleCodec(BlockVariablestore::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public BlockVariablestore(Properties properties) {
         super(properties, BlockEntityVariablestore::new);

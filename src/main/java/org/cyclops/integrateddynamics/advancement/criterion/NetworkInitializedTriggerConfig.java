@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.advancement.criterion;
 
-import org.cyclops.cyclopscore.config.extendedconfig.CriterionTriggerConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.CriterionTriggerConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * @author rubensworks
  *
  */
-public class NetworkInitializedTriggerConfig extends CriterionTriggerConfig<NetworkInitializedTrigger.Instance> {
+public class NetworkInitializedTriggerConfig extends CriterionTriggerConfigCommon<NetworkInitializedTrigger.Instance, IntegratedDynamics> {
 
     public NetworkInitializedTriggerConfig() {
         super(

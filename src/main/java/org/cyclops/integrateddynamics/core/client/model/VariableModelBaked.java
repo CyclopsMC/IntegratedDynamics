@@ -1,13 +1,11 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -28,7 +26,6 @@ import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -69,8 +66,13 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.of(world == null ? Minecraft.getInstance().level : world), itemStack);
         variableFacade.addModelOverlay(this, quads, this.rand, this.modelData);
 
+        BakedModel overrideModel = variableFacade.getVariableItemOverrideModel(this, itemStack, (ClientLevel) world, entity);
+        if (overrideModel != null) {
+            return overrideModel;
+        }
+
         return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.useAmbientOcclusion(), this.usesBlockLight(), this.isGui3d(),
-                this.getParticleIcon(), this.getTransforms(), this.getOverrides(), RenderTypeGroup.EMPTY);
+                this.getParticleIcon(), this.getTransforms(), RenderTypeGroup.EMPTY);
     }
 
     @Override
@@ -86,26 +88,5 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
     @Override
     public ItemTransforms getTransforms() {
         return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS_ITEM;
-    }
-
-    @Override
-    public ItemOverrides getOverrides() {
-        return new ItemOverrides() {
-            @Nullable
-            @Override
-            public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity, int id) {
-                IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.of(world == null ? Minecraft.getInstance().level : world), stack);
-                BakedModel overrideModel = variableFacade.getVariableItemOverrideModel(model, stack, world, livingEntity);
-                if (overrideModel != null) {
-                    return overrideModel;
-                }
-                return VariableModelBaked.super.getOverrides().resolve(model, stack, world, livingEntity, id);
-            }
-
-            @Override
-            public ImmutableList<BakedOverride> getOverrides() {
-                return baseModel.getOverrides().getOverrides();
-            }
-        };
     }
 }

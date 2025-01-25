@@ -5,8 +5,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -29,12 +29,12 @@ public class LabelsWorldStorage extends WorldStorage {
     @NBTPersist
     private Map<Integer, String> labels = Maps.newHashMap();
 
-    private LabelsWorldStorage(ModBase mod) {
+    private LabelsWorldStorage(ModBaseNeoForge mod) {
         super(mod);
         NeoForge.EVENT_BUS.register(this);
     }
 
-    public static LabelsWorldStorage getInstance(ModBase mod) {
+    public static LabelsWorldStorage getInstance(ModBaseNeoForge mod) {
         if(INSTANCE == null) {
             INSTANCE = new LabelsWorldStorage(mod);
         }
@@ -77,7 +77,7 @@ public class LabelsWorldStorage extends WorldStorage {
      * @param label The onLabelPacket
      */
     public void put(int variableId, @Nonnull String label) {
-        if(MinecraftHelpers.isClientSideThread()) {
+        if(IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new ActionLabelPacket(variableId, label));
         } else {
             putUnsafe(variableId, label);
@@ -90,7 +90,7 @@ public class LabelsWorldStorage extends WorldStorage {
      * @param variableId The variable id.
      */
     public void remove(int variableId) {
-        if(MinecraftHelpers.isClientSideThread()) {
+        if(IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new ActionLabelPacket(variableId, null));
         } else {
             removeUnsafe(variableId);
@@ -112,7 +112,7 @@ public class LabelsWorldStorage extends WorldStorage {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if(!MinecraftHelpers.isClientSideThread()) {
+        if(!IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (ServerPlayer) event.getEntity());
         }
     }

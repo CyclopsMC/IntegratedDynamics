@@ -4,9 +4,13 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.level.block.ComposterBlock;
-import org.cyclops.cyclopscore.config.ConfigurableProperty;
-import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import org.cyclops.cyclopscore.config.ConfigurablePropertyCommon;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfigCommon;
+import org.cyclops.cyclopscore.init.IModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -14,34 +18,39 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class ItemMenrilBerriesConfig extends ItemConfig {
+public class ItemMenrilBerriesConfig extends ItemConfigCommon<IModBase> {
 
-    @ConfigurableProperty(category = "item", comment = "If the berries should give the night vision effect when eaten.", requiresMcRestart = true)
+    @ConfigurablePropertyCommon(category = "item", comment = "If the berries should give the night vision effect when eaten.", requiresMcRestart = true)
     public static boolean nightVision = true;
 
     public ItemMenrilBerriesConfig() {
         super(
                 IntegratedDynamics._instance,
                 "menril_berries",
-                eConfig -> new Item(new Item.Properties()
-                        .food(createFood()))
+                (eConfig, properties) -> new Item(properties
+                        .food(createFood(), createConsumable()))
         );
     }
 
     protected static FoodProperties createFood() {
-        FoodProperties.Builder builder = new FoodProperties.Builder()
+        return new FoodProperties.Builder()
                 .nutrition(4)
                 .saturationModifier(0.3F)
-                .fast();
+                .build();
+    }
+
+    protected static Consumable createConsumable() {
+        Consumable.Builder builder = Consumables.defaultFood()
+                .consumeSeconds(0.8F);
         if (nightVision) {
-            builder = builder.effect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20, 1), 1);
+            builder = builder.onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20, 1), 1));
         }
         return builder.build();
     }
 
     @Override
-    public void onForgeRegistered() {
-        super.onForgeRegistered();
+    public void onRegistryRegistered() {
+        super.onRegistryRegistered();
         ComposterBlock.COMPOSTABLES.put(getInstance(), 0.65F);
     }
 

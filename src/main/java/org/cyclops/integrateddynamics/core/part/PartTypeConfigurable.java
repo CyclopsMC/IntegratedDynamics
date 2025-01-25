@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.cyclopscore.network.PacketCodecs;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -54,7 +54,7 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
 
     @Override
     public void writeExtraGuiDataSettings(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
-        PacketCodec.write(packetBuffer, pos);
+        PacketCodecs.write(packetBuffer, pos);
         packetBuffer.writeUtf(this.getUniqueName().toString());
     }
 
@@ -79,7 +79,7 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
 
     @Override
     public void writeExtraGuiDataOffsets(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
-        PacketCodec.write(packetBuffer, pos);
+        PacketCodecs.write(packetBuffer, pos);
         packetBuffer.writeUtf(this.getUniqueName().toString());
     }
 

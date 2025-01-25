@@ -1,5 +1,5 @@
 plugins {
-    id 'net.neoforged.gradle.userdev' version '7.0.145'
+    id 'net.neoforged.gradle.userdev' version '7.0.171'
     id 'net.neoforged.gradle.mixin' version '7.0.97'
     id 'net.darkhax.curseforgegradle' version '1.0.8'
     id 'com.diffplug.spotless' version '6.25.0'
@@ -132,15 +132,16 @@ dependencies {
     }
 	
     // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local Integrated Dynamics Compat version.
-    if(secrets.integrateddynamicscompat_version_local) {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
-            transitive = false
-        }
-    } else {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${project.integrateddynamicscompat_version}") {
-            transitive = false
-        }
-    }
+    // TODO: re-enable compat
+//    if(secrets.integrateddynamicscompat_version_local) {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
+//            transitive = false
+//        }
+//    } else {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${project.integrateddynamicscompat_version}") {
+//            transitive = false
+//        }
+//    }
 
     if(secrets.commoncapabilities_version_local) {
         implementation "org.cyclops.commoncapabilities:commoncapabilities-${project.minecraft_version}-neoforge:${secrets.commoncapabilities_version_local}:deobf"
@@ -199,15 +200,15 @@ runs {
 
     server {
         systemProperty 'neoforge.enabledGameTestNamespaces', "cyclopscore,${mod_id}"
-        programArgument '--nogui'
+        argument '--nogui'
     }
 
     gameTestServer {
         systemProperty 'neoforge.enabledGameTestNamespaces', "cyclopscore,${mod_id}"
     }
 
-    data {
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    clientData {
+        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 

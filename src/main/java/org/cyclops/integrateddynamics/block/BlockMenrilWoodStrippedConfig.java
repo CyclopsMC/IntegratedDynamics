@@ -5,14 +5,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -21,13 +20,13 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  * @author rubensworks
  *
  */
-public class BlockMenrilWoodStrippedConfig extends BlockConfig {
+public class BlockMenrilWoodStrippedConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockMenrilWoodStrippedConfig() {
         super(
                 IntegratedDynamics._instance,
                 "menril_wood_stripped",
-                eConfig -> new RotatedPillarBlock(BlockBehaviour.Properties.of()
+                (eConfig, properties) -> new RotatedPillarBlock(properties
                         .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F)
                         .sound(SoundType.WOOD)) {

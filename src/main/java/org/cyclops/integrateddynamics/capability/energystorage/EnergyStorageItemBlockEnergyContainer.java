@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.capability.energystorage;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.RegistryEntries;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
@@ -48,7 +48,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     @Override
     public int getEnergyStored() {
-        return Helpers.multiplySafe(getEnergyStoredSingular(), this.itemStack.getCount());
+        return IModHelpers.get().getBaseHelpers().multiplySafe(getEnergyStoredSingular(), this.itemStack.getCount());
     }
 
     public long getEnergyStoredLong() {
@@ -65,7 +65,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     @Override
     public int getMaxEnergyStored() {
-        return Helpers.multiplySafe(getMaxEnergyStoredSingular(), this.itemStack.getCount());
+        return IModHelpers.get().getBaseHelpers().multiplySafe(getMaxEnergyStoredSingular(), this.itemStack.getCount());
     }
 
     public long getMaxEnergyStoredLong() {

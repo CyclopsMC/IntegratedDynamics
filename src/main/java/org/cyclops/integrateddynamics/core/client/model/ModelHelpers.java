@@ -15,7 +15,6 @@ import java.io.Reader;
  */
 public final class ModelHelpers {
 
-    public static final BlockModel MODEL_GENERATED = BlockModel.fromString("{\"elements\":[{  \"from\": [0, 0, 0],   \"to\": [16, 16, 16],   \"faces\": {       \"down\": {\"uv\": [0, 0, 16, 16], \"texture\":\"\"}   }}]}");
     public static final ItemModelGenerator MODEL_GENERATOR = new ItemModelGenerator();
 
     /**
@@ -31,7 +30,7 @@ public final class ModelHelpers {
         Reader reader = resource.openAsReader();
 
         BlockModel model = BlockModel.fromStream(reader);
-        model.name = modelLocation.toString();
+//        model.name = modelLocation.toString();
         return model;
     }
 

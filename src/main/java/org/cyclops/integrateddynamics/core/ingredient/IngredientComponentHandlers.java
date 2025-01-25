@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandlerRegistry;
@@ -28,7 +28,7 @@ public class IngredientComponentHandlers {
 
     private static IIngredientComponentHandlerRegistry constructRegistry() {
         // This also allows this registry to be used outside of a minecraft environment.
-        if(MinecraftHelpers.isModdedEnvironment()) {
+        if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment()) {
             return IntegratedDynamics._instance.getRegistryManager().getRegistry(IIngredientComponentHandlerRegistry.class);
         } else {
             return IngredientComponentHandlerRegistry.getInstance();
@@ -42,11 +42,11 @@ public class IngredientComponentHandlers {
     public static void onIngredientComponentsPopulated(RegisterEvent event) {
         if (event.getRegistryKey().equals(IngredientComponent.REGISTRY.key())) {
             // Components are still loading here, so grab them by name
-            IngredientComponent componentItem = IngredientComponent.REGISTRY.get(
+            IngredientComponent componentItem = IngredientComponent.REGISTRY.getValue(
                     ResourceLocation.parse("minecraft:itemstack"));
-            IngredientComponent componentFluid = IngredientComponent.REGISTRY.get(
+            IngredientComponent componentFluid = IngredientComponent.REGISTRY.getValue(
                     ResourceLocation.parse("minecraft:fluidstack"));
-            IngredientComponent componentEnergy = IngredientComponent.REGISTRY.get(
+            IngredientComponent componentEnergy = IngredientComponent.REGISTRY.getValue(
                     ResourceLocation.parse("minecraft:energy"));
 
             REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeItemStack,

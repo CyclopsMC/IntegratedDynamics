@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.network;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
@@ -25,7 +25,7 @@ public abstract class TileNetworkElement<T extends BlockEntityCableConnectableIn
     protected abstract Class<T> getTileClass();
 
     protected Optional<T> getTile() {
-        return BlockEntityHelpers.get(getPos(), getTileClass());
+        return IModHelpers.get().getBlockEntityHelpers().get(getPos().getLevel(true), getPos().getBlockPos(), getTileClass());
     }
 
     @Override

@@ -28,9 +28,9 @@ import net.neoforged.neoforge.client.model.SimpleModelState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCableClientConfig;
@@ -187,7 +187,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         ModelState transformation = new SimpleModelState(getMatrix(getRotation(side)));
         BlockElementRotation DEFAULT_ROTATION = null;
         boolean APPLY_SHADING = true;
-        quads.add(FACE_BAKERY.bakeQuad(from, to, blockPartFace, texture, Direction.NORTH, transformation, DEFAULT_ROTATION, APPLY_SHADING));
+        quads.add(FACE_BAKERY.bakeQuad(from, to, blockPartFace, texture, Direction.NORTH, transformation, DEFAULT_ROTATION, APPLY_SHADING, 0));
     }
 
     public static Transformation getMatrix(BlockModelRotation modelRotation) {
@@ -274,7 +274,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                             );
                             i++;
                             ClientHooks.fillNormal(data, realSide); // This fixes lighting issues when item is rendered in hand/inventory
-                            ret.add(new BakedQuad(data, -1, realSide, texture, true));
+                            ret.add(new BakedQuad(data, -1, realSide, texture, true, 0, true));
                         }
                     } else {
                         addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);
@@ -284,7 +284,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
             if (blockStateHolder.isPresent() && shouldRenderParts(modelData)
                     && this.renderType != null) {
-                BakedModel facadeModel = RenderHelpers.getBakedModel(blockStateHolder.get());
+                BakedModel facadeModel = IModHelpers.get().getRenderHelpers().getBakedModel(blockStateHolder.get());
                 if (facadeModel.getRenderTypes(blockStateHolder.get(), rand, ModelData.EMPTY)
                         .contains(this.renderType)) {
                     for (Direction side : Direction.values()) {
@@ -320,7 +320,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     @Override
     public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos,
                                    @Nonnull BlockState state, @Nonnull ModelData tileData) {
-        return BlockEntityHelpers.get(world, pos, BlockEntityMultipartTicking.class)
+        return IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityMultipartTicking.class)
                 .map(BlockEntityMultipartTicking::getConnectionState)
                 .orElse(ModelData.EMPTY);
     }

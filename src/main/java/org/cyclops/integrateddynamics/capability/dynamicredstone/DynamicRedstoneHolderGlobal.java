@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.ExperimentalRedstoneUtils;
+import net.minecraft.world.level.redstone.Orientation;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
@@ -120,7 +122,8 @@ public class DynamicRedstoneHolderGlobal {
                 BlockPos pos = this.dimPos.getBlockPos();
                 if (level.isLoaded(pos.relative(side.getOpposite()))) {
                     BlockState blockState = level.getBlockState(pos);
-                    level.neighborChanged(pos.relative(side.getOpposite()), blockState.getBlock(), pos);
+                    Orientation orientation = ExperimentalRedstoneUtils.initialOrientation(level, side.getOpposite(), null);
+                    level.neighborChanged(pos, blockState.getBlock(), orientation);
                     if (strongPower) {
                         // When we are emitting a strong power, also update all neighbours of the target
                         level.updateNeighborsAt(pos.relative(side.getOpposite()), blockState.getBlock());

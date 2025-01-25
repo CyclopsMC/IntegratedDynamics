@@ -6,7 +6,7 @@ import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
@@ -23,7 +23,7 @@ import java.util.Locale;
 public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implements IValueTypeNumber<ValueTypeLong.ValueLong> {
 
     public ValueTypeLong() {
-        super("long", Helpers.RGBToInt(215, 254, 23), ChatFormatting.YELLOW, ValueTypeLong.ValueLong.class);
+        super("long", IModHelpers.get().getBaseHelpers().RGBToInt(215, 254, 23), ChatFormatting.YELLOW, ValueTypeLong.ValueLong.class);
     }
 
     @Override

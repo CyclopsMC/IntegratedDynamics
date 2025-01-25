@@ -1,20 +1,20 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.world.item.Item;
-import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfigCommon;
+import org.cyclops.cyclopscore.init.IModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * Config for the portable logic programmer.
  * @author rubensworks
  */
-public class ItemPortableLogicProgrammerConfig extends ItemConfig {
+public class ItemPortableLogicProgrammerConfig extends ItemConfigCommon<IModBase> {
 
     public ItemPortableLogicProgrammerConfig() {
         super(
                 IntegratedDynamics._instance,
                 "portable_logic_programmer",
-                eConfig -> new ItemPortableLogicProgrammer(new Item.Properties())
+                (eConfig, properties) -> new ItemPortableLogicProgrammer(properties)
         );
     }
 

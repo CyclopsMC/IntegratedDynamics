@@ -9,7 +9,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -47,8 +47,8 @@ public class TestFluidStackOperators {
 
     @IntegrationBefore
     public void before() {
-        eBucketLava = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.LAVA, FluidHelpers.BUCKET_VOLUME)));
-        eBucketWater = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, FluidHelpers.BUCKET_VOLUME)));
+        eBucketLava = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.LAVA, IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume())));
+        eBucketWater = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume())));
         eWater100 = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 100)));
         eWater100Tag = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 100)));
         eWater100Tag.getValue().getRawValue().set(DataComponents.DAMAGE, 3);
@@ -65,10 +65,10 @@ public class TestFluidStackOperators {
     public void testAmount() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), FluidHelpers.BUCKET_VOLUME, "amount(lava:1000) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume(), "amount(lava:1000) = 1000");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), FluidHelpers.BUCKET_VOLUME, "amount(water:1000) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume(), "amount(water:1000) = 1000");
 
         IValue res3 = Operators.OBJECT_FLUIDSTACK_AMOUNT.evaluate(new IVariable[]{eWater100});
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), 100, "amount(water:100) = 100");
@@ -300,10 +300,10 @@ public class TestFluidStackOperators {
     public void testSoundBucketEmpty() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BUCKET_EMPTY_LAVA.getLocation().toString(), "soundBucketEmpty(lava) = bucket_empty");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BUCKET_EMPTY_LAVA.location().toString(), "soundBucketEmpty(lava) = bucket_empty");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BUCKET_EMPTY.getLocation().toString(), "soundBucketEmpty(water) = bucket_empty");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BUCKET_EMPTY.location().toString(), "soundBucketEmpty(water) = bucket_empty");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -329,10 +329,10 @@ public class TestFluidStackOperators {
     public void testSoundBucketFill() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL.evaluate(new IVariable[]{eBucketLava});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BUCKET_FILL_LAVA.getLocation().toString(), "soundBucketFill(lava) = bucket_fill");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.BUCKET_FILL_LAVA.location().toString(), "soundBucketFill(lava) = bucket_fill");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BUCKET_FILL.getLocation().toString(), "soundBucketFill(water) = bucket_fill");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.BUCKET_FILL.location().toString(), "soundBucketFill(water) = bucket_fill");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -361,7 +361,7 @@ public class TestFluidStackOperators {
         TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), "", "soundFluidVaporize(lava) = ");
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE.evaluate(new IVariable[]{eBucketWater});
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.FIRE_EXTINGUISH.getLocation().toString(), "soundFluidVaporize(water) = ");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.FIRE_EXTINGUISH.location().toString(), "soundFluidVaporize(water) = ");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -509,7 +509,7 @@ public class TestFluidStackOperators {
         TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().getAmount(), 99, "withamount(lava, 99) = lava@99");
 
         // Check if original amount is not changed
-        TestHelpers.assertEqual(eBucketLava.getValue().getRawValue().getAmount(), FluidHelpers.BUCKET_VOLUME, "original value is not changed");
+        TestHelpers.assertEqual(eBucketLava.getValue().getRawValue().getAmount(), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume(), "original value is not changed");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

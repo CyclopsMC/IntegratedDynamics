@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.world.gen.foliageplacer;
 
-import org.cyclops.cyclopscore.config.extendedconfig.FoliagePlacerConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.FoliagePlacerConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class FoliagePlacerMenrilConfig extends FoliagePlacerConfig<FoliagePlacerMenril> {
+public class FoliagePlacerMenrilConfig extends FoliagePlacerConfigCommon<FoliagePlacerMenril, IntegratedDynamics> {
 
     public FoliagePlacerMenrilConfig() {
         super(

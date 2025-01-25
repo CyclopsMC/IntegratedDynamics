@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.Maps;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -9,7 +10,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -50,6 +51,10 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     private final int valueId, colorId, enabledId, activeAspectId;
     private final Map<IAspectWrite, Integer> aspectErrorIds;
+
+    public ContainerPartWriter(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+        this(id, playerInventory, (RegistryFriendlyByteBuf) packetBuffer);
+    }
 
     public ContainerPartWriter(int id, Inventory playerInventory, RegistryFriendlyByteBuf packetBuffer) {
         this(id, playerInventory, new SimpleInventory(packetBuffer.readInt(), 1),
@@ -132,7 +137,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                         IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork, ValueDeseralizationContext.of(player.level()));
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        readValue = Pair.of(Component.literal("NETWORK CORRUPTED!"), Helpers.RGBToInt(255, 100, 0));
+                        readValue = Pair.of(Component.literal("NETWORK CORRUPTED!"), IModHelpers.get().getBaseHelpers().RGBToInt(255, 100, 0));
                     }
                 } else {
                     readValue = Pair.of(Component.literal(""), 0);

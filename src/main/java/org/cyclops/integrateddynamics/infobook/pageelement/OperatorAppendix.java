@@ -2,13 +2,11 @@ package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoSection;
 import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
@@ -54,34 +52,32 @@ public class OperatorAppendix extends SectionAppendix {
         int yOffset = 5;
         gui.drawOuterBorder(guiGraphics, x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
         gui.drawTextBanner(guiGraphics, x + width / 2, y - 2 - yOffset);
-        gui.drawScaledCenteredString(guiGraphics, L10NHelpers.localize("operator.integrateddynamics"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
+        gui.drawScaledCenteredString(guiGraphics, IModHelpers.get().getL10NHelpers().localize("operator.integrateddynamics"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, IModHelpers.get().getBaseHelpers().RGBToInt(120, 20, 30));
 
         // Base information
-        String operatorName = L10NHelpers.localize(operator.getTranslationKey());
-        gui.drawScaledCenteredString(guiGraphics, L10NHelpers.localize(operatorName) + " (" + operator.getSymbol() + ")", x, y + 8, width, 1f, gui.getBannerWidth(), 0);
+        String operatorName = IModHelpers.get().getL10NHelpers().localize(operator.getTranslationKey());
+        gui.drawScaledCenteredString(guiGraphics, IModHelpers.get().getL10NHelpers().localize(operatorName) + " (" + operator.getSymbol() + ")", x, y + 8, width, 1f, gui.getBannerWidth(), 0);
 
         // Input/output types
         IValueType[] inputTypes = operator.getInputTypes();
         int offsetY = 14;
         for(int i = 0; i < inputTypes.length; i++) {
-            gui.getFont().drawInBatch(L10NHelpers.localize(L10NValues.GUI_INPUT, (i + 1) + ": "
-                    + inputTypes[i].getDisplayColorFormat() + L10NHelpers.localize(inputTypes[i].getTranslationKey())), x, y + offsetY, 0, false,
-                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            guiGraphics.drawString(gui.getFont(), IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_INPUT, (i + 1) + ": "
+                    + inputTypes[i].getDisplayColorFormat() + IModHelpers.get().getL10NHelpers().localize(inputTypes[i].getTranslationKey())), x, y + offsetY, 0, false);
             offsetY += 8;
         }
-        String outputTypeName = L10NHelpers.localize(operator.getOutputType().getTranslationKey());
-        gui.getFont().drawInBatch(L10NHelpers.localize(L10NValues.GUI_OUTPUT,
-                operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, 0, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        String outputTypeName = IModHelpers.get().getL10NHelpers().localize(operator.getOutputType().getTranslationKey());
+        guiGraphics.drawString(gui.getFont(), IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_OUTPUT,
+                operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, 0, false);
 
         // Global/local names
         offsetY += 8;
-        gui.drawScaledCenteredString(guiGraphics, L10NHelpers.localize(L10NValues.GUI_OPERATOR_GLOBALNAME,
+        gui.drawScaledCenteredString(guiGraphics, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_OPERATOR_GLOBALNAME,
                 operator.getGlobalInteractName()), x, y + offsetY + 6, width, 1f, gui.getBannerWidth(), 0);
         offsetY += 8;
         if (operator.getInputTypes().length > 0) {
-            String scopedTypeName = L10NHelpers.localize(operator.getInputTypes()[0].getTranslationKey());
-            gui.drawScaledCenteredString(guiGraphics, L10NHelpers.localize(L10NValues.GUI_OPERATOR_LOCALNAME,
+            String scopedTypeName = IModHelpers.get().getL10NHelpers().localize(operator.getInputTypes()[0].getTranslationKey());
+            gui.drawScaledCenteredString(guiGraphics, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_OPERATOR_LOCALNAME,
                     operator.getInputTypes()[0].getDisplayColorFormat() + scopedTypeName + "." + operator.getScopedInteractName()), x, y + offsetY + 6, width, 1f, gui.getBannerWidth(), 0);
         }
     }

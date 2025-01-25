@@ -1,20 +1,20 @@
 package org.cyclops.integrateddynamics.item;
 
-import net.minecraft.world.item.Item;
-import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfigCommon;
+import org.cyclops.cyclopscore.init.IModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * Config for the labeller.
  * @author rubensworks
  */
-public class ItemLabellerConfig extends ItemConfig {
+public class ItemLabellerConfig extends ItemConfigCommon<IModBase> {
 
     public ItemLabellerConfig() {
         super(
                 IntegratedDynamics._instance,
                 "labeller",
-                eConfig -> new ItemLabeller(new Item.Properties())
+                (eConfig, properties) -> new ItemLabeller(properties)
         );
     }
 

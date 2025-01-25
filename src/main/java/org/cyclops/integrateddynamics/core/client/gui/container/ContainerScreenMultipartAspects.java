@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,9 +16,7 @@ import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenScrolling;
 import org.cyclops.cyclopscore.client.gui.image.IImage;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -108,7 +107,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         }
 
         // Draw part name
-        RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, title.getString(),
+        IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, title.getString(),
                 this.leftPos + offsetX + 6, this.topPos + offsetY + 10, 70, 4210752, false, Font.DisplayMode.NORMAL);
 
         // Draw aspects
@@ -119,21 +118,21 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                 A aspect = container.getVisibleElement(i);
 
                 //GlStateManager._disableAlphaTest();
-                Triple<Float, Float, Float> rgb = Helpers.intToRGB(aspect.getValueType().getDisplayColor());
+                Triple<Float, Float, Float> rgb = IModHelpers.get().getBaseHelpers().intToRGB(aspect.getValueType().getDisplayColor());
                 RenderSystem.setShaderColor(colorSmoothener(rgb.getLeft()), colorSmoothener(rgb.getMiddle()),
                         colorSmoothener(rgb.getRight()), 1);
 
                 // Background
-                guiGraphics.blit(texture, leftPos + offsetX + 9,
-                        topPos + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1);
+                guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + 9,
+                        topPos + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1, 256, 256);
                 RenderSystem.setShaderColor(1, 1, 1, 1);
 
                 // Aspect type info
-                String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, aspectName,
+                String aspectName = IModHelpers.get().getL10NHelpers().localize(aspect.getTranslationKey());
+                IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, aspectName,
                         this.leftPos + offsetX + 26,
                         this.topPos + offsetY + 25 + aspectBoxHeight * i,
-                        getMaxLabelWidth(), Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
+                        getMaxLabelWidth(), IModHelpers.get().getBaseHelpers().RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
 
                 drawAdditionalElementInfo(guiGraphics, container, i, aspect);
 

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.part;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -30,8 +30,8 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     }
 
     @Override
-    protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlock();
+    protected Block createBlock(BlockConfigCommon<?> blockConfig, BlockBehaviour.Properties properties) {
+        return new IgnoredBlock(properties);
     }
 
     @Override
@@ -52,9 +52,8 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target,
-                                      PartStateEmpty<PartTypePanelLightStatic> state, BlockGetter world,
-                                      Block neighbourBlock, BlockPos neighbourPos) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourPos);
+                                      PartStateEmpty<PartTypePanelLightStatic> state, BlockGetter world) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world);
         PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
     }
 

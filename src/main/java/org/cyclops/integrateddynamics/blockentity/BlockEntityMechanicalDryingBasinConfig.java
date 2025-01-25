@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -11,14 +11,14 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  * @author rubensworks
  *
  */
-public class BlockEntityMechanicalDryingBasinConfig extends BlockEntityConfig<BlockEntityMechanicalDryingBasin> {
+public class BlockEntityMechanicalDryingBasinConfig extends BlockEntityConfigCommon<BlockEntityMechanicalDryingBasin, IntegratedDynamics> {
 
     public BlockEntityMechanicalDryingBasinConfig() {
         super(
                 IntegratedDynamics._instance,
                 "mechanical_drying_basin",
                 (eConfig) -> new BlockEntityType<>(BlockEntityMechanicalDryingBasin::new,
-                        Sets.newHashSet(RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN.get()), null)
+                        Sets.newHashSet(RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN.get()))
         );
         IntegratedDynamics._instance.getModEventBus().addListener(new BlockEntityMechanicalDryingBasin.CapabilityRegistrar(this::getInstance)::register);
     }

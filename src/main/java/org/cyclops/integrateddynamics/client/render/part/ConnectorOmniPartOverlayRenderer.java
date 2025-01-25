@@ -12,7 +12,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -61,7 +61,7 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
                             + (direction.getAxis() != Direction.Axis.Z ? 0.25F - rand.nextFloat() * 0.5F : 0F);
 
                     float scale = 0.15F;
-                    Triple<Float, Float, Float> colors = Helpers.intToRGB(getGroupColor(partState.getGroupId()));
+                    Triple<Float, Float, Float> colors = IModHelpers.get().getBaseHelpers().intToRGB(getGroupColor(partState.getGroupId()));
                     float red = colors.getLeft() + rand.nextFloat() * 0.1F - 0.05F;
                     float green = colors.getMiddle() + rand.nextFloat() * 0.1F - 0.05F;
                     float blue = colors.getRight() + rand.nextFloat() * 0.1F - 0.05F;

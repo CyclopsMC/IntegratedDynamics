@@ -2,25 +2,21 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
-import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
-import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
@@ -46,7 +42,7 @@ public class NetworkHelpers {
      */
     @Deprecated // TODO: rm in favor of variant of BlockState param
     public static Optional<INetworkCarrier> getNetworkCarrier(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkCarrier.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.NetworkCarrier.BLOCK);
     }
 
     /**
@@ -70,7 +66,7 @@ public class NetworkHelpers {
      */
     @Deprecated // TODO: rm in favor of variant of BlockState param
     public static Optional<INetworkElementProvider> getNetworkElementProvider(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkElementProvider.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.NetworkElementProvider.BLOCK);
     }
 
     /**
@@ -239,7 +235,7 @@ public class NetworkHelpers {
      * Can be absent if the starting position did not have a {@link IPathElement} capability.
      */
     public static Optional<INetwork> initNetwork(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PathElement.BLOCK)
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.PathElement.BLOCK)
                 .map(pathElement -> {
                     Network network = Network.initiateNetworkSetup(SidedPathElement.of(pathElement, side));
                     network.initialize();
@@ -251,22 +247,21 @@ public class NetworkHelpers {
     /**
      * This MUST be called by blocks having the {@link INetworkElementProvider} capability in
      * when a neighbouring block is updated, more specifically when
-     * {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, BlockPos, boolean)},
+     * {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, Orientation, boolean)},
      * {@link Block#onNeighborChange(BlockState, LevelReader, BlockPos, BlockPos)}
-     * or {@link Block#updateShape(BlockState, Direction, BlockState, LevelAccessor, BlockPos, BlockPos)} is called.
+     * or {@link Block#updateShape(BlockState, LevelReader, ScheduledTickAccess, BlockPos, Direction, BlockPos, BlockState, RandomSource)} is called.
+     *
      * @param world The world in which the neighbour was updated.
-     * @param pos The position of the center block.
-     * @param side The side at the center block.
-     * @param neighbourBlock The block type of the neighbour that was updated.
-     * @param neighbourBlockPos The position of the neighbour that was updated.
+     * @param pos   The position of the center block.
+     * @param side  The side at the center block.
      */
-    public static void onElementProviderBlockNeighborChange(Level world, BlockPos pos, Block neighbourBlock,
-                                                            @Nullable Direction side, BlockPos neighbourBlockPos) {
+    public static void onElementProviderBlockNeighborChange(Level world, BlockPos pos,
+                                                            @Nullable Direction side) {
         if (!world.isClientSide()) {
             getNetwork(world, pos, side).ifPresent(network -> {
                 getNetworkElementProvider(world, pos, side).ifPresent(networkElementProvider -> {
                     for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-                        networkElement.onNeighborBlockChange(network, world, neighbourBlock, neighbourBlockPos);
+                        networkElement.onNeighborBlockChange(network, world);
                     }
                 });
             });
@@ -301,12 +296,12 @@ public class NetworkHelpers {
      * @param pos The position.
      */
     public static void revalidateNetworkElements(Level world, BlockPos pos) {
-        INetworkCarrier networkCarrier = BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkCarrier.BLOCK).orElse(null);
-        IPathElement pathElement = BlockEntityHelpers.getCapability(world, pos, Capabilities.PathElement.BLOCK).orElse(null);
+        INetworkCarrier networkCarrier = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.NetworkCarrier.BLOCK).orElse(null);
+        IPathElement pathElement = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.PathElement.BLOCK).orElse(null);
         if (TickHandler.getInstance().ticked
                 && networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null
-                && BlockEntityHelpers.getCapability(world, pos, Capabilities.CableFakeable.BLOCK).map(ICableFakeable::isRealCable).orElse(false)) {
-            BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).ifPresent(networkElementProvider -> {
+                && IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.CableFakeable.BLOCK).map(ICableFakeable::isRealCable).orElse(false)) {
+            IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).ifPresent(networkElementProvider -> {
                 // Attempt to revalidate the network elements in this provider
                 boolean foundNetwork = false;
                 for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {

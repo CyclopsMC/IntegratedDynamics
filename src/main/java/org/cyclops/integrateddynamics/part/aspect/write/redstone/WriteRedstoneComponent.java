@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.part.aspect.write.redstone;
 
 import net.minecraft.core.Direction;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
@@ -63,6 +63,6 @@ public class WriteRedstoneComponent implements IWriteRedstoneComponent {
 
     @Override
     public Optional<IDynamicRedstone> getDynamicRedstoneBlock(DimPos dimPos, Direction side) {
-        return BlockEntityHelpers.getCapability(dimPos, side, Capabilities.DynamicRedstone.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, side, Capabilities.DynamicRedstone.BLOCK);
     }
 }

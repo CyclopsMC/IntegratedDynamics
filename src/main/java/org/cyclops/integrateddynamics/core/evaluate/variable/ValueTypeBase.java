@@ -6,8 +6,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -38,7 +38,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         this.color = color;
         this.colorFormat = colorFormat;
         this.valueClass = valueClass;
-        if(MinecraftHelpers.isModdedEnvironment() && MinecraftHelpers.isClientSide()) {
+        if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment() && IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             registerModelResourceLocation();
         }
     }
@@ -99,10 +99,10 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable V value) {
-        String typeName = L10NHelpers.localize(getTranslationKey());
+        String typeName = IModHelpers.get().getL10NHelpers().localize(getTranslationKey());
         lines.add(Component.translatable(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
-            L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(lines, getUnlocalizedPrefix());
         }
     }
 
@@ -133,7 +133,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public String toString() {
-        return L10NHelpers.localize(getTranslationKey());
+        return IModHelpers.get().getL10NHelpers().localize(getTranslationKey());
     }
 
     @Override

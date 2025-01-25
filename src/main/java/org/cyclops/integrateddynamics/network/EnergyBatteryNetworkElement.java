@@ -2,23 +2,18 @@ package org.cyclops.integrateddynamics.network;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
-import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Network element for variable stores.
@@ -29,10 +24,6 @@ import java.util.Optional;
 public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     private final DimPos pos;
-
-    protected Optional<BlockEntityEnergyBattery> getTile() {
-        return BlockEntityHelpers.get(getPos(), BlockEntityEnergyBattery.class);
-    }
 
     @Override
     public int getUpdateInterval() {
@@ -90,8 +81,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, Block neighbourBlock,
-                                      BlockPos neighbourBlockPos) {
+    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world) {
 
     }
 

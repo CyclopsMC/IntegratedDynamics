@@ -8,7 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -287,7 +287,7 @@ public class ValueHelpers {
                 readValueColor = value.getType().getDisplayColor();
             } catch (EvaluationException | NullPointerException | PartStateException e) {
                 readValue = Component.literal("ERROR");
-                readValueColor = Helpers.RGBToInt(255, 0, 0);
+                readValueColor = IModHelpers.get().getBaseHelpers().RGBToInt(255, 0, 0);
             }
         }
         return Pair.of(readValue, readValueColor);

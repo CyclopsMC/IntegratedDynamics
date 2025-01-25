@@ -6,7 +6,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -42,8 +42,8 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     private Map<IValueType, ResourceLocation> valueTypeModels;
 
     private ValueTypeRegistry() {
-        if(MinecraftHelpers.isModdedEnvironment()) {
-            if(MinecraftHelpers.isClientSide()) {
+        if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment()) {
+            if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
                 valueTypeModels = new IdentityHashMap<>();
             }
             IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);

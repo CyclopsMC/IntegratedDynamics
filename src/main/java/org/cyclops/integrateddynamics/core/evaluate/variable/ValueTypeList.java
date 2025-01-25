@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -33,7 +33,7 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     public static final int MAX_RENDER_LINES = 20;
 
     public ValueTypeList() {
-        super("list", Helpers.RGBToInt(175, 3, 1), ChatFormatting.DARK_RED, ValueTypeList.ValueList.class);
+        super("list", IModHelpers.get().getBaseHelpers().RGBToInt(175, 3, 1), ChatFormatting.DARK_RED, ValueTypeList.ValueList.class);
     }
 
     @Override

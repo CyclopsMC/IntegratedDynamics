@@ -6,7 +6,7 @@ import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
@@ -23,7 +23,7 @@ import java.util.Locale;
 public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> implements IValueTypeNumber<ValueTypeDouble.ValueDouble> {
 
     public ValueTypeDouble() {
-        super("double", Helpers.RGBToInt(235, 234, 23), ChatFormatting.YELLOW, ValueTypeDouble.ValueDouble.class);
+        super("double", IModHelpers.get().getBaseHelpers().RGBToInt(235, 234, 23), ChatFormatting.YELLOW, ValueTypeDouble.ValueDouble.class);
     }
 
     @Override

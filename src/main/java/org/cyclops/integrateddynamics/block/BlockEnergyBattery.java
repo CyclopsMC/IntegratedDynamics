@@ -1,15 +1,15 @@
 package org.cyclops.integrateddynamics.block;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 
@@ -26,7 +26,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
     public BlockEnergyBattery(Block.Properties properties) {
         super(properties);
-        if(MinecraftHelpers.isClientSide()) {
+        if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             IntegratedDynamics._instance.getModEventBus().addListener(this::postTextureStitch);
         }
     }
@@ -38,7 +38,7 @@ public class BlockEnergyBattery extends BlockEnergyBatteryBase {
 
     @OnlyIn(Dist.CLIENT)
     public void postTextureStitch(TextureAtlasStitchedEvent event) {
-        if (event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS)) {
+        if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
             iconOverlay = event.getAtlas().getSprite(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/energy_battery_overlay"));
         }
     }

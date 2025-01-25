@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -18,9 +18,8 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.DirectionHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.blockentity.BlockEntitySqueezer;
 import org.joml.Matrix4f;
 
@@ -93,17 +92,17 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
 
             if(!tile.getTank().isEmpty()) {
                 FluidStack fluid = tile.getTank().getFluid();
-                int combinedLightCorrected = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(Direction.UP.getNormal()));
-                RenderHelpers.renderFluidContext(fluid, matrixStack, () -> {
-                    float height = Math.max(0.0625F - OFFSET, fluid.getAmount() * 0.0625F / FluidHelpers.BUCKET_VOLUME + 0.0625F - OFFSET);
+                int combinedLightCorrected = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(Direction.UP.getUnitVec3i()));
+                IModHelpersNeoForge.get().getRenderHelpers().renderFluidContext(fluid, matrixStack, () -> {
+                    float height = Math.max(0.0625F - OFFSET, fluid.getAmount() * 0.0625F / IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() + 0.0625F - OFFSET);
                     int brightness = Math.max(combinedLightCorrected, fluid.getFluid().getFluidType().getLightLevel(fluid));
                     int l2 = brightness >> 0x10 & 0xFFFF;
                     int i3 = brightness & 0xFFFF;
 
                     for(Direction side : DirectionHelpers.DIRECTIONS) {
-                        TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluid, Direction.UP);
+                        TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluid, Direction.UP);
                         IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
-                        Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getTintColor(fluid));
+                        Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluid));
 
                         VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
                         Matrix4f matrix = matrixStack.last().pose();
@@ -122,11 +121,13 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
     }
 
     private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, BlockEntitySqueezer tile) {
+        ItemStackRenderState renderState = new ItemStackRenderState();
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, false, tile.getLevel(), null, 0);
+
         matrixStack.pushPose();
         float yTop = (9 - tile.getItemHeight()) * 0.125F;
         matrixStack.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
-        BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(itemStack, null, null, 0);
-        if (model.isGui3d()) {
+        if (renderState.isGui3d()) {
             matrixStack.scale(1.7F, 1.7F, 1.7F);
         }
         matrixStack.scale(1F, yTop - 0.125F, 1F);

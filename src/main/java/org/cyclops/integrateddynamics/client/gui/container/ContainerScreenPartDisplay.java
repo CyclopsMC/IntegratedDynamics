@@ -8,8 +8,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
-import org.cyclops.cyclopscore.helper.GuiHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.core.client.gui.container.ContainerScreenMultipart;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartPanelVariableDriven;
@@ -56,7 +55,7 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
         boolean ok = false;
         if(readValue != null) {
             ok = true;
-            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, readValue.getString(),
+            IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, readValue.getString(),
                     getGuiLeftTotal() + 53, getGuiTopTotal() + 38, 70, readValueColor, false, Font.DisplayMode.NORMAL);
         }
 
@@ -71,7 +70,7 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
         displayErrors.drawForeground(guiGraphics.pose(), getMenu().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.leftPos, this.topPos);
 
         // Draw tooltip over copy button
-        GuiHelpers.renderTooltip(this, guiGraphics.pose(), 128, 32, 30, 12, mouseX, mouseY,
+        IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics.pose(), 128, 32, 30, 12, mouseX, mouseY,
                 () -> Lists.newArrayList(Component.translatable("gui.integrateddynamics.button.copy.info")));
     }
 

@@ -4,16 +4,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -23,13 +21,13 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  * @author rubensworks
  *
  */
-public class BlockMenrilTorchConfig extends BlockConfig {
+public class BlockMenrilTorchConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockMenrilTorchConfig() {
         super(
                 IntegratedDynamics._instance,
                 "menril_torch",
-                eConfig -> new TorchBlock(ParticleTypes.FLAME, Block.Properties.of()
+                (eConfig, properties) -> new TorchBlock(ParticleTypes.FLAME, properties
                         .noCollission()
                         .strength(0)
                         .lightLevel((blockState) -> 14)
@@ -42,7 +40,7 @@ public class BlockMenrilTorchConfig extends BlockConfig {
                 },
                 (eConfig, block) -> new StandingAndWallBlockItem(block,
                         RegistryEntries.BLOCK_MENRIL_TORCH_WALL.get(),
-                        new Item.Properties(), Direction.DOWN)
+                        Direction.DOWN, eConfig.createDefaultItemProperties())
         );
     }
 

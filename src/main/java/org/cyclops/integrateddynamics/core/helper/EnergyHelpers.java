@@ -7,7 +7,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class EnergyHelpers {
     }
 
     public static Optional<IEnergyStorage> getEnergyStorage(Level world, BlockPos pos, Direction facing) {
-        IEnergyStorage energyStorage = BlockEntityHelpers.getCapability(world, pos, facing, net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK)
+        IEnergyStorage energyStorage = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, facing, net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK)
                 .orElseGet(() -> {
                     for (IEnergyStorageProxy energyStorageProxy : ENERGY_STORAGE_PROXIES) {
                         Optional<IEnergyStorage> optionalEnergyStorage = energyStorageProxy.getEnergyStorageProxy(world, pos, facing);

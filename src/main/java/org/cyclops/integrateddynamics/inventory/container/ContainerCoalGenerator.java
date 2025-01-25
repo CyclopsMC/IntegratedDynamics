@@ -36,7 +36,7 @@ public class ContainerCoalGenerator extends InventoryContainer {
         if(inventory instanceof Inventory) {
             return super.createNewSlot(inventory, index, row, column);
         }
-        return new FurnaceFuelSlotExtended(inventory, index, row, column);
+        return new FurnaceFuelSlotExtended(inventory, index, row, column, () -> this.player.level().fuelValues());
     }
 
     public int getProgress() {

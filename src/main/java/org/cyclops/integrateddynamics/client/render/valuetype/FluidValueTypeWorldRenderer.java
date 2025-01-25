@@ -11,8 +11,8 @@ import net.minecraft.core.Direction;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -39,9 +39,9 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
             // Fluid
             matrixStack.pushPose();
-            TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluidStack, Direction.UP);
+            TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluidStack, Direction.UP);
             IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluidStack.getFluid());
-            Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getTintColor(fluidStack));
+            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluidStack));
 
             VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
             Matrix4f matrix = matrixStack.last().pose();
@@ -63,7 +63,7 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             float scale = ((float) 5) / (float) context.getFont().width(string);
             matrixStack.scale(scale, scale, 1F);
             context.getFont().drawInBatch(string,
-                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)),
+                    0, 0, IModHelpers.get().getBaseHelpers().RGBAToInt(200, 200, 200, (int) (alpha * 255F)),
                     false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             matrixStack.popPose();
         }

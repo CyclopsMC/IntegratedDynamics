@@ -4,11 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -16,17 +12,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.network.packet.PlayerTeleportPacket;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author rubensworks
@@ -147,7 +138,7 @@ public class NetworkDataClient {
     private static JsonElement getLocalizationJson() {
         JsonObject jsonObject = new JsonObject();
         for (String entry : LOCALIZE_ENTRIES) {
-            jsonObject.addProperty(entry, L10NHelpers.localize(entry));
+            jsonObject.addProperty(entry, IModHelpers.get().getL10NHelpers().localize(entry));
         }
         return jsonObject;
     }
@@ -160,8 +151,8 @@ public class NetworkDataClient {
                 ObservablePartData part = entry.getValue();
                 jsonPart.addProperty("network", part.getNetworkId());
                 jsonPart.addProperty("cables", part.getNetworkCables());
-                jsonPart.addProperty("part", L10NHelpers.localize(part.getName()));
-                jsonPart.addProperty("ticktime", Float.parseFloat(String.format(Locale.ENGLISH, "%.6f", ((double) part.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000)));
+                jsonPart.addProperty("part", IModHelpers.get().getL10NHelpers().localize(part.getName()));
+                jsonPart.addProperty("ticktime", Float.parseFloat(String.format(Locale.ENGLISH, "%.6f", ((double) part.getLast20TicksDurationNs()) / IModHelpers.get().getMinecraftHelpers().getSecondInTicks() / 1000000)));
                 jsonPart.addProperty("dimension", part.getDimension().location().toString());
                 jsonPart.addProperty("position", part.getPos().toShortString());
                 jsonPart.addProperty("side", part.getSide().name());
@@ -180,7 +171,7 @@ public class NetworkDataClient {
                 ObservableObserverData observer = entry.getValue();
                 jsonPart.addProperty("network", observer.getNetworkId());
                 jsonPart.addProperty("part", observer.getName());
-                jsonPart.addProperty("ticktime", String.format("%.6f", ((double) observer.getLast20TicksDurationNs()) / MinecraftHelpers.SECOND_IN_TICKS / 1000000));
+                jsonPart.addProperty("ticktime", String.format("%.6f", ((double) observer.getLast20TicksDurationNs()) / IModHelpers.get().getMinecraftHelpers().getSecondInTicks() / 1000000));
                 jsonPart.addProperty("dimension", observer.getDimension().location().toString());
                 jsonPart.addProperty("position", observer.getPos().toShortString());
                 jsonPart.addProperty("side", observer.getSide() != null ? observer.getSide().name() : "null");

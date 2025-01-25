@@ -5,7 +5,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -49,7 +49,7 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         int offset = 0;
         for(String line : lines) {
-            int color = Helpers.addAlphaToColor(value.getType().getDisplayColor(), alpha);
+            int color = IModHelpers.get().getBaseHelpers().addAlphaToColor(value.getType().getDisplayColor(), alpha);
             context.getFont().drawInBatch(polishLine(line), 0, offset, color,
                     false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             offset += singleHeight;

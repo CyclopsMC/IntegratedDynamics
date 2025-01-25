@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -115,11 +115,6 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
         return 20;
     }
 
-    @Override
-    public void onUpdateReceived() {
-        super.onUpdateReceived();
-    }
-
     public static int getEnergyPerTick(int capacity) {
         return Math.max(capacity / BlockEnergyBatteryConfig.energyRateCapacityFraction, BlockEnergyBatteryConfig.minEnergyRate);
     }
@@ -182,7 +177,7 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
         protected void onSendUpdate(Level level, BlockPos pos) {
             BlockState blockState = level.getBlockState(pos);
             level.sendBlockUpdated(pos, blockState, blockState,
-                    MinecraftHelpers.BLOCK_NOTIFY | MinecraftHelpers.BLOCK_NOTIFY_CLIENT | MinecraftHelpers.BLOCK_NOTIFY_NO_RERENDER);
+                    IModHelpers.get().getMinecraftHelpers().getBlockNotify() | IModHelpers.get().getMinecraftHelpers().getBlockNotifyClient() | IModHelpers.get().getMinecraftHelpers().getBlockNotifyNoRerender());
         }
     }
 }

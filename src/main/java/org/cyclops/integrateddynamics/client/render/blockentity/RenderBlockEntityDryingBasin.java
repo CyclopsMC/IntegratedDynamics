@@ -8,9 +8,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -18,9 +19,8 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
 import org.joml.Matrix4f;
 
@@ -48,15 +48,15 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
             }
 
             FluidStack fluid = tile.getTank().getFluid();
-            RenderHelpers.renderFluidContext(fluid, matrixStack, () -> {
-                float height = (float) ((fluid.getAmount() * 0.7D) / FluidHelpers.BUCKET_VOLUME + 0.23D + 0.01D);
+            IModHelpersNeoForge.get().getRenderHelpers().renderFluidContext(fluid, matrixStack, () -> {
+                float height = (float) ((fluid.getAmount() * 0.7D) / IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() + 0.23D + 0.01D);
                 int brightness = Math.max(combinedLight, fluid.getFluid().getFluidType().getLightLevel(fluid));
                 int l2 = brightness >> 0x10 & 0xFFFF;
                 int i3 = brightness & 0xFFFF;
 
-                TextureAtlasSprite icon = RenderHelpers.getFluidIcon(fluid, Direction.UP);
+                TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluid, Direction.UP);
                 IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
-                Triple<Float, Float, Float> color = Helpers.intToRGB(renderProperties.getTintColor(fluid));
+                Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluid));
 
                 VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
                 Matrix4f matrix = matrixStack.last().pose();
@@ -69,8 +69,11 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
     }
 
     private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, float rotation, Level level) {
-        BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(itemStack, null, null, 0);
-        if (model.isGui3d()) {
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        ItemStackRenderState renderState = new ItemStackRenderState();
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, false, level, null, 0);
+
+        if (renderState.isGui3d()) {
             matrixStack.translate(1F, 1.2F, 1F);
             matrixStack.scale(1.2F, 1.2F, 1.2F);
         } else {
@@ -80,7 +83,7 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
             matrixStack.mulPose(Axis.YP.rotationDegrees(rotation));
         }
 
-        Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemDisplayContext.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, level, 0);
+        itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, level, 0);
     }
 
 }

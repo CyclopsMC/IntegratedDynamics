@@ -7,11 +7,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -53,7 +54,10 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     protected Optional<BlockEntityProxy> getProxy(IPartNetwork network) {
         DimPos dimPos = network.getProxy(proxyId);
         if(dimPos != null) {
-            return BlockEntityHelpers.get(dimPos, BlockEntityProxy.class);
+            Level level = dimPos.getLevel(false);
+            if (level != null) {
+                return IModHelpers.get().getBlockEntityHelpers().get(level, dimPos.getBlockPos(), BlockEntityProxy.class);
+            }
         }
         return Optional.empty();
     }

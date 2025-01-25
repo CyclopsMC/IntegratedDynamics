@@ -1,18 +1,19 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalDryingBasin;
+
+import java.util.function.Supplier;
 
 /**
  * Mechanical drying basin recipes.
  * @author rubensworks
  */
 public class MechanicalDryingBasinRecipeAppendix extends DryingBasinRecipeAppendix {
-    public MechanicalDryingBasinRecipeAppendix(IInfoBook infoBook, RecipeHolder<RecipeMechanicalDryingBasin> recipe) {
-        super(infoBook, recipe);
+    public MechanicalDryingBasinRecipeAppendix(IInfoBook infoBook, Supplier<RecipeDisplayEntry> recipeDisplaySupplier) {
+        super(infoBook, recipeDisplaySupplier);
     }
 
     @Override

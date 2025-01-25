@@ -6,6 +6,7 @@ import net.minecraft.nbt.IntTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.component.OminousBottleAmplifier;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -16,7 +17,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.EnchantmentHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -88,7 +89,7 @@ public class TestItemStackOperators {
         iAppleNoData.getValue().getRawValue().remove(DataComponents.FOOD);
         iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 2)));
         ItemStack appleStack = new ItemStack(Items.APPLE);
-        appleStack.set(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, 2);
+        appleStack.set(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifier(2));
         iAppleTag = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(appleStack));
         iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.RED_BED)));
         iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ENDER_PEARL)));
@@ -568,7 +569,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().isEmpty(), true, "fluidstack(hoe) = null");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACK.evaluate(new IVariable[]{iBucketLava});
-        TestHelpers.assertEqual(FluidStack.matches(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue(), new FluidStack(Fluids.LAVA, FluidHelpers.BUCKET_VOLUME)), true, "fluidstack(bucketlava) = lava:1000");
+        TestHelpers.assertEqual(FluidStack.matches(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue(), new FluidStack(Fluids.LAVA, IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume())), true, "fluidstack(bucketlava) = lava:1000");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -597,7 +598,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "fluidstackcapacity(hoe) = 0");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY.evaluate(new IVariable[]{iBucketLava});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), FluidHelpers.BUCKET_VOLUME, "fluidstackcapacity(bucketlava) = 1000");
+        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume(), "fluidstackcapacity(bucketlava) = 1000");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

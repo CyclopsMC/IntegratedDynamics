@@ -4,7 +4,7 @@ import net.minecraft.core.Direction;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
 import java.util.Optional;
@@ -23,7 +23,7 @@ public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListPr
     }
 
     protected Optional<IFluidHandler> getTank() {
-        return BlockEntityHelpers.getCapability(getPos(), getSide(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(getPos(), getSide(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK);
     }
 
     @Override

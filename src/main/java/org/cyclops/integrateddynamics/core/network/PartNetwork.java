@@ -9,7 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.CompositeMap;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
@@ -20,11 +20,7 @@ import org.cyclops.integrateddynamics.api.network.FullNetworkListenerAdapter;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartState;
-import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.PartPos;
-import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
@@ -125,7 +121,7 @@ public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetw
             for(Iterator<DimPos> it = variableContainerPositions.iterator(); it.hasNext();) {
                 DimPos dimPos = it.next();
                 if (dimPos.isLoaded()) {
-                    IVariableContainer variableContainer = BlockEntityHelpers.getCapability(dimPos, null, Capabilities.VariableContainer.BLOCK).orElse(null);
+                    IVariableContainer variableContainer = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, null, Capabilities.VariableContainer.BLOCK).orElse(null);
                     if (variableContainer != null) {
                         compositeMap.addElement(variableContainer.getVariableCache());
                     } else {

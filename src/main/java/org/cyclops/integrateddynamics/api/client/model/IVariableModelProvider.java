@@ -1,14 +1,11 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * A provider of variable overlay models.
@@ -19,14 +16,12 @@ public interface IVariableModelProvider<B extends IVariableModelProvider.BakedMo
 
     /**
      * Load the models for this provider.
-     * @param modelBaker The model state.
-     * @param spriteGetter The texture retriever.
-     * @param transform The model transformation.
-     * @param location The model location.
+     *
+     * @param modelBaker The model baker.
+     * @param transform  The model transformation.
      * @return The baked moderl provider.
      */
-    public B bakeOverlayModels(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter,
-                               ModelState transform, ResourceLocation location);
+    public B bakeOverlayModels(ModelBaker modelBaker, ModelState transform);
 
     /**
      * @return All models this provider depends on and should thus be loaded.

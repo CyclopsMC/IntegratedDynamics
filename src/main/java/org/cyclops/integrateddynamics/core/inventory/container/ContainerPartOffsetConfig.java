@@ -1,24 +1,16 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.flag.FeatureFlags;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
-import org.cyclops.cyclopscore.config.extendedconfig.GuiConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigCommon;
+import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigScreenFactoryProvider;
 import org.cyclops.cyclopscore.inventory.container.ContainerTypeData;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.core.client.gui.container.ContainerScreenPartOffset;
 
 /**
  * Config for {@link ContainerPartOffset}.
  * @author rubensworks
  */
-public class ContainerPartOffsetConfig extends GuiConfig<ContainerPartOffset> {
+public class ContainerPartOffsetConfig extends GuiConfigCommon<ContainerPartOffset, IntegratedDynamics> {
 
     public ContainerPartOffsetConfig() {
         super(IntegratedDynamics._instance,
@@ -26,15 +18,8 @@ public class ContainerPartOffsetConfig extends GuiConfig<ContainerPartOffset> {
                 eConfig -> new ContainerTypeData<>(ContainerPartOffset::new, FeatureFlags.VANILLA_SET));
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & MenuAccess<ContainerPartOffset>> MenuScreens.ScreenConstructor<ContainerPartOffset, U> getScreenFactory() {
-        return new ScreenFactorySafe<>(new MenuScreens.ScreenConstructor<ContainerPartOffset, ContainerScreenPartOffset<ContainerPartOffset>>() {
-            @Override
-            public ContainerScreenPartOffset<ContainerPartOffset> create(ContainerPartOffset container, Inventory playerInventory, Component title) {
-                return new ContainerScreenPartOffset<ContainerPartOffset>(container, playerInventory, title);
-            }
-        });
+    public GuiConfigScreenFactoryProvider<ContainerPartOffset> getScreenFactoryProvider() {
+        return new ContainerPartOffsetConfigScreenFactoryProvider();
     }
-
 }

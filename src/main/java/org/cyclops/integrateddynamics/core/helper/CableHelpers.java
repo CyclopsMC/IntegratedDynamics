@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.IFacadeable;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
@@ -58,7 +58,7 @@ public class CableHelpers {
      */
     @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
     public static Optional<ICable> getCable(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.Cable.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.Cable.BLOCK);
     }
 
     /**
@@ -82,7 +82,7 @@ public class CableHelpers {
      */
     @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
     public static Optional<ICableFakeable> getCableFakeable(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.CableFakeable.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.CableFakeable.BLOCK);
     }
 
     /**
@@ -106,7 +106,7 @@ public class CableHelpers {
      */
     @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
     public static Optional<IPathElement> getPathElement(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PathElement.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.PathElement.BLOCK);
     }
 
     /**
@@ -444,9 +444,9 @@ public class CableHelpers {
             cableFakeable.setRealCable(false);
         }
         if (player == null) {
-            ItemStackHelpers.spawnItemStack(world, pos, cable.getItemStack());
+            IModHelpers.get().getItemStackHelpers().spawnItemStack(world, pos, cable.getItemStack());
         } else if (!player.isCreative()) {
-            ItemStackHelpers.spawnItemStackToPlayer(world, pos, cable.getItemStack(), player);
+            IModHelpers.get().getItemStackHelpers().spawnItemStackToPlayer(world, pos, cable.getItemStack(), player);
         }
         CableHelpers.onCableRemoved(world, pos, connectedCables);
 
@@ -463,7 +463,7 @@ public class CableHelpers {
      */
     @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
     public static boolean hasFacade(ILevelExtension world, BlockPos pos) {
-        return BlockEntityHelpers.getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
                 .map(IFacadeable::hasFacade)
                 .orElse(false);
     }
@@ -489,7 +489,7 @@ public class CableHelpers {
      */
     @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
     public static Optional<BlockState> getFacade(ILevelExtension world, BlockPos pos) {
-        return BlockEntityHelpers.getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
                 .flatMap(facadeable -> Optional.ofNullable(facadeable.getFacade()));
     }
 

@@ -20,9 +20,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
-import org.cyclops.cyclopscore.helper.CraftingHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.InventoryHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.cyclopscore.recipe.type.InventoryFluid;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -49,8 +48,8 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
     private static final int SLOT_INPUT = 0;
     private static final int[] SLOTS_OUTPUT = {1, 2, 3, 4};
 
-    private final SingleUseTank tankIn = new SingleUseTank(FluidHelpers.BUCKET_VOLUME * 10);
-    private final SingleUseTank tankOut = new SingleUseTank(FluidHelpers.BUCKET_VOLUME * 100);
+    private final SingleUseTank tankIn = new SingleUseTank(IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() * 10);
+    private final SingleUseTank tankOut = new SingleUseTank(IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() * 100);
 
     public BlockEntityMechanicalDryingBasin(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_MECHANICAL_DRYING_BASIN.get(), blockPos, blockState, INVENTORY_SIZE);
@@ -88,7 +87,7 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
                 IInventoryFluid recipeInput = new InventoryFluid(
                         NonNullList.of(ItemStack.EMPTY, key.getLeft()),
                         NonNullList.of(FluidStack.EMPTY, key.getRight()));
-                return CraftingHelpers.findServerRecipe(getRecipeRegistry(), recipeInput, getLevel());
+                return IModHelpers.get().getCraftingHelpers().findRecipe(getRecipeRegistry(), recipeInput, getLevel());
             }
 
             @Override
@@ -150,7 +149,7 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
 
     @Override
     protected Pair<ItemStack, FluidStack> getCurrentRecipeCacheKey() {
-        return Pair.of(getInventory().getItem(SLOT_INPUT).copy(), FluidHelpers.copy(getTankInput().getFluid()));
+        return Pair.of(getInventory().getItem(SLOT_INPUT).copy(), IModHelpersNeoForge.get().getFluidHelpers().copy(getTankInput().getFluid()));
     }
 
     @Override
@@ -160,12 +159,12 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
 
     @Override
     protected boolean finalizeRecipe(RecipeMechanicalDryingBasin recipe, boolean simulate) {
-        IFluidHandler.FluidAction fluidAction = FluidHelpers.simulateBooleanToAction(simulate);
+        IFluidHandler.FluidAction fluidAction = IModHelpersNeoForge.get().getFluidHelpers().simulateBooleanToAction(simulate);
 
         // Output items
-        ItemStack outputStack = recipe.getOutputItemFirst().copy();
+        ItemStack outputStack = recipe.getOutputItemFirst().orElse(ItemStack.EMPTY).copy();
         if (!outputStack.isEmpty()) {
-            if (!InventoryHelpers.addToInventory(getInventory(), SLOTS_OUTPUT, NonNullList.withSize(1, outputStack), simulate).isEmpty()) {
+            if (!IModHelpers.get().getInventoryHelpers().addToInventory(getInventory(), SLOTS_OUTPUT, NonNullList.withSize(1, outputStack), simulate).isEmpty()) {
                 return false;
             }
         }
@@ -188,7 +187,7 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         // Consume fluid
         Optional<FluidStack> inputFluid = recipe.getInputFluid();
         if (inputFluid.isPresent()) {
-            if (FluidHelpers.getAmount(getTankInput().drain(inputFluid.get(), fluidAction)) != inputFluid.get().getAmount()) {
+            if (IModHelpersNeoForge.get().getFluidHelpers().getAmount(getTankInput().drain(inputFluid.get(), fluidAction)) != inputFluid.get().getAmount()) {
                 return false;
             }
         }

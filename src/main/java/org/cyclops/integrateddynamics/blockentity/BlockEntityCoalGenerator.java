@@ -12,9 +12,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.datastructure.DataSlotSupplied;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -122,7 +123,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
         IEnergyNetwork network = getEnergyNetwork().orElse(null);
         int toFill = energy;
         if(network != null) {
-            toFill = Helpers.castSafe(network.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).insert((long) toFill, false));
+            toFill = IModHelpers.get().getBaseHelpers().castSafe(network.getChannel(IPositionedAddonsNetwork.DEFAULT_CHANNEL).insert((long) toFill, false));
         }
         if(toFill > 0) {
             toFill -= addEnergyFe(toFill, false);
@@ -135,7 +136,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
     }
 
     public static int getFuelTime(ItemStack itemStack) {
-        return itemStack.getBurnTime(RecipeType.SMELTING);
+        return itemStack.getBurnTime(RecipeType.SMELTING, ServerLifecycleHooks.getCurrentServer().fuelValues());
     }
 
     @Override
@@ -199,7 +200,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
                     if (getFuelTime(blockEntity.getInventory().getItem(SLOT_FUEL)) > 0
                             && !(fuel = blockEntity.getInventory().removeItem(SLOT_FUEL, 1)).isEmpty()) {
                         if(blockEntity.getInventory().getItem(SLOT_FUEL).isEmpty()) {
-                            blockEntity.getInventory().setItem(SLOT_FUEL, fuel.getItem().getCraftingRemainingItem(fuel));
+                            blockEntity.getInventory().setItem(SLOT_FUEL, fuel.getItem().getCraftingRemainder(fuel));
                         }
                         blockEntity.currentlyBurningMax = getFuelTime(fuel);
                         blockEntity.currentlyBurning = 0;

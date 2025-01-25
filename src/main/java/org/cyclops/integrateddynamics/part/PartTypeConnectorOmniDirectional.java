@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -209,7 +209,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
                 Set<ISidedPathElement> pathElements = Sets.newTreeSet();
                 for (PartPos pos : PartTypeConnectorOmniDirectional.LOADED_GROUPS.getPositions(getGroupId())) {
                     if (!pos.equals(this.getPartPos())) {
-                        BlockEntityHelpers.getCapability(pos.getPos(), pos.getSide(), Capabilities.PathElement.BLOCK)
+                        IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(pos.getPos(), pos.getSide(), Capabilities.PathElement.BLOCK)
                                 .ifPresent(pathElement -> pathElements.add(SidedPathElement.of(pathElement, pos.getSide())));
                     }
                 }

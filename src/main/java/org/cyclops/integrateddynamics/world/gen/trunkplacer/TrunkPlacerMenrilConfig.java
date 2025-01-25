@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.world.gen.trunkplacer;
 
-import org.cyclops.cyclopscore.config.extendedconfig.TrunkPlacerConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.TrunkPlacerConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class TrunkPlacerMenrilConfig extends TrunkPlacerConfig<TrunkPlacerMenril> {
+public class TrunkPlacerMenrilConfig extends TrunkPlacerConfigCommon<TrunkPlacerMenril, IntegratedDynamics> {
 
     public TrunkPlacerMenrilConfig() {
         super(

@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -111,7 +111,7 @@ public class TestEntityOperators {
         eChicken = new DummyVariableEntity(makeEntity(new Chicken(EntityType.CHICKEN, world)));
         eItem = new DummyVariableEntity(makeEntity(new ItemEntity(world, 0, 0, 0, ItemStack.EMPTY)));
         eItemFrame = new DummyVariableEntity(makeEntity(new ItemFrame(world, new BlockPos(0, 0, 0), Direction.NORTH)));
-        if (MinecraftHelpers.isClientSide()) {
+        if (IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             ePlayer = new DummyVariableEntity(makeEntity(world.players().get(0)));
         } else {
             ePlayer = new DummyVariableEntity(makeEntity(new ServerPlayer(
@@ -125,7 +125,7 @@ public class TestEntityOperators {
         zombieHeldItems.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.APPLE));
         zombieHeldItems.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.POTATO));
         eZombieHeldItems = new DummyVariableEntity(makeEntity(zombieHeldItems));
-        Boat boat = new Boat(world, 0, 0, 0);
+        Boat boat = new Boat(EntityType.ACACIA_BOAT, world, () -> ItemStack.EMPTY.getItem());
         eZombie.getValue().getRawValue().get().startRiding(boat, true);
         eBoat = new DummyVariableEntity(makeEntity(boat));
         ItemFrame itemframe = new ItemFrame(world, new BlockPos(0, 0, 0), Direction.NORTH);

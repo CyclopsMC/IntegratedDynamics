@@ -16,7 +16,7 @@ public class ValueDeseralizationContextMocked {
     public static ValueDeseralizationContext get() {
         return new ValueDeseralizationContext(new HolderLookup.Provider() {
             @Override
-            public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
+            public Stream<ResourceKey<? extends Registry<?>>> listRegistryKeys() {
                 return Stream.empty();
             }
 

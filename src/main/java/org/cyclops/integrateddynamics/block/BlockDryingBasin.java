@@ -22,8 +22,7 @@ import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.block.BlockWithEntityGui;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.InventoryHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
 
@@ -63,7 +62,7 @@ public class BlockDryingBasin extends BlockWithEntityGui {
     @Override
     public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player,
                                              BlockHitResult rayTraceResult) {
-        return BlockEntityHelpers.get(world, blockPos, BlockEntityDryingBasin.class)
+        return IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityDryingBasin.class)
                 .map(tile -> {
                     ItemStack itemStack = player.getInventory().getSelected();
                     IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack).orElse(null);
@@ -84,7 +83,7 @@ public class BlockDryingBasin extends BlockWithEntityGui {
                         FluidActionResult fluidAction = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
                         if (fluidAction.isSuccess()) {
                             ItemStack newItemStack = fluidAction.getResult();
-                            InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                            IModHelpers.get().getInventoryHelpers().tryReAddToStack(player, itemStack, newItemStack, player.getUsedItemHand());
                             tile.sendUpdate();
                         }
                         return InteractionResult.SUCCESS;
@@ -93,7 +92,7 @@ public class BlockDryingBasin extends BlockWithEntityGui {
                         FluidActionResult fluidAction = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
                         if (fluidAction.isSuccess()) {
                             ItemStack newItemStack = fluidAction.getResult();
-                            InventoryHelpers.tryReAddToStack(player, itemStack, newItemStack);
+                            IModHelpers.get().getInventoryHelpers().tryReAddToStack(player, itemStack, newItemStack, player.getUsedItemHand());
                         }
                         return InteractionResult.SUCCESS;
                     } else if (!itemStack.isEmpty() && tileStack.isEmpty()) {
@@ -116,7 +115,7 @@ public class BlockDryingBasin extends BlockWithEntityGui {
     @SuppressWarnings("deprecation")
     @Override
     public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos blockPos) {
-        return BlockEntityHelpers.get(world, blockPos, BlockEntityDryingBasin.class)
+        return IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityDryingBasin.class)
                 .map(tile -> tile.getInventory().getItem(0) != null ? 15 : 0)
                 .orElse(0);
     }
@@ -134,9 +133,9 @@ public class BlockDryingBasin extends BlockWithEntityGui {
     @Override
     public void onRemove(BlockState oldState, Level world, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (oldState.getBlock() != newState.getBlock()) {
-            BlockEntityHelpers.get(world, blockPos, BlockEntityDryingBasin.class)
+            IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityDryingBasin.class)
                     .ifPresent(tile -> {
-                        InventoryHelpers.dropItems(world, tile.getInventory(), blockPos);
+                        IModHelpers.get().getInventoryHelpers().dropItems(world, tile.getInventory(), blockPos);
                         world.updateNeighbourForOutputSignal(blockPos, oldState.getBlock());
                     });
             super.onRemove(oldState, world, blockPos, newState, isMoving);

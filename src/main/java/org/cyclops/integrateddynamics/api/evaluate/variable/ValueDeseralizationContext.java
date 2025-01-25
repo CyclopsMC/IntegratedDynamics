@@ -6,7 +6,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 
 
 /**
@@ -30,7 +30,7 @@ public record ValueDeseralizationContext(HolderLookup.Provider holderLookupProvi
     }
 
     public static ValueDeseralizationContext ofAllEnabled() {
-        if (MinecraftHelpers.isClientSide()) {
+        if (IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             return ofClient();
         }
         return new ValueDeseralizationContext(ServerLifecycleHooks.getCurrentServer().registryAccess());

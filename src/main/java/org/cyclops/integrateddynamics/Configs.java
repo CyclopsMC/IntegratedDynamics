@@ -1,11 +1,7 @@
 package org.cyclops.integrateddynamics;
 
-import org.cyclops.cyclopscore.config.ConfigHandler;
-import org.cyclops.integrateddynamics.advancement.criterion.NetworkInitializedTriggerConfig;
-import org.cyclops.integrateddynamics.advancement.criterion.PartReaderAspectTriggerConfig;
-import org.cyclops.integrateddynamics.advancement.criterion.PartVariableDrivenAspectTriggerConfig;
-import org.cyclops.integrateddynamics.advancement.criterion.PartWriterAspectTriggerConfig;
-import org.cyclops.integrateddynamics.advancement.criterion.VariableCreatedTriggerConfig;
+import org.cyclops.cyclopscore.config.ConfigHandlerCommon;
+import org.cyclops.integrateddynamics.advancement.criterion.*;
 import org.cyclops.integrateddynamics.block.*;
 import org.cyclops.integrateddynamics.blockentity.*;
 import org.cyclops.integrateddynamics.component.*;
@@ -13,6 +9,12 @@ import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicki
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettingsConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffsetConfig;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettingsConfig;
+import org.cyclops.integrateddynamics.core.recipe.category.RecipeBookCategoryDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.category.RecipeBookCategoryMechanicalDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.category.RecipeBookCategoryMechanicalSqueezerConfig;
+import org.cyclops.integrateddynamics.core.recipe.category.RecipeBookCategorySqueezerConfig;
+import org.cyclops.integrateddynamics.core.recipe.display.RecipeDisplayDryingBasinConfig;
+import org.cyclops.integrateddynamics.core.recipe.display.RecipeDisplaySqueezerConfig;
 import org.cyclops.integrateddynamics.core.recipe.type.*;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
 import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
@@ -20,16 +22,8 @@ import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
 import org.cyclops.integrateddynamics.inventory.container.*;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.loot.conditions.LootConditionMatchWrenchConfig;
-import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyEnergyBatteryDataConfig;
-import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyMechanicalDryingBasinTanksConfig;
-import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyMechanicalMachineEnergyConfig;
-import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyMechanicalSqueezerTankConfig;
-import org.cyclops.integrateddynamics.loot.functions.LootFunctionCopyProxyIdConfig;
-import org.cyclops.integrateddynamics.recipe.ItemFacadeRecipeConfig;
-import org.cyclops.integrateddynamics.recipe.ItemVariableCopyRecipeConfig;
-import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapedOmniDirectional3Config;
-import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapedOmniDirectionalConfig;
-import org.cyclops.integrateddynamics.recipe.RecipeSerializerCraftingSpecialShapelessOmniDirectionalConfig;
+import org.cyclops.integrateddynamics.loot.functions.*;
+import org.cyclops.integrateddynamics.recipe.*;
 import org.cyclops.integrateddynamics.sound.SoundEventEffectPageFlipMultipleConfig;
 import org.cyclops.integrateddynamics.sound.SoundEventEffectPageFlipSingleConfig;
 import org.cyclops.integrateddynamics.world.gen.foliageplacer.FoliagePlacerMenrilConfig;
@@ -41,7 +35,7 @@ import org.cyclops.integrateddynamics.world.gen.trunkplacer.TrunkPlacerMenrilCon
  */
 public class Configs {
 
-    public static void registerBlocks(ConfigHandler configHandler) {
+    public static void registerBlocks(ConfigHandlerCommon configHandler) {
 
         // Fluids
         configHandler.addConfigurable(new FluidMenrilResinConfig());
@@ -156,6 +150,16 @@ public class Configs {
         configHandler.addConfigurable(new RecipeTypeMechanicalDryingBasinConfig());
         configHandler.addConfigurable(new RecipeTypeSqueezerConfig());
         configHandler.addConfigurable(new RecipeTypeMechanicalSqueezerConfig());
+
+        // Recipe book categories
+        configHandler.addConfigurable(new RecipeBookCategoryDryingBasinConfig());
+        configHandler.addConfigurable(new RecipeBookCategoryMechanicalDryingBasinConfig());
+        configHandler.addConfigurable(new RecipeBookCategorySqueezerConfig());
+        configHandler.addConfigurable(new RecipeBookCategoryMechanicalSqueezerConfig());
+
+        // Recipe displays
+        configHandler.addConfigurable(new RecipeDisplayDryingBasinConfig());
+        configHandler.addConfigurable(new RecipeDisplaySqueezerConfig());
 
         // Recipes
         configHandler.addConfigurable(new RecipeSerializerDryingBasinConfig());

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -30,15 +30,14 @@ public class ContainerScreenCoalGenerator extends ContainerScreenExtended<Contai
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
         int lastProgress = getMenu().getProgress();
         if (lastProgress >= 0) {
-            guiGraphics.blit(getGuiTexture(), getGuiLeftTotal() + 81, getGuiTopTotal() + 30 + lastProgress, 176,
-                    lastProgress, 14, BlockEntityCoalGenerator.MAX_PROGRESS - lastProgress + 1);
+            guiGraphics.blit(RenderType::guiTextured, getGuiTexture(), getGuiLeftTotal() + 81, getGuiTopTotal() + 30 + lastProgress, 176,
+                    lastProgress, 14, BlockEntityCoalGenerator.MAX_PROGRESS - lastProgress + 1, 256, 256);
         }
     }
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-        this.font.drawInBatch(this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
     }
 }

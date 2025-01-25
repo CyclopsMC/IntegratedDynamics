@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -61,7 +61,7 @@ public class OperatorValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         int offset = 0;
         for(Component line : lines) {
-            int color = Helpers.addAlphaToColor(ValueTypes.OPERATOR.getDisplayColor(), alpha);
+            int color = IModHelpers.get().getBaseHelpers().addAlphaToColor(ValueTypes.OPERATOR.getDisplayColor(), alpha);
             context.getFont().drawInBatch(line.getString(), 0, offset, color,
                     false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             offset += singleHeight;

@@ -395,7 +395,7 @@ public class GameTestsOffsets {
         player.setYRot(partPos.getSide().getRotation().y() * 180);
         player.setPos(partPos.getPos().getBlockPos().getCenter()
                 .add(0, -1.5, 0)
-                .add(Vec3.atLowerCornerOf(partPos.getSide().getNormal()).multiply(0.75, 0.75, 0.75))
+                .add(Vec3.atLowerCornerOf(partPos.getSide().getUnitVec3i()).multiply(0.75, 0.75, 0.75))
         );
 
 //        helper.getLevel().sendParticles(new ParticleBlurData(1, 1, 1, 1, 100), player.position().x, player.position().y + player.getEyeHeight(), player.position().z, 10, 0, 0, 0, 0); // For debugging

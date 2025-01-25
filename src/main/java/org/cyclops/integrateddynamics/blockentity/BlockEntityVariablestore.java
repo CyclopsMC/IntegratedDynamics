@@ -13,8 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -69,7 +70,7 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
 
             add(
                     net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                    (blockEntity, context) -> blockEntity.getInventory().getItemHandler()
+                    (blockEntity, context) -> new InvWrapper(blockEntity.getInventory())
             );
             add(
                     Capabilities.NetworkElementProvider.BLOCK,
@@ -130,7 +131,7 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
     @Override
     public void onLoad() {
         super.onLoad();
-        if(!MinecraftHelpers.isClientSide()) {
+        if(!IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             shouldSendUpdateEvent = true;
         }
     }

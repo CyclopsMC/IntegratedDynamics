@@ -17,9 +17,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
@@ -82,14 +81,14 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
         @Override
         public boolean destroy(Level world, BlockPos pos, Player player, boolean saveState) {
             if(!world.isClientSide()) {
-                BlockEntityHelpers.getCapability(world, pos, Capabilities.Facadeable.BLOCK)
+                IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.Facadeable.BLOCK)
                         .ifPresent(facadeable -> {
                             BlockState blockState = facadeable.getFacade();
                             ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_FACADE);
                             RegistryEntries.ITEM_FACADE.get().writeFacadeBlock(itemStack, blockState);
                             facadeable.setFacade(null);
                             if (!player.isCreative()) {
-                                ItemStackHelpers.spawnItemStackToPlayer(world, pos, itemStack, player);
+                                IModHelpers.get().getItemStackHelpers().spawnItemStackToPlayer(world, pos, itemStack, player);
                             }
                         });
                 return true;
@@ -102,7 +101,7 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
         @OnlyIn(Dist.CLIENT)
         public BakedModel getBreakingBaseModel(Level world, BlockPos pos) {
             return CableHelpers.getFacade(world, pos)
-                    .map(RenderHelpers::getBakedModel)
+                    .map(IModHelpers.get().getRenderHelpers()::getBakedModel)
                     .orElse(null);
         }
 

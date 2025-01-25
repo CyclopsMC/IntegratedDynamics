@@ -2,23 +2,17 @@ package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHolder;
-import org.cyclops.integrateddynamics.client.render.blockentity.ItemStackBlockEntityVariableRender;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Item for storing variable references.
@@ -57,16 +51,5 @@ public class ItemVariable extends Item {
             return holder.getVariableFacade(valueDeseralizationContext);
         }
         return VariableFacadeHandlerRegistry.DUMMY_FACADE;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new IClientItemExtensions() {
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return new ItemStackBlockEntityVariableRender();
-            }
-        });
     }
 }

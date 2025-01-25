@@ -13,6 +13,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.cyclopscore.network.PacketCodecs;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.client.render.level.PartOffsetsOverlayRenderer;
 import org.cyclops.integrateddynamics.core.network.PartOffsetsClientNotifier;
@@ -29,23 +30,23 @@ public class PartOffsetsDataPacket extends PacketCodec {
     public static final StreamCodec<RegistryFriendlyByteBuf, PartOffsetsDataPacket> CODEC = getCodec(PartOffsetsDataPacket::new);
 
     static {
-        PacketCodec.addCodedAction(PartOffsetsClientNotifier.Entry.class, new ICodecAction() {
+        PacketCodecs.addCodedAction(PartOffsetsClientNotifier.Entry.class, new ICodecAction() {
             @Override
             public void encode(Object object, RegistryFriendlyByteBuf output) {
                 PartOffsetsClientNotifier.Entry entry = (PartOffsetsClientNotifier.Entry) object;
-                PacketCodec.getAction(BlockPos.class).encode(entry.source(), output);
-                PacketCodec.getAction(Direction.class).encode(entry.sourceSide(), output);
-                PacketCodec.getAction(Vec3i.class).encode(entry.targetOffset(), output);
-                PacketCodec.getAction(Direction.class).encode(entry.targetSide(), output);
+                PacketCodecs.getAction(BlockPos.class).encode(entry.source(), output);
+                PacketCodecs.getAction(Direction.class).encode(entry.sourceSide(), output);
+                PacketCodecs.getAction(Vec3i.class).encode(entry.targetOffset(), output);
+                PacketCodecs.getAction(Direction.class).encode(entry.targetSide(), output);
             }
 
             @Override
             public Object decode(RegistryFriendlyByteBuf input) {
                 return new PartOffsetsClientNotifier.Entry(
-                        (BlockPos) PacketCodec.getAction(BlockPos.class).decode(input),
-                        (Direction) PacketCodec.getAction(Direction.class).decode(input),
-                        (Vec3i) PacketCodec.getAction(Vec3i.class).decode(input),
-                        (Direction) PacketCodec.getAction(Direction.class).decode(input)
+                        (BlockPos) PacketCodecs.getAction(BlockPos.class).decode(input),
+                        (Direction) PacketCodecs.getAction(Direction.class).decode(input),
+                        (Vec3i) PacketCodecs.getAction(Vec3i.class).decode(input),
+                        (Direction) PacketCodecs.getAction(Direction.class).decode(input)
                 );
             }
         });

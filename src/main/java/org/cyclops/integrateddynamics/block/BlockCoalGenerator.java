@@ -16,8 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityCoalGenerator;
 import org.cyclops.integrateddynamics.core.block.BlockWithEntityGuiCabled;
@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 public class BlockCoalGenerator extends BlockWithEntityGuiCabled {
 
     public static final MapCodec<BlockCoalGenerator> CODEC = simpleCodec(BlockCoalGenerator::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     public BlockCoalGenerator(Properties properties) {
@@ -66,7 +66,7 @@ public class BlockCoalGenerator extends BlockWithEntityGuiCabled {
     @Override
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         super.setPlacedBy(world, pos, state, placer, itemStack);
-        BlockEntityHelpers.get(world, pos, BlockEntityCoalGenerator.class)
+        IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityCoalGenerator.class)
                 .ifPresent(BlockEntityCoalGenerator::updateBlockState);
     }
 

@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
+import net.neoforged.neoforge.client.model.UnbakedModelLoader;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * Custom model loader for the variable item.
  * @author rubensworks
  */
-public class ModelLoaderVariable implements IGeometryLoader<VariableModel> {
+public class ModelLoaderVariable implements UnbakedModelLoader<VariableModel> {
 
     private final List<ResourceLocation> subModels;
 

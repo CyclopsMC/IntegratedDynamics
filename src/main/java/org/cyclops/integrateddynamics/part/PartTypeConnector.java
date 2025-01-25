@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.world.level.block.Block;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -33,8 +34,8 @@ public abstract class PartTypeConnector<P extends PartTypeConnector<P, S>, S ext
     }
 
     @Override
-    protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus();
+    protected Block createBlock(BlockConfigCommon<?> blockConfig, BlockBehaviour.Properties properties) {
+        return new IgnoredBlockStatus(properties);
     }
 
     @Override

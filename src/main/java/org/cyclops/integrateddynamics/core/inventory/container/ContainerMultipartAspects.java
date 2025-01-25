@@ -9,7 +9,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
@@ -59,7 +59,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         super(type, id, playerInventory, inventory, items, (item, pattern) -> {
             // We could cache this if this would prove to be a bottleneck.
             // But we have a small amount of aspects, so this shouldn't be a problem.
-            return pattern.matcher(L10NHelpers.localize(item.getTranslationKey()).toLowerCase(Locale.ENGLISH)).matches();
+            return pattern.matcher(IModHelpers.get().getL10NHelpers().localize(item.getTranslationKey()).toLowerCase(Locale.ENGLISH)).matches();
         });
         this.target = target;
         this.partContainer = partContainer.orElseGet(() -> PartHelpers.getPartContainerChecked(target.getCenter()));

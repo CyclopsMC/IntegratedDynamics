@@ -6,7 +6,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -19,7 +19,7 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
         implements IValueTypeNamed<ValueTypeString.ValueString> {
 
     public ValueTypeString() {
-        super("string", Helpers.RGBToInt(250, 10, 13), ChatFormatting.RED, ValueTypeString.ValueString.class);
+        super("string", IModHelpers.get().getBaseHelpers().RGBToInt(250, 10, 13), ChatFormatting.RED, ValueTypeString.ValueString.class);
     }
 
     @Override

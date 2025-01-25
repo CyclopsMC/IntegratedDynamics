@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -14,9 +15,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenScrolling;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -127,9 +126,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
 
         // Draw container name
-        font.drawInBatch(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
-                this.leftPos + offsetX + 5, this.topPos + offsetY + 208, Helpers.RGBToInt(80, 80, 80),
-                false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
+                this.leftPos + offsetX + 5, this.topPos + offsetY + 208, IModHelpers.get().getBaseHelpers().RGBToInt(80, 80, 80),
+                false);
 
         // Draw operators
         ContainerLogicProgrammerBase container = (ContainerLogicProgrammerBase) getMenu();
@@ -138,29 +137,29 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             if(container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
 
-                Triple<Float, Float, Float> rgb = Helpers.intToRGB(element.getColor());
+                Triple<Float, Float, Float> rgb = IModHelpers.get().getBaseHelpers().intToRGB(element.getColor());
                 boolean hover = LogicProgrammerElementTypes.areEqual(container.getActiveElement(), element)
                         || isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY));
                 RenderSystem.setShaderColor(colorSmoothener(rgb.getLeft(), hover), colorSmoothener(rgb.getMiddle(), hover),
                         colorSmoothener(rgb.getRight(), hover), 1);
 
                 // Background
-                guiGraphics.blit(texture, leftPos + offsetX + ITEM_POSITION.x,
-                        topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height);
+                guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + ITEM_POSITION.x,
+                        topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height, 256, 256);
 
                 // Arrow
                 if(hover) {
-                    guiGraphics.blit(texture, leftPos + offsetX + ITEM_POSITION.x,
-                            topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16);
+                    guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + ITEM_POSITION.x,
+                            topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16, 256, 256);
                 }
                 RenderSystem.setShaderColor(1, 1, 1, 1);
 
                 // Operator info
                 String aspectName = element.getSymbol();
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, aspectName,
+                IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, aspectName,
                         this.leftPos + offsetX + (hover ? 22 : 21),
                         this.topPos + offsetY + 26 + boxHeight * i,
-                        53, Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
+                        53, IModHelpers.get().getBaseHelpers().RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
             }
         }
     }
@@ -264,7 +263,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         if(keyCode != GLFW.GLFW_KEY_LEFT_SHIFT && keyCode != GLFW.GLFW_KEY_RIGHT_SHIFT) {
             ContainerLogicProgrammerBase container = getMenu();
             int pageSize = container.getPageSize();
-            int stepModifier = MinecraftHelpers.isShifted() ? pageSize - 1 : 1;
+            int stepModifier = IModHelpers.get().getMinecraftClientHelpers().isShifted() ? pageSize - 1 : 1;
             boolean isElementFocused = container.getActiveElement() != null && container.getActiveElement().isFocused(operatorConfigPattern);
 
             if (ClientProxy.FOCUS_LP_SEARCH.isActiveAndMatches(inputCode)) {

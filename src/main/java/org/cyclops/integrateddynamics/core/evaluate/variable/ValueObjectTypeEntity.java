@@ -11,7 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -124,7 +124,7 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         public Optional<Entity> getRawValue() {
             Optional<UUID> uuid = getUuid();
             if (uuid.isPresent()) {
-                if (MinecraftHelpers.isClientSideThread()) {
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
                     return ValueObjectTypeEntityClient.getEntity(uuid.get());
                 }
                 for (ServerLevel world : ServerLifecycleHooks.getCurrentServer().getAllLevels()) {

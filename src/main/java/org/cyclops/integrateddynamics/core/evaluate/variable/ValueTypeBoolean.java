@@ -6,7 +6,7 @@ import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -20,7 +20,7 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBas
 public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolean> {
 
     public ValueTypeBoolean() {
-        super("boolean", Helpers.RGBToInt(43, 47, 231), ChatFormatting.BLUE, ValueTypeBoolean.ValueBoolean.class);
+        super("boolean", IModHelpers.get().getBaseHelpers().RGBToInt(43, 47, 231), ChatFormatting.BLUE, ValueTypeBoolean.ValueBoolean.class);
     }
 
     @Override

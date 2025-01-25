@@ -173,15 +173,15 @@ public class TestBlockOperators {
     public void testBlockSound() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_BREAKSOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res1 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.STONE_BREAK.getLocation().toString(), "placesound(coal) = inecraft:block.stone.break");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res1).getRawValue(), SoundEvents.STONE_BREAK.location().toString(), "placesound(coal) = inecraft:block.stone.break");
 
         IValue res2 = Operators.OBJECT_BLOCK_PLACESOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res2 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.STONE_PLACE.getLocation().toString(), "placesound(coal) = inecraft:block.stone.place");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res2).getRawValue(), SoundEvents.STONE_PLACE.location().toString(), "placesound(coal) = inecraft:block.stone.place");
 
         IValue res3 = Operators.OBJECT_BLOCK_STEPSOUND.evaluate(new IVariable[]{bCoal});
         Asserts.check(res3 instanceof ValueTypeString.ValueString, "result is a string");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), SoundEvents.STONE_STEP.getLocation().toString(), "placesound(coal) = inecraft:block.stone.step");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) res3).getRawValue(), SoundEvents.STONE_STEP.location().toString(), "placesound(coal) = inecraft:block.stone.step");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

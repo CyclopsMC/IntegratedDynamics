@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.item;
 
 import com.google.common.collect.Lists;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.cyclops.cyclopscore.config.extendedconfig.ItemConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.ItemConfigCommon;
+import org.cyclops.cyclopscore.init.IModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 import java.util.Collection;
@@ -13,18 +13,18 @@ import java.util.List;
  * Config for an offset enhancement.
  * @author rubensworks
  */
-public class ItemEnhancementOffsetConfig extends ItemConfig {
+public class ItemEnhancementOffsetConfig extends ItemConfigCommon<IModBase> {
 
     public ItemEnhancementOffsetConfig() {
         super(
                 IntegratedDynamics._instance,
                 "enhancement_offset",
-                eConfig -> new ItemEnhancement(ItemEnhancement.Type.OFFSET, new Item.Properties())
+                (eConfig, properties) -> new ItemEnhancement(ItemEnhancement.Type.OFFSET, properties)
         );
     }
 
     @Override
-    protected Collection<ItemStack> getDefaultCreativeTabEntries() {
+    public Collection<ItemStack> getDefaultCreativeTabEntries() {
         List<ItemStack> itemStacks = Lists.newArrayList();
         ItemStack itemStack = new ItemStack(getInstance());
         ((ItemEnhancement) getInstance()).setEnhancementValue(itemStack, 4);

@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.block;
 
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import org.cyclops.cyclopscore.config.ConfigurablePropertyCommon;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockClientConfig;
@@ -23,12 +21,12 @@ public class BlockCableConfig extends BlockConfigCommon<IntegratedDynamics> {
         super(
                 IntegratedDynamics._instance,
                 "cable",
-                eConfig -> new BlockCable(Block.Properties.of()
+                (eConfig, properties) -> new BlockCable(properties
                         .strength(BlockCable.BLOCK_HARDNESS)
                         .forceSolidOn()
                         .sound(SoundType.METAL)
                         .isRedstoneConductor((blockState, world, pos) -> false)),
-                (eConfig, block) -> new ItemBlockCable(block, new Item.Properties())
+                (eConfig, block) -> new ItemBlockCable(block, eConfig.createDefaultItemProperties())
         );
     }
 

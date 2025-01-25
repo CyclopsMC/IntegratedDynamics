@@ -23,7 +23,7 @@ public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<Reci
 
     public static final MapCodec<RecipeMechanicalSqueezer> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                            Ingredient.CODEC_NONEMPTY.fieldOf("input_item").forGetter(RecipeMechanicalSqueezer::getInputIngredient),
+                            Ingredient.CODEC.fieldOf("input_item").forGetter(RecipeMechanicalSqueezer::getInputIngredient),
                             new ListCodecStrict<>(RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE).optionalFieldOf("output_items").forGetter(r -> r.getOutputItems().isEmpty() ? Optional.empty() : Optional.of(r.getOutputItems().stream().toList())),
                             FluidStack.CODEC.optionalFieldOf("output_fluid").forGetter(RecipeMechanicalSqueezer::getOutputFluid),
                             Codec.INT.fieldOf("duration").forGetter(RecipeMechanicalSqueezer::getDuration)

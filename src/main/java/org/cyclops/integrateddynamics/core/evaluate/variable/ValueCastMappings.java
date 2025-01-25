@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
 
@@ -14,7 +14,7 @@ public class ValueCastMappings {
 
     private static IValueCastRegistry constructRegistry() {
         // This also allows this registry to be used outside of a minecraft environment.
-        if(MinecraftHelpers.isModdedEnvironment()) {
+        if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment()) {
             return IntegratedDynamics._instance.getRegistryManager().getRegistry(IValueCastRegistry.class);
         } else {
             return ValueCastRegistry.getInstance();

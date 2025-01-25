@@ -1,22 +1,17 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
-import org.cyclops.cyclopscore.config.extendedconfig.GuiConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigCommon;
+import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigScreenFactoryProvider;
+import org.cyclops.cyclopscore.init.IModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenMechanicalSqueezer;
 
 /**
  * Config for {@link ContainerMechanicalSqueezer}.
  * @author rubensworks
  */
-public class ContainerMechanicalSqueezerConfig extends GuiConfig<ContainerMechanicalSqueezer> {
+public class ContainerMechanicalSqueezerConfig extends GuiConfigCommon<ContainerMechanicalSqueezer, IModBase> {
 
     public ContainerMechanicalSqueezerConfig() {
         super(IntegratedDynamics._instance,
@@ -24,10 +19,8 @@ public class ContainerMechanicalSqueezerConfig extends GuiConfig<ContainerMechan
                 eConfig -> new MenuType<>(ContainerMechanicalSqueezer::new, FeatureFlags.VANILLA_SET));
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & MenuAccess<ContainerMechanicalSqueezer>> MenuScreens.ScreenConstructor<ContainerMechanicalSqueezer, U> getScreenFactory() {
-        return new ScreenFactorySafe<>(ContainerScreenMechanicalSqueezer::new);
+    public GuiConfigScreenFactoryProvider<ContainerMechanicalSqueezer> getScreenFactoryProvider() {
+        return new ContainerMechanicalSqueezerConfigScreenFactoryProvider();
     }
-
 }

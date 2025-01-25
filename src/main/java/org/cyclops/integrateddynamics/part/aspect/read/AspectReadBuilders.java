@@ -26,7 +26,7 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandle
 import org.cyclops.commoncapabilities.api.capability.temperature.ITemperature;
 import org.cyclops.commoncapabilities.api.capability.work.IWorker;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
@@ -221,13 +221,13 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidHandler> PROP_GET = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return BlockEntityHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
+            return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, input.getLeft().getTarget().getSide(),
                     net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK)
                     .orElse(EmptyFluidHandler.INSTANCE);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Pair<IFluidHandler, Integer>> PROP_GET_ACTIVATABLE = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            IFluidHandler fluidHandler = BlockEntityHelpers.getCapability(dimPos, input.getLeft().getTarget().getSide(),
+            IFluidHandler fluidHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, input.getLeft().getTarget().getSide(),
                     net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK).orElse(null);
             if(fluidHandler != null) {
                 int i = input.getRight().getValue(PROP_TANKID).getRawValue();
@@ -273,11 +273,11 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = input -> {
             PartPos target = input.getLeft().getTarget();
-            return BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
+            return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = input -> {
             PartPos target = input.getLeft().getTarget();
-            IItemHandler itemHandler = BlockEntityHelpers.getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
+            IItemHandler itemHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
             int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
             if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
                 return itemHandler.getStackInSlot(slotId);
@@ -302,17 +302,17 @@ public class AspectReadBuilders {
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IWorker> PROP_GET_WORKER = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return BlockEntityHelpers.getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.Worker.BLOCK).orElse(null);
+            return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), Capabilities.Worker.BLOCK).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ITemperature> PROP_GET_TEMPERATURE = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            return BlockEntityHelpers.getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), org.cyclops.commoncapabilities.api.capability.Capabilities.Temperature.BLOCK).orElse(null);
+            return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), org.cyclops.commoncapabilities.api.capability.Capabilities.Temperature.BLOCK).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IRecipeHandler> PROP_GET_RECIPE_HANDLER = new IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IRecipeHandler>() {
             @Override
             public IRecipeHandler getOutput(Pair<PartTarget, IAspectProperties> input) {
                 DimPos dimPos = input.getLeft().getTarget().getPos();
-                return BlockEntityHelpers.getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK).orElse(null);
+                return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide(), org.cyclops.commoncapabilities.api.capability.Capabilities.RecipeHandler.BLOCK).orElse(null);
             }
         };
 

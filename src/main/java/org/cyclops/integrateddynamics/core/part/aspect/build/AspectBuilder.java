@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -45,14 +45,14 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
     private final List<IAspectValuePropagator> valuePropagators;
     private final List<IAspectWriteActivator> writeActivators;
     private final List<IAspectWriteDeactivator> writeDeactivators;
-    private final ModBase mod;
+    private final ModBaseNeoForge mod;
     private final List<IAspectUpdateListener.Before> beforeUpdateListeners;
     private final List<IAspectUpdateListener.After> afterUpdateListeners;
     private final AspectUpdateType updateType;
 
     private AspectBuilder(boolean read, T valueType, List<String> kinds, IAspectProperties defaultAspectProperties,
                           List<IAspectValuePropagator> valuePropagators, List<IAspectWriteActivator> writeActivators,
-                          List<IAspectWriteDeactivator> writeDeactivators, ModBase mod,
+                          List<IAspectWriteDeactivator> writeDeactivators, ModBaseNeoForge mod,
                           List<IAspectUpdateListener.Before> beforeUpdateListeners, List<IAspectUpdateListener.After> afterUpdateListeners,
                           AspectUpdateType updateType) {
         this.read = read;
@@ -188,7 +188,7 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
      * @param mod The mod.
      * @return The new builder instance.
      */
-    public AspectBuilder<V, T, O> byMod(ModBase mod) {
+    public AspectBuilder<V, T, O> byMod(ModBaseNeoForge mod) {
         return new AspectBuilder<>(
                 this.read, this.valueType,
                 Helpers.joinList(this.kinds, null),

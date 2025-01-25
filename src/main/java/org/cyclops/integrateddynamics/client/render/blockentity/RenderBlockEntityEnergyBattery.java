@@ -81,7 +81,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
             matrixStack.pushPose();
 
             for(Direction side : Direction.Plane.HORIZONTAL) {
-                combinedLight = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(side.getNormal()));
+                combinedLight = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(side.getUnitVec3i()));
                 TextureAtlasSprite icon = RegistryEntries.BLOCK_ENERGY_BATTERY.get().iconOverlay;
 
                 float[][] c = coordinates[side.ordinal()];

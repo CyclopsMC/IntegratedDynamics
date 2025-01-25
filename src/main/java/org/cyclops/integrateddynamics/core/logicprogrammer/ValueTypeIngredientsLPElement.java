@@ -18,10 +18,7 @@ import org.cyclops.cyclopscore.client.gui.component.button.ButtonArrow;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.IInputListener;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetArrowedListField;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -103,7 +100,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IValue getValue() {
-        return MinecraftHelpers.isClientSideThread()
+        return IModHelpers.get().getMinecraftHelpers().isClientSideThread()
                 ? ValueObjectTypeIngredients.ValueIngredients.of(constructValues()) : serverValue;
     }
 
@@ -165,10 +162,10 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
 
     @Override
     public Component validate() {
-        if (!MinecraftHelpers.isClientSideThread()) {
+        if (!IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             return serverValue == null ? Component.literal("") : null;
         }
-        if (MinecraftHelpers.isClientSideThread()) {
+        if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeIngredientsValueChangedPacket(ValueDeseralizationContext.ofClient(),
                             ValueObjectTypeIngredients.ValueIngredients.of(constructValues())));
@@ -296,7 +293,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, Component.translatable("valuetype.integrateddynamics.value_type"), true, getValueTypes()) {
                 @Override
                 protected String activeElementToString(IngredientComponent element) {
-                    return L10NHelpers.localize(element.getTranslationKey());
+                    return IModHelpers.get().getL10NHelpers().localize(element.getTranslationKey());
                 }
             };
             valueTypeSelector.setListener(this);
@@ -392,7 +389,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
             super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             int x = guiLeft + getX() + (getWidth() / 2);
             int y = guiTop + getY() + 4;
-            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), fontRenderer, String.valueOf(element.activeElement), x - 4, y + 2, 10, Helpers.RGBToInt(20, 20, 20), false, Font.DisplayMode.NORMAL);
+            IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, fontRenderer, String.valueOf(element.activeElement), x - 4, y + 2, 10, IModHelpers.get().getBaseHelpers().RGBToInt(20, 20, 20), false, Font.DisplayMode.NORMAL);
         }
     }
 

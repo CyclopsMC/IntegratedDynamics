@@ -6,12 +6,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -41,7 +40,7 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             float scale = 1F / ((float) stackSize.length() + 1F);
             matrixStack.scale(scale, scale, 1F);
             context.getFont().drawInBatch(stackSize,
-                    0, 0, Helpers.RGBAToInt(200, 200, 200, (int) (alpha * 255F)), false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
+                    0, 0, IModHelpers.get().getBaseHelpers().RGBAToInt(200, 200, 200, (int) (alpha * 255F)), false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             matrixStack.popPose();
         }
     }
@@ -53,18 +52,16 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         matrixStack.scale(16F, -16F, 16F);
         matrixStack.scale(0.74F, 0.74F, 0.01F);
 
-        ItemRenderer renderItem = Minecraft.getInstance().getItemRenderer();
-
-        // Inspired by: https://github.com/jaquadro/StorageDrawers/blob/1.15/src/main/java/com/jaquadro/minecraft/storagedrawers/client/renderer/BlockEntityDrawersRenderer.java
-
-        BakedModel itemModel = renderItem.getModel(itemStack, null, null, 0);
-        if (itemModel.isGui3d()) {
+        // Derived from ItemRenderer
+        ItemStackRenderState renderState = new ItemStackRenderState();
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, false, null, null, 0);
+        if (renderState.isGui3d()) {
             Lighting.setupFor3DItems();
         } else {
             Lighting.setupForFlatItems();
         }
 
-        renderItem.render(itemStack, ItemDisplayContext.GUI, false, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemModel);
+        renderState.render(matrixStack, renderTypeBuffer, combinedLight, combinedOverlay);
 
         Lighting.setupFor3DItems();
 

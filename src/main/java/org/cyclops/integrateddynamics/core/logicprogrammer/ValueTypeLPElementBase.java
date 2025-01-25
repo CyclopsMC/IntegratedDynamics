@@ -10,7 +10,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
@@ -141,7 +141,7 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
 
     @Override
     public String getSymbol() {
-        return L10NHelpers.localize(valueType.getTranslationKey());
+        return IModHelpers.get().getL10NHelpers().localize(valueType.getTranslationKey());
     }
 
     @Override

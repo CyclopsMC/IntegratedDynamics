@@ -2,8 +2,9 @@ package org.cyclops.integrateddynamics.core.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.block.BlockWithEntity;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
@@ -20,6 +22,7 @@ import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.BiFunction;
 
@@ -34,11 +37,11 @@ public abstract class BlockContainerCabled extends BlockWithEntity {
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack heldItem, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
-                                     BlockHitResult blockRayTraceResult) {
+    public InteractionResult useItemOn(ItemStack heldItem, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
+                                       BlockHitResult blockRayTraceResult) {
         if (!world.isClientSide() && WrenchHelpers.isWrench(player, heldItem, world, pos, blockRayTraceResult.getDirection()) && player.isSecondaryUseActive()) {
             world.destroyBlock(pos, true);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         return super.useItemOn(heldItem, state, world, pos, player, hand, blockRayTraceResult);
     }
@@ -68,7 +71,7 @@ public abstract class BlockContainerCabled extends BlockWithEntity {
     }
 
     @Override
-    public void onBlockExploded(BlockState state, Level world, BlockPos blockPos, Explosion explosion) {
+    public void onBlockExploded(BlockState state, ServerLevel world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.setRemovingCable(true);
         CableHelpers.onCableRemoving(world, blockPos, true, false, state);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
@@ -79,16 +82,16 @@ public abstract class BlockContainerCabled extends BlockWithEntity {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
-        super.neighborChanged(state, world, pos, neighborBlock, fromPos, isMoving);
-        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, neighborBlock, null, fromPos);
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean isMoving) {
+        super.neighborChanged(state, world, pos, neighborBlock, orientation, isMoving);
+        NetworkHelpers.onElementProviderBlockNeighborChange(world, pos, null);
     }
 
     @Override
     public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(state, world, pos, neighbor);
         if (world instanceof Level) {
-            NetworkHelpers.onElementProviderBlockNeighborChange((Level) world, pos, world.getBlockState(neighbor).getBlock(), null, neighbor);
+            NetworkHelpers.onElementProviderBlockNeighborChange((Level) world, pos, null);
         }
     }
 

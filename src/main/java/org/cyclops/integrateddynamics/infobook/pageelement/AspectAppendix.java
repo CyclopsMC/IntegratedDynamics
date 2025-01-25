@@ -4,14 +4,12 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoSection;
 import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
@@ -66,29 +64,26 @@ public class AspectAppendix extends SectionAppendix {
         int yOffset = 5;
         gui.drawOuterBorder(guiGraphics, x - 1, y - 1 - yOffset, getWidth() + 2, getHeight() + 2, 0.5F, 0.5F, 0.5F, 0.4f);
         gui.drawTextBanner(guiGraphics, x + width / 2, y - 2 - yOffset);
-        gui.drawScaledCenteredString(guiGraphics, L10NHelpers.localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, Helpers.RGBToInt(120, 20, 30));
+        gui.drawScaledCenteredString(guiGraphics, IModHelpers.get().getL10NHelpers().localize("aspect.integrateddynamics.name"), x, y - 2 - yOffset, width, 0.9f, gui.getBannerWidth() - 6, IModHelpers.get().getBaseHelpers().RGBToInt(120, 20, 30));
 
         Lighting.setupForFlatItems();
         guiGraphics.renderItem(itemStack, x, y);
 
         // Base information
-        String aspectName = L10NHelpers.localize(aspect.getTranslationKey());
-        String valueTypeName = L10NHelpers.localize(aspect.getValueType().getTranslationKey());
-        gui.drawScaledCenteredString(guiGraphics, L10NHelpers.localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
-        String valueString = L10NHelpers.localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
+        String aspectName = IModHelpers.get().getL10NHelpers().localize(aspect.getTranslationKey());
+        String valueTypeName = IModHelpers.get().getL10NHelpers().localize(aspect.getValueType().getTranslationKey());
+        gui.drawScaledCenteredString(guiGraphics, IModHelpers.get().getL10NHelpers().localize(aspectName), x + 10, y + 8, width, 1f, gui.getBannerWidth() - 10, 0);
+        String valueString = IModHelpers.get().getL10NHelpers().localize(aspect.getValueType().getDisplayColorFormat() + valueTypeName);
         //gui.getFont().setBidiFlag(true);
-        gui.getFont().drawInBatch(L10NHelpers.localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(gui.getFont(), IModHelpers.get().getL10NHelpers().localize(aspect instanceof IAspectWrite ? L10NValues.GUI_INPUT : L10NValues.GUI_OUTPUT, valueString), x, y + 16, 0, false);
 
         // Settings
         if (aspect.hasProperties()) {
             int offsetY = 26;
-            gui.getFont().drawInBatch(ChatFormatting.DARK_GRAY + L10NHelpers.localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0, false,
-                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            guiGraphics.drawString(gui.getFont(), ChatFormatting.DARK_GRAY + IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.part.properties"), x, y + offsetY, 0, false);
             for (IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                 offsetY += 10;
-                gui.getFont().drawInBatch(ChatFormatting.DARK_GRAY + L10NHelpers.localize(property.getTranslationKey()), x + 10, y + offsetY, 0, false,
-                        guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+                guiGraphics.drawString(gui.getFont(), ChatFormatting.DARK_GRAY + IModHelpers.get().getL10NHelpers().localize(property.getTranslationKey()), x + 10, y + offsetY, 0, false);
             }
         }
         //gui.getFont().setBidiFlag(wasUnicode);

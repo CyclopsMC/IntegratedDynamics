@@ -4,16 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cyclops.commoncapabilities.api.capability.Capabilities;
 import org.cyclops.commoncapabilities.api.capability.inventorystate.IInventoryState;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -79,7 +74,7 @@ public class ConcurrentWorldIngredientsProxy<T, M> {
 
             // Fetch inventory states
             if (this.readStates.contains(pos) || !this.states.containsKey(pos)) {
-                IInventoryState inventoryState = BlockEntityHelpers
+                IInventoryState inventoryState = IModHelpersNeoForge.get().getCapabilityHelpers()
                         .getCapability(pos.getPos(), pos.getSide(), Capabilities.InventoryState.BLOCK)
                         .orElse(null);
                 if (inventoryState != null) {

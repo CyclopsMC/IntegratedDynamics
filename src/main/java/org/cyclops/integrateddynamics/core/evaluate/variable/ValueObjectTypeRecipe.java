@@ -16,12 +16,11 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -125,32 +124,19 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     @Override
     @OnlyIn(Dist.CLIENT)
     public BakedModel getVariableItemOverrideModel(ValueRecipe value, BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
-        if (!MinecraftHelpers.isShifted()) {
-            return null;
-        }
-        return value.getRawValue()
-                .map((recipe) -> {
-                    List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
-                    if (!itemStacks.isEmpty()) {
-                        return Minecraft.getInstance().getItemRenderer().getModel(itemStacks.get(0), world, livingEntity, 0);
-                    }
-                    return null;
-                })
-                .orElse(null);
+        return null;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderISTER(ValueRecipe value, ItemStack stack, ItemDisplayContext transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-        if (MinecraftHelpers.isShifted()) {
+        if (IModHelpers.get().getMinecraftClientHelpers().isShifted()) {
             value.getRawValue()
                     .ifPresent((recipe) -> {
                         List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
                         if (!itemStacks.isEmpty()) {
                             ItemStack actualStack = itemStacks.get(0);
-                            IClientItemExtensions.of(actualStack)
-                                    .getCustomRenderer()
-                                    .renderByItem(actualStack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
+                            Minecraft.getInstance().getItemRenderer().renderStatic(actualStack, transformType, combinedLight, combinedOverlay, matrixStack, buffer, Minecraft.getInstance().level, 0);
                         }
                     });
         }

@@ -59,21 +59,23 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                 new Thread(() -> {
                     ClientProxy.DIAGNOSTICS_SERVER = new DiagnosticsWebServer(port);
                     ClientProxy.DIAGNOSTICS_SERVER.initialize();
-                    player.sendSystemMessage(
+                    player.displayClientMessage(
                             Component.literal("Diagnostics server has been started on ")
                                     .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
                                             .setStyle(Style.EMPTY
                                                     .withUnderlined(true)
-                                                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientProxy.DIAGNOSTICS_SERVER.getUrl()))))
+                                                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientProxy.DIAGNOSTICS_SERVER.getUrl())))),
+                            false
                     );
                 }).start();
             } else {
-                player.sendSystemMessage(
+                player.displayClientMessage(
                         Component.literal("Diagnostics server is already running on ")
                                 .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
                                         .setStyle(Style.EMPTY
                                                 .withUnderlined(true)
-                                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientProxy.DIAGNOSTICS_SERVER.getUrl()))))
+                                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientProxy.DIAGNOSTICS_SERVER.getUrl())))),
+                        false
                 );
             }
         } else {
@@ -84,10 +86,10 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                     NetworkDataClient.clearNetworkData();
                     ClientProxy.DIAGNOSTICS_SERVER.deinitialize();
                     ClientProxy.DIAGNOSTICS_SERVER = null;
-                    player.sendSystemMessage(Component.literal("Stopped diagnostics server"));
+                    player.displayClientMessage(Component.literal("Stopped diagnostics server"), false);
                 }).start();
             } else {
-                player.sendSystemMessage(Component.literal("No diagnostics server is running"));
+                player.displayClientMessage(Component.literal("No diagnostics server is running"), false);
             }
         }
     }

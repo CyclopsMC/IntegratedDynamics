@@ -22,10 +22,7 @@ All stable releases (including deobfuscated builds) can be found on [CurseForge]
 
 ### Branching Strategy
 
-For every major Minecraft version, two branches exist:
-
-* `master-{mc_version}`: Latest (potentially unstable) development.
-* `release-{mc_version}`: Latest stable release for that Minecraft version. This is also tagged with all mod releases.
+For every major Minecraft version, a `master-{mc_version} branch exists.
 
 ### Building and setting up a development environment
 
@@ -38,10 +35,6 @@ gpr.key=<YOUR TOKEN>
 Alternatively, you can use the environment variables `MAVEN_USERNAME` (your github username), and `MAVEN_KEY` (your token).
 
 Run `./gradlew test` to run the test suite, and `./gradlew build` to build the mod. The resulting jar file will be in `build/libs`.
-
-If you're using IntelliJ, you can also run `./gradlew genIntellijRuns` to set up some useful run configurations, such as the ability to build this mod and run minecraft in one step.
-
-This mod uses [Project Lombok](http://projectlombok.org/) -- an annotation processor that allows us to generate constructors, getters and setters using annotations -- to speed up recurring tasks and keep part of our codebase clean at the same time. Because of this it is advised that you install a plugin for your IDE that supports Project Lombok. Should you encounter any weird errors concerning missing getter or setter methods, it's probably because your code has not been processed by Project Lombok's processor. A list of Project Lombok plugins can be found [here](http://projectlombok.org/download.html).
 
 ### License
 All code and images are licensed under the [MIT License](https://github.com/CyclopsMC/IntegratedDynamics/blob/master-1.8/LICENSE.txt)

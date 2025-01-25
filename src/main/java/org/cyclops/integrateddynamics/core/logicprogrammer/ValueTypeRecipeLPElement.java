@@ -33,8 +33,8 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinit
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -111,7 +111,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             ItemStack itemStackOld = inputStacks.get(slotId).getItemStack();
             if (itemStackOld.getItem() != itemStack.getItem()) {
                 inputStacks.set(slotId, new ItemMatchProperties(itemStack.copy()));
-                if (MinecraftHelpers.isClientSideThread()) {
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
                     refreshPropertiesGui(slotId);
                 }
             }
@@ -119,9 +119,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         if (slotId == 9) {
             inputFluid = itemStack.copy();
             if (inputFluidAmount.equalsIgnoreCase("0")) {
-                int amount = FluidHelpers.getAmount(Helpers.getFluidStack(inputFluid));
+                int amount = IModHelpersNeoForge.get().getFluidHelpers().getAmount(Helpers.getFluidStack(inputFluid));
                 inputFluidAmount = Integer.toString(amount);
-                if (MinecraftHelpers.isClientSideThread() && lastGui != null) {
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread() && lastGui != null) {
                     refreshInputFluidAmountBox();
                 }
             }
@@ -132,9 +132,9 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         if (slotId == 13) {
             outputFluid = itemStack.copy();
             if (outputFluidAmount.equalsIgnoreCase("0")) {
-                int amount = FluidHelpers.getAmount(Helpers.getFluidStack(outputFluid));
+                int amount = IModHelpersNeoForge.get().getFluidHelpers().getAmount(Helpers.getFluidStack(outputFluid));
                 outputFluidAmount = Integer.toString(amount);
-                if (MinecraftHelpers.isClientSideThread() && lastGui != null) {
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread() && lastGui != null) {
                     refreshOutputFluidAmountBox();
                 }
             }
@@ -208,8 +208,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStackInput = fluidInputs.get(0);
         }
         putStackInContainer(container, slot, fluidStackInput.isEmpty() ? ItemStack.EMPTY : getFluidBucket(fluidStackInput));
-        inputFluidAmount = String.valueOf(FluidHelpers.getAmount(fluidStackInput));
-        if (MinecraftHelpers.isClientSideThread()) {
+        inputFluidAmount = String.valueOf(IModHelpersNeoForge.get().getFluidHelpers().getAmount(fluidStackInput));
+        if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             refreshInputFluidAmountBox();
         }
 
@@ -231,8 +231,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             fluidStackOutput = fluidOutputs.get(0);
         }
         putStackInContainer(container, slot, fluidStackOutput.isEmpty() ? ItemStack.EMPTY : getFluidBucket(fluidStackOutput));
-        outputFluidAmount = String.valueOf(FluidHelpers.getAmount(fluidStackOutput));
-        if (MinecraftHelpers.isClientSideThread()) {
+        outputFluidAmount = String.valueOf(IModHelpersNeoForge.get().getFluidHelpers().getAmount(fluidStackOutput));
+        if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             refreshOutputFluidAmountBox();
         }
     }
@@ -240,7 +240,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     protected ItemStack getFluidBucket(FluidStack fluidStack) {
         ItemStack itemStack = new ItemStack(Items.BUCKET);
         IFluidHandlerItem fluidHandler = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
-        fluidHandler.fill(new FluidStack(fluidStack.getFluid(), FluidHelpers.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+        fluidHandler.fill(new FluidStack(fluidStack.getFluid(), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume()), IFluidHandler.FluidAction.EXECUTE);
         return fluidHandler.getContainer();
     }
 
@@ -359,7 +359,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                 if (quantityNew <= 0) {
                     props.setItemTag(null);
                     props.setTagQuantity(1);
-                    if (MinecraftHelpers.isClientSideThread()) {
+                    if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
                         refreshPropertiesGui(slotId - SLOT_OFFSET);
                     }
                 }
@@ -379,12 +379,12 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
 
             @Override
             public ItemStack getItem() {
-                if (MinecraftHelpers.isClientSideThread() && slotId < 9) {
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread() && slotId < 9) {
                     ItemMatchProperties props = getInputStacks().get(slotId);
                     String tagName = props.getItemTag();
                     if (tagName != null) {
                         try {
-                            Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, ResourceLocation.parse(tagName)));
+                            Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.get(TagKey.create(Registries.ITEM, ResourceLocation.parse(tagName)));
                             if (!tag.isEmpty()) {
                                 List<Item> items = tag.stream()
                                         .flatMap(holders -> holders.stream())

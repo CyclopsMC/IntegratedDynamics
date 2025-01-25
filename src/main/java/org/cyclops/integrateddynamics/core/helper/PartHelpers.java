@@ -21,9 +21,9 @@ import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
-import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
+import org.cyclops.cyclopscore.network.PacketCodecs;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
@@ -58,7 +58,7 @@ public class PartHelpers {
      */
     @Deprecated // TODO: rm in favor of variant of BlockState param
     public static Optional<IPartContainer> getPartContainer(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(world, pos, side, Capabilities.PartContainer.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.PartContainer.BLOCK);
     }
 
     /**
@@ -81,7 +81,7 @@ public class PartHelpers {
      */
     @Deprecated // TODO: rm in favor of variant of BlockState param
     public static Optional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side) {
-        return BlockEntityHelpers.getCapability(dimPos, side, Capabilities.PartContainer.BLOCK);
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, side, Capabilities.PartContainer.BLOCK);
     }
 
     /**
@@ -312,7 +312,7 @@ public class PartHelpers {
                 }
             }
             if (triggerBlockRenderUpdate) {
-                BlockHelpers.markForUpdate(world, pos);
+                IModHelpers.get().getBlockHelpers().markForUpdate(world, pos);
             }
         }
     }
@@ -456,7 +456,7 @@ public class PartHelpers {
      */
     public static InteractionResult openContainerPart(ServerPlayer player, PartPos pos, IPartType<?, ?> partType) {
         return partType.getContainerProvider(pos)
-                .map(containerProvider -> {
+                .<InteractionResult>map(containerProvider -> {
                     player.openMenu(containerProvider, packetBuffer -> partType.writeExtraGuiData(packetBuffer, pos, player));
                     return InteractionResult.SUCCESS;
                 })
@@ -533,7 +533,7 @@ public class PartHelpers {
      * @return A part target.
      */
     public static PartTarget readPartTarget(RegistryFriendlyByteBuf packetBuffer) {
-        return PartTarget.fromCenter(PacketCodec.read(packetBuffer, PartPos.class));
+        return PartTarget.fromCenter(PacketCodecs.read(packetBuffer, PartPos.class));
     }
 
     /**

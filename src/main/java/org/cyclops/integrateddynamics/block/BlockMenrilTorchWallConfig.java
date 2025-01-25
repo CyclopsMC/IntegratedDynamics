@@ -5,15 +5,13 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.RegistryEntries;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,19 +21,18 @@ import java.util.Collections;
  * @author rubensworks
  *
  */
-public class BlockMenrilTorchWallConfig extends BlockConfig {
+public class BlockMenrilTorchWallConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockMenrilTorchWallConfig() {
         super(
                 IntegratedDynamics._instance,
                 "menril_torch_wall",
-                eConfig -> {
-                    return new WallTorchBlock(ParticleTypes.FLAME, Block.Properties.of()
+                (eConfig, properties) -> {
+                    return new WallTorchBlock(ParticleTypes.FLAME, properties
                             .noCollission()
                             .strength(0)
                             .lightLevel((blockState) -> 14)
-                            .sound(SoundType.WOOD)
-                            .lootFrom(RegistryEntries.BLOCK_MENRIL_TORCH::get)) {
+                            .sound(SoundType.WOOD)) {
                         @Override
                         @OnlyIn(Dist.CLIENT)
                         public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
@@ -48,7 +45,7 @@ public class BlockMenrilTorchWallConfig extends BlockConfig {
     }
 
     @Override
-    protected Collection<ItemStack> defaultCreativeTabEntries() {
+    public Collection<ItemStack> getDefaultCreativeTabEntries() {
         return Collections.emptyList();
     }
 }

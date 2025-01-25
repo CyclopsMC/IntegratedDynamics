@@ -2,9 +2,8 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -12,13 +11,13 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class BlockCrystalizedChorusBlockSlabConfig extends BlockConfig {
+public class BlockCrystalizedChorusBlockSlabConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockCrystalizedChorusBlockSlabConfig() {
         super(
                 IntegratedDynamics._instance,
                 "crystalized_chorus_block_slab",
-                eConfig -> new SlabBlock(BlockBehaviour.Properties.of()
+                (eConfig, properties) -> new SlabBlock(properties
                         .mapColor(MapColor.COLOR_PINK)
                         .sound(SoundType.SNOW)
                         .strength(1.5F)),

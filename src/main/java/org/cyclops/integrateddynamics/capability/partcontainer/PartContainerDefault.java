@@ -12,19 +12,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartState;
-import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.PartCapability;
-import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -44,7 +39,7 @@ public abstract class PartContainerDefault implements IPartContainer {
 
     @Override
     public void update() {
-        if(!MinecraftHelpers.isClientSideThread()) {
+        if(!IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             // Loop over all part states to check their dirtiness
             for (PartHelpers.PartStateHolder<?, ?> partStateHolder : partData.values()) {
                 if (partStateHolder.getState().isDirtyAndReset()) {
@@ -132,9 +127,9 @@ public abstract class PartContainerDefault implements IPartContainer {
                 networkElement.addDrops(itemStacks, dropMainElement, saveState);
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
-                        ItemStackHelpers.spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
+                        IModHelpers.get().getItemStackHelpers().spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
                     } else {
-                        ItemStackHelpers.spawnItemStack(getLevel(), getPos(), itemStack);
+                        IModHelpers.get().getItemStackHelpers().spawnItemStack(getLevel(), getPos(), itemStack);
                     }
                 }
 
@@ -152,10 +147,10 @@ public abstract class PartContainerDefault implements IPartContainer {
                 ItemStack itemStack = removed.getItemStack(ValueDeseralizationContext.of(player.level()), partStateHolder.getState(), saveState);
                 if(player != null) {
                     if (!player.isCreative()) {
-                        ItemStackHelpers.spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
+                        IModHelpers.get().getItemStackHelpers().spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
                     }
                 } else {
-                    ItemStackHelpers.spawnItemStack(getLevel(), getPos(), itemStack);
+                    IModHelpers.get().getItemStackHelpers().spawnItemStack(getLevel(), getPos(), itemStack);
                 }
             }
             // Finally remove the part data from this part.

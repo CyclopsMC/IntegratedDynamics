@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
@@ -44,7 +44,7 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
         // Get current aspect value
         Pair<Component, Integer> readValues = container.getReadValue(aspect);
         if(readValues != null && readValues.getLeft() != null) {
-            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, readValues.getLeft().getString(), this.leftPos + offsetX + 16,
+            IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, readValues.getLeft().getString(), this.leftPos + offsetX + 16,
                     this.topPos + offsetY + 39 + container.getAspectBoxHeight() * index,
                     70, readValues.getRight(), false, Font.DisplayMode.NORMAL);
         }

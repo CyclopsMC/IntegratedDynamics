@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -29,7 +29,7 @@ public class BlockValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         Optional<BlockState> blockOptional = ((ValueObjectTypeBlock.ValueBlock) value).getRawValue();
         if(blockOptional.isPresent()) {
             // ItemStack
-            ItemStack itemStack = BlockHelpers.getItemStackFromBlockState(blockOptional.get());
+            ItemStack itemStack = IModHelpers.get().getBlockHelpers().getItemStackFromBlockState(blockOptional.get());
             if(!itemStack.isEmpty()) {
                 ItemValueTypeWorldRenderer.renderItemStack(matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemStack, alpha);
             }

@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.RegistryEntries;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMechanicalMachine;
 
 import java.util.function.BiFunction;
@@ -25,7 +25,7 @@ public abstract class BlockMechanicalMachine extends BlockWithEntityGuiCabled {
     @Override
     public void setPlacedBy(Level world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (!world.isClientSide()) {
-            BlockEntityHelpers.get(world, blockPos, BlockEntityMechanicalMachine.class)
+            IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityMechanicalMachine.class)
                     .ifPresent(tile -> {
                         if (itemStack.has(RegistryEntries.COMPONENT_ENERGY_STORAGE)) {
                             tile.setEnergy(itemStack.get(RegistryEntries.COMPONENT_ENERGY_STORAGE));

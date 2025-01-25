@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -15,8 +14,7 @@ import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.client.gui.image.IImage;
 import org.cyclops.cyclopscore.client.gui.image.Images;
-import org.cyclops.cyclopscore.helper.GuiHelpers;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
@@ -133,12 +131,9 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
-        font.drawInBatch("X", leftPos + 45 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0), false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
-        font.drawInBatch("Y", leftPos + 99 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0), false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
-        font.drawInBatch("Z", leftPos + 153 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0), false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(font, "X", leftPos + 45 + 5, topPos + 19, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
+        guiGraphics.drawString(font, "Y", leftPos + 99 + 5, topPos + 19, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
+        guiGraphics.drawString(font, "Z", leftPos + 153 + 5, topPos + 19, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
         numberFieldX.render(guiGraphics, mouseX, mouseY, partialTicks);
         numberFieldY.render(guiGraphics, mouseX, mouseY, partialTicks);
         numberFieldZ.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -159,8 +154,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        this.font.drawInBatch(Component.translatable("gui.integrateddynamics.part_offsets"), (float)this.titleLabelX, (float)this.titleLabelY, 4210752, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.part_offsets"), this.titleLabelX, this.titleLabelY, 4210752, false);
 
         if (isHovering(0, 0, 90, 18, mouseX, mouseY)) {
             List<Component> lines = Lists.newArrayList(
@@ -178,7 +172,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         for (int i = 0; i < 3; i++) {
             int x = 64 + i * 54;
             int slot = i;
-            GuiHelpers.renderTooltipOptional(this, guiGraphics.pose(), x, 52, 14, 13, mouseX, mouseY,
+            IModHelpers.get().getGuiHelpers().renderTooltipOptional(this, guiGraphics.pose(), x, 52, 14, 13, mouseX, mouseY,
                     () -> {
                         Component unlocalizedMessage = container.getOffsetVariableError(slot);
                         if (unlocalizedMessage != null) {

@@ -4,7 +4,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.cyclops.cyclopscore.helper.GuiHelpers;
+import org.cyclops.cyclopscore.helper.IGuiHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.gui.ContainerScreenMechanicalMachine;
 import org.cyclops.integrateddynamics.inventory.container.ContainerMechanicalDryingBasin;
@@ -28,22 +30,22 @@ public class ContainerScreenMechanicalDryingBasin extends ContainerScreenMechani
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
         // Render progress
-        GuiHelpers.renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 84, getGuiTopTotal() + 31, 11, 28,
-                176, 120, GuiHelpers.ProgressDirection.UP,
+        IModHelpers.get().getGuiHelpers().renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 84, getGuiTopTotal() + 31, 11, 28,
+                176, 120, IGuiHelpers.ProgressDirection.UP,
                 getMenu().getProgress(), getMenu().getMaxProgress());
 
         // Render energy level
-        GuiHelpers.renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
-                176, 60, GuiHelpers.ProgressDirection.UP,
+        IModHelpers.get().getGuiHelpers().renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
+                176, 60, IGuiHelpers.ProgressDirection.UP,
                 getMenu().getEnergy(), getMenu().getMaxEnergy());
 
         // Render input fluid tank
-        GuiHelpers.renderOverlayedFluidTank(guiGraphics, getMenu().getInputFluidStack(),
+        IModHelpersNeoForge.get().getGuiHelpers().renderOverlayedFluidTank(guiGraphics, getMenu().getInputFluidStack(),
                 getMenu().getInputFluidCapacity(), getGuiLeftTotal() + 28, getGuiTopTotal() + 16,
                 18, 60, texture, 176, 0);
 
         // Render output fluid tank
-        GuiHelpers.renderOverlayedFluidTank(guiGraphics, getMenu().getOutputFluidStack(),
+        IModHelpersNeoForge.get().getGuiHelpers().renderOverlayedFluidTank(guiGraphics, getMenu().getOutputFluidStack(),
                 getMenu().getOutputFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 16,
                 18, 60, texture, 176, 0);
     }

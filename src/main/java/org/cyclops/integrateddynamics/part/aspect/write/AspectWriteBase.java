@@ -4,8 +4,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -33,13 +33,13 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
 
     protected final String unlocalizedTypeSuffix;
 
-    public AspectWriteBase(ModBase mod, String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
+    public AspectWriteBase(ModBaseNeoForge mod, String unlocalizedTypeSuffix, IAspectProperties defaultProperties) {
         super(mod, defaultProperties);
         if(unlocalizedTypeSuffix == null) {
             unlocalizedTypeSuffix = "";
         }
         this.unlocalizedTypeSuffix = unlocalizedTypeSuffix;
-        if(MinecraftHelpers.isClientSide()) {
+        if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             registerModelResourceLocation();
         }
     }

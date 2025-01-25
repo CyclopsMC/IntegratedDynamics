@@ -14,8 +14,8 @@ import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
@@ -56,9 +56,9 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
             matrixStack.pushPose();
             matrixStack.scale(0.3F, 0.3F, 1F);
-            context.getFont().drawInBatch(L10NHelpers.localize("gui.integrateddynamics.input_short"), 8, 15, Helpers.RGBToInt(255, 255, 255),
+            context.getFont().drawInBatch(IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.input_short"), 8, 15, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255),
                     false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
-            context.getFont().drawInBatch(L10NHelpers.localize("gui.integrateddynamics.output_short"), 46, 15, Helpers.RGBToInt(255, 255, 255),
+            context.getFont().drawInBatch(IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.output_short"), 46, 15, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255),
                     false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             matrixStack.popPose();
 

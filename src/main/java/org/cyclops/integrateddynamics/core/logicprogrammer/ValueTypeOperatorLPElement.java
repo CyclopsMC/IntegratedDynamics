@@ -11,8 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -97,7 +96,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     public void onSetDropdownPossiblity(IDropdownEntry dropdownEntry) {
         OperatorDropdownEntry operatorDropdownEntry = (OperatorDropdownEntry) dropdownEntry;
         selectedOperator = operatorDropdownEntry == null ? null : operatorDropdownEntry.getValue();
-        if (MinecraftHelpers.isClientSideThread()) {
+        if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
                     new LogicProgrammerValueTypeOperatorValueChangedPacket(ValueDeseralizationContext.ofClient(),
                             ValueTypeOperator.ValueOperator.of(selectedOperator)));
@@ -126,8 +125,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
             if (operator != null) {
                 int offsetY = 0;
                 for (Component line : ValueTypeOperator.getSignatureLines(operator, true)) {
-                    fontRenderer.drawInBatch(line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, Helpers.RGBToInt(10, 10, 10), false,
-                            guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+                    guiGraphics.drawString(fontRenderer, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, IModHelpers.get().getBaseHelpers().RGBToInt(10, 10, 10), false);
                     offsetY += fontRenderer.lineHeight;
                 }
             }

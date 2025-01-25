@@ -1,13 +1,9 @@
 package org.cyclops.integrateddynamics.entity.item;
 
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.config.extendedconfig.EntityConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.EntityClientConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.EntityConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -15,7 +11,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted> {
+public class EntityItemTargettedConfig extends EntityConfigCommon<IntegratedDynamics, EntityItemTargetted> {
 
     public EntityItemTargettedConfig() {
         super(
@@ -28,9 +24,8 @@ public class EntityItemTargettedConfig extends EntityConfig<EntityItemTargetted>
         );
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public EntityRenderer<EntityItemTargetted> getRender(EntityRendererProvider.Context renderContext, ItemRenderer renderItem) {
-        return (EntityRenderer) new net.minecraft.client.renderer.entity.ItemEntityRenderer(renderContext);
+    public EntityClientConfig<IntegratedDynamics, EntityItemTargetted> constructEntityClientConfig() {
+        return new EntityItemTargettedConfigClient(this);
     }
 }

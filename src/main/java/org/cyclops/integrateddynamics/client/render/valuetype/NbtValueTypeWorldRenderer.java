@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.datastructure.Wrapper;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -78,7 +78,7 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         int offset = 0;
         for(String line : lines) {
-            int color = Helpers.addAlphaToColor(ValueTypes.NBT.getDisplayColor(), alpha);
+            int color = IModHelpers.get().getBaseHelpers().addAlphaToColor(ValueTypes.NBT.getDisplayColor(), alpha);
             context.getFont().drawInBatch(line, 0, offset, color,
                     false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
             offset += singleHeight;

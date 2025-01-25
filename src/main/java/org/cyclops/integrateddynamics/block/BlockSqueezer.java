@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -29,8 +30,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.cyclops.cyclopscore.block.BlockWithEntity;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.InventoryHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntitySqueezer;
 
@@ -106,7 +106,7 @@ public class BlockSqueezer extends BlockWithEntity {
         if (world.isClientSide()) {
             return InteractionResult.SUCCESS;
         } else if(world.getBlockState(blockPos).getValue(BlockSqueezer.HEIGHT) == 1) {
-            return BlockEntityHelpers.get(world, blockPos, BlockEntitySqueezer.class)
+            return IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntitySqueezer.class)
                     .map(tile -> {
                         ItemStack itemStack = player.getInventory().getSelected();
                         ItemStack tileStack = tile.getInventory().getItem(0);
@@ -135,9 +135,9 @@ public class BlockSqueezer extends BlockWithEntity {
     }
 
     @Override
-    public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entityIn) {
+    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
         double motionY = entityIn.getDeltaMovement().y;
-        super.updateEntityAfterFallOn(worldIn, entityIn);
+        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
         if(!entityIn.level().isClientSide() && motionY <= -0.37D && entityIn instanceof LivingEntity) {
             // Same way of deriving blockPos as is done in Entity#moveEntity
             int i = Mth.floor(entityIn.getX());
@@ -153,22 +153,21 @@ public class BlockSqueezer extends BlockWithEntity {
                 if((entityIn.getY() - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
                     int newHeight = Math.min(7, blockState.getValue(HEIGHT) + steps);
                     entityIn.level().setBlockAndUpdate(blockPos, blockState.setValue(HEIGHT, newHeight));
-                    BlockEntityHelpers.get(worldIn, blockPos, BlockEntitySqueezer.class)
+                    IModHelpers.get().getBlockEntityHelpers().get(worldIn, blockPos, BlockEntitySqueezer.class)
                             .ifPresent(tile -> tile.setItemHeight(Math.max(newHeight, tile.getItemHeight())));
                 }
             }
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean isMoving) {
-        super.neighborChanged(state, worldIn, pos, neighborBlock, fromPos, isMoving);
-        if(!worldIn.isClientSide) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @org.jetbrains.annotations.Nullable Orientation orientation, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
+        if (!level.isClientSide) {
             for (Direction enumfacing : Direction.values()) {
-                if (worldIn.hasSignal(pos.relative(enumfacing), enumfacing)) {
-                    worldIn.setBlockAndUpdate(pos, state.setValue(HEIGHT, 1));
-                    for(Entity entity : worldIn.getEntitiesOfClass(Entity.class, new AABB(Vec3.atLowerCornerOf(pos), Vec3.atLowerCornerOf(pos.offset(1, 1, 1))))) {
+                if (level.hasSignal(pos.relative(enumfacing), enumfacing)) {
+                    level.setBlockAndUpdate(pos, state.setValue(HEIGHT, 1));
+                    for(Entity entity : level.getEntitiesOfClass(Entity.class, new AABB(Vec3.atLowerCornerOf(pos), Vec3.atLowerCornerOf(pos.offset(1, 1, 1))))) {
                         entity.getDeltaMovement().add(0, 0.25F, 0);
                         entity.setDeltaMovement(0, 1, 0);
                     }
@@ -212,9 +211,9 @@ public class BlockSqueezer extends BlockWithEntity {
     @Override
     public void onRemove(BlockState oldState, Level level, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (!oldState.is(newState.getBlock())) {
-            BlockEntityHelpers.get(level, blockPos, BlockEntitySqueezer.class)
+            IModHelpers.get().getBlockEntityHelpers().get(level, blockPos, BlockEntitySqueezer.class)
                     .ifPresent(tile -> {
-                        InventoryHelpers.dropItems(level, tile.getInventory(), blockPos);
+                        IModHelpers.get().getInventoryHelpers().dropItems(level, tile.getInventory(), blockPos);
                         level.updateNeighbourForOutputSignal(blockPos, oldState.getBlock());
                     });
             super.onRemove(oldState, level, blockPos, newState, isMoving);

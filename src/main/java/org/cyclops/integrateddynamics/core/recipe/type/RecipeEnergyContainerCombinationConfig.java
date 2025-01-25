@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * Config for {@link RecipeEnergyContainerCombination}.
  * @author rubensworks
  */
-public class RecipeEnergyContainerCombinationConfig extends RecipeConfig<RecipeEnergyContainerCombination> {
+public class RecipeEnergyContainerCombinationConfig extends RecipeConfigCommon<RecipeEnergyContainerCombination, IntegratedDynamics> {
 
     public RecipeEnergyContainerCombinationConfig() {
         super(IntegratedDynamics._instance,

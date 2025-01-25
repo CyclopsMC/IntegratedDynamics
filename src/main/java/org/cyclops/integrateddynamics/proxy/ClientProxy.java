@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.client.key.IKeyRegistry;
-import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -47,7 +47,7 @@ public class ClientProxy extends ClientProxyComponent {
     }
 
     @Override
-    public ModBase getMod() {
+    public ModBaseNeoForge getMod() {
         return IntegratedDynamics._instance;
     }
 

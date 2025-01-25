@@ -33,7 +33,7 @@ public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditio
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalDryingBasin) {
             itemStack.set(RegistryEntries.DATACOMPONENT_FLUID_CONTENT_IN_OUT, Pair.of(
                     SimpleFluidContent.copyOf(((BlockEntityMechanicalDryingBasin) tile).getTankInput().getFluid()),

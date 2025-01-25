@@ -1,8 +1,11 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -12,7 +15,10 @@ import org.cyclops.cyclopscore.infobook.InfoSection;
 import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
 import org.cyclops.cyclopscore.infobook.pageelement.RecipeAppendix;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.core.recipe.display.RecipeDisplayDryingBasin;
 import org.cyclops.integrateddynamics.core.recipe.type.RecipeDryingBasin;
+
+import java.util.function.Supplier;
 
 /**
  * Drying basin recipes.
@@ -29,8 +35,8 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
     private static final AdvancedButtonEnum RESULT_ITEM = AdvancedButtonEnum.create();
     private static final AdvancedButtonEnum RESULT_FLUID = AdvancedButtonEnum.create();
 
-    public DryingBasinRecipeAppendix(IInfoBook infoBook, RecipeHolder<? extends RecipeDryingBasin> recipe) {
-        super(infoBook, recipe);
+    public DryingBasinRecipeAppendix(IInfoBook infoBook, Supplier<RecipeDisplayEntry> recipeDisplaySupplier) {
+        super(infoBook, recipeDisplaySupplier);
     }
 
     @Override
@@ -64,11 +70,17 @@ public class DryingBasinRecipeAppendix extends RecipeAppendix<RecipeDryingBasin>
         gui.drawArrowRight(guiGraphics, x + middle - 3, y + 2);
 
         // Prepare items
+        RecipeDisplayEntry recipeDisplay = getRecipeDisplay();
+        if (recipeDisplay == null) {
+            return;
+        }
         int tick = getTick(gui);
-        ItemStack inputItem = recipe.value().getInputIngredient().isPresent() ? prepareItemStacks(recipe.value().getInputIngredient().get().getItems(), tick) : ItemStack.EMPTY;
-        FluidStack inputFluid = recipe.value().getInputFluid().orElse(FluidStack.EMPTY);
-        ItemStack resultItem = prepareItemStack(recipe.value().getOutputItemFirst(), tick);
-        FluidStack resultFluid = recipe.value().getOutputFluid().orElse(FluidStack.EMPTY);
+        ContextMap contextMap = SlotDisplayContext.fromLevel(Minecraft.getInstance().level);
+        RecipeDisplayDryingBasin display = ((RecipeDisplayDryingBasin) recipeDisplay.display());
+        ItemStack inputItem = prepareItemStacks(display.inputIngredient().resolveForStacks(contextMap), tick);
+        FluidStack inputFluid = display.inputFluid();
+        ItemStack resultItem = prepareItemStacks(display.outputItem().resolveForStacks(contextMap), tick);
+        FluidStack resultFluid = display.outputFluid();
 
         // Items
         renderItem(gui, guiGraphics, x + SLOT_INPUT_OFFSET_X, y, inputItem, mx, my, INPUT_ITEM);

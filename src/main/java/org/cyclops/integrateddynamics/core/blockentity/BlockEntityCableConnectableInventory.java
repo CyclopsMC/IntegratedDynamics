@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.capability.registrar.BlockEntityCapabilityRegistrar;
@@ -83,7 +84,7 @@ public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockE
             );
             add(
                     net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                    (blockEntity, context) -> blockEntity.getInventory().getItemHandler()
+                    (blockEntity, context) -> new InvWrapper(blockEntity.getInventory())
             );
             add(
                     org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,

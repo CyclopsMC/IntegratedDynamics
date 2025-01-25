@@ -4,13 +4,14 @@ import lombok.Getter;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -51,7 +52,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
     }
 
     protected void drawSlot(GuiGraphics guiGraphics, int x, int y) {
-        guiGraphics.blit(SubGuiBox.TEXTURE, x, y, 19, 0, 18, 18);
+        guiGraphics.blit(RenderType::guiTextured, SubGuiBox.TEXTURE, x, y, 19, 0, 18, 18, 256, 256);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
             }
 
             if (configRenderPattern.getSymbolPosition() != null) {
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), fontRenderer, element.getSymbol(),
+                IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, fontRenderer, element.getSymbol(),
                         baseX + configRenderPattern.getSymbolPosition().getLeft(),
                         baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
                         0, 1, 0, false, Font.DisplayMode.NORMAL);

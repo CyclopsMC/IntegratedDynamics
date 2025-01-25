@@ -19,11 +19,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
@@ -39,15 +43,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeEntity;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.evaluate.variable.VariableFacadePredicateTyped;
-import org.cyclops.integrateddynamics.core.evaluate.variable.VariablePredicateTyped;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -108,7 +104,7 @@ public class Codecs {
     public static final Codec<EntityType<? extends Entity>> ENTITY_TYPE = Codec.STRING.xmap(
             name -> {
                 try {
-                    return BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(name));
+                    return BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.parse(name));
                 } catch (ResourceLocationException e) {
                     throw new JsonSyntaxException("Invalid entity type name '" + name + "'");
                 }
@@ -168,14 +164,14 @@ public class Codecs {
     public static HolderLookup.Provider getHolderLookupProviderDuringWorldLoadHack() {
         return new HolderLookup.Provider() {
             @Override
-            public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
+            public Stream<ResourceKey<? extends Registry<?>>> listRegistryKeys() {
                 return (Stream) BuiltInRegistries.WRITABLE_REGISTRY.registryKeySet().stream();
             }
 
             @Override
             public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(ResourceKey<? extends Registry<? extends T>> key) {
-                WritableRegistry<T> registry = (WritableRegistry) BuiltInRegistries.WRITABLE_REGISTRY.get(key.location());
-                return Optional.of(registry.asLookup());
+                WritableRegistry<T> registry = (WritableRegistry) BuiltInRegistries.WRITABLE_REGISTRY.getValue((ResourceKey) key);
+                return Optional.of(registry);
             }
         };
     }
@@ -252,6 +248,21 @@ public class Codecs {
             ),
             Codec.unit(new VariableFacadePredicate<>(IVariableFacade.class))
     ));
+
+    public static final Codec<org.apache.commons.lang3.tuple.Pair<? extends SlotDisplay, Float>> SLOT_DISPLAY_CHANCE = RecordCodecBuilder.create(
+            builder -> builder.group(
+                    SlotDisplay.CODEC.fieldOf("display").forGetter(org.apache.commons.lang3.tuple.Pair::getLeft),
+                    Codec.FLOAT.fieldOf("chance").forGetter(org.apache.commons.lang3.tuple.Pair::getRight)
+            ).apply(builder, org.apache.commons.lang3.tuple.Pair::of)
+    );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, org.apache.commons.lang3.tuple.Pair<? extends SlotDisplay, Float>> STREAM_SLOT_DISPLAY_CHANCE = StreamCodec.of(
+            (buffer, pair) -> {
+                SlotDisplay.STREAM_CODEC.encode(buffer, pair.getLeft());
+                ByteBufCodecs.FLOAT.encode(buffer, pair.getRight());
+            },
+            buffer -> org.apache.commons.lang3.tuple.Pair.of(SlotDisplay.STREAM_CODEC.decode(buffer), ByteBufCodecs.FLOAT.decode(buffer))
+    );
 
     public static <T> RecordCodecBuilder<T, String> staticTypeField(String value) {
         return Codec.STRING.validate(type -> !value.equals(type) ?

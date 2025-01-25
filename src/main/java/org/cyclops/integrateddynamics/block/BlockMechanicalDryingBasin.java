@@ -21,7 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalDryingBasin;
 import org.cyclops.integrateddynamics.core.block.BlockMechanicalMachine;
@@ -74,7 +74,7 @@ public class BlockMechanicalDryingBasin extends BlockMechanicalMachine {
     @Override
     public void setPlacedBy(Level world, BlockPos blockPos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (!world.isClientSide()) {
-            BlockEntityHelpers.get(world, blockPos, BlockEntityMechanicalDryingBasin.class)
+            IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityMechanicalDryingBasin.class)
                     .ifPresent(tile -> {
                         if (itemStack.has(RegistryEntries.DATACOMPONENT_FLUID_CONTENT_IN_OUT)) {
                             Pair<SimpleFluidContent, SimpleFluidContent> tanks = itemStack.get(RegistryEntries.DATACOMPONENT_FLUID_CONTENT_IN_OUT);

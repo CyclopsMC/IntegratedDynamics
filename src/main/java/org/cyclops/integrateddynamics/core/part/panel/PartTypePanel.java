@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.core.part.panel;
 
 import net.minecraft.world.level.block.Block;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
@@ -18,8 +19,8 @@ public abstract class PartTypePanel<P extends PartTypePanel<P, S>, S extends IPa
     }
 
     @Override
-    protected Block createBlock(BlockConfig blockConfig) {
-        return new IgnoredBlockStatus();
+    protected Block createBlock(BlockConfigCommon<?> blockConfig, BlockBehaviour.Properties properties) {
+        return new IgnoredBlockStatus(properties);
     }
 
 }

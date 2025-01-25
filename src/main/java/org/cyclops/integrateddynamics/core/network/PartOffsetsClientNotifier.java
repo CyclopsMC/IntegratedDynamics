@@ -7,8 +7,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
-import org.cyclops.cyclopscore.helper.WorldHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.part.IPartState;
@@ -56,8 +55,8 @@ public class PartOffsetsClientNotifier {
 
     public void sendPartOffsetsToPlayer(ServerPlayer player) {
         BlockPos centerPos = player.getOnPos();
-        List<PartOffsetsClientNotifier.Entry> offsets = WorldHelpers.foldArea(player.getCommandSenderWorld(), GeneralConfig.partOffsetRenderDistance, centerPos, (list, world, pos) -> {
-            BlockEntityHelpers.get(world, pos, BlockEntityMultipartTicking.class)
+        List<PartOffsetsClientNotifier.Entry> offsets = IModHelpers.get().getWorldHelpers().foldArea(player.getCommandSenderWorld(), GeneralConfig.partOffsetRenderDistance, centerPos, (list, world, pos) -> {
+            IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityMultipartTicking.class)
                     .ifPresent(blockEntity -> {
                         for (Map.Entry<Direction, IPartType<?, ?>> entry : blockEntity.getPartContainer().getParts().entrySet()) {
                             Direction sourceSide = entry.getKey();

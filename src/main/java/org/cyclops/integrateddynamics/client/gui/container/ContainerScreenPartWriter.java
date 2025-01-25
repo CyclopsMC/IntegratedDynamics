@@ -7,7 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
@@ -69,7 +69,7 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
         ContainerPartWriter<?, ?> container = getMenu();
-        RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, container.getWriteValue().getString(), this.leftPos + offsetX + 53,
+        IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, container.getWriteValue().getString(), this.leftPos + offsetX + 53,
                 this.topPos + offsetY + 132, 70, container.getWriteValueColor(), false, Font.DisplayMode.NORMAL);
     }
 

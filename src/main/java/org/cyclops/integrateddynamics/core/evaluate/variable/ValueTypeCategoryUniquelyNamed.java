@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.ChatFormatting;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -16,7 +16,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 public class ValueTypeCategoryUniquelyNamed extends ValueTypeCategoryBase<IValue> {
 
     public ValueTypeCategoryUniquelyNamed() {
-        super("uniquely_named", Helpers.RGBToInt(250, 10, 13), ChatFormatting.RED, IValue.class);
+        super("uniquely_named", IModHelpers.get().getBaseHelpers().RGBToInt(250, 10, 13), ChatFormatting.RED, IValue.class);
     }
 
     public String getUniqueName(IVariable a) throws EvaluationException {

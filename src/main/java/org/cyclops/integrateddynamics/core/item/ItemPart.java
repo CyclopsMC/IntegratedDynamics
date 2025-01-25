@@ -50,16 +50,6 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         return part;
     }
 
-    @Override
-    public String getDescriptionId() {
-        return part.getTranslationKey();
-    }
-
-    @Override
-    public String getDescriptionId(ItemStack stack) {
-        return part.getTranslationKey();
-    }
-
     /**
      * Register a use action for the cable item.
      * @param useAction The use action.

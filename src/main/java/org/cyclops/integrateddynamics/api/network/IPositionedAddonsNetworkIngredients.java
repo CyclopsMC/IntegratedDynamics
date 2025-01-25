@@ -9,7 +9,7 @@ import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponen
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageSlotted;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorageWrapperHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 
@@ -85,7 +85,7 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
         if (world == null) {
             return null;
         }
-        Optional<BlockEntity> tile = BlockEntityHelpers.get(world, dimPos.getBlockPos(), BlockEntity.class);
+        Optional<BlockEntity> tile = IModHelpers.get().getBlockEntityHelpers().get(world, dimPos.getBlockPos(), BlockEntity.class);
         return tile
                 .map(tileEntity -> getComponent().getBlockStorage(pos.getPos().getLevel(true), pos.getPos().getBlockPos(), tileEntity.getBlockState(), tileEntity, pos.getSide()))
                 .orElse(null);

@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
-import org.cyclops.cyclopscore.helper.ItemStackHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -47,7 +47,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         try {
             return getItemStackDisplayNameUsSafe(itemStack);
         } catch (NoSuchMethodException e) {
-            return Component.translatable(itemStack.getDescriptionId());
+            return Component.translatable(itemStack.getItem().getDescriptionId());
         }
     }
 
@@ -157,7 +157,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
         @Override
         public int hashCode() {
-            return 37 + ItemStackHelpers.getItemStackHashCode(itemStack);
+            return 37 + IModHelpers.get().getItemStackHelpers().getItemStackHashCode(itemStack);
         }
     }
 

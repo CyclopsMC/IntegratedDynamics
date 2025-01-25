@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -129,7 +129,7 @@ public abstract class OperatorBase implements IOperator {
         Component operatorName = Component.translatable(getTranslationKey());
         Component categoryName = Component.translatable(getUnlocalizedCategoryName());
         String symbol = getSymbol();
-        String outputTypeName = L10NHelpers.localize(getOutputType().getTranslationKey());
+        String outputTypeName = IModHelpers.get().getL10NHelpers().localize(getOutputType().getTranslationKey());
         lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
         lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
         IValueType[] inputTypes = getInputTypes();
@@ -160,7 +160,7 @@ public abstract class OperatorBase implements IOperator {
 
             // Local name
             if (this.getInputTypes().length > 0) {
-                String scopedTypeName = L10NHelpers.localize(this.getInputTypes()[0].getTranslationKey());
+                String scopedTypeName = IModHelpers.get().getL10NHelpers().localize(this.getInputTypes()[0].getTranslationKey());
                 MutableComponent localNameComponent = Component.translatable(L10NValues.GUI_OPERATOR_LOCALNAME,
                                 this.getInputTypes()[0].getDisplayColorFormat() + scopedTypeName + "." + ChatFormatting.WHITE + this.getScopedInteractName() + "(")
                         .withStyle(ChatFormatting.YELLOW);
@@ -178,7 +178,7 @@ public abstract class OperatorBase implements IOperator {
                         .literal(")")
                         .withStyle(ChatFormatting.WHITE)));
             }
-            L10NHelpers.addOptionalInfo(lines, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(lines, getUnlocalizedPrefix());
         }
     }
 

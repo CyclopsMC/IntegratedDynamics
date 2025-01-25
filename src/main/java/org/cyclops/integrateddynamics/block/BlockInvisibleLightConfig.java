@@ -1,12 +1,11 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.fml.config.ModConfig;
-import org.cyclops.cyclopscore.config.ConfigurableProperty;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.ConfigurablePropertyCommon;
+import org.cyclops.cyclopscore.config.ModConfigLocation;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 import java.util.Collection;
@@ -16,16 +15,16 @@ import java.util.Collections;
  * Config for {@link BlockInvisibleLight}.
  * @author rubensworks
  */
-public class BlockInvisibleLightConfig extends BlockConfig {
+public class BlockInvisibleLightConfig extends BlockConfigCommon<IntegratedDynamics> {
 
-    @ConfigurableProperty(category = "machine", comment = "If invisible light should act as full a block", configLocation = ModConfig.Type.SERVER)
+    @ConfigurablePropertyCommon(category = "machine", comment = "If invisible light should act as full a block", configLocation = ModConfigLocation.SERVER)
     public static boolean invisibleLightBlock = true;
 
     public BlockInvisibleLightConfig() {
         super(
                 IntegratedDynamics._instance,
                 "invisible_light",
-                eConfig -> new BlockInvisibleLight(Block.Properties.of()
+                (eConfig, properties) -> new BlockInvisibleLight(properties
                         .strength(3.0F)
                         .sound(SoundType.METAL)
                         .lightLevel((blockState) -> 15)
@@ -35,7 +34,7 @@ public class BlockInvisibleLightConfig extends BlockConfig {
     }
 
     @Override
-    protected Collection<ItemStack> defaultCreativeTabEntries() {
+    public Collection<ItemStack> getDefaultCreativeTabEntries() {
         return Collections.emptyList();
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.cyclopscore.network.PacketCodecs;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import javax.annotation.Nullable;
@@ -18,18 +19,18 @@ import javax.annotation.Nullable;
 public class PartPos implements Comparable<PartPos> {
 
     static {
-        PacketCodec.addCodedAction(PartPos.class, new PacketCodec.ICodecAction() {
+        PacketCodecs.addCodedAction(PartPos.class, new PacketCodec.ICodecAction() {
 
             @Override
             public void encode(Object object, RegistryFriendlyByteBuf packetBuffer) {
-                PacketCodec.write(packetBuffer, ((PartPos) object).getPos());
-                PacketCodec.write(packetBuffer, ((PartPos) object).getSide());
+                PacketCodecs.write(packetBuffer, ((PartPos) object).getPos());
+                PacketCodecs.write(packetBuffer, ((PartPos) object).getSide());
             }
 
             @Override
             public Object decode(RegistryFriendlyByteBuf packetBuffer) {
-                DimPos pos = PacketCodec.read(packetBuffer, DimPos.class);
-                Direction side = PacketCodec.read(packetBuffer, Direction.class);
+                DimPos pos = PacketCodecs.read(packetBuffer, DimPos.class);
+                Direction side = PacketCodecs.read(packetBuffer, Direction.class);
                 return PartPos.of(pos, side);
             }
         });

@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -15,13 +15,13 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class BlockMenrilPlanksConfig extends BlockConfig {
+public class BlockMenrilPlanksConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockMenrilPlanksConfig() {
         super(
                 IntegratedDynamics._instance,
                 "menril_planks",
-                eConfig -> new Block(Block.Properties.of()
+                (eConfig, properties) -> new Block(properties
                         .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F, 3.0F)
                         .sound(SoundType.WOOD)) {

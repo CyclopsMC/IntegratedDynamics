@@ -14,17 +14,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.network.AttachCapabilitiesEventNetwork;
-import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
-import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
-import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.api.network.NetworkCapability;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -38,12 +32,7 @@ import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * A network instance that can hold a set of {@link INetworkElement}s.
@@ -140,7 +129,7 @@ public class Network implements INetwork {
                 Level world = sidedPathElement.getPathElement().getPosition().getLevel(true);
                 BlockPos pos = sidedPathElement.getPathElement().getPosition().getBlockPos();
                 Direction side = sidedPathElement.getSide();
-                BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkCarrier.BLOCK).ifPresent(networkCarrier -> {
+                IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.NetworkCarrier.BLOCK).ifPresent(networkCarrier -> {
                     // Correctly remove any previously saved network in this carrier
                     // and set the new network to this.
                     INetwork network = networkCarrier.getNetwork();
@@ -150,7 +139,7 @@ public class Network implements INetwork {
                     networkCarrier.setNetwork(null);
                     networkCarrier.setNetwork(this);
                 });
-                BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkElementProvider.BLOCK).ifPresent(networkElementProvider -> {
+                IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.NetworkElementProvider.BLOCK).ifPresent(networkElementProvider -> {
                     for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
                         addNetworkElement(element, true);
                     }

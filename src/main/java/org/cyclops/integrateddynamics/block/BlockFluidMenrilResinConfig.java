@@ -1,11 +1,8 @@
 package org.cyclops.integrateddynamics.block;
 
 
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 import java.util.Collection;
@@ -16,21 +13,21 @@ import java.util.Collections;
  * @author rubensworks
  *
  */
-public class BlockFluidMenrilResinConfig extends BlockConfig {
+public class BlockFluidMenrilResinConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockFluidMenrilResinConfig() {
         super(
                 IntegratedDynamics._instance,
                 "block_menril_resin",
-                eConfig -> new BlockFluidMenrilResin(Block.Properties.of()
+                (eConfig, properties) -> new BlockFluidMenrilResin(properties
                         .noCollission()
                         .strength(100.0F)),
-                (eConfig, block) -> new BlockItem(block, new Item.Properties())
+                getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
 
     @Override
-    protected Collection<ItemStack> defaultCreativeTabEntries() {
+    public Collection<ItemStack> getDefaultCreativeTabEntries() {
         return Collections.emptyList();
     }
 

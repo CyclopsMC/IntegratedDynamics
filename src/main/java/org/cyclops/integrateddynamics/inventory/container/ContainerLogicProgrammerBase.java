@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
@@ -272,7 +272,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     protected void loadConfigFrom(ItemStack itemStack) {
         // Only do this client-side, a packet will be sent to do the same server-side.
-        if(MinecraftHelpers.isClientSide()) {
+        if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level()), itemStack);
             for(ILogicProgrammerElement element : getElements()) {

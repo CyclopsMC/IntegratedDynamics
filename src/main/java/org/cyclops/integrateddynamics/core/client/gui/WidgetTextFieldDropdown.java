@@ -10,9 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -164,7 +162,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         // Display text red that is in an "invalid" state (no valid dropdrown entry selected)
-        this.setTextColor(this.selectedDropdownPossibility == null ? Helpers.RGBToInt(220, 10, 10) : 14737632);
+        this.setTextColor(this.selectedDropdownPossibility == null ? IModHelpers.get().getBaseHelpers().RGBToInt(220, 10, 10) : 14737632);
 
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
         if (this.isVisible() && isFocused()) {
@@ -184,7 +182,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 guiGraphics.fill(x, cy - 1, x + width, cy + 11, -6250336);
                 guiGraphics.fill(x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                fontRenderer.drawInBatch("...", (float)x + 1, (float)cy + 2, disabledColor, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+                guiGraphics.drawString(fontRenderer, "...", (float)x + 1, (float)cy + 2, disabledColor, true);
 
                 cy += 10;
             }
@@ -198,8 +196,8 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 int entryHeight = yOffset;
 
                 // Optionally initialize tooltip
-                boolean addTooltip = (active && MinecraftHelpers.isShifted())
-                        || RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
+                boolean addTooltip = (active && IModHelpers.get().getMinecraftClientHelpers().isShifted())
+                        || IModHelpers.get().getRenderHelpers().isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
                 List<MutableComponent> tooltipLines = null;
                 if (addTooltip) {
                     tooltipLines = dropdownEntry.getTooltip();
@@ -211,12 +209,12 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 guiGraphics.fill(x - 1, cy, x + width - 1, cy + entryHeight, -16777216);
 
                 // Draw text
-                fontRenderer.drawInBatch(displayPossibility.get(0), (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+                guiGraphics.drawString(fontRenderer, displayPossibility.get(0), (float)x + 1, (float)cy + 2, active ? enabledColor : disabledColor, true);
                 if(addTooltip) {
                     int tooltipLineOffsetY = 2;
                     for (Component tooltipLine : tooltipLines) {
                         tooltipLineOffsetY += yOffset;
-                        fontRenderer.drawInBatch(tooltipLine.getString(), (float)x + 1, (float)cy + tooltipLineOffsetY, enabledColor, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+                        guiGraphics.drawString(fontRenderer, tooltipLine.getString(), (float)x + 1, (float)cy + tooltipLineOffsetY, enabledColor, true);
                     }
                 }
 
@@ -229,7 +227,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 guiGraphics.fill(x, cy - 1, x + width, cy + 11, -6250336);
                 guiGraphics.fill(x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                fontRenderer.drawInBatch("...", (float)x + 1, (float)cy + 2, disabledColor, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+                guiGraphics.drawString(fontRenderer, "...", (float)x + 1, (float)cy + 2, disabledColor, true);
             }
         }
     }
@@ -268,9 +266,9 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             int entryHeight = yOffset;
 
             // Optionally initialize tooltip
-            boolean addTooltip = (active && MinecraftHelpers.isShifted())
-                    || RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
-            if (RenderHelpers.isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY)) {
+            boolean addTooltip = (active && IModHelpers.get().getMinecraftClientHelpers().isShifted())
+                    || IModHelpers.get().getRenderHelpers().isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY);
+            if (IModHelpers.get().getRenderHelpers().isPointInRegion(x, cy, getWidth(), yOffset, mouseX, mouseY)) {
                 return i;
             }
             List<MutableComponent> tooltipLines = null;

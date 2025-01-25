@@ -6,7 +6,7 @@ import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
@@ -24,7 +24,7 @@ import java.util.Locale;
 public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueInteger> implements IValueTypeNumber<ValueTypeInteger.ValueInteger> {
 
     public ValueTypeInteger() {
-        super("integer", Helpers.RGBToInt(243, 150, 4), ChatFormatting.GOLD, ValueTypeInteger.ValueInteger.class);
+        super("integer", IModHelpers.get().getBaseHelpers().RGBToInt(243, 150, 4), ChatFormatting.GOLD, ValueTypeInteger.ValueInteger.class);
     }
 
     @Override

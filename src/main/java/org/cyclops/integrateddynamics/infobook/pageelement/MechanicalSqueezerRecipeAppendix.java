@@ -1,18 +1,19 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.core.recipe.type.RecipeMechanicalSqueezer;
+
+import java.util.function.Supplier;
 
 /**
  * Mechanical squeezer recipes.
  * @author rubensworks
  */
 public class MechanicalSqueezerRecipeAppendix extends SqueezerRecipeAppendix {
-    public MechanicalSqueezerRecipeAppendix(IInfoBook infoBook, RecipeHolder<RecipeMechanicalSqueezer> recipe) {
-        super(infoBook, recipe);
+    public MechanicalSqueezerRecipeAppendix(IInfoBook infoBook, Supplier<RecipeDisplayEntry> recipeDisplaySupplier) {
+        super(infoBook, recipeDisplaySupplier);
     }
 
     @Override

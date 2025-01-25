@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.advancement.criterion;
 
-import org.cyclops.cyclopscore.config.extendedconfig.CriterionTriggerConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.CriterionTriggerConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * @author rubensworks
  *
  */
-public class PartVariableDrivenAspectTriggerConfig extends CriterionTriggerConfig<PartVariableDrivenAspectTrigger.Instance> {
+public class PartVariableDrivenAspectTriggerConfig extends CriterionTriggerConfigCommon<PartVariableDrivenAspectTrigger.Instance, IntegratedDynamics> {
 
     public PartVariableDrivenAspectTriggerConfig() {
         super(

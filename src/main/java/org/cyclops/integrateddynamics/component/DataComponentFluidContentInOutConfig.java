@@ -4,13 +4,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.config.extendedconfig.DataComponentConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.DataComponentConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * @author rubensworks
  */
-public class DataComponentFluidContentInOutConfig extends DataComponentConfig<Pair<SimpleFluidContent, SimpleFluidContent>> {
+public class DataComponentFluidContentInOutConfig extends DataComponentConfigCommon<Pair<SimpleFluidContent, SimpleFluidContent>, IntegratedDynamics> {
     public DataComponentFluidContentInOutConfig() {
         super(IntegratedDynamics._instance, "fluid_content_in_out", builder -> builder
                 .persistent(RecordCodecBuilder.create(rb ->

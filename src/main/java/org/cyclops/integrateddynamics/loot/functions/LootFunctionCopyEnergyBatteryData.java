@@ -34,7 +34,7 @@ public class LootFunctionCopyEnergyBatteryData extends LootItemConditionalFuncti
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityEnergyBattery) {
             IEnergyStorage energyStorage = itemStack.getCapability(Capabilities.EnergyStorage.ITEM);
             if (energyStorage != null) {

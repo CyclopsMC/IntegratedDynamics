@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
 
 import javax.annotation.Nullable;
@@ -27,7 +27,7 @@ public class DisplayErrorsComponent {
             if(gui.isHovering(errorX, errorY, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
                 List<Component> lines = Lists.newLinkedList();
                 for(Component error : errors) {
-                    lines.addAll(StringHelpers.splitLines(error.getString(), L10NHelpers.MAX_TOOLTIP_LINE_LENGTH,
+                    lines.addAll(StringHelpers.splitLines(error.getString(), IModHelpers.get().getL10NHelpers().getMaxTooltipLineLength(),
                             ChatFormatting.RED.toString())
                             .stream()
                             .map(Component::literal)

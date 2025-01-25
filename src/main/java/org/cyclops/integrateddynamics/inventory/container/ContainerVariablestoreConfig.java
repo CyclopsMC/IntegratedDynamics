@@ -1,22 +1,17 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
-import org.cyclops.cyclopscore.config.extendedconfig.GuiConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigCommon;
+import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigScreenFactoryProvider;
+import org.cyclops.cyclopscore.init.IModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenVariablestore;
 
 /**
  * Config for {@link ContainerVariablestore}.
  * @author rubensworks
  */
-public class ContainerVariablestoreConfig extends GuiConfig<ContainerVariablestore> {
+public class ContainerVariablestoreConfig extends GuiConfigCommon<ContainerVariablestore, IModBase> {
 
     public ContainerVariablestoreConfig() {
         super(IntegratedDynamics._instance,
@@ -24,10 +19,8 @@ public class ContainerVariablestoreConfig extends GuiConfig<ContainerVariablesto
                 eConfig -> new MenuType<>(ContainerVariablestore::new, FeatureFlags.VANILLA_SET));
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public <U extends Screen & MenuAccess<ContainerVariablestore>> MenuScreens.ScreenConstructor<ContainerVariablestore, U> getScreenFactory() {
-        return new ScreenFactorySafe<>(ContainerScreenVariablestore::new);
+    public GuiConfigScreenFactoryProvider<ContainerVariablestore> getScreenFactoryProvider() {
+        return new ContainerVariablestoreConfigScreenFactoryProvider();
     }
-
 }

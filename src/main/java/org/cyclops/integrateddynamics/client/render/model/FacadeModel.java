@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.client.render.model;
 
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -16,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 import javax.annotation.Nonnull;
@@ -70,15 +69,16 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
         if(blockState == null) {
             return new FacadeModel(emptyModel, itemStack, world, entity);
         }
-        BakedModel bakedModel = RenderHelpers.getBakedModel(blockState);
-        bakedModel = bakedModel.getOverrides().resolve(bakedModel,
-                RegistryEntries.ITEM_FACADE.get().getFacadeBlockItem(itemStack), (ClientLevel) world, entity, 0);
+        BakedModel bakedModel = IModHelpers.get().getRenderHelpers().getBakedModel(blockState);
+        // TODO: rm or check IBakedModelExtension if this does not work
+//        bakedModel = bakedModel.getOverrides().resolve(bakedModel,
+//                RegistryEntries.ITEM_FACADE.get().getFacadeBlockItem(itemStack), (ClientLevel) world, entity, 0);
         return new FacadeModel(bakedModel, itemStack, world, entity);
     }
 
     @Override
     public TextureAtlasSprite getParticleIcon() {
-        return RenderHelpers.getBakedModel(Blocks.STONE.defaultBlockState()).getParticleIcon();
+        return IModHelpers.get().getRenderHelpers().getBakedModel(Blocks.STONE.defaultBlockState()).getParticleIcon();
     }
 
     @Override

@@ -18,12 +18,13 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.config.ConfigHandler;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.config.ConfigHandlerCommon;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
 import org.cyclops.cyclopscore.infobook.InfoBookRegistry;
-import org.cyclops.cyclopscore.init.ModBase;
-import org.cyclops.cyclopscore.init.ModBaseVersionable;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
+import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.IClientProxy;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
@@ -58,14 +59,7 @@ import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueCastMappings;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueCastRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevelRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactories;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeRegistry;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.event.IntegratedDynamicsSetupEvent;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlerRegistry;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
@@ -92,7 +86,7 @@ import org.cyclops.integrateddynamics.proxy.CommonProxy;
  *
  */
 @Mod(Reference.MOD_ID)
-public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
+public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
 
     /**
      * The unique instance of this mod.
@@ -118,7 +112,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());
         getRegistryManager().addRegistry(IOperatorRegistry.class, OperatorRegistry.getInstance());
         getRegistryManager().addRegistry(ILogicProgrammerElementTypeRegistry.class, LogicProgrammerElementTypeRegistry.getInstance());
-        if(MinecraftHelpers.isClientSide()) {
+        if(getModHelpers().getMinecraftHelpers().isClientSide()) {
             getRegistryManager().addRegistry(IPartOverlayRendererRegistry.class, PartOverlayRendererRegistry.getInstance());
             getRegistryManager().addRegistry(IValueTypeWorldRendererRegistry.class, ValueTypeWorldRendererRegistry.getInstance());
             getRegistryManager().addRegistry(IVariableModelProviderRegistry.class, VariableModelProviderRegistry.getInstance());
@@ -169,7 +163,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         PartTypes.register();
         LogicProgrammerElementTypes.load();
         RegistryExportables.load();
-        if(MinecraftHelpers.isClientSide()) {
+        if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             PartOverlayRenderers.load();
             ValueTypeWorldRenderers.load();
             VariableModelProviders.load();
@@ -178,7 +172,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         super.setup(event);
 
         // Register info book
-        putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
+        putGenericReference(ModBaseNeoForge.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
         getRegistryManager().getRegistry(IInfoBookRegistry.class).registerInfoBook(
                 OnTheDynamicsOfIntegrationBook.getInstance(), "/data/" + Reference.MOD_ID + "/info/on_the_dynamics_of_integration.xml");
 
@@ -212,7 +206,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
     }
 
     @Override
-    protected void onConfigsRegister(ConfigHandler configHandler) {
+    protected void onConfigsRegister(ConfigHandlerCommon configHandler) {
         super.onConfigsRegister(configHandler);
 
         configHandler.addConfigurable(new GeneralConfig());

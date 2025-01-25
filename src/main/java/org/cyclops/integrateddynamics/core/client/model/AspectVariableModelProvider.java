@@ -1,9 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.Maps;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +12,6 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Variable model provider for aspects.
@@ -22,12 +19,12 @@ import java.util.function.Function;
  */
 public class AspectVariableModelProvider implements IVariableModelProvider<BakedMapVariableModelProvider<IAspect>> {
     @Override
-    public BakedMapVariableModelProvider<IAspect> bakeOverlayModels(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter,
-                                                                    ModelState transform, ResourceLocation location) {
+    public BakedMapVariableModelProvider<IAspect> bakeOverlayModels(ModelBaker modelBaker,
+                                                                    ModelState transform) {
         Map<IAspect, BakedModel> bakedModels = Maps.newHashMap();
         for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
             ResourceLocation resourceLocation = Aspects.REGISTRY.getAspectModel(aspect);
-            BakedModel bakedModel = modelBaker.bake(resourceLocation, transform, spriteGetter);
+            BakedModel bakedModel = modelBaker.bake(resourceLocation, transform);
             bakedModels.put(aspect, bakedModel);
         }
         return new BakedMapVariableModelProvider<>(bakedModels);

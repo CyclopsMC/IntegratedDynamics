@@ -9,7 +9,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
@@ -27,7 +27,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
         implements IValueTypeNullable<ValueTypeNbt.ValueNbt>, IValueTypeNamed<ValueTypeNbt.ValueNbt> {
 
     public ValueTypeNbt() {
-        super("nbt", Helpers.RGBToInt(0, 170, 170), ChatFormatting.DARK_AQUA, ValueTypeNbt.ValueNbt.class);
+        super("nbt", IModHelpers.get().getBaseHelpers().RGBToInt(0, 170, 170), ChatFormatting.DARK_AQUA, ValueTypeNbt.ValueNbt.class);
     }
 
     @Override

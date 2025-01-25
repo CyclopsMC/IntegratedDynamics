@@ -9,6 +9,7 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIng
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.cyclopscore.network.PacketCodecs;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -19,11 +20,11 @@ import java.util.Collections;
 public class ItemMatchProperties {
 
     static {
-        PacketCodec.addCodedAction(ItemMatchProperties.class, new PacketCodec.ICodecAction() {
+        PacketCodecs.addCodedAction(ItemMatchProperties.class, new PacketCodec.ICodecAction() {
             @Override
             public void encode(Object o, RegistryFriendlyByteBuf packetBuffer) {
                 ItemMatchProperties props = ((ItemMatchProperties) o);
-                PacketCodec.getAction(ItemStack.class).encode(props.itemStack, packetBuffer);
+                PacketCodecs.getAction(ItemStack.class).encode(props.itemStack, packetBuffer);
                 packetBuffer.writeBoolean(props.nbt);
                 packetBuffer.writeUtf(props.itemTag != null ? props.itemTag : "");
                 packetBuffer.writeInt(props.tagQuantity);
@@ -32,7 +33,7 @@ public class ItemMatchProperties {
 
             @Override
             public Object decode(RegistryFriendlyByteBuf packetBuffer) {
-                ItemStack itemStack = (ItemStack) PacketCodec.getAction(ItemStack.class).decode(packetBuffer);
+                ItemStack itemStack = (ItemStack) PacketCodecs.getAction(ItemStack.class).decode(packetBuffer);
                 boolean nbt = packetBuffer.readBoolean();
                 String itemTag = packetBuffer.readUtf(32767);
                 int tagQuantity = packetBuffer.readInt();

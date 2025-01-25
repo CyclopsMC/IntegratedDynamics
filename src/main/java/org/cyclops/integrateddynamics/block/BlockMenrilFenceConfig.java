@@ -5,10 +5,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
@@ -16,13 +15,13 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author rubensworks
  *
  */
-public class BlockMenrilFenceConfig extends BlockConfig {
+public class BlockMenrilFenceConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockMenrilFenceConfig() {
         super(
                 IntegratedDynamics._instance,
                 "menril_fence",
-                eConfig -> new FenceBlock(BlockBehaviour.Properties.of()
+                (eConfig, properties) -> new FenceBlock(properties
                         .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F, 3.0F)
                         .sound(SoundType.WOOD)) {

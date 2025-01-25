@@ -31,7 +31,7 @@ public class LootFunctionCopyProxyId extends LootItemConditionalFunction {
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityProxy) {
             itemStack.set(RegistryEntries.DATACOMPONENT_PROXY_ID, ((BlockEntityProxy) tile).getProxyId());
         }

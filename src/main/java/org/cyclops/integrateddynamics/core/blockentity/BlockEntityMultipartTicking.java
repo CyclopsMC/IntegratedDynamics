@@ -7,9 +7,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.ExperimentalRedstoneUtils;
+import net.minecraft.world.level.redstone.Orientation;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -18,7 +22,7 @@ import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
-import org.cyclops.cyclopscore.helper.BlockHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -190,17 +194,22 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         if (getLevel() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
                 || !Objects.equals(lastFacadeBlock, facadeBlockTag)
                 || lastRealCable != cableFakeable.isRealCable() || wasLightTransparent != isLightTransparent)) {
-            BlockHelpers.markForUpdate(getLevel(), getBlockPos());
+            IModHelpers.get().getBlockHelpers().markForUpdate(getLevel(), getBlockPos());
         }
     }
 
     @Override
-    public void onUpdateReceived() {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+        super.onDataPacket(net, pkt, lookupProvider);
+        onUpdateReceived();
+    }
+
+    protected void onUpdateReceived() {
         if(!lightLevels.equals(previousLightLevels)) {
             previousLightLevels = lightLevels;
         }
         cachedState = null;
-        BlockHelpers.markForUpdate(getLevel(), getBlockPos());
+        IModHelpers.get().getBlockHelpers().markForUpdate(getLevel(), getBlockPos());
         if (forceLightCheckAtClient) {
             getLevel().getLightEngine().checkBlock(getBlockPos());
         }
@@ -239,7 +248,8 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     public void updateRedstoneInfo(Direction side, boolean strongPower) {
         this.setChanged();
         if (getLevel().isLoaded(getBlockPos().relative(side))) {
-            getLevel().neighborChanged(getBlockPos().relative(side), getBlockState().getBlock(), getBlockPos());
+            Orientation orientation = ExperimentalRedstoneUtils.initialOrientation(level, side.getOpposite(), null);
+            getLevel().neighborChanged(getBlockPos(), getBlockState().getBlock(), orientation);
             if (strongPower) {
                 // When we are emitting a strong power, also update all neighbours of the target
                 getLevel().updateNeighborsAt(getBlockPos().relative(side), getBlockState().getBlock());

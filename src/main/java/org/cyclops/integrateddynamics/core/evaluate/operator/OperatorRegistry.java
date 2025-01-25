@@ -11,7 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
@@ -57,7 +57,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     private final IOperatorSerializer DEFAULT_SERIALIZER = new OperatorSerializerDefault();
 
     private OperatorRegistry() {
-        if(MinecraftHelpers.isModdedEnvironment()) {
+        if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment()) {
             IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
         }
     }

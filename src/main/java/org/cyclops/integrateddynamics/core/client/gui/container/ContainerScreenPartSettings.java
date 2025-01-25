@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,9 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
-import org.cyclops.cyclopscore.helper.GuiHelpers;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
@@ -241,23 +238,19 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
         if (isFieldUpdateIntervalEnabled()) {
-            font.drawInBatch(L10NHelpers.localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, Helpers.RGBToInt(0, 0, 0), false,
-                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
             numberFieldUpdateInterval.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldPriorityEnabled()) {
-            font.drawInBatch(L10NHelpers.localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, Helpers.RGBToInt(0, 0, 0), false,
-                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
             numberFieldPriority.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldChannelEnabled()) {
-            font.drawInBatch(L10NHelpers.localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? Helpers.RGBToInt(0, 0, 0) : Helpers.RGBToInt(100, 100, 100), false,
-                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0) : IModHelpers.get().getBaseHelpers().RGBToInt(100, 100, 100), false);
             numberFieldChannel.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldSideEnabled()) {
-            font.drawInBatch(L10NHelpers.localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, Helpers.RGBToInt(0, 0, 0), false,
-                    guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
             dropdownFieldSide.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
@@ -266,7 +259,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
-            GuiHelpers.renderTooltip(this, guiGraphics.pose(), 8, 87, 100, 20, mouseX, mouseY,
+            IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics.pose(), 8, 87, 100, 20, mouseX, mouseY,
                     () -> Lists.<Component>newArrayList(Component.translatable("gui.integrateddynamics.partsettings.channel.disabledinfo")));
         }
     }

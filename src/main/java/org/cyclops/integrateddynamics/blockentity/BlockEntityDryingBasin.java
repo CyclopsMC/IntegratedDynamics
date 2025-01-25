@@ -18,14 +18,15 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.capability.registrar.BlockEntityCapabilityRegistrar;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
-import org.cyclops.cyclopscore.helper.CraftingHelpers;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.SimpleInventoryState;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -76,7 +77,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 sendUpdate();
             }
         };
-        this.tank = new SingleUseTank(FluidHelpers.BUCKET_VOLUME);
+        this.tank = new SingleUseTank(IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume());
 
         // Add dirty mark listeners to inventory and tank
         this.inventory.addDirtyMarkListener(this::sendUpdate);
@@ -89,7 +90,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 IInventoryFluid recipeInput = new InventoryFluid(
                         NonNullList.of(ItemStack.EMPTY, key.getLeft()),
                         NonNullList.of(FluidStack.EMPTY, key.getRight()));
-                return CraftingHelpers.findServerRecipe(getRegistry(), recipeInput, getLevel());
+                return IModHelpers.get().getCraftingHelpers().findRecipe(getRegistry(), recipeInput, getLevel());
             }
 
             @Override
@@ -110,7 +111,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
         public void populate() {
             add(
                     net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                    (blockEntity, direction) -> blockEntity.getInventory().getItemHandler()
+                    (blockEntity, direction) -> new InvWrapper(blockEntity.getInventory())
             );
             add(
                     org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
@@ -170,7 +171,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
     }
 
     public Optional<RecipeHolder<RecipeDryingBasin>> getCurrentRecipe() {
-        return recipeCache.get(Pair.of(getInventory().getItem(0).copy(), FluidHelpers.copy(getTank().getFluid())));
+        return recipeCache.get(Pair.of(getInventory().getItem(0).copy(), IModHelpersNeoForge.get().getFluidHelpers().copy(getTank().getFluid())));
     }
 
     /**
@@ -199,11 +200,11 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 RecipeDryingBasin recipe = currentRecipe.get().value();
                 if (blockEntity.getProgress() >= recipe.getDuration()) {
                     // Consume input fluid
-                    int amount = FluidHelpers.getAmount(recipe.getInputFluid().orElse(FluidStack.EMPTY));
+                    int amount = IModHelpersNeoForge.get().getFluidHelpers().getAmount(recipe.getInputFluid().orElse(FluidStack.EMPTY));
                     blockEntity.getTank().drain(amount, IFluidHandler.FluidAction.EXECUTE);
 
                     // Produce output item
-                    ItemStack output = recipe.getOutputItemFirst();
+                    ItemStack output = recipe.getOutputItemFirst().orElse(ItemStack.EMPTY);
                     if (!output.isEmpty()) {
                         output = output.copy();
                         blockEntity.getInventory().setItem(0, output);

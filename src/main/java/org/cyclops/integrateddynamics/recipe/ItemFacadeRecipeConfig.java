@@ -1,19 +1,19 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
-import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfig;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * Config for {@link ItemFacadeRecipe}.
  * @author rubensworks
  */
-public class ItemFacadeRecipeConfig extends RecipeConfig<ItemFacadeRecipe> {
+public class ItemFacadeRecipeConfig extends RecipeConfigCommon<ItemFacadeRecipe, IntegratedDynamics> {
 
     public ItemFacadeRecipeConfig() {
         super(IntegratedDynamics._instance,
                 "crafting_special_facade",
-                eConfig -> new SimpleCraftingRecipeSerializer<>(ItemFacadeRecipe::new));
+                eConfig -> new CustomRecipe.Serializer<>(ItemFacadeRecipe::new));
     }
 
 }

@@ -12,9 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
@@ -123,10 +121,10 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
         IAspectPropertyTypeInstance activeProperty = getActiveProperty();
         if(activeProperty != null) {
-            String label = L10NHelpers.localize(activeProperty.getTranslationKey());
-            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font, label, 88, 10, 0,
-                    1.0F, 140, Helpers.RGBToInt(10, 10, 10), false, Font.DisplayMode.NORMAL);
-            if (RenderHelpers.isPointInRegion(this.leftPos + 40, this.topPos, 110, 20, mouseX, mouseY)) {
+            String label = IModHelpers.get().getL10NHelpers().localize(activeProperty.getTranslationKey());
+            IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, label, 88, 10, 0,
+                    1.0F, 140, IModHelpers.get().getBaseHelpers().RGBToInt(10, 10, 10), false, Font.DisplayMode.NORMAL);
+            if (IModHelpers.get().getRenderHelpers().isPointInRegion(this.leftPos + 40, this.topPos, 110, 20, mouseX, mouseY)) {
                 String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
                 if (I18n.exists(unlocalizedInfo)) {
                     drawTooltip(Lists.newArrayList(Component.translatable(unlocalizedInfo)

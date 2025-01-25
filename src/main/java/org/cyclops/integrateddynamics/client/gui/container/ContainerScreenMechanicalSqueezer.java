@@ -9,8 +9,9 @@ import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.image.IImage;
 import org.cyclops.cyclopscore.client.gui.image.Image;
-import org.cyclops.cyclopscore.helper.GuiHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IGuiHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.gui.ContainerScreenMechanicalMachine;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -54,17 +55,17 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
                 ? imageArrowDownEnabled : imageArrowDownDisabled);
 
         // Render progress
-        GuiHelpers.renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
-                176, 120, GuiHelpers.ProgressDirection.DOWN,
+        IModHelpers.get().getGuiHelpers().renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 73, getGuiTopTotal() + 36, 12, 18,
+                176, 120, IGuiHelpers.ProgressDirection.DOWN,
                 getMenu().getProgress(), getMenu().getMaxProgress());
 
         // Render energy level
-        GuiHelpers.renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
-                176, 60, GuiHelpers.ProgressDirection.UP,
+        IModHelpers.get().getGuiHelpers().renderProgressBar(guiGraphics, getGuiTexture(), getGuiLeftTotal() + 8, getGuiTopTotal() + 16, 18, 60,
+                176, 60, IGuiHelpers.ProgressDirection.UP,
                 getMenu().getEnergy(), getMenu().getMaxEnergy());
 
         // Render fluid tank
-        GuiHelpers.renderOverlayedFluidTank(guiGraphics, getMenu().getFluidStack(),
+        IModHelpersNeoForge.get().getGuiHelpers().renderOverlayedFluidTank(guiGraphics, getMenu().getFluidStack(),
                 getMenu().getFluidCapacity(), getGuiLeftTotal() + 150, getGuiTopTotal() + 10,
                 18, 60, texture, 176, 0);
     }
@@ -77,9 +78,9 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
         drawFluidTankTooltip(guiGraphics.pose(), getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
 
         // Draw fluid auto-eject toggle
-        GuiHelpers.renderTooltip(this, guiGraphics.pose(), 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
+        IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics.pose(), 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
                 Component.translatable(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT,
-                        ChatFormatting.AQUA + L10NHelpers.localize(getMenu().isAutoEjectFluids() ?
+                        ChatFormatting.AQUA + IModHelpers.get().getL10NHelpers().localize(getMenu().isAutoEjectFluids() ?
                                 L10NValues.GENERAL_TRUE : L10NValues.GENERAL_FALSE)),
                 Component.translatable(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT + ".info")));
     }

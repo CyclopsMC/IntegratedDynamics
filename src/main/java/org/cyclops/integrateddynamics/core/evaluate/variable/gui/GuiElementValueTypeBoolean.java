@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -107,7 +107,7 @@ public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractCont
 
     @Override
     public String getSymbol() {
-        return L10NHelpers.localize(getValueType().getTranslationKey());
+        return IModHelpers.get().getL10NHelpers().localize(getValueType().getTranslationKey());
     }
 
     @Override

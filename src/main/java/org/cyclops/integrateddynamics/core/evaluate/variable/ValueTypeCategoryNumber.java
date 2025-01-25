@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import org.cyclops.cyclopscore.helper.Helpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
@@ -27,7 +27,7 @@ public class ValueTypeCategoryNumber extends ValueTypeCategoryBase<IValue> imple
     private static final Map<IValueTypeNumber, Integer> INVERTED_ELEMENTS = Collections.unmodifiableMap(constructInvertedArray(ELEMENTS));
 
     public ValueTypeCategoryNumber() {
-        super("number", Helpers.RGBToInt(243, 245, 4), ChatFormatting.GOLD,
+        super("number", IModHelpers.get().getBaseHelpers().RGBToInt(243, 245, 4), ChatFormatting.GOLD,
                 Sets.<IValueType<?>>newHashSet(ELEMENTS), IValue.class);
     }
 

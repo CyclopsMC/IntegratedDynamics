@@ -3,12 +3,11 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -17,13 +16,13 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  * @author rubensworks
  *
  */
-public class BlockMenrilPlanksStairsConfig extends BlockConfig {
+public class BlockMenrilPlanksStairsConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public BlockMenrilPlanksStairsConfig() {
         super(
                 IntegratedDynamics._instance,
                 "menril_planks_stairs",
-                eConfig -> new StairBlock(RegistryEntries.BLOCK_MENRIL_PLANKS.get().defaultBlockState(), Block.Properties.of()
+                (eConfig, properties) -> new StairBlock(RegistryEntries.BLOCK_MENRIL_PLANKS.get().defaultBlockState(), properties
                         .mapColor(MapColor.COLOR_CYAN)
                         .strength(2.0F)
                         .sound(SoundType.WOOD)) {

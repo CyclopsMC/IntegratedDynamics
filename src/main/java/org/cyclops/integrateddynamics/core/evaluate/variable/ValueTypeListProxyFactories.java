@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.resources.ResourceLocation;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
@@ -16,7 +16,7 @@ public class ValueTypeListProxyFactories {
 
     private static IValueTypeListProxyFactoryTypeRegistry constructRegistry() {
         // This also allows this registry to be used outside of a minecraft environment.
-        if(MinecraftHelpers.isModdedEnvironment()) {
+        if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment()) {
             return IntegratedDynamics._instance.getRegistryManager().getRegistry(IValueTypeListProxyFactoryTypeRegistry.class);
         } else {
             return ValueTypeListProxyFactoryTypeRegistry.getInstance();

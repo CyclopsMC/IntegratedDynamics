@@ -15,9 +15,7 @@ import org.cyclops.cyclopscore.client.gui.component.button.ButtonArrow;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.IInputListener;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetArrowedListField;
-import org.cyclops.cyclopscore.helper.Helpers;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -73,7 +71,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public boolean canWriteElementPre() {
-        return MinecraftHelpers.isClientSideThread() ? listValueType != null : serverValue != null;
+        return IModHelpers.get().getMinecraftHelpers().isClientSideThread() ? listValueType != null : serverValue != null;
     }
 
     protected List<IValue> constructValues() {
@@ -90,7 +88,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public IValue getValue() {
-        return MinecraftHelpers.isClientSideThread()
+        return IModHelpers.get().getMinecraftHelpers().isClientSideThread()
                 ? ValueTypeList.ValueList.ofList(listValueType, constructValues()) : serverValue;
     }
 
@@ -113,7 +111,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             subElements.put(index, subElement);
             subElement.activate();
         }
-        if (MinecraftHelpers.isClientSideThread()) {
+        if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             masterGui.setActiveElement(activeElement);
             masterGui.container.onDirty();
         }
@@ -149,10 +147,10 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public Component validate() {
-        if(!MinecraftHelpers.isClientSideThread()) {
+        if(!IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             return serverValue == null ? Component.literal("") : null;
         }
-        if(MinecraftHelpers.isClientSideThread()) {
+        if(IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeListValueChangedPacket(ValueDeseralizationContext.ofClient(),
                     listValueType == null ? ValueTypes.LIST.getDefault() : ValueTypeList.ValueList.ofList(listValueType, constructValues())));
         }
@@ -319,7 +317,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             if (element.activeElement >= 0) {
                 int x = guiLeft + getX() + 10;
                 int y = guiTop + getY() + 4;
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), fontRenderer, String.valueOf(element.activeElement), x - 6, y + 12, 10, Helpers.RGBToInt(20, 20, 20), false, Font.DisplayMode.NORMAL);
+                IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, fontRenderer, String.valueOf(element.activeElement), x - 6, y + 12, 10, IModHelpers.get().getBaseHelpers().RGBToInt(20, 20, 20), false, Font.DisplayMode.NORMAL);
             }
         }
 

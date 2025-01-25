@@ -6,10 +6,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -61,16 +60,6 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 2;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
-        return getResultItem();
-    }
-
     public ItemStack getResultItem() {
         return new ItemStack(RegistryEntries.ITEM_VARIABLE, 1);
     }
@@ -85,7 +74,7 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
                 if(facade.isValid()) {
                     // Create a copy with a new id.
                     ItemStack copy = IntegratedDynamics._instance.getRegistryManager()
-                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSideThread(), element);
+                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!IModHelpers.get().getMinecraftHelpers().isClientSideThread(), element);
 
                     // If the input had a label, also copy the label
                     String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(facade.getId());
@@ -104,17 +93,12 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
-        return NonNullList.of(Ingredient.EMPTY, Ingredient.of(getResultItem()), Ingredient.of(getResultItem()));
-    }
-
-    @Override
     public boolean isSpecial() {
         return true;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return RegistryEntries.RECIPESERIALIZER_VARIABLE_COPY.get();
     }
 }

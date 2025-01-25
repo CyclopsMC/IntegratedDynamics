@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.read;
 
 import com.google.common.collect.Sets;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -13,9 +12,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.cyclopscore.network.PacketCodecs;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -103,8 +101,8 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
-                                      BlockGetter world, Block neighbourBlock, BlockPos neighbourBlockPos) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world, neighbourBlock, neighbourBlockPos);
+                                      BlockGetter world) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world);
         for(IAspect aspect : getUpdateAspects(AspectUpdateType.BLOCK_UPDATE)) {
             aspect.update(network, partNetwork, this, target, state);
         }
@@ -173,7 +171,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     @Override
     public void writeExtraGuiData(RegistryFriendlyByteBuf packetBuffer, PartPos pos, ServerPlayer player) {
         // Write part position
-        PacketCodec.write(packetBuffer, pos);
+        PacketCodecs.write(packetBuffer, pos);
 
         super.writeExtraGuiData(packetBuffer, pos, player);
     }

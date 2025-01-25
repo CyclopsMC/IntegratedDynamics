@@ -15,12 +15,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
-import org.cyclops.integrateddynamics.infobook.pageelement.AspectAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.DryingBasinRecipeAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.MechanicalDryingBasinRecipeAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.MechanicalSqueezerRecipeAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.OperatorAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.SqueezerRecipeAppendix;
+import org.cyclops.integrateddynamics.infobook.pageelement.*;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.w3c.dom.Element;
 
