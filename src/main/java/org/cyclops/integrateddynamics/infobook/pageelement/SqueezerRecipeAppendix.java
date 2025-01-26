@@ -52,7 +52,7 @@ public class SqueezerRecipeAppendix extends RecipeAppendix<RecipeSqueezer> {
         if (recipeDisplay == null) {
             return 10;
         }
-        return (!((RecipeDisplaySqueezer) recipeDisplay.display()).outputFluid().isEmpty() ? SLOT_OFFSET_Y : 0) + resultItems.size() * SLOT_OFFSET_Y - 3;
+        return (!((RecipeDisplaySqueezer) recipeDisplay.display()).outputFluid().isEmpty() ? SLOT_OFFSET_Y : 0) + ((RecipeDisplaySqueezer) recipeDisplay.display()).outputItems().size() * SLOT_OFFSET_Y - 3;
     }
 
     @Override

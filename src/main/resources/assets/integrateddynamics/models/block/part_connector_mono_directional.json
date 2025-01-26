@@ -2,8 +2,8 @@
 "parent": "integrateddynamics:block/part",
 "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
 "textures": {
-    "front": "integrateddynamics:part/connector_mono_directional_front",
-    "back": "integrateddynamics:part/connector_mono_directional_back",
+    "front": "integrateddynamics:part/part_connector_mono_directional_front",
+    "back": "integrateddynamics:part/part_connector_mono_directional_back",
     "particle": "integrateddynamics:block/cable"
 },
 "elements": [ 

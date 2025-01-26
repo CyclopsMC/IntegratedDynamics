@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "integrateddynamics:block/part_redstone_writer_inactive"
+  }
+}
