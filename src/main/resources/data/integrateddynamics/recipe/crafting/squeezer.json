@@ -6,18 +6,10 @@
     "PIP"
   ],
   "key": {
-    "S": {
-      "item": "minecraft:stick"
-    },
-    "B": {
-      "tag": "c:storage_blocks/iron"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    }
+    "S": "minecraft:stick",
+    "B": "#c:storage_blocks/iron",
+    "P": "#minecraft:planks",
+    "I": "#c:ingots/iron"
   },
   "result": {
     "id": "integrateddynamics:squeezer"

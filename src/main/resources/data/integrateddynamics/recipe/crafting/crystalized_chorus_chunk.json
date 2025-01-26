@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "integrateddynamics:crystalized_chorus_block"
-    }
+    "integrateddynamics:crystalized_chorus_block"
   ],
   "result": {
     "id": "integrateddynamics:crystalized_chorus_chunk",

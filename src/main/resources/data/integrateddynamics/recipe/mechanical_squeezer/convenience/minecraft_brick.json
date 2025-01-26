@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:bricks"
-  },
+  "input_item": "minecraft:bricks",
   "output_items": [
     {
       "item": {

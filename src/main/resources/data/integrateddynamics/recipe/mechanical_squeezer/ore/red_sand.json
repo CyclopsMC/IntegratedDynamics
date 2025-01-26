@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:red_sandstone"
-  },
+  "input_item": "minecraft:red_sandstone",
   "output_items": [
     {
       "item": {

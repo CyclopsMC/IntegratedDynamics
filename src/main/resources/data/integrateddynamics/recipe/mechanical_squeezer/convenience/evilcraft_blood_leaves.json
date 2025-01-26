@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "evilcraft:undead_leaves"
-  },
+  "input_item": "evilcraft:undead_leaves",
   "output_items": [
     {
       "item": {

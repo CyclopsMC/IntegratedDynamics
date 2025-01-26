@@ -6,12 +6,8 @@
     " X "
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_output"
-    },
-    "X": {
-      "item": "minecraft:fire_charge"
-    }
+    "V": "integrateddynamics:variable_transformer_output",
+    "X": "minecraft:fire_charge"
   },
   "result": {
     "id": "integrateddynamics:part_effect_writer"

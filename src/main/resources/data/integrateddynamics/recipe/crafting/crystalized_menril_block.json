@@ -6,9 +6,7 @@
     "CCC"
   ],
   "key": {
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    }
+    "C": "integrateddynamics:crystalized_menril_chunk"
   },
   "result": {
     "id": "integrateddynamics:crystalized_menril_block"

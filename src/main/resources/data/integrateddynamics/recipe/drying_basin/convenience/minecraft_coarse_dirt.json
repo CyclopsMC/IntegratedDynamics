@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:drying_basin",
-  "input_item": {
-    "item": "minecraft:dirt"
-  },
+  "input_item": "minecraft:dirt",
   "fluid": {
     "id": "minecraft:water",
     "amount": 100

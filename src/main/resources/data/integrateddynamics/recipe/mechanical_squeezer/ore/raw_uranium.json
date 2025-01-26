@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "tag": "c:ores/uranium"
-  },
+  "input_item": "#c:ores/uranium",
   "output_items": [
     {
       "tag": {

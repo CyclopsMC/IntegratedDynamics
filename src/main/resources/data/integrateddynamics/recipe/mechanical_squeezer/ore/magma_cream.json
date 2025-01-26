@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:magma_block"
-  },
+  "input_item": "minecraft:magma_block",
   "output_items": [
     {
       "item": {

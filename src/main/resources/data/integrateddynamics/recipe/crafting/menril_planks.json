@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "tag": "integrateddynamics:menril_logs"
-    }
+    "#integrateddynamics:menril_logs"
   ],
   "result": {
     "id": "integrateddynamics:menril_planks",

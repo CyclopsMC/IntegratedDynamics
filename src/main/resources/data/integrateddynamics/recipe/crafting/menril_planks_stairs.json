@@ -6,9 +6,7 @@
     "PPP"
   ],
   "key": {
-    "P": {
-      "item": "integrateddynamics:menril_planks"
-    }
+    "P": "integrateddynamics:menril_planks"
   },
   "result": {
     "id": "integrateddynamics:menril_planks_stairs",

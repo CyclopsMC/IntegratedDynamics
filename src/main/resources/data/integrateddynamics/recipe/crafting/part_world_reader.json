@@ -6,15 +6,9 @@
     "DOD"
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_input"
-    },
-    "O": {
-      "tag": "c:obsidians"
-    },
-    "D": {
-      "item": "minecraft:dirt"
-    }
+    "V": "integrateddynamics:variable_transformer_input",
+    "O": "#c:obsidians",
+    "D": "minecraft:dirt"
   },
   "result": {
     "id": "integrateddynamics:part_world_reader"

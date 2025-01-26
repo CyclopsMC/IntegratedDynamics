@@ -6,9 +6,7 @@
     "CCC"
   ],
   "key": {
-    "C": {
-      "item": "integrateddynamics:crystalized_chorus_chunk"
-    }
+    "C": "integrateddynamics:crystalized_chorus_chunk"
   },
   "result": {
     "id": "integrateddynamics:crystalized_chorus_block"

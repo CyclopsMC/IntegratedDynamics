@@ -6,15 +6,9 @@
     "CRC"
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable"
-    },
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    }
+    "V": "integrateddynamics:variable",
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "R": "#c:dusts/redstone"
   },
   "result": {
     "id": "integrateddynamics:materializer"

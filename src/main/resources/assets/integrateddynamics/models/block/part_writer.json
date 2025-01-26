@@ -54,5 +54,8 @@
                 "down": { "texture": "#front", "uv": [ 2.0, 12.0, 12.0, 13.0 ] }
             }
         }
-    ]
+    ],
+    "textures": {
+        "particle": "integrateddynamics:block/cable"
+    }
 }

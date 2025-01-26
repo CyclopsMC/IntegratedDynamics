@@ -7,15 +7,9 @@
     "CCC"
   ],
   "key": {
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    }
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "S": "minecraft:stick",
+    "R": "#c:dusts/redstone"
   },
   "result": {
     "id": "integrateddynamics:cable",

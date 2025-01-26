@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "integrateddynamics:menril_planks"
-  },
+  "input_item": "integrateddynamics:menril_planks",
   "output_fluid": {
     "id": "integrateddynamics:menril_resin",
     "amount": 250

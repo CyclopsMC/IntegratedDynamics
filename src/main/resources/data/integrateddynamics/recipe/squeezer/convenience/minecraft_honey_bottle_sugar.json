@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item":  {
-    "item": "honey_bottle"
-  },
+  "input_item":  "honey_bottle",
   "output_items": [
     {
       "item": {

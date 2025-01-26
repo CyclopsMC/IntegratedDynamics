@@ -1,6 +1,7 @@
 {
   "model": {
-    "type": "minecraft:model",
+    "type": "minecraft:special",
+    "base": "integrateddynamics:item/variable",
     "model": {
       "type": "integrateddynamics:variable"
     }

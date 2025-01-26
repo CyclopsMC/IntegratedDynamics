@@ -1,6 +1,7 @@
 {
   "model": {
-    "type": "minecraft:model",
+    "type": "minecraft:special",
+    "base": "integrateddynamics:block/energy_battery",
     "model": {
       "type": "integrateddynamics:energy_battery"
     }

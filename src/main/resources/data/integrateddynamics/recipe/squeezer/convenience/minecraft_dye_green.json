@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "item": "minecraft:cactus"
-  },
+  "input_item": "minecraft:cactus",
   "output_fluid": {
     "id": "minecraft:water",
     "amount": 500

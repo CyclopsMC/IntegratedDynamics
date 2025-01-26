@@ -6,15 +6,9 @@
     " B "
   ],
   "key": {
-    "B": {
-      "item": "integrateddynamics:menril_berries"
-    },
-    "P": {
-      "item": "integrateddynamics:part_static_light_panel"
-    },
-    "V": {
-      "item": "integrateddynamics:variable_transformer_output"
-    }
+    "B": "integrateddynamics:menril_berries",
+    "P": "integrateddynamics:part_static_light_panel",
+    "V": "integrateddynamics:variable_transformer_output"
   },
   "result": {
     "id": "integrateddynamics:part_display_panel"

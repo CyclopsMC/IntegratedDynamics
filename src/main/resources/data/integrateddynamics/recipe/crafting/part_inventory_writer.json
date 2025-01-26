@@ -5,12 +5,8 @@
     "XVX"
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_output"
-    },
-    "X": {
-      "tag": "c:chests/wooden"
-    }
+    "V": "integrateddynamics:variable_transformer_output",
+    "X": "#c:chests/wooden"
   },
   "result": {
     "id": "integrateddynamics:part_inventory_writer"

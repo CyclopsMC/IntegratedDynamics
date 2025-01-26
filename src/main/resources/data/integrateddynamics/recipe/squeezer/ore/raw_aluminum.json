@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "tag": "c:ores/aluminum"
-  },
+  "input_item": "#c:ores/aluminum",
   "output_items": [
     {
       "tag": {

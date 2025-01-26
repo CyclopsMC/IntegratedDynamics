@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:white_tulip"
-  },
+  "input_item": "minecraft:white_tulip",
   "output_items": [
     {
       "item": {

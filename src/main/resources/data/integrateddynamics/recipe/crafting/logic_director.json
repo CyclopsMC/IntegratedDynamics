@@ -6,15 +6,9 @@
     "CMC"
   ],
   "key": {
-    "C": {
-      "item": "integrateddynamics:crystalized_chorus_chunk"
-    },
-    "M": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "D": {
-      "tag": "c:gems/diamond"
-    }
+    "C": "integrateddynamics:crystalized_chorus_chunk",
+    "M": "integrateddynamics:crystalized_menril_chunk",
+    "D": "#c:gems/diamond"
   },
   "result": {
     "id": "integrateddynamics:logic_director",

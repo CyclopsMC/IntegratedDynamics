@@ -6,12 +6,8 @@
     "W#W"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:stick"
-    },
-    "W": {
-      "item": "integrateddynamics:menril_planks"
-    }
+    "#": "minecraft:stick",
+    "W": "integrateddynamics:menril_planks"
   },
   "result": {
     "id": "integrateddynamics:menril_fence",

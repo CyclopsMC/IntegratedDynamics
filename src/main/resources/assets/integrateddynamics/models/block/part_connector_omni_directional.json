@@ -3,7 +3,8 @@
 "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
 "textures": {
     "front": "integrateddynamics:part/connector_omni_directional_front",
-    "back": "integrateddynamics:part/connector_omni_directional_back"
+    "back": "integrateddynamics:part/connector_omni_directional_back",
+    "particle": "integrateddynamics:block/cable"
 },
 "elements": [ 
 {

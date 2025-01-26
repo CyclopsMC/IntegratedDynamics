@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:lilac"
-  },
+  "input_item": "minecraft:lilac",
   "output_items": [
     {
       "item": {

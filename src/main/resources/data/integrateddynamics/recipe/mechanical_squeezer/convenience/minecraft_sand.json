@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "tag": "c:glass_blocks"
-  },
+  "input_item": "#c:glass_blocks",
   "output_items": [
     {
       "item": {

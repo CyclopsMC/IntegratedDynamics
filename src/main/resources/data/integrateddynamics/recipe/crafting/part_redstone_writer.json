@@ -5,15 +5,9 @@
     "RVR"
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_output"
-    },
-    "B": {
-      "tag": "c:storage_blocks/redstone"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    }
+    "V": "integrateddynamics:variable_transformer_output",
+    "B": "#c:storage_blocks/redstone",
+    "R": "#c:dusts/redstone"
   },
   "result": {
     "id": "integrateddynamics:part_redstone_writer"

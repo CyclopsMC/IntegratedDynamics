@@ -6,15 +6,9 @@
     " E "
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_input"
-    },
-    "P": {
-      "tag": "c:ender_pearls"
-    },
-    "E": {
-      "item": "minecraft:ender_eye"
-    }
+    "V": "integrateddynamics:variable_transformer_input",
+    "P": "#c:ender_pearls",
+    "E": "minecraft:ender_eye"
   },
   "result": {
     "id": "integrateddynamics:part_extradimensional_reader"

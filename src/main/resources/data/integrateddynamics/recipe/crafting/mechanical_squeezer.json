@@ -6,18 +6,10 @@
     " O "
   ],
   "key": {
-    "D": {
-      "tag": "c:gems/diamond"
-    },
-    "O": {
-      "tag": "c:obsidians"
-    },
-    "B": {
-      "item": "integrateddynamics:energy_battery"
-    },
-    "S": {
-      "item": "integrateddynamics:squeezer"
-    }
+    "D": "#c:gems/diamond",
+    "O": "#c:obsidians",
+    "B": "integrateddynamics:energy_battery",
+    "S": "integrateddynamics:squeezer"
   },
   "result": {
     "id": "integrateddynamics:mechanical_squeezer"

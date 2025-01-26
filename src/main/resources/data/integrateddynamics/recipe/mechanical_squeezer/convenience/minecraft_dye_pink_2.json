@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:peony"
-  },
+  "input_item": "minecraft:peony",
   "output_items": [
     {
       "item": {

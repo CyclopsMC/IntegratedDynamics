@@ -1,8 +1,6 @@
 {
   "type": "minecraft:blasting",
-  "ingredient": {
-    "item": "integrateddynamics:menril_log_filled"
-  },
+  "ingredient": "integrateddynamics:menril_log_filled",
   "result": {
     "id": "minecraft:charcoal"
   },

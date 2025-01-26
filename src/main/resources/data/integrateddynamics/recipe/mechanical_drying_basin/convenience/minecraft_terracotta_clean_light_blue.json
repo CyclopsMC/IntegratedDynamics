@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_drying_basin",
-  "input_item": {
-    "item": "minecraft:light_blue_terracotta"
-  },
+  "input_item": "minecraft:light_blue_terracotta",
   "input_fluid": {
     "id": "minecraft:water",
     "amount": 250

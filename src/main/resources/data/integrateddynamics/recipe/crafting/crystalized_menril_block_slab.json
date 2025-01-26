@@ -5,9 +5,7 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "integrateddynamics:crystalized_menril_block"
-    }
+    "#": "integrateddynamics:crystalized_menril_block"
   },
   "result": {
     "id": "integrateddynamics:crystalized_menril_block_slab",

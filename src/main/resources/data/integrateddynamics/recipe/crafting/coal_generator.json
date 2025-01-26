@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "integrateddynamics:energy_battery"
-    },
-    {
-      "item": "minecraft:furnace"
-    }
+    "integrateddynamics:energy_battery",
+    "minecraft:furnace"
   ],
   "result": {
     "id": "integrateddynamics:coal_generator"

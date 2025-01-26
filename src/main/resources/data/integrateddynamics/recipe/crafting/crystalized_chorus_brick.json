@@ -5,9 +5,7 @@
     "BB"
   ],
   "key": {
-    "B": {
-      "item": "integrateddynamics:crystalized_chorus_block"
-    }
+    "B": "integrateddynamics:crystalized_chorus_block"
   },
   "result": {
     "id": "integrateddynamics:crystalized_chorus_brick",

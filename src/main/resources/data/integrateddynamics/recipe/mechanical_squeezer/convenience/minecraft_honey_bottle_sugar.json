@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:honey_bottle"
-  },
+  "input_item": "minecraft:honey_bottle",
   "output_items": [
     {
       "item": {

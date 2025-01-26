@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:drying_basin",
-  "input_item": {
-    "item": "minecraft:sand"
-  },
+  "input_item": "minecraft:sand",
   "input_fluid": {
     "id": "evilcraft:blood",
     "amount": 10

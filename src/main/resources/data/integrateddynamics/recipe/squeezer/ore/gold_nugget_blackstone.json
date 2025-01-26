@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "item": "minecraft:gilded_blackstone"
-  },
+  "input_item": "minecraft:gilded_blackstone",
   "output_items": [
     {
       "tag": {

@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:blackstone"
-  },
+  "input_item": "minecraft:blackstone",
   "output_items": [
     {
       "item": {

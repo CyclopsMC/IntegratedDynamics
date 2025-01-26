@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:wet_sponge"
-  },
+  "input_item": "minecraft:wet_sponge",
   "output_items": [
     {
       "item": {

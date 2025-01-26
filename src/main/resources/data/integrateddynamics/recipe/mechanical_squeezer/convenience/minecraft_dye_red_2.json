@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:rose_bush"
-  },
+  "input_item": "minecraft:rose_bush",
   "output_items": [
     {
       "item": {

@@ -2,11 +2,7 @@
   "type": "integrateddynamics:crafting_special_shapeless_omni_directional",
   "group": "integrateddynamics:part_connector_omni_directional",
   "ingredients": [
-    {
-      "item": "integrateddynamics:part_connector_omni_directional"
-    },
-    {
-      "item": "integrateddynamics:part_connector_omni_directional"
-    }
+    "integrateddynamics:part_connector_omni_directional",
+    "integrateddynamics:part_connector_omni_directional"
   ]
 }

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
@@ -27,6 +28,8 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
     private final Optional<Either<ItemStack, ItemStackFromIngredient>> outputItem;
     private final Optional<FluidStack> outputFluid;
     private final int duration;
+
+    private PlacementInfo placementInfo;
 
     public RecipeDryingBasin(Optional<Ingredient> inputIngredient, Optional<FluidStack> inputFluid,
                              Optional<Either<ItemStack, ItemStackFromIngredient>> outputIngredient, Optional<FluidStack> outputFluid, int duration) {
@@ -85,7 +88,10 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
 
     @Override
     public PlacementInfo placementInfo() {
-        return PlacementInfo.NOT_PLACEABLE;
+        if (this.placementInfo == null) {
+            this.placementInfo = PlacementInfo.create(this.inputIngredient.orElse(Ingredient.of(Items.BUCKET)));
+        }
+        return this.placementInfo;
     }
 
     @Override

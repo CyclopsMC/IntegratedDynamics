@@ -6,12 +6,8 @@
     " R "
   ],
   "key": {
-    "P": {
-      "item": "integrateddynamics:part_static_light_panel"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    }
+    "P": "integrateddynamics:part_static_light_panel",
+    "R": "#c:dusts/redstone"
   },
   "result": {
     "id": "integrateddynamics:part_dynamic_light_panel"

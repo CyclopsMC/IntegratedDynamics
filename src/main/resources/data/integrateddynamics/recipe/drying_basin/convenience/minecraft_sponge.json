@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:drying_basin",
-  "input_item": {
-    "item": "minecraft:wet_sponge"
-  },
+  "input_item": "minecraft:wet_sponge",
   "duration": 200,
   "output_item": {
     "id": "minecraft:sponge"

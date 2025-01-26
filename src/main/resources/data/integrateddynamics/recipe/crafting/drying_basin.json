@@ -6,15 +6,9 @@
     "LBL"
   ],
   "key": {
-    "L": {
-      "tag": "minecraft:logs"
-    },
-    "B": {
-      "tag": "c:dyes/black"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    }
+    "L": "#minecraft:logs",
+    "B": "#c:dyes/black",
+    "I": "#c:ingots/iron"
   },
   "result": {
     "id": "integrateddynamics:drying_basin"

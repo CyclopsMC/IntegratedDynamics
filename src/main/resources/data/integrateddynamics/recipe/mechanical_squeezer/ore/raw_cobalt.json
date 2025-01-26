@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "tag": "c:ores/cobalt"
-  },
+  "input_item": "#c:ores/cobalt",
   "output_items": [
     {
       "tag": {

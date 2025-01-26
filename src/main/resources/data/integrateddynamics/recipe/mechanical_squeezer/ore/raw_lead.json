@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "tag": "c:ores/lead"
-  },
+  "input_item": "#c:ores/lead",
   "output_items": [
     {
       "tag": {

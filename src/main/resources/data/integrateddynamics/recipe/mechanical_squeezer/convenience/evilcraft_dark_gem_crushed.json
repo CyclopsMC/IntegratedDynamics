@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "evilcraft:dark_gem"
-  },
+  "input_item": "evilcraft:dark_gem",
   "output_items": [
     {
       "item": {

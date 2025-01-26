@@ -6,12 +6,8 @@
     " X "
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_output"
-    },
-    "X": {
-      "item": "minecraft:porkchop"
-    }
+    "V": "integrateddynamics:variable_transformer_output",
+    "X": "minecraft:porkchop"
   },
   "result": {
     "id": "integrateddynamics:part_entity_writer"

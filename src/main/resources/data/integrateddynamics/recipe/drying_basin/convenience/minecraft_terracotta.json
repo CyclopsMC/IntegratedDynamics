@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:drying_basin",
-  "input_item": {
-    "item": "minecraft:clay"
-  },
+  "input_item": "minecraft:clay",
   "duration": 400,
   "output_item": {
     "id": "minecraft:terracotta"

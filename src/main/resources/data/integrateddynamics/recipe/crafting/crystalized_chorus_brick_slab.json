@@ -5,9 +5,7 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "integrateddynamics:crystalized_chorus_brick"
-    }
+    "#": "integrateddynamics:crystalized_chorus_brick"
   },
   "result": {
     "id": "integrateddynamics:crystalized_chorus_brick_slab",

@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "tag": "c:ores/tungsten"
-  },
+  "input_item": "#c:ores/tungsten",
   "output_items": [
     {
       "tag": {

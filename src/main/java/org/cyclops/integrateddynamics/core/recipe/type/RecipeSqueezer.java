@@ -28,6 +28,8 @@ public class RecipeSqueezer implements Recipe<CraftingInput> {
     private final NonNullList<IngredientChance> outputItems;
     private final Optional<FluidStack> outputFluid;
 
+    private PlacementInfo placementInfo;
+
     public RecipeSqueezer(Ingredient inputIngredient,
                           NonNullList<IngredientChance> outputItems,
                           Optional<FluidStack> outputFluid) {
@@ -81,7 +83,10 @@ public class RecipeSqueezer implements Recipe<CraftingInput> {
 
     @Override
     public PlacementInfo placementInfo() {
-        return PlacementInfo.NOT_PLACEABLE;
+        if (this.placementInfo == null) {
+            this.placementInfo = PlacementInfo.create(this.inputIngredient);
+        }
+        return this.placementInfo;
     }
 
     @Override

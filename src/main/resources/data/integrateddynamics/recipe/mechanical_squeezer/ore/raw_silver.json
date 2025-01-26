@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "tag": "c:ores/silver"
-  },
+  "input_item": "#c:ores/silver",
   "output_items": [
     {
       "tag": {

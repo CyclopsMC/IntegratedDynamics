@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "tag": "c:ores/zinc"
-  },
+  "input_item": "#c:ores/zinc",
   "output_items": [
     {
       "tag": {

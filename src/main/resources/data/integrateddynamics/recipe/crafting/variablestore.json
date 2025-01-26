@@ -6,15 +6,9 @@
     "CBC"
   ],
   "key": {
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "B": {
-      "item": "integrateddynamics:crystalized_menril_block"
-    },
-    "W": {
-      "tag": "c:chests/wooden"
-    }
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "B": "integrateddynamics:crystalized_menril_block",
+    "W": "#c:chests/wooden"
   },
   "result": {
     "id": "integrateddynamics:variablestore"

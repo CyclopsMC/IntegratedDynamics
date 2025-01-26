@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "group": "integrateddynamics:menril_torch_stone",
   "ingredients": [
-    {
-      "tag": "c:cobblestones"
-    },
-    {
-      "tag": "c:cobblestones"
-    },
-    {
-      "item": "integrateddynamics:menril_berries"
-    }
+    "#c:cobblestones",
+    "#c:cobblestones",
+    "integrateddynamics:menril_berries"
   ],
   "result": {
     "id": "integrateddynamics:menril_torch_stone",

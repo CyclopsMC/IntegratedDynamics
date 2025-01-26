@@ -6,15 +6,9 @@
     " W "
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_input"
-    },
-    "W": {
-      "item": "minecraft:water_bucket"
-    },
-    "B": {
-      "item": "minecraft:bucket"
-    }
+    "V": "integrateddynamics:variable_transformer_input",
+    "W": "minecraft:water_bucket",
+    "B": "minecraft:bucket"
   },
   "result": {
     "id": "integrateddynamics:part_fluid_reader"

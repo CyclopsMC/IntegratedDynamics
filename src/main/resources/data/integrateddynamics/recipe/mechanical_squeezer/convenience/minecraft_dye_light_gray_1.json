@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:azure_bluet"
-  },
+  "input_item": "minecraft:azure_bluet",
   "output_items": [
     {
       "item": {

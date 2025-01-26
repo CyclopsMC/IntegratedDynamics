@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "item": "minecraft:coal"
-  },
+  "input_item": "minecraft:coal",
   "output_items": [
     {
       "tag": {

@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:prismarine_shard"
-  },
+  "input_item": "minecraft:prismarine_shard",
   "output_items": [
     {
       "tag": {

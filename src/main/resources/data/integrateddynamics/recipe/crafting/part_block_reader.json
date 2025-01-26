@@ -6,15 +6,9 @@
     "CDC"
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_input"
-    },
-    "C": {
-      "tag": "c:cobblestones"
-    },
-    "D": {
-      "item": "minecraft:dirt"
-    }
+    "V": "integrateddynamics:variable_transformer_input",
+    "C": "#c:cobblestones",
+    "D": "minecraft:dirt"
   },
   "result": {
     "id": "integrateddynamics:part_block_reader"

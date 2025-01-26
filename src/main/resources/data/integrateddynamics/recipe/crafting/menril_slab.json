@@ -5,9 +5,7 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "integrateddynamics:menril_planks"
-    }
+    "#": "integrateddynamics:menril_planks"
   },
   "result": {
     "id": "integrateddynamics:menril_slab",

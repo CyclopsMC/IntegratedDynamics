@@ -37,7 +37,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
-import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -245,8 +244,7 @@ public class Codecs {
                                             DataResult.success(type)).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString())
                             )
                             .apply(builder, (type) -> new VariableFacadePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type))))
-            ),
-            Codec.unit(new VariableFacadePredicate<>(IVariableFacade.class))
+            )
     ));
 
     public static final Codec<org.apache.commons.lang3.tuple.Pair<? extends SlotDisplay, Float>> SLOT_DISPLAY_CHANCE = RecordCodecBuilder.create(

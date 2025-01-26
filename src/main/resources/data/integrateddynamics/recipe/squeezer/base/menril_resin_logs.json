@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "item": "integrateddynamics:menril_log"
-  },
+  "input_item": "integrateddynamics:menril_log",
   "output_fluid": {
     "id": "integrateddynamics:menril_resin",
     "amount": 1000

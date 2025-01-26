@@ -6,12 +6,8 @@
     " S "
   ],
   "key": {
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "S": {
-      "tag": "c:slimeballs"
-    }
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "S": "#c:slime_balls"
   },
   "result": {
     "id": "integrateddynamics:facade",

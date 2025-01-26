@@ -6,15 +6,9 @@
     "CBC"
   ],
   "key": {
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "B": {
-      "item": "integrateddynamics:crystalized_menril_block"
-    },
-    "R": {
-      "tag": "c:storage_blocks/redstone"
-    }
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "B": "integrateddynamics:crystalized_menril_block",
+    "R": "#c:storage_blocks/redstone"
   },
   "result": {
     "id": "integrateddynamics:energy_battery"

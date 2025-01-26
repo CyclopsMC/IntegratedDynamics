@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "tag": "c:ores/ardite"
-  },
+  "input_item": "#c:ores/ardite",
   "output_items": [
     {
       "tag": {

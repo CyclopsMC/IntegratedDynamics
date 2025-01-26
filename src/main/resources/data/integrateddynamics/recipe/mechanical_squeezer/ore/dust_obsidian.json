@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:obsidian"
-  },
+  "input_item": "minecraft:obsidian",
   "output_items": [
     {
       "tag": {

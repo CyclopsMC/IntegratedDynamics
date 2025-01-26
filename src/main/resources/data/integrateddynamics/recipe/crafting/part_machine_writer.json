@@ -6,18 +6,10 @@
     " C "
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_output"
-    },
-    "F": {
-      "item": "minecraft:furnace"
-    },
-    "C": {
-      "item": "minecraft:crafting_table"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    }
+    "V": "integrateddynamics:variable_transformer_output",
+    "F": "minecraft:furnace",
+    "C": "minecraft:crafting_table",
+    "I": "#c:ingots/iron"
   },
   "result": {
     "id": "integrateddynamics:part_machine_writer"

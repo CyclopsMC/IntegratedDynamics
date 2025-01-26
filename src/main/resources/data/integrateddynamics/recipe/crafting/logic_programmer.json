@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "group": "integrateddynamics:logic_programmer",
   "ingredients": [
-    {
-      "item": "integrateddynamics:crystalized_menril_block"
-    },
-    {
-      "item": "minecraft:crafting_table"
-    }
+    "integrateddynamics:crystalized_menril_block",
+    "minecraft:crafting_table"
   ],
   "result": {
     "id": "integrateddynamics:logic_programmer"

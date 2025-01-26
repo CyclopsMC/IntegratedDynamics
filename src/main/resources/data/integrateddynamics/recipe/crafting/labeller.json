@@ -6,12 +6,8 @@
     "C  "
   ],
   "key": {
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "B": {
-      "item": "minecraft:writable_book"
-    }
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "B": "minecraft:writable_book"
   },
   "result": {
     "id": "integrateddynamics:labeller"

@@ -6,15 +6,9 @@
     " I "
   ],
   "key": {
-    "I": {
-      "item": "integrateddynamics:variable_transformer_input"
-    },
-    "O": {
-      "item": "integrateddynamics:variable_transformer_output"
-    },
-    "C": {
-      "item": "integrateddynamics:cable"
-    }
+    "I": "integrateddynamics:variable_transformer_input",
+    "O": "integrateddynamics:variable_transformer_output",
+    "C": "integrateddynamics:cable"
   },
   "result": {
     "id": "integrateddynamics:part_connector_mono_directional"

@@ -6,18 +6,10 @@
     " D "
   ],
   "key": {
-    "I": {
-      "item": "integrateddynamics:variable_transformer_input"
-    },
-    "O": {
-      "item": "integrateddynamics:variable_transformer_output"
-    },
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "D": {
-      "tag": "c:gems/diamond"
-    }
+    "I": "integrateddynamics:variable_transformer_input",
+    "O": "integrateddynamics:variable_transformer_output",
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "D": "#c:gems/diamond"
   },
   "result": {
     "id": "integrateddynamics:enhancement_offset",

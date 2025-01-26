@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:poppy"
-  },
+  "input_item": "minecraft:poppy",
   "output_items": [
     {
       "item": {

@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:stick"
-    },
-    {
-      "item": "integrateddynamics:menril_berries"
-    }
+    "minecraft:stick",
+    "integrateddynamics:menril_berries"
   ],
   "result": {
     "id": "integrateddynamics:menril_torch",

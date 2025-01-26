@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "integrateddynamics:item/variable_transformer_input"
+  }
+}

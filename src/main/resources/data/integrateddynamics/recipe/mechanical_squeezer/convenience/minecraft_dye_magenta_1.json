@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:allium"
-  },
+  "input_item": "minecraft:allium",
   "output_items": [
     {
       "item": {

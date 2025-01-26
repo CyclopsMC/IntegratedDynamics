@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:mud"
-  },
+  "input_item": "minecraft:mud",
   "output_items": [
     {
       "item": {

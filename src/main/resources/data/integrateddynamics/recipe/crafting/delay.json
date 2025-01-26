@@ -6,18 +6,10 @@
     "VCV"
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable"
-    },
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "S": {
-      "item": "integrateddynamics:variablestore"
-    },
-    "L": {
-      "item": "minecraft:clock"
-    }
+    "V": "integrateddynamics:variable",
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "S": "integrateddynamics:variablestore",
+    "L": "minecraft:clock"
   },
   "result": {
     "id": "integrateddynamics:delay"

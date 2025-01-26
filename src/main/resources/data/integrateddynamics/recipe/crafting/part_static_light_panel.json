@@ -6,15 +6,9 @@
     " B "
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable_transformer_output"
-    },
-    "B": {
-      "item": "integrateddynamics:menril_berries"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    }
+    "V": "integrateddynamics:variable_transformer_output",
+    "B": "integrateddynamics:menril_berries",
+    "R": "#c:dusts/redstone"
   },
   "result": {
     "id": "integrateddynamics:part_static_light_panel"

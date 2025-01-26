@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "item": "minecraft:bone"
-  },
+  "input_item": "minecraft:bone",
   "output_items": [
     {
       "item": {

@@ -6,15 +6,9 @@
     "VCV"
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable"
-    },
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "S": {
-      "item": "integrateddynamics:variablestore"
-    }
+    "V": "integrateddynamics:variable",
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "S": "integrateddynamics:variablestore"
   },
   "result": {
     "id": "integrateddynamics:proxy"

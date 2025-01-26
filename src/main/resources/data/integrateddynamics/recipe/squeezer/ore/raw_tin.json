@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "tag": "c:ores/tin"
-  },
+  "input_item": "#c:ores/tin",
   "output_items": [
     {
       "tag": {

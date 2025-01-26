@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "tag": "c:ores/osmium"
-  },
+  "input_item": "#c:ores/osmium",
   "output_items": [
     {
       "tag": {

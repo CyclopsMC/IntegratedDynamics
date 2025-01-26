@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "item": "minecraft:glowstone"
-  },
+  "input_item": "minecraft:glowstone",
   "output_items": [
     {
       "item": {

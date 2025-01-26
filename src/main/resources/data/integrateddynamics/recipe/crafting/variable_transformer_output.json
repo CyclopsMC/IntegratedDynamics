@@ -6,15 +6,9 @@
     " V "
   ],
   "key": {
-    "V": {
-      "item": "integrateddynamics:variable"
-    },
-    "C": {
-      "item": "integrateddynamics:crystalized_menril_chunk"
-    },
-    "P": {
-      "item": "minecraft:piston"
-    }
+    "V": "integrateddynamics:variable",
+    "C": "integrateddynamics:crystalized_menril_chunk",
+    "P": "minecraft:piston"
   },
   "result": {
     "id": "integrateddynamics:variable_transformer_output",

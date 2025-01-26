@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:squeezer",
-  "input_item": {
-    "tag": "c:ores/emerald"
-  },
+  "input_item": "#c:ores/emerald",
   "output_items": [
     {
       "tag": {
