@@ -1,9 +1,18 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "integrateddynamics:block/energy_battery",
-    "model": {
-      "type": "integrateddynamics:energy_battery"
-    }
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "integrateddynamics:block/energy_battery"
+      },
+      {
+        "type": "minecraft:special",
+        "base": "integrateddynamics:block/energy_battery",
+        "model": {
+          "type": "integrateddynamics:energy_battery"
+        }
+      }
+    ]
   }
 }

@@ -8,7 +8,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.joml.Matrix4f;
@@ -67,6 +69,11 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
 
     public RenderBlockEntityEnergyBattery(BlockEntityRendererProvider.Context context) {
 
+    }
+
+    @Override
+    public boolean shouldRender(BlockEntityEnergyBattery blockEntity, Vec3 cameraPos) {
+        return blockEntity.getBlockPos() == BlockPos.ZERO || BlockEntityRenderer.super.shouldRender(blockEntity, cameraPos);
     }
 
     @Override
