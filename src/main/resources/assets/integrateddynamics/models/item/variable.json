@@ -1,6 +1,5 @@
 {
   "parent": "cyclopscore:item/flat",
-  "loader": "integrateddynamics:variable",
   "textures": {
     "layer0": "integrateddynamics:item/variable"
   }

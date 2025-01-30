@@ -1,0 +1,4 @@
+{
+  "parent": "cyclopscore:item/flat",
+  "loader": "integrateddynamics:variable_overlays_loader"
+}

@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.resources.model.BakedModel;
@@ -10,21 +9,18 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.context.ContextMap;
+import net.neoforged.neoforge.client.model.SimpleModelState;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 
 /**
- * Model for a variant of a variable item.
+ * Unbaked model for variable overlays.
  * @author rubensworks
  */
-public class VariableModel implements UnbakedModel {
-
-    private final BlockModel base;
-
-    public VariableModel(BlockModel base) {
-        this.base = base;
-    }
+public class UnbakedModelVariableOverlays implements UnbakedModel {
 
     public void loadSubModels(List<ResourceLocation> subModels) {
         for(IVariableModelProvider<? extends IVariableModelProvider.BakedModelProvider> provider : VariableModelProviders.REGISTRY.getProviders()) {
@@ -34,7 +30,6 @@ public class VariableModel implements UnbakedModel {
 
     @Override
     public void resolveDependencies(Resolver resolver) {
-        this.base.resolveDependencies(resolver);
         for (IVariableModelProvider<? extends IVariableModelProvider.BakedModelProvider> provider : VariableModelProviders.REGISTRY.getProviders()) {
             for (ResourceLocation dependency : provider.getDependencies()) {
                 resolver.resolve(dependency);
@@ -44,11 +39,13 @@ public class VariableModel implements UnbakedModel {
 
     @Override
     public BakedModel bake(TextureSlots textures, ModelBaker baker, ModelState modelState, boolean useAmbientOcclusion, boolean usesBlockLight, ItemTransforms itemTransforms, ContextMap additionalProperties) {
-        BakedModel baseModel = new ItemModelGenerator().bake(textures, baker, modelState, useAmbientOcclusion, usesBlockLight, itemTransforms, additionalProperties);
-        VariableModelBaked bakedModel = new VariableModelBaked(baseModel);
+        BakedModelVariableOverlays bakedModel = new BakedModelVariableOverlays();
 
+        // Small offset is required to prevent Z-fighting, similar to DynamicFluidContainerModel
+        Transformation overlayTransform = new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 1.002f), new Quaternionf());
         for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
-            bakedModel.setSubModels(provider, provider.bakeOverlayModels(baker, modelState));
+            ModelState overlayModelStateState = new SimpleModelState(modelState.getRotation().compose(overlayTransform), modelState.isUvLocked());
+            bakedModel.setSubModels(provider, provider.bakeOverlayModels(baker, overlayModelStateState));
         }
 
         return bakedModel;

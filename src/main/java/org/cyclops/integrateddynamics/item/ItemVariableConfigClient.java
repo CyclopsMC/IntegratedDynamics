@@ -4,13 +4,15 @@ import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterItemModelsEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemClientConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
-import org.cyclops.integrateddynamics.client.render.blockentity.ItemStackBlockEntityVariableRender;
-import org.cyclops.integrateddynamics.core.client.model.ModelLoaderVariable;
+import org.cyclops.integrateddynamics.client.render.blockentity.SpecialModelRendererVariableOverlay;
+import org.cyclops.integrateddynamics.core.client.model.ModelLoaderVariableOverlays;
+import org.cyclops.integrateddynamics.core.client.model.ItemModelVariableOverlay;
 
 import java.util.List;
 
@@ -23,13 +25,14 @@ public class ItemVariableConfigClient extends ItemClientConfig<IntegratedDynamic
     public ItemVariableConfigClient(ItemConfigCommon<IntegratedDynamics> itemConfig) {
         super(itemConfig);
         itemConfig.getMod().getModEventBus().register(this);
-        itemConfig.getMod().getModEventBus().addListener((RegisterSpecialModelRendererEvent event) -> event.register(itemConfig.getResourceKey().location(), ItemStackBlockEntityVariableRender.Unbaked.MAP_CODEC));
+        itemConfig.getMod().getModEventBus().addListener((RegisterSpecialModelRendererEvent event) -> event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable_overlay_special"), SpecialModelRendererVariableOverlay.Unbaked.MAP_CODEC));
+        itemConfig.getMod().getModEventBus().addListener((RegisterItemModelsEvent event) -> event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable_overlays"), ItemModelVariableOverlay.Unbaked.MAP_CODEC));
     }
 
     @SubscribeEvent
     public void onModelLoading(ModelEvent.RegisterLoaders event) {
         subModels = Lists.newArrayList();
-        event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable"), new ModelLoaderVariable(subModels));
+        event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable_overlays_loader"), new ModelLoaderVariableOverlays(subModels));
     }
 
     @SubscribeEvent

@@ -4,21 +4,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.SimpleBakedModel;
-import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.RenderTypeGroup;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
+import org.cyclops.cyclopscore.client.model.DynamicBaseModel;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
@@ -33,13 +30,11 @@ import java.util.Map;
  * A baked variable model.
  * @author rubensworks
  */
-public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel implements IVariableModelBaked {
+public class BakedModelVariableOverlays extends DynamicBaseModel implements IVariableModelBaked {
 
     private final Map<IVariableModelProvider, IVariableModelProvider.BakedModelProvider> subModels = Maps.newHashMap();
-
-    public VariableModelBaked(BakedModel parent) {
-        super(parent);
-    }
+    private final RandomSource rand = RandomSource.create();
+    private final ModelData modelData = ModelData.EMPTY;
 
     @Override
     public <B extends IVariableModelProvider.BakedModelProvider> void setSubModels(IVariableModelProvider<B> provider, B subModels) {
@@ -52,15 +47,27 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
     }
 
     @Override
-    public BakedModel handleBlockState(BlockState state, Direction side, RandomSource rand, ModelData modelData, RenderType renderType) {
-        return null;
+    public boolean usesBlockLight() {
+        return false;
     }
 
     @Override
-    public BakedModel handleItemState(ItemStack itemStack, Level world, LivingEntity entity) {
+    public boolean isGui3d() {
+        return false;
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleIcon() {
+        return Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getModelManager().getMissingModel().getParticleIcon();
+    }
+
+    @Override
+    public ItemTransforms getTransforms() {
+        return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS_ITEM;
+    }
+
+    public BakedModel getModelForItem(ItemStack itemStack, Level world, LivingEntity entity, ItemTransforms itemTransforms) {
         List<BakedQuad> quads = Lists.newLinkedList();
-        // Add regular quads for variable
-        quads.addAll(this.baseModel.getQuads(null, getRenderingSide(), this.rand, this.modelData, null));
 
         // Add variable type overlay
         IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.of(world == null ? Minecraft.getInstance().level : world), itemStack);
@@ -72,21 +79,6 @@ public class VariableModelBaked extends DelegatingChildDynamicItemAndBlockModel 
         }
 
         return new SimpleBakedModel(quads, ModelHelpers.EMPTY_FACE_QUADS, this.useAmbientOcclusion(), this.usesBlockLight(), this.isGui3d(),
-                this.getParticleIcon(), this.getTransforms(), RenderTypeGroup.EMPTY);
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return false;
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleIcon() {
-        return this.baseModel.getParticleIcon();
-    }
-
-    @Override
-    public ItemTransforms getTransforms() {
-        return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS_ITEM;
+                this.getParticleIcon(), itemTransforms, RenderTypeGroup.EMPTY);
     }
 }

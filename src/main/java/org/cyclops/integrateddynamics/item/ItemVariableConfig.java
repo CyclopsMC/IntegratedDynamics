@@ -21,6 +21,7 @@ public class ItemVariableConfig extends ItemConfigCommon<IntegratedDynamics> {
                 "variable",
                 (eConfig, properties) -> new ItemVariable(properties)
         );
+        getMod().getModEventBus().addListener(this::registerCapability);
     }
 
     @Override
