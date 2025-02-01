@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.item;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
@@ -38,20 +39,21 @@ public class ItemFacade extends Item implements IDynamicModelElementCommon {
     }
 
     public void writeFacadeBlock(ItemStack itemStack, BlockState blockState) {
+        // Set block data
         itemStack.set(RegistryEntries.DATACOMPONENT_FACADE_BLOCK, blockState);
-    }
 
-    @Override
-    public Component getName(ItemStack itemStack) {
+        // Append block name to item name
+        MutableComponent itemName = Component.translatable(this.descriptionId);
         Component suffix = Component.translatable("general.integrateddynamics.info.none")
                 .withStyle(ChatFormatting.ITALIC);
         ItemStack itemStackInner = getFacadeBlockItem(itemStack);
         if(itemStackInner != null) {
             suffix = getFacadeBlockItem(itemStack).getHoverName();
         }
-        return ((MutableComponent) super.getName(itemStack))
+        itemName = itemName
                 .append(" - ")
                 .append(suffix);
+        itemStack.set(DataComponents.ITEM_NAME, itemName);
     }
 
     @Override
