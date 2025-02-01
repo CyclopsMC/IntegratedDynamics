@@ -51,8 +51,11 @@ public class GameTestsAspects {
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
 
         // Produce a redstone signal
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -62,7 +65,9 @@ public class GameTestsAspects {
         placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.east().east().below(), Blocks.STONE);
         helper.setBlock(POS.east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
@@ -91,7 +96,9 @@ public class GameTestsAspects {
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.east().east().below(), Blocks.STONE);
         helper.setBlock(POS.east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
@@ -122,8 +129,11 @@ public class GameTestsAspects {
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.east().east()), Direction.EAST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
 
         // Produce a redstone signal
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -133,7 +143,9 @@ public class GameTestsAspects {
         placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east().east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.east().east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.east().east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.east().east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
@@ -168,8 +180,11 @@ public class GameTestsAspects {
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST, PartTypes.DISPLAY_PANEL, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()));
 
         // Produce a redstone signal
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -252,8 +267,11 @@ public class GameTestsAspects {
         BlockEntityVariablestore variableStore = helper.getBlockEntity(POS.north());
 
         // Produce a redstone signals
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
         helper.setBlock(POS.south(), Blocks.REDSTONE_BLOCK);
 
@@ -297,8 +315,11 @@ public class GameTestsAspects {
         BlockEntityVariablestore variableStore = helper.getBlockEntity(POS.north());
 
         // Produce a redstone signals
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
         helper.setBlock(POS.south(), Blocks.REDSTONE_BLOCK);
 
@@ -351,8 +372,11 @@ public class GameTestsAspects {
         BlockEntityVariablestore variableStore = helper.getBlockEntity(POS.north());
 
         // Produce a redstone signals
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
         helper.setBlock(POS.south(), Blocks.REDSTONE_BLOCK);
 
@@ -406,8 +430,11 @@ public class GameTestsAspects {
         BlockEntityVariablestore variableStore = helper.getBlockEntity(POS.east().east().north());
 
         // Produce a redstone signals
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
         helper.setBlock(POS.south(), Blocks.REDSTONE_BLOCK);
 
@@ -463,8 +490,11 @@ public class GameTestsAspects {
         BlockEntityVariablestore variableStore = helper.getBlockEntity(POS.north().north());
 
         // Produce a redstone signals
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
         helper.setBlock(POS.south(), Blocks.REDSTONE_BLOCK);
 
