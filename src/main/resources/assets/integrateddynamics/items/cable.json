@@ -1,6 +1,5 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "integrateddynamics:block/cable"
+    "type": "integrateddynamics:cable"
   }
 }

@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterItemModelsEvent;
 import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
@@ -29,6 +30,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.client.model.CableModel;
+import org.cyclops.integrateddynamics.core.client.model.ItemModelCable;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import javax.annotation.Nullable;
@@ -43,6 +45,7 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
         blockConfig.getMod().getModEventBus().addListener(this::onRegisterColors);
         blockConfig.getMod().getModEventBus().addListener(this::registerClientExtensions);
         blockConfig.getMod().getModEventBus().addListener(this::postTextureStitch);
+        blockConfig.getMod().getModEventBus().addListener((RegisterItemModelsEvent event) -> event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "cable"), ItemModelCable.Unbaked.MAP_CODEC));
     }
 
     public void onRegisterColors(RegisterColorHandlersEvent.Block event) {
