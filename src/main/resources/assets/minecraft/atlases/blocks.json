@@ -232,7 +232,6 @@
   { "type": "minecraft:single", "resource": "integrateddynamics:part/panel_front_light" },
   { "type": "minecraft:single", "resource": "integrateddynamics:customoverlay/delay" },
   { "type": "minecraft:single", "resource": "integrateddynamics:customoverlay/proxy" },
-  { "type": "minecraft:single", "resource": "integrateddynamics:slot/variable_empty" },
   { "type": "minecraft:single", "resource": "integrateddynamics:block/logic_programmer_top" },
   { "type": "minecraft:single", "resource": "integrateddynamics:block/menril_leaves_fancy" },
   { "type": "minecraft:single", "resource": "integrateddynamics:block/variablestore_top" },

@@ -1,0 +1,3 @@
+{ "sources": [
+  { "type": "minecraft:single", "resource": "integrateddynamics:slot/variable_empty" }
+]}
