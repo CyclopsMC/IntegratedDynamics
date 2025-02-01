@@ -249,7 +249,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         this.setChanged();
         if (getLevel().isLoaded(getBlockPos().relative(side))) {
             Orientation orientation = ExperimentalRedstoneUtils.initialOrientation(level, side.getOpposite(), null);
-            getLevel().neighborChanged(getBlockPos(), getBlockState().getBlock(), orientation);
+            getLevel().neighborChanged(getBlockPos().relative(side), getBlockState().getBlock(), orientation);
             if (strongPower) {
                 // When we are emitting a strong power, also update all neighbours of the target
                 getLevel().updateNeighborsAt(getBlockPos().relative(side), getBlockState().getBlock());
