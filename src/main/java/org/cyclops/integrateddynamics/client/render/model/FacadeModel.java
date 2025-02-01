@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
-import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
 import javax.annotation.Nonnull;
@@ -28,22 +28,21 @@ import java.util.List;
  */
 public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
 
-    public static BakedModel emptyModel;
+    private final BakedModel emptyModel;
 
-    public FacadeModel() {
-       super(null);
-    }
-
-    public FacadeModel(BakedModel baseModel) {
+    public FacadeModel(BakedModel baseModel, BakedModel emptyModel) {
         super(baseModel);
+        this.emptyModel = emptyModel;
     }
 
-    public FacadeModel(BakedModel baseModel, BlockState blockState, Direction facing, RandomSource rand, ModelData modelData, RenderType renderType) {
+    public FacadeModel(BakedModel baseModel, BakedModel emptyModel, BlockState blockState, Direction facing, RandomSource rand, ModelData modelData, RenderType renderType) {
         super(baseModel, blockState, facing, rand, modelData, renderType);
+        this.emptyModel = emptyModel;
     }
 
-    public FacadeModel(BakedModel baseModel, ItemStack itemStack, Level world, LivingEntity entity) {
+    public FacadeModel(BakedModel baseModel, BakedModel emptyModel, ItemStack itemStack, Level world, LivingEntity entity) {
         super(baseModel, itemStack, world, entity);
+        this.emptyModel = emptyModel;
     }
 
     @Override
@@ -67,13 +66,10 @@ public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
     public BakedModel handleItemState(ItemStack itemStack, Level world, LivingEntity entity) {
         BlockState blockState = RegistryEntries.ITEM_FACADE.get().getFacadeBlock(itemStack);
         if(blockState == null) {
-            return new FacadeModel(emptyModel, itemStack, world, entity);
+            return new FacadeModel(emptyModel, emptyModel, itemStack, world, entity);
         }
         BakedModel bakedModel = IModHelpers.get().getRenderHelpers().getBakedModel(blockState);
-        // TODO: rm or check IBakedModelExtension if this does not work
-//        bakedModel = bakedModel.getOverrides().resolve(bakedModel,
-//                RegistryEntries.ITEM_FACADE.get().getFacadeBlockItem(itemStack), (ClientLevel) world, entity, 0);
-        return new FacadeModel(bakedModel, itemStack, world, entity);
+        return new FacadeModel(bakedModel, emptyModel, itemStack, world, entity);
     }
 
     @Override

@@ -1,6 +1,6 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "integrateddynamics:item/facade"
+    "type": "integrateddynamics:facade",
+    "model_empty": "integrateddynamics:item/facade"
   }
 }

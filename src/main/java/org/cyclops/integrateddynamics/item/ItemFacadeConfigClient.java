@@ -5,25 +5,20 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.client.model.IDynamicModelElementCommon;
+import net.neoforged.neoforge.client.event.RegisterItemModelsEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemClientConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
+import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.core.client.model.ItemModelFacade;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * @author rubensworks
@@ -32,19 +27,7 @@ public class ItemFacadeConfigClient extends ItemClientConfig<IntegratedDynamics>
     public ItemFacadeConfigClient(ItemConfigCommon<IntegratedDynamics> itemConfig) {
         super(itemConfig);
         IntegratedDynamics._instance.getModEventBus().addListener(this::onRegisterColors);
-    }
-
-    @Override
-    public @Nullable IDynamicModelElementCommon getDynamicModelElement() {
-        return new IDynamicModelElementCommon() {
-            @Override
-            public BakedModel createDynamicModel(Consumer<Pair<ModelResourceLocation, BakedModel>> modelConsumer, Function<ModelResourceLocation, BakedModel> modelRetriever) {
-                // Don't throw away the original model, but use if for displaying an unbound facade item.
-                ModelResourceLocation location = new ModelResourceLocation(BuiltInRegistries.ITEM.getKey(getItemConfig().getInstance()), "inventory");
-                FacadeModel.emptyModel = modelRetriever.apply(location);
-                return new FacadeModel();
-            }
-        };
+        itemConfig.getMod().getModEventBus().addListener((RegisterItemModelsEvent event) -> event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "facade"), ItemModelFacade.Unbaked.MAP_CODEC));
     }
 
     @OnlyIn(Dist.CLIENT)
