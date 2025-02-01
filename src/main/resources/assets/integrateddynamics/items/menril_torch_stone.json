@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "integrateddynamics:block/menril_torch_stone"
+    "model": "integrateddynamics:item/menril_torch_stone"
   }
 }
