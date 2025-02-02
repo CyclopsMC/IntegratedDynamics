@@ -1975,7 +1975,7 @@ public final class Operators {
             .function(variables -> {
                 ItemStack inputItem = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK).getRawValue().copy();
                 ValueTypeNbt.ValueNbt tag = variables.getValue(1, ValueTypes.NBT);
-                inputItem.setTag((CompoundTag)tag.getRawValue().orElse(new CompoundTag()));
+                inputItem.setTag((CompoundTag)tag.getRawValue().orElse(null));
                 return ValueObjectTypeItemStack.ValueItemStack.of(inputItem);
             }).build());
 
