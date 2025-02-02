@@ -14,16 +14,6 @@ public interface IAspectRead<V extends IValue, T extends IValueType<V>> extends 
 
     /**
      * Creates a new variable for this aspect.
-     * @param target The target for this aspect.
-     * @return The variable pointing to the given target.
-     */
-    @Deprecated // TODO: rm in next major
-    public default IAspectVariable<V> createNewVariable(PartTarget target) {
-        return this.createNewVariable(() -> target);
-    }
-
-    /**
-     * Creates a new variable for this aspect.
      * @param targetSupplier The target supplier for this aspect.
      * @return The variable pointing to the given target.
      */

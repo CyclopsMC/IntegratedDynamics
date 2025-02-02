@@ -40,11 +40,6 @@ public abstract class LazyAspectVariable<V extends IValue> extends VariableAdapt
         this.aspect = aspect;
     }
 
-    @Deprecated // TODO: rm in next major
-    public LazyAspectVariable(IValueType<V> type, PartTarget target, IAspectRead<V, ?> aspect) {
-        this(type, () -> target, aspect);
-    }
-
     public PartTarget getTarget() {
         return targetSupplier.get();
     }

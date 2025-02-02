@@ -109,11 +109,6 @@ public class PartRenderPosition {
         return collisionBoxes.get(side);
     }
 
-    @Deprecated // TODO: rm in next major
-    public VoxelShape getBoundingBox(Direction side) {
-        return this.getBoundingBox(side, CollisionContext.empty());
-    }
-
     public float getWidthFactorSide() {
         return widthFactorSide;
     }

@@ -195,7 +195,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 materializedValue = newValue.getType().materialize(newValue);
             } catch (EvaluationException e) {
                 state.addGlobalError(e.getErrorMessage());
-                e.addResolutionListeners(() -> state.addGlobalError(null)); // TODO: also change here?
+                e.addResolutionListeners(() -> state.addGlobalError(null));
             }
             state.setDisplayValue(materializedValue);
         }
