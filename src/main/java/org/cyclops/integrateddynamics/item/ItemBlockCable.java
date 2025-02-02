@@ -76,8 +76,7 @@ public class ItemBlockCable extends BlockItem {
                 if (!context.getLevel().isClientSide()) {
                     cable.setRealCable(true);
                     CableHelpers.updateConnections(context.getLevel(), pos, side);
-                    CableHelpers.onCableAdded(context.getLevel(), pos);
-                    CableHelpers.onCableAddedByPlayer(context.getLevel(), pos, context.getPlayer());
+                    CableHelpers.onCableAddedByPlayerActual(context.getLevel(), pos, context.getPlayer());
                 }
                 return true;
             }
