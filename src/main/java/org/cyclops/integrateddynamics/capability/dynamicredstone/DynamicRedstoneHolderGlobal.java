@@ -123,7 +123,7 @@ public class DynamicRedstoneHolderGlobal {
                 if (level.isLoaded(pos.relative(side.getOpposite()))) {
                     BlockState blockState = level.getBlockState(pos);
                     Orientation orientation = ExperimentalRedstoneUtils.initialOrientation(level, side.getOpposite(), null);
-                    level.neighborChanged(pos, blockState.getBlock(), orientation);
+                    level.neighborChanged(pos.relative(side.getOpposite()), blockState.getBlock(), orientation);
                     if (strongPower) {
                         // When we are emitting a strong power, also update all neighbours of the target
                         level.updateNeighborsAt(pos.relative(side.getOpposite()), blockState.getBlock());

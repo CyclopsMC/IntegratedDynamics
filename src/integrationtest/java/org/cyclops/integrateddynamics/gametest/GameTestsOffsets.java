@@ -56,8 +56,11 @@ public class GameTestsOffsets {
         boolean changedOffsetWriter = setOffset(posWriter, new Vec3i(2, 0, 0));
 
         // Produce a redstone signal
+        helper.setBlock(POS.offset(-2, 0, 0).west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -67,7 +70,9 @@ public class GameTestsOffsets {
         placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.offset(2, 0, 0).east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(2, 0, 0).east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
@@ -108,8 +113,11 @@ public class GameTestsOffsets {
         boolean changedOffsetWriter = setOffset(posWriter, new Vec3i(2, 0, 0));
 
         // Produce a redstone signal
+        helper.setBlock(POS.offset(-2, 0, 0).west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -119,7 +127,9 @@ public class GameTestsOffsets {
         placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.offset(2, 0, 0).east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(2, 0, 0).east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
@@ -162,8 +172,11 @@ public class GameTestsOffsets {
         setOffsetSide(posWriter, Direction.SOUTH);
 
         // Produce a redstone signal
+        helper.setBlock(POS.offset(-2, 0, 0).west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -173,7 +186,9 @@ public class GameTestsOffsets {
         placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.offset(2, 0, 0).east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(2, 0, 0).east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
@@ -214,8 +229,11 @@ public class GameTestsOffsets {
         setOffsetSide(posWriter, Direction.SOUTH);
 
         // Produce a redstone signal
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -225,7 +243,9 @@ public class GameTestsOffsets {
         placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.east().east().below(), Blocks.STONE);
         helper.setBlock(POS.east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
@@ -261,8 +281,11 @@ public class GameTestsOffsets {
         boolean changedOffsetWriter = setOffset(posWriter, new Vec3i(2, 0, 0));
 
         // Produce a redstone signal
+        helper.setBlock(POS.offset(-2, 0, 0).west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -272,7 +295,9 @@ public class GameTestsOffsets {
         placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.offset(2, 0, 0).east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(2, 0, 0).east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
@@ -303,8 +328,11 @@ public class GameTestsOffsets {
         boolean changedOffsetWriter = setOffset(posWriter, new Vec3i(2, 0, 0));
 
         // Produce a redstone signal
+        helper.setBlock(POS.offset(-2, 0, 0).west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(-2, 0, 0).west().west().west().below(), Blocks.STONE);
         helper.setBlock(POS.offset(-2, 0, 0).west().west().west(), Blocks.REDSTONE_TORCH);
 
         // Writer redstone signal from redstone reader to variable card
@@ -314,7 +342,9 @@ public class GameTestsOffsets {
         placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
+        helper.setBlock(POS.offset(2, 0, 0).east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS.offset(2, 0, 0).east().east().east().below(), Blocks.STONE);
         helper.setBlock(POS.offset(2, 0, 0).east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
