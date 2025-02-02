@@ -316,11 +316,7 @@ public class CableHelpers {
             CableHelpers.onCableAddedByPlayer(world, pos, placer);
             CABLE_PLACER_SNAPSHOT = new WeakReference<>(null);
         } else {
-            CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
-            if (!world.isClientSide()) {
-                NetworkHelpers.initNetwork(world, pos, null)
-                        .ifPresent(network -> NeoForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, null)));
-            }
+            onCableAddedByPlayerActual(world, pos, null);
         }
     }
 
@@ -336,11 +332,23 @@ public class CableHelpers {
         if (world.captureBlockSnapshots) {
             CABLE_PLACER_SNAPSHOT = new WeakReference<>(placer);
         } else {
-            CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
-            if(!world.isClientSide()) {
-                NetworkHelpers.initNetwork(world, pos, null)
-                        .ifPresent(network -> NeoForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer)));
-            }
+            onCableAddedByPlayerActual(world, pos, placer);
+        }
+    }
+
+    /**
+     * This should be called when a cable was added by a player.
+     * This should be called after {@link CableHelpers#onCableAdded(Level, BlockPos)}.
+     * It simply emits an player-sensitive init event on the network bus.
+     * @param world The world.
+     * @param pos The position.
+     * @param placer The entity who placed the cable.
+     */
+    public static void onCableAddedByPlayerActual(Level world, BlockPos pos, @Nullable LivingEntity placer) {
+        CableHelpers.updateConnectionsNeighbours(world, pos, CableHelpers.ALL_SIDES);
+        if(!world.isClientSide()) {
+            NetworkHelpers.initNetwork(world, pos, null)
+                    .ifPresent(network -> NeoForge.EVENT_BUS.post(new NetworkInitializedEvent(network, world, pos, placer)));
         }
     }
 
