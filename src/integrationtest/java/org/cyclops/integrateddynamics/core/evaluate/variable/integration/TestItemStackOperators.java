@@ -87,6 +87,9 @@ public class TestItemStackOperators {
         iAppleNoData.getValue().getRawValue().remove(DataComponents.ATTRIBUTE_MODIFIERS);
         iAppleNoData.getValue().getRawValue().remove(DataComponents.RARITY);
         iAppleNoData.getValue().getRawValue().remove(DataComponents.FOOD);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.ITEM_NAME);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.ITEM_MODEL);
+        iAppleNoData.getValue().getRawValue().remove(DataComponents.CONSUMABLE);
         iApple2 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE, 2)));
         ItemStack appleStack = new ItemStack(Items.APPLE);
         appleStack.set(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifier(2));
@@ -1197,15 +1200,18 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res1).getRawValue().getLength(), 0, "datakeys(apple) = []");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_DATA_KEYS.evaluate(new IVariable[]{iAppleTag});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res2).getRawValue().getLength(), 8, "datakeys(appleTag).length = 8");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res2).getRawValue().getLength(), 11, "datakeys(appleTag).length = 11");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(0))).getRawValue(), "minecraft:attribute_modifiers", "datakeys(appleTag)[0] == ...");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(1))).getRawValue(), "minecraft:enchantments", "datakeys(appleTag)[1] == ...");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(2))).getRawValue(), "minecraft:food", "datakeys(appleTag)[2] == ...");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(3))).getRawValue(), "minecraft:lore", "datakeys(appleTag)[3] == ...");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(4))).getRawValue(), "minecraft:max_stack_size", "datakeys(appleTag)[4] == ...");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(5))).getRawValue(), "minecraft:ominous_bottle_amplifier", "datakeys(appleTag)[5] == ...");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(6))).getRawValue(), "minecraft:rarity", "datakeys(appleTag)[6] == ...");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(7))).getRawValue(), "minecraft:repair_cost", "datakeys(appleTag)[7] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(1))).getRawValue(), "minecraft:consumable", "datakeys(appleTag)[1] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(2))).getRawValue(), "minecraft:enchantments", "datakeys(appleTag)[2] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(3))).getRawValue(), "minecraft:food", "datakeys(appleTag)[3] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(4))).getRawValue(), "minecraft:item_model", "datakeys(appleTag)[4] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(5))).getRawValue(), "minecraft:item_name", "datakeys(appleTag)[5] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(6))).getRawValue(), "minecraft:lore", "datakeys(appleTag)[6] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(7))).getRawValue(), "minecraft:max_stack_size", "datakeys(appleTag)[7] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(8))).getRawValue(), "minecraft:ominous_bottle_amplifier", "datakeys(appleTag)[8] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(9))).getRawValue(), "minecraft:rarity", "datakeys(appleTag)[9] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(10))).getRawValue(), "minecraft:repair_cost", "datakeys(appleTag)[10] == ...");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
