@@ -1973,7 +1973,7 @@ public final class Operators {
             .inputTypes(ValueTypes.OBJECT_ITEMSTACK, ValueTypes.NBT)
             .output(ValueTypes.OBJECT_ITEMSTACK).symbol("item_with_tag").operatorName("itemwithtag").interactName("itemWithTag")
             .function(variables -> {
-                ItemStack inputItem = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK).getRawValue();
+                ItemStack inputItem = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK).getRawValue().copy();
                 ValueTypeNbt.ValueNbt tag = variables.getValue(1, ValueTypes.NBT);
                 inputItem.setTag((CompoundTag)tag.getRawValue().orElse(new CompoundTag()));
                 return ValueObjectTypeItemStack.ValueItemStack.of(inputItem);
