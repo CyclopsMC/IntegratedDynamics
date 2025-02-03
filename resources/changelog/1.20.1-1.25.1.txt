@@ -1,0 +1,16 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.4 or higher.
+
+Additions:
+* Add Item with tag operation
+
+Fixes:
+* Fix REI recipe transfer to LP not working for fluids
+* Fix LP recipe transfer including chance-based outputs
+  Non-100% outputs could cause issues for autocrafting.
+  This is fixed for both JEI and REI.
+  Closes CyclopsMC/IntegratedCrafting#127
+* Fix tag-based JEI recipe transfer ignoring stack sizes
+  Closes CyclopsMC/IntegratedCrafting#128
+* Fix placing part before cable not properly connecting cables
+  Closes CyclopsMC/IntegratedTunnels#321
