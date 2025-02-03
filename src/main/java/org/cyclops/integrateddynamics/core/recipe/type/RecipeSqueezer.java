@@ -62,8 +62,7 @@ public class RecipeSqueezer implements Recipe<Container> {
     }
 
     public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
-        if (!inputItem.is(RegistryEntries.ITEM_FACADE.asItem())) return getOutputItems();
-        return FacadeSqueezeCalculator.getOutputItems(inputItem);
+        return getOutputItems();
     }
 
     @Override
