@@ -1232,6 +1232,8 @@
     "operator.integrateddynamics.itemstack.nbt.info": "Get the NBT tag of the given item.",
     "operator.integrateddynamics.itemstack.hasnbt": "Has NBT",
     "operator.integrateddynamics.itemstack.hasnbt.info": "If the item stack has an NBT tag.",
+    "operator.integrateddynamics.itemstack.itemwithtag": "Item With Tag",
+    "operator.integrateddynamics.itemstack.itemwithtag.info": "Set the NBT tag of the given item.",
 
     "operator.integrateddynamics.entity": "Entity",
     "operator.integrateddynamics.entity.basename": "Entity %s",

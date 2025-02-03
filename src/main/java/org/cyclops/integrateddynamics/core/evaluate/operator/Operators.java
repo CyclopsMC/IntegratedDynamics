@@ -1967,6 +1967,19 @@ public final class Operators {
             )).build());
 
     /**
+     * Get an itemstack with the given nbt tag
+     */
+    public static final IOperator OBJECT_ITEMSTACK_WITH_TAG = REGISTRY.register(OperatorBuilders.ITEMSTACK_2_LONG
+            .inputTypes(ValueTypes.OBJECT_ITEMSTACK, ValueTypes.NBT)
+            .output(ValueTypes.OBJECT_ITEMSTACK).symbol("item_with_tag").operatorName("itemwithtag").interactName("itemWithTag")
+            .function(variables -> {
+                ItemStack inputItem = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK).getRawValue().copy();
+                ValueTypeNbt.ValueNbt tag = variables.getValue(1, ValueTypes.NBT);
+                inputItem.setTag((CompoundTag)tag.getRawValue().orElse(null));
+                return ValueObjectTypeItemStack.ValueItemStack.of(inputItem);
+            }).build());
+
+    /**
      * Get the tooltip of an itemstack in list form.
      */
     public static final IOperator OBJECT_ITEMSTACK_TOOLTIP = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
