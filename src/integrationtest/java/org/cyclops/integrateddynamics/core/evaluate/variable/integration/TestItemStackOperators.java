@@ -68,6 +68,8 @@ public class TestItemStackOperators {
 
     private DummyVariable<ValueTypeList.ValueList> lApples;
 
+    private DummyVariable<ValueTypeNbt.ValueNbt> sHoeNbt;
+
     @IntegrationBefore
     public void before() {
         iApple = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.APPLE)));
@@ -123,6 +125,10 @@ public class TestItemStackOperators {
                 iHoe100.getValue(),
                 iApple2.getValue()
         ));
+
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("Damage", 51);
+        sHoeNbt = new DummyVariable<>(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(tag));
     }
 
     /**
@@ -1251,6 +1257,32 @@ public class TestItemStackOperators {
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeHasNbt() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * WITHNBT
+     */
+
+    @IntegrationTest
+    public void testItemStackWithNbt() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{iHoe, sHoeNbt});
+        Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getOrCreateTag(), sHoeNbt.getValue().getRawValue(), "itemnbt(withnbt(iHoe, sHoeNbt)) = sHoeNbt");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputWithNbtHasNbtLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iHoe, sHoeNbt, iHoe});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputWithNbtHasNbtSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iHoe});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeWithNbt() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
