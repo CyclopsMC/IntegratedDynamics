@@ -186,6 +186,8 @@ public class Configs {
         configHandler.addConfigurable(new RecipeSerializerMechanicalDryingBasinConfig());
         configHandler.addConfigurable(new RecipeSerializerSqueezerConfig());
         configHandler.addConfigurable(new RecipeSerializerMechanicalSqueezerConfig());
+        configHandler.addConfigurable(new RecipeSerializerFacadeSqueezeConfig());
+        configHandler.addConfigurable(new RecipeSerializerFacadeSqueezeMechanicalConfig());
         configHandler.addConfigurable(new RecipeSerializerNbtClearConfig());
         configHandler.addConfigurable(new RecipeEnergyContainerCombinationConfig());
         configHandler.addConfigurable(new ItemVariableCopyRecipeConfig());

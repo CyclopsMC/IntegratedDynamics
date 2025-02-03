@@ -1,5 +1,5 @@
 {
-  "type": "integrateddynamics:mechanical_squeezer",
+  "type": "integrateddynamics:facade_squeeze_mechanical",
   "item": {
     "item": "integrateddynamics:facade"
   },
@@ -16,7 +16,7 @@
         "item": {
           "item": "integrateddynamics:facade",
 		  "chance": 1,
-          "count": 5
+          "count": 1
         }
       }
      ]
