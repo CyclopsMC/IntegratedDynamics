@@ -21,10 +21,15 @@ public interface ICable {
      */
     public boolean canConnect(ICable connector, Direction side);
 
+    public default void updateConnections() {
+        this.updateConnections(true);
+    }
+
     /**
      * Update the cable connections.
+     * @param setChanged If the block entity should be marked as changed.
      */
-    public void updateConnections();
+    public void updateConnections(boolean setChanged);
 
     /**
      * Check if this cable is connected to a side.
