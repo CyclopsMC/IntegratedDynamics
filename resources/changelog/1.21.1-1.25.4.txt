@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Fixes:
+* Fix LP recipe slot properties not displaying tag tooltip items
+* Fix reusable tag-based recipes always having strict NBT
+  This would cause issues for autocrafting jobs where tag-based reusable
+  items that take damage would not be reused from the moment they take
+  damage.
+  Closes CyclopsMC/IntegratedCrafting#129
+* Fix cable model updating neighbours from wrong thread, Closes #1465
