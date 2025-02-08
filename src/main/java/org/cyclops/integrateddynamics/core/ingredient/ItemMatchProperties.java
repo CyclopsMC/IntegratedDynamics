@@ -107,13 +107,13 @@ public class ItemMatchProperties {
     }
 
     public IPrototypedIngredientAlternatives<ItemStack, Integer> createPrototypedIngredient() {
+        int flags = isNbt() ? ItemMatch.ITEM | ItemMatch.DATA : ItemMatch.ITEM;
         if (getItemTag() == null) {
-            int flags = isNbt() ? ItemMatch.ITEM | ItemMatch.DATA : ItemMatch.ITEM;
             return new PrototypedIngredientAlternativesList<>(
                     Collections.singletonList(new PrototypedIngredient<>(IngredientComponent.ITEMSTACK, itemStack, flags)));
         } else {
             return new PrototypedIngredientAlternativesItemStackTag(Collections.singletonList(getItemTag()),
-                    ItemMatch.ITEM | ItemMatch.DATA, getTagQuantity());
+                    flags, getTagQuantity());
         }
     }
 }
