@@ -18,7 +18,6 @@
       "conditions": {
         "part_type": "integrateddynamics:display_panel",
         "variable": {
-          "type": "value_type",
           "value": {
             "type": "operator",
             "operator": "integrateddynamics:entity_targetblock"
