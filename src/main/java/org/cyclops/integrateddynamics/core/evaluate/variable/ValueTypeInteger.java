@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -46,6 +47,8 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     public ValueInteger deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
         if (value.getId() == Tag.TAG_INT) {
             return ValueInteger.of(((IntTag) value).getAsInt());
+        } else if (value.getId() == Tag.TAG_BYTE) {
+            return ValueInteger.of(((ByteTag) value).getAsInt());
         } else {
             throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to an integer.", value));
         }

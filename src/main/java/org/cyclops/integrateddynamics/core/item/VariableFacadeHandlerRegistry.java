@@ -80,7 +80,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
             return DUMMY_FACADE;
         }
         if(!tagCompound.contains("_type", Tag.TAG_STRING)
-                || !tagCompound.contains("_id", Tag.TAG_INT)) {
+                || !(tagCompound.contains("_id", Tag.TAG_INT) || tagCompound.contains("_id", Tag.TAG_BYTE))) {
             return DUMMY_FACADE;
         }
         String type = tagCompound.getString("_type");

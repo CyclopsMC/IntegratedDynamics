@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -65,6 +66,15 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
         CompoundTag tag = (CompoundTag) value;
         if (!tag.contains("valueType", Tag.TAG_STRING)) {
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the materialized list value '%s' as it is missing a valueType.", value));
+        }
+        // This tag rewrite needed for loading variables in advancement icons
+        if (tag.contains("values", Tag.TAG_BYTE_ARRAY)) {
+            byte[] byteArray = tag.getByteArray("values");
+            ListTag list = new ListTag();
+            for (byte b : byteArray) {
+                list.add(IntTag.valueOf(b));
+            }
+            tag.put("values", list);
         }
         if (!tag.contains("values", Tag.TAG_LIST)) {
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the materialized list value '%s' as it is missing values.", value));

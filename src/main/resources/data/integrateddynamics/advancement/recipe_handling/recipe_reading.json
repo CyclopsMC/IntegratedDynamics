@@ -2,7 +2,14 @@
   "display": {
     "icon": {
       "id": "integrateddynamics:variable",
-      "nbt": "{aspectName:\"integrateddynamics:read_list_recipehandler_recipes\",partId:1,_type:\"integrateddynamics:aspect\",_id:1}"
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "partId": 1,
+          "_id": 1,
+          "_type": "integrateddynamics:aspect",
+          "aspectName": "integrateddynamics:read_list_recipehandler_recipes"
+        }
+      }
     },
     "title": {
       "translate": "advancement.integrateddynamics.recipe_reading"

@@ -2,7 +2,21 @@
   "display": {
     "icon": {
       "id": "integrateddynamics:variable",
-      "nbt": "{_type:\"integrateddynamics:valuetype\",typeName:\"integrateddynamics:list\",_id:1,value:{proxyName:\"integrateddynamics:materialized\",serialized:{valueType:\"integrateddynamics:integer\",values:[1,10,100]}}}"
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "partId": 1,
+          "_id": 1,
+          "_type": "integrateddynamics:valuetype",
+          "typeName": "integrateddynamics:list",
+          "value": {
+            "proxyName": "integrateddynamics:materialized",
+            "serialized": {
+              "valueType": "integrateddynamics:integer",
+              "values": [1, 10, 100]
+            }
+          }
+        }
+      }
     },
     "title": {
       "translate": "advancement.integrateddynamics.logical_list_building"

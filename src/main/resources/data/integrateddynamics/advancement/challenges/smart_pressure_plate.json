@@ -2,7 +2,14 @@
   "display": {
     "icon": {
       "id": "integrateddynamics:variable",
-      "nbt": "{_type:\"integrateddynamics:aspect\",aspectName:\"integrateddynamics:read_entity_entity\",_id:1,partIds:1}"
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "partId": 1,
+          "_id": 1,
+          "_type": "integrateddynamics:aspect",
+          "aspectName": "integrateddynamics:read_entity_entity"
+        }
+      }
     },
     "title": {
       "translate": "advancement.integrateddynamics.smart_pressure_plate"

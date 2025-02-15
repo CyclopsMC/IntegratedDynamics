@@ -166,7 +166,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     @Override
     public IOperatorVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
         if(!tag.contains("operatorName", Tag.TAG_STRING)
-                || !tag.contains("variableIds", Tag.TAG_INT_ARRAY)) {
+                || !(tag.contains("variableIds", Tag.TAG_INT_ARRAY) || tag.contains("variableIds", Tag.TAG_BYTE_ARRAY))) {
             return INVALID_FACADE;
         }
         IOperator operator;

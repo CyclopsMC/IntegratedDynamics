@@ -2,7 +2,15 @@
   "display": {
     "icon": {
       "id": "integrateddynamics:variable",
-      "nbt": "{_type:\"integrateddynamics:valuetype\",typeName:\"integrateddynamics:nbt\",_id:1,value:{}}"
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "partId": 1,
+          "_id": 1,
+          "_type": "integrateddynamics:valuetype",
+          "typeName": "integrateddynamics:nbt",
+          "value": {}
+        }
+      }
     },
     "title": {
       "translate": "advancement.integrateddynamics.lectern_book_name"
