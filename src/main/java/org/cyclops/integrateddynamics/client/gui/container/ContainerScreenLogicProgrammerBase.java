@@ -2,13 +2,13 @@ package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Triple;
@@ -140,19 +140,22 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 Triple<Float, Float, Float> rgb = IModHelpers.get().getBaseHelpers().intToRGB(element.getColor());
                 boolean hover = LogicProgrammerElementTypes.areEqual(container.getActiveElement(), element)
                         || isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY));
-                RenderSystem.setShaderColor(colorSmoothener(rgb.getLeft(), hover), colorSmoothener(rgb.getMiddle(), hover),
-                        colorSmoothener(rgb.getRight(), hover), 1);
+                int color = ARGB.colorFromFloat(
+                        1F,
+                        colorSmoothener(rgb.getLeft(), hover),
+                        colorSmoothener(rgb.getMiddle(), hover),
+                        colorSmoothener(rgb.getRight(), hover)
+                );
 
                 // Background
                 guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + ITEM_POSITION.x,
-                        topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height, 256, 256);
+                        topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height, 256, 256, color);
 
                 // Arrow
                 if(hover) {
                     guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + ITEM_POSITION.x,
-                            topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16, 256, 256);
+                            topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16, 256, 256, color);
                 }
-                RenderSystem.setShaderColor(1, 1, 1, 1);
 
                 // Operator info
                 String aspectName = element.getSymbol();

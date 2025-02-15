@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -10,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
@@ -119,13 +119,16 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
                 //GlStateManager._disableAlphaTest();
                 Triple<Float, Float, Float> rgb = IModHelpers.get().getBaseHelpers().intToRGB(aspect.getValueType().getDisplayColor());
-                RenderSystem.setShaderColor(colorSmoothener(rgb.getLeft()), colorSmoothener(rgb.getMiddle()),
-                        colorSmoothener(rgb.getRight()), 1);
+                int color = ARGB.colorFromFloat(
+                        1F,
+                        colorSmoothener(rgb.getLeft()),
+                        colorSmoothener(rgb.getMiddle()),
+                        colorSmoothener(rgb.getRight())
+                );
 
                 // Background
                 guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + 9,
-                        topPos + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1, 256, 256);
-                RenderSystem.setShaderColor(1, 1, 1, 1);
+                        topPos + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1, 256, 256, color);
 
                 // Aspect type info
                 String aspectName = IModHelpers.get().getL10NHelpers().localize(aspect.getTranslationKey());
