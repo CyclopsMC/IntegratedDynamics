@@ -54,7 +54,7 @@ public class ConcurrentWorldIngredientsProxy<T, M> {
     }
 
     protected Collection<PartPos> getPositions() {
-        return Lists.newArrayList(getNetwork().getPositions());
+        return Sets.newHashSet(getNetwork().getPositions());
     }
 
     public void onWorldTick() {
@@ -107,7 +107,7 @@ public class ConcurrentWorldIngredientsProxy<T, M> {
                 this.states.remove(oldPosition);
                 this.instances.remove(oldPosition);
             }
-            this.oldPositions = Sets.newHashSet(newPositions);
+            this.oldPositions = (Set<PartPos>)newPositions;
         }
     }
 

@@ -13,10 +13,12 @@ public class PathElementTile<T extends BlockEntity> extends PathElementCable {
 
     private final T tile;
     private final ICable cable;
+    private DimPos position = null;
 
     public PathElementTile(T tile, ICable cable) {
         this.tile = tile;
         this.cable = cable;
+        this.position = DimPos.of(tile.getLevel(), tile.getBlockPos());
     }
 
     protected T getTile() {
@@ -30,7 +32,7 @@ public class PathElementTile<T extends BlockEntity> extends PathElementCable {
 
     @Override
     public DimPos getPosition() {
-        return DimPos.of(tile.getLevel(), tile.getBlockPos());
+        return position;
     }
 
 }
