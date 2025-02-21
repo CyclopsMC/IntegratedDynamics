@@ -362,7 +362,7 @@
 
     "parttype.integrateddynamics.data_driven_panel.error.invalid_type": "This panel does not accept a %s.",
     "parttype.integrateddynamics.static_light_panel": "Static Light Panel",
-    "parttype.integrateddynamics.static_light_panel.info": "A simply light panel that is always active",
+    "parttype.integrateddynamics.static_light_panel.info": "A simple light panel that is always active",
     "parttype.integrateddynamics.dynamic_light_panel": "Dynamic Light Panel",
     "parttype.integrateddynamics.dynamic_light_panel.info": "Visually display a variable value in the world as light value",
     "parttype.integrateddynamics.display_panel": "Display Panel",
