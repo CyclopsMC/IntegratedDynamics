@@ -862,7 +862,7 @@
     "aspect.integrateddynamics.read.boolean.world.weather.clear": "Weather: Clear",
     "aspect.integrateddynamics.read.boolean.world.weather.clear.info": "If there is a clear weather in the world",
     "aspect.integrateddynamics.read.boolean.world.weather.raining": "Weather: Rain",
-    "aspect.integrateddynamics.read.boolean.world.weather.raining.info": "If there it is raining in the world",
+    "aspect.integrateddynamics.read.boolean.world.weather.raining.info": "If it is raining in the world",
     "aspect.integrateddynamics.read.boolean.world.weather.thunder": "Weather: Thunder",
     "aspect.integrateddynamics.read.boolean.world.weather.thunder.info": "If there is a thunderstorm in the world",
     "aspect.integrateddynamics.read.boolean.world.isday": "Is Day",
