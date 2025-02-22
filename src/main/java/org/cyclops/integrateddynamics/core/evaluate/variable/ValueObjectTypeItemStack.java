@@ -13,11 +13,7 @@ import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.cyclopscore.helper.ItemStackHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
@@ -39,7 +35,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     public static MutableComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
         return !itemStack.isEmpty()
-                ? (((MutableComponent) itemStack.getHoverName()).append((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
+                ? (itemStack.getHoverName().copy().append((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))
                 : Component.literal("");
     }
 
