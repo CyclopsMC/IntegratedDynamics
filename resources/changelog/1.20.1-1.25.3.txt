@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.4 or higher.
+
+Fixes:
+* Fix GUIs remaining open after external breakage, Closes #1472
+* Fix rare tooltip crash for item-based variable cards, Closes #1477
