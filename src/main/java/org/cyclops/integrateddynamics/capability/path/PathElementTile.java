@@ -13,7 +13,7 @@ public class PathElementTile<T extends BlockEntity> extends PathElementCable {
 
     private final T tile;
     private final ICable cable;
-    private DimPos position = null;
+    private final DimPos position;
 
     public PathElementTile(T tile, ICable cable) {
         this.tile = tile;
