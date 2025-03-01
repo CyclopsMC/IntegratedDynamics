@@ -53,12 +53,12 @@ public class ConcurrentWorldIngredientsProxy<T, M> {
         return value;
     }
 
-    protected Collection<PartPos> getPositions() {
-        return Lists.newArrayList(getNetwork().getPositions());
+    protected Set<PartPos> getPositions() {
+        return Sets.newHashSet(getNetwork().getPositions());
     }
 
     public void onWorldTick() {
-        Collection<PartPos> newPositions = getPositions();
+        Set<PartPos> newPositions = getPositions();
 
         // Do nothing if nothing was read, and no positions were changed
         boolean positionsChanged = newPositions.size() != this.oldPositions.size() || !newPositions.containsAll(this.oldPositions);
@@ -107,7 +107,7 @@ public class ConcurrentWorldIngredientsProxy<T, M> {
                 this.states.remove(oldPosition);
                 this.instances.remove(oldPosition);
             }
-            this.oldPositions = Sets.newHashSet(newPositions);
+            this.oldPositions = newPositions;
         }
     }
 
