@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Changes:
+* Improve performance of block changes to very large networks
+  Pathfinder is ~70x faster, also improved tick speed with lots of devices (17 ms to 3 ms in test scene)
+
+Fixes:
+* Fix duplication of offset enchancements when breaking cable, Closes #1480
+* Fix passive interaction changes not immediately applying on change
+  It used to only take effect after re-inserting a variable card.
+  Closes CyclopsMC/IntegratedDynamics#1470
+
