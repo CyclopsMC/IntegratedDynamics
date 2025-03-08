@@ -2,7 +2,32 @@
   "display": {
     "icon": {
       "id": "integrateddynamics:variable",
-      "nbt": "{_type:\"integrateddynamics:valuetype\",typeName:\"integrateddynamics:recipe\",_id:1,value:{output:{\"minecraft:itemstack\":[{id:\"minecraft:stone\",Count:1b}]},input:{\"minecraft:itemstack\":[{val:[{prototype:{id:\"minecraft:stone\",Count:1b},condition:1}],type:0b}]}}}"
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "partId": 1,
+          "_id": 1,
+          "_type": "integrateddynamics:valuetype",
+          "typeName": "integrateddynamics:recipe",
+          "value": {
+            "output": {
+              "minecraft:itemstack": { "id": "minecraft:stone", "Count": 1 }
+            },
+            "input": {
+              "minecraft:itemstack": [
+                {
+                  "type": 0,
+                  "val": [
+                    {
+                      "prototype": { "id": "minecraft:stone", "Count": 1 },
+                      "condition": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
     },
     "title": {
       "translate": "advancement.integrateddynamics.recipe_creation"

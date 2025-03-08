@@ -151,7 +151,7 @@ public class OperatorRegistry implements IOperatorRegistry {
             IOperatorSerializer serializer = namedSerializers.get(serializerName);
             if (serializer == null) {
                 throw new EvaluationException(
-                        Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value));
+                        Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value.toString()));
             }
             return serializer.deserialize(valueDeseralizationContext, tag.get("value"));
         }
@@ -166,7 +166,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     @Override
     public IOperatorVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
         if(!tag.contains("operatorName", Tag.TAG_STRING)
-                || !tag.contains("variableIds", Tag.TAG_INT_ARRAY)) {
+                || !(tag.contains("variableIds", Tag.TAG_INT_ARRAY) || tag.contains("variableIds", Tag.TAG_BYTE_ARRAY))) {
             return INVALID_FACADE;
         }
         IOperator operator;

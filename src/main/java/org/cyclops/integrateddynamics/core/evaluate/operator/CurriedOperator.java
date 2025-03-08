@@ -228,7 +228,7 @@ public class CurriedOperator implements IOperator {
             } catch (ClassCastException e) {
                 e.printStackTrace();
                 throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
-                        valueOperator, e.getMessage()));
+                        valueOperator.toString(), e.getMessage()));
             }
             ListTag list = tag.getList("values", Tag.TAG_COMPOUND);
             IVariable[] variables = new IVariable[list.size()];

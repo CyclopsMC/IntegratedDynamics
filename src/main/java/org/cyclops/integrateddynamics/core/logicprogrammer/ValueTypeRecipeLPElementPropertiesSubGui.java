@@ -220,6 +220,8 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
                 ((items.size() % columns == 0 ? 0 : 1) + (items.size() / columns)) * offset);
 
         // Draw item grid
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 1000);
         int passed = 0;
         for (Item item : items) {
             guiGraphics.renderItem(new ItemStack(item), x, y);
@@ -229,6 +231,7 @@ class ValueTypeRecipeLPElementPropertiesSubGui extends RenderPattern<ValueTypeRe
                 x = mouseX - guiLeft;
             }
         }
+        guiGraphics.pose().popPose();
     }
 
     @Override

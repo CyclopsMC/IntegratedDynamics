@@ -22,11 +22,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
@@ -173,6 +169,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY = OperatorBuilder.forType(ValueTypes.OBJECT_ENTITY).appendKind("entity");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_SUFFIX = ENTITY.inputTypes(1, ValueTypes.OBJECT_ENTITY).renderPattern(IConfigRenderPattern.SUFFIX_1);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_SUFFIX_LONG = ENTITY.inputTypes(1, ValueTypes.OBJECT_ENTITY).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY_1_ITEMSTACK_1 = ENTITY.inputTypes(new IValueType[]{ValueTypes.OBJECT_ENTITY, ValueTypes.OBJECT_ITEMSTACK}).renderPattern(IConfigRenderPattern.INFIX_LONG);
     public static final IterativeFunction.PrePostBuilder<Entity, IValue> FUNCTION_ENTITY = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueObjectTypeEntity.ValueEntity a = input.getValue(0, ValueTypes.OBJECT_ENTITY);
@@ -187,7 +184,7 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK = OperatorBuilder.forType(ValueTypes.OBJECT_FLUIDSTACK).appendKind("fluidstack");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_1_SUFFIX_LONG = FLUIDSTACK.inputTypes(1, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_2 = FLUIDSTACK.inputTypes(2, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.INFIX);
-    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_2_LONG = ITEMSTACK.inputTypes(2, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.INFIX_LONG);
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_2_LONG = FLUIDSTACK.inputTypes(2, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.INFIX_LONG);
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> FLUIDSTACK_3 = ITEMSTACK.inputTypes(3, ValueTypes.OBJECT_FLUIDSTACK).renderPattern(IConfigRenderPattern.PREFIX_3_LONG);
     public static final IterativeFunction.PrePostBuilder<FluidStack, IValue> FUNCTION_FLUIDSTACK = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
@@ -549,7 +546,8 @@ public class OperatorBuilders {
         if (list.getRawValue().getValueType() != componentHandler.getValueType()) {
             throw new EvaluationException(Component.translatable(
                     L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
-                    list.getRawValue().getValueType(), componentHandler.getValueType()));
+                    Component.translatable(componentHandler.getValueType().getTranslationKey()),
+                    Component.translatable(list.getRawValue().getValueType().getTranslationKey())));
         }
         List<T> listTransformed = Lists.newArrayListWithExpectedSize(list.getRawValue().getLength());
         for (V value : list.getRawValue()) {

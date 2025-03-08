@@ -175,7 +175,7 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @Override
     public IAspectVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
-        if(!tag.contains("partId", Tag.TAG_INT)
+        if(!(tag.contains("partId", Tag.TAG_INT) || tag.contains("partId", Tag.TAG_BYTE))
                 || !tag.contains("aspectName", Tag.TAG_STRING)) {
             return INVALID_FACADE;
         }

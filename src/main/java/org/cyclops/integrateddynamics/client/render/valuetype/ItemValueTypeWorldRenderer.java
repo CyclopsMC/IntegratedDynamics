@@ -63,7 +63,7 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         renderState.render(matrixStack, renderTypeBuffer, combinedLight, combinedOverlay);
 
-        Lighting.setupFor3DItems();
+        Lighting.setupLevel();
 
         matrixStack.popPose();
     }

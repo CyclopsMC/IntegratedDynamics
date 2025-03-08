@@ -92,6 +92,13 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
         state.setDeactivated(true);
     }
 
+    @Override
+    public <P extends IPartType<P, S>, S extends IPartState<P>> void setProperties(P partType, PartTarget target, S state, IAspectProperties properties) {
+        onDeactivate((IPartTypeWriter) partType, target, (IPartStateWriter) state);
+        super.setProperties(partType, target, state, properties);
+        onActivate((IPartTypeWriter) partType, target, (IPartStateWriter) state);
+    }
+
     protected String getUnlocalizedType() {
         return "write" + unlocalizedTypeSuffix;
     }

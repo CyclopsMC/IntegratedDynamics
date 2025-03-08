@@ -414,7 +414,7 @@ public class CombinedOperator extends OperatorBase {
             } catch (ClassCastException e) {
                 e.printStackTrace();
                 throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
-                        valueOperator, e.getMessage()));
+                        valueOperator.toString(), e.getMessage()));
             }
             IOperator[] operators = new IOperator[list.size()];
             for (int i = 0; i < list.size(); i++) {

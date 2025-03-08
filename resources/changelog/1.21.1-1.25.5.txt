@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Fixes:
+* Fix broken advancement icons
+* Fix broken looking at advancement trigger, #1471
+* Fix broken clear facade recipe

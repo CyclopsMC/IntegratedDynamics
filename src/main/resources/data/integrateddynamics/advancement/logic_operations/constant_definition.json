@@ -2,7 +2,15 @@
   "display": {
     "icon": {
       "id": "integrateddynamics:variable",
-      "nbt": "{typeName:\"integrateddynamics:integer\",partId:1,_type:\"integrateddynamics:valuetype\",value:10,_id:1}"
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "partId": 1,
+          "_id": 1,
+          "_type": "integrateddynamics:valuetype",
+          "typeName": "integrateddynamics:integer",
+          "value": 10
+        }
+      }
     },
     "title": {
       "translate": "advancement.integrateddynamics.constant_definition"

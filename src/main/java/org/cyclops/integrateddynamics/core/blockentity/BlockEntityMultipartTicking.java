@@ -223,7 +223,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         if (partContainer.getPartData() != null) { // Can be null in rare cases where rendering happens before data sync
             builder.with(BlockCable.REALCABLE, cableFakeable.isRealCable());
             if (connected.isEmpty()) {
-                getCable().updateConnections();
+                getCable().updateConnections(false);
             }
             for (Direction side : Direction.values()) {
                 builder.with(BlockCable.CONNECTED[side.ordinal()],

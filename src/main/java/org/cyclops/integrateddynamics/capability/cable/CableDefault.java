@@ -35,7 +35,7 @@ public abstract class CableDefault implements ICable {
     }
 
     @Override
-    public void updateConnections() {
+    public void updateConnections(boolean setChanged) {
         Level world = getLevel();
         for (Direction side : Direction.values()) {
             boolean cableConnected = CableHelpers.canCableConnectTo(world, getPos(), side, this);
@@ -46,8 +46,10 @@ public abstract class CableDefault implements ICable {
                 getForceDisconnected().put(side, false);
             }
         }
-        setChanged();
-        sendUpdate();
+        if (setChanged) {
+            setChanged();
+            sendUpdate();
+        }
     }
 
     @Override

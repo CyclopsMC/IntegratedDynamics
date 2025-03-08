@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.18.2 or higher.
+
+Fixes:
+* Reduce number of network events during init to improve performance, #1439
+  Modifying very large networks is a lot faster now.

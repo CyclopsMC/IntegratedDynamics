@@ -451,4 +451,79 @@ public class GameTestsParts {
         });
     }
 
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testPartsRedstoneReaderWithoutCableAsPlayerAddCable(GameTestHelper helper) {
+        // No cable!
+
+        // Place redstone reader as player
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack itemStack = new ItemStack(PartTypes.REDSTONE_READER.getItem());
+        player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
+        helper.placeAt(player, itemStack, POS.south(), Direction.NORTH);
+
+        // Place cable afterwards as player
+        ItemStack itemStackCable = new ItemStack(RegistryEntries.ITEM_CABLE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, itemStackCable);
+        helper.placeAt(player, itemStackCable, POS.south(), Direction.NORTH);
+
+        helper.succeedWhen(() -> {
+            PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.north()), Direction.SOUTH));
+            helper.assertTrue(partStateHolder != null, "Placed part is missing");
+            helper.assertTrue(partStateHolder.getPart() == PartTypes.REDSTONE_READER, "Placed part is incorrect");
+            helper.assertTrue(partStateHolder.getState().isEnabled(), "Placed part is not enabled");
+            helper.assertTrue(partStateHolder.getState().getChannel() == 0, "Placed part is not on channel 0");
+            helper.assertTrue(CableHelpers.isNoFakeCable(helper.getLevel(), helper.absolutePos(POS.north()), null), "Cable is fake");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testPartsRedstoneReaderWithoutCableAsPlayerAddCableTwo(GameTestHelper helper) {
+        // No cable!
+
+        // Place redstone reader as player
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack itemStack = new ItemStack(PartTypes.REDSTONE_READER.getItem());
+        player.setItemInHand(InteractionHand.MAIN_HAND, itemStack.copy());
+        helper.placeAt(player, itemStack.copy(), POS.south(), Direction.NORTH);
+        player.setItemInHand(InteractionHand.MAIN_HAND, itemStack.copy());
+        helper.placeAt(player, itemStack.copy(), POS.south().east(), Direction.NORTH);
+
+        // Place cable afterwards as player
+        ItemStack itemStackCable = new ItemStack(RegistryEntries.ITEM_CABLE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, itemStackCable.copy());
+        helper.placeAt(player, itemStackCable.copy(), POS.south(), Direction.NORTH);
+        player.setItemInHand(InteractionHand.MAIN_HAND, itemStackCable.copy());
+        helper.placeAt(player, itemStackCable.copy(), POS.south().east(), Direction.NORTH);
+
+        helper.succeedWhen(() -> {
+            INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.north()), null);
+            INetwork network2 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.north().east()), null);
+            helper.assertTrue(network1 == network2, "Networks of connected cables are not equal");
+
+            PartHelpers.PartStateHolder<?, ?> partStateHolder1 = PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.north()), Direction.SOUTH));
+            helper.assertTrue(partStateHolder1 != null, "Placed part is missing");
+            helper.assertTrue(partStateHolder1.getPart() == PartTypes.REDSTONE_READER, "Placed part is incorrect");
+            helper.assertTrue(partStateHolder1.getState().isEnabled(), "Placed part is not enabled");
+            helper.assertTrue(partStateHolder1.getState().getChannel() == 0, "Placed part is not on channel 0");
+            helper.assertTrue(CableHelpers.isNoFakeCable(helper.getLevel(), helper.absolutePos(POS.north()), null), "Cable is fake");
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.north())),
+                    Sets.newHashSet(Direction.EAST),
+                    "Connected cables are invalid"
+            );
+
+            PartHelpers.PartStateHolder<?, ?> partStateHolder2 = PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.north().east()), Direction.SOUTH));
+            helper.assertTrue(partStateHolder2 != null, "Placed part 2 is missing");
+            helper.assertTrue(partStateHolder2.getPart() == PartTypes.REDSTONE_READER, "Placed part 2 is incorrect");
+            helper.assertTrue(partStateHolder2.getState().isEnabled(), "Placed part 2 is not enabled");
+            helper.assertTrue(partStateHolder2.getState().getChannel() == 0, "Placed part 2 is not on channel 0");
+            helper.assertTrue(CableHelpers.isNoFakeCable(helper.getLevel(), helper.absolutePos(POS.north().east()), null), "Cable 2 is fake");
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.north().east())),
+                    Sets.newHashSet(Direction.WEST),
+                    "Connected cables 2 are invalid"
+            );
+        });
+    }
+
 }

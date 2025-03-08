@@ -51,7 +51,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
-import org.cyclops.integrateddynamics.core.network.event.NetworkElementAddEvent;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
@@ -83,7 +82,6 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         IEventAction<P, S, INetworkEvent> updateEventListener = (network, target, state, event) -> NetworkHelpers
                 .getPartNetwork(network).ifPresent(partNetwork -> onVariableContentsUpdated(partNetwork, target, state));
         actions.put(VariableContentsUpdatedEvent.class, updateEventListener);
-        actions.put(NetworkElementAddEvent.Post.class, updateEventListener);
         return actions;
     }
 
@@ -98,18 +96,6 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         state.getInventory().clearContent();
         state.onVariableContentsUpdated((P) this, target);
         super.addDrops(target, state, itemStacks, dropMainElement, saveState);
-    }
-
-    @Override
-    public void beforeNetworkKill(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
-        super.beforeNetworkKill(network, partNetwork, target, state);
-        state.onVariableContentsUpdated((P) this, target);
-    }
-
-    @Override
-    public void afterNetworkAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
-        super.afterNetworkAlive(network, partNetwork, target, state);
-        state.onVariableContentsUpdated((P) this, target);
     }
 
     @Override
