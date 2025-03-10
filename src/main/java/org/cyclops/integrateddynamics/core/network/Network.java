@@ -18,13 +18,7 @@ import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.network.AttachCapabilitiesEventNetwork;
-import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
-import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
-import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.api.network.NetworkCapability;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -39,12 +33,7 @@ import org.cyclops.integrateddynamics.core.path.Cluster;
 import org.cyclops.integrateddynamics.core.path.PathFinder;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * A network instance that can hold a set of {@link INetworkElement}s.
@@ -295,11 +284,15 @@ public class Network implements INetwork {
         }
         element.beforeNetworkKill(this, blockState);
         element.onNetworkRemoval(this, blockState);
+        removeNetworkElementInternal(element);
+        getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
+        onNetworkChanged();
+    }
+
+    public void removeNetworkElementInternal(INetworkElement element) {
         elements.remove(element);
         removeNetworkElementUpdateable(element);
         invalidatedElements.remove(element); // The element may be invalidated (like in an unloaded chunk) when it is being removed.
-        getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
-        onNetworkChanged();
     }
 
     @Override
@@ -551,10 +544,17 @@ public class Network implements INetwork {
 
     @Override
     public void invalidateElement(INetworkElement element) {
-        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
-            fullNetworkListener.invalidateElement(element);
+        if (element.canRevalidate(this)) {
+            // If this element could already be revalidated,
+            // this means that the element was not unloaded due to incorrect chunk unload,
+            // and therefore is corrupted, so let's forcefully remove it.
+            removeNetworkElementInternal(element);
+        } else {
+            for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+                fullNetworkListener.invalidateElement(element);
+            }
+            invalidatedElements.add(element);
         }
-        invalidatedElements.add(element);
     }
 
     @Override
