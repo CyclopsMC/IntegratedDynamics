@@ -1,15 +1,12 @@
 {
-    "_comment": "Общее",
+    "_comment": "------ О содержании динамики интеграции ------",
     "itemGroup.integrateddynamics": "Интегрированная динамика",
     "general.integrateddynamics.description": "Возьмите полный и автоматизированный контроль над вашими приборами.",
     "general.integrateddynamics.info.none": "Нет",
     "general.integrateddynamics.energy": "Энергия",
-    "general.integrateddynamics.energy_unit": "RF",
     "general.integrateddynamics.error.no_network": "Сеть не найдена",
     "general.integrateddynamics.true": "Истина",
     "general.integrateddynamics.false": "Ложь",
-
-    "_comment": "Интерфейс",
     "gui.integrateddynamics.part_settings": "Настройки части",
     "gui.integrateddynamics.aspect_settings": "Настройки аспекта",
     "gui.integrateddynamics.part_offsets": "Смещения части",
@@ -53,8 +50,6 @@
     "gui.integrateddynamics.recipe.reusable": "Многоразовый",
     "gui.integrateddynamics.operator.globalname": "Глобальное имя: %s",
     "gui.integrateddynamics.operator.localname": "Имя метода: %s",
-
-    "_comment": "Диагностика",
     "gui.integrateddynamics.diagnostics.title": "Integrated Dynamics - Диагностика сети",
     "gui.integrateddynamics.diagnostics.parts": "Части",
     "gui.integrateddynamics.diagnostics.observers": "Наблюдатели за хранилищем",
@@ -66,17 +61,10 @@
     "gui.integrateddynamics.diagnostics.table.position": "Позиция",
     "gui.integrateddynamics.diagnostics.table.side": "Сторона",
     "gui.integrateddynamics.diagnostics.table.actions": "Действия",
-
-    "_comment": "Привязки клавиш",
-    "key.categories.integrateddynamics": "Integrated Dynamics",
     "key.integrateddynamics.logic_programmer_focus_search": "Фокус поиска в Логическом программисте",
     "key.integrateddynamics.logic_programmer_open_rename": "Переименовать переменную в Логическом программисте",
-
-    "_comment": "Названия звуков",
     "subtitles.integrateddynamics.effect.page.flipsingle": "Переворот страницы",
     "subtitles.integrateddynamics.effect.page.flipmultiple": "Переворот нескольких страниц",
-
-    "_comment": "Блоки",
     "block.integrateddynamics.cable": "Логический кабель",
     "block.integrateddynamics.variablestore": "Хранилище переменных",
     "block.integrateddynamics.energy_battery": "Энергетическая батарея",
@@ -131,9 +119,6 @@
     "block.integrateddynamics.crystalized_menril_brick_slab": "Плита из кирпича кристаллизованного менрила",
     "block.integrateddynamics.crystalized_chorus_block_slab": "Плита из кристаллизованного хоруса",
     "block.integrateddynamics.crystalized_chorus_brick_slab": "Плита из кирпича кристаллизованного хоруса",
-
-    "_comment": "Предметы",
-    "item.integrateddynamics.general.id": "§e§lID: §r%s",
     "item.integrateddynamics.wrench": "Гаечный ключ",
     "item.integrateddynamics.wrench.info": "Shift + Правый клик в воздухе для смены режима",
     "item.integrateddynamics.wrench.mode": "§eРежим: §r%s",
@@ -179,15 +164,9 @@
     "item.integrateddynamics.enhancement_offset.tooltip": "Увеличение смещения: %s",
     "item.integrateddynamics.enhancement_offset.increased": "Смещение части увеличено до %s",
     "item.integrateddynamics.enhancement_offset.limit": "Смещение части уже достигло предела (%s)",
-
-    "_comment": "Жидкости",
     "fluid_type.integrateddynamics.menril_resin": "Менриловая смола",
     "fluid_type.integrateddynamics.liquid_chorus": "Жидкий хорус",
-
-    "_comment": "Биомы",
     "biome.integrateddynamics.meneglin": "Менеглин",
-
-    "_comment": "Достижения",
     "advancement.integrateddynamics.meneglin_discovery": "Открытие Менеглина",
     "advancement.integrateddynamics.meneglin_discovery.desc": "Срубите дерево менрила, которое легче всего найти в биомах Менеглина.",
     "advancement.integrateddynamics.squeezing": "Сжатие как босс",
@@ -236,7 +215,6 @@
     "advancement.integrateddynamics.lectern_book.desc": "Прочитайте поле NBT книги внутри блока кафедры из NBT-тега, считанного считывателем блоков.",
     "advancement.integrateddynamics.lectern_book_name": "Имя книги NBT на кафедре",
     "advancement.integrateddynamics.lectern_book_name.desc": "Прочитайте имя (id) книги внутри блока кафедры, применив выражение пути NBT к NBT-тегу, считанному считывателем блоков.",
-
     "advancement.integrateddynamics.logic_programming": "Логическое программирование",
     "advancement.integrateddynamics.logic_programming.desc": "Откройте графический интерфейс логического программиста.",
     "advancement.integrateddynamics.constant_definition": "Определение константы",
@@ -267,8 +245,6 @@
     "advancement.integrateddynamics.tool_for_obsidian.desc": "Проверьте, может ли каменная кирка сломать блок обсидиана, и покажите результат на дисплейной панели.",
     "advancement.integrateddynamics.smart_pressure_plate": "Умная нажимная плита",
     "advancement.integrateddynamics.smart_pressure_plate.desc": "Создайте систему, которая автоматически открывает дверь, когда вы проходите мимо считывателя сущностей, основываясь на совпадении имени сущности, используя записывающее устройство красного камня, направленное прямо на дверь. (Подсказка: передайте имя сущности как первый аргумент в оператор сравнения).",
-
-    "_comment": "Типы значений",
     "valuetype.integrateddynamics.error.value": "Недопустимое значение",
     "valuetype.integrateddynamics.value_type": "Тип значения",
     "valuetype.integrateddynamics.tooltip.type_name": "§eТип: §r%s",
@@ -284,7 +260,6 @@
     "valuetype.integrateddynamics.error.fluid.no_fluid": "Вставленный предмет не содержит жидкости.",
     "valuetype.integrateddynamics.error.no_light_calculator": "Тип значения %s не может быть использован для вычисления уровня света.",
     "valuetype.integrateddynamics.error.deserialize": "Что-то пошло не так при десериализации '%s': %s",
-
     "valuetype.integrateddynamics.any": "Любой",
     "valuetype.integrateddynamics.any.info": "Принимает любые типы значений.",
     "valuetype.integrateddynamics.number": "Число",
@@ -295,15 +270,12 @@
     "valuetype.integrateddynamics.uniquely_named.info": "Что-то, что имеет уникальное имя, например, предметы и блоки.",
     "operator.integrateddynamics.string.string_error": "Ошибка",
     "operator.integrateddynamics.string.string_error.info": "Вызвать пользовательскую ошибку",
-
     "valuetype.integrateddynamics.boolean": "Логическое значение",
     "valuetype.integrateddynamics.integer": "Целое число",
     "valuetype.integrateddynamics.double": "Двойной",
     "valuetype.integrateddynamics.long": "Длинное целое",
     "valuetype.integrateddynamics.string": "Строка",
     "valuetype.integrateddynamics.operator": "Оператор",
-    "valuetype.integrateddynamics.nbt": "NBT",
-
     "valuetype.integrateddynamics.list": "Список",
     "valuetype.integrateddynamics.block": "Блок",
     "valuetype.integrateddynamics.itemstack": "Предмет",
@@ -311,10 +283,7 @@
     "valuetype.integrateddynamics.fluidstack": "Жидкость",
     "valuetype.integrateddynamics.ingredients": "Ингредиенты",
     "valuetype.integrateddynamics.recipe": "Рецепт",
-
     "valuetype.integrateddynamics.ingredients.slot.info": "Shift + клик для настройки",
-
-    "_comment": "Типы частей",
     "parttype.integrateddynamics.error.low_energy": "Недостаточно энергии",
     "parttype.integrateddynamics.tooltip.disabled": "Нет энергии",
     "parttype.integrateddynamics.tooltip.inactive": "Неактивно",
@@ -324,7 +293,6 @@
     "parttype.integrateddynamics.tooltip.monodirectionalconnector.group": "Группа: %s",
     "parttype.integrateddynamics.tooltip.noaspects": "ВНИМАНИЕ: Нет доступных аспектов. Это может стать доступным при установке других модов.",
     "parttype.integrateddynamics.tooltip.maxoffset": "Максимальное смещение: %s",
-
     "parttype.integrateddynamics.audio_reader": "Считыватель аудио",
     "parttype.integrateddynamics.audio_reader.info": "Считывает аудиоинформацию",
     "parttype.integrateddynamics.block_reader": "Считыватель блоков",
@@ -345,7 +313,6 @@
     "parttype.integrateddynamics.redstone_reader.info": "Считывает значения красного камня",
     "parttype.integrateddynamics.world_reader": "Считыватель мира",
     "parttype.integrateddynamics.world_reader.info": "Считывает информацию о мире, блоках и сущностях",
-
     "parttype.integrateddynamics.audio_writer": "Звуковой записыватель",
     "parttype.integrateddynamics.audio_writer.info": "Воспроизводит звуки и музыку",
     "parttype.integrateddynamics.effect_writer": "Записыватель эффектов",
@@ -358,7 +325,6 @@
     "parttype.integrateddynamics.inventory_writer.info": "Записывает данные в инвентарь",
     "parttype.integrateddynamics.redstone_writer": "Записыватель красного камня",
     "parttype.integrateddynamics.redstone_writer.info": "Записывает данные в красный камень",
-
     "parttype.integrateddynamics.data_driven_panel.error.invalid_type": "Эта панель не принимает %s.",
     "parttype.integrateddynamics.static_light_panel": "Статическая световая панель",
     "parttype.integrateddynamics.static_light_panel.info": "Простая световая панель, которая всегда активна",
@@ -366,30 +332,21 @@
     "parttype.integrateddynamics.dynamic_light_panel.info": "Визуально отображает значение переменной в мире как уровень света",
     "parttype.integrateddynamics.display_panel": "Дисплейная панель",
     "parttype.integrateddynamics.display_panel.info": "Визуально отображает значение переменной в мире как текст",
-
     "parttype.integrateddynamics.connector_mono_directional": "Моно-направленный коннектор",
     "parttype.integrateddynamics.connector_mono_directional.info": "Может соединяться с другими моно-направленными коннекторами на расстоянии по прямой линии",
     "parttype.integrateddynamics.connector_omni_directional": "Омни-направленный коннектор",
     "parttype.integrateddynamics.connector_omni_directional.info": "Может соединяться с другими омни-направленными коннекторами в любом месте, включая разные измерения.",
-
-    "_comment": "Фасады переменных",
     "variable.integrateddynamics.error.invalid_item": "Текущая переменная не может быть использована в этом аспекте.",
     "variable.integrateddynamics.error.part_not_in_network": "Часть с ID %s не найдена в текущей сети.",
     "variable.integrateddynamics.error.recursion": "Переменная с ID %s ссылается сама на себя.",
-
-    "_comment": "Прокси",
     "proxy.integrateddynamics.tooltip.proxy_id": "§e§oID прокси: §r§o%s",
     "proxy.integrateddynamics.error.proxy_not_in_network": "Прокси с ID %s не найден в текущей сети.",
     "proxy.integrateddynamics.error.proxy_invalid": "Прокси с ID %s не предоставляет переменную.",
     "proxy.integrateddynamics.error.proxy_invalid_type": "Прокси с ID %s должен предоставлять переменную типа %s, но обнаружен тип %s.",
-
-    "_comment": "Задержка",
     "delay.integrateddynamics.tooltip.delay_id": "§e§oID задержки: §r§o%s",
     "delay.integrateddynamics.error.delay_not_in_network": "Задержка с ID %s не найдена в текущей сети.",
     "delay.integrateddynamics.error.delay_invalid": "Задержка с ID %s не предоставляет переменную.",
     "delay.integrateddynamics.error.delay_invalid_type": "Задержка с ID %s должна предоставлять переменную типа %s, но обнаружен тип %s.",
-
-    "_comment": "Аспекты",
     "aspect.integrateddynamics.tooltip.aspect_name": "§eАспект: §r%s",
     "aspect.integrateddynamics.tooltip.value_type_name": "§eТип: §r%s",
     "aspect.integrateddynamics.tooltip.part_id": "§e§oID части: §r§o%s",
@@ -398,8 +355,6 @@
     "aspect.integrateddynamics.error.no_value_interface": "Не найден корректный интерфейс значений.",
     "aspect.integrateddynamics.error.no_value_interface_value": "Не найдено корректное значение интерфейса значений.",
     "aspect.integrateddynamics.name": "Аспект",
-
-    "_comment": "# Аудио аспекты",
     "aspect.integrateddynamics.read.integer.audio.instrument.harp": "Нота арфы",
     "aspect.integrateddynamics.read.integer.audio.instrument.harp.info": "Считывает ноту арфы, ожидаемый диапазон [0, 24]",
     "aspect.integrateddynamics.read.integer.audio.instrument.basedrum": "Нота бас-барабана",
@@ -432,7 +387,6 @@
     "aspect.integrateddynamics.read.integer.audio.instrument.banjo.info": "Считывает ноту банджо, ожидаемый диапазон [0, 24]",
     "aspect.integrateddynamics.read.integer.audio.instrument.pling": "Нота плинга",
     "aspect.integrateddynamics.read.integer.audio.instrument.pling.info": "Считывает ноту плинга, ожидаемый диапазон [0, 24]",
-
     "aspect.integrateddynamics.write.integer.audio.instrument.harp": "Нота арфы",
     "aspect.integrateddynamics.write.integer.audio.instrument.harp.info": "Выводит ноту арфы, ожидаемый диапазон [0, 24]",
     "aspect.integrateddynamics.write.integer.audio.instrument.basedrum": "Нота бас-барабана",
@@ -465,13 +419,10 @@
     "aspect.integrateddynamics.write.integer.audio.instrument.banjo.info": "Выводит ноту банджо, ожидаемый диапазон [0, 24]",
     "aspect.integrateddynamics.write.integer.audio.instrument.pling": "Нота плинга",
     "aspect.integrateddynamics.write.integer.audio.instrument.pling.info": "Выводит ноту плинга, ожидаемый диапазон [0, 24]",
-
     "aspect.integrateddynamics.write.string.audio.sound": "Звук",
     "aspect.integrateddynamics.write.string.audio.sound.info": "Воспроизводит указанный звук по имени",
     "aspect.integrateddynamics.write.string.audio.text": "Текст",
     "aspect.integrateddynamics.write.string.audio.text.info": "Преобразует указанный текст в речь",
-
-    "_comment": "# Аспекты эффектов",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_angry_villager": "Частица: Злой житель",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_angry_villager.info": "Испускает частицу злого жителя с определенной скоростью.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_bubble": "Частица: Пузырь",
@@ -503,7 +454,7 @@
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_enchant": "Частица: Зачарование",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_enchant.info": "Испускает частицу зачарования с определенной скоростью.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_end_rod": "Частица: Концевой стержень",
-        "aspect.integrateddynamics.write.double.effect.particle.minecraft_end_rod.info": "Испускает частицу концевого стержня с определенной скоростью.",
+    "aspect.integrateddynamics.write.double.effect.particle.minecraft_end_rod.info": "Испускает частицу концевого стержня с определенной скоростью.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_explosion_emitter": "Частица: Источник взрыва",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_explosion_emitter.info": "Испускает частицу источника взрыва с определенной скоростью.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_explosion": "Частица: Взрыв",
@@ -636,11 +587,8 @@
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_electric_spark.info": "Испускает частицу электрической искры с определенной скоростью.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_scrape": "Частица: Скребок",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_scrape.info": "Испускает частицу скребка с определенной скоростью.",
-
-    "_comment": "# Аспекты блоков",
     "aspect.integrateddynamics.read.boolean.block.block": "Наличие блока",
     "aspect.integrateddynamics.read.boolean.block.block.info": "Если в целевом пространстве есть блок",
-
     "aspect.integrateddynamics.read.string.block.dimension": "Измерение",
     "aspect.integrateddynamics.read.string.block.dimension.info": "ID измерения целевого мира",
     "aspect.integrateddynamics.read.integer.block.posx": "Координата X",
@@ -655,38 +603,27 @@
     "aspect.integrateddynamics.read.string.block.biome.info": "Название биома в цели",
     "aspect.integrateddynamics.read.integer.block.light": "Уровень света",
     "aspect.integrateddynamics.read.integer.block.light.info": "Уровень света в цели",
-
     "aspect.integrateddynamics.read.block.block": "Блок",
     "aspect.integrateddynamics.read.block.block.info": "Целевой блок",
-
-    "_comment": "# Аспекты сущностей",
     "aspect.integrateddynamics.read.integer.entity.itemframerotation": "Вращение рамки предмета",
     "aspect.integrateddynamics.read.integer.entity.itemframerotation.info": "Индекс вращения предмета в прикрепленной рамке предметов.",
-
     "aspect.integrateddynamics.read.list.entity.entities": "Сущности",
     "aspect.integrateddynamics.read.list.entity.entities.info": "Сущности в целевом пространстве",
     "aspect.integrateddynamics.read.list.entity.players": "Игроки",
     "aspect.integrateddynamics.read.list.entity.players.info": "Игроки, находящиеся в целевом пространстве",
-
     "aspect.integrateddynamics.read.entity.entity": "Сущность",
     "aspect.integrateddynamics.read.entity.entity.info": "Выбранная сущность в целевом пространстве",
-
     "aspect.integrateddynamics.read.itemstack.entity.itemframecontents": "Рамка предмета",
     "aspect.integrateddynamics.read.itemstack.entity.itemframecontents.info": "Предмет в рамке предметов, прикрепленной к считывателю",
-
-    "_comment": "# Аспекты вне измерений",
     "aspect.integrateddynamics.read.integer.extradimensional.random": "Случайное число",
     "aspect.integrateddynamics.read.integer.extradimensional.random.info": "Случайное целочисленное значение",
     "aspect.integrateddynamics.read.integer.extradimensional.playercount": "Количество игроков",
     "aspect.integrateddynamics.read.integer.extradimensional.playercount.info": "Количество игроков на сервере",
     "aspect.integrateddynamics.read.integer.extradimensional.ticktime": "Время тика",
     "aspect.integrateddynamics.read.integer.extradimensional.ticktime.info": "Среднее время тика в наносекундах для сервера",
-    "aspect.integrateddynamics.read.double.extradimensional.tps": "TPS",
     "aspect.integrateddynamics.read.double.extradimensional.tps.info": "Среднее количество тиков в секунду по всем мирам",
     "aspect.integrateddynamics.read.list.extradimensional.players": "Игроки",
     "aspect.integrateddynamics.read.list.extradimensional.players.info": "Игроки, находящиеся онлайн на этом сервере",
-
-    "_comment": "# Аспекты жидкостей",
     "aspect.integrateddynamics.read.boolean.fluid.empty": "Бак пуст",
     "aspect.integrateddynamics.read.boolean.fluid.empty.info": "Если целевой резервуар с жидкостью пуст",
     "aspect.integrateddynamics.read.boolean.fluid.full": "Бак полон",
@@ -695,7 +632,6 @@
     "aspect.integrateddynamics.read.boolean.fluid.nonempty.info": "Если в целевом резервуаре с жидкостью что-то есть",
     "aspect.integrateddynamics.read.boolean.fluid.applicable": "Это бак",
     "aspect.integrateddynamics.read.boolean.fluid.applicable.info": "Если цель имеет резервуар для жидкости",
-
     "aspect.integrateddynamics.read.integer.fluid.amount": "Количество жидкости",
     "aspect.integrateddynamics.read.integer.fluid.amount.info": "Количество жидкости в мБ в активном резервуаре",
     "aspect.integrateddynamics.read.integer.fluid.totalamount": "Общее количество жидкости",
@@ -706,21 +642,16 @@
     "aspect.integrateddynamics.read.integer.fluid.totalcapacity.info": "Общая вместимость резервуара",
     "aspect.integrateddynamics.read.integer.fluid.tanks": "Резервуары",
     "aspect.integrateddynamics.read.integer.fluid.tanks.info": "Количество резервуаров, найденных в цели",
-
     "aspect.integrateddynamics.read.double.fluid.fillratio": "Коэффициент заполнения резервуара",
     "aspect.integrateddynamics.read.double.fluid.fillratio.info": "Количество жидкости в активном резервуаре, деленное на его вместимость",
-
     "aspect.integrateddynamics.read.list.fluid.fluidstacks": "Жидкости в резервуарах",
     "aspect.integrateddynamics.read.list.fluid.fluidstacks.info": "Список жидкостей во всех резервуарах",
     "aspect.integrateddynamics.read.list.fluid.capacities": "Вместимости резервуаров",
     "aspect.integrateddynamics.read.list.fluid.capacities.info": "Список вместимостей всех резервуаров",
-
     "aspect.integrateddynamics.read.fluidstack.fluid": "Жидкость в резервуаре",
     "aspect.integrateddynamics.read.fluidstack.fluid.info": "Жидкость в целевом резервуаре",
     "aspect.integrateddynamics.read.fluidstack.block": "Жидкость в блоке",
     "aspect.integrateddynamics.read.fluidstack.block.info": "Жидкость в целевом блоке",
-
-    "_comment": "# Аспекты инвентаря",
     "aspect.integrateddynamics.read.boolean.inventory.full": "Инвентарь полон",
     "aspect.integrateddynamics.read.boolean.inventory.full.info": "Если все слоты содержат хотя бы один предмет",
     "aspect.integrateddynamics.read.boolean.inventory.empty": "Инвентарь пуст",
@@ -729,7 +660,6 @@
     "aspect.integrateddynamics.read.boolean.inventory.nonempty.info": "Если есть хотя бы один предмет",
     "aspect.integrateddynamics.read.boolean.inventory.applicable": "Это инвентарь",
     "aspect.integrateddynamics.read.boolean.inventory.applicable.info": "Если цель имеет инвентарь",
-
     "aspect.integrateddynamics.read.integer.inventory.count": "Количество в инвентаре",
     "aspect.integrateddynamics.read.integer.inventory.count.info": "Получить общее количество предметов",
     "aspect.integrateddynamics.read.integer.inventory.countslot": "Размер стека в слоте",
@@ -738,17 +668,12 @@
     "aspect.integrateddynamics.read.integer.inventory.slots.info": "Количество слотов в инвентаре",
     "aspect.integrateddynamics.read.integer.inventory.slotsfilled": "Заполненные слоты",
     "aspect.integrateddynamics.read.integer.inventory.slotsfilled.info": "Количество слотов, содержащих предмет",
-
     "aspect.integrateddynamics.read.double.inventory.fillratio": "Коэффициент заполнения",
     "aspect.integrateddynamics.read.double.inventory.fillratio.info": "Количество непустых слотов, деленное на общее количество слотов",
-
     "aspect.integrateddynamics.read.list.inventory.itemstacks": "Предметы",
     "aspect.integrateddynamics.read.list.inventory.itemstacks.info": "Получить список предметов в инвентаре",
-
     "aspect.integrateddynamics.read.itemstack.inventory": "Предмет в слоте",
     "aspect.integrateddynamics.read.itemstack.inventory.info": "Получить предмет в активном слоте",
-
-    "_comment": "# Аспекты машин",
     "aspect.integrateddynamics.read.boolean.machine.isworker": "Это рабочая машина",
     "aspect.integrateddynamics.read.boolean.machine.isworker.info": "Если цель является рабочей машиной",
     "aspect.integrateddynamics.read.boolean.machine.haswork": "Есть работа",
@@ -805,8 +730,6 @@
     "aspect.integrateddynamics.read.integer.fe.capacity.info": "Вместимость FE цели",
     "aspect.integrateddynamics.read.double.fe.fillratio": "Коэффициент заполнения FE",
     "aspect.integrateddynamics.read.double.fe.fillratio.info": "Количество FE в цели, деленное на его вместимость",
-
-    "_comment": "# Аспекты сети",
     "aspect.integrateddynamics.read.boolean.network.applicable": "Это сеть",
     "aspect.integrateddynamics.read.boolean.network.applicable.info": "Если цель имеет сеть",
     "aspect.integrateddynamics.read.integer.network.elementcount": "Элементы",
@@ -821,8 +744,6 @@
     "aspect.integrateddynamics.read.integer.network.energy.consumptionrate.info": "Текущая скорость потребления энергии всеми частями ID в целевой сети за тик",
     "aspect.integrateddynamics.read.any.network.value": "Значение",
     "aspect.integrateddynamics.read.any.network.value.info": "Значение, которое предоставляется целью",
-
-    "_comment": "# Аспекты красного камня",
     "aspect.integrateddynamics.read.boolean.redstone.high": "Максимальный уровень красного камня",
     "aspect.integrateddynamics.read.boolean.redstone.high.info": "Если уровень сигнала красного камня находится на максимуме",
     "aspect.integrateddynamics.read.boolean.redstone.low": "Нулевой уровень красного камня",
@@ -835,18 +756,14 @@
     "aspect.integrateddynamics.read.integer.redstone.value.info": "Получить точный уровень сигнала красного камня",
     "aspect.integrateddynamics.read.integer.redstone.comparator": "Компаратор",
     "aspect.integrateddynamics.read.integer.redstone.comparator.info": "Получить значение компаратора",
-
     "aspect.integrateddynamics.write.boolean.redstone": "Красный камень",
     "aspect.integrateddynamics.write.boolean.redstone.info": "Выводит полный сигнал красного камня, если значение истинно",
     "aspect.integrateddynamics.write.boolean.redstone.pulse": "Импульс красного камня",
     "aspect.integrateddynamics.write.boolean.redstone.pulse.info": "Выводит импульс с настроенным значением красного камня, если заданное значение изменяется.",
-
     "aspect.integrateddynamics.write.integer.redstone": "Красный камень",
     "aspect.integrateddynamics.write.integer.redstone.info": "Выводит значение как точный сигнал красного камня",
     "aspect.integrateddynamics.write.integer.redstone.pulse": "Импульс красного камня",
     "aspect.integrateddynamics.write.integer.redstone.pulse.info": "Выводит импульс с настроенным значением красного камня, если заданное значение изменяется.",
-
-    "_comment": "# Аспекты мира",
     "aspect.integrateddynamics.read.boolean.world.entity": "Есть сущность",
     "aspect.integrateddynamics.read.boolean.world.entity.info": "Если в целевом пространстве есть сущность",
     "aspect.integrateddynamics.read.boolean.world.mob": "Есть моб",
@@ -867,7 +784,6 @@
     "aspect.integrateddynamics.read.boolean.world.isday.info": "Если в целевом мире сейчас день",
     "aspect.integrateddynamics.read.boolean.world.isnight": "Ночь",
     "aspect.integrateddynamics.read.boolean.world.isnight.info": "Если в целевом мире сейчас ночь",
-
     "aspect.integrateddynamics.read.integer.world.entity": "Сущности",
     "aspect.integrateddynamics.read.integer.world.entity.info": "Количество сущностей в целевом пространстве",
     "aspect.integrateddynamics.read.integer.world.raincountdown": "Обратный отсчет до дождя",
@@ -880,37 +796,25 @@
     "aspect.integrateddynamics.read.integer.world.lightlevel.info": "Уровень света в цели",
     "aspect.integrateddynamics.read.integer.world.players": "Количество игроков",
     "aspect.integrateddynamics.read.integer.world.players.info": "Игроки, находящиеся онлайн в этом мире",
-
-    "aspect.integrateddynamics.read.double.world.tps": "TPS",
     "aspect.integrateddynamics.read.double.world.tps.info": "Количество тиков в секунду в этом мире",
-
     "aspect.integrateddynamics.read.long.world.time": "Время",
     "aspect.integrateddynamics.read.long.world.time.info": "Время мира, зависящее от команды установки времени",
     "aspect.integrateddynamics.read.long.world.totaltime": "Общее время",
     "aspect.integrateddynamics.read.long.world.totaltime.info": "Время мира, независимое от команды установки времени",
-
     "aspect.integrateddynamics.read.string.world.worldname": "Имя мира",
     "aspect.integrateddynamics.read.string.world.worldname.info": "Имя целевого мира",
-
     "aspect.integrateddynamics.read.list.world.players": "Игроки",
     "aspect.integrateddynamics.read.list.world.players.info": "Игроки, находящиеся в этом мире",
-
-    "_comment": "Типы свойств аспектов",
     "aspect.aspecttypes.integrateddynamics.integer.tankid": "ID резервуара",
     "aspect.aspecttypes.integrateddynamics.integer.slotid": "ID слота",
     "aspect.aspecttypes.integrateddynamics.integer.listindex": "Элемент списка",
     "aspect.aspecttypes.integrateddynamics.integer.range": "Диапазон",
-
     "aspect.aspecttypes.integrateddynamics.integer.channel": "Канал",
-
     "aspect.aspecttypes.integrateddynamics.integer.interval": "Интервал импульса",
     "aspect.aspecttypes.integrateddynamics.integer.length": "Длина импульса",
     "aspect.aspecttypes.integrateddynamics.integer.offset": "Временное смещение импульса",
-
     "aspect.aspecttypes.integrateddynamics.double.volume": "Громкость",
     "aspect.aspecttypes.integrateddynamics.double.frequency": "Частота",
-    "aspect.aspecttypes.integrateddynamics.integer.range": "Диапазон",
-
     "aspect.aspecttypes.integrateddynamics.double.offset_x": "Смещение по X",
     "aspect.aspecttypes.integrateddynamics.double.offset_y": "Смещение по Y",
     "aspect.aspecttypes.integrateddynamics.double.offset_z": "Смещение по Z",
@@ -918,13 +822,10 @@
     "aspect.aspecttypes.integrateddynamics.double.spread_x": "Разброс по X",
     "aspect.aspecttypes.integrateddynamics.double.spread_y": "Разброс по Y",
     "aspect.aspecttypes.integrateddynamics.double.spread_z": "Разброс по Z",
-
     "aspect.aspecttypes.integrateddynamics.boolean.strong_power": "Сильный сигнал",
     "aspect.aspecttypes.integrateddynamics.boolean.strong_power.info": "Если должен быть симулирован факел красного камня вместо обычной пыли красного камня",
     "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value": "Значение импульса",
     "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value.info": "Значение импульса, которое должно быть отправлено.",
-
-    "_comment": "Операторы",
     "operator.integrateddynamics": "Оператор",
     "operator.integrateddynamics.applied.operator_name": "Применён %s [%s]",
     "operator.integrateddynamics.applied.type": "§Применён к: §r%s",
@@ -969,7 +870,6 @@
     "operator.integrateddynamics.error.slice.index_negative": "Индексы среза не должны быть отрицательными.",
     "operator.integrateddynamics.error.reduce.empty": "Оператор reduce1 попытался получить первый элемент пустого списка. Вместо этого используйте оператор reduce, чтобы предоставить базовое значение для поддержки пустых списков.",
     "operator.integrateddynamics.error.operator_not_found": "Не удалось найти оператор с именем \"%s\".",
-
     "operator.integrateddynamics.logical": "Логический",
     "operator.integrateddynamics.logical.basename": "Логический %s",
     "operator.integrateddynamics.logical.and": "И",
@@ -977,7 +877,6 @@
     "operator.integrateddynamics.logical.not": "Не",
     "operator.integrateddynamics.logical.nand": "Не-И",
     "operator.integrateddynamics.logical.nor": "Не-Или",
-
     "operator.integrateddynamics.arithmetic": "Арифметический",
     "operator.integrateddynamics.arithmetic.basename": "Арифметический %s",
     "operator.integrateddynamics.arithmetic.addition": "Сложение",
@@ -991,13 +890,11 @@
     "operator.integrateddynamics.arithmetic.modulus": "Остаток от деления",
     "operator.integrateddynamics.arithmetic.increment": "Инкремент",
     "operator.integrateddynamics.arithmetic.decrement": "Декремент",
-
     "operator.integrateddynamics.integer": "Целочисленный",
     "operator.integrateddynamics.integer.basename": "Целочисленный %s",
     "operator.integrateddynamics.integer.modulus": "Остаток от деления",
     "operator.integrateddynamics.integer.increment": "Инкремент",
     "operator.integrateddynamics.integer.decrement": "Декремент",
-
     "operator.integrateddynamics.relational": "Отношения",
     "operator.integrateddynamics.relational.basename": "Отношение %s",
     "operator.integrateddynamics.relational.equals": "Равно",
@@ -1008,7 +905,6 @@
     "operator.integrateddynamics.relational.notequals.info": "Типы один и два должны быть равны.",
     "operator.integrateddynamics.relational.ge": "Больше или равно",
     "operator.integrateddynamics.relational.le": "Меньше или равно",
-
     "operator.integrateddynamics.binary": "Бинарный",
     "operator.integrateddynamics.binary.basename": "Бинарный %s",
     "operator.integrateddynamics.binary.and": "И",
@@ -1020,7 +916,6 @@
     "operator.integrateddynamics.binary.lshift": "Сдвиг влево",
     "operator.integrateddynamics.binary.rzshift": "Сдвиг вправо с нулями",
     "operator.integrateddynamics.binary.rzshift.info": "Сдвиг вправо с заполнением нулями",
-
     "operator.integrateddynamics.string": "Строка",
     "operator.integrateddynamics.string.basename": "Строка %s",
     "operator.integrateddynamics.string.length": "Длина",
@@ -1063,10 +958,8 @@
     "operator.integrateddynamics.string.name.info": "Получить строковое представление или имя именованного объекта или преобразовать его в строку.",
     "operator.integrateddynamics.string.unique_name": "Уникальное имя",
     "operator.integrateddynamics.string.unique_name.info": "Получить уникальное имя объекта.",
-
     "operator.integrateddynamics.double": "Число с плавающей точкой",
     "operator.integrateddynamics.double.basename": "Число с плавающей точкой %s",
-
     "operator.integrateddynamics.number": "Число",
     "operator.integrateddynamics.number.basename": "Число %s",
     "operator.integrateddynamics.number.round": "Округление",
@@ -1077,7 +970,6 @@
     "operator.integrateddynamics.number.floor.info": "Округлить вниз до ближайшего целого числа",
     "operator.integrateddynamics.number.compact": "Компактный вид",
     "operator.integrateddynamics.number.compact.info": "Показать более короткое, менее точное представление числа",
-
     "operator.integrateddynamics.list": "Список",
     "operator.integrateddynamics.list.basename": "Список %s",
     "operator.integrateddynamics.list.length": "Длина",
@@ -1116,7 +1008,6 @@
     "operator.integrateddynamics.list.slice.info": "Получить подмножество заданного списка от указанного индекса (включительно) до указанного индекса (исключительно).",
     "operator.integrateddynamics.list.intersection": "Пересечение",
     "operator.integrateddynamics.list.intersection.info": "Возвращает список элементов, присутствующих в обоих предоставленных списках.",
-
     "operator.integrateddynamics.block": "Блок",
     "operator.integrateddynamics.block.basename": "Блок %s",
     "operator.integrateddynamics.block.opaque": "Непрозрачный",
@@ -1147,7 +1038,6 @@
     "operator.integrateddynamics.block.blockfromproperties.info": "Получить заданный блок с примененными заданными свойствами.",
     "operator.integrateddynamics.block.blockpossibleproperties": "Возможные свойства блока",
     "operator.integrateddynamics.block.blockpossibleproperties.info": "Получить все возможные свойства блока в виде составного тега NBT со списком значений.",
-
     "operator.integrateddynamics.itemstack": "Предмет",
     "operator.integrateddynamics.itemstack.basename": "Предмет %s",
     "operator.integrateddynamics.itemstack.size": "Размер стека",
@@ -1220,7 +1110,6 @@
     "operator.integrateddynamics.itemstack.datavalue.info": "Получить значение заданного ключа компонента данных.",
     "operator.integrateddynamics.itemstack.withdata": "С данными",
     "operator.integrateddynamics.itemstack.withdata.info": "Добавить заданный ключ и значение компонента данных к заданному стеку предметов.",
-
     "operator.integrateddynamics.entity": "Сущность",
     "operator.integrateddynamics.entity.basename": "Сущность %s",
     "operator.integrateddynamics.entity.ismob": "Это моб",
@@ -1299,19 +1188,16 @@
     "operator.integrateddynamics.entity.entityenergystored.info": "Количество энергии, накопленной в этой сущности.",
     "operator.integrateddynamics.entity.entityenergycapacity": "Вместимость энергии сущности",
     "operator.integrateddynamics.entity.entityenergycapacity.info": "Вместимость энергии этой сущности.",
-
     "operator.integrateddynamics.entity.entityitemtooltip": "Подсказка сущности",
     "operator.integrateddynamics.entity.entityitemtooltip.info": "В контексте данной сущности игрока получить подсказку для указанного предмета в виде списка строк.",
     "operator.integrateddynamics.itemstack.tooltip": "Подсказка",
     "operator.integrateddynamics.itemstack.tooltip.info": "Получить подсказку для данного предмета в виде списка строк.",
-
     "operator.integrateddynamics.itemstack.isfecontainer": "Это контейнер FE",
     "operator.integrateddynamics.itemstack.isfecontainer.info": "Если данный предмет может хранить FE",
     "operator.integrateddynamics.itemstack.storedfe": "Накопленная FE",
     "operator.integrateddynamics.itemstack.storedfe.info": "Количество FE, накопленной в этом предмете",
     "operator.integrateddynamics.itemstack.fecapacity": "Вместимость FE",
     "operator.integrateddynamics.itemstack.fecapacity.info": "Максимальное количество FE, которое может быть сохранено в этом предмете",
-
     "operator.integrateddynamics.fluidstack": "Жидкость",
     "operator.integrateddynamics.fluidstack.basename": "Жидкость %s",
     "operator.integrateddynamics.fluidstack.amount": "Количество",
@@ -1352,9 +1238,6 @@
     "operator.integrateddynamics.fluidstack.datavalue.info": "Получить значение данного ключа компонента данных.",
     "operator.integrateddynamics.fluidstack.withdata": "С данными",
     "operator.integrateddynamics.fluidstack.withdata.info": "Добавить указанный ключ и значение компонента данных к данному стеку жидкости.",
-
-    "operator.integrateddynamics.nbt": "NBT",
-    "operator.integrateddynamics.nbt.basename": "NBT %s",
     "operator.integrateddynamics.nbt.compound_size": "Размер составного тега NBT",
     "operator.integrateddynamics.nbt.compound_size.info": "Количество записей внутри заданного составного тега NBT",
     "operator.integrateddynamics.nbt.compound_keys": "Ключи составного тега NBT",
@@ -1473,7 +1356,6 @@
     "operator.integrateddynamics.nbt.path_match_all.info": "Применить заданное выражение пути NBT к заданному значению NBT и вернуть все совпадения в виде списка",
     "operator.integrateddynamics.nbt.path_test": "Тест пути NBT",
     "operator.integrateddynamics.nbt.path_test.info": "Проверить, соответствует ли заданное выражение пути NBT заданному значению NBT",
-
     "operator.integrateddynamics.operator": "Оператор",
     "operator.integrateddynamics.operator.basename": "Оператор %s",
     "operator.integrateddynamics.operator.apply": "Применить",
@@ -1513,7 +1395,6 @@
     "operator.integrateddynamics.virtual.recipeinputsbyoutput": "Входы рецепта по выходу",
     "operator.integrateddynamics.virtual.recipesbyinput": "Рецепты по входу",
     "operator.integrateddynamics.virtual.recipesbyoutput": "Рецепты по выходу",
-
     "operator.integrateddynamics.ingredients": "Ингредиенты",
     "operator.integrateddynamics.ingredients.basename": "Ингредиенты %s",
     "operator.integrateddynamics.ingredients.items": "Предметы ингредиентов",
@@ -1534,7 +1415,6 @@
     "operator.integrateddynamics.ingredients.with_fluids.info": "Получить копию заданных ингредиентов с указанным списком жидкостей в заданной позиции ингредиента",
     "operator.integrateddynamics.ingredients.with_energies": "Ингредиенты с энергетическими элементами",
     "operator.integrateddynamics.ingredients.with_energies.info": "Получить копию заданных ингредиентов с указанным списком энергетических элементов в заданной позиции ингредиента",
-
     "operator.integrateddynamics.recipe": "Рецепт",
     "operator.integrateddynamics.recipe.basename": "Рецепт %s",
     "operator.integrateddynamics.recipe.input": "Входные ингредиенты рецепта",
@@ -1547,7 +1427,6 @@
     "operator.integrateddynamics.recipe.with_output.info": "Получить копию заданного рецепта с указанными ингредиентами в качестве выходных",
     "operator.integrateddynamics.recipe.with_input_output": "Рецепт с входными и выходными ингредиентами",
     "operator.integrateddynamics.recipe.with_input_output.info": "Создать рецепт с первыми ингредиентами в качестве входных и вторыми ингредиентами в качестве выходных",
-
     "operator.integrateddynamics.general": "Общее",
     "operator.integrateddynamics.general.basename": "Общее %s",
     "operator.integrateddynamics.general.choice": "Выбор",
@@ -1560,7 +1439,6 @@
     "operator.integrateddynamics.general.isnull.info": "Если заданное значение является null",
     "operator.integrateddynamics.general.isnotnull": "Не является Null",
     "operator.integrateddynamics.general.isnotnull.info": "Если заданное значение не является null",
-
     "operator.integrateddynamics.virtual": "Виртуальный оператор",
     "operator.integrateddynamics.virtual.basename": "Виртуальный %s",
     "operator.integrateddynamics.virtual.p_conjunction": "Конъюнкция предикатов",
@@ -1573,51 +1451,38 @@
     "operator.integrateddynamics.virtual.piped.info": "Цепочка операторов",
     "operator.integrateddynamics.virtual.piped2": "Цепочка из двух операторов",
     "operator.integrateddynamics.virtual.piped2.info": "Цепочка из двух связанных операторов",
-
     "operator.integrateddynamics.cast": "Приведение типов",
     "operator.integrateddynamics.cast.basename": "Приведение",
     "operator.integrateddynamics.cast.tooltip": "Приведение %s к %s",
-
     "operator.integrateddynamics.parse": "Анализ",
     "operator.integrateddynamics.parse.basename": "Анализ",
     "operator.integrateddynamics.parse.tooltip": "Анализ %s",
-
-    "_comment": "------ О содержании динамики интеграции ------",
-
     "info_book.integrateddynamics.section.main": "О динамике интеграции",
     "info_book.integrateddynamics.tag_index": "&oОглавление&r",
-
     "info_book.integrateddynamics.introduction": "Введение",
     "info_book.integrateddynamics.introduction.text1": "Слишком долго возможности автоматизации были слишком ограничены. &1Integrated Dynamics&0 стремится стать основным модом для автоматизации ваших логических систем. Он предлагает выразительный и погружной опыт программирования логики с поддержкой большинства элементов &lMinecraft&r и его модификаций.",
     "info_book.integrateddynamics.introduction.text2": "Красные цепи всегда были очень простым, но работоспособным и легко понятным методом автоматизации. Однако простота красного камня также является неудобством. Для сетей автоматизации с высокой сложностью красные цепи могут стать очень громоздкими и, следовательно, трудными для управления. Кроме того, одна маленькая утечка воды может вызвать серьезные проблемы у каждого инженера по красному камню.",
     "info_book.integrateddynamics.introduction.text3": "Цель этой книги двояка. Во-первых, предоставляется &lучебник&r для изучения самых важных концепций этого мода. Во-вторых, подробное &lруководство&r по всем элементам и механизмам объясняется для игроков, которые не заинтересованы в учебнике.",
     "info_book.integrateddynamics.introduction.text4": "Вы можете перемещаться по этой книге, нажимая на стрелки внизу; при удерживании Shift вы будете перелистывать целые разделы вместо отдельных страниц. В начале больших разделов вы увидите оглавление с гиперссылками на подразделы для быстрого просмотра. Когда вы встретите рецепты, предметы, описанные в этой книге, будут кликабельны как быстрая ссылка на раздел, где они объяснены. Вы также заметите кнопку в верхнем левом углу этой книги, которая приведет вас к разделу выше текущего. Кнопка в правом верхнем углу будет возвращать вас к предыдущей посещенной странице при каждом нажатии.",
-
     "info_book.integrateddynamics.tutorials": "Учебники",
-
     "info_book.integrateddynamics.tutorials.introduction": "Введение",
     "info_book.integrateddynamics.tutorials.introduction.text1": "Эта часть книги содержит несколько учебников, которые помогут вам понять основы мода. Кроме того, вы сможете получить некоторые &lнаграды&r, выполняя достижения каждого учебника.",
-
     "info_book.integrateddynamics.tutorials.menrilBasics": "Основы Менрила",
     "info_book.integrateddynamics.tutorials.menrilBasics.text1": "Чтобы начать работу с этим модом, вам нужно найти несколько &lДеревьев Менрила&r, которые чаще всего встречаются в &lБиомах Менеглина&r.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text2": "После этого вам нужно будет создать &lПресс&r и &lСушильный Бассейн&r для обработки &lБревен Менрила&r. Это можно сделать, поместив блок дерева в &lПресс&r и прыгая на нем, пока он не станет плоским. После этого &lСмола Менрила&r попадет в две стороны &lПресса&r. Затем поместите &lСушильный Бассейн&r рядом с &lПрессом&r, чтобы он наполнился &lСмолой Менрила&r, которую вы только что выжали.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text3": "Если вы хотите повторить процесс, вы можете сбросить &lПресс&r, подав на него импульс красного камня.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text4": "В будущем вы также сможете создавать улучшенные версии этих машин, которые легче автоматизировать, но они более дорогие: &lМеханический Пресс&r и &lМеханический Сушильный Бассейн&r.",
-
     "info_book.integrateddynamics.tutorials.networkFoundations": "Основы Сетей",
     "info_book.integrateddynamics.tutorials.networkFoundations.text1": "Главная цель этого мода — создание управляющих сетей для автоматизации. Это делается с помощью &lЛогических Кабелей&r. Попробуйте создать сеть из десяти таких кабелей.",
     "info_book.integrateddynamics.tutorials.networkFoundations.text2": "Следующим шагом будет создание нескольких &lКарт Переменных&r и &lТрансформаторов Переменных&r. &lКарты Переменных&r используются для хранения ссылок на значения в сети. &lТрансформаторы Переменных&r — это элементы для создания компонентов, которые можно разместить на &lЛогических Кабелях&r для чтения и записи этих значений.",
-
     "info_book.integrateddynamics.tutorials.basicNetworkComponents": "Основные Компоненты Сети",
     "info_book.integrateddynamics.tutorials.basicNetworkComponents.text1": "Один из способов связывания &lКарт Переменных&r с определенными значениями — это считывание значений с помощью &lСчитывателей&r. Давайте начнем с создания некоторых базовых считывателей. После этого создайте &lДисплей&r, который полезен для отображения значений &lКарт Переменных&r.",
-
     "info_book.integrateddynamics.tutorials.aspects": "Аспекты",
     "info_book.integrateddynamics.tutorials.aspects.text1": "В качестве простого примера, попробуем считать значение красного камня и отобразить его.",
     "info_book.integrateddynamics.tutorials.aspects.text2": "Для этого подключите &lСчитыватель Красного Камня&r к &lЛогическому Кабелю&r в мире. Убедитесь, что считывание нацелено на что-то с значением красного камня, например, на &lФакел Красного Камня&r.",
     "info_book.integrateddynamics.tutorials.aspects.text3": "После этого щелкните правой кнопкой мыши по &lСчитывателю Красного Камня&r, чтобы открыть графический интерфейс, затем вставьте &lКарту Переменной&r в аспект &6Целочисленное&0 &lЗначение Красного Камня&r, чтобы связать значение красного камня цели с этой &lКартой Переменной&r.",
     "info_book.integrateddynamics.tutorials.aspects.text4": "Далее поместите &lДисплей&r в ту же сеть, что и &lСчитыватель Красного Камня&r, и вставьте связанную &lКарту Переменной&r для отображения её значения.",
     "info_book.integrateddynamics.tutorials.aspects.text5": "В качестве следующего шага создайте &lЗаписывающее Устройство Красного Камня&r и заставьте его записывать максимальное целочисленное значение красного камня, считанное &lСчитывателем Красного Камня&r.",
-
     "info_book.integrateddynamics.tutorials.logicOperations": "Логические Операции",
     "info_book.integrateddynamics.tutorials.logicOperations.text1": "Хотя отображение значений, полученных от считывателей, может быть полезным, всё становится действительно интересным, когда вы начинаете комбинировать определённые значения с другими значениями с помощью &2Операторов&0. Все &2Операторы&0 можно найти в &lПрограмматоре Логики&r.",
     "info_book.integrateddynamics.tutorials.logicOperations.text2": "Начните с создания &lПрограмматора Логики&r, который существует как в виде предмета, так и в виде блока. Откройте его графический интерфейс, чтобы увидеть список всех &lоператоров&r.",
@@ -1626,7 +1491,6 @@
     "info_book.integrateddynamics.tutorials.logicOperations.text5": "Так как &1Integrated Dynamics&0 вычисляет переменные &oленивым&r образом, эта &lКарта Переменной Сложения&r не содержит непосредственно сумму этих &6Целых Чисел&0, но сложение будет выполнено только тогда, когда значение потребуется в сети, на основе ссылок на переменные. Для этого сеть должна иметь возможность найти эти связанные &lКарты Переменных&r. Для этого вам нужно создать и разместить &lХранилище Переменных&r. Вставьте две &6Целочисленные&0 &lКарты Переменных&r в это хранилище, чтобы сделать их доступными для сети.",
     "info_book.integrateddynamics.tutorials.logicOperations.text6": "Наконец, теперь вы можете подключить кабель к &lХранилищу Переменных&r, прикрепить &lДисплей&r и вставить &lКарту Переменной Сложения&r для отображения результата сложения.",
     "info_book.integrateddynamics.tutorials.logicOperations.text7": "&lПрограмматор Логики&r и &lХранилища Переменных&r станут вашими лучшими друзьями, когда вы захотите выполнять более сложную автоматизацию.",
-
     "info_book.integrateddynamics.tutorials.recipe_handling": "Обработка рецептов",
     "info_book.integrateddynamics.tutorials.recipe_handling.text1": "&oРецепты&r являются важной частью &lMinecraft&r. Именно поэтому этот мод предлагает поддержку первого уровня для них через значения &8Рецептов&0 и значения &lИнгредиентов&r, чтобы представлять их входные и выходные наборы. В этом уроке мы рассмотрим, как можно получить и использовать рецепты.",
     "info_book.integrateddynamics.tutorials.recipe_handling.text2": "Проще всего получить &8Рецепты&0 — просто считать их с машины, которая может обрабатывать рецепты. Итак, начнем с чтения всех крафтовых рецептов, разместив &lСчитыватель Машин&r рядом с &lВерстаком&r и считав список рецептов.",
@@ -1634,65 +1498,48 @@
     "info_book.integrateddynamics.tutorials.recipe_handling.text4": "В этой последней части урока мы пойдем дальше в чтении рецептов. Используя аспект &lРецепт по Выходу&r, мы можем получить оператор, который, будучи примененным к экземпляру &8Ингредиентов&0, вернет первый &8Рецепт&0, который возвращает заданные &8Ингредиенты&0 в качестве выхода. Мы будем использовать это, чтобы найти рецепт &lСундука&r.",
     "info_book.integrateddynamics.tutorials.recipe_handling.text5": "Давайте начнем с создания экземпляра &8Ингредиентов&0 с одним &8Сундуком&0 в вашем &lПрограмматоре Логики&r. Затем прочитайте аспект &lРецепт по Выходу&r из &lСчитывателя Машин&r, нацеленного на &lВерстак&r. После этого используйте оператор &oПрименить&r, чтобы применить ваш &lСундук&r &8Ингредиент&0 к оператору, полученному из &lСчитывателя Машин&r. Наконец, вставьте полученную переменную в &lДисплей&r, чтобы увидеть рецепт &lСундука&r. (Не забудьте вставить все использованные переменные в &lХранилище Переменных&r).",
     "info_book.integrateddynamics.tutorials.recipe_handling.text6": "Очевидно, что с &8Рецептами&0 и &8Ингредиентами&0 можно делать гораздо больше. Загляните в &lСчитыватель Машин&r и &lПрограмматор Логики&r, чтобы узнать о других расширенных возможностях.",
-
-    "info_book.integrateddynamics.tutorials.nbt": "NBT",
     "info_book.integrateddynamics.tutorials.nbt.text1": "&4NBT&0 теги используются для представления сложных структур данных. Обычно они используются внутри Minecraft для хранения информации о машинах и сущностях. В этом уроке мы рассмотрим простое чтение и манипулирование NBT-тегами.",
     "info_book.integrateddynamics.tutorials.nbt.text2": "В качестве первого шага используйте &lСчитыватель Блоков&r на кафедре, прочитайте её &4NBT&0 данные и визуализируйте их в &lДисплее&r.",
     "info_book.integrateddynamics.tutorials.nbt.text3": "Далее, из считанного &lКафедра&r &4NBT&0 тега, прочитайте подтег &3Книга&0 как составной тег и визуализируйте его.",
     "info_book.integrateddynamics.tutorials.nbt.text4": "В качестве финального шага мы прочитаем поле &3id&0 из этого подтега &3Книга&0. Однако вместо того, чтобы начинать с последнего считанного подтега, мы начнем с корня и применим выражение &lПуть NBT&r. Такие выражения полезны для получения глубоко вложенных &4NBT&0 значений. Например, применение выражения &4”.root.child1.child2”&0 к &3NBT&0 тегу &3{ root: { child1: { child2: ”some value” } }}&0 выведет &3”some value”&0. Более продвинутые функции &lПути NBT&r описаны позже в продвинутой части руководства.",
     "info_book.integrateddynamics.tutorials.nbt.text5": "Чтобы выполнить финальное достижение, создайте выражение &lПуть NBT&r, которое выбирает поле &3Книга&0/&3id&0, примените его к нашему тегу &lКафедра&r и визуализируйте его в &lДисплее&r.",
-
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents": "Продвинутые Компоненты Сети",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text1": "Теперь, когда вы знакомы с базовой логикой, мы можем взглянуть на более продвинутые компоненты сети: &lМатериализатор&r и &lПрокси&r.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text2": "Как вы можете помнить, &lПрограмматор Логики&r позволяет вам создавать переменные со &остатическими&r значениями, или вы можете создавать более сложные переменные на основе &одинамической&r оценки значений.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text3": "&lМатериализатор&r можно использовать для преобразования &одинамического&r значения в &остатическое&r. Это можно сделать, вставив &одинамическую&r &lКарту Переменной&r в верхний слот &lМатериализатора&r. Каждая &lКарта Переменной&r, вставленная в левый слот, будет установлена значением верхней переменной на тот момент.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text4": "&lПрокси&r позволяет добавить дополнительный уровень косвенности для ваших переменных. Например, у вас может быть логическая программа, которая требует &остатическое&r значение. Если в будущем вы захотите изменить это значение, вам придется переписать программу, если только это значение не было &опроксировано&r, в этом случае вам просто нужно обновить значение в &lПрокси&r.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text5": "Для этого урока создайте материализованные и проксированные &lКарты Переменных&r.",
-
     "info_book.integrateddynamics.tutorials.advancedOperations": "Продвинутые Операции",
     "info_book.integrateddynamics.tutorials.advancedOperations.text1": "Как вы могли заметить в последнем уроке, &lПрограмматор Логики&r позволяет делать гораздо больше, чем просто складывать числа. В этом уроке мы рассмотрим более сложные структуры данных и цепочки операторов.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text2": "Давайте начнем с создания статического &7Списка&0 из &6Целых Чисел&0 &61&0, &610&0 и &6100&0 и визуализируем его в &lДисплее&r.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text3": "&7Предметы&0 — это один из возможных типов значений в этом моде. Давайте создадим статическую &7Предметную&0 &lКарту Переменной&r, динамически получим имя мода из этого предмета и визуализируем его в &lДисплее&r.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text4": "Помните, что вам нужно использовать &lХранилище Переменных&r для хранения ваших ссылочных переменных.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text5": "В финальной части этого урока мы объединим динамические переменные с операторами. Подключите &lСчитыватель Сущностей&r к сети, считайте целевую &7Сущность&0, получите &7Блок&0, на который смотрит целевая &7Сущность&0, и визуализируйте этот &7Блок&0 в &lДисплее&r.",
-
     "info_book.integrateddynamics.tutorials.theValueOfOperators": "Значение Операторов",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text1": "В &1Integrated Dynamics&0, &2Операторы&0 являются первоклассными элементами. До сих пор мы использовали их только вручную через &lПрограмматор Логики&r, но в этом уроке мы рассмотрим, как они могут использоваться более динамично, сохраняя &2Операторы&0 в &lКартах Переменных&r и вызывая их динамически.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text2": "В качестве первого шага перейдите в &lПрограмматор Логики&r и создайте новый статический &2Оператор&0, начав вводить &oАрифметическое Сложение&r &2Оператора&0 в выпадающем списке автозаполнения и нажав на него, затем запишите его на &lКарту Переменной&r. После этого создайте две переменные типа &6Целое Число&0. Затем найдите оператор &oПрименить&r и примените первое &6Целое Число&0 к &2Оператору&0, что &oсвяжет&r первый входной аргумент оператора сложения с этим &6Целым Числом&0 и выведет новый &2Оператор&0 с одним оставшимся входным аргументом. Затем снова используйте оператор &oПрименить&r, чтобы &oсвязать&r последний входной аргумент вновь созданного &2Оператора&0. Наконец, используйте &lДисплей&r для визуализации вашего динамически вызванного сложения.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text3": "Помимо применения &2Операторов&0, существует множество других продвинутых операций с &2Операторами&0. Теперь мы рассмотрим использование &2Операторов&0 на &7Списках&0, а именно оператор &oФильтр&r, который принимает &7Список&0 и &oПредикат&r (оператор с одним входным аргументом и выходным значением типа &9Логическое&0). Начните с создания &7Списка&0 из &6Целых Чисел&0 &61&0, &610&0 и &6100&0. Затем сохраните оператор &oРеляционное Равенство&r в переменной. Примените этот оператор к &6Целому Числу&0 &610&0. Затем используйте оператор &oФильтр&r с вашим &7Списком&0 и примененным &2Оператором&0. Это отфильтрует все элементы из &7Списка&0, которые возвращают &9Ложь&0 при применении к данному оператору, что в данном случае означает, что все элементы, не равные &610&0, будут удалены из списка. Визуализируйте результат в &lДисплее&r.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text4": "Существует множество других операций с &2Операторами&0, таких как комбинирование &oПредикатов&r, изменение порядка аргументов &2Операторов&0 и дополнительные операции над &7Списками&0.",
-
     "info_book.integrateddynamics.tutorials.challenges": "Вызовы",
     "info_book.integrateddynamics.tutorials.challenges.text1": "Этот финальный раздел учебника содержит несколько нетривиальных задач, чтобы показать, что вы понимаете основы &1Integrated Dynamics&0. Дополнительная информация для каждого вызова предоставляться не будет, так что удачи!",
-
     "info_book.integrateddynamics.manual": "Руководство",
-
     "info_book.integrateddynamics.manual.introduction": "Введение",
     "info_book.integrateddynamics.manual.introduction.text1": "Эта часть книги содержит подробные описания всех элементов мода.",
-
     "info_book.integrateddynamics.manual.prerequisites": "Предварительные условия",
-
     "info_book.integrateddynamics.manual.prerequisites.menril_trees": "Деревья Менрила",
     "info_book.integrateddynamics.manual.prerequisites.menril_trees.text1": "Вы можете время от времени встречать высокие синие деревья. Такие деревья называются &lДеревьями Менрила&r, и они обладают очень интересными свойствами. Во-первых, их листья излучают свет. Это вызвано светящимися ягодами, которые также очень вкусные! Во-вторых, красивая древесина этих деревьев содержит много смолы, которую можно использовать для создания большинства предметов в этом моде.",
-
     "info_book.integrateddynamics.manual.prerequisites.meneglin_biome": "Биом Менеглина",
     "info_book.integrateddynamics.manual.prerequisites.meneglin_biome.text1": "&lДеревья Менрила&r, к сожалению, довольно сложно найти. К счастью, существует один биом — &lБиом Менеглина&r, где эти деревья процветают. Большое количество &lДеревьев Менрила&r заставляет некоторые объекты в этом биоме становиться синими, что вызвано &lСмолой Менрила&r, выделяемой этими деревьями в окружающую среду.",
-
     "info_book.integrateddynamics.manual.prerequisites.squeezer": "Пресс",
     "info_book.integrateddynamics.manual.prerequisites.squeezer.text1": "&lПресс&r — это машина начального этапа игры, которая позволяет вам прыгать на блоках и предметах, чтобы сломать или выжать их. Не только игроки, но и любые другие сущности могут прыгать или падать на него, чтобы выполнить процесс выжимания. Полученные предметы либо попадут в соседний инвентарь, либо упадут на землю. Полученные жидкости останутся в машине и потекут в одну из двух сторон, если есть целевой резервуар. Машина содержит небольшую подвеску, которая может быть активирована импульсом красного камня для её сброса. Наиболее примечательно, что эта машина может использоваться для выжимания смолы из &lБревен Менрила&r.",
-
     "info_book.integrateddynamics.manual.prerequisites.drying_basin": "Сушильный Бассейн",
     "info_book.integrateddynamics.manual.prerequisites.drying_basin.text1": "Сушка блоков и предметов может быть выполнена с помощью &lСушильного Бассейна&r. Это может быть полезно, например, если вы хотите высушить &lСмолу Менрила&r в &lКристаллизованный Менрил&r.",
     "info_book.integrateddynamics.manual.prerequisites.drying_basin.text2": "Что бы вы ни делали, не вставляйте горячие жидкости!",
-
     "info_book.integrateddynamics.manual.networks": "Сети",
     "info_book.integrateddynamics.manual.networks.text1": "&lIntegrated Dynamics&r &lсети&r являются основой любой хорошей системы автоматизации. Сеть состоит из набора соединенных &lЛогических Кабелей&r, на которые могут быть установлены различные части. Эти кабели следует управлять с помощью &lГаечного Ключа&r. Shift+правый клик по кабелю или части удалит его, а обычный правый клик отсоединит его от других кабелей.",
     "info_book.integrateddynamics.manual.networks.text2": "Хотя &lЛогические Кабели&r могут выглядеть красиво, в некоторых случаях вы, вероятно, захотите их скрыть. Это можно сделать с помощью &lФасадов&r, которые могут имитировать любой материал. Кроме того, эти кабели также совместимы с &lMC MultiPart&r, что означает, что вы можете скрыть свои кабели в более сложных структурах фасадов.",
-
     "info_book.integrateddynamics.manual.logic": "Логика",
-
     "info_book.integrateddynamics.manual.logic.value_types": "Типы Значений",
-
     "info_book.integrateddynamics.manual.logic.value_types.boolean": "Логический",
     "info_book.integrateddynamics.manual.logic.value_types.boolean.text1": "Простейший тип значения, его значения могут быть либо &9Истина&0, либо &9Ложь&0.",
     "info_book.integrateddynamics.manual.logic.value_types.integer": "Целое Число",
@@ -1713,7 +1560,6 @@
     "info_book.integrateddynamics.manual.logic.value_types.operator.text1": "Значение, содержащее ссылку на &2Оператор&0. Операторы могут быть частично применены для более гибкой оценки на основе концепции &lКаррирования&r. Это часть концепции &lметапрограммирования&r (поищите это, это реально!), где операторы рассматриваются как данные другими операторами. По сути, это позволяет вам создавать новые операторы самостоятельно, которые затем можно использовать для более сложных операций.",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text2": "Например, вы можете сохранить оператор сложения &2Оператора&0 на карте переменной. Сделайте это, начав вводить имя оператора, выбрав его из выпадающего списка автозаполнения и нажав на него. Затем вы можете частично применить его с одной &6Целочисленной&0 &lКартой Переменной&r, что приведет к созданию нового виртуального оператора с одним входным и одним выходным типом, который внутренне содержит ссылку на примененное &6Целое Число&0. Применение другого &6Целого Числа&0 даст результат в виде &6Целого Числа&0.",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text3": "Другие операции с &2Операторами&0 доступны в &lПрограмматоре Логики&r для более сложных вычислений, таких как свертывание списка в одно значение или фильтрация списка на основе &lПредиката&r.",
-    "info_book.integrateddynamics.manual.logic.value_types.nbt": "NBT",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text1": "Определенные вещи в &lMinecraft&r внутренне используют структуру данных &3NBT&0. Тег &3NBT&0 — это особый вид объекта, который может содержать несколько значений разных типов. Например, NBT-представление &8Сундука&0, содержащего все его предметы, информация о зачарованиях &8Кирки&0, ...",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text2": "Переменные могут хранить ссылки на такие теги &3NBT&0, и существуют соответствующие операторы для чтения или расширения этих тегов.",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text3": "Теги &3NBT&0 обычно используются в этом моде как механизм низкоуровневого резервного копирования на случай, если вы не можете прочитать определенную информацию с помощью специализированных операторов.",
@@ -1733,20 +1579,15 @@
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text3": "Эти рецепты могут использоваться для автоматического крафта в модах, таких как &lIntegrated Crafting&r.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text4": "Чтобы быстро найти конкретные рецепты среди существующих &lКарт Переменных&r внутри графического интерфейса, вы можете удерживать Shift, чтобы временно отобразить выходной предмет рецепта.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text5": "Shift-кликом по слоту ввода внутри &lПрограмматора Логики&r вы можете настроить подробные свойства этого слота ввода. Например, вы можете указать, следует ли учитывать NBT, может ли этот предмет использоваться повторно в нескольких рецептах (например, если он не будет полностью израсходован после завершения работы), и следует ли рассматривать альтернативы на основе тегов для этого предмета.",
-
     "info_book.integrateddynamics.manual.logic.variables": "Переменные",
-
     "info_book.integrateddynamics.manual.logic.variables.variable_card": "Карта Переменной",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text1": "&lКарты Переменных&r являются основным способом передачи логики в этом моде. Переменная содержит ссылку на определенное &lЗначение&r с определенным &lТипом Значения&r.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text2": "Переменные могут быть либо статическими, либо динамическими. Статические переменные определяются один раз и никогда не изменяются после этого. Динамические переменные являются результатом некоторого вида &lЛогической Оценки&r, выполняемой &lОператорами&r или &lАспектами Считывания&r. Примером динамической переменной является время в мире &lMinecraft&r, которое непрерывно меняется.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text3": "Динамические переменные будут оцениваться только тогда, когда их значение запрашивается каким-либо образом, например, отображается в &lДисплее&r или используется как часть оценки другой динамической переменной.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text4": "У каждой &lКарты Переменной&r есть уникальный ID, который используется внутри сетей для &lЛогической Оценки&r. Когда в сети возникает ошибка, эти ID будут показаны игроку для помощи в отладке. Для лучшего удобства использования можно присвоить &lКартам Переменных&r метку с помощью &lМетчика&r, что позволит игрокам видеть метку вместо ID.",
-
     "info_book.integrateddynamics.manual.logic.variables.variable_store": "Хранилище Переменных",
     "info_book.integrateddynamics.manual.logic.variables.variable_store.text1": "Некоторые динамические переменные оцениваются на основе других переменных, где доступ к этим ссылочным переменным должен быть возможен. Динамическая переменная, представляющая сложение двух других переменных, должна иметь возможность получить доступ к этим двум другим переменным при её оценке. Доступ к этим другим переменным должен быть возможен в той же сети, где оценивается динамическая переменная, что можно сделать, поместив другие карты переменных в &lХранилище Переменных&r. В сети может присутствовать несколько &lХранилищ Переменных&r. Эти другие переменные также могут ссылаться на определенные переменные, которые также должны присутствовать в той же сети.",
-
     "info_book.integrateddynamics.manual.logic.advanced": "Продвинутый",
-
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path": "Путь NBT",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text1": "При работе со сложными тегами &3NBT&0 может быстро потребоваться цепочка сложных операторов для чтения глубоко вложенных значений NBT. Чтобы упростить эту задачу, можно использовать выражения &lПути NBT&r на основе &4Строк&0 для определения пути внутри тега &3NBT&0.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text2": "Простейшее выражение Пути NBT состоит из цепочки &lселекторов полей&r, таких как &4.fieldName&0 или &4.[”fieldName”]&0.",
@@ -1759,32 +1600,26 @@
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text9": "Например, применение выражения &4”.a[1:4:2]”&0 к тегу &3NBT&0 &3{ a: [0,1,2,3,4,5] }&0 выведет &3[1,3]&0.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text10": "Также возможны более сложные выражения фильтрации с использованием синтаксиса фильтров, например, &4[?(@.childName < 10)]&0 (@ ссылается на текущий тег, .. — на родительский тег, $ — на корневой тег).",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text11": "Например, применение выражения &4”$.a[?(@ == 3)]”&0 к тегу &3NBT&0 &3{ a: [0,1,2,3,4,5] }&0 выведет &3[3]&0.",
-
     "info_book.integrateddynamics.manual.parts": "Части",
-
     "info_book.integrateddynamics.manual.parts.introduction": "Введение",
     "info_book.integrateddynamics.manual.parts.introduction.text1": "Части могут быть размещены на каждой стороне &lЛогического Кабеля&r. Этот раздел описывает части, которые могут считывать &lЗначения&r и делать их доступными в виде &lКарты Переменной&r, а также части, которые могут выполнять действия на основе &lЗначений&r внутри &lКарт Переменных&r.",
     "info_book.integrateddynamics.manual.parts.introduction.text2": "У большинства частей есть настраиваемые параметры, к которым можно получить доступ с помощью кнопки в правом верхнем углу графического интерфейса части. Это позволяет изменить &lТики/Операцию&r, то есть через сколько тиков эта часть должна выполнять свои действия. Во-вторых, можно изменить &lПриоритет&r части, который указывает порядок, в котором эта часть может действовать относительно других частей в той же сети в один и тот же тик. Если у части A приоритет -1, а у части B приоритет 1, то часть B всегда будет выполнять свои действия раньше части A. Если приоритеты частей одинаковы, то относительный порядок случайный.",
     "info_book.integrateddynamics.manual.parts.introduction.text3": "&lЭнергетический Канал&r части определяет, откуда она может получать энергию. -1 — это универсальный канал (он соответствует всем каналам), а 0 — это канал по умолчанию (используется частями, такими как энергетические ячейки, у которых нет настройки канала). Наконец, &lЦелевая Сторона&r определяет, с какой стороны целевого блока будет происходить взаимодействие. По умолчанию это сторона, на которую фактически была размещена часть.",
     "info_book.integrateddynamics.manual.parts.introduction.text4": "Некоторые части для чтения и записи содержат аспекты только при наличии определенных модов. Если для определенной части отсутствуют аспекты, предупреждение будет добавлено в подсказку предмета при попытке его создания.",
-
     "info_book.integrateddynamics.manual.parts.settings": "Настройки",
     "info_book.integrateddynamics.manual.parts.settings.text1": "У большинства частей есть экран &lНастроек&r, с помощью которого можно изменять базовые параметры части.",
     "info_book.integrateddynamics.manual.parts.settings.text2": "Целевая Сторона — это сторона, с которой эта часть будет взаимодействовать. По умолчанию это противоположная сторона от той, на которую была размещена часть.",
     "info_book.integrateddynamics.manual.parts.settings.text3": "&lТики/Операция&r позволяют настроить частоту тиков этой части. Чем выше значение, тем медленнее она работает.",
     "info_book.integrateddynamics.manual.parts.settings.text4": "&lПриоритет&r определяет порядок, в котором эта часть выполняется в рамках одного тика сети.",
     "info_book.integrateddynamics.manual.parts.settings.text5": "&lЭнергетический Канал&r указывает, из какого канала должна потребляться энергия при работе этой части. Это применимо только в том случае, если потребление энергии для сетей включено.",
-
     "info_book.integrateddynamics.manual.parts.offsets": "Смещения",
     "info_book.integrateddynamics.manual.parts.offsets.text1": "По умолчанию части нацелены на непосредственно соседнюю позицию. Однако, при применении &lУлучшений Части&r, целевая позиция может быть изменена через экран &lСмещения&r части.",
     "info_book.integrateddynamics.manual.parts.offsets.text2": "Смещения всегда относительны к целевой позиции части и ограничены количеством примененных Улучшений Части.",
     "info_book.integrateddynamics.manual.parts.offsets.text3": "Смещения можно задавать вручную или визуально с помощью &lГаечного Ключа&r. При установке &lГаечного Ключа&r в режим смещения, позицию можно сохранить, нажав Shift + правый клик. Эта позиция может быть сохранена в части простым правым кликом с этим &lГаечным Ключом&r.",
     "info_book.integrateddynamics.manual.parts.offsets.text4": "Смещения могут быть не только статически определены, но и быть &одинамическими&r с использованием &lКарт Переменных&r.",
-
     "info_book.integrateddynamics.manual.parts.reader": "Считыватели",
     "info_book.integrateddynamics.manual.parts.reader.introduction": "Введение",
     "info_book.integrateddynamics.manual.parts.reader.introduction.text1": "Простейший способ создания динамической переменной осуществляется с помощью &lСчитывателей&r. Существуют различные типы считывателей для чтения информации из мира и её сохранения внутри &lКарты Переменной&r. Каждый &lСчитыватель&r содержит один или несколько &lАспектов&r для чтения различных данных с различными &lТипами Значений&r.",
-
     "info_book.integrateddynamics.manual.parts.reader.audio": "Аудио",
     "info_book.integrateddynamics.manual.parts.reader.audio.text1": "Информация о музыке и аудио, воспроизводимых в окружающей среде.",
     "info_book.integrateddynamics.manual.parts.reader.block": "Блок",
@@ -1805,7 +1640,6 @@
     "info_book.integrateddynamics.manual.parts.reader.redstone.text1": "Считывание информации о красном камне из блока, на который направлена часть.",
     "info_book.integrateddynamics.manual.parts.reader.world": "Мир",
     "info_book.integrateddynamics.manual.parts.reader.world.text1": "Информация о мире, в котором находится эта часть, например, текущая погода и время.",
-
     "info_book.integrateddynamics.manual.parts.writer": "Записывающие Устройства",
     "info_book.integrateddynamics.manual.parts.writer.audio": "Аудио",
     "info_book.integrateddynamics.manual.parts.writer.audio.text1": "Воспроизводить звуки и музыку.",
@@ -1819,7 +1653,6 @@
     "info_book.integrateddynamics.manual.parts.writer.inventory.text1": "Выполнять действия, связанные с инвентарем и трубами. Сама передача предметов не происходит.",
     "info_book.integrateddynamics.manual.parts.writer.redstone": "Красный Камень",
     "info_book.integrateddynamics.manual.parts.writer.redstone.text1": "Выводить определенный уровень сигнала красного камня.",
-
     "info_book.integrateddynamics.manual.parts.other": "Другие",
     "info_book.integrateddynamics.manual.parts.other.light": "Свет",
     "info_book.integrateddynamics.manual.parts.other.light.text1": "Простой источник света, который либо всегда включен, либо может управляться с помощью &1Логической&0 или &6Целочисленной&0 &lКарты Переменной&r.",
@@ -1834,39 +1667,30 @@
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text2": "Например, вы можете захотеть подключить более двух сетей с помощью одного коннектора или подключиться к сетям в других измерениях. Для таких случаев вы можете использовать &lОмни-Направленные&r коннекторы.",
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text3": "Эти коннекторы получают уникальный идентификатор группы при первом создании, который определяет группу, в которой могут быть подключены сети. У каждого коннектора в группе есть уникальный цвет частиц при размещении в мире. Идентификатор группы можно увидеть в подсказке предмета или нажав правой кнопкой мыши на размещенный коннектор. Дополнительные коннекторы можно добавить в группу, создав новый с использованием существующего коннектора из группы.",
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text4": "Вы также можете изменить группу существующих коннекторов двумя способами. Создание одного в верстаке назначит его новой группе без других участников, а создание двух вместе скопирует группу первого на второй.",
-
     "info_book.integrateddynamics.manual.machines": "Машины",
-
     "info_book.integrateddynamics.manual.machines.materializer": "Материализатор",
     "info_book.integrateddynamics.manual.machines.materializer.text1": "Чтобы сделать динамическую &lКарту Переменной&r статической, можно использовать &lМатериализатор&r. Динамическая &lКарта Переменной&r должна быть вставлена, а новая пустая &lКарта Переменной&r должна быть вставлена, что приведет к тому, что она будет содержать текущее значение динамической &lКарты Переменной&r как статическое значение.",
     "info_book.integrateddynamics.manual.machines.materializer.text2": "Это может быть полезно в ситуациях, когда вы хотите записывать значения определенной динамической &lКарты Переменной&r, или когда вам больше не нужна динамическая оценка &lКарты Переменной&r.",
     "info_book.integrateddynamics.manual.machines.materializer.text3": "&lКарты Переменных&r могут быть подключены для входа и выхода из &lМатериализатора&r.",
-
     "info_book.integrateddynamics.manual.machines.proxy": "Прокси",
     "info_book.integrateddynamics.manual.machines.proxy.text1": "&lПрокси&r можно использовать для создания динамической ссылки на определенную &lКарту Переменной&r. Он позволяет вам вставить &lКарту Переменной&r в верхний слот и записать новую &lКарту Переменной&r, которая будет динамически принимать значение &lКарты Переменной&r, присутствующей в прокси. Обратите внимание, что ссылочная (или любая другая) &lКарта Переменной&r должна оставаться в верхнем слоте для работы прокси.",
     "info_book.integrateddynamics.manual.machines.proxy.text2": "Это полезно в ситуациях, когда у вас есть цепочка &lКарт Переменных&r, но вы все же хотели бы иметь возможность изменять одно значение вручную. Вы можете тогда проксировать эту переменную, что позволит заменить её на другую переменную в любое время.",
     "info_book.integrateddynamics.manual.machines.proxy.text3": "Как и в случае с &lМатериализатором&r, &lКарты Переменных&r могут быть подключены для входа и выхода из него.",
-
     "info_book.integrateddynamics.manual.machines.delay": "Задержка",
     "info_book.integrateddynamics.manual.machines.delay.text1": "В некоторых ситуациях вам может понадобиться поддерживать историю значений переменных. Например, если вы хотите вычислить среднее значение или разницу между последними значениями.",
     "info_book.integrateddynamics.manual.machines.delay.text2": "Для этого вы можете использовать &lЗадержку&r, с помощью которой можно сохранять историю значений заданной переменной. Вы можете сделать это, вставив &lКарту Переменной&r в верхний слот, для которой хотите сохранить историю. Теперь вы можете создать &lКарты Переменных&r, которые будут ссылаться на список значений, соответствующий истории. Ссылочная (или любая другая) &lКарта Переменной&r должна оставаться в верхнем слоте для работы задержки.",
     "info_book.integrateddynamics.manual.machines.delay.text3": "Самые старые значения соответствуют последним элементам в списке. Вы можете выбрать максимальную длину истории в графическом интерфейсе.",
-
     "info_book.integrateddynamics.manual.machines.energy_battery": "Энергетическая Батарея",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "Сети &lIntegrated Dynamics&r могут быть настроены на потребление энергии. Для этого вы можете подключить &lЭнергетические Батареи&r к сети, чтобы увеличить её ёмкость для хранения энергии.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text2": "Эти батареи принимают как &lRF&r, так и &lTesla&r энергию.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "Подача сигнала красного камня включит режим автоматического экспорта энергии на все стороны.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "Когда эта батарея находится в вашем инвентаре, режим &lавто-подачи&r можно включить, нажав Shift + правый клик. Когда этот режим включен, батарея будет автоматически пытаться заряжать предметы, которые вы держите в руках.",
-
     "info_book.integrateddynamics.manual.machines.generator": "Генератор",
     "info_book.integrateddynamics.manual.machines.generator.text1": "Когда вам нужна энергия &lRF&r или &lTesla&r, вы можете использовать &lГенератор&r для создания энергии из &oсжигаемых&r предметов.",
-
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "Механический Пресс",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer.text1": "Наступит время, когда вам надоест прыгать на &lПрессах&r. Если к тому моменту вы еще не автоматизировали свои &lПрессы&r, возможно, пришло время подумать о создании &lМеханического Пресса&r. Он не требует ручного труда, но для работы потребляет энергию. Это также делает его значительно быстрее, чем обычный &lПресс&r, и позволяет выжимать больше вещей с более высокой отдачей.",
-
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin": "Механический Сушильный Бассейн",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1": "Сушка с помощью &lСушильного Бассейна&r может занять некоторое время. Если вы хотите ускорить процесс или иметь возможность сушить больше вещей, вы можете использовать &lМеханический Сушильный Бассейн&r, который работает за счет энергии.",
-
     "info_book.integrateddynamics.manual.logic_programming": "Логическое Программирование",
     "info_book.integrateddynamics.manual.logic_programming.text1": "Другой метод создания динамических карт переменных — это применение &lОператора&r к одной или нескольким &lКартам Переменных&r для получения новой &lКарты Переменной&r. Примером &lОператора&r является сложение двух &lЧисел&r, что приводит к получению нового &lЧисла&r.",
     "info_book.integrateddynamics.manual.logic_programming.text2": "&lОператор&r может иметь одно или несколько входных значений и одно выходное значение. В большинстве случаев входные и выходные данные имеют определенный &lТип Значения&r; в противном случае они будут иметь тип &lЛюбой&r. &lОператор&r с одним входом и одним выходным значением типа &lЛогический&r называется &lПредикатом&r.",
@@ -1874,7 +1698,6 @@
     "info_book.integrateddynamics.manual.logic_programming.text4": "&lПрограмматор Логики&r позволяет искать &lОператоры&r по имени с помощью текстового поля вверху. Также можно фильтровать по типам входных или выходных значений, вставляя &lКарту Переменной&r этих типов в слоты в нижнем левом углу.",
     "info_book.integrateddynamics.manual.logic_programming.text5": "Если у игрока в инвентаре есть &lМетчик&r, результирующую &lКарту Переменной&r можно сразу пометить, нажав кнопку ‘E’ рядом с выходным слотом.",
     "info_book.integrateddynamics.manual.logic_programming.text6": "&lПрограмматор Логики&r существует как в форме блока, так и в форме предмета. Обе формы можно взаимозаменять, размещая их в сетке крафта.",
-
     "info_book.integrateddynamics.manual.diagnostics": "Диагностика Сетей",
     "info_book.integrateddynamics.manual.diagnostics.text1": "Игроки с правами оператора имеют доступ к инструменту &lДиагностика Сетей&r, который позволяет проверить время тиков для всех сетей на сервере.",
     "info_book.integrateddynamics.manual.diagnostics.text2": "Чтобы включить этот инструмент, выполните команду &o\\integrateddynamics networkdiagnostics&r, которая запустит временный локальный веб-сервер.",
