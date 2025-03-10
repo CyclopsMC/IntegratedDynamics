@@ -284,11 +284,15 @@ public class Network implements INetwork {
         }
         element.beforeNetworkKill(this, blockState);
         element.onNetworkRemoval(this, blockState);
+        removeNetworkElementInternal(element);
+        getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
+        onNetworkChanged();
+    }
+
+    public void removeNetworkElementInternal(INetworkElement element) {
         elements.remove(element);
         removeNetworkElementUpdateable(element);
         invalidatedElements.remove(element); // The element may be invalidated (like in an unloaded chunk) when it is being removed.
-        getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
-        onNetworkChanged();
     }
 
     @Override
@@ -540,10 +544,17 @@ public class Network implements INetwork {
 
     @Override
     public void invalidateElement(INetworkElement element) {
-        for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
-            fullNetworkListener.invalidateElement(element);
+        if (element.canRevalidate(this)) {
+            // If this element could already be revalidated,
+            // this means that the element was not unloaded due to incorrect chunk unload,
+            // and therefore is corrupted, so let's forcefully remove it.
+            removeNetworkElementInternal(element);
+        } else {
+            for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
+                fullNetworkListener.invalidateElement(element);
+            }
+            invalidatedElements.add(element);
         }
-        invalidatedElements.add(element);
     }
 
     @Override

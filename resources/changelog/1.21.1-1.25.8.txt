@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Additions:
+* Update ru_ru.json (#1483)
+
+Changes:
+* Avoid repeated log spam for forcefully unloaded parts, Closes #1481
