@@ -64,6 +64,14 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         ItemStack itemStack = value.getRawValue();
         if(!itemStack.isEmpty()) {
             tag.putInt("count", itemStack.getCount());
+            int count = itemStack.getCount();
+            if (itemStack.getCount() > 99) {
+                itemStack = itemStack.copy();
+                itemStack.setCount(99);
+            }
+            if (count > 127) {
+                tag.putInt("ExtendedCount", count);
+            }
             return itemStack.save(valueDeseralizationContext.holderLookupProvider(), tag);
         }
         return tag;
@@ -81,6 +89,9 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             ItemStack itemStack = ItemStack.parseOptional(valueDeseralizationContext.holderLookupProvider(), tag);
             if (!itemStack.isEmpty()) {
                 itemStack.setCount(realCount);
+            }
+            if (tag.contains("ExtendedCount", Tag.TAG_INT)) {
+                itemStack.setCount(tag.getInt("ExtendedCount"));
             }
             return ValueItemStack.of(itemStack);
         } else {
