@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.google.common.collect.Lists;
 import net.minecraft.nbt.*;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
@@ -1946,6 +1947,19 @@ public class TestNbtOperators {
                 ValueTypeInteger.ValueInteger.of(1),
                 ValueTypeInteger.ValueInteger.of(2)
         ))});
+        assertThat("result is nbt", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
+        assertThat("from_intlist(7) = nbt(7)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nintlist.getValue().getRawValue().get()));
+    }
+
+    @Test
+    public void testNbtFromIntListAny() throws EvaluationException {
+        CompoundTag subCompound = new CompoundTag();
+        subCompound.putString("hello", "world");
+        IValue res1 = Operators.NBT_FROM_INT_LIST.evaluate(new IVariable[]{new DummyVariableList(ValueTypeList.ValueList.ofList(ValueTypes.CATEGORY_ANY, Lists.newArrayList(
+                ValueTypeInteger.ValueInteger.of(0),
+                ValueTypeInteger.ValueInteger.of(1),
+                ValueTypeInteger.ValueInteger.of(2)
+        )))});
         assertThat("result is nbt", res1, instanceOf(ValueTypeNbt.ValueNbt.class));
         assertThat("from_intlist(7) = nbt(7)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nintlist.getValue().getRawValue().get()));
     }
