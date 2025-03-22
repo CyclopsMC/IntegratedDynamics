@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Additions:
+* Add ja_jp translations through Crowdin (#1492)
+
+Fixes:
+* Fix NBT from int list not working for any lists
+  Closes CyclopsMC/IntegratedScripting#37
+* Fix typos in manual
+* Fixed number typo
+* Fixed variable description
+* Fixed typo in reader introduction
