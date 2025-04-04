@@ -1,0 +1,13 @@
+{
+  "values": {
+    "integrateddynamics:menril_sapling": {
+      "chance": 0.3
+    },
+    "integrateddynamics:menril_leaves": {
+      "chance": 0.3
+    },
+    "integrateddynamics:menril_berries": {
+      "chance": 0.65
+    }
+  }
+}
