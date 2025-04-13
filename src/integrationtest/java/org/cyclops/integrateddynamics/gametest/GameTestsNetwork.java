@@ -20,6 +20,8 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 import java.util.Optional;
 
@@ -1765,6 +1767,124 @@ public class GameTestsNetwork {
             );
 
             helper.assertItemEntityPresent(RegistryEntries.BLOCK_PROXY.get().asItem());
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testNetworkMonodirectional(GameTestHelper helper) {
+        // Place cables directly
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.south().south().south(), RegistryEntries.BLOCK_CABLE.value());
+
+        // Place monodirectional connectors
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.SOUTH, PartTypes.CONNECTOR_MONO, new ItemStack(PartTypes.CONNECTOR_MONO.getItem()));
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.south().south().south()), Direction.NORTH, PartTypes.CONNECTOR_MONO, new ItemStack(PartTypes.CONNECTOR_MONO.getItem()));
+
+        helper.succeedWhen(() -> {
+            INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            INetwork network2 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.south().south().south()), null);
+            helper.assertTrue(network1 == network2, "Networks of connected cables are not equal");
+
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS)),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.south().south().south())),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testNetworkMonodirectionalUnconnected(GameTestHelper helper) {
+        // Place cables directly
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.south().south().south().east(), RegistryEntries.BLOCK_CABLE.value());
+
+        // Place monodirectional connectors
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.SOUTH, PartTypes.CONNECTOR_MONO, new ItemStack(PartTypes.CONNECTOR_MONO.getItem()));
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.south().south().south().east()), Direction.NORTH, PartTypes.CONNECTOR_MONO, new ItemStack(PartTypes.CONNECTOR_MONO.getItem()));
+
+        helper.succeedWhen(() -> {
+            INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            INetwork network2 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.south().south().south().east()), null);
+            helper.assertFalse(network1 == network2, "Networks of connected cables are equal");
+
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS)),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.south().south().south())),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testNetworkOmnidirectional(GameTestHelper helper) {
+        // Place cables directly
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.south().south().south().east(), RegistryEntries.BLOCK_CABLE.value());
+
+        // Place omnidirectional connectors
+        ItemStack omniDirectionalConnector = new ItemStack(PartTypes.CONNECTOR_OMNI.getItem());
+        omniDirectionalConnector.set(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP, 1);
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.SOUTH, PartTypes.CONNECTOR_OMNI, omniDirectionalConnector.copy());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.south().south().south().east()), Direction.NORTH, PartTypes.CONNECTOR_OMNI, omniDirectionalConnector.copy());
+
+        helper.succeedWhen(() -> {
+            INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            INetwork network2 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.south().south().south().east()), null);
+            helper.assertTrue(network1 == network2, "Networks of connected cables are not equal");
+
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS)),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.south().south().south())),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testNetworkOmnidirectionalUnconnected(GameTestHelper helper) {
+        // Place cables directly
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.south().south().south().east(), RegistryEntries.BLOCK_CABLE.value());
+
+        // Place omnidirectional connectors
+        ItemStack omniDirectionalConnector1 = new ItemStack(PartTypes.CONNECTOR_OMNI.getItem());
+        omniDirectionalConnector1.set(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP, 1);
+        ItemStack omniDirectionalConnector2 = new ItemStack(PartTypes.CONNECTOR_OMNI.getItem());
+        omniDirectionalConnector2.set(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP, 2);
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.SOUTH, PartTypes.CONNECTOR_OMNI, omniDirectionalConnector1.copy());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.south().south().south().east()), Direction.NORTH, PartTypes.CONNECTOR_OMNI, omniDirectionalConnector2.copy());
+
+        helper.succeedWhen(() -> {
+            INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            INetwork network2 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.south().south().south().east()), null);
+            helper.assertFalse(network1 == network2, "Networks of connected cables are equal");
+
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS)),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.south().south().south())),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
         });
     }
 
