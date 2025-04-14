@@ -6,9 +6,11 @@ import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -29,6 +31,7 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBas
 import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -38,7 +41,18 @@ public class GameTestHelpersIntegratedDynamics {
 
     public static void assertValueEqual(IValue value1, IValue value2) {
         if (!Objects.equals(value1, value2)) {
-            throw new GameTestAssertException("Value is incorrect");
+            throw new GameTestAssertException(String.format("Value %s does not equal value %s", value1, value2));
+        }
+    }
+
+    public static void assertValueEqual(@Nullable IVariable value1, IValue value2) {
+        if (value1 == null) {
+            throw new GameTestAssertException("Variable is null");
+        }
+        try {
+            assertValueEqual(value1.getValue(), value2);
+        } catch (EvaluationException e) {
+            throw new GameTestAssertException(e.getMessage());
         }
     }
 
