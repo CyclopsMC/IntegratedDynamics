@@ -28,37 +28,37 @@ public class GameTestsAspectsReadWorld {
 
     @GameTest(template = TEMPLATE_EMPTY, batch = "weather1")
     public void testAspectsReadWorldWeatherClearTrue(GameTestHelper helper) {
-        helper.getLevel().setWeatherParameters(1000, 0, false, false);
+        helper.getLevel().setWeatherParameters(0, 0, false, false);
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_CLEAR, ValueTypeBoolean.ValueBoolean.of(true));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, batch = "weather2")
     public void testAspectsReadWorldWeatherClearFalse(GameTestHelper helper) {
-        helper.getLevel().setWeatherParameters(0, 1000, true, false);
+        helper.getLevel().setWeatherParameters(0, 0, true, false);
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_CLEAR, ValueTypeBoolean.ValueBoolean.of(false));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, batch = "weather3")
     public void testAspectsReadWorldWeatherRainingTrue(GameTestHelper helper) {
-        helper.getLevel().setWeatherParameters(0, 1000, true, false);
+        helper.getLevel().setWeatherParameters(0, 0, true, false);
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_RAINING, ValueTypeBoolean.ValueBoolean.of(true));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, batch = "weather4")
     public void testAspectsReadWorldWeatherRainingFalse(GameTestHelper helper) {
-        helper.getLevel().setWeatherParameters(1000, 0, false, false);
+        helper.getLevel().setWeatherParameters(0, 0, false, false);
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_RAINING, ValueTypeBoolean.ValueBoolean.of(false));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, batch = "weather5")
     public void testAspectsReadWorldWeatherThunderTrue(GameTestHelper helper) {
-        helper.getLevel().setWeatherParameters(0, 1000, true, true);
+        helper.getLevel().setWeatherParameters(0, 0, true, true);
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_THUNDER, ValueTypeBoolean.ValueBoolean.of(true));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, batch = "weather6")
     public void testAspectsReadWorldWeatherThunderFalse(GameTestHelper helper) {
-        helper.getLevel().setWeatherParameters(1000, 0, false, false);
+        helper.getLevel().setWeatherParameters(0, 0, false, false);
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_THUNDER, ValueTypeBoolean.ValueBoolean.of(false));
     }
 
