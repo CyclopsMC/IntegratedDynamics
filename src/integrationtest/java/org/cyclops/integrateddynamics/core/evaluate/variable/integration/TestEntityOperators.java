@@ -26,14 +26,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeEntity;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeDouble;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -82,7 +75,12 @@ public class TestEntityOperators {
     @IntegrationBefore
     public void before() {
         Level world = ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD);
-        eZombie = new DummyVariableEntity(makeEntity(new Zombie(world)));
+        eZombie = new DummyVariableEntity(makeEntity(new Zombie(world) {
+            @Override
+            public boolean isInWaterOrRain() {
+                return false;
+            }
+        }));
         Zombie zombieBurning = new Zombie(world);
         zombieBurning.setRemainingFireTicks(10);
         eZombieBurning = new DummyVariableEntity(makeEntity(zombieBurning));

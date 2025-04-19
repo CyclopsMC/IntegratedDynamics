@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.integration;
 
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestGenerator;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.TestFunction;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import org.apache.commons.compress.utils.Lists;
@@ -20,6 +21,8 @@ import java.util.List;
  */
 @GameTestHolder(Reference.MOD_ID)
 public class GameTester {
+
+    public static GameTestHelper GAME_TEST_HELPER;
 
     @GameTestGenerator
     public Collection<TestFunction> integrationTests() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -54,6 +57,7 @@ public class GameTester {
                         true,
                         (gameTestHelpers) -> {
                             gameTestHelpers.succeedIf(() -> {
+                                GameTester.GAME_TEST_HELPER = gameTestHelpers;
                                 try {
                                     for(Method before : befores) {
                                         before.invoke(testInstance);

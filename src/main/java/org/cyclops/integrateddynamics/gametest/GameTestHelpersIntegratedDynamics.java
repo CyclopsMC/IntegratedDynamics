@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.gametest;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestAssertException;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,10 +19,15 @@ import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
+import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -33,6 +41,8 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * @author rubensworks
@@ -126,6 +136,35 @@ public class GameTestHelpersIntegratedDynamics {
         state.getInventory().setItem(0, variableAspect);
 
         return Pair.of(part, state);
+    }
+
+    public static Supplier<IAspectVariable> testReadAspectSetup(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<?, ?> aspectRead) {
+        // Place cable
+        helper.setBlock(pos, RegistryEntries.BLOCK_CABLE.value());
+
+        // Place part
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(pos), Direction.WEST, partType, new ItemStack(partType.getItem()));
+        PartPos partPos = PartPos.of(helper.getLevel(), helper.absolutePos(pos), Direction.WEST);
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
+        IPartTypeReader partReader = (IPartTypeReader) partStateHolder.getPart();
+        IPartStateReader partStateReader = (IPartStateReader) partStateHolder.getState();
+        return () -> partReader.getVariable(PartTarget.fromCenter(partPos), partStateReader, aspectRead);
+    }
+
+    public static <V extends IValue> void testReadAspect(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, V expectedValue) {
+        Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
+        helper.succeedWhen(() -> assertValueEqual(variableSupplier.get(), expectedValue));
+    }
+
+    public static <V extends IValue> void testReadAspectPredicate(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, Predicate<V> asserter) {
+        Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
+        helper.succeedWhen(() -> {
+            try {
+                helper.assertTrue(asserter.test((V) variableSupplier.get().getValue()), "Value was not asserted correctly");
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }
