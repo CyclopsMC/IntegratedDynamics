@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -216,7 +217,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
             BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, CollisionContext.of(player))
                     .rayTrace(pos, player);
             if(rayTraceResult != null) {
-                InteractionResult actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, player.getUsedItemHand(), rayTraceResult);
+                InteractionResult actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, InteractionHand.MAIN_HAND, rayTraceResult);
                 if (actionResultType.consumesAction()) {
                     return actionResultType;
                 }
