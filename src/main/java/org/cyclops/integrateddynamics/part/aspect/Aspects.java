@@ -138,7 +138,7 @@ public class Aspects {
                         dimPos -> dimPos.getLevel(true).getBlockState(dimPos.getBlockPos()).getBlock() != Blocks.AIR
                     ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
-            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> INTEGER_DIMENSION =
+            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_DIMENSION =
                     AspectReadBuilders.Block.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
                             world -> world.dimension().location().toString()
                     ).withUpdateType(AspectUpdateType.NEVER)
