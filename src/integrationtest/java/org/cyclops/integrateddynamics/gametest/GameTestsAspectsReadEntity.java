@@ -20,7 +20,10 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.util.Objects;
+
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.testReadAspect;
+import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.testReadAspectPredicate;
 
 @GameTestHolder(Reference.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -69,6 +72,11 @@ public class GameTestsAspectsReadEntity {
     public void testAspectsReadEntityEntity(GameTestHelper helper) {
         Cow cow = helper.spawn(EntityType.COW, POS.west());
         testReadAspect(POS, helper, PartTypes.ENTITY_READER, Aspects.Read.Entity.ENTITY, ValueObjectTypeEntity.ValueEntity.of(cow));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadEntityPlayers(GameTestHelper helper) {
+        testReadAspectPredicate(POS, helper, PartTypes.ENTITY_READER, Aspects.Read.Entity.LIST_PLAYERS, Objects::nonNull);
     }
 
 }
