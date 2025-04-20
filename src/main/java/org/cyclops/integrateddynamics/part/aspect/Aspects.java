@@ -30,6 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -127,6 +128,27 @@ public class Aspects {
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLING_NOTE =
                     AspectReadBuilders.Audio.forInstrument(NoteBlockInstrument.PLING)
                             .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ZOMBIE_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockInstrument.ZOMBIE)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_SKELETON_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockInstrument.SKELETON)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CREEPER_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockInstrument.CREEPER)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DRAGON_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockInstrument.DRAGON)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_WITHER_SKELETON_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockInstrument.WITHER_SKELETON)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PIGLIN_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockInstrument.PIGLIN)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
+            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CUSTOM_HEAD_NOTE =
+                    AspectReadBuilders.Audio.forInstrument(NoteBlockInstrument.CUSTOM_HEAD)
+                            .handle(AspectReadBuilders.PROP_GET_INTEGER).buildRead();
 
         }
 
@@ -136,7 +158,7 @@ public class Aspects {
                         dimPos -> dimPos.getLevel(true).getBlockState(dimPos.getBlockPos()).getBlock() != Blocks.AIR
                     ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
-            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> INTEGER_DIMENSION =
+            public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_DIMENSION =
                     AspectReadBuilders.Block.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
                             world -> world.dimension().location().toString()
                     ).withUpdateType(AspectUpdateType.NEVER)
@@ -291,7 +313,7 @@ public class Aspects {
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonempty").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_APPLICABLE =
                     AspectReadBuilders.Fluid.BUILDER_BOOLEAN.handle(
-                        tankInfo -> tankInfo.getTanks() > 0
+                        tankInfo -> tankInfo.getTanks() > 0 && tankInfo != EmptyFluidHandler.INSTANCE
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").buildRead();
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_AMOUNT =
@@ -840,6 +862,34 @@ public class Aspects {
             public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PLING_NOTE =
                     AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
                             .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.PLING), "pling")
+                            .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ZOMBIE_NOTE =
+                    AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
+                            .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.ZOMBIE), "zombie")
+                            .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_SKELETON_NOTE =
+                    AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
+                            .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.SKELETON), "skeleton")
+                            .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CREEPER_NOTE =
+                    AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
+                            .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.CREEPER), "creeper")
+                            .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DRAGON_NOTE =
+                    AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
+                            .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.DRAGON), "dragon")
+                            .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_WITHER_SKELETON_NOTE =
+                    AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
+                            .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.WITHER_SKELETON), "wither_skeleton")
+                            .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_PIGLIN_NOTE =
+                    AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
+                            .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.PIGLIN), "piglin")
+                            .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
+            public static final IAspectWrite<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CUSTOM_HEAD_NOTE =
+                    AspectWriteBuilders.Audio.BUILDER_INTEGER_INSTRUMENT
+                            .handle(AspectWriteBuilders.Audio.propWithInstrument(NoteBlockInstrument.CUSTOM_HEAD), "custom_head")
                             .handle(AspectWriteBuilders.Audio.PROP_SET).buildWrite();
 
             public static final IAspectWrite<ValueTypeString.ValueString, ValueTypeString> STRING_SOUND =

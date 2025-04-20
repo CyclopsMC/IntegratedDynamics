@@ -150,7 +150,8 @@ public class GameTestsParts {
         player.setShiftKeyDown(true); // To remove part!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
         player.setPos(helper.absolutePos(POS).getCenter().add(0.25, -1.5, -0.5));
-        helper.getBlockState(POS).useWithoutItem(helper.getLevel(), player,
+        helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
+                InteractionHand.MAIN_HAND,
                 new BlockHitResult(
                         helper.absolutePos(POS).getCenter(),
                         Direction.NORTH,
@@ -183,7 +184,8 @@ public class GameTestsParts {
         player.setShiftKeyDown(true); // To remove part!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
         player.setPos(helper.absolutePos(POS).getCenter().add(0.25, -1.5, -0.5));
-        helper.getBlockState(POS).useWithoutItem(helper.getLevel(), player,
+        helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
+                InteractionHand.MAIN_HAND,
                 new BlockHitResult(
                         helper.absolutePos(POS).getCenter(),
                         Direction.NORTH,
@@ -289,7 +291,8 @@ public class GameTestsParts {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
         player.setPos(helper.absolutePos(POS).getCenter().add(0, -1.5, 0.5));
         player.setYRot(180);
-        helper.getBlockState(POS).useWithoutItem(helper.getLevel(), player,
+        helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
+                InteractionHand.MAIN_HAND,
                 new BlockHitResult(
                         helper.absolutePos(POS).getCenter(),
                         Direction.SOUTH,

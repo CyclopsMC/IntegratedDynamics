@@ -18,7 +18,7 @@ public class PartTypeBlockReader extends PartTypeReadBase<PartTypeBlockReader, P
         super(name);
         AspectRegistry.getInstance().register(this, Lists.<IAspect>newArrayList(
                 Aspects.Read.Block.BOOLEAN_BLOCK,
-                Aspects.Read.Block.INTEGER_DIMENSION,
+                Aspects.Read.Block.STRING_DIMENSION,
                 Aspects.Read.Block.INTEGER_POSX,
                 Aspects.Read.Block.INTEGER_POSY,
                 Aspects.Read.Block.INTEGER_POSZ,

@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +39,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player, BlockHitResult rayTraceResult) {
+    public InteractionResult useItemOn(ItemStack pStack, BlockState blockState, Level world, BlockPos blockPos, Player player, InteractionHand pHand, BlockHitResult rayTraceResult) {
         ItemStack heldItem = player.getItemInHand(player.getUsedItemHand());
         if (WrenchHelpers.isWrench(player, heldItem, world, blockPos, rayTraceResult.getDirection())
                 && player.isSecondaryUseActive()) {
@@ -48,7 +49,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
             }
             return InteractionResult.SUCCESS;
         }
-        return super.useWithoutItem(blockState, world, blockPos, player, rayTraceResult);
+        return super.useItemOn(pStack, blockState, world, blockPos, player, pHand, rayTraceResult);
     }
 
     @Override

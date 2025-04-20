@@ -52,6 +52,7 @@ public class RegistryEntries {
     public static final DeferredHolder<Item, Item> ITEM_BUCKET_LIQUID_CHORUS = DeferredHolder.create(Registries.ITEM, ResourceLocation.parse("integrateddynamics:bucket_liquid_chorus"));
     public static final DeferredHolder<Item, Item> ITEM_BUCKET_MENRIL_RESIN = DeferredHolder.create(Registries.ITEM, ResourceLocation.parse("integrateddynamics:bucket_menril_resin"));
     public static final DeferredHolder<Item, Item> ITEM_CABLE = DeferredHolder.create(Registries.ITEM, ResourceLocation.parse("integrateddynamics:cable"));
+    public static final DeferredHolder<Item, Item> ITEM_CRYSTALIZED_MENRIL_CHUNK = DeferredHolder.create(Registries.ITEM, ResourceLocation.parse("integrateddynamics:crystalized_menril_chunk"));
     public static final DeferredHolder<Item, Item> ITEM_DELAY = DeferredHolder.create(Registries.ITEM, ResourceLocation.parse("integrateddynamics:delay"));
     public static final DeferredHolder<Item, ItemBlockEnergyContainer> ITEM_ENERGY_BATTERY = DeferredHolder.create(Registries.ITEM, ResourceLocation.parse("integrateddynamics:energy_battery"));
     public static final DeferredHolder<Item, ItemFacade> ITEM_FACADE = DeferredHolder.create(Registries.ITEM, ResourceLocation.parse("integrateddynamics:facade"));

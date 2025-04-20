@@ -413,7 +413,8 @@ public class GameTestsOffsets {
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
         facePlayerToPart(player, partPos);
 
-        partPos.getPos().getLevel(true).getBlockState(partPos.getPos().getBlockPos()).useWithoutItem(helper.getLevel(), player,
+        partPos.getPos().getLevel(true).getBlockState(partPos.getPos().getBlockPos()).useItemOn(itemStack, helper.getLevel(), player,
+                InteractionHand.MAIN_HAND,
                 new BlockHitResult(
                         partPos.getPos().getBlockPos().getCenter(),
                         partPos.getSide(),

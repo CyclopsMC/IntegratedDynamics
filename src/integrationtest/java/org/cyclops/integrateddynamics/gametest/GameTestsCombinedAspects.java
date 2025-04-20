@@ -33,13 +33,13 @@ import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedD
 
 @GameTestHolder(Reference.MOD_ID)
 @PrefixGameTestTemplate(false)
-public class GameTestsAspects {
+public class GameTestsCombinedAspects {
 
     public static final String TEMPLATE_EMPTY = "empty10";
     public static final BlockPos POS = BlockPos.ZERO.offset(2, 0, 2);
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderToWriter(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderToWriter(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
@@ -87,7 +87,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsNothingToWriter(GameTestHelper helper) {
+    public void testCombinedAspectsNothingToWriter(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
@@ -117,7 +117,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderToWriterDisconnected(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderToWriterDisconnected(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east().east(), RegistryEntries.BLOCK_CABLE.value());
@@ -168,7 +168,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderToDisplay(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderToDisplay(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
@@ -206,7 +206,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsNothingToDisplay(GameTestHelper helper) {
+    public void testCombinedAspectsNothingToDisplay(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
 
@@ -227,7 +227,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsBlankVariableToDisplay(GameTestHelper helper) {
+    public void testCombinedAspectsBlankVariableToDisplay(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
 
@@ -250,7 +250,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderAddOperatorToDisplay(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderAddOperatorToDisplay(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
@@ -298,7 +298,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsDisplayPanelAsVariableStore(GameTestHelper helper) {
+    public void testCombinedAspectsDisplayPanelAsVariableStore(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
@@ -347,7 +347,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderAddOperatorToDisplayIncompleteVariableStore(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderAddOperatorToDisplayIncompleteVariableStore(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
@@ -404,7 +404,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderAddOperatorToDisplayFullyDisconnected(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderAddOperatorToDisplayFullyDisconnected(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east().east(), RegistryEntries.BLOCK_CABLE.value());
@@ -462,7 +462,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderAddOperatorToDisplayBecomesFullyDisconnected(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderAddOperatorToDisplayBecomesFullyDisconnected(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east().east(), RegistryEntries.BLOCK_CABLE.value());
@@ -525,7 +525,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderAddOperatorToDisplayReadersDisconnected(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderAddOperatorToDisplayReadersDisconnected(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east().east(), RegistryEntries.BLOCK_CABLE.value());
@@ -585,7 +585,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderAddOperatorToDisplayVariableStoreDisconnected(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderAddOperatorToDisplayVariableStoreDisconnected(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
@@ -643,7 +643,7 @@ public class GameTestsAspects {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsRedstoneReaderAddOperatorToDisplayBecomesFullyConnected(GameTestHelper helper) {
+    public void testCombinedAspectsRedstoneReaderAddOperatorToDisplayBecomesFullyConnected(GameTestHelper helper) {
         // Place cable
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east().east(), RegistryEntries.BLOCK_CABLE.value());

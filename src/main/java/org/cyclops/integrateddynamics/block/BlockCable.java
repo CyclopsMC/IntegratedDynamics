@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -208,25 +209,25 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
         /*
             Wrench: sneak + right-click anywhere on cable to remove cable
                     right-click on a cable side to disconnect on that side
                     sneak + right-click on part to remove that part
             No wrench: right-click to open GUI
          */
-        BlockEntityMultipartTicking tile = IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityMultipartTicking.class).orElse(null);
+        BlockEntityMultipartTicking tile = IModHelpers.get().getBlockEntityHelpers().get(pLevel, pPos, BlockEntityMultipartTicking.class).orElse(null);
         if(tile != null) {
-            BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, CollisionContext.of(player))
-                    .rayTrace(pos, player);
+            BlockRayTraceResultComponent rayTraceResult = getSelectedShape(pState, pLevel, pPos, CollisionContext.of(pPlayer))
+                    .rayTrace(pPos, pPlayer);
             if(rayTraceResult != null) {
-                InteractionResult actionResultType = rayTraceResult.getComponent().onBlockActivated(state, world, pos, player, player.getUsedItemHand(), rayTraceResult);
+                InteractionResult actionResultType = rayTraceResult.getComponent().onBlockActivated(pState, pLevel, pPos, pPlayer, pHand, rayTraceResult);
                 if (actionResultType.consumesAction()) {
                     return actionResultType;
                 }
             }
         }
-        return super.useWithoutItem(state, world, pos, player, hit);
+        return super.useItemOn(pStack, pState, pLevel, pPos, pPlayer, pHand, pHitResult);
     }
 
     @Override

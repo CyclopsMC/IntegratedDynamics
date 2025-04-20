@@ -32,6 +32,7 @@ import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.item.ProxyVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerProxy;
 import org.cyclops.integrateddynamics.network.ProxyNetworkElement;
@@ -205,6 +206,12 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
         @Override
         protected void update(Level level, BlockPos pos, BlockState blockState, T blockEntity) {
             super.update(level, pos, blockState, blockEntity);
+
+            // If the block was placed by a non-player, this is needed.
+            if (blockEntity.getProxyId() < 0) {
+                blockEntity.generateNewProxyId();
+                NetworkHelpers.initNetwork(level, pos, null);
+            }
 
             if (blockEntity.isWriteVariable()) {
                 if (!blockEntity.getInventory().getItem(blockEntity.getSlotWriteIn()).isEmpty() && blockEntity.getInventory().getItem(blockEntity.getSlotWriteOut()).isEmpty()) {
