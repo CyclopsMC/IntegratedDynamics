@@ -19,7 +19,6 @@ import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartState;
-import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -141,7 +140,7 @@ public class GameTestHelpersIntegratedDynamics {
         return Pair.of(part, state);
     }
 
-    public static Supplier<IAspectVariable> testReadAspectSetup(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<?, ?> aspectRead) {
+    public static Supplier<IAspectVariable> testReadAspectSetup(BlockPos pos, GameTestHelper helper, IPartTypeReader<?, ?> partType, IAspectRead<?, ?> aspectRead) {
         // Place cable
         helper.setBlock(pos, RegistryEntries.BLOCK_CABLE.value());
 
@@ -154,7 +153,7 @@ public class GameTestHelpersIntegratedDynamics {
         return () -> partReader.getVariable(PartTarget.fromCenter(partPos), partStateReader, aspectRead);
     }
 
-    public static <V extends IValue> void testReadAspectThrows(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead) {
+    public static <V extends IValue> void testReadAspectThrows(BlockPos pos, GameTestHelper helper, IPartTypeReader<?, ?> partType, IAspectRead<V, ?> aspectRead) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
         helper.succeedWhen(() -> {
             try {
@@ -166,12 +165,12 @@ public class GameTestHelpersIntegratedDynamics {
         });
     }
 
-    public static <V extends IValue> void testReadAspect(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, V expectedValue) {
+    public static <V extends IValue> void testReadAspect(BlockPos pos, GameTestHelper helper, IPartTypeReader<?, ?> partType, IAspectRead<V, ?> aspectRead, V expectedValue) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
         helper.succeedWhen(() -> assertValueEqual(variableSupplier.get(), expectedValue));
     }
 
-    public static <V extends IValue> void testReadAspectPredicate(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, Predicate<V> asserter) {
+    public static <V extends IValue> void testReadAspectPredicate(BlockPos pos, GameTestHelper helper, IPartTypeReader<?, ?> partType, IAspectRead<V, ?> aspectRead, Predicate<V> asserter) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
         helper.succeedWhen(() -> {
             try {
@@ -182,7 +181,7 @@ public class GameTestHelpersIntegratedDynamics {
         });
     }
 
-    public static <V extends IValue> void testReadAspectOperator(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, List<IValue> operatorInputs, IValue expectedOperatorOutput) {
+    public static <V extends IValue> void testReadAspectOperator(BlockPos pos, GameTestHelper helper, IPartTypeReader<?, ?> partType, IAspectRead<V, ?> aspectRead, List<IValue> operatorInputs, IValue expectedOperatorOutput) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
         helper.succeedWhen(() -> {
             try {
@@ -198,7 +197,7 @@ public class GameTestHelpersIntegratedDynamics {
         });
     }
 
-    public static <V extends IValue> void testReadAspectOperatorPredicate(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, List<IValue> operatorInputs, Predicate<IValue> asserter) {
+    public static <V extends IValue> void testReadAspectOperatorPredicate(BlockPos pos, GameTestHelper helper, IPartTypeReader<?, ?> partType, IAspectRead<V, ?> aspectRead, List<IValue> operatorInputs, Predicate<IValue> asserter) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
         helper.succeedWhen(() -> {
             try {
@@ -212,6 +211,22 @@ public class GameTestHelpersIntegratedDynamics {
                 throw new GameTestAssertException(e.getMessage());
             }
         });
+    }
+
+    public static <V extends IValue> void testWriteAspectSetup(BlockPos pos, GameTestHelper helper, IPartTypeWriter<?, ?> partType, IAspectWrite<V, ?> aspectWrite, ItemStack variableAspect) {
+        // Place cable
+        if (helper.getLevel().isEmptyBlock(helper.absolutePos(pos))) {
+            helper.setBlock(pos, RegistryEntries.BLOCK_CABLE.value());
+        }
+
+        // Place part
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(pos), Direction.WEST, partType, new ItemStack(partType.getItem()));
+        PartPos partPos = PartPos.of(helper.getLevel(), helper.absolutePos(pos), Direction.WEST);
+        placeVariableInWriter(helper.getLevel(), partPos, aspectWrite, variableAspect);
+    }
+
+    public static <V extends IValue> void testWriteAspectSetup(BlockPos pos, GameTestHelper helper, IPartTypeWriter<?, ?> partType, IAspectWrite<V, ?> aspectWrite, V value) {
+        testWriteAspectSetup(pos, helper, partType, aspectWrite, createVariableForValue(helper.getLevel(), value.getType(), value));
     }
 
 }
