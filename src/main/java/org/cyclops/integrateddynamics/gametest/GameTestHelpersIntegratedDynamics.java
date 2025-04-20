@@ -31,7 +31,9 @@ import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
@@ -40,6 +42,7 @@ import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -151,6 +154,18 @@ public class GameTestHelpersIntegratedDynamics {
         return () -> partReader.getVariable(PartTarget.fromCenter(partPos), partStateReader, aspectRead);
     }
 
+    public static <V extends IValue> void testReadAspectThrows(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead) {
+        Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
+        helper.succeedWhen(() -> {
+            try {
+                variableSupplier.get().getValue();
+                helper.assertTrue(false, "The aspect did not throw");
+            } catch (EvaluationException e) {
+                helper.assertTrue(true, "The aspect did successfully throw");
+            }
+        });
+    }
+
     public static <V extends IValue> void testReadAspect(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, V expectedValue) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
         helper.succeedWhen(() -> assertValueEqual(variableSupplier.get(), expectedValue));
@@ -167,14 +182,34 @@ public class GameTestHelpersIntegratedDynamics {
         });
     }
 
-    public static <V extends IValue> void testReadAspectThrows(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead) {
+    public static <V extends IValue> void testReadAspectOperator(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, List<IValue> operatorInputs, IValue expectedOperatorOutput) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
         helper.succeedWhen(() -> {
             try {
-                variableSupplier.get().getValue();
-                helper.assertTrue(false, "The aspect did not throw");
+                IValue operatorValue = variableSupplier.get().getValue();
+                if (!(operatorValue instanceof ValueTypeOperator.ValueOperator operator)) {
+                    throw new GameTestAssertException("Return value is not an operator");
+                }
+                IValue output = operator.getRawValue().evaluate(operatorInputs.stream().map(Variable::new).toArray(Variable[]::new));
+                assertValueEqual(output, expectedOperatorOutput);
             } catch (EvaluationException e) {
-                helper.assertTrue(true, "The aspect did successfully throw");
+                throw new GameTestAssertException(e.getMessage());
+            }
+        });
+    }
+
+    public static <V extends IValue> void testReadAspectOperatorPredicate(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead, List<IValue> operatorInputs, Predicate<IValue> asserter) {
+        Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
+        helper.succeedWhen(() -> {
+            try {
+                IValue operatorValue = variableSupplier.get().getValue();
+                if (!(operatorValue instanceof ValueTypeOperator.ValueOperator operator)) {
+                    throw new GameTestAssertException("Return value is not an operator");
+                }
+                IValue output = operator.getRawValue().evaluate(operatorInputs.stream().map(Variable::new).toArray(Variable[]::new));
+                helper.assertTrue(asserter.test(output), "Value was not asserted correctly");
+            } catch (EvaluationException e) {
+                throw new GameTestAssertException(e.getMessage());
             }
         });
     }

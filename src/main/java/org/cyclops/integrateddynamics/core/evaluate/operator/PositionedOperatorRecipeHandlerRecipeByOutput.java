@@ -13,10 +13,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeIngredients;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeRecipe;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -66,7 +64,7 @@ public class PositionedOperatorRecipeHandlerRecipeByOutput<T extends IValueType<
 
                 }
             }
-            return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_RECIPE, Collections.emptyList());
+            return ValueObjectTypeRecipe.ValueRecipe.of(null);
         }
 
         protected boolean validateIngredients(IMixedIngredients actualIngredients, IMixedIngredients givenIngredients) {
