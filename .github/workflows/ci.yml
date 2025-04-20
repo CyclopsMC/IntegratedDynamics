@@ -44,7 +44,7 @@ jobs:
         if: ${{ env.KEYSTORE_BASE64 }}
         run: cp ${{ steps.unlock_keystore.outputs.filePath }} .
       - name: 'Build'
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build --stacktrace
         env:
           SIGN_KEYSTORE: ${{ secrets.SIGN_KEYSTORE }}
           SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
@@ -63,6 +63,11 @@ jobs:
         with:
           if-no-files-found: error
           path: build/libs/*
+      - name: 'Upload failure reports if build fails'
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          path: build/reports/*
       - name: 'Deploy to CurseForge'
         if: startsWith(github.ref, 'refs/tags/') || (!startsWith(github.event.head_commit.message, 'Bump mod version') && startsWith(github.ref, 'refs/heads/master'))
         env:
