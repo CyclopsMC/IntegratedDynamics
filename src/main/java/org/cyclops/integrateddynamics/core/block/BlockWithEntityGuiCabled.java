@@ -2,7 +2,8 @@ package org.cyclops.integrateddynamics.core.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +38,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player, BlockHitResult rayTraceResult) {
+    public ItemInteractionResult useItemOn(ItemStack pStack, BlockState blockState, Level world, BlockPos blockPos, Player player, InteractionHand pHand, BlockHitResult rayTraceResult) {
         ItemStack heldItem = player.getItemInHand(player.getUsedItemHand());
         if (WrenchHelpers.isWrench(player, heldItem, world, blockPos, rayTraceResult.getDirection())
                 && player.isSecondaryUseActive()) {
@@ -45,9 +46,9 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
                 Block.dropResources(blockState, world, blockPos, blockState.hasBlockEntity() ? world.getBlockEntity(blockPos) : null, player, heldItem);
                 world.destroyBlock(blockPos, false);
             }
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
-        return super.useWithoutItem(blockState, world, blockPos, player, rayTraceResult);
+        return super.useItemOn(pStack, blockState, world, blockPos, player, pHand, rayTraceResult);
     }
 
     @Override
