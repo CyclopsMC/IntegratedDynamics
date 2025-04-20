@@ -167,4 +167,16 @@ public class GameTestHelpersIntegratedDynamics {
         });
     }
 
+    public static <V extends IValue> void testReadAspectThrows(BlockPos pos, GameTestHelper helper, IPartType<?, ?> partType, IAspectRead<V, ?> aspectRead) {
+        Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
+        helper.succeedWhen(() -> {
+            try {
+                variableSupplier.get().getValue();
+                helper.assertTrue(false, "The aspect did not throw");
+            } catch (EvaluationException e) {
+                helper.assertTrue(true, "The aspect did successfully throw");
+            }
+        });
+    }
+
 }
