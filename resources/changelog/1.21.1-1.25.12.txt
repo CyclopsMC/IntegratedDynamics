@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Additions:
+* Add skull-based note support to audio reader and writer
+
+Fixes:
+* Fix wrench not removing cables after using off-hand item, Closes #1504
+* Fix proxies placed by non-players not having an id
