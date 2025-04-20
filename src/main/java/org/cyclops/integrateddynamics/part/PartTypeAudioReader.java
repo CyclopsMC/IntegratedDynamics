@@ -32,7 +32,14 @@ public class PartTypeAudioReader extends PartTypeReadBase<PartTypeAudioReader, P
                 Aspects.Read.Audio.INTEGER_DIDGERIDOO_NOTE,
                 Aspects.Read.Audio.INTEGER_BIT_NOTE,
                 Aspects.Read.Audio.INTEGER_BANJO_NOTE,
-                Aspects.Read.Audio.INTEGER_PLING_NOTE
+                Aspects.Read.Audio.INTEGER_PLING_NOTE,
+                Aspects.Read.Audio.INTEGER_ZOMBIE_NOTE,
+                Aspects.Read.Audio.INTEGER_SKELETON_NOTE,
+                Aspects.Read.Audio.INTEGER_CREEPER_NOTE,
+                Aspects.Read.Audio.INTEGER_DRAGON_NOTE,
+                Aspects.Read.Audio.INTEGER_WITHER_SKELETON_NOTE,
+                Aspects.Read.Audio.INTEGER_PIGLIN_NOTE,
+                Aspects.Read.Audio.INTEGER_CUSTOM_HEAD_NOTE
         ));
     }
 

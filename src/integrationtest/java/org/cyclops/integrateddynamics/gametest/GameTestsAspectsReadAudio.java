@@ -118,6 +118,48 @@ public class GameTestsAspectsReadAudio {
         testReadAspect(POS, helper, PartTypes.AUDIO_READER, Aspects.Read.Audio.INTEGER_PLING_NOTE, ValueTypeInteger.ValueInteger.of(15));
     }
 
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadAudioZombie(GameTestHelper helper) {
+        playNote(helper, NoteBlockInstrument.ZOMBIE);
+        testReadAspect(POS, helper, PartTypes.AUDIO_READER, Aspects.Read.Audio.INTEGER_ZOMBIE_NOTE, ValueTypeInteger.ValueInteger.of(15));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadAudioSkeleton(GameTestHelper helper) {
+        playNote(helper, NoteBlockInstrument.SKELETON);
+        testReadAspect(POS, helper, PartTypes.AUDIO_READER, Aspects.Read.Audio.INTEGER_SKELETON_NOTE, ValueTypeInteger.ValueInteger.of(15));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadAudioCreeper(GameTestHelper helper) {
+        playNote(helper, NoteBlockInstrument.CREEPER);
+        testReadAspect(POS, helper, PartTypes.AUDIO_READER, Aspects.Read.Audio.INTEGER_CREEPER_NOTE, ValueTypeInteger.ValueInteger.of(15));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadAudioDragon(GameTestHelper helper) {
+        playNote(helper, NoteBlockInstrument.DRAGON);
+        testReadAspect(POS, helper, PartTypes.AUDIO_READER, Aspects.Read.Audio.INTEGER_DRAGON_NOTE, ValueTypeInteger.ValueInteger.of(15));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadAudioWitherSkeleton(GameTestHelper helper) {
+        playNote(helper, NoteBlockInstrument.WITHER_SKELETON);
+        testReadAspect(POS, helper, PartTypes.AUDIO_READER, Aspects.Read.Audio.INTEGER_WITHER_SKELETON_NOTE, ValueTypeInteger.ValueInteger.of(15));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadAudioPiglin(GameTestHelper helper) {
+        playNote(helper, NoteBlockInstrument.PIGLIN);
+        testReadAspect(POS, helper, PartTypes.AUDIO_READER, Aspects.Read.Audio.INTEGER_PIGLIN_NOTE, ValueTypeInteger.ValueInteger.of(15));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadAudioCustomHead(GameTestHelper helper) {
+        playNote(helper, NoteBlockInstrument.CUSTOM_HEAD);
+        testReadAspect(POS, helper, PartTypes.AUDIO_READER, Aspects.Read.Audio.INTEGER_CUSTOM_HEAD_NOTE, ValueTypeInteger.ValueInteger.of(15));
+    }
+
     public static void playNote(GameTestHelper helper, NoteBlockInstrument instrument) {
         helper.setBlock(POS.west(), Blocks.NOTE_BLOCK.defaultBlockState()
                 .setValue(NoteBlock.INSTRUMENT, instrument)

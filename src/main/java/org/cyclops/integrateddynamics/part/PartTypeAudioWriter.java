@@ -33,6 +33,13 @@ public class PartTypeAudioWriter extends PartTypeWriteBase<PartTypeAudioWriter, 
                 Aspects.Write.Audio.INTEGER_BIT_NOTE,
                 Aspects.Write.Audio.INTEGER_BANJO_NOTE,
                 Aspects.Write.Audio.INTEGER_PLING_NOTE,
+                Aspects.Write.Audio.INTEGER_ZOMBIE_NOTE,
+                Aspects.Write.Audio.INTEGER_SKELETON_NOTE,
+                Aspects.Write.Audio.INTEGER_CREEPER_NOTE,
+                Aspects.Write.Audio.INTEGER_DRAGON_NOTE,
+                Aspects.Write.Audio.INTEGER_WITHER_SKELETON_NOTE,
+                Aspects.Write.Audio.INTEGER_PIGLIN_NOTE,
+                Aspects.Write.Audio.INTEGER_CUSTOM_HEAD_NOTE,
                 Aspects.Write.Audio.STRING_SOUND,
                 Aspects.Write.Audio.STRING_TEXT
         ));
