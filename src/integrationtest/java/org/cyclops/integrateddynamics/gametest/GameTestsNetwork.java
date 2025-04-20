@@ -213,6 +213,61 @@ public class GameTestsNetwork {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testNetworkTwoDisconnectedByWrenchOffhand(GameTestHelper helper) {
+        // Place two networks directly next to each other
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(1, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(2, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(3, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+
+        // And disconnect them using the wrench
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
+        player.setItemInHand(InteractionHand.OFF_HAND, itemStack);
+        player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, -0.5));
+        helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
+                InteractionHand.OFF_HAND,
+                new BlockHitResult(
+                        helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
+                        Direction.NORTH,
+                        helper.absolutePos(POS.offset(1, 0, 0)),
+                        false)
+        );
+
+        helper.succeedWhen(() -> {
+            INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            INetwork network2 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.offset(1, 0, 0)), null);
+            INetwork network3 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.offset(2, 0, 0)), null);
+            INetwork network4 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.offset(3, 0, 0)), null);
+            helper.assertTrue(network1 == network2, "Networks of connected cables are not equal");
+            helper.assertTrue(network2 != network3, "Networks of wrench-disconnected cables are equal");
+            helper.assertTrue(network3 == network4, "Networks of connected cables are not equal");
+
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS)),
+                    Sets.newHashSet(Direction.EAST),
+                    "Connected cables are invalid"
+            );
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.offset(1, 0, 0))),
+                    Sets.newHashSet(Direction.WEST),
+                    "Connected cables are invalid"
+            );
+
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.offset(2, 0, 0))),
+                    Sets.newHashSet(Direction.EAST),
+                    "Connected cables are invalid"
+            );
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.offset(3, 0, 0))),
+                    Sets.newHashSet(Direction.WEST),
+                    "Connected cables are invalid"
+            );
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testNetworkTwoDisconnectedAndReconnectedByWrench(GameTestHelper helper) {
         // Place two networks directly next to each other
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
@@ -341,6 +396,64 @@ public class GameTestsNetwork {
         player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, -0.5));
         helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
+                new BlockHitResult(
+                        helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
+                        Direction.NORTH,
+                        helper.absolutePos(POS.offset(1, 0, 0)),
+                        false)
+        );
+
+        helper.succeedWhen(() -> {
+            INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            Optional<INetwork> network2 = NetworkHelpers.getNetwork(helper.getLevel(), helper.absolutePos(POS.offset(1, 0, 0)), null);
+            INetwork network3 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.offset(2, 0, 0)), null);
+            INetwork network4 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.offset(3, 0, 0)), null);
+            helper.assertTrue(network1 != network3, "Networks of connected cables are not equal");
+            helper.assertTrue(network2.isEmpty(), "Network of removed cable is not empty");
+            helper.assertTrue(network3 == network4, "Networks of connected cables are not equal");
+
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS)),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.offset(1, 0, 0))),
+                    Sets.newHashSet(),
+                    "Connected cables are invalid"
+            );
+
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.offset(2, 0, 0))),
+                    Sets.newHashSet(Direction.EAST),
+                    "Connected cables are invalid"
+            );
+            helper.assertValueEqual(
+                    CableHelpers.getExternallyConnectedCables(helper.getLevel(), helper.absolutePos(POS.offset(3, 0, 0))),
+                    Sets.newHashSet(Direction.WEST),
+                    "Connected cables are invalid"
+            );
+
+            helper.assertItemEntityPresent(RegistryEntries.ITEM_CABLE.get());
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testNetworkTwoRemovedByWrenchOffand(GameTestHelper helper) {
+        // Place two networks directly next to each other
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(1, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(2, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(3, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+
+        // And remove one cable using the wrench
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setShiftKeyDown(true); // To remove cable!
+        ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
+        player.setItemInHand(InteractionHand.OFF_HAND, itemStack);
+        player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, -0.5));
+        helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
+                InteractionHand.OFF_HAND,
                 new BlockHitResult(
                         helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
                         Direction.NORTH,
