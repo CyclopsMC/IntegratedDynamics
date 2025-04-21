@@ -1072,6 +1072,8 @@
 
     "operator.integrateddynamics.double": "Double",
     "operator.integrateddynamics.double.basename": "Double %s",
+    "operator.integrateddynamics.double.sqrt": "Square Root",
+    "operator.integrateddynamics.double.pow": "Power",
 
     "operator.integrateddynamics.number": "Number",
     "operator.integrateddynamics.number.basename": "Number %s",

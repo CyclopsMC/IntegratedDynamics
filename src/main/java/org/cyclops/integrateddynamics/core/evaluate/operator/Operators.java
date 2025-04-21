@@ -1,10 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
@@ -38,16 +34,8 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.IForgeShearable;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.SoundActions;
+import net.minecraft.world.phys.*;
+import net.minecraftforge.common.*;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -63,11 +51,7 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIn
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
-import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
-import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
+import org.cyclops.commoncapabilities.api.ingredient.*;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
@@ -77,11 +61,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
@@ -292,6 +272,29 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeInteger.ValueInteger.of(a.getRawValue() - 1);
+            }).build());
+
+    /**
+     * ----------------------------------- DOUBLE OPERATORS -----------------------------------
+     */
+
+    /**
+     * Integer SQRT operator with two input numbers and one output number.
+     */
+    public static final IOperator DOUBLE_SQRT = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.symbolOperatorInteract("sqrt")
+            .function(variables -> {
+                ValueTypeDouble.ValueDouble a = variables.getValue(0, ValueTypes.DOUBLE);
+                return ValueTypeDouble.ValueDouble.of(Math.sqrt(a.getRawValue()));
+            }).build());
+
+    /**
+     * Integer POW operator with two input numbers and one output number.
+     */
+    public static final IOperator DOUBLE_POW = REGISTRY.register(OperatorBuilders.DOUBLE_2.symbolOperatorInteract("pow")
+            .function(variables -> {
+                ValueTypeDouble.ValueDouble a = variables.getValue(0, ValueTypes.DOUBLE);
+                ValueTypeDouble.ValueDouble b = variables.getValue(1, ValueTypes.DOUBLE);
+                return ValueTypeDouble.ValueDouble.of(Math.pow(a.getRawValue(), b.getRawValue()));
             }).build());
 
     /**
