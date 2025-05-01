@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.common.*;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -1461,6 +1462,47 @@ public final class Operators {
             }).build());
 
     /**
+     * The tag entries of the given block
+     */
+    public static final IOperator OBJECT_BLOCK_TAG = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST)
+            .symbol("block_tag_names").operatorName("tag").interactName("tags")
+            .function(variables -> {
+                ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
+                ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
+                if(!a.getRawValue().isEmpty()) {
+                    Optional<IReverseTag<Block>> optionalReverseTag = ForgeRegistries.BLOCKS.tags().getReverseTag(a.getRawValue().get().getBlock());
+                    optionalReverseTag
+                            .ifPresent(reverseTag -> reverseTag.getTagKeys()
+                                    .forEach(owningTag -> builder.add(ValueTypeString.ValueString
+                                            .of(owningTag.location().toString()))));
+                }
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING, builder.build());
+            }).build());
+
+    /**
+     * Get a list of blocks that correspond to the given tag key.
+     */
+    public static final IOperator OBJECT_BLOCK_TAG_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
+            .output(ValueTypes.LIST)
+            .symbol("block_tag_values").operatorName("blocktag").interactName("blocksByTag")
+            .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .function(variables -> {
+                ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
+                ImmutableList.Builder<ValueObjectTypeBlock.ValueBlock> builder = ImmutableList.builder();
+                if (!StringUtil.isNullOrEmpty(a.getRawValue())) {
+                    try {
+                        Helpers.getBlockTagValues(a.getRawValue())
+                                .map(ValueObjectTypeBlock.ValueBlock::of)
+                                .forEach(builder::add);
+                    } catch (ResourceLocationException e) {
+                        throw new EvaluationException(Component.translatable(e.getMessage()));
+                    }
+                }
+                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_BLOCK, builder.build());
+            }).build());
+
+    /**
      * ----------------------------------- ITEM STACK OBJECT OPERATORS -----------------------------------
      */
 
@@ -1721,7 +1763,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_TAG = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.LIST)
-            .symbol("tag_names").operatorName("tag").interactName("tags")
+            .symbol("item_tag_names").operatorName("tag").interactName("tags")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
@@ -1740,7 +1782,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_TAG_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
             .output(ValueTypes.LIST)
-            .symbol("tag_values").operatorName("tag").interactName("itemsByTag")
+            .symbol("item_tag_values").operatorName("tag").interactName("itemsByTag")
             .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
             .function(variables -> {
                 ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
@@ -2729,6 +2771,47 @@ public final class Operators {
                 FluidStack fluidStack = valueFluidStack.getRawValue().copy();
                 fluidStack.setAmount(valueInteger.getRawValue());
                 return ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack);
+            }).build());
+
+    /**
+     * The tag entries of the given fluidstack
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_TAG = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST)
+            .symbol("fluid_tag_names").operatorName("tag").interactName("tags")
+            .function(variables -> {
+                ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+                ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
+                if(!a.getRawValue().isEmpty()) {
+                    Optional<IReverseTag<Fluid>> optionalReverseTag = ForgeRegistries.FLUIDS.tags().getReverseTag(a.getRawValue().getFluid());
+                    optionalReverseTag
+                            .ifPresent(reverseTag -> reverseTag.getTagKeys()
+                                    .forEach(owningTag -> builder.add(ValueTypeString.ValueString
+                                            .of(owningTag.location().toString()))));
+                }
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING, builder.build());
+            }).build());
+
+    /**
+     * Get a list of fluidstacks that correspond to the given tag key.
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_TAG_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
+            .output(ValueTypes.LIST)
+            .symbol("fluid_tag_values").operatorName("fluidtag").interactName("fluidsByTag")
+            .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .function(variables -> {
+                ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
+                ImmutableList.Builder<ValueObjectTypeFluidStack.ValueFluidStack> builder = ImmutableList.builder();
+                if (!StringUtil.isNullOrEmpty(a.getRawValue())) {
+                    try {
+                        Helpers.getFluidTagValues(a.getRawValue())
+                                .map(ValueObjectTypeFluidStack.ValueFluidStack::of)
+                                .forEach(builder::add);
+                    } catch (ResourceLocationException e) {
+                        throw new EvaluationException(Component.translatable(e.getMessage()));
+                    }
+                }
+                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_FLUIDSTACK, builder.build());
             }).build());
 
     /**
