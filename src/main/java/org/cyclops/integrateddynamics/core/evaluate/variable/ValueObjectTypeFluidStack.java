@@ -5,8 +5,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
@@ -79,7 +82,11 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
 
             @Override
             public Component validate(ItemStack itemStack) {
-                return itemStack.isEmpty() || Helpers.getFluidStack(itemStack) != null ? null : Component.translatable(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+                return itemStack.isEmpty() ||
+                        FluidUtil.getFluidHandler(itemStack).isPresent() ||
+                        (itemStack.getItem() instanceof BlockItem blockItem && blockItem instanceof IFluidBlock) ?
+                        null :
+                        Component.translatable(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
             }
 
             @Override
