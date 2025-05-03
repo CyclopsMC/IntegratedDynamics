@@ -18,13 +18,17 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 
 import java.util.List;
 import java.util.Locale;
@@ -72,13 +76,37 @@ public final class Helpers {
     /**
      * Retrieves a Stream of items that are registered to this tag name.
      *
-     * @param name The tag name, directly calls OreDictionary.getOres
-     * @return A Stream containing ItemStacks registered for this ore
+     * @param name The tag name
+     * @return A Stream containing ItemStacks registered for this tag
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
         Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM
                 .getTag(TagKey.create(Registries.ITEM, ResourceLocation.parse(name)));
         return tag.stream().flatMap(named -> named.stream().map(ItemStack::new));
+    }
+
+    /**
+     * Retrieves a Stream of blocks that are registered to this tag name.
+     *
+     * @param name The tag name
+     * @return A Stream containing Blocks registered for this tag
+     */
+    public static Stream<BlockState> getBlockTagValues(String name) throws ResourceLocationException {
+        Optional<HolderSet.Named<Block>> tag = BuiltInRegistries.BLOCK
+                .getTag(TagKey.create(Registries.BLOCK, ResourceLocation.parse(name)));
+        return tag.stream().flatMap(named -> named.stream().map(block -> block.value().defaultBlockState()));
+    }
+
+    /**
+     * Retrieves a Stream of fluids that are registered to this tag name.
+     *
+     * @param name The tag name
+     * @return A Stream containing Fluids registered for this tag
+     */
+    public static Stream<FluidStack> getFluidTagValues(String name) throws ResourceLocationException {
+        Optional<HolderSet.Named<Fluid>> tag = BuiltInRegistries.FLUID
+                .getTag(TagKey.create(Registries.FLUID, ResourceLocation.parse(name)));
+        return tag.stream().flatMap(named -> named.stream().map(fluid -> new FluidStack(fluid, IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume())));
     }
 
     /**
