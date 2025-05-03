@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
@@ -80,7 +81,10 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
 
             @Override
             public Component validate(ItemStack itemStack) {
-                return itemStack.isEmpty() || Helpers.getFluidStack(itemStack) != null ? null : Component.translatable(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
+                return itemStack.isEmpty() ||
+                        FluidUtil.getFluidHandler(itemStack).isPresent() ?
+                        null :
+                        Component.translatable(L10NValues.VALUETYPE_OBJECT_FLUID_ERROR_NOFLUID);
             }
 
             @Override
