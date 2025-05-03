@@ -815,4 +815,80 @@ public class TestListOperators {
             is("c")
         );
     }
+
+    /**
+     * ----------------------------------- EQUALS_SET -----------------------------------
+     */
+
+    @Test
+    public void testListEqualsSet() throws EvaluationException {
+        IValue res1 = Operators.LIST_EQUALS_SET.evaluate(new IVariable[]{
+                new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i2.getValue(), i3.getValue(), i3.getValue(), i1.getValue())),
+                new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()))
+        });
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("result is true", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeEqualsSetInvalidType() throws EvaluationException {
+        Operators.LIST_EQUALS_SET.evaluate(new IVariable[]{lintegers_012, oRelationalEquals});
+        Operators.LIST_EQUALS_SET.evaluate(new IVariable[]{oRelationalEquals, lintegers_012});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeEqualsSetLarge() throws EvaluationException {
+        Operators.LIST_EQUALS_SET.evaluate(new IVariable[]{lintegers, lintegers_012, lintegers_012});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeEqualsSetSmall() throws EvaluationException {
+        Operators.LIST_EQUALS_SET.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeEqualsSet() throws EvaluationException {
+        Operators.LIST_EQUALS_SET.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- EQUALS_MULTISET -----------------------------------
+     */
+
+    @Test
+    public void testListEqualsMultiSet() throws EvaluationException {
+        IValue res1 = Operators.LIST_EQUALS_MULTISET.evaluate(new IVariable[]{
+                new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i2.getValue(), i3.getValue(), i3.getValue(), i1.getValue())),
+                new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue()))
+        });
+        assertThat("result is a boolean", res1, instanceOf(ValueTypeBoolean.ValueBoolean.class));
+        assertThat("result is true", ((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), is(false));
+
+        IValue res2 = Operators.LIST_EQUALS_MULTISET.evaluate(new IVariable[]{
+                new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i2.getValue(), i3.getValue(), i3.getValue(), i1.getValue())),
+                new DummyVariableList(ValueTypeList.ValueList.ofAll(i0.getValue(), i1.getValue(), i2.getValue(), i3.getValue(), i3.getValue()))
+        });
+        assertThat("result is true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeEqualsMultiSetInvalidType() throws EvaluationException {
+        Operators.LIST_EQUALS_MULTISET.evaluate(new IVariable[]{lintegers_012, oRelationalEquals});
+        Operators.LIST_EQUALS_MULTISET.evaluate(new IVariable[]{oRelationalEquals, lintegers_012});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeEqualsMultiSetLarge() throws EvaluationException {
+        Operators.LIST_EQUALS_MULTISET.evaluate(new IVariable[]{lintegers, lintegers_012, lintegers_012});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputSizeEqualsMultiSetSmall() throws EvaluationException {
+        Operators.LIST_EQUALS_MULTISET.evaluate(new IVariable[]{lintegers});
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidInputTypeEqualsMultiSet() throws EvaluationException {
+        Operators.LIST_EQUALS_MULTISET.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+    }
 }

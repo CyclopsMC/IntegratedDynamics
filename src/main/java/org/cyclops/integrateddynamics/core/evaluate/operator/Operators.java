@@ -1249,6 +1249,52 @@ public final class Operators {
             }).build());
 
     /**
+     * Test list equality using set semantics.
+     */
+    public static final IOperator LIST_EQUALS_SET = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.LIST})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.BOOLEAN)
+            .symbol("=set=").operatorInteract("equals_set")
+            .function(variables -> {
+                ValueTypeList.ValueList valueList0 = variables.getValue(0, ValueTypes.LIST);
+                IValueTypeListProxy a = valueList0.getRawValue();
+                ValueTypeList.ValueList valueList1 = variables.getValue(1, ValueTypes.LIST);
+                IValueTypeListProxy b = valueList1.getRawValue();
+                if (!ValueHelpers.correspondsTo(a.getValueType(), b.getValueType())) {
+                    throw new EvaluationException(Component.translatable(
+                            L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                            Component.translatable(a.getValueType().getTranslationKey()),
+                            Component.translatable(b.getValueType().getTranslationKey())));
+                }
+                Set<Object> setA = Sets.newHashSet(a);
+                Set<Object> setB = Sets.newHashSet(b);
+                return ValueTypeBoolean.ValueBoolean.of(setA.equals(setB));
+            }).build());
+
+    /**
+     * Test list equality using multiset semantics.
+     */
+    public static final IOperator LIST_EQUALS_MULTISET = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.LIST})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.BOOLEAN)
+            .symbol("=multiset=").operatorInteract("equals_multiset")
+            .function(variables -> {
+                ValueTypeList.ValueList valueList0 = variables.getValue(0, ValueTypes.LIST);
+                IValueTypeListProxy a = valueList0.getRawValue();
+                ValueTypeList.ValueList valueList1 = variables.getValue(1, ValueTypes.LIST);
+                IValueTypeListProxy b = valueList1.getRawValue();
+                if (!ValueHelpers.correspondsTo(a.getValueType(), b.getValueType())) {
+                    throw new EvaluationException(Component.translatable(
+                            L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                            Component.translatable(a.getValueType().getTranslationKey()),
+                            Component.translatable(b.getValueType().getTranslationKey())));
+                }
+                Multiset<Object> setA = HashMultiset.create(a);
+                Multiset<Object> setB = HashMultiset.create(b);
+                return ValueTypeBoolean.ValueBoolean.of(setA.equals(setB));
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 
