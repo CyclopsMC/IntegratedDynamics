@@ -1,10 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
@@ -37,6 +33,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -61,11 +58,7 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIn
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
-import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
-import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
-import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
+import org.cyclops.commoncapabilities.api.ingredient.*;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
@@ -75,11 +68,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
@@ -290,6 +279,29 @@ public final class Operators {
             .function(variables -> {
                 ValueTypeInteger.ValueInteger a = variables.getValue(0, ValueTypes.INTEGER);
                 return ValueTypeInteger.ValueInteger.of(a.getRawValue() - 1);
+            }).build());
+
+    /**
+     * ----------------------------------- DOUBLE OPERATORS -----------------------------------
+     */
+
+    /**
+     * Integer SQRT operator with two input numbers and one output number.
+     */
+    public static final IOperator DOUBLE_SQRT = REGISTRY.register(OperatorBuilders.DOUBLE_1_PREFIX.symbolOperatorInteract("sqrt")
+            .function(variables -> {
+                ValueTypeDouble.ValueDouble a = variables.getValue(0, ValueTypes.DOUBLE);
+                return ValueTypeDouble.ValueDouble.of(Math.sqrt(a.getRawValue()));
+            }).build());
+
+    /**
+     * Integer POW operator with two input numbers and one output number.
+     */
+    public static final IOperator DOUBLE_POW = REGISTRY.register(OperatorBuilders.DOUBLE_2.symbolOperatorInteract("pow")
+            .function(variables -> {
+                ValueTypeDouble.ValueDouble a = variables.getValue(0, ValueTypes.DOUBLE);
+                ValueTypeDouble.ValueDouble b = variables.getValue(1, ValueTypes.DOUBLE);
+                return ValueTypeDouble.ValueDouble.of(Math.pow(a.getRawValue(), b.getRawValue()));
             }).build());
 
     /**
@@ -1243,6 +1255,52 @@ public final class Operators {
             }).build());
 
     /**
+     * Test list equality using set semantics.
+     */
+    public static final IOperator LIST_EQUALS_SET = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.LIST})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.BOOLEAN)
+            .symbol("=set=").operatorInteract("equals_set")
+            .function(variables -> {
+                ValueTypeList.ValueList valueList0 = variables.getValue(0, ValueTypes.LIST);
+                IValueTypeListProxy a = valueList0.getRawValue();
+                ValueTypeList.ValueList valueList1 = variables.getValue(1, ValueTypes.LIST);
+                IValueTypeListProxy b = valueList1.getRawValue();
+                if (!ValueHelpers.correspondsTo(a.getValueType(), b.getValueType())) {
+                    throw new EvaluationException(Component.translatable(
+                            L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                            Component.translatable(a.getValueType().getTranslationKey()),
+                            Component.translatable(b.getValueType().getTranslationKey())));
+                }
+                Set<Object> setA = Sets.newHashSet(a);
+                Set<Object> setB = Sets.newHashSet(b);
+                return ValueTypeBoolean.ValueBoolean.of(setA.equals(setB));
+            }).build());
+
+    /**
+     * Test list equality using multiset semantics.
+     */
+    public static final IOperator LIST_EQUALS_MULTISET = REGISTRY.register(OperatorBuilders.LIST
+            .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.LIST})
+            .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.BOOLEAN)
+            .symbol("=multiset=").operatorInteract("equals_multiset")
+            .function(variables -> {
+                ValueTypeList.ValueList valueList0 = variables.getValue(0, ValueTypes.LIST);
+                IValueTypeListProxy a = valueList0.getRawValue();
+                ValueTypeList.ValueList valueList1 = variables.getValue(1, ValueTypes.LIST);
+                IValueTypeListProxy b = valueList1.getRawValue();
+                if (!ValueHelpers.correspondsTo(a.getValueType(), b.getValueType())) {
+                    throw new EvaluationException(Component.translatable(
+                            L10NValues.VALUETYPE_ERROR_INVALIDLISTVALUETYPE,
+                            Component.translatable(a.getValueType().getTranslationKey()),
+                            Component.translatable(b.getValueType().getTranslationKey())));
+                }
+                Multiset<Object> setA = HashMultiset.create(a);
+                Multiset<Object> setB = HashMultiset.create(b);
+                return ValueTypeBoolean.ValueBoolean.of(setA.equals(setB));
+            }).build());
+
+    /**
      * ----------------------------------- BLOCK OBJECT OPERATORS -----------------------------------
      */
 
@@ -1453,6 +1511,47 @@ public final class Operators {
                     }
                     return tag;
                 }));
+            }).build());
+
+    /**
+     * The tag entries of the given block
+     */
+    public static final IOperator OBJECT_BLOCK_TAG = REGISTRY.register(OperatorBuilders.BLOCK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST)
+            .symbol("block_tag_names").operatorName("tag").interactName("tags")
+            .function(variables -> {
+                ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
+                ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
+                if(!a.getRawValue().isEmpty()) {
+                    Optional<IReverseTag<Block>> optionalReverseTag = ForgeRegistries.BLOCKS.tags().getReverseTag(a.getRawValue().get().getBlock());
+                    optionalReverseTag
+                            .ifPresent(reverseTag -> reverseTag.getTagKeys()
+                                    .forEach(owningTag -> builder.add(ValueTypeString.ValueString
+                                            .of(owningTag.location().toString()))));
+                }
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING, builder.build());
+            }).build());
+
+    /**
+     * Get a list of blocks that correspond to the given tag key.
+     */
+    public static final IOperator OBJECT_BLOCK_TAG_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
+            .output(ValueTypes.LIST)
+            .symbol("block_tag_values").operatorName("blocktag").interactName("blocksByTag")
+            .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .function(variables -> {
+                ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
+                ImmutableList.Builder<ValueObjectTypeBlock.ValueBlock> builder = ImmutableList.builder();
+                if (!StringUtil.isNullOrEmpty(a.getRawValue())) {
+                    try {
+                        Helpers.getBlockTagValues(a.getRawValue())
+                                .map(ValueObjectTypeBlock.ValueBlock::of)
+                                .forEach(builder::add);
+                    } catch (ResourceLocationException e) {
+                        throw new EvaluationException(Component.translatable(e.getMessage()));
+                    }
+                }
+                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_BLOCK, builder.build());
             }).build());
 
     /**
@@ -1716,7 +1815,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_TAG = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.LIST)
-            .symbol("tag_names").operatorName("tag").interactName("tags")
+            .symbol("item_tag_names").operatorName("tag").interactName("tags")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
@@ -1735,7 +1834,7 @@ public final class Operators {
      */
     public static final IOperator OBJECT_ITEMSTACK_TAG_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
             .output(ValueTypes.LIST)
-            .symbol("tag_values").operatorName("tag").interactName("itemsByTag")
+            .symbol("item_tag_values").operatorName("tag").interactName("itemsByTag")
             .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
             .function(variables -> {
                 ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
@@ -2724,6 +2823,60 @@ public final class Operators {
                 FluidStack fluidStack = valueFluidStack.getRawValue().copy();
                 fluidStack.setAmount(valueInteger.getRawValue());
                 return ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack);
+            }).build());
+
+    /**
+     * The tag entries of the given fluidstack
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_TAG = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LIST)
+            .symbol("fluid_tag_names").operatorName("tag").interactName("tags")
+            .function(variables -> {
+                ValueObjectTypeFluidStack.ValueFluidStack a = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK);
+                ImmutableList.Builder<ValueTypeString.ValueString> builder = ImmutableList.builder();
+                if(!a.getRawValue().isEmpty()) {
+                    Optional<IReverseTag<Fluid>> optionalReverseTag = ForgeRegistries.FLUIDS.tags().getReverseTag(a.getRawValue().getFluid());
+                    optionalReverseTag
+                            .ifPresent(reverseTag -> reverseTag.getTagKeys()
+                                    .forEach(owningTag -> builder.add(ValueTypeString.ValueString
+                                            .of(owningTag.location().toString()))));
+                }
+                return ValueTypeList.ValueList.ofList(ValueTypes.STRING, builder.build());
+            }).build());
+
+    /**
+     * Get a list of fluidstacks that correspond to the given tag key.
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_TAG_STACKS = REGISTRY.register(OperatorBuilders.STRING_1_PREFIX
+            .output(ValueTypes.LIST)
+            .symbol("fluid_tag_values").operatorName("fluidtag").interactName("fluidsByTag")
+            .inputType(ValueTypes.STRING).renderPattern(IConfigRenderPattern.SUFFIX_1_LONG)
+            .function(variables -> {
+                ValueTypeString.ValueString a = variables.getValue(0, ValueTypes.STRING);
+                ImmutableList.Builder<ValueObjectTypeFluidStack.ValueFluidStack> builder = ImmutableList.builder();
+                if (!StringUtil.isNullOrEmpty(a.getRawValue())) {
+                    try {
+                        Helpers.getFluidTagValues(a.getRawValue())
+                                .map(ValueObjectTypeFluidStack.ValueFluidStack::of)
+                                .forEach(builder::add);
+                    } catch (ResourceLocationException e) {
+                        throw new EvaluationException(Component.translatable(e.getMessage()));
+                    }
+                }
+                return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_FLUIDSTACK, builder.build());
+            }).build());
+
+    /**
+     * Get an fluidstack with the given nbt tag
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_WITH_TAG = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2_LONG
+            .inputTypes(ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.NBT)
+            .output(ValueTypes.OBJECT_FLUIDSTACK).symbol("fluid_with_tag").operatorName("fluidwithtag").interactName("fluidWithTag")
+            .function(variables -> {
+                FluidStack inputFluid = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK).getRawValue().copy();
+                ValueTypeNbt.ValueNbt tag = variables.getValue(1, ValueTypes.NBT);
+                inputFluid.setTag((CompoundTag)tag.getRawValue().orElse(null));
+                return ValueObjectTypeFluidStack.ValueFluidStack.of(inputFluid);
             }).build());
 
     /**

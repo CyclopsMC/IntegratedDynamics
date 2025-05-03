@@ -16,6 +16,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -72,13 +75,37 @@ public final class Helpers {
     /**
      * Retrieves a Stream of items that are registered to this tag name.
      *
-     * @param name The tag name, directly calls OreDictionary.getOres
-     * @return A Stream containing ItemStacks registered for this ore
+     * @param name The tag name
+     * @return A Stream containing ItemStacks registered for this tag
      */
     public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
         ITag<Item> tag = ForgeRegistries.ITEMS.tags()
                 .getTag(TagKey.create(Registries.ITEM, new ResourceLocation(name)));
         return tag.stream().map(ItemStack::new);
+    }
+
+    /**
+     * Retrieves a Stream of blocks that are registered to this tag name.
+     *
+     * @param name The tag name
+     * @return A Stream containing Blocks registered for this tag
+     */
+    public static Stream<BlockState> getBlockTagValues(String name) throws ResourceLocationException {
+        ITag<Block> tag = ForgeRegistries.BLOCKS.tags()
+                .getTag(TagKey.create(Registries.BLOCK, new ResourceLocation(name)));
+        return tag.stream().map(Block::defaultBlockState);
+    }
+
+    /**
+     * Retrieves a Stream of fluids that are registered to this tag name.
+     *
+     * @param name The tag name
+     * @return A Stream containing Fluids registered for this tag
+     */
+    public static Stream<FluidStack> getFluidTagValues(String name) throws ResourceLocationException {
+        ITag<Fluid> tag = ForgeRegistries.FLUIDS.tags()
+                .getTag(TagKey.create(Registries.FLUID, new ResourceLocation(name)));
+        return tag.stream().map(fluid -> new FluidStack(fluid, FluidHelpers.BUCKET_VOLUME));
     }
 
     /**

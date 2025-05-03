@@ -794,7 +794,7 @@ public class TestItemStackOperators {
      */
 
     @IntegrationTest
-    public void testItemStackOreDict() throws EvaluationException {
+    public void testItemStackTag() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iStone});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 2, "size(tag(stone)) = 2");
@@ -804,17 +804,17 @@ public class TestItemStackOperators {
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeOreDictLarge() throws EvaluationException {
+    public void testInvalidInputSizeTagLarge() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iHoe, iHoe});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeOreDictSmall() throws EvaluationException {
+    public void testInvalidInputSizeTagSmall() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypeOreDict() throws EvaluationException {
+    public void testInvalidInputTypeTag() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
@@ -823,24 +823,24 @@ public class TestItemStackOperators {
      */
 
     @IntegrationTest
-    public void testItemStackOreDictStacks() throws EvaluationException {
+    public void testItemStackTagStacks() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_TAG_STACKS.evaluate(new IVariable[]{sPlankWood});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), (int)Helpers.getTagValues("minecraft:planks").count(), "size(tag_stacks(plankWood))");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeOreDictStacksLarge() throws EvaluationException {
+    public void testInvalidInputSizeTagStacksLarge() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_TAG_STACKS.evaluate(new IVariable[]{sPlankWood, sPlankWood});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputSizeOreDictStacksSmall() throws EvaluationException {
+    public void testInvalidInputSizeTagStacksSmall() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_TAG_STACKS.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypeOreDictStacks() throws EvaluationException {
+    public void testInvalidInputTypeTagStacks() throws EvaluationException {
         Operators.OBJECT_ITEMSTACK_TAG_STACKS.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
@@ -1261,29 +1261,29 @@ public class TestItemStackOperators {
     }
 
     /**
-     * WITHNBT
+     * ----------------------------------- WITHNBT -----------------------------------
      */
 
     @IntegrationTest
     public void testItemStackWithNbt() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{iHoe, sHoeNbt});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getOrCreateTag(), sHoeNbt.getValue().getRawValue(), "itemnbt(withnbt(iHoe, sHoeNbt)) = sHoeNbt");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getOrCreateTag(), sHoeNbt.getValue().getRawValue().get(), "itemnbt(withnbt(iHoe, sHoeNbt)) = sHoeNbt");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputWithNbtHasNbtLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iHoe, sHoeNbt, iHoe});
+    public void testInvalidItemStackWithNbtLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{iHoe, sHoeNbt, iHoe});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputWithNbtHasNbtSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iHoe});
+    public void testInvalidItemStackWithNbtSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{iHoe});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypeWithNbt() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    public void testInvalidItemStackWithNbt() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**

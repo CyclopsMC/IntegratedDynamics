@@ -13,13 +13,8 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 import org.cyclops.integrateddynamics.core.test.TestHelpers;
@@ -49,6 +44,7 @@ public class TestBlockOperators {
     private DummyVariableItemStack iSeedWheat;
 
     private DummyVariable<ValueTypeString.ValueString> sSponge;
+    private DummyVariable<ValueTypeString.ValueString> sSand;
 
     private DummyVariable<ValueTypeNbt.ValueNbt> nbtCarrotGrown;
 
@@ -69,6 +65,7 @@ public class TestBlockOperators {
         iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
 
         sSponge = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:sponge"));
+        sSand = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:sand"));
 
         CompoundTag tag = new CompoundTag();
         tag.putString("age", "1");
@@ -468,6 +465,61 @@ public class TestBlockOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeBlockPossibleProperties() throws EvaluationException {
         Operators.OBJECT_BLOCK_POSSIBLE_PROPERTIES.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- TAG -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockTag() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_TAG.evaluate(new IVariable[]{bSand});
+        Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 15, "size(tag(sand)) = 15");
+
+        IValue res2 = Operators.OBJECT_BLOCK_TAG.evaluate(new IVariable[]{bLeaves});
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 7, "size(tag(leaves)) = 7");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeTagLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_TAG.evaluate(new IVariable[]{bLeaves, bLeaves});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeTagSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_TAG.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeTag() throws EvaluationException {
+        Operators.OBJECT_BLOCK_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- TAG_STACKS -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testBlockTagStacks() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_BLOCK_TAG_STACKS.evaluate(new IVariable[]{sSand});
+        Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), (int) Helpers.getBlockTagValues("minecraft:sand").count(), "size(tag_stacks(sand))");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeTagStacksLarge() throws EvaluationException {
+        Operators.OBJECT_BLOCK_TAG_STACKS.evaluate(new IVariable[]{sSand, sSand});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeTagStacksSmall() throws EvaluationException {
+        Operators.OBJECT_BLOCK_TAG_STACKS.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeTagStacks() throws EvaluationException {
+        Operators.OBJECT_BLOCK_TAG_STACKS.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }
