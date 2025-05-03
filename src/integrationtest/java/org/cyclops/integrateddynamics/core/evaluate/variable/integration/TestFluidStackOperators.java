@@ -35,6 +35,7 @@ public class TestFluidStackOperators {
     private DummyVariableFluidStack eWater100Tag;
     private DummyVariable<ValueTypeInteger.ValueInteger> i99;
     private DummyVariable<ValueTypeString.ValueString> sWater;
+    private DummyVariable<ValueTypeNbt.ValueNbt> sHoeNbt;
 
     @IntegrationBefore
     public void before() {
@@ -45,8 +46,14 @@ public class TestFluidStackOperators {
         eWater100Tag = new DummyVariableFluidStack(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 100)));
         eWater100Tag.getValue().getRawValue().setTag(new CompoundTag());
         eWater100Tag.getValue().getRawValue().getTag().putString("a", "abc");
+
         i99 = new DummyVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(99));
+
         sWater = new DummyVariable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("minecraft:water"));
+
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("Damage", 51);
+        sHoeNbt = new DummyVariable<>(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(tag));
     }
 
     /**
@@ -572,6 +579,32 @@ public class TestFluidStackOperators {
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeTagStacks() throws EvaluationException {
         Operators.OBJECT_FLUIDSTACK_TAG_STACKS.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
+    /**
+     * ----------------------------------- WITHNBT -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testFluidStackWithNbt() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_FLUIDSTACK_WITH_TAG.evaluate(new IVariable[]{eBucketWater, sHoeNbt});
+        Asserts.check(res1 instanceof ValueObjectTypeFluidStack.ValueFluidStack, "result is a fluid");
+        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().getOrCreateTag(), sHoeNbt.getValue().getRawValue().get(), "fluidnbt(withnbt(iHoe, sHoeNbt)) = sHoeNbt");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidFluidStackWithNbtLarge() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_TAG.evaluate(new IVariable[]{eBucketWater, sHoeNbt, eBucketWater});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidFluidStackWithNbtSmall() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_TAG.evaluate(new IVariable[]{eBucketWater});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidFluidStackWithNbt() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_WITH_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
 }

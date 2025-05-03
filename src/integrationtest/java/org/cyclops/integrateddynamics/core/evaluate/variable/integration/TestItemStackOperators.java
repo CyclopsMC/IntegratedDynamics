@@ -1262,29 +1262,29 @@ public class TestItemStackOperators {
     }
 
     /**
-     * WITHNBT
+     * ----------------------------------- WITHNBT -----------------------------------
      */
 
     @IntegrationTest
     public void testItemStackWithNbt() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{iHoe, sHoeNbt});
         Asserts.check(res1 instanceof ValueObjectTypeItemStack.ValueItemStack, "result is an item");
-        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getOrCreateTag(), sHoeNbt.getValue().getRawValue(), "itemnbt(withnbt(iHoe, sHoeNbt)) = sHoeNbt");
+        TestHelpers.assertEqual(((ValueObjectTypeItemStack.ValueItemStack) res1).getRawValue().getOrCreateTag(), sHoeNbt.getValue().getRawValue().get(), "itemnbt(withnbt(iHoe, sHoeNbt)) = sHoeNbt");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputWithNbtHasNbtLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iHoe, sHoeNbt, iHoe});
+    public void testInvalidItemStackWithNbtLarge() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{iHoe, sHoeNbt, iHoe});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputWithNbtHasNbtSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{iHoe});
+    public void testInvalidItemStackWithNbtSmall() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{iHoe});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
-    public void testInvalidInputTypeWithNbt() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_HASNBT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    public void testInvalidItemStackWithNbt() throws EvaluationException {
+        Operators.OBJECT_ITEMSTACK_WITH_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**

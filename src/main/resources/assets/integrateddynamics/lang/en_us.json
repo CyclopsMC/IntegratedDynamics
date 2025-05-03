@@ -1370,6 +1370,8 @@
     "operator.integrateddynamics.fluidstack.tag.info": "The Tag names (strings) of the given fluid",
     "operator.integrateddynamics.string.fluidtag": "Fluid Tag Values",
     "operator.integrateddynamics.string.fluidtag.info": "The Tag values (fluids) of the given fluid tag name",
+    "operator.integrateddynamics.fluidstack.fluidwithtag": "Fluid With Tag",
+    "operator.integrateddynamics.fluidstack.fluidwithtag.info": "Set the NBT tag of the given fluid.",
 
     "operator.integrateddynamics.nbt": "NBT",
     "operator.integrateddynamics.nbt.basename": "NBT %s",

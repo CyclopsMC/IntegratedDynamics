@@ -2815,6 +2815,19 @@ public final class Operators {
             }).build());
 
     /**
+     * Get an fluidstack with the given nbt tag
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_WITH_TAG = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2_LONG
+            .inputTypes(ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.NBT)
+            .output(ValueTypes.OBJECT_FLUIDSTACK).symbol("fluid_with_tag").operatorName("fluidwithtag").interactName("fluidWithTag")
+            .function(variables -> {
+                FluidStack inputFluid = variables.getValue(0, ValueTypes.OBJECT_FLUIDSTACK).getRawValue().copy();
+                ValueTypeNbt.ValueNbt tag = variables.getValue(1, ValueTypes.NBT);
+                inputFluid.setTag((CompoundTag)tag.getRawValue().orElse(null));
+                return ValueObjectTypeFluidStack.ValueFluidStack.of(inputFluid);
+            }).build());
+
+    /**
      * ----------------------------------- OPERATOR OPERATORS -----------------------------------
      */
 
