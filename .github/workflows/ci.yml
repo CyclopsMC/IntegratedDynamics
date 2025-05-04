@@ -16,8 +16,6 @@ jobs:
             ~/.m2
             ~/.gradle
           key: ${{ runner.os }}-gradle-${{ hashFiles('build.gradle') }}
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
       - name: 'Setup Java'
         uses: actions/setup-java@v1
         with:
