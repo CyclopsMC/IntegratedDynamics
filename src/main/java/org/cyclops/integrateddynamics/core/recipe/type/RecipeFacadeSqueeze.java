@@ -27,12 +27,6 @@ public class RecipeFacadeSqueeze extends RecipeSqueezer {
 
     public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
 
-        if (!(inputItem.getItem() instanceof ItemFacade)) {
-            Either<ItemStack, ItemStackFromIngredient> inputItemEither = Either.left(inputItem);
-            IngredientChance inputItemChance = new IngredientChance(inputItemEither, 1.0f);
-            return NonNullList.of(inputItemChance, inputItemChance);	// if a non-facade gets passed to this recipe somehow, just return it
-        }
-
         ItemFacade inputFacade = (ItemFacade)inputItem.getItem();
         ItemStack facadeBlockItem = inputFacade.getFacadeBlockItem(inputItem);
 
@@ -44,9 +38,7 @@ public class RecipeFacadeSqueeze extends RecipeSqueezer {
 
     @Override
     public boolean matches(Container inv, Level worldIn) {
-        ItemStack inputCopy = inv.getItem(0).copy();
-        inputCopy.setTag(null);
-        return inputIngredient.test(inputCopy);
+         return (inv.getItem(0).getItem() instanceof ItemFacade);
     }
 
     @Override
