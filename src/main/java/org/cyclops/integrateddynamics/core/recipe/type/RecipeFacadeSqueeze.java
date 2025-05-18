@@ -17,15 +17,17 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class RecipeFacadeSqueeze extends RecipeSqueezer {
 
-    private Ingredient inputIngredient;
-    private IngredientChance facadeItemChance = new IngredientChance(Either.<ItemStack, ItemStackFromIngredient>left(new ItemStack(RegistryEntries.ITEM_FACADE)), 1.0f);
+    private static IngredientChance facadeItemChance = new IngredientChance(Either.<ItemStack, ItemStackFromIngredient>left(new ItemStack(RegistryEntries.ITEM_FACADE)), 1.0f);
 
     public RecipeFacadeSqueeze(ResourceLocation id, Ingredient inputIngredient, NonNullList<IngredientChance> outputItems, FluidStack outputFluid) {
         super(id, inputIngredient, outputItems, outputFluid);
-        this.inputIngredient = inputIngredient;
+    }
+    
+    public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
+    	return getOutput(inputItem);
     }
 
-    public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
+    public static NonNullList<IngredientChance> getOutput(ItemStack inputItem) {
 
         ItemFacade inputFacade = (ItemFacade)inputItem.getItem();
         ItemStack facadeBlockItem = inputFacade.getFacadeBlockItem(inputItem);
