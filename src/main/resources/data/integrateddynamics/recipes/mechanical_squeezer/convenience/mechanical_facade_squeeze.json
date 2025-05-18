@@ -1,25 +1,4 @@
 {
-  "type": "integrateddynamics:facade_squeeze_mechanical",
-  "item": {
-    "item": "integrateddynamics:facade"
-  },
-  "result": {
-    "items": [
-      {
-        "item": {
-          "item": "integrateddynamics:facade",
-		  "chance": 1,
-          "count": 1
-        }
-      },
-	  {
-        "item": {
-          "item": "integrateddynamics:facade",
-		  "chance": 1,
-          "count": 1
-        }
-      }
-     ]
-  },
-  "duration": 20
+    "type": "integrateddynamics:facade_squeeze_mechanical",
+    "duration": 20
 }

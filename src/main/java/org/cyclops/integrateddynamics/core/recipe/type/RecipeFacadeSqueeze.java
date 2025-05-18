@@ -22,9 +22,10 @@ public class RecipeFacadeSqueeze extends RecipeSqueezer {
     public RecipeFacadeSqueeze(ResourceLocation id, Ingredient inputIngredient, NonNullList<IngredientChance> outputItems, FluidStack outputFluid) {
         super(id, inputIngredient, outputItems, outputFluid);
     }
-    
+
+    @Override
     public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
-    	return getOutput(inputItem);
+        return getOutput(inputItem);
     }
 
     public static NonNullList<IngredientChance> getOutput(ItemStack inputItem) {

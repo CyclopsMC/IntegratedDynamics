@@ -10,13 +10,14 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
 
 public class RecipeFacadeSqueezeMechanical extends RecipeMechanicalSqueezer {
-	
+
     public RecipeFacadeSqueezeMechanical(ResourceLocation id, Ingredient inputIngredient, NonNullList<IngredientChance> outputItems, FluidStack outputFluid, int duration) {
         super(id, inputIngredient, outputItems, outputFluid, duration);
     }
 
+    @Override
     public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
-    	return RecipeFacadeSqueeze.getOutput(inputItem);
+        return RecipeFacadeSqueeze.getOutput(inputItem);
     }
 
     @Override
