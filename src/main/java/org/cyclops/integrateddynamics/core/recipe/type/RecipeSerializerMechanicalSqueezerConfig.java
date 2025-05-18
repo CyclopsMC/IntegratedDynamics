@@ -5,7 +5,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 /**
  * Config for the mechanical squeezer recipe serializer.
- * @author kirjorjos
+ * @author rubensworks
  *
  */
 public class RecipeSerializerMechanicalSqueezerConfig extends RecipeConfig<RecipeMechanicalSqueezer> {

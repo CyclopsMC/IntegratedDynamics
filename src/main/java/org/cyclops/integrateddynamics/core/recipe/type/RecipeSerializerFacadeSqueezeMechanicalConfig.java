@@ -6,8 +6,8 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 
 
 /**
- * Config for the drying basin recipe serializer.
- * @author rubensworks
+ * Config for the Mechanical Facade Squeeze recipe serializer.
+ * @author kirjorjos
  *
  */
 public class RecipeSerializerFacadeSqueezeMechanicalConfig extends RecipeConfig<RecipeFacadeSqueezeMechanical> {
