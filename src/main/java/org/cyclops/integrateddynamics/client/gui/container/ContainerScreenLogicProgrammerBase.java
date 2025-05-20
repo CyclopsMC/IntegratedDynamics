@@ -53,6 +53,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected SubGuiOperatorInfo operatorInfoPattern = null;
     protected boolean firstInit = true;
     protected int relativeStep = -1;
+    protected boolean swallowNextCharacter = false;
 
     public ContainerScreenLogicProgrammerBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
@@ -271,10 +272,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             if (ClientProxy.FOCUS_LP_SEARCH.isActiveAndMatches(inputCode)) {
                 // Focus search field
                 setSearchFieldFocussed(true);
+                swallowNextCharacter = true;
                 return true;
             } else if (isElementFocused && ClientProxy.FOCUS_LP_RENAME.isActiveAndMatches(inputCode) && hasLabeller()) {
                 // Open labeller gui
                 operatorInfoPattern.onButtonEditClick();
+                swallowNextCharacter = true;
                 return true;
             } else if (GLFW.GLFW_KEY_LEFT == keyCode && (!isElementFocused && isSearchFieldFocussed())) {
                 // Unfocus search field
@@ -312,6 +315,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     public boolean charTyped(char keyCode, int scanCode) {
+        if (swallowNextCharacter) {
+            swallowNextCharacter = false;
+            return true;
+        }
+
         return subGuiHolder.charTyped(keyCode, scanCode) || handleKeyCode(keyCode, scanCode) || super.charTyped(keyCode, scanCode);
     }
 
