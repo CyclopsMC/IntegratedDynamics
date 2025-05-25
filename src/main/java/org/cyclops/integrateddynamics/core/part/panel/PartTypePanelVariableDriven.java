@@ -202,6 +202,11 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 return new ContainerPartPanelVariableDriven(id, playerInventory, partState.getInventory(),
                         Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypePanelVariableDriven<?, ?>) data.getMiddle());
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         });
     }
 

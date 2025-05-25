@@ -167,6 +167,11 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
                 return new ContainerPartReader<>(id, playerInventory, new SimpleContainer(0),
                         data.getRight(), Optional.of(data.getLeft()), (PartTypeReadBase) data.getMiddle());
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         });
     }
 

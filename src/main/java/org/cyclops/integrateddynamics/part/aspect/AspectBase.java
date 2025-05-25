@@ -121,6 +121,11 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
                 return new ContainerAspectSettings(id, playerInventory, new SimpleContainer(0),
                         Optional.of(data.getRight()), Optional.of(data.getLeft()), Optional.of(data.getMiddle()), AspectBase.this);
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         };
     }
 

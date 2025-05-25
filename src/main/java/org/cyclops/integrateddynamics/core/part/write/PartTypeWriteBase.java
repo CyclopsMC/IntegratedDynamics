@@ -242,6 +242,11 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
                 return new ContainerPartWriter<>(id, playerInventory, partState.getInventory(),
                         data.getRight(), Optional.of(data.getLeft()), (PartTypeWriteBase) data.getMiddle());
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         });
     }
 
