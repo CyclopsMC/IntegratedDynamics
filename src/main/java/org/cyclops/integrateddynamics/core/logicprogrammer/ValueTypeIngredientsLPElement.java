@@ -25,6 +25,7 @@ import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
@@ -46,6 +47,9 @@ import java.util.Map;
  * @author rubensworks
  */
 public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
+
+    protected static final int OFFSET_X = 31;
+    protected static final int OFFSET_Y = 21;
 
     private IngredientComponent currentType = IngredientComponent.ITEMSTACK;
     private Map<IngredientComponent, Integer> lengths = Maps.newHashMap();
@@ -105,6 +109,69 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                 ? ValueObjectTypeIngredients.ValueIngredients.of(constructValues()) : serverValue;
     }
 
+    @Override
+    public void setValue(IValue value) {
+        ValueObjectTypeIngredients.ValueIngredients valueIngredients = (ValueObjectTypeIngredients.ValueIngredients) value;
+        if (!MinecraftHelpers.isClientSideThread()) {
+            setServerValue(valueIngredients);
+        }
+
+        valueIngredients.getRawValue().ifPresent(ingredients -> {
+            // Select itemstack by default if it has instances
+            if (ingredients.getComponents().contains(IngredientComponent.ITEMSTACK)) {
+                currentType = IngredientComponent.ITEMSTACK;
+            } else {
+                currentType = null;
+            }
+
+            for (IngredientComponent<?, ?> ingredientComponent : ingredients.getComponents()) {
+                IIngredientComponentHandler handler = IngredientComponentHandlers.REGISTRY.getComponentHandler(ingredientComponent);
+
+                // If no itemstacks in ingredient, select any other
+                if (currentType == null) {
+                    currentType = ingredientComponent;
+                }
+
+                // Save length per ingredient component
+                lengths.put(ingredientComponent, ingredients.getInstances(ingredientComponent).size());
+
+                // Initialize LP elements for all instances of this ingredient component
+                Map<Integer, IValueTypeLogicProgrammerElement> entries = Maps.newHashMap();
+                List<?> instances = ingredients.getInstances(ingredientComponent);
+                for (int i = 0; i < instances.size(); i++) {
+                    initializeElementFromInstanceValue(entries, handler, instances.get(i), i);
+                }
+                subElements.put(ingredientComponent, entries);
+            }
+        });
+    }
+
+    protected <VT extends IValueType<V>, V extends IValue, T, M> void initializeElementFromInstanceValue(Map<Integer, IValueTypeLogicProgrammerElement> entries, IIngredientComponentHandler<VT, V, T, M> handler, T instance, int instanceIndex) {
+        IValue instanceValue = handler.toValue(instance);
+        IValueTypeLogicProgrammerElement lpElement = instanceValue.getType().createLogicProgrammerElement();
+        lpElement.setValue(instanceValue);
+        entries.put(instanceIndex, lpElement);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void setValueInGui(ISubGuiBox subGui) {
+        if (!subElements.get(currentType).isEmpty()) {
+            setActiveElement(0);
+        }
+    }
+
+    @Override
+    public void setValueInContainer(ContainerLogicProgrammerBase container) {
+        if (!subElements.get(currentType).isEmpty()) {
+            IValueTypeLogicProgrammerElement subElement = setActiveElement(0);
+            int x = RenderPattern.calculateX(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.MAX_WIDTH, subElement.getRenderPattern()) + ContainerLogicProgrammerBase.BASE_X - OFFSET_X;
+            int y = RenderPattern.calculateY(ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_HEIGHT, subElement.getRenderPattern()) + ContainerLogicProgrammerBase.BASE_Y - OFFSET_Y;
+            container.setElementInventory(subElement, x, y);
+            subElement.setValueInContainer(container);
+        }
+    }
+
     public int getLength() {
         return lengths.get(currentType);
     }
@@ -119,14 +186,22 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         setActiveElement(subElements.get(currentType).size() - 1);
     }
 
-    public void setActiveElement(int index) {
+    public IValueTypeLogicProgrammerElement setActiveElement(int index) {
         activeElement = index;
-        if(index >= 0 && !subElements.get(currentType).containsKey(index)) {
-            subElements.get(currentType).put(index, IngredientComponentHandlers.REGISTRY.getComponentHandler(currentType)
-                    .getValueType().createLogicProgrammerElement());
+        IValueTypeLogicProgrammerElement subElement = null;
+        if (index >= 0) {
+            if (!subElements.get(currentType).containsKey(index)) {
+                subElements.get(currentType).put(index, subElement = IngredientComponentHandlers.REGISTRY.getComponentHandler(currentType)
+                        .getValueType().createLogicProgrammerElement());
+            } else {
+                subElement = subElements.get(currentType).get(index);
+            }
         }
-        masterGui.setActiveElement(activeElement);
-        masterGui.container.onDirty();
+        if (masterGui != null) {
+            masterGui.setActiveElement(activeElement);
+            masterGui.container.onDirty();
+        }
+        return subElement;
     }
 
     public void removeElement(int index) {
@@ -230,6 +305,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         public void setActiveElement(int index) {
             if(elementSubGui != null) {
                 subGuiHolder.removeSubGui(elementSubGui);
+                ((ContainerLogicProgrammerBase) gui.getMenu()).setElementInventory(null, 0, 0);
             }
             if(index >= 0) {
                 subGuiHolder.addSubGui(elementSubGui = new ListElementSubGui(element, baseX, baseY + (getHeight() / 4),
@@ -339,11 +415,14 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
         private ButtonArrow arrowRight;
         private Button arrowRemove;
 
+        private RenderPattern subGui;
+        private IValueTypeLogicProgrammerElement subElement;
+
         public ListElementSubGui(ValueTypeIngredientsLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                  ContainerScreenLogicProgrammerBase<?> gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-            RenderPattern subGui = element.subElementGuis.get(element.currentType).get(element.activeElement);
-            IValueTypeLogicProgrammerElement subElement = element.subElements.get(element.currentType).get(element.activeElement);
+            this.subGui = element.subElementGuis.get(element.currentType).get(element.activeElement);
+            this.subElement = element.subElements.get(element.currentType).get(element.activeElement);
             if(subGui == null) {
                 subGui = (RenderPattern) subElement.createSubGui(baseX, baseY, maxWidth,
                         maxHeight / 3 * 2, gui, container);
@@ -351,10 +430,9 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                         element.activeElement,
                         subGui);
             }
-            int x = getX() + baseX - 24;
-            int y = getY() + baseY - 23;
+            int x = getX() + baseX - OFFSET_X;
+            int y = getY() + baseY - OFFSET_Y;
             gui.getMenu().setElementInventory(subElement, x, y);
-            subElement.setValueInGui(subGui);
             subGuiHolder.addSubGui(subGui);
 
             // Do the same thing server-side
@@ -382,6 +460,8 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
             arrowLeft.active = element.activeElement > 0;
             arrowRight.active = element.activeElement < element.getLength() - 1;
             arrowRemove.active = element.getLength() > 0;
+            subElement.setValueInGui(subGui);
+            subElement.setValueInContainer(subGui.container);
         }
 
         @Override

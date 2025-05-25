@@ -97,7 +97,7 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
         return super.keyPressed(typedChar, keyCode, modifiers);
     }
 
-    private void onTyped() {
+    public void onTyped() {
         element.setInputString(searchField.getValue());
         if (container instanceof IDirtyMarkListener) {
             ((IDirtyMarkListener) container).onDirty();

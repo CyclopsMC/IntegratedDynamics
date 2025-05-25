@@ -35,6 +35,7 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerLabelPacket;
 import org.cyclops.integrateddynamics.proxy.ClientProxy;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
@@ -194,7 +195,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected void onActivateElement(ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> element) {
         subGuiHolder.addSubGui(operatorInfoPattern = new SubGuiOperatorInfo(element));
         operatorInfoPattern.init(leftPos, topPos);
-        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammerBase) getMenu()));
+        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_WIDTH, ContainerLogicProgrammerBase.MAX_HEIGHT, this, (ContainerLogicProgrammerBase) getMenu()));
         operatorConfigPattern.init(leftPos, topPos);
     }
 
@@ -202,30 +203,47 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         subGuiHolder.clear();
     }
 
-    public boolean handleElementActivation(ILogicProgrammerElement element) {
+    public boolean handleElementActivation(ILogicProgrammerElement element, boolean sendToServer) {
         boolean activate = false;
+        boolean deselect = false;
         ContainerLogicProgrammerBase container = getMenu();
         ILogicProgrammerElement newActive = null;
-        onDeactivateElement(element);
-        if(container.getActiveElement() != element) {
+        if (container.getActiveElement() == element) {
+            // Only allow deselection of the current LP element if the write slot is empty
+            if (!container.hasWriteItemInSlot()) {
+                deselect = true;
+                onDeactivateElement(element);
+            }
+        } else {
+            // Swap to another LP element
+            onDeactivateElement(element);
             activate = true;
             newActive = element;
             if(element != null) {
                 onActivateElement(element);
             }
         }
-        container.setActiveElement(newActive,
-                operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
-                operatorConfigPattern == null ? 0 : operatorConfigPattern.getY());
-        if(newActive != null) {
-            ILogicProgrammerElementType type = newActive.getType();
-            IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerActivateElementPacket(type.getUniqueName(), type.getName(newActive)));
-        } else {
-            IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerActivateElementPacket(new ResourceLocation(""), new ResourceLocation("")));
+        if (activate || deselect) {
+            container.setActiveElement(newActive,
+                    operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
+                    operatorConfigPattern == null ? 0 : operatorConfigPattern.getY());
+        }
+        if (sendToServer) {
+            if (newActive != null) {
+                ILogicProgrammerElementType type = newActive.getType();
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                        new LogicProgrammerActivateElementPacket(type.getUniqueName(), type.getName(newActive)));
+            } else if (deselect) {
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                        new LogicProgrammerActivateElementPacket(new ResourceLocation(""), new ResourceLocation("")));
+            }
         }
         return activate;
+    }
+
+    @Nullable
+    public RenderPattern getOperatorConfigPattern() {
+        return operatorConfigPattern;
     }
 
     protected void setSearchFieldFocussed(boolean focused) {
@@ -241,7 +259,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         // Deactivate current element
         if (elementId < 0) {
-            handleElementActivation(container.getActiveElement());
+            handleElementActivation(container.getActiveElement(), true);
             return false;
         }
 
@@ -251,7 +269,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 if (elementId-- == 0) {
                     ILogicProgrammerElement element = container.getVisibleElement(i);
                     if (container.getActiveElement() != element) {
-                        handleElementActivation(element);
+                        handleElementActivation(element, true);
                     }
                     return true;
                 }
@@ -333,7 +351,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             if (container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
                 if (isPointInRegion(getElementPosition(container, i, false), new Point((int) mouseX, (int) mouseY))) {
-                    boolean activated = handleElementActivation(element);
+                    boolean activated = handleElementActivation(element, true);
                     relativeStep = activated ? i : -1;
                     if (activated) {
                         container.getActiveElement().setFocused(operatorConfigPattern, true);

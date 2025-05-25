@@ -84,6 +84,11 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     }
 
     @Override
+    public void setValue(IValue value) {
+        this.itemStack = this.itemStackToValue.getValueAsItemStack((V) value);
+    }
+
+    @Override
     @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                    ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -91,9 +96,8 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void setValueInGui(ISubGuiBox subGui) {
-        ((ValueTypeItemStackLPElement.SubGuiRenderPattern) subGui).container.getTemporaryInputSlots().setItem(0, this.itemStack);
+    public void setValueInContainer(ContainerLogicProgrammerBase container) {
+        container.getTemporaryInputSlots().setItem(0, this.itemStack);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -130,6 +134,7 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
         public boolean isNullable();
         public Component validate(ItemStack itemStack);
         public V getValue(ItemStack itemStack);
+        public ItemStack getValueAsItemStack(V value);
 
     }
 

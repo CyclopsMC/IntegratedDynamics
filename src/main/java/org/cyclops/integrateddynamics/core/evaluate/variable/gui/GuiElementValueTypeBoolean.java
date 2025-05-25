@@ -46,15 +46,22 @@ public class GuiElementValueTypeBoolean<G extends GuiComponent, C extends Abstra
     }
 
     @Override
-    public void setValue(IValue value, GuiElementValueTypeBooleanRenderPattern propertyConfigPattern) {
-        setInputBoolean(((ValueTypeBoolean.ValueBoolean) value).getRawValue(), propertyConfigPattern);
+    public void setValue(IValue value) {
+        setInputBoolean(((ValueTypeBoolean.ValueBoolean) value).getRawValue());
     }
 
-    public void setInputBoolean(boolean inputBoolean, GuiElementValueTypeBooleanRenderPattern subGui) {
-        this.inputBoolean = inputBoolean;
+    @Override
+    public void setValueInGui(GuiElementValueTypeBooleanRenderPattern subGui, boolean sendToServer) {
         if(subGui != null) {
             subGui.getCheckbox().setChecked(inputBoolean);
+            if (sendToServer) {
+                subGui.sendValueToServer();
+            }
         }
+    }
+
+    public void setInputBoolean(boolean inputBoolean) {
+        this.inputBoolean = inputBoolean;
     }
 
     @Override

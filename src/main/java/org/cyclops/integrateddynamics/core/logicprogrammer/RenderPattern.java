@@ -107,4 +107,8 @@ public class RenderPattern<E extends IGuiInputElement, G extends GuiComponent, C
         return element.getRenderPattern().getHeight();
     }
 
+    public void sendValueToServer() {
+
+    }
+
 }

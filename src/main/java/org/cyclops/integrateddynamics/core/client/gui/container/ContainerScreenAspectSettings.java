@@ -214,7 +214,8 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
         IAspectPropertyTypeInstance property = getActiveProperty();
         IValue value = container.getPropertyValue(property);
         if(value != null) {
-            guiElement.setValue(value, propertyConfigPattern);
+            guiElement.setValue(value);
+            guiElement.setValueInGui(propertyConfigPattern, false);
         }
         onValueChanged();
     }

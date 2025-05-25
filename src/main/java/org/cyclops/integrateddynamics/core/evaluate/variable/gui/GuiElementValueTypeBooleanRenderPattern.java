@@ -73,6 +73,12 @@ public class GuiElementValueTypeBooleanRenderPattern<S extends ISubGuiBox, G ext
             ((IDirtyMarkListener) container).onDirty();
         }
         this.getElement().setInputBoolean(checked);
-        IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeBooleanValueChangedPacket(checked));
+        sendValueToServer();
+    }
+
+    @Override
+    public void sendValueToServer() {
+        super.sendValueToServer();
+        IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerValueTypeBooleanValueChangedPacket(this.getElement().getInputBoolean()));
     }
 }
