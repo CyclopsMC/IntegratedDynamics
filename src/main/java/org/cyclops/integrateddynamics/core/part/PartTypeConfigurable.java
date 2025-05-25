@@ -49,6 +49,11 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
                 return new ContainerPartSettings(id, playerInventory, new SimpleContainer(0),
                         data.getRight(), Optional.of(data.getLeft()), data.getMiddle());
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         });
     }
 
@@ -73,6 +78,11 @@ public abstract class PartTypeConfigurable<P extends IPartType<P, S>, S extends 
                 Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(pos);
                 return new ContainerPartOffset(id, playerInventory, new SimpleContainer(0),
                         data.getRight(), Optional.of(data.getLeft()), data.getMiddle());
+            }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
             }
         });
     }
