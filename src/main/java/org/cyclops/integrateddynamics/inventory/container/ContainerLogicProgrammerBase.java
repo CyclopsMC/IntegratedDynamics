@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -320,6 +321,18 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     public boolean hasWriteItemInSlot() {
         return !this.writeSlot.getItem(0).isEmpty();
+    }
+
+    public void returnWriteItemToPlayer() {
+        if (hasWriteItemInSlot()) {
+            ItemStack itemStack = writeSlot.getItem(0);
+            if (player.isAlive() && (!(player instanceof ServerPlayer) || !((ServerPlayer)player).hasDisconnected())) {
+                player.getInventory().placeItemBackInInventory(itemStack);
+            } else {
+                player.drop(itemStack, false);
+            }
+            writeSlot.setItem(0, ItemStack.EMPTY);
+        }
     }
 
     @Override

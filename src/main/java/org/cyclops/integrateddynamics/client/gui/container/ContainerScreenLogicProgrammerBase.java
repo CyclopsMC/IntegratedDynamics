@@ -56,6 +56,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected SubGuiOperatorInfo operatorInfoPattern = null;
     protected boolean firstInit = true;
     protected int relativeStep = -1;
+    private ButtonText resetButton;
 
     public ContainerScreenLogicProgrammerBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
@@ -73,6 +74,19 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     public void init() {
         super.init();
+
+        // Button to deselect the active LP element
+        addRenderableWidget(this.resetButton = new ButtonText(this.leftPos + 87,  this.topPos + 4,
+                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_RESET),
+                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_RESET), button -> {
+            if (container.getActiveElement() != null) {
+                container.returnWriteItemToPlayer();
+                handleElementActivation(container.getActiveElement(), true);
+            }
+        }));
+        this.resetButton.setHeight(12);
+        resetButton.visible = false;
+
         subGuiHolder.init(this.leftPos, this.topPos);
         if (firstInit) {
             setSearchFieldFocussed(true);
@@ -185,7 +199,6 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         // super.renderLabels(matrixStack, mouseX, mouseY);
-        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
 
         subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().textureManager, font, mouseX, mouseY);
 
@@ -255,6 +268,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 onActivateElement(element);
             }
         }
+        resetButton.visible = newActive != null;
         if (activate || deselect) {
             container.setActiveElement(newActive,
                     operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
