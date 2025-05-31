@@ -228,10 +228,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public void removed(Player player) {
         super.removed(player);
         if (!player.level.isClientSide()) {
-            ItemStack itemStack = writeSlot.getItem(0);
-            if(!itemStack.isEmpty()) {
-                player.drop(itemStack, false);
-            }
+            returnWriteItemToPlayer();
         }
     }
 
