@@ -27,6 +27,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
@@ -99,7 +100,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     protected void initializeSlotsPre() {
-        addSlot(new SlotSingleItem(writeSlot, 0, OUTPUT_X, OUTPUT_Y, RegistryEntries.ITEM_VARIABLE) {
+        addSlot(new SlotVariable(writeSlot, 0, OUTPUT_X, OUTPUT_Y) {
             @Override
             public void setChanged() {
                 // We don't call super here to avoid dirty mark listeners to be called twice, which can cause issues with loading and immediate overwriting.
@@ -108,9 +109,9 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
                 // TODO: refactor this in SimpleInventory in next major?
             }
         });
-        SlotSingleItem filterSlotIn1 = new SlotSingleItem(filterSlots, 0, 6, 218, RegistryEntries.ITEM_VARIABLE);
-        SlotSingleItem filterSlotIn2 = new SlotSingleItem(filterSlots, 1, 24, 218, RegistryEntries.ITEM_VARIABLE);
-        SlotSingleItem filterSlotOut = new SlotSingleItem(filterSlots, 2, 58, 218, RegistryEntries.ITEM_VARIABLE);
+        SlotSingleItem filterSlotIn1 = new SlotVariable(filterSlots, 0, 6, 218);
+        SlotSingleItem filterSlotIn2 = new SlotVariable(filterSlots, 1, 24, 218);
+        SlotSingleItem filterSlotOut = new SlotVariable(filterSlots, 2, 58, 218);
         filterSlotIn1.setPhantom(true);
         filterSlotIn2.setPhantom(true);
         filterSlotOut.setPhantom(true);

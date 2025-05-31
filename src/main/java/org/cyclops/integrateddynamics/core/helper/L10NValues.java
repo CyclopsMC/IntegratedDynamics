@@ -29,6 +29,8 @@ public class L10NValues {
 
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
+    public static final String GUI_LOGICPROGRAMMER_INFO_CREATE = "gui." + NS + ".logicprogrammer.info.create";
+    public static final String GUI_LOGICPROGRAMMER_INFO_MODIFY = "gui." + NS + ".logicprogrammer.info.modify";
     public static final String GUI_INPUT = "gui." + NS + ".input";
     public static final String GUI_OUTPUT = "gui." + NS + ".output";
     public static final String GUI_RECIPE_STRICTNBT = "gui." + NS + ".recipe.strictnbt";

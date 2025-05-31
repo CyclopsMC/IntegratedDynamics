@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenScrolling;
+import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -58,6 +60,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     public ContainerScreenLogicProgrammerBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
         container.setGui(this);
+        this.titleLabelX = 87;
 
         this.hasLabeller = playerInventory.contains(new ItemStack(RegistryEntries.ITEM_LABELLER));
     }
@@ -176,8 +179,25 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        // super.renderLabels(matrixStack, mouseX, mouseY);
+        this.font.draw(matrixStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
+
         subGuiHolder.drawGuiContainerForegroundLayer(matrixStack, this.leftPos, this.topPos, getMinecraft().textureManager, font, mouseX, mouseY);
+
+        // Draw usage information
+        if (subGuiHolder.isEmpty()) {
+            // Create
+            Images.ARROW_LEFT.draw(this, matrixStack, offsetX + 85, offsetY + 17);
+            font.draw(matrixStack, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_CREATE),
+                    offsetX + 100, offsetY + 23, Helpers.RGBToInt(80, 80, 80));
+
+            // Modify
+            Images.ARROW_DOWN.draw(this, matrixStack, offsetX + 230, offsetY + 90);
+            MutableComponent modifyComponent = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_MODIFY);
+            font.draw(matrixStack, modifyComponent,
+                    offsetX + 230 - font.width(modifyComponent), offsetY + 95, Helpers.RGBToInt(80, 80, 80));
+        }
+
         // Draw operator tooltips
         ContainerLogicProgrammerBase container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {

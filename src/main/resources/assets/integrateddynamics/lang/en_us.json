@@ -37,6 +37,8 @@
     "gui.integrateddynamics.delay.capacity": "Capacity",
     "gui.integrateddynamics.part.properties": "Properties:",
     "gui.integrateddynamics.logicprogrammer.filter": "Filter",
+    "gui.integrateddynamics.logicprogrammer.info.create": "Bind §lnew§r Variable Card",
+    "gui.integrateddynamics.logicprogrammer.info.modify": "§lModify§r Variable Card",
     "gui.integrateddynamics.rewards": "Rewards",
     "gui.integrateddynamics.rewards.collect": "Collect",
     "gui.integrateddynamics.rewards.collected": "Collected",
