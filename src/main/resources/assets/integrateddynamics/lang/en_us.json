@@ -832,6 +832,8 @@
     "aspect.integrateddynamics.read.integer.network.energy.consumptionrate.info": "The current energy consumption rate of all ID parts within the target network per tick",
     "aspect.integrateddynamics.read.any.network.value": "Value",
     "aspect.integrateddynamics.read.any.network.value.info": "The value that is being exposed by the target",
+    "aspect.integrateddynamics.read.operator.network.variablebyid": "Variable Value By ID",
+    "aspect.integrateddynamics.read.operator.network.variablebyid.info": "An operator that returns the value of a variable by its integer identifier",
 
     "_comment": "# Redstone aspects",
     "aspect.integrateddynamics.read.boolean.redstone.high": "Redstone High",
