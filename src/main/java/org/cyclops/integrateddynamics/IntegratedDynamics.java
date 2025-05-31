@@ -163,13 +163,6 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
         PartTypes.register();
         LogicProgrammerElementTypes.load();
         RegistryExportables.load();
-        if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
-            PartOverlayRenderers.load();
-            ValueTypeWorldRenderers.load();
-            VariableModelProviders.load();
-        }
-
-        super.setup(event);
 
         // Register info book
         putGenericReference(ModBaseNeoForge.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
@@ -182,6 +175,14 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
                 fmlModContainer.getEventBus().post(integratedDynamicsSetupEvent);
             }
         });
+
+        if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
+            PartOverlayRenderers.load();
+            ValueTypeWorldRenderers.load();
+            VariableModelProviders.load();
+        }
+
+        super.setup(event);
     }
 
     protected void onServerStartedLoadedGroups(ServerStartedEvent event) {
