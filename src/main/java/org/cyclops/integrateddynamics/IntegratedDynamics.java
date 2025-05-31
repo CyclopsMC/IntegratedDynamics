@@ -169,13 +169,6 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
         PartTypes.register();
         LogicProgrammerElementTypes.load();
         RegistryExportables.load();
-        if(MinecraftHelpers.isClientSide()) {
-            PartOverlayRenderers.load();
-            ValueTypeWorldRenderers.load();
-            VariableModelProviders.load();
-        }
-
-        super.setup(event);
 
         // Register info book
         putGenericReference(ModBase.REFKEY_INFOBOOK_REWARDS, ItemOnTheDynamicsOfIntegrationConfig.bookRewards);
@@ -188,6 +181,14 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
                 fmlModContainer.getEventBus().post(integratedDynamicsSetupEvent);
             }
         });
+
+        if(MinecraftHelpers.isClientSide()) {
+            PartOverlayRenderers.load();
+            ValueTypeWorldRenderers.load();
+            VariableModelProviders.load();
+        }
+
+        super.setup(event);
     }
 
     protected void onServerStartedLoadedGroups(ServerStartedEvent event) {
