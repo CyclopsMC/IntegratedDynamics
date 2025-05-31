@@ -53,14 +53,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.capability.network.EnergyNetworkConfig;
 import org.cyclops.integrateddynamics.capability.valueinterface.ValueInterfaceConfig;
-import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperator;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerInputs;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerOutput;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipeByInput;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipeByOutput;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipesByInput;
-import org.cyclops.integrateddynamics.core.evaluate.operator.PositionedOperatorRecipeHandlerRecipesByOutput;
+import org.cyclops.integrateddynamics.core.evaluate.operator.*;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
@@ -71,11 +64,7 @@ import org.cyclops.integrateddynamics.network.packet.SpeakTextPacket;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Collection of all aspects.
@@ -684,6 +673,19 @@ public class Aspects {
                                                 L10NValues.ASPECT_ERROR_NOVALUEINTERFACEVALUE)));
                             }
                     ).appendKind("value").buildRead();
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator>
+                    OPERATOR_GETVARIABLEBYID = AspectReadBuilders.BUILDER_OPERATOR
+                    .appendKind("network")
+                    .handle(input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorNetworkVariableById(
+                            input.getLeft().getTarget().getPos(),
+                            input.getLeft().getTarget().getSide()
+                    )))
+                    .appendKind("variablebyid")
+                    .buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorNetworkVariableById.class, new ResourceLocation(Reference.MOD_ID, "positioned_network_variable_by_id")));
+            }
 
         }
 

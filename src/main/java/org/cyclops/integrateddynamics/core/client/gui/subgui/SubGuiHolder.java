@@ -32,6 +32,10 @@ public class SubGuiHolder implements ISubGui {
         return Sets.newHashSet(subGuis);
     }
 
+    public boolean isEmpty() {
+        return subGuis.isEmpty();
+    }
+
     @Override
     public void init(int guiLeft, int guiTop) {
         for(ISubGui subGui : getSubGuis()) {

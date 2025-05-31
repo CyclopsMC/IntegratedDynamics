@@ -120,6 +120,13 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
+    public void loadElement(IVariableFacade variableFacade) {
+        if (variableFacade instanceof IValueTypeVariableFacade valueTypeVariableFacade) {
+            setValue(valueTypeVariableFacade.getValue());
+        }
+    }
+
+    @Override
     public boolean canCurrentlyReadFromOtherItem() {
         return true;
     }
@@ -182,8 +189,22 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
                                             ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container);
 
     @Override
+    public void setValue(IValue value) {
+        if (getInnerGuiElement() != null) {
+            getInnerGuiElement().setValue(value);
+        }
+    }
+
+    @Override
     @OnlyIn(Dist.CLIENT)
     public void setValueInGui(ISubGuiBox subGui) {
+        if (getInnerGuiElement() != null) {
+            ((IGuiInputElementValueType) getInnerGuiElement()).setValueInGui(subGui, true);
+        }
+    }
+
+    @Override
+    public void setValueInContainer(ContainerLogicProgrammerBase container) {
 
     }
 

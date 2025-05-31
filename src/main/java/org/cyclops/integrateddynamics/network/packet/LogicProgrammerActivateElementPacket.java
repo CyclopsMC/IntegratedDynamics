@@ -45,8 +45,12 @@ public class LogicProgrammerActivateElementPacket extends PacketCodec {
     @Override
     public void actionServer(Level world, ServerPlayer player) {
         if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
+            ResourceLocation type = new ResourceLocation(typeId);
+            if (type.getPath().isEmpty()) {
+                ((ContainerLogicProgrammerBase) player.containerMenu).returnWriteItemToPlayer();
+            }
             ((ContainerLogicProgrammerBase) player.containerMenu).setActiveElementById(
-                    new ResourceLocation(typeId), new ResourceLocation(elementId));
+                    type, new ResourceLocation(elementId));
         }
     }
 

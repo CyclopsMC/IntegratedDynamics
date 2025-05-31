@@ -53,15 +53,22 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
     }
 
     @Override
-    public void setValue(IValue value, GuiElementValueTypeStringRenderPattern propertyConfigPattern) {
-        setInputString(ValueHelpers.toString(value), propertyConfigPattern);
+    public void setValue(IValue value) {
+        setInputString(ValueHelpers.toString(value));
     }
 
-    public void setInputString(String inputString, GuiElementValueTypeStringRenderPattern subGui) {
-        this.inputString = inputString;
+    @Override
+    public void setValueInGui(GuiElementValueTypeStringRenderPattern subGui, boolean sendToServer) {
         if(subGui != null) {
             subGui.getTextField().setValue(inputString);
+            if (sendToServer) {
+                subGui.sendValueToServer();
+            }
         }
+    }
+
+    public void setInputString(String inputString) {
+        this.inputString = inputString;
     }
 
     @Override

@@ -36,18 +36,10 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
         super(SubGuiBox.Box.LIGHT);
         this.element = element;
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();
-        this.x = calculateX(baseX, maxWidth, configRenderPattern);
-        this.y = calculateY(baseY, maxHeight, configRenderPattern);
+        this.x = RenderPatternCommon.calculateX(baseX, maxWidth, configRenderPattern);
+        this.y = RenderPatternCommon.calculateY(baseY, maxHeight, configRenderPattern);
         this.gui = gui;
         this.container = container;
-    }
-
-    public static int calculateX(int baseX, int maxWidth, IConfigRenderPattern configRenderPattern) {
-        return baseX + (maxWidth  - configRenderPattern.getWidth()) / 2;
-    }
-
-    public static int calculateY(int baseY, int maxHeight, IConfigRenderPattern configRenderPattern) {
-        return baseY + (maxHeight - configRenderPattern.getHeight()) / 2;
     }
 
     protected void drawSlot(GuiGraphics guiGraphics, int x, int y) {
@@ -108,6 +100,10 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
     @Override
     public int getHeight() {
         return element.getRenderPattern().getHeight();
+    }
+
+    public void sendValueToServer() {
+
     }
 
 }
