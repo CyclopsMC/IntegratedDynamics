@@ -37,7 +37,7 @@
     "gui.integrateddynamics.delay.capacity": "Capacity",
     "gui.integrateddynamics.part.properties": "Properties:",
     "gui.integrateddynamics.logicprogrammer.filter": "Filter",
-    "gui.integrateddynamics.logicprogrammer.info.create": "Bind §lnew§r Variable Card",
+    "gui.integrateddynamics.logicprogrammer.info.create": "§lBind new§r Variable Card",
     "gui.integrateddynamics.logicprogrammer.info.modify": "§lModify§r Variable Card",
     "gui.integrateddynamics.logicprogrammer.tooltip.writeslot.create": "Insert Variable Card to bind to a §lnew§r value",
     "gui.integrateddynamics.logicprogrammer.tooltip.writeslot.modify": "Insert Variable Card to load §lload§r its value",

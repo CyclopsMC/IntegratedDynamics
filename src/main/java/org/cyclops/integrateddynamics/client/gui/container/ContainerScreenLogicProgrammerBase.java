@@ -168,6 +168,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                         53, Helpers.RGBToInt(40, 40, 40));
             }
         }
+
+        // Draw arrow on write slot
+        RenderHelpers.bindTexture(texture);
+        blit(matrixStack, leftPos + offsetX + ContainerLogicProgrammerBase.OUTPUT_X - 4,
+                topPos + offsetY + ContainerLogicProgrammerBase.OUTPUT_Y - 4, subGuiHolder.isEmpty() ? 7 : 3, 240, 4, 4);
     }
 
     protected Rectangle getElementPosition(ContainerLogicProgrammerBase container, int i, boolean absolute) {
@@ -199,7 +204,8 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
             // Tooltip on write slot
             if (this.isHovering(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
-                    ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
+                    ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)
+                    && Minecraft.getInstance().player.containerMenu.getCarried().isEmpty()) {
                 this.drawTooltip(Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY)), matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
             }
         }
