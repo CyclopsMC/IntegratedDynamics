@@ -91,6 +91,11 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
             public ValueObjectTypeFluidStack.ValueFluidStack getValue(ItemStack itemStack) {
                 return ValueObjectTypeFluidStack.ValueFluidStack.of(Helpers.getFluidStack(itemStack));
             }
+
+            @Override
+            public ItemStack getValueAsItemStack(ValueFluidStack value) {
+                return value.getRawValue().getFluid().getFluidType().getBucket(value.getRawValue());
+            }
         });
     }
 

@@ -23,7 +23,8 @@ public class PartTypeNetworkReader extends PartTypeReadBase<PartTypeNetworkReade
                 Aspects.Read.Network.INTEGER_ENERGY_STORED,
                 Aspects.Read.Network.INTEGER_ENERGY_MAX,
                 Aspects.Read.Network.INTEGER_ENERGY_CONSUMPTION_RATE,
-                Aspects.Read.Network.ANY_VALUE
+                Aspects.Read.Network.ANY_VALUE,
+                Aspects.Read.Network.OPERATOR_GETVARIABLEBYID
         ));
     }
 

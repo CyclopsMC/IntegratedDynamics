@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.26.0 or higher.
+
+Additions:
+* Allow editing existing variables in Logic Programmer, Closes #357
+* Add Variable Value By ID operator aspect to network reader, Closes #1346
+* Add button to reset selected LP element
+
+Changes:
+* Don't drop item in world when closing LP
+* Improve LP element arrow
+
+Fixes:
+* Fix operator text field in LP sometimes being red

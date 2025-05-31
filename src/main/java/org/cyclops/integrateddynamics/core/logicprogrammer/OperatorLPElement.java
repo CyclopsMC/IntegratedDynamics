@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import com.google.common.collect.Iterables;
 import lombok.Data;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -8,13 +9,16 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
@@ -22,7 +26,9 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
+import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 import java.util.List;
@@ -113,6 +119,35 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
         int[] variableIds = getVariableIds(inputVariables);
         return registry.writeVariableFacadeItem(!player.level().isClientSide(), itemStack, Operators.REGISTRY,
                 new OperatorVariableFacadeFactory(operator, variableIds), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
+    }
+
+    @Override
+    public void loadElement(IVariableFacade variableFacade) {
+        if (variableFacade instanceof OperatorVariableFacade operatorVariableFacade) {
+            int[] variableIds = operatorVariableFacade.getVariableIds();
+            this.inputVariables = new IVariableFacade[variableIds.length];
+            for (int i = 0; i < variableIds.length; i++) {
+                IValueType valueType = operator.getInputTypes()[i];
+                if (valueType instanceof IValueTypeCategory<?> valueTypeCategory) {
+                    valueType = Iterables.getFirst(valueTypeCategory.getElements(), valueType);
+                }
+                this.inputVariables[i] = new ValueTypeVariableFacade(variableIds[i], valueType, valueType.getDefault());
+            }
+        }
+    }
+
+    @Override
+    public void setValueInGui(RenderPattern subGui) {
+        setValueInContainer((ContainerLogicProgrammerBase) subGui.container);
+    }
+
+    @Override
+    public void setValueInContainer(ContainerLogicProgrammerBase container) {
+        SimpleInventory inputSlots = container.getTemporaryInputSlots();
+        for (int i = 0; i < inputSlots.getContainerSize(); i++) {
+            ItemStack itemStack = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).writeVariableFacadeItem(new ItemStack(RegistryEntries.ITEM_VARIABLE), inputVariables[i], (IVariableFacadeHandler) ValueTypes.REGISTRY);
+            inputSlots.setItem(i, itemStack);
+        }
     }
 
     @Override

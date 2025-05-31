@@ -18,8 +18,10 @@ import org.cyclops.cyclopscore.client.gui.component.input.WidgetArrowedListField
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
@@ -92,8 +94,55 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
                 ? ValueTypeList.ValueList.ofList(listValueType, constructValues()) : serverValue;
     }
 
+    @Override
+    public void setValue(IValue value) {
+        if (!IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
+            serverValue = (ValueTypeList.ValueList) value;
+        }
+
+        IValueTypeListProxy list = ((ValueTypeList.ValueList) value).getRawValue();
+        if (!list.isInfinite()) {
+            setListValueType(list.getValueType());
+            try {
+                int length = list.getLength();
+                this.length = length;
+                for (int i = 0; i < length; i++) {
+                    initializeElement(i).setValue(list.get(i));
+                }
+            } catch (EvaluationException e) {
+                // Ignore exceptions
+            }
+        }
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void setValueInGui(ISubGuiBox subGui) {
+        if (length > 0) {
+            masterGui.setSelectedValueType(this.listValueType);
+            setActiveElement(0);
+        }
+    }
+
+    @Override
+    public void setValueInContainer(ContainerLogicProgrammerBase container) {
+        if (length > 0) {
+            IValueTypeLogicProgrammerElement subElement = setActiveElement(0);
+            int x = RenderPatternCommon.calculateX(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.MAX_WIDTH, subElement.getRenderPattern());
+            int y = RenderPatternCommon.calculateY(ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_HEIGHT, subElement.getRenderPattern());
+            container.setElementInventory(subElement, x, y);
+            container.getTemporaryInputSlots().removeDirtyMarkListener(container);
+            subElement.setValueInContainer(container);
+            container.getTemporaryInputSlots().addDirtyMarkListener(container);
+        }
+    }
+
     public void setListValueType(IValueType listValueType) {
         this.listValueType = listValueType;
+        reset();
+    }
+
+    public void reset() {
         this.subElements = Maps.newHashMap();
         this.subElementGuis = Maps.newHashMap();
         setLength(0);
@@ -104,17 +153,27 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         setActiveElement(length - 1);
     }
 
-    public void setActiveElement(int index) {
+    public IValueTypeLogicProgrammerElement initializeElement(int index) {
+        IValueTypeLogicProgrammerElement subElement = listValueType.createLogicProgrammerElement();
+        subElement.activate();
+        subElements.put(index, subElement);
+        return subElement;
+    }
+
+    public IValueTypeLogicProgrammerElement setActiveElement(int index) {
         activeElement = index;
+        IValueTypeLogicProgrammerElement subElement;
         if(index >= 0 && !subElements.containsKey(index)) {
-            IValueTypeLogicProgrammerElement subElement = listValueType.createLogicProgrammerElement();
-            subElements.put(index, subElement);
+            subElement = initializeElement(index);
             subElement.activate();
+        } else {
+            subElement = subElements.get(index);
         }
         if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
             masterGui.setActiveElement(activeElement);
             masterGui.container.onDirty();
         }
+        return subElement;
     }
 
     public void removeElement(int index) {
@@ -137,7 +196,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
 
     @Override
     public void activate() {
-
+        reset();
     }
 
     @Override
@@ -193,6 +252,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         private final int maxHeight;
         private final ContainerScreenLogicProgrammerBase gui;
         private final ContainerLogicProgrammerBase container;
+        private final SelectionSubGui selectionGui;
 
         protected ListElementSubGui elementSubGui = null;
         protected int lastGuiLeft;
@@ -202,7 +262,7 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         public MasterSubGuiRenderPattern(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                          ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-            subGuiHolder.addSubGui(new SelectionSubGui(element, baseX, baseY - getHeight() / 4, maxWidth, maxHeight, gui, container));
+            subGuiHolder.addSubGui(this.selectionGui = new SelectionSubGui(element, baseX, baseY - getHeight() / 4, maxWidth, maxHeight, gui, container));
             this.baseX = baseX;
             this.baseY = baseY;
             this.maxWidth = maxWidth;
@@ -220,6 +280,10 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
                         maxWidth, maxHeight, gui, container));
                 elementSubGui.init(lastGuiLeft, lastGuiTop);
             }
+        }
+
+        public void setSelectedValueType(IValueType valueType) {
+            this.selectionGui.setActiveElement(valueType);
         }
 
         @Override
@@ -329,6 +393,12 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
                 arrowAdd.active = newType != ValueTypes.CATEGORY_ANY;
             }
         }
+
+        public void setActiveElement(IValueType valueType) {
+            valueTypeSelector.setListener(null);
+            valueTypeSelector.setActiveElement(valueType);
+            valueTypeSelector.setListener(this);
+        }
     }
 
     /**
@@ -341,11 +411,14 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         private ButtonArrow arrowRight;
         private Button arrowRemove;
 
+        private RenderPattern subGui;
+        private IValueTypeLogicProgrammerElement subElement;
+
         public ListElementSubGui(ValueTypeListLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                  ContainerScreenLogicProgrammerBase<?> gui, ContainerLogicProgrammerBase container) {
             super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-            RenderPattern subGui = element.subElementGuis.get(element.activeElement);
-            IValueTypeLogicProgrammerElement subElement = element.subElements.get(element.activeElement);
+            this.subGui = element.subElementGuis.get(element.activeElement);
+            this.subElement = element.subElements.get(element.activeElement);
             if(subGui == null) {
                 subGui = (RenderPattern) subElement.createSubGui(baseX, baseY, maxWidth,
                         maxHeight, gui, container);
@@ -353,10 +426,9 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
                         element.activeElement,
                         subGui);
             }
-            int x = RenderPattern.calculateX(baseX, maxWidth, subElement.getRenderPattern());
-            int y = RenderPattern.calculateY(baseY, maxHeight, subElement.getRenderPattern());
+            int x = RenderPatternCommon.calculateX(baseX, maxWidth, subElement.getRenderPattern());
+            int y = RenderPatternCommon.calculateY(baseY, maxHeight, subElement.getRenderPattern());
             gui.getMenu().setElementInventory(subElement, x, y);
-            subElement.setValueInGui(subGui);
             subGuiHolder.addSubGui(subGui);
             if (subGui instanceof IRenderPatternValueTypeTooltip) {
                 ((IRenderPatternValueTypeTooltip) subGui).setRenderTooltip(false);
@@ -381,6 +453,10 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             arrowLeft.active = element.activeElement > 0;
             arrowRight.active = element.activeElement < element.length - 1;
             arrowRemove.active = element.length > 0;
+            container.getTemporaryInputSlots().removeDirtyMarkListener(container);
+            subElement.setValueInGui(subGui);
+            subElement.setValueInContainer(subGui.container);
+            container.getTemporaryInputSlots().addDirtyMarkListener(container);
         }
     }
 

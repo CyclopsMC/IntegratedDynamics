@@ -6,12 +6,14 @@ import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesItemStackTag;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
+import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.cyclopscore.network.PacketCodecs;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -116,5 +118,22 @@ public class ItemMatchProperties {
             return new PrototypedIngredientAlternativesItemStackTag(Collections.singletonList(getItemTag()),
                     flags, getTagQuantity());
         }
+    }
+
+    public static ItemMatchProperties fromPrototypedIngredient(IPrototypedIngredientAlternatives<ItemStack, Integer> prototypedIngredient, boolean reusable) {
+        ItemMatchProperties props = new ItemMatchProperties(ItemStack.EMPTY);
+        if (prototypedIngredient instanceof PrototypedIngredientAlternativesItemStackTag prototypedTag) {
+            prototypedTag.getKeys().stream().findFirst().ifPresent(props::setItemTag);
+            props.setTagQuantity((int) prototypedTag.getQuantity());
+        } else if (prototypedIngredient instanceof PrototypedIngredientAlternativesList<ItemStack, Integer> prototypedList) {
+            Collection<IPrototypedIngredient<ItemStack, Integer>> alternatives = prototypedList.getAlternatives();
+            IPrototypedIngredient<ItemStack, Integer> prototype = alternatives.stream().findFirst().orElse(null);
+            if (prototype != null) {
+                props = new ItemMatchProperties(prototype.getPrototype());
+                props.setNbt(IngredientComponent.ITEMSTACK.getMatcher().hasCondition(prototype.getCondition(), ItemMatch.DATA));
+            }
+        }
+        props.setReusable(reusable);
+        return props;
     }
 }

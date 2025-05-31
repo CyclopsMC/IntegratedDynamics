@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -29,6 +30,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
@@ -43,6 +45,11 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     public static final int OUTPUT_X = 232;
     public static final int OUTPUT_Y = 110;
+
+    public static final int BASE_X = 88;
+    public static final int BASE_Y = 18;
+    public static final int MAX_WIDTH = 160;
+    public static final int MAX_HEIGHT = 87;
 
     protected static final IItemPredicate<ILogicProgrammerElement> FILTERER =
             (item, pattern) -> pattern.matcher(item.getMatchString()).matches()
@@ -96,10 +103,18 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     protected void initializeSlotsPre() {
-        addSlot(new SlotSingleItem(writeSlot, 0, OUTPUT_X, OUTPUT_Y, RegistryEntries.ITEM_VARIABLE.get()));
-        SlotSingleItem filterSlotIn1 = new SlotSingleItem(filterSlots, 0, 6, 218, RegistryEntries.ITEM_VARIABLE.get());
-        SlotSingleItem filterSlotIn2 = new SlotSingleItem(filterSlots, 1, 24, 218, RegistryEntries.ITEM_VARIABLE.get());
-        SlotSingleItem filterSlotOut = new SlotSingleItem(filterSlots, 2, 58, 218, RegistryEntries.ITEM_VARIABLE.get());
+        addSlot(new SlotVariable(writeSlot, 0, OUTPUT_X, OUTPUT_Y) {
+            @Override
+            public void setChanged() {
+                // We don't call super here to avoid dirty mark listeners to be called twice, which can cause issues with loading and immediate overwriting.
+                // This is because SimpleInventory will already call dirty mark listeners when calling setItem.
+                // Strictly this behaviour in SimpleInventory is not required, but due to backwards-compat, we keep it.
+                // TODO: refactor this in SimpleInventory in next major?
+            }
+        });
+        SlotSingleItem filterSlotIn1 = new SlotVariable(filterSlots, 0, 6, 218);
+        SlotSingleItem filterSlotIn2 = new SlotVariable(filterSlots, 1, 24, 218);
+        SlotSingleItem filterSlotOut = new SlotVariable(filterSlots, 2, 58, 218);
         filterSlotIn1.setPhantom(true);
         filterSlotIn2.setPhantom(true);
         filterSlotOut.setPhantom(true);
@@ -215,10 +230,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public void removed(Player player) {
         super.removed(player);
         if (!player.level().isClientSide()) {
-            ItemStack itemStack = writeSlot.getItem(0);
-            if(!itemStack.isEmpty()) {
-                player.drop(itemStack, false);
-            }
+            returnWriteItemToPlayer();
         }
     }
 
@@ -262,23 +274,38 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
             ItemStack outputStack = writeElementInfo();
             writeSlot.removeDirtyMarkListener(this);
+            writeSlot.removeDirtyMarkListener(loadConfigListener);
             writeSlot.setItem(0, outputStack);
             if(!StringUtil.isNullOrEmpty(this.lastLabel)) {
                 labelCurrent();
             }
             writeSlot.addDirtyMarkListener(this);
+            writeSlot.addDirtyMarkListener(loadConfigListener);
         }
     }
 
     protected void loadConfigFrom(ItemStack itemStack) {
-        // Only do this client-side, a packet will be sent to do the same server-side.
-        if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
-            IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-            IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level()), itemStack);
-            for(ILogicProgrammerElement element : getElements()) {
-                if(element.isFor(variableFacade)) {
-                    getGui().handleElementActivation(element);
+        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+        IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level()), itemStack);
+        for(ILogicProgrammerElement element : getUnfilteredItems()) {
+            if(element.isFor(variableFacade)) {
+                writeSlot.removeDirtyMarkListener(this);
+                writeSlot.removeDirtyMarkListener(loadConfigListener);
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
+                    getGui().handleElementActivation(element, false);
+                } else {
+                    setActiveElement(element, 0, 0);
                 }
+                temporaryInputSlots.removeDirtyMarkListener(this);
+                element.loadElement(variableFacade);
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
+                    element.setValueInGui(getGui().getOperatorConfigPattern());
+                } else {
+                    element.setValueInContainer(this);
+                }
+                writeSlot.addDirtyMarkListener(this);
+                writeSlot.addDirtyMarkListener(loadConfigListener);
+                temporaryInputSlots.addDirtyMarkListener(this);
             }
         }
     }
@@ -287,12 +314,24 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         return this.lastError;
     }
 
-    public Container getTemporaryInputSlots() {
+    public SimpleInventory getTemporaryInputSlots() {
         return this.temporaryInputSlots;
     }
 
     public boolean hasWriteItemInSlot() {
         return !this.writeSlot.getItem(0).isEmpty();
+    }
+
+    public void returnWriteItemToPlayer() {
+        if (hasWriteItemInSlot()) {
+            ItemStack itemStack = writeSlot.getItem(0);
+            if (player.isAlive() && (!(player instanceof ServerPlayer) || !((ServerPlayer)player).hasDisconnected())) {
+                player.getInventory().placeItemBackInInventory(itemStack);
+            } else {
+                player.drop(itemStack, false);
+            }
+            writeSlot.setItem(0, ItemStack.EMPTY);
+        }
     }
 
     @Override
@@ -320,15 +359,12 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
         @Override
         public void onDirty() {
-            // Currently disabled, this requires quite complex negotiation between C and S, not too mention
-            // any other players having the gui open!
-            /*if ((temporaryInputSlots == null || temporaryInputSlots.isEmpty())
-                    && (activeElement == null || activeElement.canCurrentlyReadFromOtherItem())) {
-                ItemStack itemStack = writeSlot.getStackInSlot(0);
+            if (activeElement == null) {
+                ItemStack itemStack = writeSlot.getItem(0);
                 if (!itemStack.isEmpty()) {
-                    ContainerLogicProgrammer.this.loadConfigFrom(itemStack);
+                    ContainerLogicProgrammerBase.this.loadConfigFrom(itemStack);
                 }
-            }*/
+            }
         }
 
     }

@@ -694,6 +694,19 @@ public class Aspects {
                                                 L10NValues.ASPECT_ERROR_NOVALUEINTERFACEVALUE)));
                             }
                     ).appendKind("value").buildRead();
+            public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator>
+                    OPERATOR_GETVARIABLEBYID = AspectReadBuilders.BUILDER_OPERATOR
+                    .appendKind("network")
+                    .handle(input -> ValueTypeOperator.ValueOperator.of(new PositionedOperatorNetworkVariableById(
+                            input.getLeft().getTarget().getPos(),
+                            input.getLeft().getTarget().getSide()
+                    )))
+                    .appendKind("variablebyid")
+                    .buildRead();
+            static {
+                Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
+                        PositionedOperatorNetworkVariableById.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_network_variable_by_id")));
+            }
 
         }
 
