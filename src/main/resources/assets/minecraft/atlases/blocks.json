@@ -166,6 +166,7 @@
   { "type": "minecraft:single", "resource": "integrateddynamics:aspect/read/string/world/worldname" },
   { "type": "minecraft:single", "resource": "integrateddynamics:aspect/read/string/block/biome" },
   { "type": "minecraft:single", "resource": "integrateddynamics:aspect/read/string/block/dimension" },
+  { "type": "minecraft:single", "resource": "integrateddynamics:aspect/read/operator/network/variablebyid" },
   { "type": "minecraft:single", "resource": "integrateddynamics:aspect/read/operator/recipehandler/recipeoutputsingle" },
   { "type": "minecraft:single", "resource": "integrateddynamics:aspect/read/operator/recipehandler/recipeinputsingle" },
   { "type": "minecraft:single", "resource": "integrateddynamics:aspect/read/operator/recipehandler/recipeoutputlist" },

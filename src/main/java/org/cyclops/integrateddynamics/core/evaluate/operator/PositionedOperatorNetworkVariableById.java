@@ -58,7 +58,7 @@ public class PositionedOperatorNetworkVariableById extends PositionedOperator {
                 if (variableFacade != null) {
                     return variableFacade.getVariable(network, partNetwork).getValue();
                 }
-                EvaluationException exception = new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_VARIABLENOTINNETWORK, variableId));
+                EvaluationException exception = new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_VARIABLENOTINNETWORK, Integer.toString(variableId)));
                 exception.setRetryEvaluation(true);
                 throw exception;
             }
