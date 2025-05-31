@@ -196,6 +196,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             MutableComponent modifyComponent = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_MODIFY);
             font.draw(matrixStack, modifyComponent,
                     offsetX + 230 - font.width(modifyComponent), offsetY + 95, Helpers.RGBToInt(80, 80, 80));
+
+            // Tooltip on write slot
+            if (this.isHovering(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
+                    ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
+                this.drawTooltip(Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY)), matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
+            }
         }
 
         // Draw operator tooltips

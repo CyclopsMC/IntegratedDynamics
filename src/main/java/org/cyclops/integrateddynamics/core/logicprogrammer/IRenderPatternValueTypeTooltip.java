@@ -5,9 +5,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author rubensworks
@@ -31,7 +33,9 @@ public interface IRenderPatternValueTypeTooltip {
             if (!container.hasWriteItemInSlot()) {
                 if (gui.isHovering(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
                         ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)) {
-                    gui.drawTooltip(getValueTypeTooltip(valueType), poseStack, mouseX - guiLeft, mouseY - guiTop);
+                    List<Component> tooltips = Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_CREATE));
+                    tooltips = Stream.concat(tooltips.stream(), getValueTypeTooltip(valueType).stream()).toList();
+                    gui.drawTooltip(tooltips, poseStack, mouseX - guiLeft, mouseY - guiTop);
                 }
             }
         }

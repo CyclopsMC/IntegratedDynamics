@@ -39,6 +39,8 @@
     "gui.integrateddynamics.logicprogrammer.filter": "Filter",
     "gui.integrateddynamics.logicprogrammer.info.create": "Bind §lnew§r Variable Card",
     "gui.integrateddynamics.logicprogrammer.info.modify": "§lModify§r Variable Card",
+    "gui.integrateddynamics.logicprogrammer.tooltip.writeslot.create": "Insert Variable Card to bind to a §lnew§r value",
+    "gui.integrateddynamics.logicprogrammer.tooltip.writeslot.modify": "Insert Variable Card to load §lload§r its value",
     "gui.integrateddynamics.rewards": "Rewards",
     "gui.integrateddynamics.rewards.collect": "Collect",
     "gui.integrateddynamics.rewards.collected": "Collected",
