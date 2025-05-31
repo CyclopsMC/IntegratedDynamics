@@ -68,7 +68,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
         return visiblePossibilities.get(index);
     }
 
-    protected void refreshDropdownList() {
+    public void refreshDropdownList() {
         // Remove all colors and formatting when changing text
         if(getValue().contains("§")) {
             setValue(getValue().replaceAll("§.", ""));
@@ -111,6 +111,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
 
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        IDropdownEntry<T> oldPossibility = selectedDropdownPossibility;
         selectedDropdownPossibility = null;
         if (!possibilities.isEmpty()) {
             switch (typedChar) {
@@ -143,6 +144,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
             refreshDropdownList();
             return true;
         }
+        selectedDropdownPossibility = oldPossibility;
         return false;
     }
 

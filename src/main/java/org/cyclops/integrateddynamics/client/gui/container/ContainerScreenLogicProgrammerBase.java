@@ -3,10 +3,12 @@ package org.cyclops.integrateddynamics.client.gui.container;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +16,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenScrolling;
+import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
@@ -34,6 +37,7 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerLabelPacket;
 import org.cyclops.integrateddynamics.proxy.ClientProxy;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
@@ -53,10 +57,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected boolean firstInit = true;
     protected int relativeStep = -1;
     protected boolean swallowNextCharacter = false;
+    private ButtonText resetButton;
 
     public ContainerScreenLogicProgrammerBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
         container.setGui(this);
+        this.titleLabelX = 87;
 
         this.hasLabeller = playerInventory.contains(new ItemStack(RegistryEntries.ITEM_LABELLER));
     }
@@ -69,6 +75,19 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     public void init() {
         super.init();
+
+        // Button to deselect the active LP element
+        addRenderableWidget(this.resetButton = new ButtonText(this.leftPos + 87,  this.topPos + 4,
+                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_RESET),
+                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_RESET), button -> {
+            if (container.getActiveElement() != null) {
+                container.returnWriteItemToPlayer();
+                handleElementActivation(container.getActiveElement(), true);
+            }
+        }));
+        this.resetButton.setHeight(12);
+        resetButton.visible = false;
+
         subGuiHolder.init(this.leftPos, this.topPos);
         if (firstInit) {
             setSearchFieldFocussed(true);
@@ -164,6 +183,10 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                         53, Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
             }
         }
+
+        // Draw arrow on write slot
+        guiGraphics.blit(texture, leftPos + offsetX + ContainerLogicProgrammerBase.OUTPUT_X - 4,
+                topPos + offsetY + ContainerLogicProgrammerBase.OUTPUT_Y - 4, subGuiHolder.isEmpty() ? 7 : 3, 240, 4, 4);
     }
 
     protected Rectangle getElementPosition(ContainerLogicProgrammerBase container, int i, boolean absolute) {
@@ -177,6 +200,28 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
+
+        // Draw usage information
+        if (subGuiHolder.isEmpty()) {
+            // Create
+            Images.ARROW_LEFT.draw(guiGraphics, offsetX + 85, offsetY + 17);
+            guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_CREATE),
+                    offsetX + 100, offsetY + 23, Helpers.RGBToInt(80, 80, 80), false);
+
+            // Modify
+            Images.ARROW_DOWN.draw(guiGraphics, offsetX + 230, offsetY + 90);
+            MutableComponent modifyComponent = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_MODIFY);
+            guiGraphics.drawString(font, modifyComponent,
+                    offsetX + 230 - font.width(modifyComponent), offsetY + 95, Helpers.RGBToInt(80, 80, 80), false);
+
+            // Tooltip on write slot
+            if (this.isHovering(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
+                    ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)
+                    && Minecraft.getInstance().player.containerMenu.getCarried().isEmpty()) {
+                this.drawTooltip(Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY)), guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
+            }
+        }
+
         // Draw operator tooltips
         ContainerLogicProgrammerBase container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
@@ -192,9 +237,10 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     protected void onActivateElement(ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> element) {
+        this.resetButton.setFocused(false);
         subGuiHolder.addSubGui(operatorInfoPattern = new SubGuiOperatorInfo(element));
         operatorInfoPattern.init(leftPos, topPos);
-        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(88, 18, 160, 87, this, (ContainerLogicProgrammerBase) getMenu()));
+        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_WIDTH, ContainerLogicProgrammerBase.MAX_HEIGHT, this, (ContainerLogicProgrammerBase) getMenu()));
         operatorConfigPattern.init(leftPos, topPos);
     }
 
@@ -202,30 +248,48 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         subGuiHolder.clear();
     }
 
-    public boolean handleElementActivation(ILogicProgrammerElement element) {
+    public boolean handleElementActivation(ILogicProgrammerElement element, boolean sendToServer) {
         boolean activate = false;
+        boolean deselect = false;
         ContainerLogicProgrammerBase container = getMenu();
         ILogicProgrammerElement newActive = null;
-        onDeactivateElement(element);
-        if(container.getActiveElement() != element) {
+        if (container.getActiveElement() == element) {
+            // Only allow deselection of the current LP element if the write slot is empty
+            if (!container.hasWriteItemInSlot()) {
+                deselect = true;
+                onDeactivateElement(element);
+            }
+        } else {
+            // Swap to another LP element
+            onDeactivateElement(element);
             activate = true;
             newActive = element;
             if(element != null) {
                 onActivateElement(element);
             }
         }
-        container.setActiveElement(newActive,
-                operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
-                operatorConfigPattern == null ? 0 : operatorConfigPattern.getY());
-        if(newActive != null) {
-            ILogicProgrammerElementType type = newActive.getType();
-            IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerActivateElementPacket(type.getUniqueName(), type.getName(newActive)));
-        } else {
-            IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                    new LogicProgrammerActivateElementPacket(ResourceLocation.parse(""), ResourceLocation.parse("")));
+        resetButton.visible = newActive != null;
+        if (activate || deselect) {
+            container.setActiveElement(newActive,
+                    operatorConfigPattern == null ? 0 : operatorConfigPattern.getX(),
+                    operatorConfigPattern == null ? 0 : operatorConfigPattern.getY());
+        }
+        if (sendToServer) {
+            if (newActive != null) {
+                ILogicProgrammerElementType type = newActive.getType();
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                        new LogicProgrammerActivateElementPacket(type.getUniqueName(), type.getName(newActive)));
+            } else if (deselect) {
+                IntegratedDynamics._instance.getPacketHandler().sendToServer(
+                        new LogicProgrammerActivateElementPacket(ResourceLocation.parse(""), ResourceLocation.parse("")));
+            }
         }
         return activate;
+    }
+
+    @Nullable
+    public RenderPattern getOperatorConfigPattern() {
+        return operatorConfigPattern;
     }
 
     protected void setSearchFieldFocussed(boolean focused) {
@@ -241,7 +305,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         // Deactivate current element
         if (elementId < 0) {
-            handleElementActivation(container.getActiveElement());
+            handleElementActivation(container.getActiveElement(), true);
             return false;
         }
 
@@ -251,7 +315,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 if (elementId-- == 0) {
                     ILogicProgrammerElement element = container.getVisibleElement(i);
                     if (container.getActiveElement() != element) {
-                        handleElementActivation(element);
+                        handleElementActivation(element, true);
                     }
                     return true;
                 }
@@ -346,7 +410,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             if (container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
                 if (isPointInRegion(getElementPosition(container, i, false), new Point((int) mouseX, (int) mouseY))) {
-                    boolean activated = handleElementActivation(element);
+                    boolean activated = handleElementActivation(element, true);
                     relativeStep = activated ? i : -1;
                     if (activated) {
                         container.getActiveElement().setFocused(operatorConfigPattern, true);

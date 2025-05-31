@@ -111,6 +111,7 @@
             <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text5</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text6</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text7</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.logicOperations.text8</paragraph>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer</appendix>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer_to_portable</appendix>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer_from_portable</appendix>
@@ -637,6 +638,7 @@
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text4</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text5</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text6</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.text7</paragraph>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer</appendix>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer_to_portable</appendix>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer_from_portable</appendix>

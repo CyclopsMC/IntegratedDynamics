@@ -27,6 +27,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeDropdownList;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeDropdownListRenderPattern;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeOperatorValueChangedPacket;
@@ -86,6 +87,21 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
     @Override
     public IValue getValue() {
         return ValueTypeOperator.ValueOperator.of(selectedOperator);
+    }
+
+    @Override
+    public void setValue(IValue value) {
+        this.selectedOperator = ((ValueTypeOperator.ValueOperator) value).getRawValue();
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void setValueInGui(ISubGuiBox subGui) {
+        if (this.selectedOperator != null) {
+            ((GuiElementValueTypeDropdownListRenderPattern) subGui).getSearchField().setValue(this.selectedOperator.getLocalizedNameFull().getString());
+            ((GuiElementValueTypeDropdownListRenderPattern) subGui).onTyped();
+            ((GuiElementValueTypeDropdownListRenderPattern) subGui).getSearchField().refreshDropdownList();
+        }
     }
 
     @Override

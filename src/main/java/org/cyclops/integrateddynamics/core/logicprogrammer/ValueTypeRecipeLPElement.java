@@ -28,8 +28,10 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
+import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
+import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
@@ -511,33 +513,121 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-        return lastGui = new ValueTypeRecipeLPElementMasterSubGui(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+    public void setValue(IValue value) {
+        ValueObjectTypeRecipe.ValueRecipe valueRecipe = (ValueObjectTypeRecipe.ValueRecipe) value;
+        valueRecipe.getRawValue().ifPresent(recipe -> {
+            loadInputStacks(recipe);
+            loadInputFluid(recipe);
+            loadInputEnergy(recipe);
+
+            loadOutputStacks(recipe);
+            loadOutputFluid(recipe);
+            loadOutputEnergy(recipe);
+        });
+    }
+
+    private void loadInputStacks(IRecipeDefinition recipe) {
+        List<IPrototypedIngredientAlternatives<ItemStack, Integer>> listAlternatives = recipe.getInputs(IngredientComponent.ITEMSTACK);
+        for (int i = 0; i < listAlternatives.size(); i++) {
+            IPrototypedIngredientAlternatives<ItemStack, Integer> prototypes = listAlternatives.get(i);
+            boolean reusable = recipe.isInputReusable(IngredientComponent.ITEMSTACK, i);
+            ItemMatchProperties itemMatchProperties = ItemMatchProperties.fromPrototypedIngredient(prototypes, reusable);
+            this.inputStacks.set(i, itemMatchProperties);
+        }
+    }
+
+    private <T, M> Optional<T> loadFirstInput(IRecipeDefinition recipe, IngredientComponent<T, M> ingredientComponent) {
+        List<IPrototypedIngredientAlternatives<T, M>> listAlternatives = recipe.getInputs(ingredientComponent);
+        if (listAlternatives.size() > 0) {
+            IPrototypedIngredientAlternatives<T, M> prototypes = listAlternatives.get(0);
+            if (prototypes.getAlternatives().size() > 0) {
+                IPrototypedIngredient<T, M> prototype = prototypes.getAlternatives().stream().findFirst().get();
+                return Optional.of(prototype.getPrototype());
+            }
+        }
+        return Optional.empty();
+    }
+
+    private void loadInputFluid(IRecipeDefinition recipe) {
+        loadFirstInput(recipe, IngredientComponent.FLUIDSTACK).ifPresent(fluidStack -> {
+            this.inputFluid = fluidStack.getFluid().getFluidType().getBucket(fluidStack);
+            this.inputFluidAmount = Integer.toString(fluidStack.getAmount());
+        });
+    }
+
+    private void loadInputEnergy(IRecipeDefinition recipe) {
+        loadFirstInput(recipe, IngredientComponent.ENERGY).ifPresent(energy -> this.inputEnergy = Long.toString(energy));
+    }
+
+    private void loadOutputStacks(IRecipeDefinition recipe) {
+        List<ItemStack> instances = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
+        if (instances.size() > 0) {
+            outputStacks.set(0, instances.get(0));
+        }
+        if (instances.size() > 1) {
+            outputStacks.set(1, instances.get(1));
+        }
+        if (instances.size() > 2) {
+            outputStacks.set(2, instances.get(2));
+        }
+    }
+
+    private <T, M> Optional<T> loadFirstOutput(IRecipeDefinition recipe, IngredientComponent<T, M> ingredientComponent) {
+        List<T> instances = recipe.getOutput().getInstances(ingredientComponent);
+        if (instances.size() > 0) {
+            return Optional.of(instances.get(0));
+        }
+        return Optional.empty();
+    }
+
+    private void loadOutputFluid(IRecipeDefinition recipe) {
+        loadFirstOutput(recipe, IngredientComponent.FLUIDSTACK).ifPresent(fluidStack -> {
+            this.outputFluid = fluidStack.getFluid().getFluidType().getBucket(fluidStack);
+            this.outputFluidAmount = Integer.toString(fluidStack.getAmount());
+        });
+    }
+
+    private void loadOutputEnergy(IRecipeDefinition recipe) {
+        loadFirstOutput(recipe, IngredientComponent.ENERGY).ifPresent(energy -> this.outputEnergy = Long.toString(energy));
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setValueInGui(ISubGuiBox subGui) {
         ValueTypeRecipeLPElementRecipeSubGui gui = ((ValueTypeRecipeLPElementMasterSubGui) subGui).getSubGuiRecipe();
-        Container slots = gui.container.getTemporaryInputSlots();
+        setValueInContainer(gui.container);
+        if (gui.getInputFluidAmountBox() != null) {
+            gui.getInputFluidAmountBox().setValue(this.inputFluidAmount);
+            gui.getInputEnergyBox().setValue(this.inputEnergy);
+            gui.getOutputFluidAmountBox().setValue(this.outputFluidAmount);
+            gui.getOutputEnergyBox().setValue(this.outputEnergy);
+        }
+    }
+
+    @Override
+    public void setValueInContainer(ContainerLogicProgrammerBase container) {
+        Container slots = container.getTemporaryInputSlots();
+
+        // Input slots
         for (int i = 0; i < this.inputStacks.size(); i++) {
             ItemMatchProperties entry = this.inputStacks.get(i);
             slots.setItem(i, entry.getItemStack());
         }
         slots.setItem(9, this.inputFluid);
-        if (gui.getInputFluidAmountBox() != null) {
-            gui.getInputFluidAmountBox().setValue(this.inputFluidAmount);
-            gui.getInputEnergyBox().setValue(this.inputEnergy);
-            for (int i = 0; i < this.outputStacks.size(); i++) {
-                slots.setItem(10 + i, this.outputStacks.get(i));
-                // No need to set slot type, as this can't be changed for output stacks
-            }
-            slots.setItem(13, this.outputFluid);
-            gui.getOutputFluidAmountBox().setValue(this.outputFluidAmount);
-            gui.getOutputEnergyBox().setValue(this.outputEnergy);
+
+        // Output slots
+        for (int i = 0; i < this.outputStacks.size(); i++) {
+            slots.setItem(10 + i, this.outputStacks.get(i));
+            // No need to set slot type, as this can't be changed for output stacks
         }
+        slots.setItem(13, this.outputFluid);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
+                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+        return lastGui = new ValueTypeRecipeLPElementMasterSubGui(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
 }
