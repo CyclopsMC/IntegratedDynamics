@@ -94,6 +94,13 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends GuiComp
     public ItemStack writeElement(Player player, ItemStack itemStack);
 
     /**
+     * The variable facade to load onto this element.
+     *
+     * @param variableFacade        The variable facade to load.
+     */
+    public void loadElement(IVariableFacade variableFacade);
+
+    /**
      * If this element in its current state can be deactivated because of another item being inserted into the
      * write slot.
      * @return If this element can be deactivated.
@@ -144,4 +151,19 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends GuiComp
      */
     @OnlyIn(Dist.CLIENT)
     public void setFocused(S subGui, boolean focused);
+
+    /**
+     * Set the currently stored value in the given sub gui.
+     * This is useful when the gui is reused for multiple elements where the actual value is stored in this element.
+     * @param subGui The sub gui to put the currently stored value in.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public void setValueInGui(S subGui);
+
+    /**
+     * Set the currently stored value in the given container.
+     * This is only relevant to values that use things like slots, which must be updated server-side as well.
+     * @param container The container to put the currently stored value in.
+     */
+    public void setValueInContainer(C container);
 }

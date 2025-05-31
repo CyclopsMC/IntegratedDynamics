@@ -97,6 +97,13 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
                 return ValueObjectTypeBlock.ValueBlock.of(
                         itemStack.isEmpty() ? Blocks.AIR.defaultBlockState() : BlockHelpers.getBlockStateFromItemStack(itemStack));
             }
+
+            @Override
+            public ItemStack getValueAsItemStack(ValueBlock value) {
+                return value.getRawValue()
+                        .map(BlockHelpers::getItemStackFromBlockState)
+                        .orElse(ItemStack.EMPTY);
+            }
         });
     }
 

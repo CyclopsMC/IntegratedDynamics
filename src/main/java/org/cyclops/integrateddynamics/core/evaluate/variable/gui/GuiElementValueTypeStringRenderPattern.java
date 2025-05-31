@@ -97,6 +97,12 @@ public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G exte
         if (container instanceof IDirtyMarkListener) {
             ((IDirtyMarkListener) container).onDirty();
         }
+        sendValueToServer();
+    }
+
+    @Override
+    public void sendValueToServer() {
+        super.sendValueToServer();
         IntegratedDynamics._instance.getPacketHandler().sendToServer(
                 new LogicProgrammerValueTypeStringValueChangedPacket(element.getInputString()));
     }
