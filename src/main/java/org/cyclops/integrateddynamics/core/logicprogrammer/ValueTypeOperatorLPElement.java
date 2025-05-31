@@ -99,6 +99,7 @@ public class ValueTypeOperatorLPElement extends ValueTypeLPElementBase implement
         if (this.selectedOperator != null) {
             ((GuiElementValueTypeDropdownListRenderPattern) subGui).getSearchField().setValue(this.selectedOperator.getLocalizedNameFull().getString());
             ((GuiElementValueTypeDropdownListRenderPattern) subGui).onTyped();
+            ((GuiElementValueTypeDropdownListRenderPattern) subGui).getSearchField().refreshDropdownList();
         }
     }
 
