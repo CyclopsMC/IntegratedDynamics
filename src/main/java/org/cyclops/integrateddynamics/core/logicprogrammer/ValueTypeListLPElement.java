@@ -129,8 +129,8 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
     public void setValueInContainer(ContainerLogicProgrammerBase container) {
         if (length > 0) {
             IValueTypeLogicProgrammerElement subElement = setActiveElement(0);
-            int x = RenderPattern.calculateX(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.MAX_WIDTH, subElement.getRenderPattern());
-            int y = RenderPattern.calculateY(ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_HEIGHT, subElement.getRenderPattern());
+            int x = RenderPatternCommon.calculateX(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.MAX_WIDTH, subElement.getRenderPattern());
+            int y = RenderPatternCommon.calculateY(ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_HEIGHT, subElement.getRenderPattern());
             container.setElementInventory(subElement, x, y);
             container.getTemporaryInputSlots().removeDirtyMarkListener(container);
             subElement.setValueInContainer(container);
@@ -427,8 +427,8 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
                         element.activeElement,
                         subGui);
             }
-            int x = RenderPattern.calculateX(baseX, maxWidth, subElement.getRenderPattern());
-            int y = RenderPattern.calculateY(baseY, maxHeight, subElement.getRenderPattern());
+            int x = RenderPatternCommon.calculateX(baseX, maxWidth, subElement.getRenderPattern());
+            int y = RenderPatternCommon.calculateY(baseY, maxHeight, subElement.getRenderPattern());
             gui.getMenu().setElementInventory(subElement, x, y);
             subGuiHolder.addSubGui(subGui);
             if (subGui instanceof IRenderPatternValueTypeTooltip) {

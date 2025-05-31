@@ -165,8 +165,8 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
     public void setValueInContainer(ContainerLogicProgrammerBase container) {
         if (!subElements.get(currentType).isEmpty()) {
             IValueTypeLogicProgrammerElement subElement = setActiveElement(0);
-            int x = RenderPattern.calculateX(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.MAX_WIDTH, subElement.getRenderPattern()) + ContainerLogicProgrammerBase.BASE_X - OFFSET_X;
-            int y = RenderPattern.calculateY(ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_HEIGHT, subElement.getRenderPattern()) + ContainerLogicProgrammerBase.BASE_Y - OFFSET_Y;
+            int x = RenderPatternCommon.calculateX(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.MAX_WIDTH, subElement.getRenderPattern()) + ContainerLogicProgrammerBase.BASE_X - OFFSET_X;
+            int y = RenderPatternCommon.calculateY(ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_HEIGHT, subElement.getRenderPattern()) + ContainerLogicProgrammerBase.BASE_Y - OFFSET_Y;
             container.setElementInventory(subElement, x, y);
             subElement.setValueInContainer(container);
         }
@@ -197,7 +197,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
                 subElement = subElements.get(currentType).get(index);
             }
         }
-        if (masterGui != null) {
+        if (MinecraftHelpers.isClientSideThread() && masterGui != null) {
             masterGui.setActiveElement(activeElement);
             masterGui.container.onDirty();
         }
