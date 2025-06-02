@@ -1042,7 +1042,7 @@
     "operator.integrateddynamics.relational.gt": "Greater Than",
     "operator.integrateddynamics.relational.lt": "Less Than",
     "operator.integrateddynamics.relational.notequals": "Not Equals",
-    "operator.integrateddynamics.relational.notequals.info": "Type one and two must not be equal.",
+    "operator.integrateddynamics.relational.notequals.info": "Type one and two must be equal.",
     "operator.integrateddynamics.relational.ge": "Greater Than or Equal",
     "operator.integrateddynamics.relational.le": "Less Than or Equal",
 
@@ -1641,7 +1641,7 @@
     "info_book.integrateddynamics.introduction": "Introduction",
     "info_book.integrateddynamics.introduction.text1": "For too long, automation possibilities have been too limited. &1Integrated Dynamics&0 aims to be the go-to mod for automating your logic systems. It does this by providing an expressive immersive logic programming experience with hooks and support for most elements of &lMinecraft&r and its modifications.",
     "info_book.integrateddynamics.introduction.text2": "Redstone circuits have always been a very basic, but workable and easily understandable method for automation. The basicness of redstone is however also an inconvenience. For automation networks with higher complexities, redstone circuits can become very large and consequently also difficult to manage. Furthermore, one small water-leak can cause major headaches to every redstoner.",
-    "info_book.integrateddynamics.introduction.text3": "The goal of this book is twofold. First, a &ltutorial&r is provided for learning the most important concepts behind this mod. Secondly, a detailed &lmanual&r of all elements and mechanisms are explained for players that are not not interested in the tutorial.",
+    "info_book.integrateddynamics.introduction.text3": "The goal of this book is twofold. First, a &ltutorial&r is provided for learning the most important concepts behind this mod. Secondly, a detailed &lmanual&r explains all elements and mechanisms for players that are not not interested in the tutorial.",
     "info_book.integrateddynamics.introduction.text4": "You can navigate through this book by clicking on the arrows at the bottom, shift clicking will flip through whole sections instead of single pages. At the start of large sections you will see a content table which will contain hyperlinks to its subsections for faster browsing. When you come across recipes, the items that are explained in this book are clickable as a fast reference to the section they are explained in. You will also notice a button at the top left of this book, which will take you to the section above your current one. The button at the top right corner will go back to the previously visited page each time when clicked.",
 
     "info_book.integrateddynamics.tutorials": "Tutorials",
@@ -1651,7 +1651,7 @@
 
     "info_book.integrateddynamics.tutorials.menrilBasics": "Menril Basics",
     "info_book.integrateddynamics.tutorials.menrilBasics.text1": "To get started with this mod, you will need to find some &lMenril Trees&r which can most easily be found in &lMeneglin Biomes&r.",
-    "info_book.integrateddynamics.tutorials.menrilBasics.text2": "After that, you’ll need to craft a &lSqueezer&r and &lDrying Basin&r for processing &lMenril Log&r. This can be done by placing a block of wood in the &lSqueezer&r and jumping on it until it's flat. Once that has been done, the &lMenril Resin&r will try to go to the two sides of the &lSqueezer&r. Next, place a &lDrying Basin&r next to the &lSqueezer&r to make it fill with the &lMenril Resin&r you just squeezed.",
+    "info_book.integrateddynamics.tutorials.menrilBasics.text2": "After that, you’ll need to craft a &lSqueezer&r and &lDrying Basin&r for processing &lMenril Logs&r. This can be done by placing a block of wood in the &lSqueezer&r and jumping on it until it's flat. Once that has been done, the &lMenril Resin&r will try to go to the two sides of the &lSqueezer&r. Next, place a &lDrying Basin&r next to the &lSqueezer&r to make it fill up with the &lMenril Resin&r you just squeezed.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text3": "If you want to repeat the process, you can reset the &lSqueezer&r by applying a redstone pulse.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text4": "In the future, you will also be able to craft upgraded variants of these machines that are more easily automatable, but are more costly: the &lMechanical Squeezer&r and the &lMechanical Drying Basin&r.",
 
@@ -1664,9 +1664,9 @@
 
     "info_book.integrateddynamics.tutorials.aspects": "Aspects",
     "info_book.integrateddynamics.tutorials.aspects.text1": "As a simple example, let’s try reading in a redstone value and displaying it.",
-    "info_book.integrateddynamics.tutorials.aspects.text2": "Do this by attaching a &lRedstone Reader&r to a &lLogic Cable&r in the world. Make sure that the reading is targeting something with a redstone value, like a &lRedstone Torch&r.",
+    "info_book.integrateddynamics.tutorials.aspects.text2": "Do this by attaching a &lRedstone Reader&r to a &lLogic Cable&r in the world. Make sure that the reader is targeting something with a redstone value, like a &lRedstone Torch&r.",
     "info_book.integrateddynamics.tutorials.aspects.text3": "After that, right-click on the &lRedstone Reader&r to open the gui, after which you have to insert a &lVariable Card&r into the &6Integer&0 &lRedstone Value&r aspect, to bind the target’s redstone value to that &lVariable Card&r.",
-    "info_book.integrateddynamics.tutorials.aspects.text4": "Next, place a &lDisplay Panel&r in the same network as the &lRedstone Reader&r, and insert your bound &lVariable Card&r to display it value.",
+    "info_book.integrateddynamics.tutorials.aspects.text4": "Next, place a &lDisplay Panel&r in the same network as the &lRedstone Reader&r, and insert your bound &lVariable Card&r to display its value.",
     "info_book.integrateddynamics.tutorials.aspects.text5": "As a next step, craft a &lRedstone Writer&r and let it write a maximal integer redstone value that was read by a Redstone Reader.",
 
     "info_book.integrateddynamics.tutorials.logicOperations": "Logic Operations",
@@ -1706,10 +1706,10 @@
     "info_book.integrateddynamics.tutorials.advancedOperations.text2": "Let’s start by creating a static &7List&0 of the &6Integers&0 &61&0, &610&0 and &6100&0, and visualize it in a &lDisplay Panel&r.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text3": "&7Items&0 are one of the possible value types in this mod. Let’s make a static &7Item&0 &lVariable Card&r, dynamically retrieve the mod name from that item, and visualize it in a &lDisplay Panel&r.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text4": "Remember that you’ll have to use a &lVariable Store&r to store your referenced variable.",
-    "info_book.integrateddynamics.tutorials.advancedOperations.text5": "For the final, part of this tutorial, we’ll combine dynamic variables with operators. Attach an &lEntity Reader&r to a network, read the target &7Entity&0, retrieve the &7Block&0 the target &7Entity&0 is looking at, and visualize that &7Block&0 in a &lDisplay Panel&r.",
+    "info_book.integrateddynamics.tutorials.advancedOperations.text5": "For the final part of this tutorial, we’ll combine dynamic variables with operators. Attach an &lEntity Reader&r to a network, read the target &7Entity&0, retrieve the &7Block&0 the target &7Entity&0 is looking at, and visualize that &7Block&0 in a &lDisplay Panel&r.",
 
     "info_book.integrateddynamics.tutorials.theValueOfOperators": "The Value of Operators",
-    "info_book.integrateddynamics.tutorials.theValueOfOperators.text1": "In &1Integrated Dynamics&0, &2Operators&0 are first-class citizens. Up until now, we have only used manually using the &lLogic Programmer&r, but in this tutorial, we’ll look into how they can be used in a more dynamic way, by storing &2Operators&0 in &lVariable Cards&r, and invoking them dynamically.",
+    "info_book.integrateddynamics.tutorials.theValueOfOperators.text1": "In &1Integrated Dynamics&0, &2Operators&0 are first-class citizens. Up until now, we have only used them manually using the &lLogic Programmer&r, but in this tutorial, we’ll look into how they can be used in a more dynamic way, by storing &2Operators&0 in &lVariable Cards&r, and invoking them dynamically.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text2": "As a first step, go to the &lLogic Programmer&r, and create a new static &2Operator&0, by starting to type &oArithmetic Addition&r &2Operator&0 in the autocomplete dropdown-list and clicking it, and write it to a &lVariable Card&r. After that, create two &6Integer&0 variables. Next, find the &oApply&r operator, and apply the first &6Integer&0 to the &2Operator&0, which will &obind&r the first input argument of the addition &2Operator&0 to that &6Integer&0, and will output a new &2Operator&0 with one remaining input argument. Next, use the &oApply&r operator again to &obind&r the final input argument of the newly created &2Operator&0. Finally, use a &lDisplay Panel&r to visualize your dynamically invoked addition.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text3": "Next to applying &2Operators&0, there are a lot of other advanced &2Operator&0 operations. We’ll now look into using &2Operators&0 on &7Lists&0, more specifically the &oFilter&r &2Operator&0 that takes a &7List&0 and a &oPredicate&r (an &2Operator&0 with one input argument and a &9Boolean&0 output value). Start by creating a &7List&0 of the &6Integers&0 &61&0, &610&0 and &6100&0. Next, store the &oRelational Equals&r &2Operator&0 in a variable. Next, apply this operator on the &6Integer&0 &610&0. Next, use the &oFilter&r &2Operator&0 with your &7List&0 and the applied &2Operator&0. This will filter away all the items from the &7List&0 that return &9False&0 by applying them on the given operator, which in this case means that all elements that are not equal to &610&0 will be removed from the list. Visualize the result in a &lDisplay Panel&r.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text4": "There are plenty of other operations on &2Operators&0, such as combining &oPredicates&r, flipping &2Operator&0 arguments, and more operations on &7Lists&0.",
@@ -1720,7 +1720,7 @@
     "info_book.integrateddynamics.manual": "Manual",
 
     "info_book.integrateddynamics.manual.introduction": "Introduction",
-    "info_book.integrateddynamics.manual.introduction.text1": "This part of the book contains detail descriptions of all parts of the mod.",
+    "info_book.integrateddynamics.manual.introduction.text1": "This part of the book contains detailed descriptions of all parts of the mod.",
 
     "info_book.integrateddynamics.manual.prerequisites": "Prerequisites",
 
@@ -1731,7 +1731,7 @@
     "info_book.integrateddynamics.manual.prerequisites.meneglin_biome.text1": "&lMenril Trees&r are unfortunately quite hard to find. Luckily, there is one biome, the &lMeneglin Biome&r in which these trees thrive. The large amount of &lMenril Trees&r causes some things in this biome to become blue, which is because of the &lMenril Resin&r that is given off by these trees to the environment.",
 
     "info_book.integrateddynamics.manual.prerequisites.squeezer": "Squeezer",
-    "info_book.integrateddynamics.manual.prerequisites.squeezer.text1": "The &lSqueezer&r is an early-game machine that allows you to jump on blocks and items to break or squeeze them. Not only players, but any kind of entity can jump or fall on it to perform the squeezing process. Resulting items will either fall into any adjacent inventory or on the ground. Resulting fluids will remain in the machine and will flow to one of the two sides when there is a target tank. The machine contains a small suspension that can enabled with a redstone pulse to reset it. Most notably, this machine can be used to squeeze the resin out of &lMenril Log&r.",
+    "info_book.integrateddynamics.manual.prerequisites.squeezer.text1": "The &lSqueezer&r is an early-game machine that allows you to jump on blocks and items to break or squeeze them. Not only players, but any kind of entity can jump or fall on it to perform the squeezing process. Resulting items will either fall into any adjacent inventory or on the ground. Resulting fluids will remain in the machine and will flow to one of the two sides when there is a target tank. The machine contains a small suspension that can be enabled with a redstone pulse to reset it. Most notably, this machine can be used to squeeze the resin out of &lMenril Logs&r.",
 
     "info_book.integrateddynamics.manual.prerequisites.drying_basin": "Drying Basin",
     "info_book.integrateddynamics.manual.prerequisites.drying_basin.text1": "Drying out blocks and items can be done using the &lDrying Basin&r. This can for instance be useful when you want to let your &lMenril Resin&r dry into &lCrystallized Menril&r.",
@@ -1739,7 +1739,7 @@
 
     "info_book.integrateddynamics.manual.networks": "Networks",
     "info_book.integrateddynamics.manual.networks.text1": "&lIntegrated Dynamics&r &lnetworks&r are the basis of any good automation system. A network consists of a collection of connected &lLogic Cables&r and parts can be placed on them. These cables should be managed using a &lWrench&r. Shift+right-clicking a cable or part will remove it, while a regular right-click will disconnect it from other cables.",
-    "info_book.integrateddynamics.manual.networks.text2": "Even though &lLogic Cables&r may look nice, in some cases you’ll probably want to hide them. You can do this using &lFacades&r, which can be resemble any material. Furthermore, these cables are also compatible with &lMC MultiPart&r, which means that you can hide your cables in more complex facade structures.",
+    "info_book.integrateddynamics.manual.networks.text2": "Even though &lLogic Cables&r may look nice, in some cases you’ll probably want to hide them. You can do this using &lFacades&r, which can resemble any material. Furthermore, these cables are also compatible with &lMC MultiPart&r, which means that you can hide your cables in more complex facade structures.",
 
     "info_book.integrateddynamics.manual.logic": "Logic",
 
@@ -1760,7 +1760,7 @@
     "info_book.integrateddynamics.manual.logic.value_types.string": "String",
     "info_book.integrateddynamics.manual.logic.value_types.string.text1": "A sequence of characters, for example &4”aaa”&0, &4“Hi!”&0, &4“x!(àà)ç”&0, ...",
     "info_book.integrateddynamics.manual.logic.value_types.list": "List",
-    "info_book.integrateddynamics.manual.logic.value_types.list.text1": "A list containing values of a certain &lValue Type&r. All elements in a certain can only contain values of the same value types. For example &8(0, 1, 2, 3)&0, &8(“a”, “b”, “c”)&0, &8(3.33, 1.14, 5, 6)&0",
+    "info_book.integrateddynamics.manual.logic.value_types.list.text1": "A list containing values of a certain &lValue Type&r. All elements in a certain list can only contain values of the same value types. For example &8(0, 1, 2, 3)&0, &8(“a”, “b”, “c”)&0, &8(3.33, 1.14, 5, 6)&0",
     "info_book.integrateddynamics.manual.logic.value_types.operator": "Operator",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text1": "A value containing a reference to an &2Operator&0. Operators can be partially applied for more flexible evaluations based on the concept of &lCurrying&r. This is part of the concept of &lmetaprogramming&r (look it up, it's a thing!), where operators are treated as data by other operators. This basically allows you to create new operators yourself, which can then be used for more complex operations.",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text2": "You can for example store the addition &2Operator&0 in a variable card. Do this by starting to type the operator name and selecting it from the autocomplete dropdown-list and clicking it. You can then partially apply it with one &6Integer&0 &lVariable Card&r, which will result in a new virtual operator with one input type and one output type, which internally contains a reference to that applied &6Integer&0. Applying another &6Integer&0 will result in an &6Integer&0.",
