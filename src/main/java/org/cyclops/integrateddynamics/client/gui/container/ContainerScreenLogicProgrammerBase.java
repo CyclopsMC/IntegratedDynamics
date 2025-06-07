@@ -219,7 +219,8 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             // Tooltip on write slot
             if (this.isHovering(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
                     ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)
-                    && Minecraft.getInstance().player.containerMenu.getCarried().isEmpty()) {
+                    && Minecraft.getInstance().player.containerMenu.getCarried().isEmpty()
+                    && !container.hasWriteItemInSlot()) {
                 this.drawTooltip(Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY)), matrixStack, mouseX - this.leftPos, mouseY - this.topPos);
             }
         }
