@@ -1,0 +1,11 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.26.0 or higher.
+
+Changes:
+* Only switch Wrench mode when aiming at air
+  Closes #1518
+  Closes #1390
+
+Fixes:
+* Fix overlapping tooltips in LP write slot, Closes #1519
+* Fix typos in language file
