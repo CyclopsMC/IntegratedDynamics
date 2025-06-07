@@ -81,6 +81,9 @@ public class ItemWrench extends Item {
                     context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.saved", context.getClickedPos().toShortString(), context.getClickedFace().getSerializedName()), true);
                     return InteractionResult.SUCCESS;
                 }
+                case DEFAULT -> {
+                    return InteractionResult.FAIL;
+                }
             }
         }
 
