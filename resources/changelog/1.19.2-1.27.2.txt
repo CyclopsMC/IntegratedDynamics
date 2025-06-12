@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.20.0 or higher.
+
+Fixes:
+* Fix cables not being breakable with wrench, Closes #1523
