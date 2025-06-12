@@ -27,6 +27,7 @@ import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import java.util.List;
 import java.util.Map;
@@ -78,7 +79,9 @@ public class ItemWrench extends Item {
                     return InteractionResult.SUCCESS;
                 }
                 case DEFAULT -> {
-                    return InteractionResult.FAIL;
+                    if (!CableHelpers.getCable(context.getLevel(), context.getClickedPos(), context.getClickedFace()).isPresent()) {
+                        return InteractionResult.FAIL;
+                    }
                 }
             }
         }
