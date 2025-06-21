@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLabeller;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.item.ItemLabeller;
 
@@ -84,7 +85,7 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         if (!player.level().isClientSide()) {
             ItemStack itemStack = temporaryInputSlots.getItem(0);
             if(!itemStack.isEmpty()) {
-                player.drop(itemStack, false);
+                Helpers.returnItemToPlayer(player, itemStack);
             }
         }
     }

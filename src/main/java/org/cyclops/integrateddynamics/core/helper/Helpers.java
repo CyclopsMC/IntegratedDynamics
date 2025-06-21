@@ -10,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -223,6 +224,14 @@ public final class Helpers {
             return "";
         } else {
             return Character.toTitleCase(value.charAt(0)) + value.substring(1);
+        }
+    }
+
+    public static void returnItemToPlayer(Player player, ItemStack itemStack) {
+        if (player.isAlive() && (!(player instanceof ServerPlayer) || !((ServerPlayer)player).hasDisconnected())) {
+            player.getInventory().placeItemBackInInventory(itemStack);
+        } else {
+            player.drop(itemStack, false);
         }
     }
 

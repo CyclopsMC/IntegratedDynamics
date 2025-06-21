@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.20.0 or higher.
+
+Changes:
+* Return item to player instead of dropping on Labeler exit, Closes #1526
+
+Fixes:
+* Fix fluidstack operator crash on empty items, Closes #1525
+
