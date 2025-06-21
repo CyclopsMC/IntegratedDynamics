@@ -55,6 +55,7 @@ public class TestItemStackOperators {
     private DummyVariableItemStack iIronOre;
     private DummyVariableItemStack iShulkerBox;
     private DummyVariableItemStack iSeedWheat;
+    private DummyVariableItemStack iEmpty;
 
     private DummyVariableBlock bStone;
     private DummyVariableBlock bObsidian;
@@ -104,6 +105,7 @@ public class TestItemStackOperators {
         itemHandler.insertItem(10, new ItemStack(Items.APPLE, 10), false);
         iShulkerBox = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(shulkerBox));
         iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
+        iEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(ItemStack.EMPTY));
 
         bStone = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.defaultBlockState()));
         bObsidian = new DummyVariableBlock(ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.defaultBlockState()));
@@ -557,6 +559,9 @@ public class TestItemStackOperators {
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACK.evaluate(new IVariable[]{iBucketLava});
         TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res2).getRawValue().isFluidStackIdentical(new FluidStack(Fluids.LAVA, FluidHelpers.BUCKET_VOLUME)), true, "fluidstack(bucketlava) = lava:1000");
+
+        IValue res3 = Operators.OBJECT_ITEMSTACK_FLUIDSTACK.evaluate(new IVariable[]{iEmpty});
+        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res3).getRawValue().isFluidStackIdentical(FluidStack.EMPTY), true, "fluidstack(empty) = empty");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

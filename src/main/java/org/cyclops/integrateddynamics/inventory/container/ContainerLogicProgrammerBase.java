@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.inventory.container;
 import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -29,6 +28,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
@@ -324,11 +324,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public void returnWriteItemToPlayer() {
         if (hasWriteItemInSlot()) {
             ItemStack itemStack = writeSlot.getItem(0);
-            if (player.isAlive() && (!(player instanceof ServerPlayer) || !((ServerPlayer)player).hasDisconnected())) {
-                player.getInventory().placeItemBackInInventory(itemStack);
-            } else {
-                player.drop(itemStack, false);
-            }
+            Helpers.returnItemToPlayer(player, itemStack);
             writeSlot.setItem(0, ItemStack.EMPTY);
         }
     }
