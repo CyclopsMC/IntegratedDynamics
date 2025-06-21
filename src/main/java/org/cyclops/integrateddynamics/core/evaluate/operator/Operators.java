@@ -1613,7 +1613,7 @@ public final class Operators {
             .output(ValueTypes.OBJECT_FLUIDSTACK).symbolOperator("fluidstack").interactName("fluidStack")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueObjectTypeFluidStack.ValueFluidStack.of(!a.getRawValue().isEmpty() ? Helpers.getFluidStack(a.getRawValue()) : null);
+                return ValueObjectTypeFluidStack.ValueFluidStack.of(!a.getRawValue().isEmpty() ? Helpers.getFluidStack(a.getRawValue()) : FluidStack.EMPTY);
             }).build());
 
     /**
