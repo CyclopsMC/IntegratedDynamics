@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.26.0 or higher.
+
+Additions:
+* Add translations through Crowdin (#1528)
+
+Fixes:
+* Fix LP crash when loading with empty category card, Closes #1527
