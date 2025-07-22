@@ -160,6 +160,10 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "machine", comment = "The maximum values that Part Offset items will have when dropped from a broken part.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
     public static int enchancementOffsetPartDropValue = 4;
 
+    @ConfigurableProperty(category = "machine" , comment = "When true, disable the collision for cable.", configLocation = ModConfig.Type.SERVER)
+    public static boolean disableCableCollision = false;
+
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
     }

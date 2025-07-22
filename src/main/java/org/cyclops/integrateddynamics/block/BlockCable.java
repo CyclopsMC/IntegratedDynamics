@@ -63,6 +63,7 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
@@ -354,7 +355,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     @SneakyThrows
     @Override
     public VoxelShape getCollisionShape(BlockState blockState, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
-        if(disableCollisionBox) {
+        if(disableCollisionBox || GeneralConfig.disableCableCollision) {
             return Shapes.empty();
         }
 
