@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Base class for cast operators.
@@ -58,11 +58,11 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     }
 
     @Override
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
-        lines.add(Component.translatable("operator.integrateddynamics.cast.tooltip",
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo) {
+        tooltipAdder.accept(Component.translatable("operator.integrateddynamics.cast.tooltip",
                 Component.translatable(from.getTranslationKey()),
                 Component.translatable(to.getTranslationKey())));
-        super.loadTooltip(lines, appendOptionalInfo);
+        super.loadTooltip(tooltipAdder, appendOptionalInfo);
     }
 
 }

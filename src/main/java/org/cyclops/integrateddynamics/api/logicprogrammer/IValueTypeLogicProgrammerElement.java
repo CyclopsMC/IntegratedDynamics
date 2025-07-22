@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu> extends ILogicProgrammerElement<S, G, C> {
+public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu, GIC extends ILogicProgrammerElementClient<S, G, C>> extends ILogicProgrammerElement<S, G, C, GIC> {
 
     /**
      * @return The value type of this element.
@@ -39,6 +39,6 @@ public interface IValueTypeLogicProgrammerElement<S extends ISubGuiBox, G extend
      * @param <C2> The type of container.
      */
     @Nullable
-    public <G2 extends Screen, C2 extends AbstractContainerMenu> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement();
+    public <G2 extends Screen, C2 extends AbstractContainerMenu> IGuiInputElementValueType<?, G2, C2, ?> createInnerGuiElement();
 
 }

@@ -55,7 +55,7 @@ public class PartOffsetsClientNotifier {
 
     public void sendPartOffsetsToPlayer(ServerPlayer player) {
         BlockPos centerPos = player.getOnPos();
-        List<PartOffsetsClientNotifier.Entry> offsets = IModHelpers.get().getWorldHelpers().foldArea(player.getCommandSenderWorld(), GeneralConfig.partOffsetRenderDistance, centerPos, (list, world, pos) -> {
+        List<PartOffsetsClientNotifier.Entry> offsets = IModHelpers.get().getWorldHelpers().foldArea(player.level(), GeneralConfig.partOffsetRenderDistance, centerPos, (list, world, pos) -> {
             IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityMultipartTicking.class)
                     .ifPresent(blockEntity -> {
                         for (Map.Entry<Direction, IPartType<?, ?>> entry : blockEntity.getPartContainer().getParts().entrySet()) {

@@ -4,7 +4,6 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -39,6 +38,7 @@ import org.cyclops.integrateddynamics.item.ItemEnhancement;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * An abstract {@link IPartType} with a default implementation for creating
@@ -77,7 +77,7 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     /**
      * Creates and registers a block instance for this part type.
-     * This is mainly used for the block model.
+     * This is mainly used for the block facadeModel.
      */
     protected void registerBlock() {
         BlockConfigCommon blockConfig = new BlockConfigCommon<>(getMod(), "part_" + this.name,
@@ -217,20 +217,20 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public void loadTooltip(ItemStack itemStack, List<Component> lines) {
+    public void loadTooltip(ItemStack itemStack, Consumer<Component> tooltipAdder) {
         if(itemStack.has(RegistryEntries.DATACOMPONENT_PART_STATE)) {
             CompoundTag tag = itemStack.get(RegistryEntries.DATACOMPONENT_PART_STATE);
-            if(tag.contains("id", Tag.TAG_INT)) {
-                int id = tag.getInt("id");
-                lines.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
+            if(tag.contains("id")) {
+                int id = tag.getInt("id").orElseThrow();
+                tooltipAdder.accept(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
             }
-            if(tag.contains("maxOffset", Tag.TAG_INT)) {
-                int maxOffset = tag.getInt("maxOffset");
-                lines.add(Component.translatable(L10NValues.PART_TOOLTIP_MAXOFFSET, maxOffset));
+            if(tag.contains("maxOffset")) {
+                int maxOffset = tag.getInt("maxOffset").orElseThrow();
+                tooltipAdder.accept(Component.translatable(L10NValues.PART_TOOLTIP_MAXOFFSET, maxOffset));
             }
         }
 
-        super.loadTooltip(itemStack, lines);
+        super.loadTooltip(itemStack, tooltipAdder);
     }
 
     /**

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
@@ -56,7 +57,7 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
         if(readValue != null) {
             ok = true;
             IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, readValue.getString(),
-                    getGuiLeftTotal() + 53, getGuiTopTotal() + 38, 70, readValueColor, false, Font.DisplayMode.NORMAL);
+                    getGuiLeftTotal() + 53, getGuiTopTotal() + 38, 70, ARGB.opaque(readValueColor), false, Font.DisplayMode.NORMAL);
         }
 
         displayErrors.drawBackground(guiGraphics, getMenu().getReadErrors(), ERROR_X, ERROR_Y, OK_X, OK_Y, this,
@@ -67,10 +68,10 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         super.renderLabels(guiGraphics, mouseX, mouseY);
         // Render error tooltip
-        displayErrors.drawForeground(guiGraphics.pose(), getMenu().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.leftPos, this.topPos);
+        displayErrors.drawForeground(guiGraphics, getMenu().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.leftPos, this.topPos);
 
         // Draw tooltip over copy button
-        IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics.pose(), 128, 32, 30, 12, mouseX, mouseY,
+        IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics, 128, 32, 30, 12, mouseX, mouseY,
                 () -> Lists.newArrayList(Component.translatable("gui.integrateddynamics.button.copy.info")));
     }
 

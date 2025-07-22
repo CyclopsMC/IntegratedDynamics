@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -109,8 +108,8 @@ public class BlockEntityVariablestore extends BlockEntityCableConnectableInvento
     }
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
-        super.read(tag, provider);
+    public void read(ValueInput input) {
+        super.read(input);
         shouldSendUpdateEvent = true;
     }
 

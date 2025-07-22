@@ -1,9 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.TagParser;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -527,22 +525,22 @@ public class TestParseOperators {
     public void testNBTFurnace () throws EvaluationException {
         String NBT = "{CookTime:0,x:2005,BurnTime:0,y:56,ForgeCaps:{},z:-81,Items:[],id:\"minecraft:furnace\",CookTimeTotal:0,Lock:\"\"}";
         IValue res1 = PARSE_NBT.evaluate(s(NBT));
-        assertThat("parse_NBT(\"" + NBT + "\")", ((CompoundTag) ((ValueTypeNbt.ValueNbt) res1).getRawValue().get()).getString("id"), instanceOf(String.class));
+        assertThat("parse_NBT(\"" + NBT + "\")", ((CompoundTag) ((ValueTypeNbt.ValueNbt) res1).getRawValue().get()).getString("id").get(), instanceOf(String.class));
     }
     @Test
-    public void testNBTFurnaceSpaces () throws EvaluationException, CommandSyntaxException {
+    public void testNBTFurnaceSpaces () throws EvaluationException {
         String NBT = "{\rCookTime:\n0,\tx:2005, BurnTime:0,  y:56,ForgeCaps:{},z:-81,Items:[],id:\r\n\t \"minecraft:furnace\",CookTimeTotal  :0,Lock:\"\"}";
         IValue res1 = PARSE_NBT.evaluate(s(NBT));
-        CompoundTag nbt = (CompoundTag) ValueTypeNbt.ValueNbt.of(TagParser.parseTag(NBT)).getRawValue().get();
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("CookTime"), is(0));
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("x"), is(2005));
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("BurnTime"), is(0));
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("y"), is(56));
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getCompound("ForgeCaps").isEmpty(), is(true));
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("z"), is(-81));
+        CompoundTag nbt = (CompoundTag) ((ValueTypeNbt.ValueNbt) res1).getRawValue().get();
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("CookTime").get(), is(0));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("x").get(), is(2005));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("BurnTime").get(), is(0));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("y").get(), is(56));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getCompound("ForgeCaps").get().isEmpty(), is(true));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("z").get(), is(-81));
         assertThat("parse_NBT(\"" + NBT + "\")", nbt.get("Items"), instanceOf(ListTag.class));
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getString("id"), is("minecraft:furnace"));
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("CookTimeTotal"), is(0));
-        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getString("Lock"), is(""));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getString("id").get(), is("minecraft:furnace"));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getInt("CookTimeTotal").get(), is(0));
+        assertThat("parse_NBT(\"" + NBT + "\")", nbt.getString("Lock").get(), is(""));
     }
 }

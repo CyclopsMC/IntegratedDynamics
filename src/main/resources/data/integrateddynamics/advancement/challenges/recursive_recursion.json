@@ -12,7 +12,11 @@
             "proxyName": "integrateddynamics:materialized",
             "serialized": {
               "valueType": "integrateddynamics:integer",
-              "values": [1, 10, 100]
+              "values": [
+                { "v": 1 },
+                { "v": 10 },
+                { "v": 100 }
+              ]
             }
           }
         }

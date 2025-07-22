@@ -7,7 +7,7 @@
           "partId": 1,
           "_id": 1,
           "_type": "integrateddynamics:operator",
-          "operatorName": "integrateddynamics:arithmetic_addition",
+          "operator": { "v": "integrateddynamics:arithmetic_addition" },
           "variableIds": [1, 1]
         }
       }

@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
@@ -13,6 +12,8 @@ import org.junit.Test;
 
 import java.util.Optional;
 
+import static org.cyclops.integrateddynamics.core.test.TestHelpers.deserialize;
+import static org.cyclops.integrateddynamics.core.test.TestHelpers.serialize;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -101,9 +102,21 @@ public class TestValueTypeListProxyFactories {
         ));
     }
 
-    protected void testFactoryType(IValueTypeListProxy<?, ?> proxy) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        Tag serialized = ValueTypeListProxyFactories.REGISTRY.serialize(ValueDeseralizationContextMocked.get(), proxy);
-        IValueTypeListProxy<?, ?> proxyNew = ValueTypeListProxyFactories.REGISTRY.deserialize(ValueDeseralizationContextMocked.get(), serialized);
+    protected void testFactoryType(IValueTypeListProxy<?, ?> proxy) {
+        CompoundTag serialized = serialize(o -> {
+            try {
+                ValueTypeListProxyFactories.REGISTRY.serialize(o, proxy);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                throw new RuntimeException(e);
+            }
+        }, ValueDeseralizationContextMocked.get().holderLookupProvider());
+        IValueTypeListProxy<?, ?> proxyNew = deserialize(serialized, valueInput -> {
+            try {
+                return ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                throw new RuntimeException(e);
+            }
+        }, ValueDeseralizationContextMocked.get().holderLookupProvider());
         if (!(proxy.isInfinite() && proxy.isInfinite())) {
             assertThat(proxyNew, equalTo(proxy));
         }

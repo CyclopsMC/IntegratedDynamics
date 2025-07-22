@@ -74,11 +74,11 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         super.renderLabels(guiGraphics, mouseX, mouseY);
 
-        drawEnergyBarTooltip(guiGraphics.pose(), 8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(guiGraphics.pose(), getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
+        drawEnergyBarTooltip(guiGraphics, 8, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(guiGraphics, getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);
 
         // Draw fluid auto-eject toggle
-        IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics.pose(), 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
+        IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics, 150, 70, 18, 10, mouseX, mouseY, () -> Lists.newArrayList(
                 Component.translatable(L10NValues.GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT,
                         ChatFormatting.AQUA + IModHelpers.get().getL10NHelpers().localize(getMenu().isAutoEjectFluids() ?
                                 L10NValues.GENERAL_TRUE : L10NValues.GENERAL_FALSE)),

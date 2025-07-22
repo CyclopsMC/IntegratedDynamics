@@ -2,14 +2,13 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * Value type with values that are strings.
@@ -33,13 +32,13 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueString value) {
-        return StringTag.valueOf(value.getRawValue());
+    public void serialize(ValueOutput valueOutput, ValueString value) {
+        valueOutput.putString("v", value.getRawValue());
     }
 
     @Override
-    public ValueString deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        return ValueString.of(value.getAsString());
+    public ValueString deserialize(ValueInput valueInput) {
+        return ValueString.of(valueInput.getString("v").orElseThrow());
     }
 
     @Override

@@ -37,7 +37,7 @@ import java.util.Optional;
  *
  * @author rubensworks
  */
-public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S extends IPartState<P>, A extends IAspect>
+public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S extends IPartState<P>, A extends IAspect<?, ?>>
         extends ScrollingInventoryContainer<A> implements IDirtyMarkListener {
 
     public static String BUTTON_SETTINGS = "button_settings";
@@ -64,7 +64,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         this.target = target;
         this.partContainer = partContainer.orElseGet(() -> PartHelpers.getPartContainerChecked(target.getCenter()));
         this.partType = partType;
-        this.world = player.getCommandSenderWorld();
+        this.world = player.level();
 
         this.inputSlots = constructInputSlotsInventory();
 

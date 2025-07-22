@@ -4,10 +4,12 @@ import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -95,13 +97,13 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, State state, boolean saveState) {
+    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, ProblemReporter.PathElement problemPath, State state, boolean saveState) {
         // Set offset to 0 to make sure it is not stored in the item
         int offset = state.getOffset();
         state.setOffset(0);
 
         // Serialize to item
-        ItemStack itemStack = super.getItemStack(valueDeseralizationContext, state, saveState);
+        ItemStack itemStack = super.getItemStack(valueDeseralizationContext, problemPath, state, saveState);
 
         // Set original offset back
         state.setOffset(offset);
@@ -198,19 +200,17 @@ public class PartTypeConnectorMonoDirectional extends PartTypeConnector<PartType
         }
 
         @Override
-        public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-            super.writeToNBT(valueDeseralizationContext, tag);
+        public void serialize(ValueOutput valueOutput) {
+            super.serialize(valueOutput);
             if (offset > 0) {
-                tag.putInt("connect_offset", offset);
+                valueOutput.putInt("connect_offset", offset);
             }
         }
 
         @Override
-        public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-            super.readFromNBT(valueDeseralizationContext, tag);
-            if (tag.contains("connect_offset")) {
-                this.offset = tag.getInt("connect_offset");
-            }
+        public void deserialize(ValueInput valueInput) {
+            super.deserialize(valueInput);
+            this.offset = valueInput.getIntOr("connect_offset", 0);
         }
 
         protected static PartTypeConnectorMonoDirectional.State getUnboundTargetState(PartPos origin, int offset) {

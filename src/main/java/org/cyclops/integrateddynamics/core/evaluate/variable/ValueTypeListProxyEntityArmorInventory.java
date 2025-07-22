@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,10 +24,7 @@ public class ValueTypeListProxyEntityArmorInventory extends ValueTypeListProxyEn
     protected ItemStack[] getInventory() {
         Entity e = getEntity();
         if(e instanceof LivingEntity livingEntity) {
-            ItemStack[] inventory = Iterables.toArray(livingEntity.getArmorSlots(), ItemStack.class);
-            if(inventory != null) {
-                return inventory;
-            }
+            return Iterables.toArray(Iterables.transform(EquipmentSlotGroup.ARMOR, livingEntity::getItemBySlot), ItemStack.class);
         }
         return new ItemStack[0];
     }

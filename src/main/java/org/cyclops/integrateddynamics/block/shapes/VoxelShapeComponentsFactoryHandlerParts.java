@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.block.shapes;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -14,10 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
-import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
@@ -93,15 +89,6 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
                 return PartHelpers.removePart(world, pos, direction, player, true, true, saveState);
             }
             return false;
-        }
-
-        @Nullable
-        @Override
-        @OnlyIn(Dist.CLIENT)
-        public BakedModel getBreakingBaseModel(Level world, BlockPos pos) {
-            return IModHelpers.get().getRenderHelpers().getBakedModel(getPart()
-                    .map(part -> part.getBlockState(partContainer, direction))
-                    .orElse(null));
         }
 
         @Override

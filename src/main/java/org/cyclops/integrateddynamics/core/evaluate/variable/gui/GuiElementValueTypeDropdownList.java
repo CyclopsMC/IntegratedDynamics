@@ -5,8 +5,6 @@ import lombok.Data;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -16,11 +14,10 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -28,7 +25,7 @@ import java.util.function.Predicate;
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<RenderPattern, G, C>, IDropdownEntryListener<T> {
+public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeDropdownListRenderPattern, G, C, GuiElementValueTypeDropdownListClient<T, G, C>>, IDropdownEntryListener<T> {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
@@ -54,13 +51,13 @@ public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends Abst
     }
 
     @Override
-    public void setValueInGui(RenderPattern subGui, boolean sendToServer) {
+    public IValue getValue() {
         throw new UnsupportedOperationException("This method has not been implemented yet");
     }
 
     @Override
-    public IValue getValue() {
-        throw new UnsupportedOperationException("This method has not been implemented yet");
+    public GuiElementValueTypeDropdownListClient<T, G, C> getClient() {
+        return new GuiElementValueTypeDropdownListClient<>(this);
     }
 
     @Override
@@ -69,8 +66,8 @@ public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends Abst
     }
 
     @Override
-    public void loadTooltip(List<Component> lines) {
-        getValueType().loadTooltip(lines, true, null);
+    public void loadTooltip(Consumer<Component> tooltipAdder) {
+        getValueType().loadTooltip(tooltipAdder, true, null);
     }
 
     @Override
@@ -116,12 +113,5 @@ public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends Abst
         if (dropdownEntryListener != null) {
             dropdownEntryListener.onSetDropdownPossiblity(dropdownEntry);
         }
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public GuiElementValueTypeDropdownListRenderPattern<T, ?, G, C> createSubGui(int baseX, int baseY,
-                                                                                 int maxWidth, int maxHeight, G gui, C container) {
-        return new GuiElementValueTypeDropdownListRenderPattern<>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 }

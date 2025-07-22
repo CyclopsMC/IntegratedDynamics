@@ -3,11 +3,11 @@ package org.cyclops.integrateddynamics.api.part;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -33,17 +33,16 @@ public interface IPartState<P extends IPartType> {
     /**
      * Write a state to NBT.
      *
-     * @param valueDeseralizationContext
-     * @param tag                        The tag to write to.
+     * @param valueOutput The value to write to.
      */
-    public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag);
+    public void serialize(ValueOutput valueOutput);
 
     /**
      * Read a state from NBT.
-     * @param valueDeseralizationContext Getter for blocks.
-     * @param tag The tag to read from.
+     *
+     * @param valueInput The value to read from.
      */
-    public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag);
+    public void deserialize(ValueInput valueInput);
 
     /**
      * Generate a server-wide unique ID for this part state.

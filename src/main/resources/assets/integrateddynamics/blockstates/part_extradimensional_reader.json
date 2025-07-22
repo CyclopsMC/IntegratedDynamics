@@ -7,4 +7,4 @@
     "facing=up":    { "model": "integrateddynamics:block/part_extradimensional_reader", "x": 90  },
     "facing=down":  { "model": "integrateddynamics:block/part_extradimensional_reader", "x": 270 }
   }
-}r
+}

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.api.part.aspect.property;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 
 import java.util.Collection;
@@ -56,17 +56,17 @@ public interface IAspectProperties {
 
 
     /**
-     * Convert the data to an NBT tag.
-     * @return The NBT tag.
+     * Serialize the data.
+     * @param valueOutput The value output.
      */
-    public CompoundTag toNBT(ValueDeseralizationContext valueDeseralizationContext);
+    public void serialize(ValueOutput valueOutput);
 
     /**
-     * Read the data from an NBT tag and place it in this object.
+     * Read the data and place it in this object.
      * The given tag will never be null, so make sure that all fields have a correct default value in case
      * the received tag would be null anyways.
-     * @param valueDeseralizationContext The deserialization context.
-     * @param tag The tag to read from.
+     *
+     * @param valueInput The value input.
      */
-    public void fromNBT(ValueDeseralizationContext valueDeseralizationContext,  CompoundTag tag);
+    public void deserialize(ValueInput valueInput);
 }

@@ -11,8 +11,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
-import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBatteryConfigClient;
 import org.joml.Matrix4f;
 
 /**
@@ -78,7 +78,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
 
     @Override
     public void render(BlockEntityEnergyBattery tile, float partialTicks, PoseStack matrixStack,
-                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
+                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
         if(tile != null && tile.getEnergyStored() > 0) {
             float height = (float) tile.getEnergyStored() / tile.getMaxEnergyStored();
 
@@ -89,7 +89,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
 
             for(Direction side : Direction.Plane.HORIZONTAL) {
                 combinedLight = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(side.getUnitVec3i()));
-                TextureAtlasSprite icon = RegistryEntries.BLOCK_ENERGY_BATTERY.get().iconOverlay;
+                TextureAtlasSprite icon = BlockEntityEnergyBatteryConfigClient.ICON_OVERLAY;
 
                 float[][] c = coordinates[side.ordinal()];
                 float replacedMaxV = icon.getV1();

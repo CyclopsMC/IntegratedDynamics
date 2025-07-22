@@ -1,14 +1,17 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
+import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -29,7 +32,19 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
 
     public ContainerScreenLabeller(ContainerLabeller container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
-        container.setGui(this);
+        SimpleInventory temporaryInputSlots = container.getTemporaryInputSlots();
+        temporaryInputSlots.addDirtyMarkListener(() -> {
+            ItemStack itemStack = temporaryInputSlots.getItem(0);
+            IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+            IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(container.getPlayerIInventory().player.level()), itemStack);
+            String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
+            if(label == null && !itemStack.isEmpty() && itemStack.has(DataComponents.CUSTOM_NAME)) {
+                label = itemStack.getHoverName().getString();
+            }
+            if(label != null) {
+                this.setText(label);
+            }
+        });
     }
 
     @Override
@@ -65,7 +80,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
         this.searchField.setBordered(false);
         this.searchField.setVisible(true);
         this.searchField.setFocused(true);
-        this.searchField.setTextColor(16777215);
+        this.searchField.setTextColor(ARGB.opaque(16777215));
         this.searchField.setCanLoseFocus(false);
         this.searchField.setValue("");
         this.searchField.setX(this.leftPos + (searchX + searchWidth) - this.searchField.getWidth());

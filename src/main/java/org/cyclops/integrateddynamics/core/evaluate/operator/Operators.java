@@ -5,6 +5,7 @@ import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.logging.LogUtils;
 import lombok.Lombok;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.component.DataComponentPatch;
@@ -16,6 +17,7 @@ import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
@@ -39,6 +41,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.IShearable;
@@ -74,6 +77,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
+import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -85,6 +89,7 @@ import java.util.stream.Collectors;
  */
 public final class Operators {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final IOperatorRegistry REGISTRY = constructRegistry();
 
     private static IOperatorRegistry constructRegistry() {
@@ -1393,8 +1398,8 @@ public final class Operators {
                     if (tagRaw instanceof CompoundTag) {
                         CompoundTag tag = (CompoundTag) tagRaw;
                         for (Property property : blockState.getProperties()) {
-                            if (tag.contains(property.getName(), Tag.TAG_STRING)) {
-                                Optional<Comparable> valueOptional = property.getValue(tag.getString(property.getName()));
+                            if (tag.contains(property.getName())) {
+                                Optional<Comparable> valueOptional = property.getValue(tag.getString(property.getName()).orElseThrow());
                                 if (valueOptional.isPresent()) {
                                     blockState = blockState.setValue(property, valueOptional.get());
                                 }
@@ -1916,9 +1921,20 @@ public final class Operators {
             .function(input -> {
                 ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 // Explicitly check for item emptiness first, because vanilla sometimes persists NBT when setting stacks to empty
-                return ValueTypeNbt.ValueNbt.of(itemStack.getRawValue().isEmpty() || itemStack.getRawValue().getComponents().isEmpty() ?
-                        Optional.empty() :
-                        Optional.of(DataComponentPatch.CODEC.encodeStart(ServerLifecycleHooks.getCurrentServer().registryAccess().createSerializationContext(NbtOps.INSTANCE), itemStack.getRawValue().getComponentsPatch()).getOrThrow()));
+                if (itemStack.getRawValue().isEmpty() || itemStack.getRawValue().getComponents().isEmpty()) {
+                    return ValueTypeNbt.ValueNbt.of();
+                }
+                CompoundTag tag = (CompoundTag) DataComponentPatch.CODEC.encodeStart(ServerLifecycleHooks.getCurrentServer().registryAccess().createSerializationContext(NbtOps.INSTANCE), itemStack.getRawValue().getComponentsPatch()).getOrThrow();
+                // Remove entries that have been marked as removed.
+                for (String key : Sets.newHashSet(tag.keySet())) {
+                    if (key.startsWith("!")) {
+                        tag.remove(key);
+                    }
+                }
+                if (tag.isEmpty()) {
+                    return ValueTypeNbt.ValueNbt.of();
+                }
+                return ValueTypeNbt.ValueNbt.of(Optional.of(tag));
             }).build());
 
     /**
@@ -1944,7 +1960,7 @@ public final class Operators {
                                 itemStack.getRawValue().getComponents().keySet().stream()
                                         .filter(c -> !c.isTransient())
                                         .map(c -> ValueTypeString.ValueString.of(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c).toString()))
-                                        .sorted((o1, o2) -> o1.getRawValue().compareTo(o2.getRawValue()))
+                                        .sorted(Comparator.comparing(ValueTypeString.ValueString::getRawValue))
                                         .toList());
             }).build());
 
@@ -2496,7 +2512,12 @@ public final class Operators {
                 ValueObjectTypeEntity.ValueEntity entity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 try {
                     if (entity.getRawValue().isPresent()) {
-                        return ValueTypeNbt.ValueNbt.of(entity.getRawValue().get().serializeNBT(ServerLifecycleHooks.getCurrentServer().registryAccess()));
+                        Entity e = entity.getRawValue().get();
+                        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(e.problemPath(), LOGGER)) {
+                            TagValueOutput valueOutput = TagValueOutput.createWithContext(scopedCollector, e.level().registryAccess());
+                            e.save(valueOutput);
+                            return ValueTypeNbt.ValueNbt.of(valueOutput.buildResult());
+                        }
                     }
                 } catch (Exception e) {
                     // Catch possible errors during NBT writing
@@ -3232,7 +3253,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_VALUE_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.BOOLEAN).operatorName("compound_value_boolean").symbol("NBT{}.get_boolean").interactName("getBoolean")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_BOOLEAN.build(
-                    o -> o.map(tag -> tag instanceof NumericTag && ((NumericTag) tag).getAsByte() != 0).orElse(false)
+                    o -> o.flatMap(Tag::asBoolean).orElse(false)
             )).build());
 
     /**
@@ -3241,7 +3262,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_VALUE_INTEGER = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.INTEGER).operatorName("compound_value_integer").symbol("NBT{}.get_integer").interactName("getInteger")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_INT.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsInt() : 0).orElse(0)
+                    o -> o.flatMap(Tag::asInt).orElse(0)
             )).build());
 
     /**
@@ -3250,7 +3271,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_VALUE_LONG = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.LONG).operatorName("compound_value_long").symbol("NBT{}.get_long").interactName("getLong")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_LONG.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsLong() : 0).orElse(0L)
+                    o -> o.flatMap(Tag::asLong).orElse(0L)
             )).build());
 
     /**
@@ -3259,7 +3280,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_VALUE_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.DOUBLE).operatorName("compound_value_double").symbol("NBT{}.get_double").interactName("getDouble")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_DOUBLE.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsDouble() : 0).orElse(0D)
+                    o -> o.flatMap(Tag::asDouble).orElse(0D)
             )).build());
 
     /**
@@ -3268,7 +3289,7 @@ public final class Operators {
     public static final IOperator NBT_COMPOUND_VALUE_STRING = REGISTRY.register(OperatorBuilders.NBT_2
             .output(ValueTypes.STRING).operatorName("compound_value_string").symbol("NBT{}.get_string").interactName("getString")
             .function(OperatorBuilders.FUNCTION_NBT_COMPOUND_ENTRY_TO_STRING.build(
-                    o -> o.map(tag -> tag instanceof StringTag ? tag.getAsString() : "").orElse("")
+                    o -> o.flatMap(Tag::asString).orElse("")
             )).build());
 
     /**
@@ -3592,7 +3613,7 @@ public final class Operators {
     public static final IOperator NBT_AS_BOOLEAN = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN).operatorName("as_boolean").symbol("NBT.as_boolean").interactName("asBoolean")
             .function(OperatorBuilders.FUNCTION_NBT_TO_BOOLEAN.build(
-                    o -> o.map(tag -> tag instanceof ByteTag && ((ByteTag) tag).getAsByte() != 0).orElse(false)
+                    o -> o.flatMap(Tag::asBoolean).orElse(false)
             )).build());
 
     /**
@@ -3601,7 +3622,7 @@ public final class Operators {
     public static final IOperator NBT_AS_BYTE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).operatorName("as_byte").symbol("NBT.as_byte").interactName("asByte")
             .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsInt() : 0).orElse(0)
+                    o -> o.flatMap(Tag::asByte).map(s -> (int) s).orElse(0)
             )).build());
 
     /**
@@ -3610,7 +3631,7 @@ public final class Operators {
     public static final IOperator NBT_AS_SHORT = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).operatorName("as_short").symbol("NBT.as_short").interactName("asShort")
             .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsInt() : 0).orElse(0)
+                    o -> o.flatMap(Tag::asShort).map(s -> (int) s).orElse(0)
             )).build());
 
     /**
@@ -3619,7 +3640,7 @@ public final class Operators {
     public static final IOperator NBT_AS_INT = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.INTEGER).operatorName("as_int").symbol("NBT.as_int").interactName("asInt")
             .function(OperatorBuilders.FUNCTION_NBT_TO_INT.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsInt() : 0).orElse(0)
+                    o -> o.flatMap(Tag::asInt).orElse(0)
             )).build());
 
     /**
@@ -3628,7 +3649,7 @@ public final class Operators {
     public static final IOperator NBT_AS_LONG = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.LONG).operatorName("as_long").symbol("NBT.as_long").interactName("asLong")
             .function(OperatorBuilders.FUNCTION_NBT_TO_LONG.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsLong() : 0L).orElse(0L)
+                    o -> o.flatMap(Tag::asLong).orElse(0L)
             )).build());
 
     /**
@@ -3637,7 +3658,7 @@ public final class Operators {
     public static final IOperator NBT_AS_DOUBLE = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.DOUBLE).operatorName("as_double").symbol("NBT.as_double").interactName("asDouble")
             .function(OperatorBuilders.FUNCTION_NBT_TO_DOUBLE.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsDouble() : 0D).orElse(0D)
+                    o -> o.flatMap(Tag::asDouble).orElse(0D)
             )).build());
 
     /**
@@ -3646,7 +3667,7 @@ public final class Operators {
     public static final IOperator NBT_AS_FLOAT = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.DOUBLE).operatorName("as_float").symbol("NBT.as_float").interactName("asFloat")
             .function(OperatorBuilders.FUNCTION_NBT_TO_DOUBLE.build(
-                    o -> o.map(tag -> tag instanceof NumericTag ? ((NumericTag) tag).getAsFloat() : 0D).orElse(0D)
+                    o -> o.flatMap(Tag::asFloat).map(f -> (double) f).orElse(0D)
             )).build());
 
     /**
@@ -3655,7 +3676,7 @@ public final class Operators {
     public static final IOperator NBT_AS_STRING = REGISTRY.register(OperatorBuilders.NBT_1_SUFFIX_LONG
             .output(ValueTypes.STRING).operatorName("as_string").symbol("NBT.as_string").interactName("asString")
             .function(OperatorBuilders.FUNCTION_NBT_TO_STRING.build(
-                    o -> o.map(tag -> tag instanceof StringTag ? ((StringTag) tag).getAsString() : "").orElse("")
+                    o -> o.flatMap(Tag::asString).orElse("")
             )).build());
 
     /**
@@ -4228,7 +4249,7 @@ public final class Operators {
     public static final IOperator PARSE_NBT = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.NBT, v -> {
       ValueTypeString.ValueString value = v.getValue(0, ValueTypes.STRING);
       try {
-        return ValueTypeNbt.ValueNbt.of(TagParser.parseTag(value.getRawValue()));
+        return ValueTypeNbt.ValueNbt.of(Helpers.TAG_PARSER.parseFully(value.getRawValue()));
       } catch (CommandSyntaxException e) {
         throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_PARSE, value.getRawValue(),
                 Component.translatable(ValueTypes.NBT.getTranslationKey())));

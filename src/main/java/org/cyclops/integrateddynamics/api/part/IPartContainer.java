@@ -2,11 +2,10 @@ package org.cyclops.integrateddynamics.api.part;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -19,7 +18,7 @@ import java.util.Optional;
  * An interface for containers that can hold {@link IPartType}s.
  * @author rubensworks
  */
-public interface IPartContainer extends INBTSerializable<CompoundTag> {
+public interface IPartContainer extends INBTSerializable {
 
     /**
      * Should be called every tick, updates parts.

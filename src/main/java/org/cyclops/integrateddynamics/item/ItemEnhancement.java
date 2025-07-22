@@ -8,13 +8,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * An enhancement item.
@@ -60,9 +61,9 @@ public class ItemEnhancement extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-        list.add(Component.translatable("item.integrateddynamics.enhancement_offset.tooltip", getEnhancementValue(itemStack)).withStyle(ChatFormatting.GRAY));
-        super.appendHoverText(itemStack, context, list, flag);
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        tooltipAdder.accept(Component.translatable("item.integrateddynamics.enhancement_offset.tooltip", getEnhancementValue(itemStack)).withStyle(ChatFormatting.GRAY));
+        super.appendHoverText(itemStack, context, tooltipDisplay, tooltipAdder, flag);
     }
 
     public static enum Type {

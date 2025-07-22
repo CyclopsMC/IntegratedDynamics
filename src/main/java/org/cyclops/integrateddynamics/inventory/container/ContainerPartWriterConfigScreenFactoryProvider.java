@@ -3,8 +3,6 @@ package org.cyclops.integrateddynamics.inventory.container;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.ScreenFactorySafe;
 import org.cyclops.cyclopscore.config.extendedconfig.GuiConfigScreenFactoryProvider;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
@@ -21,7 +19,6 @@ public class ContainerPartWriterConfigScreenFactoryProvider extends GuiConfigScr
         return new ScreenFactorySafe<>((MenuScreens.ScreenConstructor) createScreenFactory());
     }
 
-    @OnlyIn(Dist.CLIENT)
     protected static <P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>> MenuScreens.ScreenConstructor<ContainerPartWriter<P, S>, ContainerScreenPartWriter<P, S>> createScreenFactory() {
         return ContainerScreenPartWriter::new;
     }

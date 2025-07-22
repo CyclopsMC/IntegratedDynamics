@@ -112,7 +112,7 @@ public class EntityItemTargetted extends ItemEntity {
                 this.setDeltaMovement(this.getDeltaMovement().x, 0.3, this.getDeltaMovement().z);
             }
         }
-        if (!getCommandSenderWorld().isClientSide() && random.nextInt(5) == 0) {
+        if (!level().isClientSide() && random.nextInt(5) == 0) {
             showEntityMoved();
         }
     }
@@ -125,7 +125,7 @@ public class EntityItemTargetted extends ItemEntity {
         float blue = rand.nextFloat() * 0.10F + 0.10F;
         float ageMultiplier = (float) (rand.nextDouble() * 25D + 50D);
 
-        ((ServerLevel) getCommandSenderWorld()).sendParticles(
+        ((ServerLevel) level()).sendParticles(
                 new ParticleBlurData(red, green, blue, scale, ageMultiplier),
                 this.getX(), this.getY() + 0.5D, this.getZ(), 1,
                 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0.1 - rand.nextFloat() * 0.2, 0D);
@@ -138,7 +138,7 @@ public class EntityItemTargetted extends ItemEntity {
             double x = this.getX() - dx * factor;
             double y = this.getY() - dy * factor;
             double z = this.getZ() - dz * factor;
-            ((ServerLevel) getCommandSenderWorld()).sendParticles(
+            ((ServerLevel) level()).sendParticles(
                     new ParticleBlurData(red, green, blue, scale, ageMultiplier),
                     x, y, z, 1,
                     -0.02 * dx, -0.02 * dy, -0.02 * dz, 0D);

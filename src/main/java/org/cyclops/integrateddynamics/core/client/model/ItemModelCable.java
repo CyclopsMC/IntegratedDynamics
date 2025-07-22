@@ -1,12 +1,8 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.color.item.Constant;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.item.BlockModelWrapper;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +18,8 @@ import java.util.List;
 public record ItemModelCable(DynamicItemAndBlockModel model) implements ItemModel {
     @Override
     public void update(ItemStackRenderState renderState, ItemStack stack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
-        new BlockModelWrapper(this.model.handleItemState(stack, level, entity), List.of(new Constant(-1)))
+        ModelRenderProperties modelRenderProperties = new ModelRenderProperties(false, model.particleIcon(), model.getTopTransforms());
+        new BlockModelWrapper(List.of(), this.model.handleItemState(stack, level, entity), modelRenderProperties)
                 .update(renderState, stack, itemModelResolver, displayContext, level, entity, seed);
     }
 

@@ -1,10 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 
@@ -24,9 +21,8 @@ public record ValueDeseralizationContext(HolderLookup.Provider holderLookupProvi
         return new ValueDeseralizationContext(holderLookupProvider);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static ValueDeseralizationContext ofClient() {
-        return of(Minecraft.getInstance().level);
+        return ValueDeseralizationContextClient.ofClient();
     }
 
     public static ValueDeseralizationContext ofAllEnabled() {

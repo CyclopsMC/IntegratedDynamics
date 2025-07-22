@@ -1,14 +1,15 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.util.Optional;
 
@@ -62,15 +63,13 @@ public abstract class ValueTypeListProxyNbtAsListGeneric<N extends Tag, T extend
         }
 
         @Override
-        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, L value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            if (value.getTag().isPresent()) {
-                tag.put("tag", value.getTag().get());
-            }
+        protected void serializeNbt(ValueOutput valueOutput, L value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            value.getTag().ifPresent(tag -> valueOutput.store("tag", ExtraCodecs.NBT, tag));
         }
 
         @Override
-        protected L deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            return create(Optional.ofNullable(tag.get("tag")));
+        protected L deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            return create(valueInput.read("tag", ExtraCodecs.NBT));
         }
 
         protected abstract L create(Optional<Tag> tag);

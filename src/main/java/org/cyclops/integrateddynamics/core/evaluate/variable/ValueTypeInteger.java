@@ -2,16 +2,14 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.text.NumberFormat;
@@ -39,19 +37,13 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueInteger value) {
-        return IntTag.valueOf(value.getRawValue());
+    public void serialize(ValueOutput valueOutput, ValueInteger value) {
+        valueOutput.putInt("v", value.getRawValue());
     }
 
     @Override
-    public ValueInteger deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value.getId() == Tag.TAG_INT) {
-            return ValueInteger.of(((IntTag) value).getAsInt());
-        } else if (value.getId() == Tag.TAG_BYTE) {
-            return ValueInteger.of(((ByteTag) value).getAsInt());
-        } else {
-            throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to an integer.", value));
-        }
+    public ValueInteger deserialize(ValueInput valueInput) {
+        return ValueInteger.of(valueInput.getInt("v").orElseThrow());
     }
 
     @Override

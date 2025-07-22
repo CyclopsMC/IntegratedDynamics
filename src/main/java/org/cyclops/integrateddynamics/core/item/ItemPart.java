@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -29,6 +30,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * An item that can place parts.
@@ -105,7 +107,8 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                             if (cableFakeable != null) {
                                 CableHelpers.onCableRemoving(world, target, false, false, world.getBlockState(target));
                                 cableFakeable.setRealCable(false);
-                                CableHelpers.onCableRemoved(world, target, CableHelpers.ALL_SIDES);
+                                CableHelpers.overrideCableRemovingConnections(world, target, CableHelpers.ALL_SIDES);
+                                CableHelpers.onCableRemoved(world, target);
                             } else {
                                 IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Tried to set a fake cable at a block that is not fakeable at %s", target));
                             }
@@ -150,9 +153,9 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-        getPart().loadTooltip(itemStack, list);
-        super.appendHoverText(itemStack, context, list, flag);
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        getPart().loadTooltip(itemStack, tooltipAdder);
+        super.appendHoverText(itemStack, context, tooltipDisplay, tooltipAdder, flag);
     }
 
     public static interface IUseAction {

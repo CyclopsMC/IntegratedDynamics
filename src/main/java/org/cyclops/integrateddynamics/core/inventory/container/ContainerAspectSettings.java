@@ -2,16 +2,20 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.mojang.logging.LogUtils;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -30,6 +34,7 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdatedEvent;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
+import org.slf4j.Logger;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -40,6 +45,7 @@ import java.util.Optional;
  */
 public class ContainerAspectSettings extends InventoryContainer {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final String BUTTON_EXIT = "button_exit";
     public static final int BUTTON_SETTINGS = 1;
     private static final int PAGE_SIZE = 3;
@@ -70,7 +76,7 @@ public class ContainerAspectSettings extends InventoryContainer {
         this.target = target;
         this.partType = partType;
         this.partContainer = partContainer;
-        this.world = player.getCommandSenderWorld();
+        this.world = player.level();
         this.aspect = aspect;
 
         addPlayerInventory(player.getInventory(), 8, 131);
@@ -112,7 +118,11 @@ public class ContainerAspectSettings extends InventoryContainer {
     }
 
     public void setValue(ValueDeseralizationContext valueDeseralizationContext, IAspectPropertyTypeInstance property, IValue value) {
-        ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), ValueHelpers.serializeRaw(valueDeseralizationContext, value));
+        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(player.problemPath(), LOGGER)) {
+            TagValueOutput valueOutput = TagValueOutput.createWithContext(scopedCollector, valueDeseralizationContext.holderLookupProvider());
+            ValueHelpers.serializeRaw(valueOutput, value);
+            ValueNotifierHelpers.setValue(this, propertyIds.inverse().get(property), valueOutput.buildResult());
+        }
     }
 
     public Optional<IPartState> getPartState() {
@@ -131,9 +141,16 @@ public class ContainerAspectSettings extends InventoryContainer {
 
     public <T extends IValueType<V>, V extends IValue> V getPropertyValue(ValueDeseralizationContext valueDeseralizationContext, IAspectPropertyTypeInstance<T, V> property) {
         if(propertyIds.containsValue(property)) {
-            Tag value = ValueNotifierHelpers.getValueNbt(this, propertyIds.inverse().get(property));
+            CompoundTag value = (CompoundTag) ValueNotifierHelpers.getValueNbt(this, propertyIds.inverse().get(property));
             if(value != null) {
-                return ValueHelpers.deserializeRaw(valueDeseralizationContext, property.getType(), value);
+                try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(player.problemPath(), LOGGER)) {
+                    ValueInput input = TagValueInput.create(
+                            scopedCollector,
+                            valueDeseralizationContext.holderLookupProvider(),
+                            value
+                    );
+                    return ValueHelpers.deserializeRaw(input, property.getType());
+                }
             }
         }
         return null;
@@ -151,7 +168,15 @@ public class ContainerAspectSettings extends InventoryContainer {
 
                 IAspectProperties aspectProperties = aspect.getProperties(partType, target, partState);
                 aspectProperties = aspectProperties.clone();
-                IValue trueValue = ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(world), property.getType(), value.get(ValueNotifierHelpers.KEY));
+                IValue trueValue;
+                try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(player.problemPath(), LOGGER)) {
+                    ValueInput input = TagValueInput.create(
+                            scopedCollector,
+                            player.level().registryAccess(),
+                            (CompoundTag) value.get(ValueNotifierHelpers.KEY)
+                    );
+                    trueValue = ValueHelpers.deserializeRaw(input, property.getType());
+                }
                 aspectProperties.setValue(property, trueValue);
                 aspect.setProperties(partType, target, partState, aspectProperties);
 

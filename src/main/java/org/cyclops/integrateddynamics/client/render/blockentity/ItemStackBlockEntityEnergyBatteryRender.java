@@ -14,6 +14,9 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+
+import java.util.Set;
 
 /**
  * @author rubensworks
@@ -37,6 +40,11 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
         tile.setLevel(Minecraft.getInstance().level);
         BlockEnergyBatteryBase.itemStackToTile(itemStackIn, tile);
         this.blockEntityRenderDispatcher.render(tile, 0, poseStack, bufferSource);
+    }
+
+    @Override
+    public void getExtents(Set<Vector3f> vectors) {
+
     }
 
     public static record Unbaked() implements SpecialModelRenderer.Unbaked {

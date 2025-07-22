@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -42,7 +43,7 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
         if (readValue != null) {
             ok = true;
             IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, readValue.getString(),
-                    getGuiLeftTotal() + getValueX(), getGuiTopTotal() + getValueY(), 70, readValueColor, false, Font.DisplayMode.NORMAL);
+                    getGuiLeftTotal() + getValueX(), getGuiTopTotal() + getValueY(), 70, ARGB.opaque(readValueColor), false, Font.DisplayMode.NORMAL);
         }
 
         displayErrors.drawBackground(guiGraphics, getMenu().getReadErrors(), getErrorX(), getErrorY(), getErrorX(), getErrorY(), this,
@@ -52,7 +53,7 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
-        displayErrors.drawForeground(guiGraphics.pose(), getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
+        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
+        displayErrors.drawForeground(guiGraphics, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 }

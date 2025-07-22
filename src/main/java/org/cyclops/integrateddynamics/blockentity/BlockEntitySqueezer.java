@@ -4,8 +4,7 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -13,6 +12,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -126,17 +127,17 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
     }
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
-        inventory.readFromNBT(provider, tag, "inventory");
-        tank.readFromNBT(provider, tag, "tank");
-        super.read(tag, provider);
+    public void read(ValueInput input) {
+        inventory.readFromNBT(input, "inventory");
+        tank.deserialize(input, "tank");
+        super.read(input);
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        inventory.writeToNBT(provider, tag, "inventory");
-        tank.writeToNBT(provider, tag, "tank");
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(ValueOutput output) {
+        inventory.writeToNBT(output, "inventory");
+        tank.serialize(output, "tank");
+        super.saveAdditional(output);
     }
 
     protected RecipeType<RecipeSqueezer> getRegistry() {
@@ -151,6 +152,12 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
         this.itemHeight = itemHeight;
         sendUpdate();
         getInventory().setChanged();
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        Containers.dropContents(level, pos, this.getInventory());
     }
 
     public static class Ticker extends BlockEntityTickerDelayed<BlockEntitySqueezer> {

@@ -17,7 +17,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTy
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * An element that can be used inside parts to access a specific aspect of something to read/write.
@@ -39,10 +39,11 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
-     * @param lines The list to add lines to.
+     *
+     * @param tooltipAdder       The list to add lines to.
      * @param appendOptionalInfo If shift-to-show info should be added.
      */
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo);
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo);
 
     /**
      * @return The type of value this aspect can handle.

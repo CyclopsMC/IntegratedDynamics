@@ -2,12 +2,9 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.client.render.blockentity.RenderBlockEntitySqueezer;
 
 /**
  * Config for the {@link BlockEntitySqueezer}.
@@ -27,10 +24,11 @@ public class BlockEntitySqueezerConfig extends BlockEntityConfigCommon<BlockEnti
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onRegistered() {
         super.onRegistered();
-        getMod().getProxy().registerRenderer(getInstance(), RenderBlockEntitySqueezer::new);
+        if (getMod().getModHelpers().getMinecraftHelpers().isClientSide()) {
+            new BlockEntitySqueezerConfigClient().onRegistered(this);
+        }
     }
 
 }

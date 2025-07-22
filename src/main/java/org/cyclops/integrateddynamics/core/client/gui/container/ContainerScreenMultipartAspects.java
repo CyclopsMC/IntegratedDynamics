@@ -2,11 +2,10 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
@@ -32,7 +31,7 @@ import java.util.Map;
  * Gui for parts.
  * @author rubensworks
  */
-public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>, S extends IPartState<P>, A extends IAspect, C extends ContainerMultipartAspects<P, S, A>>
+public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>, S extends IPartState<P>, A extends IAspect<?, ?>, C extends ContainerMultipartAspects<P, S, A>>
         extends ContainerScreenScrolling<C> {
 
     private static final Rectangle ITEM_POSITION = new Rectangle(8, 17, 18, 18);
@@ -108,7 +107,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
         // Draw part name
         IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, title.getString(),
-                this.leftPos + offsetX + 6, this.topPos + offsetY + 10, 70, 4210752, false, Font.DisplayMode.NORMAL);
+                this.leftPos + offsetX + 6, this.topPos + offsetY + 10, 70, ARGB.opaque(4210752), false, Font.DisplayMode.NORMAL);
 
         // Draw aspects
         C container = getMenu();
@@ -127,7 +126,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                 );
 
                 // Background
-                guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + 9,
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + offsetX + 9,
                         topPos + offsetY + 18 + aspectBoxHeight * i, 0, getBaseYSize(), 160, aspectBoxHeight - 1, 256, 256, color);
 
                 // Aspect type info
@@ -135,7 +134,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                 IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, aspectName,
                         this.leftPos + offsetX + 26,
                         this.topPos + offsetY + 25 + aspectBoxHeight * i,
-                        getMaxLabelWidth(), IModHelpers.get().getBaseHelpers().RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
+                        getMaxLabelWidth(), IModHelpers.get().getBaseHelpers().RGBAToInt(40, 40, 40, 255), false, Font.DisplayMode.NORMAL);
 
                 drawAdditionalElementInfo(guiGraphics, container, i, aspect);
 
@@ -166,10 +165,10 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                 // Item icon tooltip
                 if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
                     List<Component> lines = Lists.newLinkedList();
-                    container.getVisibleElement(i).loadTooltip(lines, true);
-                    drawTooltip(lines, guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
+                    container.getVisibleElement(i).loadTooltip(lines::add, true);
+                    drawTooltip(lines, guiGraphics, mouseX, mouseY);
                 }
-                drawAdditionalElementInfoForeground(guiGraphics.pose(), container, i, container.getVisibleElement(i), mouseX, mouseY);
+                drawAdditionalElementInfoForeground(guiGraphics, container, i, container.getVisibleElement(i), mouseX, mouseY);
 
                 // Optional aspect properties tooltip
                 IAspect aspect = container.getVisibleElement(i);
@@ -186,21 +185,21 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                                     .withStyle(ChatFormatting.YELLOW)
                                     .append(Component.translatable(property.getTranslationKey())));
                         }
-                        drawTooltip(lines, guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
+                        drawTooltip(lines, guiGraphics, mouseX, mouseY);
                     }
                 }
             }
         }
 
         if (isHovering(-20, 0, 18, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), guiGraphics, mouseX, mouseY);
         }
         if (isHovering(-20, 20, 18, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), guiGraphics, mouseX, mouseY);
         }
     }
 
-    protected abstract void drawAdditionalElementInfoForeground(PoseStack matrixStack, C container, int index,
+    protected abstract void drawAdditionalElementInfoForeground(GuiGraphics guiGraphics, C container, int index,
                                                                 A aspect, int mouseX, int mouseY);
 
     public int getMaxLabelWidth() {

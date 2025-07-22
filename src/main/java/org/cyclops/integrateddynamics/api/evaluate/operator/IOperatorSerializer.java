@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * A serialization action for operators.
@@ -26,20 +26,18 @@ public interface IOperatorSerializer<O extends IOperator> {
     /**
      * Serialize the given operator.
      *
-     * @param valueDeseralizationContext
-     * @param operator                   The operator to serialize.
-     * @return The serialized operator value.
+     * @param valueOutput
+     * @param operator    The operator to serialize.
      */
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, O operator);
+    public void serialize(ValueOutput valueOutput, O operator);
 
     /**
      * Deserialize the given operator value.
      *
-     * @param valueDeseralizationContext
-     * @param value The operator value to deserialize.
+     * @param valueInput
      * @return The deserialized operator, null if deserialization failed.
      * @throws EvaluationException If something goes wrong while deserializing
      */
-    public O deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException;
+    public O deserialize(ValueInput valueInput) throws EvaluationException;
 
 }

@@ -5,10 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -22,20 +19,10 @@ import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistry;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.api.part.aspect.*;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Registry for {@link IAspect}.
@@ -46,21 +33,21 @@ public final class AspectRegistry implements IAspectRegistry {
     private static AspectRegistry INSTANCE = new AspectRegistry();
     private static final IAspectVariableFacade INVALID_FACADE = new AspectVariableFacade(false, -1, null);
 
-    private final Map<IPartType, Set<IAspect>> partAspects = new IdentityHashMap<>();
-    private final Map<IPartType, Set<IAspectRead>> partReadAspects = new IdentityHashMap<>();
-    private final Map<IPartType, Set<IAspectWrite>> partWriteAspects = new IdentityHashMap<>();
-    private final Map<IPartType, List<IAspectRead>> partReadAspectsListTransform = new IdentityHashMap<>();
-    private final Map<IPartType, List<IAspectWrite>> partWriteAspectsListTransform = new IdentityHashMap<>();
-    private final Map<String, IAspect> unlocalizedAspects = Maps.newHashMap();
-    private final Map<String, IAspectRead> unlocalizedReadAspects = Maps.newHashMap();
-    private final Map<String, IAspectWrite> unlocalizedWriteAspects = Maps.newHashMap();
-    @OnlyIn(Dist.CLIENT)
-    private Map<IAspect, ResourceLocation> aspectModels;
+    private final Map<IPartType, Set<IAspect<?, ?>>> partAspects = new IdentityHashMap<>();
+    private final Map<IPartType, Set<IAspectRead<?, ?>>> partReadAspects = new IdentityHashMap<>();
+    private final Map<IPartType, Set<IAspectWrite<?, ?>>> partWriteAspects = new IdentityHashMap<>();
+    private final Map<IPartType, List<IAspectRead<?, ?>>> partReadAspectsListTransform = new IdentityHashMap<>();
+    private final Map<IPartType, List<IAspectWrite<?, ?>>> partWriteAspectsListTransform = new IdentityHashMap<>();
+    private final Map<String, IAspect<?, ?>> unlocalizedAspects = Maps.newHashMap();
+    private final Map<String, IAspectRead<?, ?>> unlocalizedReadAspects = Maps.newHashMap();
+    private final Map<String, IAspectWrite<?, ?>> unlocalizedWriteAspects = Maps.newHashMap();
+
+    private AspectRegistryClient client;
 
     private AspectRegistry() {
         IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
         if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
-            aspectModels = new IdentityHashMap<>();
+            client = new AspectRegistryClient();
         }
     }
 
@@ -69,6 +56,11 @@ public final class AspectRegistry implements IAspectRegistry {
      */
     public static AspectRegistry getInstance() {
         return INSTANCE;
+    }
+
+    @Override
+    public AspectRegistryClient getClient() {
+        return client;
     }
 
     @Override
@@ -85,7 +77,7 @@ public final class AspectRegistry implements IAspectRegistry {
         return aspect;
     }
 
-    protected <T extends IAspect> void registerSubAspectType(IPartType partType, T aspect, Map<IPartType,
+    protected <T extends IAspect<?, ?>> void registerSubAspectType(IPartType partType, T aspect, Map<IPartType,
                                                              Set<T>> partAspects, Map<String, T> unlocalizedAspects) {
         Set<T> aspects = partAspects.get(partType);
         if(aspects == null) {
@@ -105,16 +97,16 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @Override
     public Set<IAspect> getAspects(IPartType partType) {
-        Set<IAspect> aspects = partAspects.get(partType);
+        Set<IAspect<?, ?>> aspects = partAspects.get(partType);
         if(aspects == null) {
-            return Collections.unmodifiableSet(Collections.<IAspect>emptySet());
+            return Collections.emptySet();
         }
         return Collections.unmodifiableSet(aspects);
     }
 
     @Override
-    public List<IAspectRead> getReadAspects(IPartType partType) {
-        List<IAspectRead> aspects = partReadAspectsListTransform.get(partType);
+    public List<IAspectRead<?, ?>> getReadAspects(IPartType partType) {
+        List<IAspectRead<?, ?>> aspects = partReadAspectsListTransform.get(partType);
         if (aspects == null) {
             return Collections.emptyList();
         }
@@ -122,8 +114,8 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public List<IAspectWrite> getWriteAspects(IPartType partType) {
-        List<IAspectWrite> aspects = partWriteAspectsListTransform.get(partType);
+    public List<IAspectWrite<?, ?>> getWriteAspects(IPartType partType) {
+        List<IAspectWrite<?, ?>> aspects = partWriteAspectsListTransform.get(partType);
         if (aspects == null) {
             return Collections.emptyList();
         }
@@ -150,24 +142,6 @@ public final class AspectRegistry implements IAspectRegistry {
         return unlocalizedAspects.get(name.toString());
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public void registerAspectModel(IAspect aspect, ResourceLocation modelLocation) {
-        aspectModels.put(aspect, modelLocation);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public ResourceLocation getAspectModel(IAspect aspect) {
-        return aspectModels.get(aspect);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public Collection<ResourceLocation> getAspectModels() {
-        return Collections.unmodifiableCollection(aspectModels.values());
-    }
-
     @Override
     public ResourceLocation getUniqueName() {
         return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "aspect");
@@ -175,12 +149,11 @@ public final class AspectRegistry implements IAspectRegistry {
 
     @Override
     public IAspectVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
-        if(!(tag.contains("partId", Tag.TAG_INT) || tag.contains("partId", Tag.TAG_BYTE))
-                || !tag.contains("aspectName", Tag.TAG_STRING)) {
+        if(!(tag.contains("partId") || tag.contains("partId")) || !tag.contains("aspectName")) {
             return INVALID_FACADE;
         }
-        int partId = tag.getInt("partId");
-        IAspect aspect = getAspect(ResourceLocation.parse(tag.getString("aspectName")));
+        int partId = tag.getInt("partId").orElseThrow();
+        IAspect aspect = getAspect(ResourceLocation.parse(tag.getString("aspectName").orElseThrow()));
         if(aspect == null) {
             return INVALID_FACADE;
         }

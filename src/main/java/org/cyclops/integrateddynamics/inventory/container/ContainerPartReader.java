@@ -42,7 +42,7 @@ import java.util.Optional;
  * @author rubensworks
  */
 public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPartStateReader<P>>
-        extends ContainerMultipartAspects<P, S, IAspectRead> {
+        extends ContainerMultipartAspects<P, S, IAspectRead<?, ?>> {
 
     public static final int ASPECT_BOX_HEIGHT = 36;
     private static final int SLOT_IN_X = 96;
@@ -51,8 +51,8 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
     private static final int SLOT_OUT_Y = 27;
 
     private final Container outputSlots;
-    private final BiMap<Integer, IAspectRead> readValueIds = HashBiMap.create();
-    private final BiMap<Integer, IAspectRead> readColorIds = HashBiMap.create();
+    private final BiMap<Integer, IAspectRead<?, ?>> readValueIds = HashBiMap.create();
+    private final BiMap<Integer, IAspectRead<?, ?>> readColorIds = HashBiMap.create();
 
     public ContainerPartReader(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
         this(id, playerInventory, (RegistryFriendlyByteBuf) packetBuffer);
@@ -81,7 +81,7 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
 
         addPlayerInventory(player.getInventory(), 9, 131);
 
-        for(IAspectRead aspectRead : getUnfilteredItems()) {
+        for(IAspectRead<?, ?> aspectRead : getUnfilteredItems()) {
             readValueIds.put(getNextValueId(), aspectRead);
             readColorIds.put(getNextValueId(), aspectRead);
         }

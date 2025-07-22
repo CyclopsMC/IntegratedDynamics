@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
@@ -18,16 +19,18 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
@@ -36,8 +39,8 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.item.TagPathElement;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
@@ -46,6 +49,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +61,8 @@ import java.util.stream.Stream;
  * @author rubensworks
  */
 public class Codecs {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     public static final Codec<CompoundTag> COMPOUND_TAG = Codec.PASSTHROUGH.xmap(
             dynamic -> (CompoundTag) dynamic.convert(NbtOps.INSTANCE).getValue(),
@@ -147,11 +153,23 @@ public class Codecs {
                             .apply(builder, (raw, valueType, valueJson) -> {
                                 Optional<IValue> value = Optional.empty();
                                 try {
-                                    Tag tag = TagParser.parseTag(valueJson.getAsString());
-                                    if (((CompoundTag) tag).contains("Primitive")) {
-                                        tag = ((CompoundTag) tag).get("Primitive");
+                                    Tag tag = Helpers.TAG_PARSER.parseFully(valueJson.getAsString());
+                                    if (tag instanceof CompoundTag compoundTag && compoundTag.contains("Primitive")) {
+                                        tag = compoundTag.get("Primitive");
                                     }
-                                    value = Optional.of(ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(getHolderLookupProviderDuringWorldLoadHack()), valueType, tag));
+                                    if (!(tag instanceof CompoundTag)) {
+                                        CompoundTag compoundTag = new CompoundTag();
+                                        compoundTag.put("v", tag);
+                                        tag = compoundTag;
+                                    }
+                                    try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(new TagPathElement((CompoundTag) tag), LOGGER)) {
+                                        ValueInput input = TagValueInput.create(
+                                                scopedCollector,
+                                                getHolderLookupProviderDuringWorldLoadHack(),
+                                                (CompoundTag) tag
+                                        );
+                                        value = Optional.of(ValueHelpers.deserializeRaw(input, valueType));
+                                    }
                                 } catch (CommandSyntaxException e) {
                                     e.printStackTrace();
                                 }

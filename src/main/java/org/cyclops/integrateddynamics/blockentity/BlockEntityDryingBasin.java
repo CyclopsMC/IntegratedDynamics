@@ -2,12 +2,11 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -16,6 +15,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -153,17 +154,17 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
     }
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
-        inventory.readFromNBT(provider, tag, "inventory");
-        tank.readFromNBT(provider, tag, "tank");
-        super.read(tag, provider);
+    public void read(ValueInput input) {
+        inventory.readFromNBT(input, "inventory");
+        tank.deserialize(input, "tank");
+        super.read(input);
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        inventory.writeToNBT(provider, tag, "inventory");
-        tank.writeToNBT(provider, tag, "tank");
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(ValueOutput output) {
+        inventory.writeToNBT(output, "inventory");
+        tank.serialize(output, "tank");
+        super.saveAdditional(output);
     }
 
     protected RecipeType<RecipeDryingBasin> getRegistry() {
@@ -180,6 +181,12 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
      */
     public float getRandomRotation() {
         return randomRotation;
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        Containers.dropContents(level, pos, this.getInventory());
     }
 
     public static class TickerServer extends BlockEntityTickerDelayed<BlockEntityDryingBasin> {

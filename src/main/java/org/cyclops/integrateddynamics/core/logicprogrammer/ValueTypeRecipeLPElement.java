@@ -20,8 +20,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -39,16 +37,15 @@ import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
-import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeRecipe;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.ingredient.ItemMatchProperties;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.ValueTypeRecipeLPElementClient;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket;
 
@@ -63,13 +60,10 @@ import java.util.stream.Collectors;
  * This is hardcoded to only support items, fluids and energy
  * @author rubensworks
  */
-public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
+public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRecipeLPElementClient> {
 
     public static final int SLOT_OFFSET = 4;
     public static final int TICK_DELAY = 30;
-
-    @OnlyIn(Dist.CLIENT)
-    public ValueTypeRecipeLPElementMasterSubGui lastGui;
 
     @Getter
     private NonNullList<ItemMatchProperties> inputStacks;
@@ -94,6 +88,11 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
+    public ValueTypeRecipeLPElementClient constructClient() {
+        return new ValueTypeRecipeLPElementClient(this);
+    }
+
+    @Override
     public ILogicProgrammerElementType getType() {
         return LogicProgrammerElementTypes.VALUETYPE;
     }
@@ -114,7 +113,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             if (itemStackOld.getItem() != itemStack.getItem()) {
                 inputStacks.set(slotId, new ItemMatchProperties(itemStack.copy()));
                 if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
-                    refreshPropertiesGui(slotId);
+                    getClient().refreshPropertiesGui(slotId);
                 }
             }
         }
@@ -123,8 +122,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             if (inputFluidAmount.equalsIgnoreCase("0")) {
                 int amount = IModHelpersNeoForge.get().getFluidHelpers().getAmount(Helpers.getFluidStack(inputFluid));
                 inputFluidAmount = Integer.toString(amount);
-                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread() && lastGui != null) {
-                    refreshInputFluidAmountBox();
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
+                    getClient().refreshInputFluidAmountBox();
                 }
             }
         }
@@ -136,31 +135,10 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             if (outputFluidAmount.equalsIgnoreCase("0")) {
                 int amount = IModHelpersNeoForge.get().getFluidHelpers().getAmount(Helpers.getFluidStack(outputFluid));
                 outputFluidAmount = Integer.toString(amount);
-                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread() && lastGui != null) {
-                    refreshOutputFluidAmountBox();
+                if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
+                    getClient().refreshOutputFluidAmountBox();
                 }
             }
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    protected void refreshPropertiesGui(int slot) {
-        if (this.lastGui != null && this.lastGui.isPropertySubGuiActive(slot)) {
-            this.lastGui.propertiesSubGuis.get(slot).loadStateToGui();
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    protected void refreshInputFluidAmountBox() {
-        if (this.lastGui != null && this.lastGui.subGuiRecipe.getInputFluidAmountBox() != null) {
-            this.lastGui.subGuiRecipe.getInputFluidAmountBox().setValue(inputFluidAmount);
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    protected void refreshOutputFluidAmountBox() {
-        if (this.lastGui != null && this.lastGui.subGuiRecipe.getOutputFluidAmountBox() != null) {
-            this.lastGui.subGuiRecipe.getOutputFluidAmountBox().setValue(outputFluidAmount);
         }
     }
 
@@ -212,7 +190,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         putStackInContainer(container, slot, fluidStackInput.isEmpty() ? ItemStack.EMPTY : getFluidBucket(fluidStackInput));
         inputFluidAmount = String.valueOf(IModHelpersNeoForge.get().getFluidHelpers().getAmount(fluidStackInput));
         if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
-            refreshInputFluidAmountBox();
+            getClient().refreshInputFluidAmountBox();
         }
 
         // Fill input output slots
@@ -235,7 +213,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
         putStackInContainer(container, slot, fluidStackOutput.isEmpty() ? ItemStack.EMPTY : getFluidBucket(fluidStackOutput));
         outputFluidAmount = String.valueOf(IModHelpersNeoForge.get().getFluidHelpers().getAmount(fluidStackOutput));
         if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
-            refreshOutputFluidAmountBox();
+            getClient().refreshOutputFluidAmountBox();
         }
     }
 
@@ -335,7 +313,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             if (clickType == ClickType.QUICK_MOVE && mouseButton == 0) {
                 if (player.level().isClientSide()) {
                     int id = slotId - SLOT_OFFSET;
-                    lastGui.setPropertySubGui(id);
+                    getClient().setPropertySubGui(id);
                 }
                 return true;
             } else {
@@ -362,7 +340,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
                     props.setItemTag(null);
                     props.setTagQuantity(1);
                     if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
-                        refreshPropertiesGui(slotId - SLOT_OFFSET);
+                        getClient().refreshPropertiesGui(slotId - SLOT_OFFSET);
                     }
                 }
             }
@@ -592,19 +570,6 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void setValueInGui(ISubGuiBox subGui) {
-        ValueTypeRecipeLPElementRecipeSubGui gui = ((ValueTypeRecipeLPElementMasterSubGui) subGui).getSubGuiRecipe();
-        setValueInContainer(gui.container);
-        if (gui.getInputFluidAmountBox() != null) {
-            gui.getInputFluidAmountBox().setValue(this.inputFluidAmount);
-            gui.getInputEnergyBox().setValue(this.inputEnergy);
-            gui.getOutputFluidAmountBox().setValue(this.outputFluidAmount);
-            gui.getOutputEnergyBox().setValue(this.outputEnergy);
-        }
-    }
-
-    @Override
     public void setValueInContainer(ContainerLogicProgrammerBase container) {
         Container slots = container.getTemporaryInputSlots();
 
@@ -621,13 +586,6 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase {
             // No need to set slot type, as this can't be changed for output stacks
         }
         slots.setItem(13, this.outputFluid);
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                   ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-        return lastGui = new ValueTypeRecipeLPElementMasterSubGui(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
 }

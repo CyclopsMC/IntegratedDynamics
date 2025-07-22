@@ -5,10 +5,6 @@ import com.google.common.collect.Queues;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
@@ -28,7 +26,6 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -176,24 +173,22 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        ListTag valueList = new ListTag();
+    public void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        ValueOutput.ValueOutputList valueList = output.childrenList("values");
         for (IValue value : getValues()) {
-            valueList.add(ValueHelpers.serialize(ValueDeseralizationContext.of(provider), value));
+            ValueHelpers.serialize(valueList.addChild(), value);
         }
-        tag.put("values", valueList);
     }
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
-        super.read(tag, provider);
+    public void read(ValueInput input) {
+        super.read(input);
         if (this.capacity <= 0) this.capacity = 1;
         values = Queues.newArrayBlockingQueue(this.capacity);
 
-        ListTag valueList = tag.getList("values", Tag.TAG_COMPOUND);
-        for (int i = 0; i < valueList.size(); i++) {
-            IValue value = ValueHelpers.deserialize(ValueDeseralizationContext.of(getLevel()), valueList.getCompound(i));
+        for (ValueInput valueInput : input.childrenList("values").orElseThrow()) {
+            IValue value = ValueHelpers.deserialize(valueInput);
             if (value != null) {
                 this.values.add(value);
             }

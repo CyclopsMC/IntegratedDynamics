@@ -4,8 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.ComposterBlock;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.TintedParticleLeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -21,7 +21,7 @@ public class BlockMenrilLeavesConfig extends BlockConfigCommon<IntegratedDynamic
         super(
                 IntegratedDynamics._instance,
                 "menril_leaves",
-                (eConfig, properties) -> new LeavesBlock(properties
+                (eConfig, properties) -> new TintedParticleLeavesBlock(0.1F, properties
                         .replaceable()
                         .strength(0.2F)
                         .randomTicks()

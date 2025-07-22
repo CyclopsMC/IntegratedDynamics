@@ -9,7 +9,7 @@
     "description": {
       "translate": "general.integrateddynamics.description"
     },
-    "background": "integrateddynamics:textures/gui/advancements/backgrounds/dynamics.png",
+    "background": "integrateddynamics:gui/advancements/backgrounds/dynamics",
     "show_toast": false,
     "announce_to_chat": false
   },

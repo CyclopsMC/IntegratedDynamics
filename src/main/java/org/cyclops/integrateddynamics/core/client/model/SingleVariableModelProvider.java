@@ -1,47 +1,34 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import com.google.common.collect.ImmutableList;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.color.item.Constant;
+import net.minecraft.client.renderer.item.BlockModelWrapper;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.resources.model.ResolvableModel;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
- * Variable model provider for a single model.
+ * Variable facadeModel provider for a single facadeModel.
  * @author rubensworks
  */
 public class SingleVariableModelProvider implements IVariableModelProvider<BakedSingleVariableModelProvider> {
 
-    private final ResourceLocation model;
+    private ItemModel.Unbaked modelUnbaked;
 
     public SingleVariableModelProvider(ResourceLocation model) {
-        this.model = model;
+        this.modelUnbaked = new BlockModelWrapper.Unbaked(model, List.of(new Constant(-1)));
     }
 
     @Override
-    public BakedSingleVariableModelProvider bakeOverlayModels(ModelBaker modelBaker,
-                                                              ModelState transform) {
-        BakedModel bakedModel = null;
-        try {
-            bakedModel = modelBaker.bake(this.model, transform);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new BakedSingleVariableModelProvider(bakedModel);
+    public BakedSingleVariableModelProvider bakeOverlayModels(ItemModel.BakingContext bakingContext) {
+        return new BakedSingleVariableModelProvider(this.modelUnbaked.bake(bakingContext));
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies() {
-        return ImmutableList.of(model);
-    }
-
-    @Override
-    public void loadModels(List<ResourceLocation> subModels) {
-        subModels.add(model);
+    public void resolveDependencies(ResolvableModel.Resolver resolver) {
+        this.modelUnbaked.resolveDependencies(resolver);
     }
 
 }

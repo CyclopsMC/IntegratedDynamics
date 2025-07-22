@@ -1,12 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -38,18 +37,18 @@ public abstract class ValueTypeListProxyEntityCapability<C, Context, T extends I
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
-        super.writeGeneratedFieldsToNBT(tag, holderLookupProvider);
+    public void writeGeneratedFieldsToNBT(ValueOutput output) {
+        super.writeGeneratedFieldsToNBT(output);
         if (side != null) {
-            tag.putInt("side", side.ordinal());
+            output.putInt("side", side.ordinal());
         }
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
-        super.readGeneratedFieldsFromNBT(tag, holderLookupProvider);
-        if (tag.contains("side", Tag.TAG_INT)) {
-            this.side = Direction.values()[tag.getInt("side")];
-        }
+    public void readGeneratedFieldsFromNBT(ValueInput input) {
+        super.readGeneratedFieldsFromNBT(input);
+        this.side = input.getInt("side")
+                .map(i -> Direction.values()[i])
+                .orElse(null);
     }
 }

@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.api.client.render.valuetype;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
@@ -11,7 +9,6 @@ import javax.annotation.Nullable;
  * Registry for {@link IValueTypeWorldRenderer}.
  * @author rubensworks
  */
-@OnlyIn(Dist.CLIENT)
 public interface IValueTypeWorldRendererRegistry extends IRegistry {
 
     /**
@@ -28,7 +25,7 @@ public interface IValueTypeWorldRendererRegistry extends IRegistry {
      * @param valueType The value type
      * @return The registered renderer of null.
      */
-    public @Nullable
-    IValueTypeWorldRenderer getRenderer(IValueType<?> valueType);
+    @Nullable
+    public IValueTypeWorldRenderer getRenderer(IValueType<?> valueType);
 
 }

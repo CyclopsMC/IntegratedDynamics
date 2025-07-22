@@ -1,89 +1,52 @@
 package org.cyclops.integrateddynamics.client.render.model;
 
-import net.minecraft.client.renderer.RenderType;
+import com.google.common.collect.Lists;
+import net.minecraft.client.color.item.Constant;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.item.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.cyclops.cyclopscore.client.model.DelegatingChildDynamicItemAndBlockModel;
 import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.cyclopscore.helper.ModelHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Dynamic model for facade items.
+ * Dynamic facadeModel for facade items.
  * @author rubensworks
  */
-public class FacadeModel extends DelegatingChildDynamicItemAndBlockModel {
+public class FacadeModel implements ItemModel {
 
-    private final BakedModel emptyModel;
+    private final ItemModel emptyModel;
+    private final ModelRenderProperties modelrenderproperties;
 
-    public FacadeModel(BakedModel baseModel, BakedModel emptyModel) {
-        super(baseModel);
+    public FacadeModel(ItemModel emptyModel, ModelRenderProperties modelrenderproperties) {
         this.emptyModel = emptyModel;
-    }
-
-    public FacadeModel(BakedModel baseModel, BakedModel emptyModel, BlockState blockState, Direction facing, RandomSource rand, ModelData modelData, RenderType renderType) {
-        super(baseModel, blockState, facing, rand, modelData, renderType);
-        this.emptyModel = emptyModel;
-    }
-
-    public FacadeModel(BakedModel baseModel, BakedModel emptyModel, ItemStack itemStack, Level world, LivingEntity entity) {
-        super(baseModel, itemStack, world, entity);
-        this.emptyModel = emptyModel;
+        this.modelrenderproperties = modelrenderproperties;
     }
 
     @Override
-    public List<BakedQuad> getGeneralQuads() {
-        this.rand.setSeed(0); // To avoid weighted blockstates to change each tick
-        try {
-            return baseModel.getQuads(this.blockState, getRenderingSide(), this.rand);
-        } catch (Exception e) {
-            return emptyModel.getQuads(this.blockState, getRenderingSide(), this.rand);
-        }
-    }
-
-    @Override
-    public BakedModel handleBlockState(@Nullable BlockState blockState, @Nullable Direction direction,
-                                        @Nonnull RandomSource random, @Nonnull ModelData iModelData,
-                                       @Nullable RenderType renderType) {
-        return null;
-    }
-
-    @Override
-    public BakedModel handleItemState(ItemStack itemStack, Level world, LivingEntity entity) {
+    public void update(ItemStackRenderState renderState, ItemStack itemStack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @org.jetbrains.annotations.Nullable ClientLevel level, @org.jetbrains.annotations.Nullable LivingEntity entity, int seed) {
         BlockState blockState = RegistryEntries.ITEM_FACADE.get().getFacadeBlock(itemStack);
         if(blockState == null) {
-            return new FacadeModel(emptyModel, emptyModel, itemStack, world, entity);
+            emptyModel.update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
+        } else {
+            BlockStateModel bakedModel = IModHelpers.get().getRenderHelpers().getBakedModel(blockState);
+            List<BakedQuad> quads = Lists.newArrayList();
+            for (BlockModelPart collectPart : bakedModel.collectParts(level, BlockPos.ZERO, blockState, RandomSource.create(seed))) {
+                for (Direction direction : Direction.values()) {
+                    quads.addAll(collectPart.getQuads(direction));
+                }
+            }
+            new BlockModelWrapper(List.of(new Constant(-1)), quads, this.modelrenderproperties).update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
         }
-        BakedModel bakedModel = IModHelpers.get().getRenderHelpers().getBakedModel(blockState);
-        return new FacadeModel(bakedModel, emptyModel, itemStack, world, entity);
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleIcon() {
-        return IModHelpers.get().getRenderHelpers().getBakedModel(Blocks.STONE.defaultBlockState()).getParticleIcon();
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return true; // If false, RenderHelper.setupGuiFlatDiffuseLighting() is called
-    }
-
-    @Override
-    public ItemTransforms getTransforms() {
-        return ModelHelpers.DEFAULT_CAMERA_TRANSFORMS;
     }
 }

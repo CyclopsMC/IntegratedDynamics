@@ -2,14 +2,12 @@ package org.cyclops.integrateddynamics.core.blockentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockEntityConfigCommon;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.client.render.blockentity.RenderCable;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityMultipartTickingConfigClient;
 
 /**
  * Config for the {@link BlockEntityMultipartTicking}.
@@ -36,13 +34,8 @@ public class BlockEntityMultipartTickingConfig extends BlockEntityConfigCommon<B
     public void onRegistered() {
         super.onRegistered();
         if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
-            registerClientSide();
+            new BlockEntityMultipartTickingConfigClient().onRegistered(this);
         }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void registerClientSide() {
-        IntegratedDynamics._instance.getProxy().registerRenderer(getInstance(), RenderCable::new);
     }
 
 }

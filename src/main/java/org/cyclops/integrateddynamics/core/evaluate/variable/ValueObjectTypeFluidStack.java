@@ -2,18 +2,16 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
@@ -46,19 +44,13 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueFluidStack value) {
-        return FluidStack.OPTIONAL_CODEC.encodeStart(valueDeseralizationContext.holderLookupProvider().createSerializationContext(NbtOps.INSTANCE), value.getRawValue()).getOrThrow();
+    public void serialize(ValueOutput valueOutput, ValueFluidStack value) {
+        valueOutput.store("v", FluidStack.OPTIONAL_CODEC, value.getRawValue());
     }
 
     @Override
-    public ValueFluidStack deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value instanceof CompoundTag) {
-            FluidStack fluidStack = FluidStack.OPTIONAL_CODEC.decode(valueDeseralizationContext.holderLookupProvider().createSerializationContext(NbtOps.INSTANCE), value)
-                    .getOrThrow().getFirst();
-            return ValueFluidStack.of(fluidStack);
-        } else {
-            return null;
-        }
+    public ValueFluidStack deserialize(ValueInput valueInput) {
+        return ValueFluidStack.of(valueInput.read("v", FluidStack.OPTIONAL_CODEC).orElse(FluidStack.EMPTY));
     }
 
     @Override

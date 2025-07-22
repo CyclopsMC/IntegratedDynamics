@@ -1,14 +1,12 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Iterables;
-import lombok.Data;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -29,21 +27,40 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.OperatorLPElementClient;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.RenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Element for operator.
  *
  * @author rubensworks
  */
-@Data
-public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
+public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase, OperatorLPElementClient<?>> {
 
     private final IOperator operator;
     private IVariableFacade[] inputVariables;
     private boolean focused = false;
+
+    private OperatorLPElementClient<?> client;
+
+    public OperatorLPElement(IOperator operator) {
+        this.operator = operator;
+        if (IModHelpers.get().getMinecraftHelpers().isClientSide()) {
+            this.client = constructClient();
+        }
+    }
+
+    private OperatorLPElementClient<?> constructClient() {
+        return new OperatorLPElementClient<>(this);
+    }
+
+    @Override
+    public OperatorLPElementClient<?> getClient() {
+        return client;
+    }
 
     @Override
     public ILogicProgrammerElementType getType() {
@@ -58,7 +75,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     @Override
     public boolean matchesInput(IValueType valueType) {
         for (IValueType operatorIn : getOperator().getInputTypes()) {
-            if(ValueHelpers.correspondsTo(operatorIn, valueType)) {
+            if (ValueHelpers.correspondsTo(operatorIn, valueType)) {
                 return true;
             }
         }
@@ -76,8 +93,8 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public void loadTooltip(List<Component> lines) {
-        getOperator().loadTooltip(lines, true);
+    public void loadTooltip(Consumer<Component> tooltipAdder) {
+        getOperator().loadTooltip(tooltipAdder, true);
     }
 
     @Override
@@ -134,11 +151,6 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
                 this.inputVariables[i] = new ValueTypeVariableFacade(variableIds[i], valueType, valueType.getDefault());
             }
         }
-    }
-
-    @Override
-    public void setValueInGui(RenderPattern subGui) {
-        setValueInContainer((ContainerLogicProgrammerBase) subGui.container);
     }
 
     @Override
@@ -206,21 +218,55 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
         return 1;
     }
 
-    @Override
-    public boolean isFocused(RenderPattern subGui) {
+    public IOperator getOperator() {
+        return this.operator;
+    }
+
+    public IVariableFacade[] getInputVariables() {
+        return this.inputVariables;
+    }
+
+    public void setInputVariables(IVariableFacade[] inputVariables) {
+        this.inputVariables = inputVariables;
+    }
+
+    public boolean isFocused() {
         return focused;
     }
 
-    @Override
-    public void setFocused(RenderPattern subGui, boolean focused) {
+    public void setFocused(boolean focused) {
         this.focused = focused;
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public RenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                      ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-        return new OperatorLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof OperatorLPElement)) return false;
+        final OperatorLPElement other = (OperatorLPElement) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$operator = this.getOperator();
+        final Object other$operator = other.getOperator();
+        if (this$operator == null ? other$operator != null : !this$operator.equals(other$operator)) return false;
+        if (!java.util.Arrays.deepEquals(this.getInputVariables(), other.getInputVariables())) return false;
+        if (this.isFocused() != other.isFocused()) return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof OperatorLPElement;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $operator = this.getOperator();
+        result = result * PRIME + ($operator == null ? 43 : $operator.hashCode());
+        result = result * PRIME + java.util.Arrays.deepHashCode(this.getInputVariables());
+        result = result * PRIME + (this.isFocused() ? 79 : 97);
+        return result;
+    }
+
+    public String toString() {
+        return "OperatorLPElement(operator=" + this.getOperator() + ", inputVariables=" + java.util.Arrays.deepToString(this.getInputVariables()) + ", focused=" + this.isFocused() + ")";
     }
 
     public static class OperatorVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IOperatorVariableFacade> {

@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -25,15 +25,15 @@ public abstract class ValueTypeListProxyPositioned<T extends IValueType<V>, V ex
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
-        NBTClassType.writeNbt(DimPos.class, "pos", pos, tag, holderLookupProvider);
-        NBTClassType.writeNbt(Direction.class, "side", side, tag, holderLookupProvider);
+    public void writeGeneratedFieldsToNBT(ValueOutput output) {
+        NBTClassType.writeNbt(DimPos.class, "pos", pos, output);
+        NBTClassType.writeNbt(Direction.class, "side", side, output);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
-        this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag, holderLookupProvider);
-        this.side = NBTClassType.readNbt(Direction.class, "side", tag, holderLookupProvider);
+    public void readGeneratedFieldsFromNBT(ValueInput input) {
+        this.pos = NBTClassType.readNbt(DimPos.class, "pos", input);
+        this.side = NBTClassType.readNbt(Direction.class, "side", input);
     }
 
     protected DimPos getPos() {

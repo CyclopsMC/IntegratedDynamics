@@ -47,8 +47,8 @@ import java.util.Set;
 public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extends IPartStateReader<P>>
         extends PartTypeAspects<P, S> implements IPartTypeReader<P, S> {
 
-    private List<IAspectRead> aspectsRead = null;
-    private EnumMap<AspectUpdateType, Set<IAspectRead>> updateAspects = null;
+    private List<IAspectRead<?, ?>> aspectsRead = null;
+    private EnumMap<AspectUpdateType, Set<IAspectRead<?, ?>>> updateAspects = null;
 
     public PartTypeReadBase(String name) {
         this(name, new PartRenderPosition(0.1875F, 0.3125F, 0.625F, 0.625F));
@@ -58,7 +58,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
         super(name, partRenderPosition);
     }
 
-    protected Set<IAspectRead> getUpdateAspects(AspectUpdateType updateType) {
+    protected Set<IAspectRead<?, ?>> getUpdateAspects(AspectUpdateType updateType) {
         if (updateAspects == null) {
             updateAspects = new EnumMap<>(AspectUpdateType.class);
             for (AspectUpdateType aspectUpdateType : AspectUpdateType.values()) {
@@ -109,7 +109,7 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    public List<IAspectRead> getReadAspects() {
+    public List<IAspectRead<?, ?>> getReadAspects() {
         if (aspectsRead == null) {
             aspectsRead = Aspects.REGISTRY.getReadAspects(this);
         }

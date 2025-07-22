@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * The default serializer for operators.
@@ -24,12 +23,12 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, IOperator operator) {
-        return StringTag.valueOf(operator.getUniqueName().toString());
+    public void serialize(ValueOutput valueOutput, IOperator operator) {
+        valueOutput.putString("v", operator.getUniqueName().toString());
     }
 
     @Override
-    public IOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        return Operators.REGISTRY.getOperator(ResourceLocation.parse(value.getAsString()));
+    public IOperator deserialize(ValueInput valueInput) {
+        return Operators.REGISTRY.getOperator(ResourceLocation.parse(valueInput.getString("v").orElseThrow()));
     }
 }

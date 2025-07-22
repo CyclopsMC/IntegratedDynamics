@@ -1,32 +1,40 @@
 package org.cyclops.integrateddynamics.client.model;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.resources.model.ResolvedModel;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import org.cyclops.cyclopscore.helper.ModelHelpers;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartRenderPosition;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
- * A dynamic model for cables.
+ * A dynamic facadeModel for cables.
  * @author rubensworks
  */
 public class CableModel extends CableModelBase {
 
-    public CableModel(BlockState state, Direction facing, RandomSource rand, ModelData modelData, RenderType renderType) {
-        super(state, facing, rand, modelData, renderType);
+    public CableModel(BlockAndTintGetter level, BlockState state, Direction facing, RandomSource rand, ModelData modelData, ChunkSectionLayer renderType) {
+        super(level, state, facing, rand, modelData, renderType);
     }
 
     public CableModel(ItemStack itemStack, Level world, LivingEntity entity) {
@@ -69,7 +77,7 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
-    protected BakedModel getPartModel(ModelData modelData, Direction side) {
+    protected BlockStateModel getPartModel(ModelData modelData, Direction side) {
         IPartContainer partContainer = ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null);
         BlockState blockState = partContainer != null && partContainer.hasPart(side) ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
         Minecraft mc = Minecraft.getInstance();
@@ -84,12 +92,27 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
-    public BakedModel handleBlockState(BlockState state, Direction side, RandomSource rand, ModelData modelData, RenderType renderType) {
-        return new CableModel(state, side, rand, modelData, renderType);
+    public List<BakedQuad> handleBlockState(BlockAndTintGetter level, BlockPos pos, BlockState state, Direction side, RandomSource rand, ModelData extraData, ChunkSectionLayer renderType) {
+        return new CableModel(level, state, side, rand, extraData, renderType).getGeneralQuads();
     }
 
     @Override
-    public BakedModel handleItemState(ItemStack stack, Level world, LivingEntity entity) {
-        return new CableModel(stack, world, entity);
+    public List<BakedQuad> handleItemState(@Nullable ItemStack stack, @Nullable Level world, @Nullable LivingEntity entity) {
+        return new CableModel(stack, world, entity).getGeneralQuads();
+    }
+
+    @Override
+    public UnbakedModel wrapped() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @Nullable ResolvedModel parent() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String debugName() {
+        return Reference.MOD_ID + ":CableModel";
     }
 }

@@ -8,7 +8,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Base class for parse operators.
@@ -46,11 +46,11 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   }
 
   @Override
-  public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
-    lines.add(Component.translatable("operator.integrateddynamics.parse.tooltip",
+  public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo) {
+    tooltipAdder.accept(Component.translatable("operator.integrateddynamics.parse.tooltip",
             Component.translatable(to.getTranslationKey()))
     );
-    super.loadTooltip(lines, appendOptionalInfo);
+    super.loadTooltip(tooltipAdder, appendOptionalInfo);
   }
 
 }

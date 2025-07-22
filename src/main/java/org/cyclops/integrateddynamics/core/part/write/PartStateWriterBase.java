@@ -1,12 +1,13 @@
 package org.cyclops.integrateddynamics.core.part.write;
 
 import com.google.common.collect.Maps;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -30,7 +31,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
         extends PartStateActiveVariableBase<P> implements IPartStateWriter<P> {
 
     private IAspectWrite activeAspect = null;
-    private Map<String, List<MutableComponent>> errorMessages = Maps.newHashMap();
+    private Map<String, List<Component>> errorMessages = Maps.newHashMap();
     private boolean firstTick = true;
 
     public PartStateWriterBase(int inventorySize) {
@@ -38,20 +39,22 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        if (this.activeAspect != null) tag.putString("activeAspectName", this.activeAspect.getUniqueName().toString());
-        NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, tag, valueDeseralizationContext.holderLookupProvider());
-        super.writeToNBT(valueDeseralizationContext, tag);
+    public void serialize(ValueOutput valueOutput) {
+        if (this.activeAspect != null) valueOutput.putString("activeAspectName", this.activeAspect.getUniqueName().toString());
+        NBTClassType.getType(Map.class, this.errorMessages).writePersistedField("errorMessages", this.errorMessages, valueOutput);
+        super.serialize(valueOutput);
     }
 
     @Override
-    public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        IAspect aspect = Aspects.REGISTRY.getAspect(ResourceLocation.parse(tag.getString("activeAspectName")));
-        if (aspect instanceof IAspectWrite) {
-            this.activeAspect = (IAspectWrite) aspect;
-        }
-        this.errorMessages = (Map<String, List<MutableComponent>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", tag, valueDeseralizationContext.holderLookupProvider());
-        super.readFromNBT(valueDeseralizationContext, tag);
+    public void deserialize(ValueInput valueInput) {
+        valueInput.getString("activeAspectName").ifPresent(activeAspect -> {
+            IAspect aspect = Aspects.REGISTRY.getAspect(ResourceLocation.parse(activeAspect));
+            if (aspect instanceof IAspectWrite) {
+                this.activeAspect = (IAspectWrite) aspect;
+            }
+        });
+        this.errorMessages = (Map<String, List<Component>>) NBTClassType.getType(Map.class, this.errorMessages).readPersistedField("errorMessages", valueInput);
+        super.deserialize(valueInput);
     }
 
     @Override
@@ -108,8 +111,8 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     }
 
     @Override
-    public List<MutableComponent> getErrors(IAspectWrite aspect) {
-        List<MutableComponent> errors = errorMessages.get(aspect.getUniqueName().toString());
+    public List<Component> getErrors(IAspectWrite aspect) {
+        List<Component> errors = errorMessages.get(aspect.getUniqueName().toString());
         if(errors == null) {
             return Collections.emptyList();
         }

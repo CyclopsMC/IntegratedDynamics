@@ -9,8 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterItemModelsEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemClientConfig;
@@ -30,12 +28,10 @@ public class ItemFacadeConfigClient extends ItemClientConfig<IntegratedDynamics>
         itemConfig.getMod().getModEventBus().addListener((RegisterItemModelsEvent event) -> event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "facade"), ItemModelFacade.Unbaked.MAP_CODEC));
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void onRegisterColors(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(getItemConfig().getResourceKey().location(), Color.MAP_CODEC);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Color implements ItemTintSource {
         public static final MapCodec<Color> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.point(new Color()));
 

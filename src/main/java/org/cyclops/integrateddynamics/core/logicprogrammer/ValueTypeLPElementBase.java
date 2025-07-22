@@ -8,8 +8,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -27,38 +25,50 @@ import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicP
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.ValueTypeLPElementBaseClient;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Element for value type.
  * @author rubensworks
  */
-public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgrammerElement<ISubGuiBox, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
+public abstract class ValueTypeLPElementBase<C extends ValueTypeLPElementBaseClient<?>> implements IValueTypeLogicProgrammerElement<ISubGuiBox, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase, C> {
 
     @Getter
     private final IValueType<?> valueType;
+    private C client;
 
     public ValueTypeLPElementBase(IValueType<?> valueType) {
         this.valueType = valueType;
+        if (IModHelpers.get().getMinecraftHelpers().isClientSide()) {
+            this.client = constructClient();
+        }
     }
+
+    @Override
+    public C getClient() {
+        return this.client;
+    }
+
+    public abstract C constructClient();
 
     @Nullable
     @Override
-    public <G2 extends Screen, C2 extends AbstractContainerMenu> IGuiInputElementValueType<?, G2, C2> createInnerGuiElement() {
+    public <G2 extends Screen, C2 extends AbstractContainerMenu> IGuiInputElementValueType<?, G2, C2, ?> createInnerGuiElement() {
         return null;
     }
 
     @Nullable
-    public IGuiInputElementValueType<?, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> getInnerGuiElement() {
+    public IGuiInputElementValueType<?, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase, ?> getInnerGuiElement() {
         return null;
     }
 
     @Override
-    public void loadTooltip(List<Component> lines) {
-        getValueType().loadTooltip(lines, true, null);
+    public void loadTooltip(Consumer<Component> tooltipAdder) {
+        getValueType().loadTooltip(tooltipAdder, true, null);
     }
 
     @Override
@@ -167,39 +177,9 @@ public abstract class ValueTypeLPElementBase implements IValueTypeLogicProgramme
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public boolean isFocused(ISubGuiBox subGui) {
-        if (subGui instanceof ValueTypeStringLPElementRenderPattern) {
-            return ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().isFocused();
-        }
-        return false;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void setFocused(ISubGuiBox subGui, boolean focused) {
-        if (subGui instanceof ValueTypeStringLPElementRenderPattern) {
-            ((ValueTypeStringLPElementRenderPattern) subGui).getTextField().setFocused(focused);
-        }
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public abstract ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                            ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container);
-
-    @Override
     public void setValue(IValue value) {
         if (getInnerGuiElement() != null) {
             getInnerGuiElement().setValue(value);
-        }
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void setValueInGui(ISubGuiBox subGui) {
-        if (getInnerGuiElement() != null) {
-            ((IGuiInputElementValueType) getInnerGuiElement()).setValueInGui(subGui, true);
         }
     }
 

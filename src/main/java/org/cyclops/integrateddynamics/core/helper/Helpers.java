@@ -8,6 +8,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,6 +45,8 @@ import java.util.stream.Stream;
 public final class Helpers {
 
     public static final Predicate<Entity> SELECTOR_IS_PLAYER = entity -> entity instanceof Player;
+
+    public static final TagParser<Tag> TAG_PARSER = TagParser.create(NbtOps.INSTANCE);
 
     /**
      * Get the fluidstack from the given itemstack.

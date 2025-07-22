@@ -1,15 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeIngredientsLPElement;
@@ -56,21 +55,13 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueIngredients value) {
-        if(!value.getRawValue().isPresent()) return new CompoundTag();
-        return IMixedIngredients.serialize(valueDeseralizationContext.holderLookupProvider(), value.getRawValue().get());
+    public void serialize(ValueOutput valueOutput, ValueIngredients value) {
+        value.getRawValue().ifPresent(v -> IMixedIngredients.serialize(valueOutput.child("v"), v));
     }
 
     @Override
-    public ValueIngredients deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
-            return ValueIngredients.of(null);
-        }
-        try {
-            return ValueIngredients.of(IMixedIngredients.deserialize(valueDeseralizationContext.holderLookupProvider(), (CompoundTag) value));
-        } catch (IllegalArgumentException e) {
-            return ValueIngredients.of(null);
-        }
+    public ValueIngredients deserialize(ValueInput valueInput) {
+        return ValueIngredients.of(valueInput.child("v").map(IMixedIngredients::deserialize).orElse(null));
     }
 
     @Override

@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 public class CustomModelException extends RuntimeException {
 
     public CustomModelException(ResourceLocation modelLocation) {
-        super(String.format("The model %s could not be loaded.", modelLocation));
+        super(String.format("The facadeModel %s could not be loaded.", modelLocation));
     }
 
 }

@@ -2,13 +2,12 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeBooleanLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -34,17 +33,13 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueBoolean value) {
-        return ByteTag.valueOf(value.getRawValue() ? (byte) 1 : (byte) 0);
+    public void serialize(ValueOutput valueOutput, ValueBoolean value) {
+        valueOutput.putBoolean("v", value.getRawValue());
     }
 
     @Override
-    public ValueBoolean deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value.getId() == Tag.TAG_BYTE) {
-            return ValueBoolean.of(((ByteTag) value).getAsByte() == 1);
-        } else {
-            throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a boolean.", value));
-        }
+    public ValueBoolean deserialize(ValueInput valueInput) {
+        return ValueBoolean.of(valueInput.getBooleanOr("v", false));
     }
 
     @Override

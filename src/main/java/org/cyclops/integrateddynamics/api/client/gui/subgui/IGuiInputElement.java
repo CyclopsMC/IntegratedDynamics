@@ -3,11 +3,9 @@ package org.cyclops.integrateddynamics.api.client.gui.subgui;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * An element inside the logic programmer.
@@ -16,7 +14,9 @@ import java.util.List;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface IGuiInputElement<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu> {
+public interface IGuiInputElement<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu, GIC extends IGuiInputElementClient<S, G, C>> {
+
+    public GIC getClient();
 
     /**
      * @return Name used for rendering.
@@ -24,9 +24,9 @@ public interface IGuiInputElement<S extends ISubGuiBox, G extends Screen, C exte
     public Component getName();
 
     /**
-     * @param lines The list to add tooltip lines to.
+     * @param tooltipAdder The list to add tooltip lines to.
      */
-    public void loadTooltip(List<Component> lines);
+    public void loadTooltip(Consumer<Component> tooltipAdder);
 
     /**
      * @return The render pattern.
@@ -58,18 +58,5 @@ public interface IGuiInputElement<S extends ISubGuiBox, G extends Screen, C exte
      * @return The symbol used to identify this element.
      */
     public String getSymbol();
-
-    /**
-     * @param baseX Base x
-     * @param baseY Base y
-     * @param maxWidth Max width
-     * @param maxHeight Max height
-     * @param gui The parent gui
-     * @param container The parent container
-     * @return A subgui that is shown when activated.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public S createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                                  G gui, C container);
 
 }

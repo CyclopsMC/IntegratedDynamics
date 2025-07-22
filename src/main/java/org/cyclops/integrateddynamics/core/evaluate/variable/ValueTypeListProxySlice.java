@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * A sliced list.
@@ -49,16 +49,16 @@ public class ValueTypeListProxySlice<T extends IValueType<V>, V extends IValue> 
         }
 
         @Override
-        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxySlice<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.list));
-            tag.putInt("from", value.from);
-            tag.putInt("to", value.to);
+        protected void serializeNbt(ValueOutput valueOutput, ValueTypeListProxySlice<IValueType<IValue>, IValue> value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            ValueTypeListProxyFactories.REGISTRY.serialize(valueOutput.child("sublist"), value.list);
+            valueOutput.putInt("from", value.from);
+            valueOutput.putInt("to", value.to);
         }
 
         @Override
-        protected ValueTypeListProxySlice<IValueType<IValue>, IValue> deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, tag.get("sublist"));
-            return new ValueTypeListProxySlice<>(list, tag.getInt("from"), tag.getInt("to"));
+        protected ValueTypeListProxySlice<IValueType<IValue>, IValue> deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput.child("sublist").orElseThrow());
+            return new ValueTypeListProxySlice<>(list, valueInput.getInt("from").orElseThrow(), valueInput.getInt("to").orElseThrow());
         }
     }
 }

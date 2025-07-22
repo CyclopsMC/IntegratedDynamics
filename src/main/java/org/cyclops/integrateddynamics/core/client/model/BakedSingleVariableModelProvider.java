@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import lombok.Data;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.item.ItemModel;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 /**
- * A baked model provider that maps keys to baked models.
+ * A baked facadeModel provider that maps keys to baked models.
  * @author rubensworks
  */
 @Data
 public class BakedSingleVariableModelProvider implements IVariableModelProvider.BakedModelProvider {
-    private final BakedModel bakedModel;
+    private final ItemModel bakedModel;
 }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.helper;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -9,12 +9,12 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 
-import java.util.List;
 import java.util.Set;
 
 /**
  * @author rubensworks
  */
+@Slf4j
 public class NbtHelpers {
 
     /**
@@ -25,7 +25,7 @@ public class NbtHelpers {
      * @return If tag a is a subset (or equal) of tag b.
      */
     public static boolean nbtMatchesSubset(CompoundTag a, CompoundTag b, boolean recursive) {
-        for (String key : a.getAllKeys()) {
+        for (String key : a.keySet()) {
             Tag valueA = a.get(key);
             if (recursive && (valueA instanceof CompoundTag || valueA instanceof ListTag)) {
                 Tag valueB = b.get(key);
@@ -45,10 +45,10 @@ public class NbtHelpers {
                     ListTag tagA = (ListTag) valueA;
                     ListTag tagB = (ListTag) valueB;
                     for (int i = 0; i < tagA.size(); i++) {
-                        CompoundTag subTagA = tagA.getCompound(i);
+                        CompoundTag subTagA = tagA.getCompound(i).orElseThrow();
                         boolean foundA = false;
                         for (int j = 0; j < tagB.size(); j++) {
-                            CompoundTag subTagB = tagB.getCompound(j);
+                            CompoundTag subTagB = tagB.getCompound(j).orElseThrow();
                             if (nbtMatchesSubset(subTagA, subTagB, recursive)) {
                                 foundA = true;
                                 break;
@@ -93,18 +93,20 @@ public class NbtHelpers {
         if (tags.length == 0) {
             return new CompoundTag();
         }
+        System.out.println(tags[0]);
+        System.out.println(tags[1].toString());
         CompoundTag tag = null;
         for (CompoundTag inputTag : tags) {
             if (tag == null) {
                 tag = inputTag.copy();
             } else {
-                Set<String> keys = Sets.newHashSet(tag.getAllKeys());
+                Set<String> keys = Sets.newHashSet(tag.keySet());
                 for (String key : keys) {
                     int type = tag.get(key).getId();
-                    if (!inputTag.contains(key, type)) {
+                    if (!inputTag.contains(key)) {
                         tag.remove(key);
                     } else if (type == Tag.TAG_COMPOUND) {
-                        tag.put(key, intersection(tag.getCompound(key), inputTag.getCompound(key)));
+                        tag.put(key, intersection(tag.getCompound(key).orElseThrow(), inputTag.getCompound(key).orElseThrow()));
                     }
                 }
             }
@@ -121,11 +123,11 @@ public class NbtHelpers {
      */
     public static CompoundTag minus(CompoundTag a, CompoundTag b) {
         CompoundTag tag = a.copy();
-        for (String key : b.getAllKeys()) {
+        for (String key : b.keySet()) {
             int type = b.get(key).getId();
-            if (tag.contains(key, type)) {
+            if (tag.contains(key)) {
                 if (type == Tag.TAG_COMPOUND) {
-                    CompoundTag difference = minus(tag.getCompound(key), b.getCompound(key));
+                    CompoundTag difference = minus(tag.getCompound(key).orElseThrow(), b.getCompound(key).orElseThrow());
                     if (difference.isEmpty()) {
                         tag.remove(key);
                     } else {
@@ -170,7 +172,13 @@ public class NbtHelpers {
      * @return An NBT byte array.
      */
     public static ByteArrayTag getListNbtByte(ValueTypeList.ValueList<?, ?> value, Component operatorName) {
-        List<Byte> list = Lists.newLinkedList();
+        byte[] array = null;
+        try {
+            array = new byte[value.getRawValue().getLength()];
+        } catch (EvaluationException error) {
+            Helpers.sneakyThrow(error);
+        }
+        int index = 0;
         for (IValue valueNbt : value.getRawValue()) {
             if (valueNbt.getType() != ValueTypes.INTEGER) {
                 MutableComponent error = Component.translatable(
@@ -181,9 +189,9 @@ public class NbtHelpers {
                         Component.translatable(ValueTypes.INTEGER.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
-            list.add((byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue());
+            array[index++] = (byte) ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue();
         }
-        return new ByteArrayTag(list);
+        return new ByteArrayTag(array);
     }
 
     /**
@@ -193,7 +201,13 @@ public class NbtHelpers {
      * @return An NBT int array.
      */
     public static IntArrayTag getListNbtInt(ValueTypeList.ValueList<?, ?> value, Component operatorName) {
-        List<Integer> list = Lists.newLinkedList();
+        int[] array = null;
+        try {
+            array = new int[value.getRawValue().getLength()];
+        } catch (EvaluationException error) {
+            Helpers.sneakyThrow(error);
+        }
+        int index = 0;
         for (IValue valueNbt : value.getRawValue()) {
             if (valueNbt.getType() != ValueTypes.INTEGER) {
                 MutableComponent error = Component.translatable(
@@ -204,9 +218,9 @@ public class NbtHelpers {
                         Component.translatable(ValueTypes.INTEGER.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
-            list.add(((ValueTypeInteger.ValueInteger) valueNbt).getRawValue());
+            array[index++] = ((ValueTypeInteger.ValueInteger) valueNbt).getRawValue();
         }
-        return new IntArrayTag(list);
+        return new IntArrayTag(array);
     }
 
     /**
@@ -216,7 +230,13 @@ public class NbtHelpers {
      * @return An NBT long list.
      */
     public static LongArrayTag getListNbtLong(ValueTypeList.ValueList<?, ?> value, Component operatorName) {
-        List<Long> list = Lists.newLinkedList();
+        long[] array = null;
+        try {
+            array = new long[value.getRawValue().getLength()];
+        } catch (EvaluationException error) {
+            Helpers.sneakyThrow(error);
+        }
+        int index = 0;
         for (IValue valueNbt : value.getRawValue()) {
             if (valueNbt.getType() != ValueTypes.LONG) {
                 MutableComponent error = Component.translatable(
@@ -227,9 +247,9 @@ public class NbtHelpers {
                         Component.translatable(ValueTypes.LONG.getTranslationKey()));
                 Helpers.sneakyThrow(new EvaluationException(error));
             }
-            list.add(((ValueTypeLong.ValueLong) valueNbt).getRawValue());
+            array[index++] = ((ValueTypeLong.ValueLong) valueNbt).getRawValue();
         }
-        return new LongArrayTag(list);
+        return new LongArrayTag(array);
     }
 
 }

@@ -23,4 +23,9 @@ public interface ISidedPathElement extends Comparable<ISidedPathElement> {
     @Nullable
     public Direction getSide();
 
+    /**
+     * @return Parameters for (de)serializing the path element.
+     */
+    public SidedPathElementParams getParams();
+
 }

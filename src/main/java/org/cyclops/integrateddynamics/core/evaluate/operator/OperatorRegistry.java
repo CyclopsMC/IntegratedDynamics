@@ -1,16 +1,20 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
+import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -26,15 +30,13 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.item.TagPathElement;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
+import org.slf4j.Logger;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Registry for {@link IOperator}
@@ -42,6 +44,7 @@ import java.util.Optional;
  */
 public class OperatorRegistry implements IOperatorRegistry {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static OperatorRegistry INSTANCE = new OperatorRegistry();
     private static final IOperatorVariableFacade INVALID_FACADE = new OperatorVariableFacade(false, null, null);
 
@@ -131,31 +134,27 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, IOperator value) {
+    public void serialize(ValueOutput valueOutput, IOperator value) {
         for (IOperatorSerializer serializer : serializers) {
             if (serializer.canHandle(value)) {
-                CompoundTag tag = new CompoundTag();
-                tag.putString("serializer", serializer.getUniqueName().toString());
-                tag.put("value", serializer.serialize(valueDeseralizationContext, value));
-                return tag;
+                valueOutput.putString("serializer", serializer.getUniqueName().toString());
+                serializer.serialize(valueOutput.child("value"), value);
+                return;
             }
         }
-        return DEFAULT_SERIALIZER.serialize(valueDeseralizationContext, value);
+        DEFAULT_SERIALIZER.serialize(valueOutput, value);
     }
 
     @Override
-    public IOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException {
-        if (value.getId() == Tag.TAG_COMPOUND) {
-            CompoundTag tag = (CompoundTag) value;
-            String serializerName = tag.getString("serializer");
-            IOperatorSerializer serializer = namedSerializers.get(serializerName);
-            if (serializer == null) {
-                throw new EvaluationException(
-                        Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, value.toString()));
-            }
-            return serializer.deserialize(valueDeseralizationContext, tag.get("value"));
+    public IOperator deserialize(ValueInput valueInput) throws EvaluationException {
+        IOperatorSerializer serializer = valueInput.getString("serializer")
+                .map(namedSerializers::get)
+                .orElse(DEFAULT_SERIALIZER);
+        if (serializer == null) { // Can be null if namedSerializers does not contain the serializer
+            throw new EvaluationException(
+                    Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, valueInput.toString()));
         }
-        return DEFAULT_SERIALIZER.deserialize(valueDeseralizationContext, value);
+        return serializer.deserialize(valueInput);
     }
 
     @Override
@@ -165,27 +164,46 @@ public class OperatorRegistry implements IOperatorRegistry {
 
     @Override
     public IOperatorVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
-        if(!tag.contains("operatorName", Tag.TAG_STRING)
-                || !(tag.contains("variableIds", Tag.TAG_INT_ARRAY) || tag.contains("variableIds", Tag.TAG_BYTE_ARRAY))) {
+        if(!tag.contains("operator") || !(tag.contains("variableIds") || tag.contains("variableIds"))) {
             return INVALID_FACADE;
         }
-        IOperator operator;
-        try {
-            operator = deserialize(valueDeseralizationContext, tag.get("operatorName"));
-        } catch (EvaluationException e) {
+        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(new TagPathElement(tag), LOGGER)) {
+            ValueInput input = TagValueInput.create(
+                    scopedCollector,
+                    valueDeseralizationContext.holderLookupProvider(),
+                    tag
+            );
+            IOperator operator;
+            try {
+                operator = deserialize(input.child("operator").orElseThrow());
+            } catch (EvaluationException e) {
+                return INVALID_FACADE;
+            }
+            if(operator == null) {
+                return INVALID_FACADE;
+            }
+            int[] variableIds = input.list("variableIds", Codec.INT).orElseThrow()
+                    .stream()
+                    .mapToInt(i -> i)
+                    .toArray();
+            return new OperatorVariableFacade(id, operator, variableIds);
+        } catch (IllegalArgumentException | NoSuchElementException e) {
             return INVALID_FACADE;
         }
-        if(operator == null) {
-            return INVALID_FACADE;
-        }
-        int[] variableIds = tag.getIntArray("variableIds");
-        return new OperatorVariableFacade(id, operator, variableIds);
     }
 
     @Override
     public void setVariableFacade(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, IOperatorVariableFacade variableFacade) {
-        tag.put("operatorName", serialize(valueDeseralizationContext, variableFacade.getOperator()));
-        tag.putIntArray("variableIds", variableFacade.getVariableIds());
+        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(new TagPathElement(tag), LOGGER)) {
+            TagValueOutput valueOutput = TagValueOutput.createWithContext(scopedCollector, valueDeseralizationContext.holderLookupProvider());
+            serialize(valueOutput, variableFacade.getOperator());
+            tag.put("operator", valueOutput.buildResult());
+        }
+        ListTag variableIds = new ListTag();
+        for (int variableId : variableFacade.getVariableIds()) {
+            variableIds.add(IntTag.valueOf(variableId));
+        }
+        tag.put("variableIds", variableIds);
     }
 
     @Override

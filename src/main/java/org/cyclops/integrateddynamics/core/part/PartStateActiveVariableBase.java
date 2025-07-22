@@ -3,10 +3,12 @@ package org.cyclops.integrateddynamics.core.part;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -42,7 +44,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     @Setter
     private boolean deactivated = false;
     private SimpleInventory inventory;
-    private List<MutableComponent> globalErrorMessages = Lists.newLinkedList();
+    private List<Component> globalErrorMessages = Lists.newLinkedList();
     @Getter
     @Setter
     private boolean retryEvaluation = false;
@@ -131,7 +133,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     /**
      * @return All global error messages.
      */
-    public List<MutableComponent> getGlobalErrors() {
+    public List<Component> getGlobalErrors() {
         return globalErrorMessages;
     }
 
@@ -139,7 +141,7 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
      * Add a global error message.
      * @param error The message to add.
      */
-    public void addGlobalError(MutableComponent error) {
+    public void addGlobalError(Component error) {
         setRetryEvaluation(false);
         if(error == null) {
             globalErrorMessages.clear();
@@ -151,18 +153,18 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     }
 
     @Override
-    public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        super.writeToNBT(valueDeseralizationContext, tag);
-        NBTClassType.writeNbt(List.class, "globalErrorMessages", globalErrorMessages, tag, valueDeseralizationContext.holderLookupProvider());
-        inventory.writeToNBT(valueDeseralizationContext.holderLookupProvider(), tag, "inventory");
+    public void serialize(ValueOutput valueOutput) {
+        super.serialize(valueOutput);
+        NBTClassType.writeNbt(List.class, "globalErrorMessages", globalErrorMessages, valueOutput);
+        inventory.writeToNBT(valueOutput, "inventory");
     }
 
     @Override
-    public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        super.readFromNBT(valueDeseralizationContext, tag);
+    public void deserialize(ValueInput valueInput) {
+        super.deserialize(valueInput);
         //noinspection unchecked
-        this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", tag, valueDeseralizationContext.holderLookupProvider());
-        inventory.readFromNBT(valueDeseralizationContext.holderLookupProvider(), tag, "inventory");
+        this.globalErrorMessages = NBTClassType.readNbt(List.class, "globalErrorMessages", valueInput);
+        inventory.readFromNBT(valueInput, "inventory");
     }
 
     @Override

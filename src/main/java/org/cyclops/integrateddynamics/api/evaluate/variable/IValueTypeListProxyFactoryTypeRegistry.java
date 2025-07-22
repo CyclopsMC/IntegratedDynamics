@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.init.IRegistry;
 
 /**
@@ -34,27 +35,26 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
     /**
      * Serialize the given list proxy.
      *
-     * @param <T>                        The list element type value type.
-     * @param <V>                        The list element type.
-     * @param <P>                        The proxy type.
-     * @param valueDeseralizationContext
-     * @param proxy                      The proxy to serialize.
-     * @return The serialized string.
+     * @param <T>         The list element type value type.
+     * @param <V>         The list element type.
+     * @param <P>         The proxy type.
+     * @param valueOutput The value to output to.
+     * @param proxy       The proxy to serialize.
      * @throws SerializationException If something goes wrong while serializing.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P proxy) throws SerializationException;
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> void serialize(ValueOutput valueOutput, P proxy) throws SerializationException;
 
     /**
      * Deserialize the given serialized list proxy to a list proxy instance.
-     * @param <T> The list element type value type.
-     * @param <V> The list element type.
-     * @param <P> The proxy type.
-     * @param valueDeseralizationContext
-     * @param value The serialized list proxy.
+     *
+     * @param <T>        The list element type value type.
+     * @param <V>        The list element type.
+     * @param <P>        The proxy type.
+     * @param valueInput The serialized list proxy.
      * @return The deserialized list proxy.
      * @throws SerializationException If something goes wrong while serializing.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws SerializationException;
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(ValueInput valueInput) throws SerializationException;
 
     /**
      * Factory for a list proxy.
@@ -72,22 +72,20 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
         /**
          * Serialize the given value.
          *
-         * @param valueDeseralizationContext
-         * @param value                      The value to serialize.
-         * @return The serialized value.
+         * @param valueOutput Where to serialize to.
+         * @param value       The value to serialize.
          * @throws SerializationException If something goes wrong while serializing.
          */
-        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P value) throws SerializationException;
+        public void serialize(ValueOutput valueOutput, P value) throws SerializationException;
 
         /**
          * Deserialize the given value.
          *
-         * @param valueDeseralizationContext
-         * @param value The value to deserialize.
+         * @param valueInput The value to deserialize.
          * @return The deserialized value.
          * @throws SerializationException If something goes wrong while deserializing.
          */
-        public P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws SerializationException;
+        public P deserialize(ValueInput valueInput) throws SerializationException;
 
     }
 

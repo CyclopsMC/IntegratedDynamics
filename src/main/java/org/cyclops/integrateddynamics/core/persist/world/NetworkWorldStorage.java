@@ -1,28 +1,40 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Sets;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import org.apache.commons.compress.utils.Lists;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.TickHandler;
+import org.cyclops.integrateddynamics.core.network.Network;
+import org.cyclops.integrateddynamics.core.network.NetworkParams;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
  * World NBT storage for all active networks.
  * @author rubensworks
  */
-public class NetworkWorldStorage extends WorldStorage {
+public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
 
     private static NetworkWorldStorage INSTANCE = null;
 
-    @NBTPersist
-    private Set<INetwork> networks = Sets.newHashSet();
+    private List<NetworkParams> networkParams;
+    private Set<Network> networks = Sets.newHashSet();
 
     private NetworkWorldStorage(ModBaseNeoForge mod) {
         super(mod);
+        this.networkParams = Lists.newArrayList();
+    }
+
+    public NetworkWorldStorage(ModBaseNeoForge mod, List<NetworkParams> networkParams) {
+        super(mod);
+        this.networkParams = networkParams;
     }
 
     public static NetworkWorldStorage getInstance(ModBaseNeoForge mod) {
@@ -34,19 +46,26 @@ public class NetworkWorldStorage extends WorldStorage {
 
     @Override
     public void reset() {
-        networks.clear();
+        networkParams.clear();
     }
 
     @Override
-    protected String getDataId() {
-        return "Networks";
+    protected SavedDataType<NetworkWorldStorage> constructSavedDataType() {
+        return new SavedDataType<>(
+                this.mod.getModId() + "_networks",
+                (ctx) -> new NetworkWorldStorage(this.mod),
+                ctx -> RecordCodecBuilder.create(instance -> instance.group(
+                        RecordCodecBuilder.point(ctx.levelOrThrow()),
+                        Codec.list(NetworkParams.CODEC).fieldOf("networks").forGetter(data -> data.networkParams)
+                ).apply(instance, (level, networkParams) -> new NetworkWorldStorage(this.mod, networkParams)))
+        );
     }
 
     /**
      * Add a network that needs persistence.
      * @param network The network.
      */
-    public synchronized void addNewNetwork(INetwork network) {
+    public synchronized void addNewNetwork(Network network) {
         networks.add(network);
     }
 
@@ -55,7 +74,7 @@ public class NetworkWorldStorage extends WorldStorage {
      * This is allowed to be called if the network was already removed.
      * @param network The network.
      */
-    public synchronized void removeInvalidatedNetwork(INetwork network) {
+    public synchronized void removeInvalidatedNetwork(Network network) {
         networks.remove(network);
     }
 
@@ -68,6 +87,14 @@ public class NetworkWorldStorage extends WorldStorage {
 
     @Override
     public void afterLoad() {
+        // Load from params
+        networks.clear();
+        for (NetworkParams networkParam : networkParams) {
+            Network network = new Network();
+            network.fromParams(networkParam);
+            networks.add(network);
+        }
+
         TickHandler.getInstance().ticked = false;
         for(INetwork network : networks) {
             network.afterServerLoad();
@@ -76,8 +103,15 @@ public class NetworkWorldStorage extends WorldStorage {
 
     @Override
     public void beforeSave() {
-        for(INetwork network : networks) {
+        for(Network network : networks) {
             network.beforeServerStop();
+        }
+
+        // Save to params
+        this.networkParams.clear();
+        for(Network network : networks) {
+            // Save to params
+            this.networkParams.add(network.toParams());
         }
     }
 

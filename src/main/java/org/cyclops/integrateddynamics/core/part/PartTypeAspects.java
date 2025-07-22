@@ -10,8 +10,8 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
-import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * An abstract {@link IPartType} that can hold aspects.
@@ -41,10 +41,10 @@ public abstract class PartTypeAspects<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void loadTooltip(ItemStack itemStack, List<Component> lines) {
-        super.loadTooltip(itemStack, lines);
+    public void loadTooltip(ItemStack itemStack, Consumer<Component> tooltipAdder) {
+        super.loadTooltip(itemStack, tooltipAdder);
         if (getAspects().isEmpty()) {
-            lines.add(Component.translatable(L10NValues.PART_TOOLTIP_NOASPECTS)
+            tooltipAdder.accept(Component.translatable(L10NValues.PART_TOOLTIP_NOASPECTS)
                     .withStyle(ChatFormatting.GOLD));
         }
     }

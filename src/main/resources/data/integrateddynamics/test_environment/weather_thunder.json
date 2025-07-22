@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:all_of",
+  "definitions": [
+    {
+      "type": "minecraft:weather",
+      "weather": "thunder"
+    }
+  ]
+}

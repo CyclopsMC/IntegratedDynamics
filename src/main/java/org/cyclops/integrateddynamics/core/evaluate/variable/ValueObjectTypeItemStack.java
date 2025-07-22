@@ -3,16 +3,18 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import lombok.ToString;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.*;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
@@ -59,44 +61,27 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueItemStack value) {
-        CompoundTag tag = new CompoundTag();
-        ItemStack itemStack = value.getRawValue();
-        if(!itemStack.isEmpty()) {
-            tag.putInt("count", itemStack.getCount());
-            int count = itemStack.getCount();
-            if (itemStack.getCount() > 99) {
-                itemStack = itemStack.copy();
-                itemStack.setCount(99);
-            }
-            if (count > 127) {
-                tag.putInt("ExtendedCount", count);
-            }
-            return itemStack.save(valueDeseralizationContext.holderLookupProvider(), tag);
+    public void serialize(ValueOutput valueOutput, ValueItemStack value) {
+        ValueOutput child = valueOutput.child("v");
+        ItemStack itemStack;
+        itemStack = value.getRawValue();
+        int count = itemStack.getCount();
+        if (itemStack.getCount() > 99) {
+            itemStack = itemStack.copy();
+            itemStack.setCount(99);
         }
-        return tag;
+        if (count > 127) {
+            child.putInt("ExtendedCount", count);
+        }
+        child.store("stack", ItemStack.OPTIONAL_CODEC, itemStack);
     }
 
     @Override
-    public ValueItemStack deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value instanceof CompoundTag tag && !tag.isEmpty()) {
-            // Forge returns air for tags with negative count,
-            // so we set it to 1 for deserialization and fix it afterwards.
-            int realCount = tag.getInt("count");
-            // Consider the tag immutable, to avoid changes elsewhere
-            tag = tag.copy();
-            tag.putInt("count", 1);
-            ItemStack itemStack = ItemStack.parseOptional(valueDeseralizationContext.holderLookupProvider(), tag);
-            if (!itemStack.isEmpty()) {
-                itemStack.setCount(realCount);
-            }
-            if (tag.contains("ExtendedCount", Tag.TAG_INT)) {
-                itemStack.setCount(tag.getInt("ExtendedCount"));
-            }
-            return ValueItemStack.of(itemStack);
-        } else {
-            return ValueItemStack.of(ItemStack.EMPTY);
-        }
+    public ValueItemStack deserialize(ValueInput valueInput) {
+        ValueInput child = valueInput.child("v").orElseThrow();
+        ItemStack itemStack = child.read("stack", ItemStack.OPTIONAL_CODEC).orElseThrow();
+        child.getInt("ExtendedCount").ifPresent(itemStack::setCount);
+        return ValueItemStack.of(itemStack);
     }
 
     @Override

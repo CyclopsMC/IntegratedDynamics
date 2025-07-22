@@ -72,7 +72,7 @@ public class ContainerPartOffset extends InventoryContainer {
         this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
-        this.world = player.getCommandSenderWorld();
+        this.world = player.level();
 
         lastXValueId = getNextValueId();
         lastYValueId = getNextValueId();

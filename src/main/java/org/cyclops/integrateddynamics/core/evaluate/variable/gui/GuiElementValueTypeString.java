@@ -2,41 +2,27 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
 import lombok.Data;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
-import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.cyclopscore.helper.StringHelpers;
-import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
-import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
-import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiBox;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * GUI element for value type that can be read from and written to strings.
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeString<G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeStringRenderPattern, G, C> {
+public class GuiElementValueTypeString<G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeStringRenderPattern, G, C, GuiElementValueTypeStringClient<G, C>> {
 
     private final IValueType valueType;
     private Predicate<IValue> validator;
@@ -54,16 +40,6 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
     @Override
     public void setValue(IValue value) {
         setInputString(ValueHelpers.toString(value));
-    }
-
-    @Override
-    public void setValueInGui(GuiElementValueTypeStringRenderPattern subGui, boolean sendToServer) {
-        if(subGui != null) {
-            subGui.getTextField().setValue(inputString);
-            if (sendToServer) {
-                subGui.sendValueToServer();
-            }
-        }
     }
 
     public void setInputString(String inputString) {
@@ -86,13 +62,18 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
     }
 
     @Override
+    public GuiElementValueTypeStringClient<G, C> getClient() {
+        return new GuiElementValueTypeStringClient<>(this);
+    }
+
+    @Override
     public Component getName() {
         return Component.translatable(getValueType().getTranslationKey());
     }
 
     @Override
-    public void loadTooltip(List<Component> lines) {
-        getValueType().loadTooltip(lines, true, null);
+    public void loadTooltip(Consumer<Component> tooltipAdder) {
+        getValueType().loadTooltip(tooltipAdder, true, null);
     }
 
     @Override
@@ -131,86 +112,6 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
     @Override
     public String getSymbol() {
         return IModHelpers.get().getL10NHelpers().localize(getValueType().getTranslationKey());
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public GuiElementValueTypeStringRenderPattern<?, G, C> createSubGui(int baseX, int baseY,
-                                                                        int maxWidth, int maxHeight, G gui, C container) {
-        return new GuiElementValueTypeStringRenderPattern<>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public abstract static class SubGuiValueTypeInfo<S extends ISubGuiBox, G extends ContainerScreenExtended<?>, C extends AbstractContainerMenu> extends SubGuiBox.Base {
-
-        private final IGuiInputElement element;
-        protected final G gui;
-        protected final C container;
-
-        public SubGuiValueTypeInfo(G gui, C container, IGuiInputElement<S, G, C> element, int x, int y, int width, int height) {
-            super(Box.DARK, x, y, width, height);
-            this.gui = gui;
-            this.container = container;
-            this.element = element;
-        }
-
-        protected abstract boolean showError();
-        protected abstract Component getLastError();
-        protected abstract ResourceLocation getTexture();
-
-        protected int getSignalX() {
-            return getWidth() - 22;
-        }
-
-        protected int getSignalY() {
-            return (getHeight() - 12) / 2;
-        }
-
-        @Override
-        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
-            super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-
-            int x = guiLeft + getX();
-            int y = guiTop + getY();
-
-            if (this.shouldRenderElementName()) {
-                guiGraphics.drawString(fontRenderer, element.getName(), x + 2, y + 6, IModHelpers.get().getBaseHelpers().RGBToInt(240, 240, 240), true);
-            }
-
-            if(showError()) {
-                Component lastError = getLastError();
-                if (lastError != null) {
-                    Images.ERROR.draw(guiGraphics, x + getSignalX(), y + getSignalY() - 1);
-                } else {
-                    Images.OK.draw(guiGraphics, x + getSignalX(), y + getSignalY() + 1);
-                }
-            }
-        }
-
-        public boolean shouldRenderElementName() {
-            return true;
-        }
-
-        @Override
-        public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
-            super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
-
-            int x = getX();
-            int y = getY();
-
-            if(showError()) {
-                Component lastError = getLastError();
-                if (lastError != null && gui.isHovering(x + getSignalX(), y + getSignalY() - 1, Images.ERROR.getSheetWidth(), Images.ERROR.getSheetHeight(), mouseX, mouseY)) {
-                    List<Component> lines = StringHelpers.splitLines(lastError.getString(), IModHelpers.get().getL10NHelpers().getMaxTooltipLineLength(),
-                            ChatFormatting.RED.toString())
-                            .stream()
-                            .map(Component::literal)
-                            .collect(Collectors.toList());
-                    gui.drawTooltip(lines, guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
-                }
-            }
-        }
-
     }
 
 }

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEventBus;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 
@@ -12,7 +11,7 @@ import java.util.Set;
  * Note that this network only contains references to the relevant data, it does not contain the actual information.
  * @author rubensworks
  */
-public interface INetwork extends IFullNetworkListener, INBTSerializable {
+public interface INetwork extends IFullNetworkListener {
 
     /**
      * @return If this network and its elements have been fully initialized.

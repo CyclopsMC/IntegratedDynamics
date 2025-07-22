@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -31,10 +34,7 @@ import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Helpers related to cables.
@@ -352,6 +352,12 @@ public class CableHelpers {
         }
     }
 
+    private static final Map<Pair<ResourceKey<Level>, BlockPos>, Collection<Direction>> CABLE_REMOVING_CONNECTIONS = Maps.newConcurrentMap();
+
+    public static void overrideCableRemovingConnections(Level level, BlockPos pos, Collection<Direction> sides) {
+        CABLE_REMOVING_CONNECTIONS.put(Pair.of(level.dimension(), pos), sides);
+    }
+
     /**
      * This should be called when a cable is being removed, while the part entity is still present.
      * This method won't do anything when called client-side.
@@ -362,6 +368,7 @@ public class CableHelpers {
      * @return If the cable was removed from the network.
      */
     public static boolean onCableRemoving(Level world, BlockPos pos, boolean dropMainElement, boolean saveState, BlockState blockState) {
+        CABLE_REMOVING_CONNECTIONS.put(Pair.of(world.dimension(), pos), CableHelpers.getExternallyConnectedCables(world, pos));
         if (!world.isClientSide() && CableHelpers.isNoFakeCable(world, pos, null)) {
             INetworkCarrier networkCarrier = NetworkHelpers.getNetworkCarrier(world, pos, null, blockState).orElse(null);
 
@@ -394,10 +401,13 @@ public class CableHelpers {
      * This method won't do anything when called client-side.
      * @param world The world.
      * @param pos The position.
-     * @param sides The sides to update connections for.
      * @return If the cable was removed from the network.
      */
-    public static boolean onCableRemoved(Level world, BlockPos pos, Collection<Direction> sides) {
+    public static boolean onCableRemoved(Level world, BlockPos pos) {
+        Collection<Direction> sides = CABLE_REMOVING_CONNECTIONS.remove(Pair.of(world.dimension(), pos));
+        if (sides == null) {
+            sides = Collections.emptyList();
+        }
         updateConnectionsNeighbours(world, pos, sides);
         if (!world.isClientSide()) {
             // Reinit neighbouring networks.
@@ -442,7 +452,6 @@ public class CableHelpers {
             return;
         }
 
-        Collection<Direction> connectedCables = getCableConnections(cable);
         CableHelpers.onCableRemoving(world, pos, false, false, blockState);
         // If the cable has no parts or is not fakeable, remove the block,
         // otherwise mark the cable as being fake.
@@ -456,7 +465,7 @@ public class CableHelpers {
         } else if (!player.isCreative()) {
             IModHelpers.get().getItemStackHelpers().spawnItemStackToPlayer(world, pos, cable.getItemStack(), player);
         }
-        CableHelpers.onCableRemoved(world, pos, connectedCables);
+        CableHelpers.onCableRemoved(world, pos);
 
         ItemBlockCable.playBreakSound(world, pos, blockState);
 

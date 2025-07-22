@@ -28,8 +28,8 @@ import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Base class for aspects.
@@ -64,14 +64,14 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     protected abstract String getUnlocalizedType();
 
     @Override
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo) {
         Component aspectName = Component.translatable(getTranslationKey());
         Component valueTypeName = Component.translatable(getValueType().getTranslationKey());
-        lines.add(Component.translatable(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
-        lines.add(Component.translatable(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
+        tooltipAdder.accept(Component.translatable(L10NValues.ASPECT_TOOLTIP_ASPECTNAME, aspectName));
+        tooltipAdder.accept(Component.translatable(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
                 .withStyle(getValueType().getDisplayColorFormat()));
         if(appendOptionalInfo) {
-            IModHelpers.get().getL10NHelpers().addOptionalInfo(lines, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix());
         }
     }
 

@@ -4,9 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -178,28 +177,28 @@ public class PartHelpers {
 
     /**
      * Write the given part type to nbt.
-     * @param partTag The tag to write to.
+     * @param valueOutput The output to write to.
      * @param side The side to write.
      * @param partType The part type to write.
      */
-    public static void writePartTypeToNBT(CompoundTag partTag, Direction side, IPartType partType) {
-        partTag.putString("__partType", partType.getUniqueName().toString());
-        partTag.putString("__side", side.getSerializedName());
+    public static void serializePartType(ValueOutput valueOutput, Direction side, IPartType partType) {
+        valueOutput.putString("__partType", partType.getUniqueName().toString());
+        valueOutput.putString("__side", side.getSerializedName());
     }
 
     /**
      * Write the given part data to nbt.
+     * @param valueOutput The output to write to.
      * @param pos The position of the part, used for error reporting.
-     * @param partTag The tag to write to.
      * @param partData The part data.
      * @return If the writing succeeded.
      */
-    public static boolean writePartToNBT(ValueDeseralizationContext valueDeseralizationContext, BlockPos pos, CompoundTag partTag, Pair<Direction, PartStateHolder<?, ?>> partData) {
+    public static boolean serializePart(ValueOutput valueOutput, BlockPos pos, Pair<Direction, PartStateHolder<?, ?>> partData) {
         IPartType part = partData.getValue().getPart();
         IPartState partState = partData.getValue().getState();
-        writePartTypeToNBT(partTag, partData.getKey(), part);
+        serializePartType(valueOutput, partData.getKey(), part);
         try {
-            part.toNBT(valueDeseralizationContext, partTag, partState);
+            part.serializeState(valueOutput, partState);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,33 +210,31 @@ public class PartHelpers {
 
     /**
      * Write the given parts to nbt.
+     * @param valueOutput The output to write to.
      * @param pos The position of the part, used for error reporting.
-     * @param tag The tag to write to.
      * @param partData The part data.
      */
-    public static void writePartsToNBT(ValueDeseralizationContext valueDeseralizationContext, BlockPos pos, CompoundTag tag, Map<Direction, PartStateHolder<?, ?>> partData) {
-        ListTag partList = new ListTag();
+    public static void serializeParts(ValueOutput valueOutput, BlockPos pos, Map<Direction, PartStateHolder<?, ?>> partData) {
+        ValueOutput.ValueOutputList partList = valueOutput.childrenList("parts");
         for(Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : partData.entrySet()) {
-            CompoundTag partTag = new CompoundTag();
-            if(writePartToNBT(valueDeseralizationContext, pos, partTag, Pair.<Direction, PartStateHolder<?, ?>>of(entry.getKey(), entry.getValue()))) {
-                partList.add(partTag);
+            if(!serializePart(partList.addChild(), pos, Pair.of(entry.getKey(), entry.getValue()))) {
+                partList.discardLast();
             }
         }
-        tag.put("parts", partList);
     }
 
     /**
      * Read a part from nbt.
+     * @param valueInput The value to read from.
      * @param network The network the part will be part of.
      * @param pos The position of the part, used for error reporting.
-     * @param partTag The tag to read from.
      * @return The part data.
      */
-    public static Pair<Direction, IPartType> readPartTypeFromNBT(@Nullable INetwork network, BlockPos pos, CompoundTag partTag) {
-        String partTypeName = partTag.getString("__partType");
+    public static Pair<Direction, IPartType> deserializePartType(ValueInput valueInput, @Nullable INetwork network, BlockPos pos) {
+        String partTypeName = valueInput.getString("__partType").orElseThrow();
         IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(ResourceLocation.parse(partTypeName)));
         if(partType != null) {
-            Direction side = Direction.byName(partTag.getString("__side"));
+            Direction side = Direction.byName(valueInput.getString("__side").orElseThrow());
             if (side != null) {
                 return Pair.of(side, partType);
             } else {
@@ -254,16 +251,15 @@ public class PartHelpers {
 
     /**
      * Read part data from nbt.
+     * @param valueInput The value to read from.
      * @param network The network the part will be part of.
      * @param pos The position of the part, used for error reporting.
-     * @param partTag The tag to read from.
-     * @param level The world.
      * @return The part data.
      */
-    public static Pair<Direction, ? extends PartStateHolder<?, ?>> readPartFromNBT(@Nullable INetwork network, BlockPos pos, CompoundTag partTag, Level level) {
-        Pair<Direction, IPartType> partData = readPartTypeFromNBT(network, pos, partTag);
+    public static Pair<Direction, ? extends PartStateHolder<?, ?>> deserializePart(ValueInput valueInput, @Nullable INetwork network, BlockPos pos) {
+        Pair<Direction, IPartType> partData = deserializePartType(valueInput, network, pos);
         if(partData != null) {
-            IPartState partState = partData.getValue().fromNBT(ValueDeseralizationContext.of(level), partTag);
+            IPartState partState = partData.getValue().deserializeState(valueInput);
             return Pair.of(partData.getKey(), PartStateHolder.of(partData.getValue(), partState));
         }
         return null;
@@ -273,20 +269,18 @@ public class PartHelpers {
      * Read parts data from nbt.
      * If the world is not null and we are running client-side,
      * a block render update will automatically be triggered if needed.
+     * @param valueInput The value to read from.
      * @param network The network the part will be part of.
      * @param pos The position of the part, used for error reporting.
-     * @param tag The tag to read from.
      * @param partData The map of part data to write to.
      * @param world The world.
      */
-    public static void readPartsFromNBT(@Nullable INetwork network, BlockPos pos, CompoundTag tag,
+    public static void deserializeParts(ValueInput valueInput, @Nullable INetwork network, BlockPos pos,
                                         Map<Direction, PartStateHolder<?, ?>> partData, Level world) {
         Map<Direction, PartStateHolder<?, ?>> oldPartData = ImmutableMap.copyOf(partData);
         partData.clear();
-        ListTag partList = tag.getList("parts", Tag.TAG_COMPOUND);
-        for(int i = 0; i < partList.size(); i++) {
-            CompoundTag partTag = partList.getCompound(i);
-            Pair<Direction, ? extends PartStateHolder<?, ?>> part = readPartFromNBT(network, pos, partTag, world);
+        for (ValueInput partTag : valueInput.childrenList("parts").orElseThrow()) {
+            Pair<Direction, ? extends PartStateHolder<?, ?>> part = deserializePart(partTag, network, pos);
             if(part != null) {
                 partData.put(part.getKey(), part.getValue());
             }
@@ -364,7 +358,7 @@ public class PartHelpers {
         IPartContainer partContainer = getPartContainerChecked(level, pos, side);
         if(partContainer.canAddPart(side, partType)) {
             if(!level.isClientSide()) {
-                partContainer.setPart(side, partType, partType.getState(ValueDeseralizationContext.of(level), itemStack));
+                partContainer.setPart(side, partType, partType.getState(ValueDeseralizationContext.of(level), new PartPathElement(pos), itemStack));
             }
             return true;
         }

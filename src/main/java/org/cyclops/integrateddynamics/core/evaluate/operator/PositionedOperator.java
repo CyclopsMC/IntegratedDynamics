@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
@@ -13,7 +12,6 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
@@ -42,15 +40,15 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
-        NBTClassType.writeNbt(DimPos.class, "pos", pos, tag, holderLookupProvider);
-        NBTClassType.writeNbt(Direction.class, "side", side, tag, holderLookupProvider);
+    public void writeGeneratedFieldsToNBT(ValueOutput output) {
+        NBTClassType.writeNbt(DimPos.class, "pos", pos, output);
+        NBTClassType.writeNbt(Direction.class, "side", side, output);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
-        this.pos = NBTClassType.readNbt(DimPos.class, "pos", tag, holderLookupProvider);
-        this.side = NBTClassType.readNbt(Direction.class, "side", tag, holderLookupProvider);
+    public void readGeneratedFieldsFromNBT(ValueInput input) {
+        this.pos = NBTClassType.readNbt(DimPos.class, "pos", input);
+        this.side = NBTClassType.readNbt(Direction.class, "side", input);
     }
 
     public DimPos getPos() {
@@ -90,23 +88,21 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
         }
 
         @Override
-        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, PositionedOperator operator) {
-            CompoundTag tag = new CompoundTag();
-            operator.writeGeneratedFieldsToNBT(tag, valueDeseralizationContext.holderLookupProvider());
-            return tag;
+        public void serialize(ValueOutput valueOutput, PositionedOperator operator) {
+            operator.writeGeneratedFieldsToNBT(valueOutput);
         }
 
         @Override
-        public PositionedOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException {
+        public PositionedOperator deserialize(ValueInput valueInput) throws EvaluationException {
             try {
                 Constructor<? extends PositionedOperator> constructor = this.clazz.getConstructor();
                 PositionedOperator proxy = constructor.newInstance();
-                proxy.readGeneratedFieldsFromNBT((CompoundTag) value, valueDeseralizationContext.holderLookupProvider());
+                proxy.readGeneratedFieldsFromNBT(valueInput);
                 return proxy;
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | ClassCastException | IllegalAccessException e) {
                 e.printStackTrace();
                 throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
-                        value.toString(), e.getMessage()));
+                        valueInput.toString(), e.getMessage()));
             }
         }
     }

@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -15,7 +15,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeListLPElement;
 
@@ -47,19 +46,18 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueList value) {
+    public void serialize(ValueOutput valueOutput, ValueList value) {
         try {
-            return ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.getRawValue());
+            ValueTypeListProxyFactories.REGISTRY.serialize(valueOutput, value.getRawValue());
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
             e.printStackTrace();
         }
-        return new CompoundTag();
     }
 
     @Override
-    public Component canDeserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
+    public Component canDeserialize(ValueInput valueInput) {
         try {
-            IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, value);
+            IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput);
             return null;
         } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
             return Component.translatable(e.getMessage());
@@ -67,14 +65,12 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
     }
 
     @Override
-    public ValueList deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (!(value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty()))) {
-            try {
-                IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, value);
-                return ValueList.ofFactory(proxy);
-            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
-                e.printStackTrace();
-            }
+    public ValueList deserialize(ValueInput valueInput) {
+        try {
+            IValueTypeListProxy<IValueType<IValue>, IValue> proxy = ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput);
+            return ValueList.ofFactory(proxy);
+        } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+            e.printStackTrace();
         }
         return getDefault();
     }

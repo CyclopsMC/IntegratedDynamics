@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import lombok.Data;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 
 import java.util.List;
 
@@ -48,21 +47,26 @@ public class RawNetworkData implements IRawData {
 
     public static RawNetworkData fromNbt(CompoundTag tag) {
         List<RawPartData> parts = Lists.newArrayList();
-        ListTag listParts = tag.getList("parts", Tag.TAG_COMPOUND);
+        ListTag listParts = tag.getList("parts").orElseThrow();
         for (int i = 0; i < listParts.size(); i++) {
-            CompoundTag partTag = listParts.getCompound(i);
+            CompoundTag partTag = listParts.getCompound(i).orElseThrow();
             parts.add(RawPartData.fromNbt(partTag));
         }
 
         List<RawObserverData> observers = Lists.newArrayList();
-        ListTag listObservers = tag.getList("observers", Tag.TAG_COMPOUND);
+        ListTag listObservers = tag.getList("observers").orElseThrow();
         for (int i = 0; i < listObservers.size(); i++) {
-            CompoundTag observerTag = listObservers.getCompound(i);
+            CompoundTag observerTag = listObservers.getCompound(i).orElseThrow();
             observers.add(RawObserverData.fromNbt(observerTag));
         }
 
-        return new RawNetworkData(tag.getBoolean("killed"), tag.getInt("id"),
-                tag.getInt("cables"), parts, observers);
+        return new RawNetworkData(
+                tag.getBoolean("killed").orElseThrow(),
+                tag.getInt("id").orElseThrow(),
+                tag.getInt("cables").orElseThrow(),
+                parts,
+                observers
+        );
     }
 
 }

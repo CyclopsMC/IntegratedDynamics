@@ -1,24 +1,20 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.IModHelpers;
+import net.minecraft.world.level.storage.ValueInput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeStringLPElement;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Base implementation of a value type.
@@ -30,6 +26,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     private final int color;
     private final ChatFormatting colorFormat;
     private final Class<V> valueClass;
+    private ValueTypeBaseClient<V> client;
 
     private String translationKey = null;
 
@@ -39,8 +36,18 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         this.colorFormat = colorFormat;
         this.valueClass = valueClass;
         if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment() && IModHelpers.get().getMinecraftHelpers().isClientSide()) {
-            registerModelResourceLocation();
+            this.client = constructClient();
+            this.client.registerModelResourceLocation();
         }
+    }
+
+    protected ValueTypeBaseClient<V> constructClient() {
+        return new ValueTypeBaseClient<>(this);
+    }
+
+    @Override
+    public ValueTypeBaseClient<V> getClient() {
+        return client;
     }
 
     @Override
@@ -91,28 +98,22 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         return this == valueType;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    protected void registerModelResourceLocation() {
-        ValueTypes.REGISTRY.registerValueTypeModel(this,
-                ResourceLocation.parse(getModId() + ":valuetype" + getTypeNamespace().replace('.', '/') + getTypeName().replace('.', '/')));
-    }
-
     @Override
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable V value) {
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo, @Nullable V value) {
         String typeName = IModHelpers.get().getL10NHelpers().localize(getTranslationKey());
-        lines.add(Component.translatable(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
+        tooltipAdder.accept(Component.translatable(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
-            IModHelpers.get().getL10NHelpers().addOptionalInfo(lines, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix());
         }
     }
 
     @Override
-    public Component canDeserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
+    public Component canDeserialize(ValueInput valueInput) {
         try {
-            deserialize(valueDeseralizationContext, value);
+            deserialize(valueInput);
             return null;
         } catch (IllegalArgumentException e) {
-            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, value);
+            return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, valueInput);
         }
     }
 

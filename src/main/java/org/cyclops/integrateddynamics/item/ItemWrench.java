@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -29,9 +30,9 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * The default wrench for this mod.
@@ -140,18 +141,18 @@ public class ItemWrench extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-        super.appendHoverText(itemStack, context, list, flag);
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        super.appendHoverText(itemStack, context, tooltipDisplay, tooltipAdder, flag);
 
         Mode mode = getMode(itemStack);
-        list.add(Component.translatable("item.integrateddynamics.wrench.mode", Component.translatable(mode.getLabel())));
+        tooltipAdder.accept(Component.translatable("item.integrateddynamics.wrench.mode", Component.translatable(mode.getLabel())));
         if (itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS)) {
-            list.add(Component.translatable("item.integrateddynamics.wrench.mode.offset.pos", itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS).toShortString()).withStyle(ChatFormatting.GRAY));
+            tooltipAdder.accept(Component.translatable("item.integrateddynamics.wrench.mode.offset.pos", itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS).toShortString()).withStyle(ChatFormatting.GRAY));
         }
         if (itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION)) {
-            list.add(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.side", itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION).getSerializedName()).withStyle(ChatFormatting.GRAY));
+            tooltipAdder.accept(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.side", itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION).getSerializedName()).withStyle(ChatFormatting.GRAY));
         }
-        list.add(Component.translatable(mode.getLabel() + ".info").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        tooltipAdder.accept(Component.translatable(mode.getLabel() + ".info").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
     }
 
     public <P extends IPartType<P, S>, S extends IPartState<P>> InteractionResult performPartAction(BlockHitResult hit, IPartType<P, S> partType, IPartState<P> partState, ItemStack itemStack, Player player, InteractionHand hand, PartPos center) {

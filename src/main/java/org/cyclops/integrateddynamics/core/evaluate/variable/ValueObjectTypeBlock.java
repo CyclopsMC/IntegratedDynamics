@@ -2,20 +2,18 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeItemStackLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -55,17 +53,13 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueBlock value) {
-        if(!value.getRawValue().isPresent()) return new CompoundTag();
-        return IModHelpers.get().getBlockHelpers().serializeBlockState(value.getRawValue().get());
+    public void serialize(ValueOutput valueOutput, ValueBlock value) {
+        value.getRawValue().ifPresent(v -> valueOutput.store("v", BlockState.CODEC, v));
     }
 
     @Override
-    public ValueBlock deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
-            return ValueBlock.of(Blocks.AIR.defaultBlockState());
-        }
-        return ValueBlock.of(IModHelpers.get().getBlockHelpers().deserializeBlockState(valueDeseralizationContext.holderLookupProvider().lookupOrThrow(Registries.BLOCK), (CompoundTag) value));
+    public ValueBlock deserialize(ValueInput valueInput) {
+        return ValueBlock.of(valueInput.read("v", BlockState.CODEC).orElseGet(Blocks.AIR::defaultBlockState));
     }
 
     @Override

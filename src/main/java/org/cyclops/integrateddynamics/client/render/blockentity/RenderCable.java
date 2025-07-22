@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
@@ -26,7 +27,7 @@ public class RenderCable implements BlockEntityRenderer<BlockEntityMultipartTick
 
     @Override
     public void render(BlockEntityMultipartTicking tile, float partialTicks, PoseStack matrixStack,
-                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
+                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
         for (Map.Entry<Direction, IPartType<?, ?>> entry : tile.getPartContainer().getParts().entrySet()) {
             // Draw part overlays
             for (IPartOverlayRenderer renderer : PartOverlayRenderers.REGISTRY.getRenderers(entry.getValue())) {
@@ -35,5 +36,4 @@ public class RenderCable implements BlockEntityRenderer<BlockEntityMultipartTick
             }
         }
     }
-
 }

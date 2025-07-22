@@ -14,7 +14,7 @@ public interface IVariableModelProviderRegistry extends IRegistry {
      * Register a new provider.
      * @param provider The provider to register.
      * @param <E> The type of provider.
-     * @param <B> The type of the baked model provider.
+     * @param <B> The type of the baked facadeModel provider.
      * @return The registered provider
      */
     public <E extends IVariableModelProvider<B>, B extends IVariableModelProvider.BakedModelProvider> E addProvider(E provider);

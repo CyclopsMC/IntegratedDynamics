@@ -3,7 +3,9 @@ package org.cyclops.integrateddynamics.block;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -108,11 +110,11 @@ public class BlockSqueezer extends BlockWithEntity {
         } else if(world.getBlockState(blockPos).getValue(BlockSqueezer.HEIGHT) == 1) {
             return IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntitySqueezer.class)
                     .map(tile -> {
-                        ItemStack itemStack = player.getInventory().getSelected();
+                        ItemStack itemStack = player.getInventory().getSelectedItem();
                         ItemStack tileStack = tile.getInventory().getItem(0);
 
                         if (itemStack.isEmpty() && !tileStack.isEmpty()) {
-                            player.getInventory().setItem(player.getInventory().selected, tileStack);
+                            player.getInventory().setItem(player.getInventory().getSelectedSlot(), tileStack);
                             tile.getInventory().setItem(0, ItemStack.EMPTY);
                             tile.sendUpdate();
                             return InteractionResult.SUCCESS;
@@ -123,7 +125,7 @@ public class BlockSqueezer extends BlockWithEntity {
                         } else if (!itemStack.isEmpty() && tile.getInventory().getItem(0).isEmpty()) {
                             tile.getInventory().setItem(0, itemStack.split(1));
                             if (itemStack.getCount() <= 0)
-                                player.getInventory().setItem(player.getInventory().selected, ItemStack.EMPTY);
+                                player.getInventory().setItem(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
                             tile.sendUpdate();
                             return InteractionResult.SUCCESS;
                         }
@@ -209,14 +211,8 @@ public class BlockSqueezer extends BlockWithEntity {
     }
 
     @Override
-    public void onRemove(BlockState oldState, Level level, BlockPos blockPos, BlockState newState, boolean isMoving) {
-        if (!oldState.is(newState.getBlock())) {
-            IModHelpers.get().getBlockEntityHelpers().get(level, blockPos, BlockEntitySqueezer.class)
-                    .ifPresent(tile -> {
-                        IModHelpers.get().getInventoryHelpers().dropItems(level, tile.getInventory(), blockPos);
-                        level.updateNeighbourForOutputSignal(blockPos, oldState.getBlock());
-                    });
-            super.onRemove(oldState, level, blockPos, newState, isMoving);
-        }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+        Containers.updateNeighboursAfterDestroy(state, level, pos);
     }
 }

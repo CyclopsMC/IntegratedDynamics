@@ -7,8 +7,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.ModLoader;
@@ -53,8 +51,7 @@ public class Network implements INetwork {
     private Map<NetworkCapability<?>, List<ICapabilityProvider<INetwork, Void, ?>>> capabilityProviders;
     private IFullNetworkListener[] fullNetworkListeners;
 
-    private CompoundTag toRead = null;
-    private HolderLookup.Provider provider = null;
+    private NetworkParams toRead = null;
     private volatile boolean changed = false;
     private volatile boolean killed = false;
 
@@ -172,26 +169,20 @@ public class Network implements INetwork {
         return object instanceof Network && areNetworksEqual(this, (Network) object);
     }
 
-    @Override
-    public CompoundTag toNBT(HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
-        tag.put("baseCluster", this.baseCluster.toNBT(provider));
-        tag.putBoolean("crashed", this.crashed);
-        return tag;
+    public NetworkParams toParams() {
+        return new NetworkParams(this.baseCluster.toParams(), this.crashed);
     }
 
-    @Override
-    public void fromNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void fromParams(NetworkParams params) {
         // NBT reading is postponed until the first network tick, to ensure that the game is properly initialized.
         // Because other mods may register things such as dimensions at the same time when networks
         // are being constructed (as was the case in #349)
-        this.toRead = tag;
-        this.provider = provider;
+        this.toRead = params;
     }
 
-    public void fromNBTEffective(HolderLookup.Provider provider, CompoundTag tag) {
-        this.baseCluster.fromNBT(provider, tag.getCompound("baseCluster"));
-        this.crashed = tag.getBoolean("crashed");
+    public void fromParamsEffective(NetworkParams networkParams) {
+        this.baseCluster.fromParams(networkParams.pathElements());
+        this.crashed = networkParams.crashed();
         deriveNetworkElements(baseCluster);
         initialize(true);
     }
@@ -369,9 +360,8 @@ public class Network implements INetwork {
     @Override
     public void updateGuaranteed() {
         if (this.toRead != null) {
-            this.fromNBTEffective(this.provider, this.toRead);
+            this.fromParamsEffective(this.toRead);
             this.toRead = null;
-            this.provider = null;
         }
     }
 

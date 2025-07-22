@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -64,13 +66,13 @@ public class BlockDryingBasin extends BlockWithEntityGui {
                                              BlockHitResult rayTraceResult) {
         return IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityDryingBasin.class)
                 .map(tile -> {
-                    ItemStack itemStack = player.getInventory().getSelected();
+                    ItemStack itemStack = player.getInventory().getSelectedItem();
                     IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack).orElse(null);
                     SingleUseTank tank = tile.getTank();
                     ItemStack tileStack = tile.getInventory().getItem(0);
 
                     if (itemStack.isEmpty() && !tileStack.isEmpty()) {
-                        player.getInventory().setItem(player.getInventory().selected, tileStack);
+                        player.getInventory().setItem(player.getInventory().getSelectedSlot(), tileStack);
                         tile.getInventory().setItem(0, ItemStack.EMPTY);
                         tile.sendUpdate();
                         return InteractionResult.SUCCESS;
@@ -97,7 +99,7 @@ public class BlockDryingBasin extends BlockWithEntityGui {
                         return InteractionResult.SUCCESS;
                     } else if (!itemStack.isEmpty() && tileStack.isEmpty()) {
                         tile.getInventory().setItem(0, itemStack.split(1));
-                        if(itemStack.getCount() <= 0) player.getInventory().setItem(player.getInventory().selected, ItemStack.EMPTY);
+                        if(itemStack.getCount() <= 0) player.getInventory().setItem(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
                         tile.sendUpdate();
                         return InteractionResult.SUCCESS;
                     }
@@ -131,14 +133,8 @@ public class BlockDryingBasin extends BlockWithEntityGui {
     }
 
     @Override
-    public void onRemove(BlockState oldState, Level world, BlockPos blockPos, BlockState newState, boolean isMoving) {
-        if (oldState.getBlock() != newState.getBlock()) {
-            IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityDryingBasin.class)
-                    .ifPresent(tile -> {
-                        IModHelpers.get().getInventoryHelpers().dropItems(world, tile.getInventory(), blockPos);
-                        world.updateNeighbourForOutputSignal(blockPos, oldState.getBlock());
-                    });
-            super.onRemove(oldState, world, blockPos, newState, isMoving);
-        }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+        Containers.updateNeighboursAfterDestroy(state, level, pos);
     }
 }

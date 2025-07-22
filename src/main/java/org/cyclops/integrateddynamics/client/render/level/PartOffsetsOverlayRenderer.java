@@ -1,15 +1,10 @@
 package org.cyclops.integrateddynamics.client.render.level;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
@@ -32,12 +27,12 @@ import java.util.Random;
 public class PartOffsetsOverlayRenderer {
 
     public static final RenderType RENDER_TYPE_LINE = RenderType.create(Reference.MOD_ID + "line",
-            DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.DEBUG_LINES, 128, false, false, RenderType.CompositeState.builder()
-                    .setShaderState(RenderType.RENDERTYPE_LINES_SHADER)
-                    .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(1)))
+            128,
+            RenderPipelines.SECONDARY_BLOCK_OUTLINE,
+            RenderType.CompositeState.builder()
+                    .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
                     .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                    .setWriteMaskState(new RenderStateShard.WriteMaskStateShard(true, false))
+                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
                     .createCompositeState(false));
 
     private static final PartOffsetsOverlayRenderer _INSTANCE = new PartOffsetsOverlayRenderer();
@@ -73,26 +68,24 @@ public class PartOffsetsOverlayRenderer {
     }
 
     @SubscribeEvent
-    public void onRender(RenderLevelStageEvent event) {
+    public void onRender(RenderLevelStageEvent.AfterTranslucentBlocks event) {
+        // If the player is holding a wrench, show the offsets of parts
+        // Only do this for parts with non-default target side or non-default offset
         Player player = Minecraft.getInstance().player;
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-            // If the player is holding a wrench, show the offsets of parts
-            // Only do this for parts with non-default target side or non-default offset
-            if (player.getItemInHand(InteractionHand.MAIN_HAND).is(WrenchHelpers.TAG_WRENCH)
-                    || player.getItemInHand(InteractionHand.OFF_HAND).is(WrenchHelpers.TAG_WRENCH)) {
-                if (!subscribedToServerChanges) {
-                    this.subscribeToServerChanges();
-                }
-
-                Vec3 eyePos = event.getCamera().getPosition();
-                for (PartOffsetsClientNotifier.Entry entry : this.data) {
-                    this.renderOffset(event.getPoseStack(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), entry, eyePos);
-                }
-
-            } else if (subscribedToServerChanges) {
-                this.data.clear();
-                this.unsubscribeToServerChanges();
+        if (player.getItemInHand(InteractionHand.MAIN_HAND).is(WrenchHelpers.TAG_WRENCH)
+                || player.getItemInHand(InteractionHand.OFF_HAND).is(WrenchHelpers.TAG_WRENCH)) {
+            if (!subscribedToServerChanges) {
+                this.subscribeToServerChanges();
             }
+
+            Vec3 eyePos = event.getCamera().getPosition();
+            for (PartOffsetsClientNotifier.Entry entry : this.data) {
+                this.renderOffset(event.getPoseStack(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), entry, eyePos);
+            }
+
+        } else if (subscribedToServerChanges) {
+            this.data.clear();
+            this.unsubscribeToServerChanges();
         }
     }
 

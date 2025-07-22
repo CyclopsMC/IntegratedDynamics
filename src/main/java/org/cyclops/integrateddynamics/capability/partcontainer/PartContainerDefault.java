@@ -5,11 +5,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -144,7 +144,7 @@ public abstract class PartContainerDefault implements IPartContainer {
                 onPartsChanged();
                 return ret;
             } else if (dropMainElement) {
-                ItemStack itemStack = removed.getItemStack(ValueDeseralizationContext.of(player.level()), partStateHolder.getState(), saveState);
+                ItemStack itemStack = removed.getItemStack(ValueDeseralizationContext.of(player.level()), new PartPathElement(getPos()), partStateHolder.getState(), saveState);
                 if(player != null) {
                     if (!player.isCreative()) {
                         IModHelpers.get().getItemStackHelpers().spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
@@ -198,16 +198,14 @@ public abstract class PartContainerDefault implements IPartContainer {
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
-        PartHelpers.writePartsToNBT(ValueDeseralizationContext.of(provider), getPos(), tag, this.partData);
-        return tag;
+    public void toValueOutput(ValueOutput valueOutput) {
+        PartHelpers.serializeParts(valueOutput, getPos(), this.partData);
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void fromValueInput(ValueInput valueInput) {
         synchronized (this.partData) {
-            PartHelpers.readPartsFromNBT(getNetwork(), getPos(), tag, this.partData, getLevel());
+            PartHelpers.deserializeParts(valueInput, getNetwork(), getPos(), this.partData, getLevel());
         }
     }
 

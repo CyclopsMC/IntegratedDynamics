@@ -3,19 +3,19 @@
     "type": "minecraft:composite",
     "models": [
       {
-        "type": "minecraft:special",
-        "base": "integrateddynamics:item/variable",
-        "model": {
-          "type": "integrateddynamics:variable_overlay_special"
-        }
+        "type": "minecraft:model",
+        "model": "integrateddynamics:item/variable"
       },
       {
         "type": "integrateddynamics:variable_overlays",
         "model": "integrateddynamics:item/variable_overlays"
       },
       {
-        "type": "minecraft:model",
-        "model": "integrateddynamics:item/variable"
+        "type": "minecraft:special",
+        "base": "integrateddynamics:item/variable",
+        "model": {
+          "type": "integrateddynamics:variable_overlay_special"
+        }
       }
     ]
   }

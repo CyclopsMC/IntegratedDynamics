@@ -1,20 +1,20 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -41,20 +41,15 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueNbt value) {
-        CompoundTag tag = new CompoundTag();
+    public void serialize(ValueOutput valueOutput, ValueNbt value) {
         if (value.getRawValue().isPresent()) {
-            tag.put("v", value.getRawValue().get());
+            valueOutput.store("v", ExtraCodecs.NBT, value.getRawValue().get());
         }
-        return tag;
     }
 
     @Override
-    public ValueNbt deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value instanceof CompoundTag && ((CompoundTag) value).contains("v")) {
-            return ValueNbt.of(((CompoundTag) value).get("v"));
-        }
-        return ValueNbt.of();
+    public ValueNbt deserialize(ValueInput valueInput) {
+        return ValueNbt.of(valueInput.read("v", ExtraCodecs.NBT));
     }
 
     @Override
@@ -68,7 +63,7 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
             return ValueNbt.of();
         }
         try {
-            return ValueNbt.of(new TagParser(new StringReader(value)).readValue());
+            return ValueNbt.of(Helpers.TAG_PARSER.parseFully(value));
         } catch (CommandSyntaxException e) {
             throw new EvaluationException(Component.literal(e.getMessage()));
         }
@@ -108,7 +103,6 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
         return toCompactString(value).getString();
     }
 
-    @ToString
     public static class ValueNbt extends ValueOptionalBase<Tag> {
 
         private ValueNbt(Tag value) {

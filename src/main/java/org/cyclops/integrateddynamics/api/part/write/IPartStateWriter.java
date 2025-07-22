@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.api.part.write;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -72,7 +73,7 @@ public interface IPartStateWriter<P extends IPartTypeWriter> extends IPartState<
      * @param aspect The aspect to get the error from.
      * @return The current error, can be empty.
      */
-    public List<MutableComponent> getErrors(IAspectWrite aspect);
+    public List<Component> getErrors(IAspectWrite aspect);
 
     /**
      * Set the current error for the given aspect.

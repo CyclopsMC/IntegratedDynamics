@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.*;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
 import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
+import org.cyclops.integrateddynamics.gametest.integration.IntegrationMethodGameTestInstanceConfig;
 import org.cyclops.integrateddynamics.inventory.container.*;
 import org.cyclops.integrateddynamics.item.*;
 import org.cyclops.integrateddynamics.loot.conditions.LootConditionMatchWrenchConfig;
@@ -207,6 +208,9 @@ public class Configs {
         configHandler.addConfigurable(new DataComponentWrenchTargetBlockPosConfig());
         configHandler.addConfigurable(new DataComponentWrenchTargetDirectionConfig());
         configHandler.addConfigurable(new DataComponentWrenchModeConfig());
+
+        // Game test instances
+        configHandler.addConfigurable(new IntegrationMethodGameTestInstanceConfig(IntegratedDynamics._instance));
     }
 
 }

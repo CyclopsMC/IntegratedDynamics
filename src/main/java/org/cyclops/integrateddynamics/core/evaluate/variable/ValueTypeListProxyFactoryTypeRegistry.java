@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.util.Map;
 
@@ -49,36 +48,22 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
     }
 
     @Override
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P proxy) throws SerializationException {
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> void serialize(ValueOutput valueOutput, P proxy) throws SerializationException {
         IProxyFactory<T, V, P> factory = getFactory(proxy.getName());
-        if(factory == null) {
+        if (factory == null) {
             throw new SerializationException(String.format("No serialization factory exists for the list proxy type name '%s'.", proxy.getName()));
         }
-        Tag serialized = factory.serialize(valueDeseralizationContext, proxy);
-        CompoundTag tag = new CompoundTag();
-        tag.putString("proxyName", proxy.getName().toString());
-        tag.put("serialized", serialized);
-        return tag;
+        valueOutput.putString("proxyName", proxy.getName().toString());
+        factory.serialize(valueOutput.child("serialized"), proxy);
     }
 
     @Override
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws SerializationException {
-        if (!(value instanceof CompoundTag)) {
-            throw new SerializationException(String.format("Could not deserialize the serialized list proxy value '%s' as it is not a CompoundTag.", value));
-        }
-        CompoundTag tag = (CompoundTag) value;
-        if (!tag.contains("proxyName", Tag.TAG_STRING)) {
-            throw new SerializationException(String.format("Could not deserialize the serialized list proxy value '%s' as it is missing a proxyName.", value));
-        }
-        if (!tag.contains("serialized")) {
-            throw new SerializationException(String.format("Could not deserialize the serialized list proxy value '%s' as it is missing a serialized value.", value));
-        }
-        String name = tag.getString("proxyName");
-        Tag actualValue = tag.get("serialized");
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(ValueInput valueInput) throws SerializationException {
+        String name = valueInput.getString("proxyName").orElseThrow();
         IProxyFactory<T, V, P> factory = getFactory(ResourceLocation.parse(name));
-        if(factory == null) {
+        if (factory == null) {
             throw new SerializationException(String.format("No deserialization factory exists for the list proxy type name '%s'.", name));
         }
-        return factory.deserialize(valueDeseralizationContext, actualValue);
+        return factory.deserialize(valueInput.child("serialized").orElseThrow());
     }
 }

@@ -2,21 +2,13 @@ package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.RandomSource;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IDelayVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeClient;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-
-import java.util.List;
 
 /**
  * Variable facade for variables determined by delays.
@@ -32,6 +24,11 @@ public class DelayVariableFacade extends ProxyVariableFacade implements IDelayVa
 
     public DelayVariableFacade(int id, int proxyId) {
         super(id, proxyId);
+    }
+
+    @Override
+    protected IVariableFacadeClient constructClient() {
+        return new DelayVariableFacadeClient(this);
     }
 
     @Override
@@ -55,13 +52,5 @@ public class DelayVariableFacade extends ProxyVariableFacade implements IDelayVa
 
     protected Component getProxyTooltip() {
         return Component.translatable(L10NValues.DELAY_TOOLTIP_DELAYID, getProxyId());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
-        if(isValid()) {
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.DELAY).getBakedModel().getQuads(null, null, random, modelData, null));
-        }
     }
 }

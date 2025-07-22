@@ -40,7 +40,7 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
         this.target = target;
         this.partType = partType;
         this.partContainer = partContainer;
-        this.world = player.getCommandSenderWorld();
+        this.world = player.level();
 
         putButtonAction(ContainerMultipart.BUTTON_SETTINGS, (s, containerExtended) -> {
             if(!world.isClientSide()) {

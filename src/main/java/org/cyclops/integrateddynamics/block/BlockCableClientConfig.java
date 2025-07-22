@@ -3,10 +3,10 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -35,6 +35,7 @@ import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics> {
 
@@ -93,12 +94,18 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
 
     public static class DynamicModel implements IDynamicModelElementCommon {
         @Override
-        public BakedModel createDynamicModel(Consumer<Pair<ModelResourceLocation, BakedModel>> modelConsumer) {
+        public BlockStateModel createDynamicBlockModel(Consumer<Pair<BlockState, BlockStateModel>> modelConsumer, Function<BlockState, BlockStateModel> modelRetriever) {
             CableModel model = new CableModel();
+            modelConsumer.accept(Pair.of(RegistryEntries.BLOCK_CABLE.get().defaultBlockState(), model));
+            modelConsumer.accept(Pair.of(RegistryEntries.BLOCK_CABLE.get().defaultBlockState().setValue(BlockCable.WATERLOGGED, true), model));
+            return model;
+        }
+
+        @Override
+        public ItemModel createDynamicItemModel(Consumer<Pair<ResourceLocation, ItemModel>> modelConsumer, Function<ResourceLocation, ItemModel> modelRetriever) {
+            ItemModelCable model = new ItemModelCable(new CableModel());
             ResourceLocation registryName = BuiltInRegistries.BLOCK.getKey(RegistryEntries.BLOCK_CABLE.get());
-            modelConsumer.accept(Pair.of(new ModelResourceLocation(registryName, "waterlogged=false"), model));
-            modelConsumer.accept(Pair.of(new ModelResourceLocation(registryName, "waterlogged=true"), model));
-            modelConsumer.accept(Pair.of(new ModelResourceLocation(registryName, "inventory"), model));
+            modelConsumer.accept(Pair.of(registryName, model));
             return model;
         }
     }

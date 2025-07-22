@@ -1,23 +1,19 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -67,33 +63,23 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         }
 
         @Override
-        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, PredicateOperator<IValueType<IValue>, IValue> operator) {
-            CompoundTag tag = new CompoundTag();
-            tag.putString("valueType", operator.inputType.getTranslationKey());
-            ListTag list = new ListTag();
+        public void serialize(ValueOutput valueOutput, PredicateOperator<IValueType<IValue>, IValue> operator) {
+            valueOutput.putString("valueType", operator.inputType.getTranslationKey());
+            ValueOutput.ValueOutputList list = valueOutput.childrenList("values");
             for (IValue rawValue : operator.rawValues) {
-                list.add(operator.inputType.serialize(valueDeseralizationContext, rawValue));
+                operator.inputType.serialize(list.addChild(), rawValue);
             }
-            tag.put("values", list);
-            return tag;
         }
 
         @Override
-        public PredicateOperator<IValueType<IValue>, IValue> deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws EvaluationException {
-            try {
-                CompoundTag tag = (CompoundTag) value;
-                IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("valueType")));
-                ListTag list = (ListTag) tag.get("values");
-                List<IValue> values = Lists.newArrayList();
-                for (Tag subTag : list) {
-                    values.add(ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, subTag));
-                }
-                return new PredicateOperator<>(valueType, values);
-            } catch (ClassCastException e) {
-                e.printStackTrace();
-                throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
-                        value.toString(), e.getMessage()));
+        public PredicateOperator<IValueType<IValue>, IValue> deserialize(ValueInput valueInput) throws EvaluationException {
+            IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueInput.getString("valueType").orElseThrow()));
+            ValueInput.ValueInputList list = valueInput.childrenList("values").orElseThrow();
+            List<IValue> values = Lists.newArrayList();
+            for (ValueInput subTag : list) {
+                values.add(ValueHelpers.deserializeRaw(subTag, valueType));
             }
+            return new PredicateOperator<>(valueType, values);
         }
     }
 }

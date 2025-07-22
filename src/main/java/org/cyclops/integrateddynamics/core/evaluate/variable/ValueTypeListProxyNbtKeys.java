@@ -4,10 +4,12 @@ import com.google.common.collect.Iterables;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.util.Optional;
 
@@ -26,14 +28,14 @@ public class ValueTypeListProxyNbtKeys extends ValueTypeListProxyBase<ValueTypeS
     @Override
     public int getLength() throws EvaluationException {
         return tag
-                .map(t -> t instanceof CompoundTag ? ((CompoundTag) t).getAllKeys().size() : 0)
+                .map(t -> t instanceof CompoundTag ? ((CompoundTag) t).keySet().size() : 0)
                 .orElse(0);
     }
 
     @Override
     public ValueTypeString.ValueString get(int index) throws EvaluationException {
         if (index < getLength()) {
-            return ValueTypeString.ValueString.of(Iterables.get(((CompoundTag) tag.get()).getAllKeys(), index));
+            return ValueTypeString.ValueString.of(Iterables.get(((CompoundTag) tag.get()).keySet(), index));
         }
         return null;
     }
@@ -46,13 +48,13 @@ public class ValueTypeListProxyNbtKeys extends ValueTypeListProxyBase<ValueTypeS
         }
 
         @Override
-        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyNbtKeys value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            value.tag.ifPresent(inbt -> tag.put("tag", inbt));
+        protected void serializeNbt(ValueOutput valueOutput, ValueTypeListProxyNbtKeys value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            value.tag.ifPresent(inbt -> valueOutput.store("tag", ExtraCodecs.NBT, inbt));
         }
 
         @Override
-        protected ValueTypeListProxyNbtKeys deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            return new ValueTypeListProxyNbtKeys(tag.contains("tag") ? Optional.of(tag.get("tag")) : Optional.empty());
+        protected ValueTypeListProxyNbtKeys deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            return new ValueTypeListProxyNbtKeys(valueInput.read("tag", ExtraCodecs.NBT));
         }
     }
 }

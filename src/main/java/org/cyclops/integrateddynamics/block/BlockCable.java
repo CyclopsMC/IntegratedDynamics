@@ -34,8 +34,8 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.*;
-import net.neoforged.neoforge.client.model.data.ModelProperty;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
+import net.neoforged.neoforge.model.data.ModelProperty;
 import org.cyclops.cyclopscore.block.BlockWithEntity;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -61,7 +61,6 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -166,7 +165,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public boolean canPlaceLiquid(@org.jetbrains.annotations.Nullable Player player, BlockGetter worldIn, BlockPos pos, BlockState blockState, Fluid fluidIn) {
+    public boolean canPlaceLiquid(@org.jetbrains.annotations.Nullable LivingEntity entity, BlockGetter worldIn, BlockPos pos, BlockState blockState, Fluid fluidIn) {
         return !blockState.getValue(BlockStateProperties.WATERLOGGED) && fluidIn == Fluids.WATER
                 && !(worldIn instanceof ILevelExtension levelExtension && CableHelpers.hasFacade(levelExtension, pos));
     }
@@ -175,9 +174,8 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     public void onBlockExploded(BlockState state, ServerLevel world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.setRemovingCable(true);
         CableHelpers.onCableRemoving(world, blockPos, true, false, state);
-        Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
         super.onBlockExploded(state, world, blockPos, explosion);
-        CableHelpers.onCableRemoved(world, blockPos, connectedCables);
+        CableHelpers.onCableRemoved(world, blockPos);
         CableHelpers.setRemovingCable(false);
     }
 
@@ -192,19 +190,11 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos blockPos, BlockState newState, boolean isMoving) {
-        if (newState.getBlock() != this) {
-            Collection<Direction> connectedCables = null;
-            if (!CableHelpers.isRemovingCable()) {
-                CableHelpers.onCableRemoving(world, blockPos, false, false, state);
-                connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
-            }
-            super.onRemove(state, world, blockPos, newState, isMoving);
-            if (!CableHelpers.isRemovingCable()) {
-                CableHelpers.onCableRemoved(world, blockPos, connectedCables);
-            }
-        } else {
-            super.onRemove(state, world, blockPos, newState, isMoving);
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+
+        if (!CableHelpers.isRemovingCable()) {
+            CableHelpers.onCableRemoved(level, pos);
         }
     }
 

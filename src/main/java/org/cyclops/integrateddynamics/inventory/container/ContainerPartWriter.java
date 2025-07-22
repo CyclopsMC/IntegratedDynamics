@@ -42,7 +42,7 @@ import java.util.Optional;
  * @author rubensworks
  */
 public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>>
-        extends ContainerMultipartAspects<P, S, IAspectWrite> {
+        extends ContainerMultipartAspects<P, S, IAspectWrite<?, ?>> {
 
     public static final int ASPECT_BOX_HEIGHT = 18;
     private static final int PAGE_SIZE = 6;
@@ -50,7 +50,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     private static final int SLOT_Y = 18;
 
     private final int valueId, colorId, enabledId, activeAspectId;
-    private final Map<IAspectWrite, Integer> aspectErrorIds;
+    private final Map<IAspectWrite<?, ?>, Integer> aspectErrorIds;
 
     public ContainerPartWriter(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
         this(id, playerInventory, (RegistryFriendlyByteBuf) packetBuffer);
@@ -137,7 +137,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                         IVariable variable = partState.getVariable(optionalNetwork.orElse(null), partNetwork, ValueDeseralizationContext.of(player.level()));
                         readValue = ValueHelpers.getSafeReadableValue(variable);
                     } else {
-                        readValue = Pair.of(Component.literal("NETWORK CORRUPTED!"), IModHelpers.get().getBaseHelpers().RGBToInt(255, 100, 0));
+                        readValue = Pair.of(Component.literal("NETWORK CORRUPTED!"), IModHelpers.get().getBaseHelpers().RGBAToInt(255, 100, 0, 255));
                     }
                 } else {
                     readValue = Pair.of(Component.literal(""), 0);
@@ -145,7 +145,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
                 setWriteValue(readValue.getLeft(), readValue.getRight());
 
                 // Update error values
-                for (IAspectWrite aspectWrite : getPartType().getWriteAspects()) {
+                for (IAspectWrite<?, ?> aspectWrite : getPartType().getWriteAspects()) {
                     ValueNotifierHelpers.setValue(this, aspectErrorIds.get(aspectWrite), getPartState().getErrors(aspectWrite));
                 }
 
@@ -175,7 +175,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         return ValueNotifierHelpers.getValueInt(this, colorId);
     }
 
-    public List<MutableComponent> getAspectErrors(IAspectWrite aspectWrite) {
+    public List<Component> getAspectErrors(IAspectWrite aspectWrite) {
         return ValueNotifierHelpers.getValueTextComponentList(this, aspectErrorIds.get(aspectWrite));
     }
 

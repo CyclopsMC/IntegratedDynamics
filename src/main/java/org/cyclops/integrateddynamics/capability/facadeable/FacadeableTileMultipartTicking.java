@@ -42,6 +42,7 @@ public class FacadeableTileMultipartTicking implements IFacadeable {
             tile.setFacadeBlockTag(IModHelpers.get().getBlockHelpers().serializeBlockState(blockState));
         }
         tile.setForceLightCheckAtClient(true);
+        tile.setChanged();
         tile.sendUpdate();
     }
 }

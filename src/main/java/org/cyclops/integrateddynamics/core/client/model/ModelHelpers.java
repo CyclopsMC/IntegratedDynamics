@@ -18,10 +18,10 @@ public final class ModelHelpers {
     public static final ItemModelGenerator MODEL_GENERATOR = new ItemModelGenerator();
 
     /**
-     * Read the given model location to a {@link BlockModel}.
-     * @param modelLocation A model location (without .json suffix)
-     * @return The corresponding model.
-     * @throws IOException If the model file was invalid.
+     * Read the given facadeModel location to a {@link BlockModel}.
+     * @param modelLocation A facadeModel location (without .json suffix)
+     * @return The corresponding facadeModel.
+     * @throws IOException If the facadeModel file was invalid.
      */
     public static BlockModel loadModelBlock(ResourceLocation modelLocation) throws IOException {
         Resource resource = Minecraft.getInstance().getResourceManager().getResource(
@@ -30,7 +30,7 @@ public final class ModelHelpers {
         Reader reader = resource.openAsReader();
 
         BlockModel model = BlockModel.fromStream(reader);
-//        model.name = modelLocation.toString();
+//        facadeModel.name = modelLocation.toString();
         return model;
     }
 

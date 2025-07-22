@@ -1,31 +1,27 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.Maps;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.resources.model.ResolvableModel;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Variable model provider for value types.
+ * Variable facadeModel provider for value types.
  * @author rubensworks
  */
 public class ValueTypeVariableModelProvider implements IVariableModelProvider<BakedMapVariableModelProvider<IValueType>> {
     @Override
-    public BakedMapVariableModelProvider<IValueType> bakeOverlayModels(ModelBaker modelBaker, ModelState transform) {
-        Map<IValueType, BakedModel> bakedModels = Maps.newHashMap();
+    public BakedMapVariableModelProvider<IValueType> bakeOverlayModels(ItemModel.BakingContext bakingContext) {
+        Map<IValueType, ItemModel> bakedModels = Maps.newHashMap();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             try {
-                ResourceLocation resourceLocation = ValueTypes.REGISTRY.getValueTypeModel(valueType);
-                if(resourceLocation != null) {
-                    BakedModel bakedModel = modelBaker.bake(resourceLocation, transform);
+                ItemModel.Unbaked unbakedModel = ValueTypes.REGISTRY.getClient().getValueTypeModel(valueType);
+                if(unbakedModel != null) {
+                    ItemModel bakedModel = unbakedModel.bake(bakingContext);
                     bakedModels.put(valueType, bakedModel);
                 }
             } catch (Exception e) {
@@ -36,14 +32,9 @@ public class ValueTypeVariableModelProvider implements IVariableModelProvider<Ba
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies() {
-        return ValueTypes.REGISTRY.getValueTypeModels();
-    }
-
-    @Override
-    public void loadModels(List<ResourceLocation> subModels) {
+    public void resolveDependencies(ResolvableModel.Resolver resolver) {
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
-            subModels.add(ValueTypes.REGISTRY.getValueTypeModel(valueType));
+            ValueTypes.REGISTRY.getClient().getValueTypeModel(valueType).resolveDependencies(resolver);
         }
     }
 

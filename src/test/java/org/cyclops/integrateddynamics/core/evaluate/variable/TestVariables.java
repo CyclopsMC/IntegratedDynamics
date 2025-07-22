@@ -1,9 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
@@ -16,6 +13,8 @@ import org.junit.Test;
 
 import java.util.Optional;
 
+import static org.cyclops.integrateddynamics.core.test.TestHelpers.deserialize;
+import static org.cyclops.integrateddynamics.core.test.TestHelpers.serialize;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -49,11 +48,16 @@ public class TestVariables {
 
         bFalse.setValue(ValueTypeBoolean.ValueBoolean.of(false));
         bTrue.setValue(ValueTypeBoolean.ValueBoolean.of(true));
-        assertThat("serializing false returns false", bFalse.getType().serialize(context, bFalse.getValue()), is(ByteTag.valueOf((byte)0)));
-        assertThat("serializing true returns true", bTrue.getType().serialize(context, bTrue.getValue()), is(ByteTag.valueOf((byte)1)));
+        CompoundTag tag0 = new CompoundTag();
+        tag0.putByte("v", (byte) 0);
+        CompoundTag tag1 = new CompoundTag();
+        tag1.putByte("v", (byte) 1);
 
-        assertThat("deserializing false returns false", bFalse.getType().deserialize(context, ByteTag.valueOf((byte)0)), is(bFalse.getValue()));
-        assertThat("deserializing true returns true", bTrue.getType().deserialize(context, ByteTag.valueOf((byte)1)), is(bTrue.getValue()));
+        assertThat("serializing false returns false", serialize(o -> bFalse.getType().serialize(o, bFalse.getValue()), context.holderLookupProvider()), is(tag0));
+        assertThat("serializing true returns true", serialize(o -> bTrue.getType().serialize(o, bTrue.getValue()), context.holderLookupProvider()), is(tag1));
+
+        assertThat("deserializing false returns false", deserialize(tag0, bFalse.getType()::deserialize, context.holderLookupProvider()), is(bFalse.getValue()));
+        assertThat("deserializing true returns true", deserialize(tag1, bTrue.getType()::deserialize, context.holderLookupProvider()), is(bTrue.getValue()));
 
         bFalse.setValue(ValueTypeBoolean.ValueBoolean.of(false));
         bTrue.setValue(ValueTypeBoolean.ValueBoolean.of(true));
@@ -75,13 +79,20 @@ public class TestVariables {
         DummyVariableInteger i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
         assertThat("10 value is 10", i10.getValue().getRawValue(), is(10));
 
-        assertThat("serializing 10 returns 10", i10.getType().serialize(context, i10.getValue()), is(IntTag.valueOf(10)));
-        assertThat("serializing -10 returns -10", im10.getType().serialize(context, im10.getValue()), is(IntTag.valueOf(-10)));
-        assertThat("serializing 0 returns 0", i0.getType().serialize(context, i0.getValue()), is(IntTag.valueOf(0)));
+        CompoundTag tag10 = new CompoundTag();
+        tag10.putInt("v", 10);
+        CompoundTag tagm10 = new CompoundTag();
+        tagm10.putInt("v", -10);
+        CompoundTag tag0 = new CompoundTag();
+        tag0.putInt("v", 0);
 
-        assertThat("deserializing 10 returns 10", i10.getType().deserialize(context, IntTag.valueOf(10)), is(i10.getValue()));
-        assertThat("deserializing -10 returns -10", im10.getType().deserialize(context, IntTag.valueOf(-10)), is(im10.getValue()));
-        assertThat("deserializing 0 returns 0", i0.getType().deserialize(context, IntTag.valueOf(0)), is(i0.getValue()));
+        assertThat("serializing 10 returns 10", serialize(o -> i10.getType().serialize(o, i10.getValue()), context.holderLookupProvider()), is(tag10));
+        assertThat("serializing -10 returns -10", serialize(o -> im10.getType().serialize(o, im10.getValue()), context.holderLookupProvider()), is(tagm10));
+        assertThat("serializing 0 returns 0", serialize(o -> i0.getType().serialize(o, i0.getValue()), context.holderLookupProvider()), is(tag0));
+
+        assertThat("deserializing 10 returns 10", deserialize(tag10, i10.getType()::deserialize, context.holderLookupProvider()), is(i10.getValue()));
+        assertThat("deserializing -10 returns -10", deserialize(tagm10, im10.getType()::deserialize, context.holderLookupProvider()), is(im10.getValue()));
+        assertThat("deserializing 0 returns 0", deserialize(tag0, i0.getType()::deserialize, context.holderLookupProvider()), is(i0.getValue()));
 
         assertThat("serializing 10 returns 10", i10.getType().toString(i10.getValue()), is("10"));
         assertThat("serializing -10 returns -10", im10.getType().toString(im10.getValue()), is("-10"));
@@ -103,13 +114,20 @@ public class TestVariables {
         DummyVariableDouble d10 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(10.1));
         assertThat("10.1 value is 10.1", d10.getValue().getRawValue(), is(10.1));
 
-        assertThat("serializing 10.1 returns 10.1", d10.getType().serialize(context, d10.getValue()), is(DoubleTag.valueOf(10.1)));
-        assertThat("serializing -10.1 returns -10.1", dm10.getType().serialize(context, dm10.getValue()), is(DoubleTag.valueOf(-10.1)));
-        assertThat("serializing 0.1 returns 0.1", d0.getType().serialize(context, d0.getValue()), is(DoubleTag.valueOf(0.1)));
+        CompoundTag tag10 = new CompoundTag();
+        tag10.putDouble("v", 10.1);
+        CompoundTag tagm10 = new CompoundTag();
+        tagm10.putDouble("v", -10.1);
+        CompoundTag tag0 = new CompoundTag();
+        tag0.putDouble("v", 0.1);
 
-        assertThat("deserializing 10.1 returns 10.1", d10.getType().deserialize(context, DoubleTag.valueOf(10.1)), is(d10.getValue()));
-        assertThat("deserializing -10.1 returns -10.1", dm10.getType().deserialize(context, DoubleTag.valueOf(-10.1)), is(dm10.getValue()));
-        assertThat("deserializing 0.1 returns 0.1", d0.getType().deserialize(context, DoubleTag.valueOf(0.1)), is(d0.getValue()));
+        assertThat("serializing 10.1 returns 10.1", serialize(o -> d10.getType().serialize(o, d10.getValue()), context.holderLookupProvider()), is(tag10));
+        assertThat("serializing -10.1 returns -10.1", serialize(o -> dm10.getType().serialize(o, dm10.getValue()), context.holderLookupProvider()), is(tagm10));
+        assertThat("serializing 0.1 returns 0.1", serialize(o -> d0.getType().serialize(o, d0.getValue()), context.holderLookupProvider()), is(tag0));
+
+        assertThat("deserializing 10.1 returns 10.1", deserialize(tag10, d10.getType()::deserialize, context.holderLookupProvider()), is(d10.getValue()));
+        assertThat("deserializing -10.1 returns -10.1", deserialize(tagm10, dm10.getType()::deserialize, context.holderLookupProvider()), is(dm10.getValue()));
+        assertThat("deserializing 0.1 returns 0.1", deserialize(tag0, d0.getType()::deserialize, context.holderLookupProvider()), is(d0.getValue()));
 
         assertThat("serializing 10.1 returns 10.1", d10.getType().toString(d10.getValue()), is("10.1"));
         assertThat("serializing -10.1 returns -10.1", dm10.getType().toString(dm10.getValue()), is("-10.1"));
@@ -131,13 +149,20 @@ public class TestVariables {
         DummyVariableString s10 = new DummyVariableString(ValueTypeString.ValueString.of("10"));
         assertThat("10 value is 10", s10.getValue().getRawValue(), is("10"));
 
-        assertThat("serializing 10 returns 10", s10.getType().serialize(context, s10.getValue()), is(StringTag.valueOf("10")));
-        assertThat("serializing -10 returns -10", sm10.getType().serialize(context, sm10.getValue()), is(StringTag.valueOf("-10")));
-        assertThat("serializing 0 returns 0", s0.getType().serialize(context, s0.getValue()), is(StringTag.valueOf("0")));
+        CompoundTag tag10 = new CompoundTag();
+        tag10.putString("v", "10");
+        CompoundTag tagm10 = new CompoundTag();
+        tagm10.putString("v", "-10");
+        CompoundTag tag0 = new CompoundTag();
+        tag0.putString("v", "0");
 
-        assertThat("deserializing 10 returns 10", s10.getType().deserialize(context, StringTag.valueOf("10")), is(s10.getValue()));
-        assertThat("deserializing -10 returns -10", sm10.getType().deserialize(context, StringTag.valueOf("-10")), is(sm10.getValue()));
-        assertThat("deserializing 0 returns 0", s0.getType().deserialize(context, StringTag.valueOf("0")), is(s0.getValue()));
+        assertThat("serializing 10 returns 10", serialize(o -> s10.getType().serialize(o, s10.getValue()), context.holderLookupProvider()), is(tag10));
+        assertThat("serializing -10 returns -10", serialize(o -> sm10.getType().serialize(o, sm10.getValue()), context.holderLookupProvider()), is(tagm10));
+        assertThat("serializing 0 returns 0", serialize(o -> s0.getType().serialize(o, s0.getValue()), context.holderLookupProvider()), is(tag0));
+
+        assertThat("deserializing 10 returns 10", deserialize(tag10, s10.getType()::deserialize, context.holderLookupProvider()), is(s10.getValue()));
+        assertThat("deserializing -10 returns -10", deserialize(tagm10, sm10.getType()::deserialize, context.holderLookupProvider()), is(sm10.getValue()));
+        assertThat("deserializing 0 returns 0", deserialize(tag0, s0.getType()::deserialize, context.holderLookupProvider()), is(s0.getValue()));
 
         assertThat("serializing 10 returns 10", s10.getType().toString(s10.getValue()), is("10"));
         assertThat("serializing -10 returns -10", sm10.getType().toString(sm10.getValue()), is("-10"));
@@ -188,8 +213,12 @@ public class TestVariables {
         CompoundTag tagStringSerialized = new CompoundTag();
         tagStringSerialized.putString("valueType", "integrateddynamics:string");
         ListTag listString = new ListTag();
-        listString.add(StringTag.valueOf("a"));
-        listString.add(StringTag.valueOf("b"));
+        CompoundTag listString1 = new CompoundTag();
+        listString1.putString("v", "a");
+        CompoundTag listString2 = new CompoundTag();
+        listString2.putString("v", "b");
+        listString.add(listString1);
+        listString.add(listString2);
         tagStringSerialized.put("values", listString);
         CompoundTag tagString = new CompoundTag();
         tagString.putString("proxyName", "integrateddynamics:materialized");
@@ -202,8 +231,8 @@ public class TestVariables {
         CompoundTag tagStringNestedSub1Serialized = new CompoundTag();
         tagStringNestedSub1Serialized.putString("valueType", "integrateddynamics:string");
         ListTag listStringNestedSub1 = new ListTag();
-        listStringNestedSub1.add(StringTag.valueOf("a"));
-        listStringNestedSub1.add(StringTag.valueOf("b"));
+        listStringNestedSub1.add(listString1);
+        listStringNestedSub1.add(listString2);
         tagStringNestedSub1Serialized.put("values", listStringNestedSub1);
         CompoundTag tagStringNestedSub1 = new CompoundTag();
         tagStringNestedSub1.putString("proxyName", "integrateddynamics:materialized");
@@ -212,8 +241,12 @@ public class TestVariables {
         CompoundTag tagStringNestedSub2Serialized = new CompoundTag();
         tagStringNestedSub2Serialized.putString("valueType", "integrateddynamics:string");
         ListTag listStringNestedSub2 = new ListTag();
-        listStringNestedSub2.add(StringTag.valueOf("c"));
-        listStringNestedSub2.add(StringTag.valueOf("d"));
+        CompoundTag listString3 = new CompoundTag();
+        listString3.putString("v", "c");
+        CompoundTag listString4 = new CompoundTag();
+        listString4.putString("v", "d");
+        listStringNestedSub2.add(listString3);
+        listStringNestedSub2.add(listString4);
         tagStringNestedSub2Serialized.put("values", listStringNestedSub2);
         CompoundTag tagStringNestedSub2 = new CompoundTag();
         tagStringNestedSub2.putString("proxyName", "integrateddynamics:materialized");
@@ -234,9 +267,9 @@ public class TestVariables {
         CompoundTag valueHeterogeneous1 = new CompoundTag();
         CompoundTag valueHeterogeneous2 = new CompoundTag();
         valueHeterogeneous1.putString("valueType", "integrateddynamics:integer");
-        valueHeterogeneous1.putInt("value", 42);
+        valueHeterogeneous1.putInt("v", 42);
         valueHeterogeneous2.putString("valueType", "integrateddynamics:string");
-        valueHeterogeneous2.putString("value", "hello");
+        valueHeterogeneous2.putString("v", "hello");
         listHeterogeneous.add(valueHeterogeneous1);
         listHeterogeneous.add(valueHeterogeneous2);
         tagHeterogeneousSerialized.put("values", listHeterogeneous);
@@ -245,22 +278,22 @@ public class TestVariables {
         tagHeterogeneous.put("serialized", tagHeterogeneousSerialized);
 
         assertThat("serializing empty list",
-                l0.getType().serialize(context, l0.getValue()), is(tagEmpty));
+                serialize(o -> l0.getType().serialize(o, l0.getValue()), context.holderLookupProvider()), is(tagEmpty));
         assertThat("serializing string list",
-                l2.getType().serialize(context, l2.getValue()), is(tagString));
+                serialize(o -> l2.getType().serialize(o, l2.getValue()), context.holderLookupProvider()), is(tagString));
         assertThat("serializing nested list",
-                l2.getType().serialize(context, l2_2.getValue()), is(tagStringNested));
+                serialize(o -> l2.getType().serialize(o, l2_2.getValue()), context.holderLookupProvider()), is(tagStringNested));
         assertThat("serializing heterogeneous list",
-                l2h.getType().serialize(context, l2h.getValue()), is(tagHeterogeneous));
+                serialize(o -> l2h.getType().serialize(o, l2h.getValue()), context.holderLookupProvider()), is(tagHeterogeneous));
 
         assertThat("deserializing empty list",
-                l0.getType().deserialize(context, tagEmpty), is(l0.getValue()));
+                deserialize(tagEmpty, l0.getType()::deserialize, context.holderLookupProvider()), is(l0.getValue()));
         assertThat("deserializing string list",
-                l2.getType().deserialize(context, tagString), is(l2.getValue()));
+                deserialize(tagString, l2.getType()::deserialize, context.holderLookupProvider()), is(l2.getValue()));
         assertThat("deserializing nested list",
-                l2_2.getType().deserialize(context, tagStringNested), is(l2_2.getValue()));
+                deserialize(tagStringNested, l2_2.getType()::deserialize, context.holderLookupProvider()), is(l2_2.getValue()));
         assertThat("deserializing heterogeneous list",
-                l2h.getType().deserialize(context, tagHeterogeneous), is(l2h.getValue()));
+                deserialize(tagHeterogeneous, l2h.getType()::deserialize, context.holderLookupProvider()), is(l2h.getValue()));
     }
 
     @Test
@@ -288,13 +321,13 @@ public class TestVariables {
         assertThat("tag value is tag", tagVariable.getValue().getRawValue().get(), is(tag2));
         assertThat("string tag value is tag", strTagVariable.getValue().getRawValue().get(), is(strTag2));
 
-        assertThat("serializing null value returns empty NBT tag", snull.getType().serialize(context, snull.getValue()), is(new CompoundTag()));
-        assertThat("serializing tag returns tag", tagVariable.getType().serialize(context, tagVariable.getValue()), is(tagWrapped));
-        assertThat("serializing string tag returns tag", tagVariable.getType().serialize(context, strTagVariable.getValue()), is(strTagWrapped));
+        assertThat("serializing null value returns empty NBT tag", serialize(o -> snull.getType().serialize(o, snull.getValue()), context.holderLookupProvider()), is(new CompoundTag()));
+        assertThat("serializing tag returns tag", serialize(o -> tagVariable.getType().serialize(o, tagVariable.getValue()), context.holderLookupProvider()), is(tagWrapped));
+        assertThat("serializing string tag returns tag", serialize(o -> tagVariable.getType().serialize(o, strTagVariable.getValue()), context.holderLookupProvider()), is(strTagWrapped));
 
-        assertThat("deserializing null value returns empty NBT tag", snull.getType().deserialize(context, new CompoundTag()), is(snull.getValue()));
-        assertThat("deserializing tag returns tag", tagVariable.getType().deserialize(context, tagWrapped), is(tagVariable.getValue()));
-        assertThat("deserializing string tag returns tag", strTagVariable.getType().deserialize(context, strTagWrapped), is(strTagVariable.getValue()));
+        assertThat("deserializing null value returns empty NBT tag", deserialize(new CompoundTag(), snull.getType()::deserialize, context.holderLookupProvider()), is(snull.getValue()));
+        assertThat("deserializing tag returns tag", deserialize(tagWrapped, tagVariable.getType()::deserialize, context.holderLookupProvider()), is(tagVariable.getValue()));
+        assertThat("deserializing string tag returns tag", deserialize(strTagWrapped, strTagVariable.getType()::deserialize, context.holderLookupProvider()), is(strTagVariable.getValue()));
 
         assertThat("serializing null value returns empty NBT tag", snull.getType().toString(snull.getValue()), is(""));
         assertThat("serializing tag returns tag", tagVariable.getType().toString(tagVariable.getValue()), is("{abc:1b}"));

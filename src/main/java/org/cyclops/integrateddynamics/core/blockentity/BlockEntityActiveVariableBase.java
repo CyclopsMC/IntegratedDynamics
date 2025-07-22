@@ -2,11 +2,11 @@ package org.cyclops.integrateddynamics.core.blockentity;
 
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -79,16 +79,16 @@ public abstract class BlockEntityActiveVariableBase<E> extends BlockEntityCableC
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
         List<MutableComponent> errors = evaluator.getErrors();
-        NBTClassType.writeNbt(List.class, "errors", errors, tag, provider);
+        NBTClassType.writeNbt(List.class, "errors", errors, output);
     }
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
-        evaluator.setErrors(NBTClassType.readNbt(List.class, "errors", tag, provider));
-        super.read(tag, provider);
+    public void read(ValueInput input) {
+        evaluator.setErrors(NBTClassType.readNbt(List.class, "errors", input));
+        super.read(input);
     }
 
     public abstract int getSlotRead();

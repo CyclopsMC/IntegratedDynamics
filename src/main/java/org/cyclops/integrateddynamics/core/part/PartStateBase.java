@@ -5,26 +5,20 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.part.AttachCapabilitiesEventPart;
-import org.cyclops.integrateddynamics.api.part.IPartState;
-import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.PartCapability;
-import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
@@ -61,100 +55,98 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private IdentityHashMap<PartCapability<?>, Optional<Object>> volatileCapabilities = new IdentityHashMap<>();
 
     @Override
-    public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        tag.putInt("updateInterval", this.updateInterval);
-        tag.putInt("priority", this.priority);
-        tag.putInt("channel", this.channel);
+    public void serialize(ValueOutput valueOutput) {
+        valueOutput.putInt("updateInterval", this.updateInterval);
+        valueOutput.putInt("priority", this.priority);
+        valueOutput.putInt("channel", this.channel);
         if (this.targetSide != null) {
-            tag.putInt("targetSide", this.targetSide.ordinal());
+            valueOutput.putInt("targetSide", this.targetSide.ordinal());
         }
-        tag.putInt("id", this.id);
-        writeAspectProperties(valueDeseralizationContext, "aspectProperties", tag);
-        tag.putBoolean("enabled", this.enabled);
-        tag.putInt("maxOffset", this.maxOffset);
-        tag.putInt("offsetX", this.targetOffset.getX());
-        tag.putInt("offsetY", this.targetOffset.getY());
-        tag.putInt("offsetZ", this.targetOffset.getZ());
+        valueOutput.putInt("id", this.id);
+        writeAspectProperties(valueOutput.child("aspectProperties"));
+        valueOutput.putBoolean("enabled", this.enabled);
+        valueOutput.putInt("maxOffset", this.maxOffset);
+        valueOutput.putInt("offsetX", this.targetOffset.getX());
+        valueOutput.putInt("offsetY", this.targetOffset.getY());
+        valueOutput.putInt("offsetZ", this.targetOffset.getZ());
 
         // Write inventoriesNamed
-        ListTag namedInventoriesList = new ListTag();
+        ValueOutput.ValueOutputList namedInventoriesList = valueOutput.childrenList("inventoriesNamed");
         for (Map.Entry<String, NonNullList<ItemStack>> entry : this.inventoriesNamed.entrySet()) {
-            CompoundTag listEntry = new CompoundTag();
+            ValueOutput listEntry = namedInventoriesList.addChild();
             listEntry.putString("tabName", entry.getKey());
             listEntry.putInt("itemCount", entry.getValue().size());
-            ContainerHelper.saveAllItems(listEntry, entry.getValue(), valueDeseralizationContext.holderLookupProvider());
-            namedInventoriesList.add(listEntry);
+            ContainerHelper.saveAllItems(listEntry, entry.getValue());
         }
-        tag.put("inventoriesNamed", namedInventoriesList);
 
-        CompoundTag errorsTag = new CompoundTag();
+        ValueOutput.ValueOutputList errorsTag = valueOutput.childrenList("offsetVariablesSlotMessages");
         for (Int2ObjectMap.Entry<MutableComponent> entry : this.offsetHandler.offsetVariablesSlotMessages.int2ObjectEntrySet()) {
-            NBTClassType.writeNbt(MutableComponent.class, String.valueOf(entry.getIntKey()), entry.getValue(), errorsTag, valueDeseralizationContext.holderLookupProvider());
+            ValueOutput child = errorsTag.addChild();
+            String slot = String.valueOf(entry.getIntKey());
+            child.putString("slot", slot);
+            NBTClassType.writeNbt(MutableComponent.class, slot, entry.getValue(), child);
         }
-        tag.put("offsetVariablesSlotMessages", errorsTag);
     }
 
     @Override
-    public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        this.updateInterval = tag.getInt("updateInterval");
-        this.priority = tag.getInt("priority");
-        this.channel = tag.getInt("channel");
-        if (tag.contains("targetSide", Tag.TAG_INT)) {
-            this.targetSide = Direction.values()[tag.getInt("targetSide")];
-        }
-        this.id = tag.getInt("id");
+    public void deserialize(ValueInput valueInput) {
+        this.updateInterval = valueInput.getInt("updateInterval").orElseThrow();
+        this.priority = valueInput.getInt("priority").orElseThrow();
+        this.channel = valueInput.getInt("channel").orElseThrow();
+        this.targetSide = valueInput.getInt("targetSide")
+                .map(s -> Direction.values()[s])
+                .orElse(null);
+        this.id = valueInput.getInt("id").orElseThrow();
         this.aspectProperties.clear();
-        readAspectProperties(valueDeseralizationContext, "aspectProperties", tag);
-        this.enabled = tag.getBoolean("enabled");
-        this.maxOffset = tag.getInt("maxOffset");
-        this.targetOffset = new Vec3i(tag.getInt("offsetX"), tag.getInt("offsetY"), tag.getInt("offsetZ"));
+        readAspectProperties(valueInput.child("aspectProperties").orElseThrow());
+        this.enabled = valueInput.getBooleanOr("enabled", false);
+        this.maxOffset = valueInput.getInt("maxOffset").orElseThrow();
+        this.targetOffset = new Vec3i(
+                valueInput.getInt("offsetX").orElseThrow(),
+                valueInput.getInt("offsetY").orElseThrow(),
+                valueInput.getInt("offsetZ").orElseThrow()
+        );
 
         // Read inventoriesNamed
-        for (Tag listEntry : tag.getList("inventoriesNamed", Tag.TAG_COMPOUND)) {
-            NonNullList<ItemStack> list = NonNullList.withSize(((CompoundTag) listEntry).getInt("itemCount"), ItemStack.EMPTY);
-            String tabName = ((CompoundTag) listEntry).getString("tabName");
-            ContainerHelper.loadAllItems((CompoundTag) listEntry, list, valueDeseralizationContext.holderLookupProvider());
+        for (ValueInput listEntry : valueInput.childrenList("inventoriesNamed").orElseThrow()) {
+            NonNullList<ItemStack> list = NonNullList.withSize(listEntry.getInt("itemCount").orElseThrow(), ItemStack.EMPTY);
+            String tabName = listEntry.getString("tabName").orElseThrow();
+            ContainerHelper.loadAllItems(listEntry, list);
             this.inventoriesNamed.put(tabName, list);
         }
 
         this.offsetHandler.offsetVariablesSlotMessages.clear();
-        CompoundTag errorsTag = tag.getCompound("offsetVariablesSlotMessages");
-        for (String slot : errorsTag.getAllKeys()) {
-            MutableComponent unlocalizedString = NBTClassType.readNbt(MutableComponent.class, slot, errorsTag, valueDeseralizationContext.holderLookupProvider());
+        ValueInput.ValueInputList errorsTag = valueInput.childrenList("offsetVariablesSlotMessages").orElseThrow();
+        for (ValueInput child : errorsTag) {
+            String slot = child.getString("slot").orElseThrow();
+            MutableComponent unlocalizedString = NBTClassType.readNbt(MutableComponent.class, slot, child);
             this.offsetHandler.offsetVariablesSlotMessages.put(Integer.parseInt(slot), unlocalizedString);
         }
     }
 
-    protected void writeAspectProperties(ValueDeseralizationContext valueDeseralizationContext, String name, CompoundTag tag) {
-        CompoundTag mapTag = new CompoundTag();
-        ListTag list = new ListTag();
+    protected void writeAspectProperties(ValueOutput valueOutput) {
+        ValueOutput.ValueOutputList list = valueOutput.childrenList("map");
         for(Map.Entry<IAspect, IAspectProperties> entry : aspectProperties.entrySet()) {
-            CompoundTag entryTag = new CompoundTag();
+            ValueOutput entryTag = list.addChild();
             entryTag.putString("key", entry.getKey().getUniqueName().toString());
             if(entry.getValue() != null) {
-                entryTag.put("value", entry.getValue().toNBT(valueDeseralizationContext));
+                entry.getValue().serialize(entryTag.child("value"));
             }
-            list.add(entryTag);
         }
-        mapTag.put("map", list);
-        tag.put(name, mapTag);
     }
 
-    public void readAspectProperties(ValueDeseralizationContext valueDeseralizationContext, String name, CompoundTag tag) {
-        CompoundTag mapTag = tag.getCompound(name);
-        ListTag list = mapTag.getList("map", Tag.TAG_COMPOUND);
-        if(list.size() > 0) {
-            for (int i = 0; i < list.size(); i++) {
-                CompoundTag entryTag = list.getCompound(i);
-                IAspect key = Aspects.REGISTRY.getAspect(ResourceLocation.parse(entryTag.getString("key")));
-                IAspectProperties value = null;
-                if (entryTag.contains("value")) {
-                    value = new AspectProperties();
-                    value.fromNBT(valueDeseralizationContext, entryTag.getCompound("value"));
-                }
-                if (key != null && value != null) {
-                    this.aspectProperties.put(key, value);
-                }
+    public void readAspectProperties(ValueInput valueInput) {
+        for (ValueInput entryTag : valueInput.childrenList("map").orElseThrow()) {
+            IAspect key = Aspects.REGISTRY.getAspect(ResourceLocation.parse(entryTag.getString("key").orElseThrow()));
+            IAspectProperties value = entryTag.child("value")
+                    .map(v -> {
+                        AspectProperties ap = new AspectProperties();
+                        ap.deserialize(v);
+                        return ap;
+                    })
+                    .orElse(null);
+            if (key != null && value != null) {
+                this.aspectProperties.put(key, value);
             }
         }
     }

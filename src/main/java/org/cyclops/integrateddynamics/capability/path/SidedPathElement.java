@@ -1,10 +1,13 @@
 package org.cyclops.integrateddynamics.capability.path;
 
 import net.minecraft.core.Direction;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
+import org.cyclops.integrateddynamics.api.path.SidedPathElementParams;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * @author rubensworks
@@ -28,6 +31,12 @@ public class SidedPathElement implements ISidedPathElement {
     @Nullable
     public Direction getSide() {
         return side;
+    }
+
+    @Override
+    public SidedPathElementParams getParams() {
+        DimPos pos = getPathElement().getPosition();
+        return new SidedPathElementParams(pos.getLevel(), pos.getBlockPos(), Optional.ofNullable(getSide()));
     }
 
     @Override

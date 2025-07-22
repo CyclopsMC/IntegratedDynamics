@@ -1,11 +1,12 @@
 package org.cyclops.integrateddynamics.api.part;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,6 +14,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -20,18 +25,22 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Default implementation of {@link IPartType}.
  * @author rubensworks
  */
 public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPartState<P>> implements IPartType<P, S> {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private String translationKey = null;
 
@@ -48,14 +57,14 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void toNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, S partState) {
-        partState.writeToNBT(valueDeseralizationContext, tag);
+    public void serializeState(ValueOutput valueOutput, S partState) {
+        partState.serialize(valueOutput);
     }
 
     @Override
-    public S fromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
+    public S deserializeState(ValueInput valueInput) {
         S partState = constructDefaultState();
-        partState.readFromNBT(valueDeseralizationContext, tag);
+        partState.deserialize(valueInput);
         partState.gatherCapabilities((P) this);
         return partState;
     }
@@ -170,26 +179,35 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, S state, boolean saveState) {
+    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, ProblemReporter.PathElement problemPath, S state, boolean saveState) {
         ItemStack itemStack = new ItemStack(getItem());
         if (saveState) {
-            CompoundTag tag = new CompoundTag();
-            toNBT(valueDeseralizationContext, tag, state);
-            itemStack.set(RegistryEntries.DATACOMPONENT_PART_STATE, tag);
+            try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(problemPath, LOGGER)) {
+                TagValueOutput valueOutput = TagValueOutput.createWithContext(scopedCollector, valueDeseralizationContext.holderLookupProvider());
+                serializeState(valueOutput, state);
+                itemStack.set(RegistryEntries.DATACOMPONENT_PART_STATE, valueOutput.buildResult());
+            }
         }
         return itemStack;
     }
 
     @Override
     public ItemStack getCloneItemStack(Level world, BlockPos pos, S state) {
-        return getItemStack(ValueDeseralizationContext.of(world), state, false);
+        return getItemStack(ValueDeseralizationContext.of(world), new PartPathElement(pos), state, false);
     }
 
     @Override
-    public S getState(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
+    public S getState(ValueDeseralizationContext valueDeseralizationContext, ProblemReporter.PathElement problemPath, ItemStack itemStack) {
         S partState = null;
         if(!itemStack.isEmpty() && itemStack.has(RegistryEntries.DATACOMPONENT_PART_STATE)) {
-            partState = fromNBT(valueDeseralizationContext, itemStack.get(RegistryEntries.DATACOMPONENT_PART_STATE));
+            try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(problemPath, LOGGER)) {
+                ValueInput input = TagValueInput.create(
+                        scopedCollector,
+                        valueDeseralizationContext.holderLookupProvider(),
+                        itemStack.get(RegistryEntries.DATACOMPONENT_PART_STATE)
+                );
+                partState = deserializeState(input);
+            }
         }
         if(partState == null) {
             partState = defaultBlockState();
@@ -213,7 +231,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     @Override
     public void addDrops(PartTarget target, S state, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
         if(dropMainElement) {
-            itemStacks.add(getItemStack(ValueDeseralizationContext.of(target.getCenter().getPos().getLevel(true)), state, saveState));
+            itemStacks.add(getItemStack(ValueDeseralizationContext.of(target.getCenter().getPos().getLevel(true)), new PartPathElement(target.getCenter().getPos().getBlockPos()), state, saveState));
         }
 
         // Drop contents of named inventories
@@ -289,7 +307,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
-    public void loadTooltip(ItemStack itemStack, List<Component> lines) {
+    public void loadTooltip(ItemStack itemStack, Consumer<Component> tooltipAdder) {
 
     }
 

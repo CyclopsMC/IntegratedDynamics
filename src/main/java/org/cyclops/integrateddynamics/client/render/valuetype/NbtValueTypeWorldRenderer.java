@@ -43,7 +43,7 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             if (tag instanceof CompoundTag) {
                 CompoundTag tagCompound = (CompoundTag) tag;
                 lines.add("{");
-                for (String key : tagCompound.getAllKeys()) {
+                for (String key : tagCompound.keySet()) {
                     if (lines.size() >= MAX_LINES) {
                         lines.add("...");
                         break;

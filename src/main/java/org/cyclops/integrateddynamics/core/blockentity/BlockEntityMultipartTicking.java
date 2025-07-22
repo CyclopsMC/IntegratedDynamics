@@ -4,20 +4,20 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.redstone.ExperimentalRedstoneUtils;
 import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -173,23 +173,23 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
         forceLightCheckAtClient = false;
-        tag.put("partContainer", partContainer.serializeNBT(provider));
-        tag.putBoolean("realCable", cableFakeable.isRealCable());
+        partContainer.toValueOutput(output.child("partContainer"));
+        output.putBoolean("realCable", cableFakeable.isRealCable());
     }
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
+    public void read(ValueInput input) {
         EnumFacingMap<Boolean> lastConnected = EnumFacingMap.newMap(connected);
         Tag lastFacadeBlock = facadeBlockTag;
         boolean lastRealCable = cableFakeable.isRealCable();
-        partContainer.deserializeNBT(provider, tag.getCompound("partContainer"));
+        partContainer.fromValueInput(input.child("partContainer").orElseThrow());
         boolean wasLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null);
 
-        super.read(tag, provider);
-        cableFakeable.setRealCable(tag.getBoolean("realCable"));
+        super.read(input);
+        cableFakeable.setRealCable(input.getBooleanOr("realCable", false));
         boolean isLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null);
         if (getLevel() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
                 || !Objects.equals(lastFacadeBlock, facadeBlockTag)
@@ -199,8 +199,8 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
+    public void onDataPacket(Connection net, ValueInput valueInput) {
+        super.onDataPacket(net, valueInput);
         onUpdateReceived();
     }
 
@@ -304,6 +304,15 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     protected Direction transformFacingForRotation(Direction facing) {
         // Ignore rotations on this tile
         return facing;
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+
+        if (!CableHelpers.isRemovingCable()) {
+            CableHelpers.onCableRemoving(level, pos, false, false, state);
+        }
     }
 
     public static class Ticker<T extends BlockEntityMultipartTicking> extends BlockEntityTickerDelayed<T> {

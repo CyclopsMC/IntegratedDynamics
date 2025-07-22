@@ -12,8 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -32,6 +30,7 @@ import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicP
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.RenderPattern;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 import javax.annotation.Nullable;
@@ -41,7 +40,7 @@ import java.util.List;
  * Base container for the logic programmer.
  * @author rubensworks
  */
-public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryContainer<ILogicProgrammerElement> implements IDirtyMarkListener {
+public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryContainer<ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase, ?>> implements IDirtyMarkListener {
 
     public static final int OUTPUT_X = 232;
     public static final int OUTPUT_Y = 110;
@@ -51,7 +50,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public static final int MAX_WIDTH = 160;
     public static final int MAX_HEIGHT = 87;
 
-    protected static final IItemPredicate<ILogicProgrammerElement> FILTERER =
+    protected static final IItemPredicate<ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase, ?>> FILTERER =
             (item, pattern) -> pattern.matcher(item.getMatchString()).matches()
                     || pattern.matcher(item.getSymbol()).matches();
 
@@ -67,8 +66,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     private IValueType filterIn2 = null;
     private IValueType filterOut = null;
 
-    @OnlyIn(Dist.CLIENT)
-    private ContainerScreenLogicProgrammerBase gui;
+    private ScreenCallbackHandler screenCallbackHandler;
 
     private String lastLabel = "";
 
@@ -84,22 +82,20 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         initializeSlotsPost();
     }
 
-    protected static List<ILogicProgrammerElement> getElements() {
-        List<ILogicProgrammerElement> elements = Lists.newLinkedList();
+    protected static List<ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase, ?>> getElements() {
+        List<ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase, ?>> elements = Lists.newLinkedList();
         for(ILogicProgrammerElementType type: LogicProgrammerElementTypes.REGISTRY.getTypes()) {
             elements.addAll(type.createElements());
         }
         return elements;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void setGui(ContainerScreenLogicProgrammerBase gui) {
-        this.gui = gui;
+    public void setScreenCallbackHandler(ScreenCallbackHandler screenCallbackHandler) {
+        this.screenCallbackHandler = screenCallbackHandler;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public ContainerScreenLogicProgrammerBase getGui() {
-        return this.gui;
+    public ScreenCallbackHandler getGui() {
+        return this.screenCallbackHandler;
     }
 
     protected void initializeSlotsPre() {
@@ -222,7 +218,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         return lastError == null;
     }
 
-    public ILogicProgrammerElement getActiveElement() {
+    public ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase, ?> getActiveElement() {
         return activeElement;
     }
 
@@ -287,7 +283,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     protected void loadConfigFrom(ItemStack itemStack) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level()), itemStack);
-        for(ILogicProgrammerElement element : getUnfilteredItems()) {
+        for(ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase, ?> element : getUnfilteredItems()) {
             if(element.isFor(variableFacade)) {
                 writeSlot.removeDirtyMarkListener(this);
                 writeSlot.removeDirtyMarkListener(loadConfigListener);
@@ -299,7 +295,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
                 temporaryInputSlots.removeDirtyMarkListener(this);
                 element.loadElement(variableFacade);
                 if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
-                    element.setValueInGui(getGui().getOperatorConfigPattern());
+                    element.getClient().setValueInGui(getGui().getOperatorConfigPattern());
                 } else {
                     element.setValueInContainer(this);
                 }
@@ -401,6 +397,11 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
             }
         }
 
+    }
+
+    public static interface ScreenCallbackHandler {
+        public boolean handleElementActivation(ILogicProgrammerElement element, boolean sendToServer);
+        public RenderPattern getOperatorConfigPattern();
     }
 
 }

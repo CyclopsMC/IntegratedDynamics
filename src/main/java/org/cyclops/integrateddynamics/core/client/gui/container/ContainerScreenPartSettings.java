@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
@@ -95,7 +96,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
             setSideInDropdownField(getCurrentSide());
             dropdownFieldSide.setMaxLength(15);
             dropdownFieldSide.setVisible(true);
-            dropdownFieldSide.setTextColor(16777215);
+            dropdownFieldSide.setTextColor(ARGB.opaque(16777215));
             dropdownFieldSide.setCanLoseFocus(true);
         }
 
@@ -104,7 +105,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
                     Component.translatable("gui.integrateddynamics.partsettings.update_interval"), true);
             numberFieldUpdateInterval.setMaxLength(15);
             numberFieldUpdateInterval.setVisible(true);
-            numberFieldUpdateInterval.setTextColor(16777215);
+            numberFieldUpdateInterval.setTextColor(ARGB.opaque(16777215));
             numberFieldUpdateInterval.setCanLoseFocus(true);
             numberFieldUpdateInterval.setMinValue(container.getLastMinUpdateValue());
         }
@@ -115,7 +116,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
             numberFieldPriority.setPositiveOnly(false);
             numberFieldPriority.setMaxLength(15);
             numberFieldPriority.setVisible(true);
-            numberFieldPriority.setTextColor(16777215);
+            numberFieldPriority.setTextColor(ARGB.opaque(16777215));
             numberFieldPriority.setCanLoseFocus(true);
         }
 
@@ -125,7 +126,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
             numberFieldChannel.setPositiveOnly(false);
             numberFieldChannel.setMaxLength(15);
             numberFieldChannel.setVisible(true);
-            numberFieldChannel.setTextColor(16777215);
+            numberFieldChannel.setTextColor(ARGB.opaque(16777215));
             numberFieldChannel.setCanLoseFocus(true);
             numberFieldChannel.setEditable(isChannelEnabled());
         }
@@ -238,19 +239,19 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
         if (isFieldUpdateIntervalEnabled()) {
-            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
+            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, ARGB.opaque(0), false);
             numberFieldUpdateInterval.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldPriorityEnabled()) {
-            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
+            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, ARGB.opaque(0), false);
             numberFieldPriority.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldChannelEnabled()) {
-            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0) : IModHelpers.get().getBaseHelpers().RGBToInt(100, 100, 100), false);
+            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? ARGB.opaque(0) : IModHelpers.get().getBaseHelpers().RGBAToInt(100, 100, 100, 255), false);
             numberFieldChannel.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldSideEnabled()) {
-            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
+            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, ARGB.opaque(0), false);
             dropdownFieldSide.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
@@ -259,7 +260,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
-            IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics.pose(), 8, 87, 100, 20, mouseX, mouseY,
+            IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics, 8, 87, 100, 20, mouseX, mouseY,
                     () -> Lists.<Component>newArrayList(Component.translatable("gui.integrateddynamics.partsettings.channel.disabledinfo")));
         }
     }

@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.ResourceLocationException;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -16,7 +16,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -175,53 +174,48 @@ public class ValueHelpers {
     /**
      * Serialize the given value to a raw tag without its value type.
      *
-     * @param valueDeseralizationContext The deserialization context.
-     * @param value                      The value.
-     * @return The NBT tag.
+     * @param valueOutput The value output.
+     * @param value       The value.
      */
-    public static Tag serializeRaw(ValueDeseralizationContext valueDeseralizationContext, IValue value) {
-        return value.getType().serialize(valueDeseralizationContext, value);
+    public static void serializeRaw(ValueOutput valueOutput, IValue value) {
+        value.getType().serialize(valueOutput, value);
     }
 
     /**
-     * Serialize the given value to NBT.
+     * Serialize the given value.
      *
-     * @param valueDeseralizationContext The deserialization context.
-     * @param value                      The value.
-     * @return The NBT tag.
+     * @param valueOutput The output to write to.
+     * @param value  The value.
      */
-    public static CompoundTag serialize(ValueDeseralizationContext valueDeseralizationContext, IValue value) {
-        CompoundTag tag = new CompoundTag();
-        tag.putString("valueType", value.getType().getUniqueName().toString());
-        tag.put("value", serializeRaw(valueDeseralizationContext, value));
-        return tag;
+    public static void serialize(ValueOutput valueOutput, IValue value) {
+        valueOutput.putString("valueType", value.getType().getUniqueName().toString());
+        serializeRaw(valueOutput, value);
     }
 
     /**
-     * Deserialize the given NBT tag to a value.
+     * Deserialize the given input to a value.
      *
-     * @param valueDeseralizationContext The deserialization context.
-     * @param tag The NBT tag containing a value.
+     * @param input The input containing a value.
      * @return The value.
      */
-    public static IValue deserialize(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-        IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("valueType")));
+    public static IValue deserialize(ValueInput input) {
+        IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(input.getString("valueType").orElseThrow()));
         if (valueType == null) {
             return null;
         }
-        return deserializeRaw(valueDeseralizationContext, valueType, tag.get("value"));
+        return deserializeRaw(input, valueType);
     }
 
     /**
      * Deserialize the given value string to a value.
-     * @param <T> The type of value.
-     * @param valueDeseralizationContext The deserialization context.
-     * @param valueType The value type to deserialize for.
-     * @param valueString The value tag.
+     *
+     * @param <T>        The type of value.
+     * @param valueInput The value input.
+     * @param valueType  The value type to deserialize for.
      * @return The value.
      */
-    public static <T extends IValue> T deserializeRaw(ValueDeseralizationContext valueDeseralizationContext, IValueType<T> valueType, Tag valueString) {
-        return valueType.deserialize(valueDeseralizationContext, valueString);
+    public static <T extends IValue> T deserializeRaw(ValueInput valueInput, IValueType<T> valueType) {
+        return valueType.deserialize(valueInput);
     }
 
     /**

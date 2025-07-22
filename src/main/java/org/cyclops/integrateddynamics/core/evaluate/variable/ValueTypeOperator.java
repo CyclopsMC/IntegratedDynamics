@@ -3,9 +3,10 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Lists;
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -13,7 +14,6 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
@@ -22,6 +22,7 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeOperatorLPEl
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Value type with operator values.
@@ -47,29 +48,29 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueOperator value) {
-        return Operators.REGISTRY.serialize(valueDeseralizationContext, value.getRawValue());
+    public void serialize(ValueOutput valueOutput, ValueOperator value) {
+        Operators.REGISTRY.serialize(valueOutput.child("v"), value.getRawValue());
     }
 
     @Override
-    public ValueOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
+    public ValueOperator deserialize(ValueInput valueInput) {
         IOperator operator;
         try {
-            operator = Operators.REGISTRY.deserialize(valueDeseralizationContext, value);
+            operator = Operators.REGISTRY.deserialize(valueInput.child("v").orElseThrow());
         } catch (EvaluationException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
         if (operator != null) {
             return ValueOperator.of(operator);
         }
-        throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to an operator.", value));
+        throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to an operator.", valueInput));
     }
 
     @Override
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable ValueOperator value) {
-        super.loadTooltip(lines, appendOptionalInfo, value);
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo, @Nullable ValueOperator value) {
+        super.loadTooltip(tooltipAdder, appendOptionalInfo, value);
         if (value != null) {
-            lines.add(Component.translatable(L10NValues.VALUETYPEOPERATOR_TOOLTIP_SIGNATURE)
+            tooltipAdder.accept(Component.translatable(L10NValues.VALUETYPEOPERATOR_TOOLTIP_SIGNATURE)
                     .append(getSignature(value.getRawValue())));
         }
     }

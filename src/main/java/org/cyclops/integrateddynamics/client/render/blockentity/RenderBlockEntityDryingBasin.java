@@ -16,6 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
@@ -38,7 +39,7 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
 
     @Override
     public void render(BlockEntityDryingBasin tile, float partialTicks, PoseStack matrixStack,
-                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
+                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
         if(tile != null) {
             if(!tile.getInventory().getItem(0).isEmpty()) {
                 matrixStack.pushPose();
@@ -71,9 +72,9 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
     private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, float rotation, Level level) {
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         ItemStackRenderState renderState = new ItemStackRenderState();
-        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, false, level, null, 0);
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, level, null, 0);
 
-        if (renderState.isGui3d()) {
+        if (renderState.isOversizedInGui()) {
             matrixStack.translate(1F, 1.2F, 1F);
             matrixStack.scale(1.2F, 1.2F, 1.2F);
         } else {

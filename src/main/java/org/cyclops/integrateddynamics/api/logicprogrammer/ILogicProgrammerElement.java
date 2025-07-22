@@ -7,8 +7,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
@@ -22,7 +20,8 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
  * @param <S> The sub gui box type.
  * @author rubensworks
  */
-public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu> extends IGuiInputElement<S, G, C> {
+public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu, GIC extends ILogicProgrammerElementClient<S, G, C>>
+        extends IGuiInputElement<S, G, C, GIC> {
 
     /**
      * @return The element type.
@@ -137,29 +136,6 @@ public interface ILogicProgrammerElement<S extends ISubGuiBox, G extends Screen,
      * @return The max stacksize.
      */
     public int getItemStackSizeLimit();
-
-    /**
-     * @param subGui The corresponding sub gui of this element.
-     * @return If this element has the active focus. For typing and things like that.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public boolean isFocused(S subGui);
-
-    /**
-     * Set the focus of this element.
-     * @param subGui The corresponding sub gui of this element.
-     * @param focused If it must be focused.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public void setFocused(S subGui, boolean focused);
-
-    /**
-     * Set the currently stored value in the given sub gui.
-     * This is useful when the gui is reused for multiple elements where the actual value is stored in this element.
-     * @param subGui The sub gui to put the currently stored value in.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public void setValueInGui(S subGui);
 
     /**
      * Set the currently stored value in the given container.

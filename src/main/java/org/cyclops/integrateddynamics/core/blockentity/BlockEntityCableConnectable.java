@@ -1,11 +1,10 @@
 package org.cyclops.integrateddynamics.core.blockentity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.capability.registrar.BlockEntityCapabilityRegistrar;
@@ -19,6 +18,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.capability.cable.CableTile;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 import java.util.function.Supplier;
@@ -94,8 +94,8 @@ public abstract class BlockEntityCableConnectable extends CyclopsBlockEntity {
     public abstract INetworkElementProvider getNetworkElementProvider();
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
-        super.read(tag, provider);
+    public void read(ValueInput input) {
+        super.read(input);
         connected.clear();
     }
 
@@ -107,6 +107,15 @@ public abstract class BlockEntityCableConnectable extends CyclopsBlockEntity {
             if (network != null) {
                 NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), network, getNetworkElementProvider());
             }
+        }
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+
+        if (!CableHelpers.isRemovingCable()) {
+            CableHelpers.onCableRemoving(level, pos, false, false, state);
         }
     }
 

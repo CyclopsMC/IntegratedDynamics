@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
@@ -76,7 +77,7 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
         // Draw part name
-        guiGraphics.drawString(font, getTitle(), leftPos + 8, topPos + 6, 4210752, false);
+        guiGraphics.drawString(font, getTitle(), leftPos + 8, topPos + 6, ARGB.opaque(4210752), false);
     }
 
     @Override
@@ -84,10 +85,10 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 
         if (isHovering(-20, 0, 18, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_settings")), guiGraphics, mouseX, mouseY);
         }
         if (isHovering(-20, 20, 18, 18, mouseX, mouseY)) {
-            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
+            drawTooltip(Lists.newArrayList(Component.translatable("gui.integrateddynamics.part_offsets")), guiGraphics, mouseX, mouseY);
         }
     }
 }

@@ -1,44 +1,34 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
 import com.google.common.collect.Maps;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.resources.model.ResolvableModel;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Variable model provider for aspects.
+ * Variable facadeModel provider for aspects.
  * @author rubensworks
  */
 public class AspectVariableModelProvider implements IVariableModelProvider<BakedMapVariableModelProvider<IAspect>> {
     @Override
-    public BakedMapVariableModelProvider<IAspect> bakeOverlayModels(ModelBaker modelBaker,
-                                                                    ModelState transform) {
-        Map<IAspect, BakedModel> bakedModels = Maps.newHashMap();
+    public BakedMapVariableModelProvider<IAspect> bakeOverlayModels(ItemModel.BakingContext bakingContext) {
+        Map<IAspect, ItemModel> bakedModels = Maps.newHashMap();
         for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
-            ResourceLocation resourceLocation = Aspects.REGISTRY.getAspectModel(aspect);
-            BakedModel bakedModel = modelBaker.bake(resourceLocation, transform);
+            ItemModel.Unbaked unbakedModel = Aspects.REGISTRY.getClient().getAspectModel(aspect);
+            ItemModel bakedModel = unbakedModel.bake(bakingContext);
             bakedModels.put(aspect, bakedModel);
         }
         return new BakedMapVariableModelProvider<>(bakedModels);
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies() {
-        return Aspects.REGISTRY.getAspectModels();
-    }
-
-    @Override
-    public void loadModels(List<ResourceLocation> subModels) {
+    public void resolveDependencies(ResolvableModel.Resolver resolver) {
         for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
-            subModels.add(Aspects.REGISTRY.getAspectModel(aspect));
+            Aspects.REGISTRY.getClient().getAspectModel(aspect).resolveDependencies(resolver);
         }
     }
 

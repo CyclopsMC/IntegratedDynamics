@@ -11,6 +11,9 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+
+import java.util.Set;
 
 /**
  * @author rubensworks
@@ -28,8 +31,13 @@ public class SpecialModelRendererVariableOverlay implements SpecialModelRenderer
             IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.ofClient(), itemStackIn);
             displayContext = ItemDisplayContext.GUI;
             poseStack.translate(0.5F, 0.5F, 0.7F);
-            variableFacade.renderISTER(itemStackIn, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
+            variableFacade.getClient().renderISTER(itemStackIn, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
         }
+    }
+
+    @Override
+    public void getExtents(Set<Vector3f> p_428206_) {
+
     }
 
     public static record Unbaked() implements SpecialModelRenderer.Unbaked {

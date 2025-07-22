@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -59,9 +57,8 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
         return "read" + this.unlocalizedTypeSuffix;
     }
 
-    @OnlyIn(Dist.CLIENT)
     protected void registerModelResourceLocation() {
-        Aspects.REGISTRY.registerAspectModel(this,
+        Aspects.REGISTRY.getClient().registerAspectModel(this,
                 ResourceLocation.parse(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
     }
 

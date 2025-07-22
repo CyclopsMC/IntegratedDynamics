@@ -23,7 +23,7 @@ public class ValueTypeListProxyEntityInventory extends ValueTypeListProxyEntityB
     protected NonNullList<ItemStack> getInventory() {
         Entity e = getEntity();
         if(e != null && e instanceof Player) {
-            return ((Player) e).getInventory().items;
+            return ((Player) e).getInventory().getNonEquipmentItems();
         }
         return NonNullList.create();
     }

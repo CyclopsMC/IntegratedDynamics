@@ -1,15 +1,17 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.apache.commons.compress.utils.Lists;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+
+import java.util.List;
 
 /**
  * A concatenated list.
@@ -54,22 +56,20 @@ public class ValueTypeListProxyConcat<T extends IValueType<V>, V extends IValue>
         }
 
         @Override
-        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyConcat<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            ListTag list = new ListTag();
+        protected void serializeNbt(ValueOutput valueOutput, ValueTypeListProxyConcat<IValueType<IValue>, IValue> value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            ValueOutput.ValueOutputList list = valueOutput.childrenList("sublists");
             for (IValueTypeListProxy<IValueType<IValue>, IValue> listProxy : value.lists) {
-                list.add(ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, listProxy));
+                ValueTypeListProxyFactories.REGISTRY.serialize(list.addChild(), listProxy);
             }
-            tag.put("sublists", list);
         }
 
         @Override
-        protected ValueTypeListProxyConcat<IValueType<IValue>, IValue> deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            ListTag list = (ListTag) tag.get("sublists");
-            IValueTypeListProxy<IValueType<IValue>, IValue>[] listProxies = new IValueTypeListProxy[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                listProxies[i] = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, list.get(i));
+        protected ValueTypeListProxyConcat<IValueType<IValue>, IValue> deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            List<IValueTypeListProxy<IValueType<IValue>, IValue>> listProxies = Lists.newArrayList();
+            for (ValueInput child : valueInput.childrenList("sublists").orElseThrow()) {
+                listProxies.add(ValueTypeListProxyFactories.REGISTRY.deserialize(child));
             }
-            return new ValueTypeListProxyConcat<>(listProxies);
+            return new ValueTypeListProxyConcat<>(listProxies.toArray(IValueTypeListProxy[]::new));
         }
     }
 }

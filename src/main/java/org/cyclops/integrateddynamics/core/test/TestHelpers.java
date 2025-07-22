@@ -1,9 +1,19 @@
 package org.cyclops.integrateddynamics.core.test;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.apache.http.util.Asserts;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.command.CommandTest;
 
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Helpers for tests
@@ -88,6 +98,45 @@ public class TestHelpers {
         } catch (IllegalStateException e) {
             throw new AssertionError(String.format("Failure: %s. Expected to be non null, but got %s.", ifNonNull, actual));
         }
+    }
+
+    public static <T> CompoundTag serialize(Consumer<ValueOutput> deserializer) {
+        return serialize(deserializer, ValueDeseralizationContext.ofAllEnabled().holderLookupProvider());
+    }
+
+    public static <T> CompoundTag serialize(Consumer<ValueOutput> deserializer, HolderLookup.Provider holderLookup) {
+        TagValueOutput valueOutput = TagValueOutput.createWithContext(new ProblemReporter() {
+            @Override
+            public ProblemReporter forChild(PathElement p_421613_) {
+                return this;
+            }
+
+            @Override
+            public void report(Problem p_422137_) {
+
+            }
+        }, holderLookup);
+        deserializer.accept(valueOutput);
+        return valueOutput.buildResult();
+    }
+
+    public static <T> T deserialize(CompoundTag tag, Function<ValueInput, T> serializer) {
+        return deserialize(tag, serializer, ValueDeseralizationContext.ofAllEnabled().holderLookupProvider());
+    }
+
+    public static <T> T deserialize(CompoundTag tag, Function<ValueInput, T> serializer, HolderLookup.Provider holderLookup) {
+        ValueInput valueInput = TagValueInput.create(new ProblemReporter() {
+            @Override
+            public ProblemReporter forChild(PathElement p_421613_) {
+                return this;
+            }
+
+            @Override
+            public void report(Problem p_422137_) {
+
+            }
+        }, holderLookup, tag);
+        return serializer.apply(valueInput);
     }
 
 }

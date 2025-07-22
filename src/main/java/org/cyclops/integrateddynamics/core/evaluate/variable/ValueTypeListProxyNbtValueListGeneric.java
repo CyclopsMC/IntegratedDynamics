@@ -3,12 +3,14 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.util.Optional;
 
@@ -72,16 +74,16 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends Tag, T ext
         }
 
         @Override
-        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, L value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.putString("key", value.getKey());
+        protected void serializeNbt(ValueOutput valueOutput, L value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            valueOutput.putString("key", value.getKey());
             if (value.getTag().isPresent()) {
-                tag.put("tag", value.getTag().get());
+                valueOutput.store("tag", ExtraCodecs.NBT, value.getTag().get());
             }
         }
 
         @Override
-        protected L deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            return create(tag.getString("key"), Optional.ofNullable(tag.get("tag")));
+        protected L deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            return create(valueInput.getString("key").orElseThrow(), valueInput.read("tag", ExtraCodecs.NBT));
         }
 
         protected abstract L create(String key, Optional<Tag> tag);

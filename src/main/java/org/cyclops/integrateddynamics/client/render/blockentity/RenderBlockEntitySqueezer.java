@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
@@ -81,7 +82,7 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
 
     @Override
     public void render(BlockEntitySqueezer tile, float partialTicks, PoseStack matrixStack,
-                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
+                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
         if(tile != null) {
             if(!tile.getInventory().getItem(0).isEmpty()) {
                 matrixStack.pushPose();
@@ -122,12 +123,12 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
 
     private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, BlockEntitySqueezer tile) {
         ItemStackRenderState renderState = new ItemStackRenderState();
-        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, false, tile.getLevel(), null, 0);
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, tile.getLevel(), null, 0);
 
         matrixStack.pushPose();
         float yTop = (9 - tile.getItemHeight()) * 0.125F;
         matrixStack.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
-        if (renderState.isGui3d()) {
+        if (renderState.isOversizedInGui()) {
             matrixStack.scale(1.7F, 1.7F, 1.7F);
         }
         matrixStack.scale(1F, yTop - 0.125F, 1F);

@@ -1,14 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * An appended list.
@@ -50,17 +50,17 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
         }
 
         @Override
-        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyAppend<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.putString("valueType", value.value.getType().getUniqueName().toString());
-            tag.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, value.value));
-            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.list));
+        protected void serializeNbt(ValueOutput valueOutput, ValueTypeListProxyAppend<IValueType<IValue>, IValue> value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            valueOutput.putString("valueType", value.value.getType().getUniqueName().toString());
+            ValueHelpers.serializeRaw(valueOutput.child("v"), value.value);
+            ValueTypeListProxyFactories.REGISTRY.serialize(valueOutput.child("sublist"), value.list);
         }
 
         @Override
-        protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("valueType")));
-            IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, tag.get("value"));
-            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, tag.get("sublist"));
+        protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueInput.getString("valueType").orElseThrow()));
+            IValue value = ValueHelpers.deserializeRaw(valueInput.child("v").orElseThrow(), valueType);
+            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput.child("sublist").orElseThrow());
             return new ValueTypeListProxyAppend<>(list, value);
         }
     }

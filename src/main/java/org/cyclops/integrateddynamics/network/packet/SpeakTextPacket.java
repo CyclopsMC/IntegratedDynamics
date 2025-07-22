@@ -7,8 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -30,14 +28,17 @@ public class SpeakTextPacket extends PacketCodec {
 
     @CodecField
     private String text;
+    @CodecField
+    private float volume;
 
     public SpeakTextPacket() {
         super(ID);
     }
 
-    public SpeakTextPacket(String text) {
+    public SpeakTextPacket(String text, float volume) {
         super(ID);
         this.text = text;
+        this.volume = volume;
     }
 
     @Override
@@ -46,11 +47,10 @@ public class SpeakTextPacket extends PacketCodec {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void actionClient(Level world, Player player) {
         if (new Date().getTime() >= lastSay + GeneralConfig.speachMaxFrequency) {
             Narrator.getNarrator().clear();
-            Narrator.getNarrator().say(this.text, true);
+            Narrator.getNarrator().say(this.text, true, this.volume);
             lastSay = new Date().getTime();
         }
     }

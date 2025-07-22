@@ -6,21 +6,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.inventory.ItemLocation;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ItemInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
-import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLabeller;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
-import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.item.ItemLabeller;
 
 /**
@@ -31,9 +23,6 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
 
     private SimpleInventory temporaryInputSlots = null;
 
-    @OnlyIn(Dist.CLIENT)
-    private ContainerScreenLabeller gui;
-
     public ContainerLabeller(int id, Inventory inventory, FriendlyByteBuf packetBuffer) {
         this(id, inventory, ItemLocation.readFromPacketBuffer(packetBuffer));
     }
@@ -43,31 +32,10 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
         this.temporaryInputSlots = new SimpleInventory(1, 1);
         addSlot(new SlotExtended(temporaryInputSlots, 0, 8, 8));
         this.addPlayerInventory(player.getInventory(), 8, 31);
-
-        if(inventory.player.level().isClientSide()) {
-            temporaryInputSlots.addDirtyMarkListener(() -> {
-                ItemStack itemStack = temporaryInputSlots.getItem(0);
-                IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
-                IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(inventory.player.level()), itemStack);
-                String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
-                if(label == null && !itemStack.isEmpty() && itemStack.has(DataComponents.CUSTOM_NAME)) {
-                    label = itemStack.getHoverName().getString();
-                }
-                if(label != null) {
-                    ContainerLabeller.this.getGui().setText(label);
-                }
-            });
-        }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void setGui(ContainerScreenLabeller gui) {
-        this.gui = gui;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public ContainerScreenLabeller getGui() {
-        return this.gui;
+    public SimpleInventory getTemporaryInputSlots() {
+        return temporaryInputSlots;
     }
 
     public ItemStack getItemStack() {

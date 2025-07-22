@@ -6,7 +6,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProviderRegistry;
 
 /**
- * Collection of variable model providers.
+ * Collection of variable facadeModel providers.
  * @author rubensworks
  */
 public class VariableModelProviders {

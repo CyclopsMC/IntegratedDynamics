@@ -1,21 +1,8 @@
 package org.cyclops.integrateddynamics.api.item;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -23,13 +10,15 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A facade for retrieving a variable.
  * @author rubensworks
  */
 public interface IVariableFacade {
+
+    public IVariableFacadeClient getClient();
 
     /**
      * @return The unique id for this facade.
@@ -39,7 +28,8 @@ public interface IVariableFacade {
     /**
      * @return The optional label for this facade.
      */
-    public @Nullable String getLabel();
+    @Nullable
+    public String getLabel();
 
     /**
      * Get the variable.
@@ -72,54 +62,16 @@ public interface IVariableFacade {
     /**
      * Add information about this variable facade to the list.
      *
-     * @param list    The list to add lines to.
-     * @param context The context.
+     * @param tooltipAdder The list to add lines to.
+     * @param context      The context.
      */
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(List<Component> list, Item.TooltipContext context);
-
-    /**
-     * Handle the quads for the given baked model.
-     * @param variableModelBaked The baked model.
-     * @param quads The quads that can be added to.
-     * @param random A random instance.
-     * @param modelData Model data.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData);
-
-    /**
-     * An optional baked model to override when rendering the variable as item.
-     * @param model The original baked model.
-     * @param stack The variable stack.
-     * @param world The client world.
-     * @param livingEntity The entity holding the stack.
-     * @return The overridden model. Will fallback to default if null.
-     */
-    @Nullable
-    @OnlyIn(Dist.CLIENT)
-    public default BakedModel getVariableItemOverrideModel(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
-        return null;
-    }
-
-    /**
-     * Called during ISTER rendering of an variable item.
-     * @param stack The variable stack.
-     * @param transformType Transform type.
-     * @param matrixStack Matrix stack.
-     * @param buffer Render buffer.
-     * @param combinedLight Lighting.
-     * @param combinedOverlay Overlay.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public default void renderISTER(ItemStack stack, ItemDisplayContext transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-
-    }
+    public void appendHoverText(Consumer<Component> tooltipAdder, Item.TooltipContext context);
 
     public static interface IValidator {
 
         /**
          * Set the current error for the given aspect.
+         *
          * @param error The error to set, or null to clear.
          */
         public void addError(MutableComponent error);

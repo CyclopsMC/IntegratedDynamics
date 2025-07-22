@@ -5,8 +5,6 @@ import lombok.Data;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -14,7 +12,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -22,7 +20,7 @@ import java.util.function.Predicate;
  * @author rubensworks
  */
 @Data
-public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeBooleanRenderPattern, G, C> {
+public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeBooleanRenderPattern, G, C, GuiElementValueTypeBooleanClient<G, C>> {
 
     private final ValueTypeBoolean valueType;
     private Predicate<IValue> validator;
@@ -50,16 +48,6 @@ public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractCont
         setInputBoolean(((ValueTypeBoolean.ValueBoolean) value).getRawValue());
     }
 
-    @Override
-    public void setValueInGui(GuiElementValueTypeBooleanRenderPattern subGui, boolean sendToServer) {
-        if(subGui != null) {
-            subGui.getCheckbox().setChecked(inputBoolean);
-            if (sendToServer) {
-                subGui.sendValueToServer();
-            }
-        }
-    }
-
     public void setInputBoolean(boolean inputBoolean) {
         this.inputBoolean = inputBoolean;
     }
@@ -75,13 +63,18 @@ public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractCont
     }
 
     @Override
+    public GuiElementValueTypeBooleanClient<G, C> getClient() {
+        return new GuiElementValueTypeBooleanClient<>(this);
+    }
+
+    @Override
     public Component getName() {
         return Component.translatable(getValueType().getTranslationKey());
     }
 
     @Override
-    public void loadTooltip(List<Component> lines) {
-        getValueType().loadTooltip(lines, true, null);
+    public void loadTooltip(Consumer<Component> tooltipAdder) {
+        getValueType().loadTooltip(tooltipAdder, true, null);
     }
 
     @Override
@@ -115,13 +108,6 @@ public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractCont
     @Override
     public String getSymbol() {
         return IModHelpers.get().getL10NHelpers().localize(getValueType().getTranslationKey());
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public GuiElementValueTypeBooleanRenderPattern<?, G, C> createSubGui(int baseX, int baseY,
-                                                                        int maxWidth, int maxHeight, G gui, C container) {
-        return new GuiElementValueTypeBooleanRenderPattern<>(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
 }

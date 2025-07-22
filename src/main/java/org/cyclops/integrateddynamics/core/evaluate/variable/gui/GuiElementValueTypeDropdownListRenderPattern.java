@@ -7,16 +7,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
-import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.RenderPattern;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeStringValueChangedPacket;
 
 import java.util.Set;
@@ -25,7 +24,6 @@ import java.util.Set;
  * A render pattern for value types that can be read from and written to strings.
  * @author rubensworks
  */
-@OnlyIn(Dist.CLIENT)
 public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu>
         extends RenderPattern<GuiElementValueTypeDropdownList<T, G, C>, G, C> implements IDropdownEntryListener<T> {
 
@@ -53,7 +51,7 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
         this.searchField.setMaxLength(64);
         this.searchField.setBordered(false);
         this.searchField.setVisible(true);
-        this.searchField.setTextColor(16777215);
+        this.searchField.setTextColor(ARGB.opaque(16777215));
         this.searchField.setCanLoseFocus(true);
         String value = element.getInputString();
         if (value == null) {

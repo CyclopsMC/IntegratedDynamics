@@ -109,6 +109,7 @@ public class AspectWriteBuilders {
                 PROP_FREQUENCY
         ));
         public static final IAspectProperties PROPERTIES_TEXT = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
+                PROP_VOLUME,
                 PROP_RANGE
         ));
         static {
@@ -116,6 +117,7 @@ public class AspectWriteBuilders {
             PROPERTIES_SOUND.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
             PROPERTIES_SOUND.setValue(PROP_FREQUENCY, ValueTypeDouble.ValueDouble.of(1D));
             PROPERTIES_TEXT.setValue(PROP_RANGE, ValueTypeInteger.ValueInteger.of(32));
+            PROPERTIES_TEXT.setValue(PROP_VOLUME, ValueTypeDouble.ValueDouble.of(3D));
         }
 
         public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Pair<NoteBlockInstrument, Integer>>, Void> PROP_SET = input -> {

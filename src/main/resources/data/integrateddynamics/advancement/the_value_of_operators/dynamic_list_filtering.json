@@ -7,7 +7,7 @@
           "partId": 1,
           "_id": 1,
           "_type": "integrateddynamics:operator",
-          "operatorName": "integrateddynamics:operator_filter",
+          "operator": { "v": "integrateddynamics:operator_filter" },
           "variableIds": [1, 1]
         }
       }
@@ -31,7 +31,7 @@
           "value": {
             "type": "serialized",
             "value_type": "integrateddynamics:list",
-            "value": "{proxyName:\"integrateddynamics:materialized\",serialized:{valueType:\"integrateddynamics:integer\",values:[10]}}"
+            "value": "{proxyName:\"integrateddynamics:materialized\",serialized:{valueType:\"integrateddynamics:integer\",values:[{v:10}]}}"
           }
         }
       }

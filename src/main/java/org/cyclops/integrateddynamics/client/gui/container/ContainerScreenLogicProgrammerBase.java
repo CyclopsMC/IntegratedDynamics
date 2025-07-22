@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -26,10 +26,10 @@ import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
-import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.SubGuiValueTypeInfoBase;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
-import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.RenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerLabelPacket;
@@ -44,7 +44,9 @@ import java.util.List;
  * Base gui for the logic programmer.
  * @author rubensworks
  */
-public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgrammerBase> extends ContainerScreenScrolling<C> {
+public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgrammerBase>
+        extends ContainerScreenScrolling<C>
+        implements ContainerLogicProgrammerBase.ScreenCallbackHandler {
 
     public static final int BOX_HEIGHT = 18;
     private static final Rectangle ITEM_POSITION = new Rectangle(19, 18, 56, BOX_HEIGHT - 1);
@@ -60,7 +62,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     public ContainerScreenLogicProgrammerBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
-        container.setGui(this);
+        container.setScreenCallbackHandler(this);
         this.titleLabelX = 87;
 
         this.hasLabeller = playerInventory.contains(new ItemStack(RegistryEntries.ITEM_LABELLER));
@@ -147,7 +149,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         // Draw container name
         guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
-                this.leftPos + offsetX + 5, this.topPos + offsetY + 208, IModHelpers.get().getBaseHelpers().RGBToInt(80, 80, 80),
+                this.leftPos + offsetX + 5, this.topPos + offsetY + 208, IModHelpers.get().getBaseHelpers().RGBAToInt(80, 80, 80, 255),
                 false);
 
         // Draw operators
@@ -168,12 +170,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 );
 
                 // Background
-                guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + ITEM_POSITION.x,
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + offsetX + ITEM_POSITION.x,
                         topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 19, 18, ITEM_POSITION.width, ITEM_POSITION.height, 256, 256, color);
 
                 // Arrow
                 if(hover) {
-                    guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + ITEM_POSITION.x,
+                    guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + offsetX + ITEM_POSITION.x,
                             topPos + offsetY + ITEM_POSITION.y + boxHeight * i, 0, 240, 3, 16, 256, 256, color);
                 }
 
@@ -182,12 +184,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, aspectName,
                         this.leftPos + offsetX + (hover ? 22 : 21),
                         this.topPos + offsetY + 26 + boxHeight * i,
-                        53, IModHelpers.get().getBaseHelpers().RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
+                        53, IModHelpers.get().getBaseHelpers().RGBAToInt(40, 40, 40, 255), false, Font.DisplayMode.NORMAL);
             }
         }
 
         // Draw arrow on write slot
-        guiGraphics.blit(RenderType::guiTextured, texture, leftPos + offsetX + ContainerLogicProgrammerBase.OUTPUT_X - 4,
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + offsetX + ContainerLogicProgrammerBase.OUTPUT_X - 4,
                 topPos + offsetY + ContainerLogicProgrammerBase.OUTPUT_Y - 4, subGuiHolder.isEmpty() ? 7 : 3, 240, 4, 4, 256, 256);
     }
 
@@ -208,20 +210,20 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             // Create
             Images.ARROW_LEFT.draw(guiGraphics, offsetX + 85, offsetY + 17);
             guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_CREATE),
-                    offsetX + 100, offsetY + 23, IModHelpers.get().getBaseHelpers().RGBToInt(80, 80, 80), false);
+                    offsetX + 100, offsetY + 23, IModHelpers.get().getBaseHelpers().RGBAToInt(80, 80, 80, 255), false);
 
             // Modify
             Images.ARROW_DOWN.draw(guiGraphics, offsetX + 230, offsetY + 90);
             MutableComponent modifyComponent = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_MODIFY);
             guiGraphics.drawString(font, modifyComponent,
-                    offsetX + 230 - font.width(modifyComponent), offsetY + 95, IModHelpers.get().getBaseHelpers().RGBToInt(80, 80, 80), false);
+                    offsetX + 230 - font.width(modifyComponent), offsetY + 95, IModHelpers.get().getBaseHelpers().RGBAToInt(80, 80, 80, 255), false);
 
             // Tooltip on write slot
             if (this.isHovering(ContainerLogicProgrammerBase.OUTPUT_X, ContainerLogicProgrammerBase.OUTPUT_Y,
                     ContainerScreenLogicProgrammerBase.BOX_HEIGHT, ContainerScreenLogicProgrammerBase.BOX_HEIGHT, mouseX, mouseY)
                     && Minecraft.getInstance().player.containerMenu.getCarried().isEmpty()
                     && !container.hasWriteItemInSlot()) {
-                this.drawTooltip(Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY)), guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
+                this.drawTooltip(Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY)), guiGraphics, mouseX, mouseY);
             }
         }
 
@@ -229,21 +231,21 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         ContainerLogicProgrammerBase container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
             if(container.isElementVisible(i)) {
-                ILogicProgrammerElement element = container.getVisibleElement(i);
+                ILogicProgrammerElement<?, ?, ?, ?> element = container.getVisibleElement(i);
                 if(isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY))) {
                     List<Component> lines = Lists.newLinkedList();
-                    element.loadTooltip(lines);
-                    drawTooltip(lines, guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
+                    element.loadTooltip(lines::add);
+                    drawTooltip(lines, guiGraphics, mouseX, mouseY);
                 }
             }
         }
     }
 
-    protected void onActivateElement(ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> element) {
+    protected void onActivateElement(ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase, ?> element) {
         this.resetButton.setFocused(false);
         subGuiHolder.addSubGui(operatorInfoPattern = new SubGuiOperatorInfo(element));
         operatorInfoPattern.init(leftPos, topPos);
-        subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_WIDTH, ContainerLogicProgrammerBase.MAX_HEIGHT, this, (ContainerLogicProgrammerBase) getMenu()));
+        subGuiHolder.addSubGui(operatorConfigPattern = element.getClient().createSubGui(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_WIDTH, ContainerLogicProgrammerBase.MAX_HEIGHT, this, (ContainerLogicProgrammerBase) getMenu()));
         operatorConfigPattern.init(leftPos, topPos);
     }
 
@@ -251,6 +253,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         subGuiHolder.clear();
     }
 
+    @Override
     public boolean handleElementActivation(ILogicProgrammerElement element, boolean sendToServer) {
         boolean activate = false;
         boolean deselect = false;
@@ -291,6 +294,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Nullable
+    @Override
     public RenderPattern getOperatorConfigPattern() {
         return operatorConfigPattern;
     }
@@ -333,7 +337,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             ContainerLogicProgrammerBase container = getMenu();
             int pageSize = container.getPageSize();
             int stepModifier = IModHelpers.get().getMinecraftClientHelpers().isShifted() ? pageSize - 1 : 1;
-            boolean isElementFocused = container.getActiveElement() != null && container.getActiveElement().isFocused(operatorConfigPattern);
+            boolean isElementFocused = container.getActiveElement() != null && container.getActiveElement().getClient().isFocused(operatorConfigPattern);
 
             if (ClientProxy.FOCUS_LP_SEARCH.isActiveAndMatches(inputCode)) {
                 // Focus search field
@@ -370,7 +374,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     && (GLFW.GLFW_KEY_RIGHT == keyCode || GLFW.GLFW_KEY_TAB == keyCode
                     || GLFW.GLFW_KEY_ENTER == keyCode || GLFW.GLFW_KEY_KP_ENTER == keyCode)) {
                 if (container.getActiveElement() != null) {
-                    container.getActiveElement().setFocused(operatorConfigPattern, true);
+                    container.getActiveElement().getClient().setFocused(operatorConfigPattern, true);
                     setSearchFieldFocussed(false);
                 }
                 return true;
@@ -416,7 +420,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     boolean activated = handleElementActivation(element, true);
                     relativeStep = activated ? i : -1;
                     if (activated) {
-                        container.getActiveElement().setFocused(operatorConfigPattern, true);
+                        container.getActiveElement().getClient().setFocused(operatorConfigPattern, true);
                         setSearchFieldFocussed(false);
                         return true;
                     }
@@ -427,8 +431,8 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         // If the search box has been selected, de-active the current element.
         if(isSearchFieldFocussed() &&
-                container.getActiveElement() != null && container.getActiveElement().isFocused(operatorConfigPattern)) {
-            container.getActiveElement().setFocused(operatorConfigPattern, false);
+                container.getActiveElement() != null && container.getActiveElement().getClient().isFocused(operatorConfigPattern)) {
+            container.getActiveElement().getClient().setFocused(operatorConfigPattern, false);
             return true;
         }
 
@@ -443,12 +447,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         return this.hasLabeller;
     }
 
-    public class SubGuiOperatorInfo extends GuiElementValueTypeString.SubGuiValueTypeInfo<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> {
+    public class SubGuiOperatorInfo extends SubGuiValueTypeInfoBase<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> {
 
         private WidgetTextFieldExtended searchField;
         private ButtonText button = null;
 
-        public SubGuiOperatorInfo(IGuiInputElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> element) {
+        public SubGuiOperatorInfo(IGuiInputElement<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase, ?> element) {
             super(ContainerScreenLogicProgrammerBase.this, getMenu(), element, 88, 106, 139, 20);
 
             if(hasLabeller()) {
@@ -462,7 +466,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             this.searchField.setMaxLength(64);
             this.searchField.setBordered(true);
             this.searchField.setVisible(false);
-            this.searchField.setTextColor(16777215);
+            this.searchField.setTextColor(ARGB.opaque(16777215));
             this.searchField.setCanLoseFocus(true);
             this.searchField.setValue("");
             this.searchField.setWidth(searchWidth);

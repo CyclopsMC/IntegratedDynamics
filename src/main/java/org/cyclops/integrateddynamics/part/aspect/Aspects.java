@@ -755,11 +755,11 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "weather").appendKind("thunder").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISDAY =
                     AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            net.minecraft.world.level.Level::isDay
+                            net.minecraft.world.level.Level::isBrightOutside
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isday").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISNIGHT =
                     AspectReadBuilders.World.BUILDER_BOOLEAN.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> !world.isDay()
+                        world -> !world.isBrightOutside()
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isnight").buildRead();
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RAINCOUNTDOWN =
@@ -937,7 +937,7 @@ public class Aspects {
                                 if(!StringUtil.isNullOrEmpty(input.getRight())) {
                                     int range = properties.getValue(AspectWriteBuilders.Audio.PROP_RANGE).getRawValue();
                                     IntegratedDynamics._instance.getPacketHandler().sendToAllAroundPoint(
-                                            new SpeakTextPacket(input.getRight()),
+                                            new SpeakTextPacket(input.getRight(), (float) properties.getValue(AspectWriteBuilders.Audio.PROP_VOLUME).getRawValue()),
                                             IPacketHandler.createTargetPointFromLocation((ServerLevel) world, pos, range));
                                 }
                                 return null;

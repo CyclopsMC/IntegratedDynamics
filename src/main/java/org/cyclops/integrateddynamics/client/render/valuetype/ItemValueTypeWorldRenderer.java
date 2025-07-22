@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -54,16 +53,8 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         // Derived from ItemRenderer
         ItemStackRenderState renderState = new ItemStackRenderState();
-        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, false, null, null, 0);
-        if (renderState.isGui3d()) {
-            Lighting.setupFor3DItems();
-        } else {
-            Lighting.setupForFlatItems();
-        }
-
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, null, null, 0);
         renderState.render(matrixStack, renderTypeBuffer, combinedLight, combinedOverlay);
-
-        Lighting.setupLevel();
 
         matrixStack.popPose();
     }

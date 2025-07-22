@@ -4,10 +4,11 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.Registry;
+import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
@@ -15,15 +16,14 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.ConfigHandlerCommon;
 import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
 import org.cyclops.cyclopscore.infobook.InfoBookRegistry;
-import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.IClientProxy;
@@ -72,6 +72,8 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.aspect.AspectRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
+import org.cyclops.integrateddynamics.gametest.*;
+import org.cyclops.integrateddynamics.gametest.integration.GameTester;
 import org.cyclops.integrateddynamics.infobook.OnTheDynamicsOfIntegrationBook;
 import org.cyclops.integrateddynamics.item.ItemOnTheDynamicsOfIntegrationConfig;
 import org.cyclops.integrateddynamics.metadata.RegistryExportables;
@@ -79,6 +81,8 @@ import org.cyclops.integrateddynamics.part.PartTypeConnectorOmniDirectional;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.proxy.ClientProxy;
 import org.cyclops.integrateddynamics.proxy.CommonProxy;
+
+import java.lang.reflect.Field;
 
 /**
  * The main mod class of IntegratedDynamics.
@@ -100,7 +104,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
 
         // Register world storages
         registerWorldStorage(NetworkWorldStorage.getInstance(this));
-        registerWorldStorage(globalCounters = new GlobalCounters(this));
+        registerWorldStorage(globalCounters = new GlobalCounters(this, new SavedData.Context(null, 0)));
         registerWorldStorage(LabelsWorldStorage.getInstance(this));
 
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
@@ -130,6 +134,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
         modEventBus.addListener(EventPriority.LOWEST, IngredientComponentHandlers::onIngredientComponentsPopulated);
         modEventBus.addListener(this::onRegistriesCreate);
         modEventBus.register(new NetworkCapabilityConstructors());
+        modEventBus.addListener(this::registerIntegrationGameTests);
 
         NeoForge.EVENT_BUS.addListener(this::onServerStartedLoadedGroups);
         NeoForge.EVENT_BUS.register(TickHandler.getInstance());
@@ -190,7 +195,6 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     protected IClientProxy constructClientProxy() {
         return new ClientProxy();
     }
@@ -212,6 +216,49 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
 
         configHandler.addConfigurable(new GeneralConfig());
         Configs.registerBlocks(configHandler);
+    }
+
+    @Override
+    public Class<?>[] getGameTestClasses() {
+        return new Class[]{
+                GameTestsAspectsReadAudio.class,
+                GameTestsAspectsReadBlock.class,
+                GameTestsAspectsReadEntity.class,
+                GameTestsAspectsReadExtraDimensional.class,
+                GameTestsAspectsReadFluid.class,
+                GameTestsAspectsReadInventory.class,
+                GameTestsAspectsReadMachine.class,
+                GameTestsAspectsReadNetwork.class,
+                GameTestsAspectsReadRedstone.class,
+                GameTestsAspectsReadWorld.class,
+                GameTestsAspectsWriteRedstone.class,
+                GameTestsBattery.class,
+                GameTestsCombinedAspects.class,
+                GameTestsDelayer.class,
+                GameTestsDryingBasin.class,
+                GameTestsFacades.class,
+                GameTestsGenerator.class,
+                GameTestsMaterializer.class,
+                GameTestsMechanicalDryingBasin.class,
+                GameTestsMechanicalSqueezer.class,
+                GameTestsNetwork.class,
+                GameTestsOffsets.class,
+                GameTestsParts.class,
+                GameTestsProxy.class,
+                GameTestsSqueezer.class,
+                GameTestsWrench.class,
+        };
+    }
+
+    protected void registerIntegrationGameTests(RegisterGameTestsEvent event) {
+        try {
+            Field field = RegisterGameTestsEvent.class.getDeclaredField("environmentsRegistry");
+            field.setAccessible(true);
+            Registry<TestEnvironmentDefinition> testEnvironmentRegistry = (Registry<TestEnvironmentDefinition>) field.get(event);
+            GameTester.registerCommonTests(getModId(), event::registerTest, testEnvironmentRegistry);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

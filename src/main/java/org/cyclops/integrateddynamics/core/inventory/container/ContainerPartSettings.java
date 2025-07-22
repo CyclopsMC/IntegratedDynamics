@@ -69,7 +69,7 @@ public class ContainerPartSettings extends InventoryContainer {
         this.target = target;
         this.partContainer = partContainer;
         this.partType = partType;
-        this.world = player.getCommandSenderWorld();
+        this.world = player.level();
 
         addPlayerInventory(player.getInventory(), 27, getPlayerInventoryOffsetY());
 

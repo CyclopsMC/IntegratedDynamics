@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -24,7 +22,6 @@ import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
  * Overlay renderer for the display part to display values on the part.
  * @author rubensworks
  */
-@OnlyIn(Dist.CLIENT)
 public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
 
     public static final float MAX = 12.5F;

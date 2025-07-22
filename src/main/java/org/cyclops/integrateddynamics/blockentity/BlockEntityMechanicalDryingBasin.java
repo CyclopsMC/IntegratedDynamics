@@ -2,9 +2,7 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,6 +13,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
@@ -129,17 +129,17 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
     }
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
-        super.read(tag, provider);
-        getTankInput().readFromNBT(provider, tag.getCompound("tankIn"));
-        getTankOutput().readFromNBT(provider, tag.getCompound("tankOut"));
+    public void read(ValueInput input) {
+        super.read(input);
+        getTankInput().deserialize(input, "tankIn");
+        getTankOutput().deserialize(input, "tankOut");
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        tag.put("tankIn", getTankInput().writeToNBT(provider, new CompoundTag()));
-        tag.put("tankOut", getTankOutput().writeToNBT(provider, new CompoundTag()));
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(ValueOutput output) {
+        getTankInput().serialize(output, "tankIn");
+        getTankOutput().serialize(output, "tankOut");
+        super.saveAdditional(output);
     }
 
     @Override

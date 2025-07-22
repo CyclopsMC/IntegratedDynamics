@@ -4,12 +4,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * The item for the proxy.
@@ -22,11 +23,11 @@ public class ItemBlockProxy extends ItemBlockNBT {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
         if(itemStack.has(RegistryEntries.DATACOMPONENT_PROXY_ID)) {
             int id = itemStack.get(RegistryEntries.DATACOMPONENT_PROXY_ID);
-            list.add(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
+            tooltipAdder.accept(Component.translatable(L10NValues.GENERAL_ITEM_ID, id));
         }
-        super.appendHoverText(itemStack, context, list, flag);
+        super.appendHoverText(itemStack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

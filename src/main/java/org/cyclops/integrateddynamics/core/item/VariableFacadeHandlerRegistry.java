@@ -1,21 +1,16 @@
 package org.cyclops.integrateddynamics.core.item;
 
 import com.google.common.collect.Maps;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -23,6 +18,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeClient;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -35,9 +31,9 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammer
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * The variable facade handler registry.
@@ -79,12 +75,11 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         if(tagCompound == null) {
             return DUMMY_FACADE;
         }
-        if(!tagCompound.contains("_type", Tag.TAG_STRING)
-                || !(tagCompound.contains("_id", Tag.TAG_INT) || tagCompound.contains("_id", Tag.TAG_BYTE))) {
+        if(!tagCompound.contains("_type") || !(tagCompound.contains("_id"))) {
             return DUMMY_FACADE;
         }
-        String type = tagCompound.getString("_type");
-        int id = tagCompound.getInt("_id");
+        String type = tagCompound.getString("_type").orElseThrow();
+        int id = tagCompound.getInt("_id").orElseThrow();
         IVariableFacadeHandler handler = getHandler(ResourceLocation.parse(type));
         if(handler != null) {
             return handler.getVariableFacade(valueDeseralizationContext, id, tagCompound);
@@ -212,12 +207,12 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
 
         @Override
-        public void appendHoverText(List<Component> list, Item.TooltipContext context) {
-
+        protected IVariableFacadeClient constructClient() {
+            return new DummyVariableFacadeClient();
         }
 
         @Override
-        public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
+        public void appendHoverText(Consumer<Component> tooltipAdder, Item.TooltipContext context) {
 
         }
     }

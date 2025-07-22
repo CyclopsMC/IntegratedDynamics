@@ -135,7 +135,7 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         return ValueNotifierHelpers.getValueInt(this, readColorId);
     }
 
-    public List<MutableComponent> getReadErrors() {
+    public List<Component> getReadErrors() {
         return ValueNotifierHelpers.getValueTextComponentList(this, readErrorsId);
     }
 }

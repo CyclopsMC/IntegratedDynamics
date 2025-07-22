@@ -1,32 +1,27 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
+import com.mojang.logging.LogUtils;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.item.TagPathElement;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
+import org.slf4j.Logger;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Registry for {@link IValueType}.
@@ -34,17 +29,17 @@ import java.util.Optional;
  */
 public final class ValueTypeRegistry implements IValueTypeRegistry {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static ValueTypeRegistry INSTANCE = new ValueTypeRegistry();
     private static final IValueTypeVariableFacade INVALID_FACADE = new ValueTypeVariableFacade(false, null, (IValue) null);
 
     private final Map<String, IValueType> valueTypes = Maps.newHashMap();
-    @OnlyIn(Dist.CLIENT)
-    private Map<IValueType, ResourceLocation> valueTypeModels;
+    private ValueTypeRegistryClient client;
 
     private ValueTypeRegistry() {
         if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment()) {
             if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
-                valueTypeModels = new IdentityHashMap<>();
+                client = new ValueTypeRegistryClient();
             }
             IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(this);
         }
@@ -55,6 +50,11 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
      */
     public static ValueTypeRegistry getInstance() {
         return INSTANCE;
+    }
+
+    @Override
+    public IValueTypeRegistryClient getClient() {
+        return this.client;
     }
 
     @Override
@@ -73,24 +73,6 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
         return valueTypes.get(name.toString());
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, ResourceLocation modelLocation) {
-        valueTypeModels.put(valueType, modelLocation);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public <V extends IValue, T extends IValueType<V>> ResourceLocation getValueTypeModel(T valueType) {
-        return valueTypeModels.get(valueType);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public Collection<ResourceLocation> getValueTypeModels() {
-        return Collections.unmodifiableCollection(valueTypeModels.values());
-    }
-
     @Override
     public Collection<IValueType> getValueTypes() {
         return Collections.unmodifiableCollection(valueTypes.values());
@@ -103,18 +85,22 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
 
     @Override
     public IValueTypeVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
-        if(!tag.contains("typeName", Tag.TAG_STRING)
-                || !tag.contains("value")) {
+        if(!tag.contains("typeName") || !tag.contains("value")) {
             return INVALID_FACADE;
         }
-        IValueType type = getValueType(ResourceLocation.parse(tag.getString("typeName")));
+        IValueType type = getValueType(ResourceLocation.parse(tag.getString("typeName").orElseThrow()));
         if(type == null) {
             return INVALID_FACADE;
         }
         IValue value;
-        try {
-            value = ValueHelpers.deserializeRaw(valueDeseralizationContext, type, tag.get("value"));
-        } catch (IllegalArgumentException e) {
+        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(new TagPathElement(tag), LOGGER)) {
+            ValueInput input = TagValueInput.create(
+                    scopedCollector,
+                    valueDeseralizationContext.holderLookupProvider(),
+                    tag.getCompound("value").orElseThrow()
+            );
+            value = ValueHelpers.deserializeRaw(input, type);
+        } catch (IllegalArgumentException | NoSuchElementException e) {
             return INVALID_FACADE;
         }
         return new ValueTypeVariableFacade(id, type, value);
@@ -123,7 +109,11 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     @Override
     public void setVariableFacade(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, IValueTypeVariableFacade variableFacade) {
         tag.putString("typeName", variableFacade.getValueType().getUniqueName().toString());
-        tag.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, variableFacade.getValue()));
+        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(new TagPathElement(tag), LOGGER)) {
+            TagValueOutput valueOutput = TagValueOutput.createWithContext(scopedCollector, valueDeseralizationContext.holderLookupProvider());
+            ValueHelpers.serializeRaw(valueOutput, variableFacade.getValue());
+            tag.put("value", valueOutput.buildResult());
+        }
     }
 
     @Override

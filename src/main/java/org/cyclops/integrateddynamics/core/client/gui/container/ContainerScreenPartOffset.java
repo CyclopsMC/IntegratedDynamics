@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
@@ -62,7 +62,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         numberFieldX.setMaxValue(GeneralConfig.maxPartOffset);
         numberFieldX.setMinValue(-GeneralConfig.maxPartOffset);
         numberFieldX.setVisible(true);
-        numberFieldX.setTextColor(16777215);
+        numberFieldX.setTextColor(ARGB.opaque(16777215));
         numberFieldX.setCanLoseFocus(true);
 
         numberFieldY = new WidgetNumberField(font, leftPos + 107 - 54 + 36 - 7, topPos + 33, 46, 14, true,
@@ -71,7 +71,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         numberFieldY.setMaxValue(GeneralConfig.maxPartOffset);
         numberFieldY.setMinValue(-GeneralConfig.maxPartOffset);
         numberFieldY.setVisible(true);
-        numberFieldY.setTextColor(16777215);
+        numberFieldY.setTextColor(ARGB.opaque(16777215));
         numberFieldY.setCanLoseFocus(true);
 
         numberFieldZ = new WidgetNumberField(font, leftPos + 107 - 54 + 72 - 7 + 18, topPos + 33, 46, 14, true,
@@ -80,7 +80,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         numberFieldZ.setMaxValue(GeneralConfig.maxPartOffset);
         numberFieldZ.setMinValue(-GeneralConfig.maxPartOffset);
         numberFieldZ.setVisible(true);
-        numberFieldZ.setTextColor(16777215);
+        numberFieldZ.setTextColor(ARGB.opaque(16777215));
         numberFieldZ.setCanLoseFocus(true);
 
         MutableComponent save = Component.translatable("gui.integrateddynamics.button.save");
@@ -131,14 +131,13 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
-        guiGraphics.drawString(font, "X", leftPos + 45 + 5, topPos + 19, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
-        guiGraphics.drawString(font, "Y", leftPos + 99 + 5, topPos + 19, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
-        guiGraphics.drawString(font, "Z", leftPos + 153 + 5, topPos + 19, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
+        guiGraphics.drawString(font, "X", leftPos + 45 + 5, topPos + 19, ARGB.opaque(0), false);
+        guiGraphics.drawString(font, "Y", leftPos + 99 + 5, topPos + 19, ARGB.opaque(0), false);
+        guiGraphics.drawString(font, "Z", leftPos + 153 + 5, topPos + 19, ARGB.opaque(0), false);
         numberFieldX.render(guiGraphics, mouseX, mouseY, partialTicks);
         numberFieldY.render(guiGraphics, mouseX, mouseY, partialTicks);
         numberFieldZ.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-        RenderSystem.setShaderColor(1, 1, 1, 1);
         for (int i = 0; i < 3; i++) {
             int x = leftPos + 64 + i * 54;
             if (getMenu().isOffsetVariableFilled(i)) {
@@ -154,7 +153,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.part_offsets"), this.titleLabelX, this.titleLabelY, 4210752, false);
+        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.part_offsets"), this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
 
         if (isHovering(0, 0, 90, 18, mouseX, mouseY)) {
             List<Component> lines = Lists.newArrayList(
@@ -166,13 +165,13 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
                 lines.add(Component.translatable("gui.integrateddynamics.partoffset.offsets.max.howtoincrease", getMenu().getMaxOffset())
                         .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
             }
-            drawTooltip(lines, guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
+            drawTooltip(lines, guiGraphics, mouseX, mouseY);
         }
 
         for (int i = 0; i < 3; i++) {
             int x = 64 + i * 54;
             int slot = i;
-            IModHelpers.get().getGuiHelpers().renderTooltipOptional(this, guiGraphics.pose(), x, 52, 14, 13, mouseX, mouseY,
+            IModHelpers.get().getGuiHelpers().renderTooltipOptional(this, guiGraphics, x, 52, 14, 13, mouseX, mouseY,
                     () -> {
                         Component unlocalizedMessage = container.getOffsetVariableError(slot);
                         if (unlocalizedMessage != null) {

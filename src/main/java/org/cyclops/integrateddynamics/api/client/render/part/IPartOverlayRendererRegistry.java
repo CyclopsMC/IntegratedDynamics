@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.api.client.render.part;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 
@@ -11,7 +9,6 @@ import java.util.Collection;
  * Registry for {@link IPartOverlayRenderer}.
  * @author rubensworks
  */
-@OnlyIn(Dist.CLIENT)
 public interface IPartOverlayRendererRegistry extends IRegistry {
 
     /**

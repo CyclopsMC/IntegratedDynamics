@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
@@ -36,10 +35,10 @@ public class DelayVariableFacadeHandler implements IVariableFacadeHandler<IDelay
 
     @Override
     public IDelayVariableFacade getVariableFacade(ValueDeseralizationContext valueDeseralizationContext, int id, CompoundTag tag) {
-        if(!tag.contains("partId", Tag.TAG_INT)) {
+        if(!tag.contains("partId")) {
             return INVALID_FACADE;
         }
-        return new DelayVariableFacade(id, tag.getInt("partId"));
+        return new DelayVariableFacade(id, tag.getInt("partId").orElseThrow());
     }
 
     @Override

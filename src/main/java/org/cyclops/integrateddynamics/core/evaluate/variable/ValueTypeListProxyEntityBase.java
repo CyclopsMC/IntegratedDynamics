@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -36,14 +36,14 @@ public abstract class ValueTypeListProxyEntityBase<T extends IValueType<V>, V ex
     }
 
     @Override
-    public void writeGeneratedFieldsToNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
-        tag.putString("world", world);
-        tag.putInt("entity", entity);
+    public void writeGeneratedFieldsToNBT(ValueOutput output) {
+        output.putString("world", world);
+        output.putInt("entity", entity);
     }
 
     @Override
-    public void readGeneratedFieldsFromNBT(CompoundTag tag, HolderLookup.Provider holderLookupProvider) {
-        this.world = tag.getString("world");
-        this.entity = tag.getInt("entity");
+    public void readGeneratedFieldsFromNBT(ValueInput input) {
+        this.world = input.getString("world").orElseThrow();
+        this.entity = input.getInt("entity").orElseThrow();
     }
 }

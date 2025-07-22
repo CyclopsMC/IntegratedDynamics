@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.network.packet;
 
+import net.minecraft.Util;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -9,8 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -19,6 +18,8 @@ import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.cyclops.integrateddynamics.core.network.diagnostics.http.DiagnosticsWebServer;
 import org.cyclops.integrateddynamics.proxy.ClientProxy;
+
+import java.net.URISyntaxException;
 
 /**
  * Packet for opening or closing network diagnostics at a client.
@@ -51,7 +52,6 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void actionClient(Level world, Player player) {
         if (start) {
             if (ClientProxy.DIAGNOSTICS_SERVER == null) {
@@ -59,24 +59,32 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                 new Thread(() -> {
                     ClientProxy.DIAGNOSTICS_SERVER = new DiagnosticsWebServer(port);
                     ClientProxy.DIAGNOSTICS_SERVER.initialize();
+                    try {
+                        player.displayClientMessage(
+                                Component.literal("Diagnostics server has been started on ")
+                                        .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
+                                                .setStyle(Style.EMPTY
+                                                        .withUnderlined(true)
+                                                        .withClickEvent(new ClickEvent.OpenUrl(Util.parseAndValidateUntrustedUri(ClientProxy.DIAGNOSTICS_SERVER.getUrl()))))),
+                                false
+                        );
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
+            } else {
+                try {
                     player.displayClientMessage(
-                            Component.literal("Diagnostics server has been started on ")
+                            Component.literal("Diagnostics server is already running on ")
                                     .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
                                             .setStyle(Style.EMPTY
                                                     .withUnderlined(true)
-                                                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientProxy.DIAGNOSTICS_SERVER.getUrl())))),
+                                                    .withClickEvent(new ClickEvent.OpenUrl(Util.parseAndValidateUntrustedUri(ClientProxy.DIAGNOSTICS_SERVER.getUrl()))))),
                             false
                     );
-                }).start();
-            } else {
-                player.displayClientMessage(
-                        Component.literal("Diagnostics server is already running on ")
-                                .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
-                                        .setStyle(Style.EMPTY
-                                                .withUnderlined(true)
-                                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ClientProxy.DIAGNOSTICS_SERVER.getUrl())))),
-                        false
-                );
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else {
             if (ClientProxy.DIAGNOSTICS_SERVER != null) {

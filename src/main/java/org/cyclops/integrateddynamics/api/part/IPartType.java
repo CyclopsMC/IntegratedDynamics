@@ -3,11 +3,11 @@ package org.cyclops.integrateddynamics.api.part;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -19,6 +19,8 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -31,6 +33,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * A type of part that can be inserted into a {@link IPartContainer}.
@@ -53,7 +56,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public String getTranslationKey();
 
     /**
-     * @return JSON model path for the block representation of this part.
+     * @return JSON facadeModel path for the block representation of this part.
      */
     public ResourceLocation getBlockModelPath();
 
@@ -78,20 +81,19 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * Write the properties of this part to NBT.
      * An identificator for this part is not required, this is written somewhere else.
      *
-     * @param valueDeseralizationContext
-     * @param tag                        The tag to write to. This tag is guaranteed to be empty.
-     * @param partState                  The state of this part.
+     * @param valueOutput The value to write to.
+     * @param partState   The state of this part.
      */
-    public void toNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, S partState);
+    public void serializeState(ValueOutput valueOutput, S partState);
 
     /**
      * Read the properties of this part from nbt.
      * This tag is guaranteed to only contain data for this part.
-     * @param valueDeseralizationContext
-     * @param tag The tag to read from.
+     *
+     * @param valueInput The input to read from.
      * @return The state of this part.
      */
-    public S fromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag);
+    public S deserializeState(ValueInput valueInput);
 
     /**
      * @return The default state of this part.
@@ -240,11 +242,12 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * Get the itemstack from the given state.
      *
      * @param valueDeseralizationContext
+     * @param problemPath
      * @param state                      The state
      * @param saveState                  If the part state should be saved in the item.
      * @return The itemstack possibly containing the state information.
      */
-    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, S state, boolean saveState);
+    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, ProblemReporter.PathElement problemPath, S state, boolean saveState);
 
     /**
      * Get the itemstack from the given state.
@@ -257,11 +260,13 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     /**
      * Get the part state from the given itemstack.
+     *
      * @param valueDeseralizationContext
-     * @param itemStack The itemstack possibly containing state information.
+     * @param problemPath
+     * @param itemStack                  The itemstack possibly containing state information.
      * @return The state contained in the itemstack or the default part state.
      */
-    public S getState(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack);
+    public S getState(ValueDeseralizationContext valueDeseralizationContext, ProblemReporter.PathElement problemPath, ItemStack itemStack);
 
     /**
      * Add the itemstacks to drop when this element is removed.
@@ -410,10 +415,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
 
     /**
      * Add tooltip lines for this aspect when this part's item is being hovered.
-     * @param itemStack The itemstack.
-     * @param lines The list to add lines to.
+     *
+     * @param itemStack    The itemstack.
+     * @param tooltipAdder The list to add lines to.
      */
-    public void loadTooltip(ItemStack itemStack, List<Component> lines);
+    public void loadTooltip(ItemStack itemStack, Consumer<Component> tooltipAdder);
 
     /**
      * Check if the given state change should trigger a block render update.

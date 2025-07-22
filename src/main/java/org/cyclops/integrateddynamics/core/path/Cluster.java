@@ -5,24 +5,22 @@ import lombok.Data;
 import lombok.experimental.Delegate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import org.apache.commons.compress.utils.Lists;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
-import org.cyclops.cyclopscore.persist.nbt.INBTSerializable;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
+import org.cyclops.integrateddynamics.api.path.SidedPathElementParams;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,7 +29,7 @@ import java.util.TreeSet;
  * @author rubensworks
  */
 @Data
-public class Cluster implements Collection<ISidedPathElement>, INBTSerializable {
+public class Cluster implements Collection<ISidedPathElement> {
 
     @Delegate
     private final Set<ISidedPathElement> elements;
@@ -47,39 +45,13 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
         this.elements = elements;
     }
 
-    @Override
-    public CompoundTag toNBT(HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
-        ListTag list = new ListTag();
-
-        for(ISidedPathElement e : elements) {
-            CompoundTag elementTag = new CompoundTag();
-            elementTag.putString("dimension", e.getPathElement().getPosition().getLevel());
-            elementTag.putLong("pos", e.getPathElement().getPosition().getBlockPos().asLong());
-            if (e.getSide() != null) {
-                elementTag.putInt("side", e.getSide().ordinal());
-            }
-            list.add(elementTag);
-        }
-
-        tag.put("list", list);
-        return tag;
-    }
-
-    @Override
-    public void fromNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        ListTag list = tag.getList("list", Tag.TAG_COMPOUND);
-
-        for(int i = 0; i < list.size(); i++) {
-            CompoundTag elementTag = list.getCompound(i);
-            ResourceLocation dimensionId = ResourceLocation.parse(elementTag.getString("dimension"));
+    public void fromParams(List<SidedPathElementParams> pathElements) {
+        for (SidedPathElementParams pathElementParam : pathElements) {
+            ResourceLocation dimensionId = ResourceLocation.parse(pathElementParam.dimension());
             ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimensionId);
             Level world = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
-            BlockPos pos = BlockPos.of(elementTag.getLong("pos"));
-            Direction side = null;
-            if (elementTag.contains("side", Tag.TAG_INT)) {
-                side = Direction.values()[elementTag.getInt("side")];
-            }
+            BlockPos pos = pathElementParam.pos();
+            Direction side = pathElementParam.side().orElse(null);
 
             if (world == null) {
                 IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Skipped loading part from a network at the " +
@@ -94,5 +66,13 @@ public class Cluster implements Collection<ISidedPathElement>, INBTSerializable 
                 }
             }
         }
+    }
+
+    public List<SidedPathElementParams> toParams() {
+        List<SidedPathElementParams> list = Lists.newArrayList();
+        for(ISidedPathElement e : elements) {
+            list.add(e.getParams());
+        }
+        return list;
     }
 }

@@ -1,14 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -46,17 +45,15 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        CompoundTag tag = new CompoundTag();
-        values.writeGeneratedFieldsToNBT(tag, valueDeseralizationContext.holderLookupProvider());
-        return tag;
+    public void serialize(ValueOutput valueOutput, P values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        values.writeGeneratedFieldsToNBT(valueOutput);
     }
 
     @Override
-    public P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public P deserialize(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         try {
             P proxy = this.proxyClassConstructor.newInstance();
-            proxy.readGeneratedFieldsFromNBT((CompoundTag) value, valueDeseralizationContext.holderLookupProvider());
+            proxy.readGeneratedFieldsFromNBT(valueInput);
             return proxy;
         } catch (InvocationTargetException | InstantiationException | ClassCastException | IllegalAccessException e) {
             e.printStackTrace();

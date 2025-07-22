@@ -16,14 +16,15 @@ import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueType;
+import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElementValueTypeClient;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
-import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.SubGuiValueTypeInfoBase;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
-import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.RenderPattern;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     private final List<IAspectPropertyTypeInstance> propertyTypes;
     protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
-    protected IGuiInputElementValueType<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings> guiElement = null;
+    protected IGuiInputElementValueType<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings, IGuiInputElementValueTypeClient<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings>> guiElement = null;
     protected int activePropertyIndex = 0;
     protected RenderPattern propertyConfigPattern = null;
     protected SubGuiValueTypeInfo propertyInfo = null;
@@ -123,12 +124,12 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
         if(activeProperty != null) {
             String label = IModHelpers.get().getL10NHelpers().localize(activeProperty.getTranslationKey());
             IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, label, 88, 10, 0,
-                    1.0F, 140, IModHelpers.get().getBaseHelpers().RGBToInt(10, 10, 10), false, Font.DisplayMode.NORMAL);
+                    1.0F, 140, IModHelpers.get().getBaseHelpers().RGBAToInt(10, 10, 10, 255), false, Font.DisplayMode.NORMAL);
             if (IModHelpers.get().getRenderHelpers().isPointInRegion(this.leftPos + 40, this.topPos, 110, 20, mouseX, mouseY)) {
                 String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
                 if (I18n.exists(unlocalizedInfo)) {
                     drawTooltip(Lists.newArrayList(Component.translatable(unlocalizedInfo)
-                            .withStyle(ChatFormatting.GRAY)), guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos + 20);
+                            .withStyle(ChatFormatting.GRAY)), guiGraphics, mouseX, mouseY + 20);
                 }
             }
         }
@@ -203,7 +204,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
         // Create new element
         guiElement.setValidator(property.getValidator());
-        subGuiHolder.addSubGui(propertyConfigPattern = guiElement.createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getMenu()));
+        subGuiHolder.addSubGui(propertyConfigPattern = guiElement.getClient().createSubGui(8, 17, 160, 91, this, (ContainerAspectSettings) getMenu()));
         subGuiHolder.addSubGui(propertyInfo = new SubGuiValueTypeInfo(guiElement));
         propertyConfigPattern.init(leftPos, topPos);
         guiElement.activate();
@@ -216,7 +217,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
         IValue value = container.getPropertyValue(ValueDeseralizationContext.of(Minecraft.getInstance().player.level()), property);
         if(value != null) {
             guiElement.setValue(value);
-            guiElement.setValueInGui(propertyConfigPattern, false);
+            guiElement.getClient().setValueInGui(propertyConfigPattern, false);
         }
         onValueChanged();
     }
@@ -231,9 +232,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
         }
     }
 
-    public class SubGuiValueTypeInfo extends GuiElementValueTypeString.SubGuiValueTypeInfo<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings> {
+    public class SubGuiValueTypeInfo extends SubGuiValueTypeInfoBase<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings> {
 
-        public SubGuiValueTypeInfo(IGuiInputElement<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings> element) {
+        public SubGuiValueTypeInfo(IGuiInputElement<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings, IGuiInputElementValueTypeClient<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings>> element) {
             super(ContainerScreenAspectSettings.this, (ContainerAspectSettings) ContainerScreenAspectSettings.this.container, element, 8, 105, 160, 20);
         }
 

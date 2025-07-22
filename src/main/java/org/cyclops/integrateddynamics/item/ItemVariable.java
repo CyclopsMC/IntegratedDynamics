@@ -6,13 +6,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHolder;
 import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Item for storing variable references.
@@ -25,13 +26,13 @@ public class ItemVariable extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
         IVariableFacade variableFacade = getVariableFacade(ValueDeseralizationContext.ofClient(), itemStack);
-        variableFacade.appendHoverText(list, context);
+        variableFacade.appendHoverText(tooltipAdder, context);
         if (variableFacade != VariableFacadeHandlerRegistry.DUMMY_FACADE && Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
-            list.add(Component.translatable("item.integrateddynamics.variable.warning"));
+            tooltipAdder.accept(Component.translatable("item.integrateddynamics.variable.warning"));
         }
-        super.appendHoverText(itemStack, context, list, flag);
+        super.appendHoverText(itemStack, context, tooltipDisplay, tooltipAdder, flag);
     }
 
     @Override

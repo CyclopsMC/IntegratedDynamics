@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
@@ -51,20 +52,20 @@ import java.util.function.Supplier;
  */
 public class GameTestHelpersIntegratedDynamics {
 
-    public static void assertValueEqual(IValue value1, IValue value2) {
+    public static void assertValueEqual(GameTestHelper helper, IValue value1, IValue value2) {
         if (!Objects.equals(value1, value2)) {
-            throw new GameTestAssertException(String.format("Value %s does not equal value %s", value1, value2));
+            throw new GameTestAssertException(Component.literal(String.format("Value %s does not equal value %s", value1, value2)), (int) helper.getTick());
         }
     }
 
-    public static void assertValueEqual(@Nullable IVariable value1, IValue value2) {
+    public static void assertValueEqual(GameTestHelper helper, @Nullable IVariable value1, IValue value2) {
         if (value1 == null) {
-            throw new GameTestAssertException("Variable is null");
+            throw new GameTestAssertException(Component.literal("Variable is null"), (int) helper.getTick());
         }
         try {
-            assertValueEqual(value1.getValue(), value2);
+            assertValueEqual(helper, value1.getValue(), value2);
         } catch (EvaluationException e) {
-            throw new GameTestAssertException(e.getMessage());
+            throw new GameTestAssertException(e.getErrorMessage(), (int) helper.getTick());
         }
     }
 
@@ -106,7 +107,7 @@ public class GameTestHelpersIntegratedDynamics {
         }, level, null, null);
     }
 
-    public static void placeVariableInWriter(Level level, PartPos partPos, final IAspectWrite<?, ?> aspect, ItemStack variableAspect) {
+    public static void placeVariableInWriter(GameTestHelper helper, Level level, PartPos partPos, final IAspectWrite<?, ?> aspect, ItemStack variableAspect) {
         PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
         IPartTypeWriter<?, ?> part = (IPartTypeWriter<?, ?>) partStateHolder.getPart();
         IPartStateWriter<?> state = (IPartStateWriter<?>) partStateHolder.getState();
@@ -119,7 +120,7 @@ public class GameTestHelpersIntegratedDynamics {
             }
         }
         if (aspectIndex < 0) {
-            throw new GameTestAssertException("Aspect " + aspect + " not found");
+            throw new GameTestAssertException(Component.literal("Aspect " + aspect + " not found"), (int) helper.getTick());
         }
 
         // Insert variable
@@ -158,23 +159,23 @@ public class GameTestHelpersIntegratedDynamics {
         helper.succeedWhen(() -> {
             try {
                 variableSupplier.get().getValue();
-                helper.assertTrue(false, "The aspect did not throw");
+                helper.assertTrue(false, Component.literal("The aspect did not throw"));
             } catch (EvaluationException e) {
-                helper.assertTrue(true, "The aspect did successfully throw");
+                helper.assertTrue(true, Component.literal("The aspect did successfully throw"));
             }
         });
     }
 
     public static <V extends IValue> void testReadAspect(BlockPos pos, GameTestHelper helper, IPartTypeReader<?, ?> partType, IAspectRead<V, ?> aspectRead, V expectedValue) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
-        helper.succeedWhen(() -> assertValueEqual(variableSupplier.get(), expectedValue));
+        helper.succeedWhen(() -> assertValueEqual(helper, variableSupplier.get(), expectedValue));
     }
 
     public static <V extends IValue> void testReadAspectPredicate(BlockPos pos, GameTestHelper helper, IPartTypeReader<?, ?> partType, IAspectRead<V, ?> aspectRead, Predicate<V> asserter) {
         Supplier<IAspectVariable> variableSupplier = testReadAspectSetup(pos, helper, partType, aspectRead);
         helper.succeedWhen(() -> {
             try {
-                helper.assertTrue(asserter.test((V) variableSupplier.get().getValue()), "Value was not asserted correctly");
+                helper.assertTrue(asserter.test((V) variableSupplier.get().getValue()), Component.literal("Value was not asserted correctly"));
             } catch (EvaluationException e) {
                 throw new RuntimeException(e);
             }
@@ -187,12 +188,12 @@ public class GameTestHelpersIntegratedDynamics {
             try {
                 IValue operatorValue = variableSupplier.get().getValue();
                 if (!(operatorValue instanceof ValueTypeOperator.ValueOperator operator)) {
-                    throw new GameTestAssertException("Return value is not an operator");
+                    throw new GameTestAssertException(Component.literal("Return value is not an operator"), (int) helper.getTick());
                 }
                 IValue output = operator.getRawValue().evaluate(operatorInputs.stream().map(Variable::new).toArray(Variable[]::new));
-                assertValueEqual(output, expectedOperatorOutput);
+                assertValueEqual(helper, output, expectedOperatorOutput);
             } catch (EvaluationException e) {
-                throw new GameTestAssertException(e.getMessage());
+                throw new GameTestAssertException(e.getErrorMessage(), (int) helper.getTick());
             }
         });
     }
@@ -203,12 +204,12 @@ public class GameTestHelpersIntegratedDynamics {
             try {
                 IValue operatorValue = variableSupplier.get().getValue();
                 if (!(operatorValue instanceof ValueTypeOperator.ValueOperator operator)) {
-                    throw new GameTestAssertException("Return value is not an operator");
+                    throw new GameTestAssertException(Component.literal("Return value is not an operator"), (int) helper.getTick());
                 }
                 IValue output = operator.getRawValue().evaluate(operatorInputs.stream().map(Variable::new).toArray(Variable[]::new));
-                helper.assertTrue(asserter.test(output), "Value was not asserted correctly");
+                helper.assertTrue(asserter.test(output), Component.literal("Value was not asserted correctly"));
             } catch (EvaluationException e) {
-                throw new GameTestAssertException(e.getMessage());
+                throw new GameTestAssertException(e.getErrorMessage(), (int) helper.getTick());
             }
         });
     }
@@ -222,7 +223,7 @@ public class GameTestHelpersIntegratedDynamics {
         // Place part
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(pos), Direction.WEST, partType, new ItemStack(partType.getItem()));
         PartPos partPos = PartPos.of(helper.getLevel(), helper.absolutePos(pos), Direction.WEST);
-        placeVariableInWriter(helper.getLevel(), partPos, aspectWrite, variableAspect);
+        placeVariableInWriter(helper, helper.getLevel(), partPos, aspectWrite, variableAspect);
     }
 
     public static <V extends IValue> void testWriteAspectSetup(BlockPos pos, GameTestHelper helper, IPartTypeWriter<?, ?> partType, IAspectWrite<V, ?> aspectWrite, V value) {

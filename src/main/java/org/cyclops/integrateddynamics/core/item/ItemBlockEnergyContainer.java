@@ -6,6 +6,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -16,9 +17,9 @@ import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.capability.energystorage.EnergyStorageItemBlockEnergyContainer;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * {@link BlockItem} that can be used for blocks that implement the {@link IEnergyStorage} capability.
@@ -47,14 +48,14 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-        super.appendHoverText(itemStack, context, list, flag);
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        super.appendHoverText(itemStack, context, tooltipDisplay, tooltipAdder, flag);
         getEnergyBattery(itemStack)
                 .ifPresent(energyStorage -> {
                     long amount = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getEnergyStoredLong();
                     long capacity = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getMaxEnergyStoredLong();
                     String line = String.format(Locale.ROOT, "%,d", amount) + " / " + String.format(Locale.ROOT, "%,d", capacity) + " " + IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT);
-                    list.add(Component.literal(IInformationProvider.ITEM_PREFIX + line));
+                    tooltipAdder.accept(Component.literal(IInformationProvider.ITEM_PREFIX + line));
                 });
     }
 

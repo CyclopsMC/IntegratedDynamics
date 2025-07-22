@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,14 +17,11 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.block.BlockWithEntityGui;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
-import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectableInventory;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.function.BiFunction;
 
 /**
@@ -71,18 +67,16 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
     @Override
     public void destroy(LevelAccessor world, BlockPos blockPos, BlockState blockState) {
         CableHelpers.onCableRemoving((Level) world, blockPos, true, false, blockState);
-        Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables((Level) world, blockPos);
         super.destroy(world, blockPos, blockState);
-        CableHelpers.onCableRemoved((Level) world, blockPos, connectedCables);
+        CableHelpers.onCableRemoved((Level) world, blockPos);
     }
 
     @Override
     public void onBlockExploded(BlockState state, ServerLevel world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.setRemovingCable(true);
         CableHelpers.onCableRemoving(world, blockPos, true, false, state);
-        Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
         super.onBlockExploded(state, world, blockPos, explosion);
-        CableHelpers.onCableRemoved(world, blockPos, connectedCables);
+        CableHelpers.onCableRemoved(world, blockPos);
         CableHelpers.setRemovingCable(false);
     }
 
@@ -101,19 +95,11 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
     }
 
     @Override
-    public void onRemove(BlockState oldState, Level world, BlockPos blockPos, BlockState newState, boolean isMoving) {
-        if (oldState.getBlock() != newState.getBlock()) {
-            IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityCableConnectableInventory.class)
-                    .ifPresent(tile -> IModHelpers.get().getInventoryHelpers().dropItems(world, tile.getInventory(), blockPos));
-            Collection<Direction> connectedCables = null;
-            if (!CableHelpers.isRemovingCable()) {
-                CableHelpers.onCableRemoving(world, blockPos, true, false, oldState);
-                connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
-            }
-            super.onRemove(oldState, world, blockPos, newState, isMoving);
-            if (!CableHelpers.isRemovingCable()) {
-                CableHelpers.onCableRemoved(world, blockPos, connectedCables);
-            }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+
+        if (!CableHelpers.isRemovingCable()) {
+            CableHelpers.onCableRemoved(level, pos);
         }
     }
 

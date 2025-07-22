@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -17,6 +15,8 @@ import java.util.Set;
  * @author rubensworks
  */
 public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<IAspectVariableFacade> {
+
+    public IAspectRegistryClient getClient();
 
     /**
      * Register a new aspect for a given part type.
@@ -45,14 +45,14 @@ public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<IAspe
      * @param partType The part type.
      * @return The read aspects.
      */
-    public List<IAspectRead> getReadAspects(IPartType partType);
+    public List<IAspectRead<?, ?>> getReadAspects(IPartType partType);
 
     /**
      * Get the registered write aspects for a given part type.
      * @param partType The part type.
      * @return The write aspects.
      */
-    public List<IAspectWrite> getWriteAspects(IPartType partType);
+    public List<IAspectWrite<?, ?>> getWriteAspects(IPartType partType);
 
     /**
      * Get all registered aspects.
@@ -78,28 +78,5 @@ public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<IAspe
      * @return The matching aspect.
      */
     public IAspect getAspect(ResourceLocation name);
-
-    /**
-     * Register a model resource location for the given aspect.
-     * @param aspect The aspect.
-     * @param modelLocation The model resource location.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public void registerAspectModel(IAspect aspect, ResourceLocation modelLocation);
-
-    /**
-     * Get the model resource location of the given aspect.
-     * @param aspect The aspect.
-     * @return The model resource location.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public ResourceLocation getAspectModel(IAspect aspect);
-
-    /**
-     * Get all registered model resource locations for the aspects.
-     * @return All model resource locations.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public Collection<ResourceLocation> getAspectModels();
 
 }

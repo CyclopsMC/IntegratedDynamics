@@ -9,7 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
-import org.cyclops.cyclopscore.client.model.IDynamicModelElementCommon;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -20,7 +19,7 @@ import org.cyclops.integrateddynamics.api.block.IFacadeable;
  * An item that represents a facade of a certain type.
  * @author rubensworks
  */
-public class ItemFacade extends Item implements IDynamicModelElementCommon {
+public class ItemFacade extends Item {
 
     public ItemFacade(Properties properties) {
         super(properties);

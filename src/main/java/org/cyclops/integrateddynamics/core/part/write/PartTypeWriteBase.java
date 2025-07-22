@@ -5,7 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -57,7 +56,7 @@ import java.util.Optional;
 public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S extends IPartStateWriter<P>>
         extends PartTypeAspects<P, S> implements IPartTypeWriter<P, S> {
 
-    private List<IAspectWrite> aspectsWrite = null;
+    private List<IAspectWrite<?, ?>> aspectsWrite = null;
 
     public PartTypeWriteBase(String name) {
         this(name, new PartRenderPosition(0.3125F, 0.3125F, 0.625F, 0.625F, 0.25F, 0.25F));
@@ -129,7 +128,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public List<IAspectWrite> getWriteAspects() {
+    public List<IAspectWrite<?, ?>> getWriteAspects() {
         if (aspectsWrite == null) {
             aspectsWrite = Aspects.REGISTRY.getWriteAspects(this);
         }
@@ -218,8 +217,8 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
             } else {
                 lines.add(Component.translatable(L10NValues.PART_TOOLTIP_ERRORS)
                         .withStyle(ChatFormatting.RED));
-                for (MutableComponent error : state.getErrors(aspectWrite)) {
-                    lines.add(error.withStyle(ChatFormatting.RED));
+                for (Component error : state.getErrors(aspectWrite)) {
+                    lines.add(error.copy().withStyle(ChatFormatting.RED));
                 }
             }
         } else {

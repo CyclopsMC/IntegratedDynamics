@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * A base class for list proxy factories that use NBT to store data.
@@ -16,22 +15,20 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 public abstract class ValueTypeListProxyNBTFactorySimple<T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> implements IValueTypeListProxyFactoryTypeRegistry.IProxyFactory<T, V, P> {
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, P value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        CompoundTag tag = new CompoundTag();
-        serializeNbt(valueDeseralizationContext, value, tag);
-        return tag;
+    public void serialize(ValueOutput valueOutput, P value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        serializeNbt(valueOutput, value);
     }
 
     @Override
-    public P deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+    public P deserialize(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         try {
-            return deserializeNbt(valueDeseralizationContext, (CompoundTag) value);
+            return deserializeNbt(valueInput);
         } catch (ClassCastException | EvaluationException e) {
             e.printStackTrace();
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(e.getMessage());
         }
     }
 
-    protected abstract void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, P value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException;
-    protected abstract P deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException;
+    protected abstract void serializeNbt(ValueOutput valueOutput, P value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException;
+    protected abstract P deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException;
 }

@@ -2,15 +2,14 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.LongTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.text.NumberFormat;
@@ -37,17 +36,13 @@ public class ValueTypeLong extends ValueTypeBase<ValueTypeLong.ValueLong> implem
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueLong value) {
-        return LongTag.valueOf(value.getRawValue());
+    public void serialize(ValueOutput valueOutput, ValueLong value) {
+        valueOutput.putLong("v", value.getRawValue());
     }
 
     @Override
-    public ValueLong deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value.getId() == Tag.TAG_LONG) {
-            return ValueLong.of(((LongTag) value).getAsLong());
-        } else {
-            throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a long.", value));
-        }
+    public ValueLong deserialize(ValueInput valueInput) {
+        return ValueLong.of(valueInput.getLong("v").orElseThrow());
     }
 
     @Override

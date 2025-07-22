@@ -2,32 +2,26 @@ package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IProxyVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeClient;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityProxy;
-import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Variable facade for variables determined by proxies.
@@ -136,21 +130,17 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
         return Component.translatable(L10NValues.PROXY_TOOLTIP_PROXYID, proxyId);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<Component> list, Item.TooltipContext context) {
-        if(isValid()) {
-            list.add(getProxyTooltip());
-        }
-        super.appendHoverText(list, context);
+    protected IVariableFacadeClient constructClient() {
+        return new ProxyVariableFacadeClient(this);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
+    public void appendHoverText(Consumer<Component> tooltipAdder, Item.TooltipContext context) {
         if(isValid()) {
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.PROXY).getBakedModel().getQuads(null, null, random, modelData, null));
+            tooltipAdder.accept(getProxyTooltip());
         }
+        super.appendHoverText(tooltipAdder, context);
     }
 
     public static class VariableRecursionException extends IllegalArgumentException {

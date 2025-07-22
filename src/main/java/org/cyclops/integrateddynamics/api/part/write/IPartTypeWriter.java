@@ -17,7 +17,7 @@ public interface IPartTypeWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     /**
      * @return All possible write aspects that can be used in this part type.
      */
-    public List<IAspectWrite> getWriteAspects();
+    public List<IAspectWrite<?, ?>> getWriteAspects();
 
     /**
      * Get the aspect that is currently active in this part, can be null.

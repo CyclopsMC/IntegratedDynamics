@@ -1,11 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -13,7 +13,6 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -24,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * An operator that is partially being applied.
@@ -95,9 +95,9 @@ public class CurriedOperator implements IOperator {
     }
 
     @Override
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
-        baseOperator.loadTooltip(lines, appendOptionalInfo);
-        lines.add(Component.translatable(L10NValues.OPERATOR_APPLIED_TYPE, getAppliedSymbol()));
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo) {
+        baseOperator.loadTooltip(tooltipAdder, appendOptionalInfo);
+        tooltipAdder.accept(Component.translatable(L10NValues.OPERATOR_APPLIED_TYPE, getAppliedSymbol()));
     }
 
     @Override
@@ -197,8 +197,9 @@ public class CurriedOperator implements IOperator {
         }
 
         @Override
-        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, CurriedOperator operator) {
-            ListTag list = new ListTag();
+        public void serialize(ValueOutput valueOutput, CurriedOperator operator) {
+            Operators.REGISTRY.serialize(valueOutput.child("baseOperator"), operator.baseOperator);
+            ValueOutput.ValueOutputList list = valueOutput.childrenList("values");
             for (int i = 0; i < operator.appliedVariables.length; i++) {
                 IVariable appliedVariable = operator.appliedVariables[i];
                 IValue value;
@@ -207,39 +208,24 @@ public class CurriedOperator implements IOperator {
                 } catch (EvaluationException e) {
                     value = appliedVariable.getType().getDefault();
                 }
-                CompoundTag valueTag = new CompoundTag();
+                ValueOutput valueTag = list.addChild();
                 IValueType valueType = value.getType();
                 valueTag.putString("valueType", valueType.getUniqueName().toString());
-                valueTag.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, value));
-                list.add(valueTag);
+                ValueHelpers.serializeRaw(valueTag.child("value"), value);
             }
-
-            CompoundTag tag = new CompoundTag();
-            tag.put("values", list);
-            tag.put("baseOperator", Operators.REGISTRY.serialize(valueDeseralizationContext, operator.baseOperator));
-            return tag;
         }
 
         @Override
-        public CurriedOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag valueOperator) throws EvaluationException {
-            CompoundTag tag;
-            try {
-                tag = (CompoundTag) valueOperator;
-            } catch (ClassCastException e) {
-                e.printStackTrace();
-                throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
-                        valueOperator.toString(), e.getMessage()));
+        public CurriedOperator deserialize(ValueInput valueInput) throws EvaluationException {
+            ValueInput.ValueInputList list = valueInput.childrenList("values").orElseThrow();
+            List<IVariable> variables = Lists.newArrayList();
+            for (ValueInput valuetag : list) {
+                IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valuetag.getString("valueType").orElseThrow()));
+                IValue value = ValueHelpers.deserializeRaw(valuetag.child("value").orElseThrow(), valueType);
+                variables.add(new Variable(valueType, value));
             }
-            ListTag list = tag.getList("values", Tag.TAG_COMPOUND);
-            IVariable[] variables = new IVariable[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                CompoundTag valuetag = list.getCompound(i);
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valuetag.getString("valueType")));
-                IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, valuetag.get("value"));
-                variables[i] = new Variable(valueType, value);
-            }
-            IOperator baseOperator = Objects.requireNonNull(Operators.REGISTRY.deserialize(valueDeseralizationContext, tag.get("baseOperator")));
-            return new CurriedOperator(baseOperator, variables);
+            IOperator baseOperator = Objects.requireNonNull(Operators.REGISTRY.deserialize(valueInput.child("baseOperator").orElseThrow()));
+            return new CurriedOperator(baseOperator, variables.toArray(new IVariable[0]));
         }
     }
 }

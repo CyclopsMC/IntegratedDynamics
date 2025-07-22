@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -9,7 +10,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 /**
@@ -45,15 +45,15 @@ public class ValueTypeListProxyOperatorMapped extends ValueTypeListProxyBase<IVa
         }
 
         @Override
-        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyOperatorMapped value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.put("operator", Operators.REGISTRY.serialize(valueDeseralizationContext, value.operator));
-            tag.put("sublist", ValueTypeListProxyFactories.REGISTRY.serialize(valueDeseralizationContext, value.listProxy));
+        protected void serializeNbt(ValueOutput valueOutput, ValueTypeListProxyOperatorMapped value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            Operators.REGISTRY.serialize(valueOutput.child("operator"), value.operator);
+            ValueTypeListProxyFactories.REGISTRY.serialize(valueOutput.child("sublist"), value.listProxy);
         }
 
         @Override
-        protected ValueTypeListProxyOperatorMapped deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
-            IOperator operator = Operators.REGISTRY.deserialize(valueDeseralizationContext, tag.get("operator"));
-            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueDeseralizationContext, tag.get("sublist"));
+        protected ValueTypeListProxyOperatorMapped deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
+            IOperator operator = Operators.REGISTRY.deserialize(valueInput.child("operator").orElseThrow());
+            IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput.child("sublist").orElseThrow());
             return new ValueTypeListProxyOperatorMapped(operator, list);
         }
     }

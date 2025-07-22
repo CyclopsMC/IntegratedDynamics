@@ -1,15 +1,11 @@
 package org.cyclops.integrateddynamics.api.client.model;
 
-import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.Collection;
-import java.util.List;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.resources.model.ResolvableModel;
 
 /**
  * A provider of variable overlay models.
- * @param <B> The type of baked model provider.
+ * @param <B> The type of baked facadeModel provider.
  * @author rubensworks
  */
 public interface IVariableModelProvider<B extends IVariableModelProvider.BakedModelProvider> {
@@ -17,22 +13,17 @@ public interface IVariableModelProvider<B extends IVariableModelProvider.BakedMo
     /**
      * Load the models for this provider.
      *
-     * @param modelBaker The model baker.
-     * @param transform  The model transformation.
+     * @param bakingContext The facadeModel baker.
      * @return The baked moderl provider.
      */
-    public B bakeOverlayModels(ModelBaker modelBaker, ModelState transform);
+    public B bakeOverlayModels(ItemModel.BakingContext bakingContext);
 
     /**
-     * @return All models this provider depends on and should thus be loaded.
+     * Load all required models for this facadeModel provider into the given facadeModel loader.
+     *
+     * @param resolver The list of sub models that can be appended to, which will be registered afterwards.
      */
-    public Collection<ResourceLocation> getDependencies();
-
-    /**
-     * Load all required models for this model provider into the given model loader.
-     * @param subModels The list of sub models that can be appended to, which will be registered afterwards.
-     */
-    void loadModels(List<ResourceLocation> subModels);
+    void resolveDependencies(ResolvableModel.Resolver resolver);
 
     /**
      * Provider for baked models.

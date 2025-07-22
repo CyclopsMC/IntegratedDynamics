@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.block.shapes;
 
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -14,8 +13,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
@@ -94,15 +91,6 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
                 return true;
             }
             return false;
-        }
-
-        @Nullable
-        @Override
-        @OnlyIn(Dist.CLIENT)
-        public BakedModel getBreakingBaseModel(Level world, BlockPos pos) {
-            return CableHelpers.getFacade(world, pos)
-                    .map(IModHelpers.get().getRenderHelpers()::getBakedModel)
-                    .orElse(null);
         }
 
         @Override

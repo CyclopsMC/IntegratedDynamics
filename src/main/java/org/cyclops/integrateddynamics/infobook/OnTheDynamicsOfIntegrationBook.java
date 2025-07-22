@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.infobook;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
@@ -19,7 +18,6 @@ import org.cyclops.integrateddynamics.infobook.pageelement.*;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.w3c.dom.Element;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -57,13 +55,11 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
                     throw new InfoBookParser.InvalidAppendixException(String.format("Could not find a part type by name '%s'.", partName));
                 }
                 List<IAspect> aspects = Lists.newArrayList(Aspects.REGISTRY.getAspects(partType));
-                return Lists.transform(aspects, new Function<IAspect, SectionAppendix>() {
-                    @Nullable
-                    @Override
-                    public SectionAppendix apply(IAspect input) {
-                        return new AspectAppendix(infoBook, input);
-                    }
-                });
+                List<SectionAppendix> appendices = Lists.newArrayList();
+                for (IAspect aspect : aspects) {
+                    appendices.add(new AspectAppendix(infoBook, aspect));
+                }
+                return appendices;
             }
         });
 
@@ -84,13 +80,11 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
             public List<SectionAppendix> create(final IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
                 String categoryName = node.getTextContent();
                 List<IOperator> operators = Lists.newArrayList("*".equals(categoryName) ? Operators.REGISTRY.getOperators() : Operators.REGISTRY.getOperatorsInCategory(categoryName));
-                return Lists.transform(operators, new Function<IOperator, SectionAppendix>() {
-                    @Nullable
-                    @Override
-                    public SectionAppendix apply(IOperator input) {
-                        return new OperatorAppendix(infoBook, input);
-                    }
-                });
+                List<SectionAppendix> appendices = Lists.newArrayList();
+                for (IOperator operator : operators) {
+                    appendices.add(new OperatorAppendix(infoBook, operator));
+                }
+                return appendices;
             }
         });
     }

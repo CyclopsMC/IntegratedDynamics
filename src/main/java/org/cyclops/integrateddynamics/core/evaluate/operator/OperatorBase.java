@@ -18,7 +18,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A basic abstract implementation of an operator.
@@ -125,20 +125,20 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo) {
         Component operatorName = Component.translatable(getTranslationKey());
         Component categoryName = Component.translatable(getUnlocalizedCategoryName());
         String symbol = getSymbol();
         String outputTypeName = IModHelpers.get().getL10NHelpers().localize(getOutputType().getTranslationKey());
-        lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
-        lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
+        tooltipAdder.accept(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OPERATORNAME, operatorName, symbol));
+        tooltipAdder.accept(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OPERATORCATEGORY, categoryName));
         IValueType[] inputTypes = getInputTypes();
         for(int i = 0; i < inputTypes.length; i++) {
-            lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME, i + 1)
+            tooltipAdder.accept(Component.translatable(L10NValues.OPERATOR_TOOLTIP_INPUTTYPENAME, i + 1)
             .append(Component.translatable(inputTypes[i].getTranslationKey()))
                     .withStyle(inputTypes[i].getDisplayColorFormat()));
         }
-        lines.add(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
+        tooltipAdder.accept(Component.translatable(L10NValues.OPERATOR_TOOLTIP_OUTPUTTYPENAME, getOutputType().getDisplayColorFormat() + outputTypeName));
         if(appendOptionalInfo) {
             // Global name
             MutableComponent globalNameComponent = Component.translatable(L10NValues.GUI_OPERATOR_GLOBALNAME,
@@ -154,7 +154,7 @@ public abstract class OperatorBase implements IOperator {
                         .translatable(inputTypes[i].getTranslationKey())
                         .withStyle(inputTypes[i].getDisplayColorFormat()));
             }
-            lines.add(globalNameComponent.append(Component
+            tooltipAdder.accept(globalNameComponent.append(Component
                     .literal(")")
                     .withStyle(ChatFormatting.WHITE)));
 
@@ -174,11 +174,11 @@ public abstract class OperatorBase implements IOperator {
                             .translatable(inputTypes[i].getTranslationKey())
                             .withStyle(inputTypes[i].getDisplayColorFormat()));
                 }
-                lines.add(localNameComponent.append(Component
+                tooltipAdder.accept(localNameComponent.append(Component
                         .literal(")")
                         .withStyle(ChatFormatting.WHITE)));
             }
-            IModHelpers.get().getL10NHelpers().addOptionalInfo(lines, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix());
         }
     }
 

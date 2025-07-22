@@ -54,8 +54,8 @@ public class ContainerScreenMechanicalDryingBasin extends ContainerScreenMechani
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         super.renderLabels(guiGraphics, mouseX, mouseY);
 
-        drawEnergyBarTooltip(guiGraphics.pose(), 8, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(guiGraphics.pose(), getMenu().getInputFluidStack(), getMenu().getInputFluidCapacity(), 28, 16, 18, 60, mouseX, mouseY);
-        drawFluidTankTooltip(guiGraphics.pose(), getMenu().getOutputFluidStack(), getMenu().getOutputFluidCapacity(), 150, 16, 18, 60, mouseX, mouseY);
+        drawEnergyBarTooltip(guiGraphics, 8, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(guiGraphics, getMenu().getInputFluidStack(), getMenu().getInputFluidCapacity(), 28, 16, 18, 60, mouseX, mouseY);
+        drawFluidTankTooltip(guiGraphics, getMenu().getOutputFluidStack(), getMenu().getOutputFluidCapacity(), 150, 16, 18, 60, mouseX, mouseY);
     }
 }

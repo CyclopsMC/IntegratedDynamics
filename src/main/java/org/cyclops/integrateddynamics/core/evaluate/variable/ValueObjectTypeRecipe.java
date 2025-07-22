@@ -1,37 +1,22 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
-import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.ToString;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
-import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentHandler;
 import org.cyclops.integrateddynamics.core.ingredient.IngredientComponentHandlers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeRecipeLPElement;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * Value type with values that are recipes.
@@ -42,6 +27,11 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
 
     public ValueObjectTypeRecipe() {
         super("recipe", ValueObjectTypeRecipe.ValueRecipe.class);
+    }
+
+    @Override
+    protected ValueObjectTypeRecipeClient constructClient() {
+        return new ValueObjectTypeRecipeClient(this);
     }
 
     @Override
@@ -88,21 +78,13 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueRecipe value) {
-        if(!value.getRawValue().isPresent()) return new CompoundTag();
-        return IRecipeDefinition.serialize(valueDeseralizationContext.holderLookupProvider(), value.getRawValue().get());
+    public void serialize(ValueOutput valueOutput, ValueRecipe value) {
+        value.getRawValue().ifPresent(v -> IRecipeDefinition.serialize(valueOutput.child("v"), v));
     }
 
     @Override
-    public ValueRecipe deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value.getId() == Tag.TAG_END || (value.getId() == Tag.TAG_COMPOUND && ((CompoundTag) value).isEmpty())) {
-            return ValueRecipe.of(null);
-        }
-        try {
-            return ValueRecipe.of(IRecipeDefinition.deserialize(valueDeseralizationContext.holderLookupProvider(), (CompoundTag) value));
-        } catch (IllegalArgumentException e) {
-            return ValueRecipe.of(null);
-        }
+    public ValueRecipe deserialize(ValueInput valueInput) {
+        return ValueRecipe.of(valueInput.child("v").map(IRecipeDefinition::deserialize).orElse(null));
     }
 
     @Override
@@ -118,28 +100,6 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
     @Override
     public ValueTypeLPElementBase createLogicProgrammerElement() {
         return new ValueTypeRecipeLPElement();
-    }
-
-    @Nullable
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public BakedModel getVariableItemOverrideModel(ValueRecipe value, BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
-        return null;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void renderISTER(ValueRecipe value, ItemStack stack, ItemDisplayContext transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-        if (IModHelpers.get().getMinecraftClientHelpers().isShifted()) {
-            value.getRawValue()
-                    .ifPresent((recipe) -> {
-                        List<ItemStack> itemStacks = recipe.getOutput().getInstances(IngredientComponent.ITEMSTACK);
-                        if (!itemStacks.isEmpty()) {
-                            ItemStack actualStack = itemStacks.get(0);
-                            Minecraft.getInstance().getItemRenderer().renderStatic(actualStack, transformType, combinedLight, combinedOverlay, matrixStack, buffer, Minecraft.getInstance().level, 0);
-                        }
-                    });
-        }
     }
 
     @ToString

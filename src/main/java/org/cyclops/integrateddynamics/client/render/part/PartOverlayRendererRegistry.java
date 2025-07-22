@@ -5,8 +5,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
@@ -18,7 +16,6 @@ import java.util.Set;
  * Registry for {@link IPartOverlayRenderer}.
  * @author rubensworks
  */
-@OnlyIn(Dist.CLIENT)
 public final class PartOverlayRendererRegistry implements IPartOverlayRendererRegistry {
 
     private static PartOverlayRendererRegistry INSTANCE = new PartOverlayRendererRegistry();

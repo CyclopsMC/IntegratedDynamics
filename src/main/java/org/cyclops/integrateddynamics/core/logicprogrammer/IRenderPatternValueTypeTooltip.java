@@ -37,7 +37,7 @@ public interface IRenderPatternValueTypeTooltip {
                         && Minecraft.getInstance().player.containerMenu.getCarried().isEmpty()) {
                     List<Component> tooltips = Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_CREATE));
                     tooltips = Stream.concat(tooltips.stream(), getValueTypeTooltip(valueType).stream()).toList();
-                    gui.drawTooltip(tooltips, guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
+                    gui.drawTooltip(tooltips, guiGraphics, mouseX, mouseY);
                 }
             }
         }

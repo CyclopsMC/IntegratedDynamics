@@ -1,7 +1,7 @@
 plugins {
-    id 'net.neoforged.gradle.userdev' version '7.0.171'
+    id 'net.neoforged.gradle.userdev' version '7.0.185'
     id 'net.neoforged.gradle.mixin' version '7.0.97'
-    id 'net.darkhax.curseforgegradle' version '1.0.8'
+    id 'net.darkhax.curseforgegradle' version '1.1.26'
     id 'com.diffplug.spotless' version '6.25.0'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 	id 'com.modrinth.minotaur' version '2.+'
@@ -84,19 +84,11 @@ def getChangelog() {
 sourceSets {
     main
     test
-    integrationtest {
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
 }
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
     shadow.setTransitive(false);
-
-	integrationtestImplementation.extendsFrom(implementation)
-	integrationtestRuntimeOnly.extendsFrom(runtimeOnly)
-	javadoc.classpath += sourceSets.integrationtest.output
 
     modLib
     implementation.extendsFrom modLib
@@ -187,7 +179,6 @@ runs {
         systemProperty 'forge.logging.console.level', 'debug'
         systemProperty 'forge.logging.console.level', 'debug'
         modSource project.sourceSets.main
-        modSource project.sourceSets.integrationtest
 
         dependencies {
             runtime project.configurations.modLib

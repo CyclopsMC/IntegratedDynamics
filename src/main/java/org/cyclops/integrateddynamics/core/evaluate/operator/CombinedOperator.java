@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.Reference;
@@ -14,7 +14,6 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
@@ -23,6 +22,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -391,36 +391,22 @@ public class CombinedOperator extends OperatorBase {
         }
 
         @Override
-        public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, CombinedOperator operator) {
+        public void serialize(ValueOutput valueOutput, CombinedOperator operator) {
             OperatorsFunction function = (OperatorsFunction) operator.getFunction();
             IOperator[] operators = function.getOperators();
-            CompoundTag tag = new CompoundTag();
-            ListTag list = new ListTag();
+            ValueOutput.ValueOutputList list = valueOutput.childrenList("operators");
             for (IOperator functionOperator : operators) {
-                CompoundTag elementTag = new CompoundTag();
-                elementTag.put("v", Operators.REGISTRY.serialize(valueDeseralizationContext, functionOperator));
-                list.add(elementTag);
+                Operators.REGISTRY.serialize(list.addChild(), functionOperator);
             }
-            tag.put("operators", list);
-            return tag;
         }
 
         @Override
-        public CombinedOperator deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag valueOperator) throws EvaluationException {
-            ListTag list;
-            try {
-                CompoundTag tag = (CompoundTag) valueOperator;
-                list = (ListTag) tag.get("operators");
-            } catch (ClassCastException e) {
-                e.printStackTrace();
-                throw new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE,
-                        valueOperator.toString(), e.getMessage()));
+        public CombinedOperator deserialize(ValueInput valueInput) throws EvaluationException {
+            List<IOperator> operators = Lists.newArrayList();
+            for (ValueInput input : valueInput.childrenList("operators").orElseThrow()) {
+                operators.add(Objects.requireNonNull(Operators.REGISTRY.deserialize(input)));
             }
-            IOperator[] operators = new IOperator[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                operators[i] = Objects.requireNonNull(Operators.REGISTRY.deserialize(valueDeseralizationContext, list.getCompound(i).get("v")));
-            }
-            return newFunction(operators);
+            return newFunction(operators.toArray(new IOperator[0]));
         }
 
         public abstract CombinedOperator newFunction(IOperator... operators) throws EvaluationException;

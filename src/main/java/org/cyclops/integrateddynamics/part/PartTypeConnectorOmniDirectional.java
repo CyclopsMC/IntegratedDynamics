@@ -5,8 +5,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
@@ -39,6 +41,7 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * An omnidirectional wireless connector part that can connect to
@@ -64,8 +67,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, State state, boolean saveState) {
-        ItemStack itemStack = super.getItemStack(valueDeseralizationContext, state, saveState);
+    public ItemStack getItemStack(ValueDeseralizationContext valueDeseralizationContext, ProblemReporter.PathElement problemPath, State state, boolean saveState) {
+        ItemStack itemStack = super.getItemStack(valueDeseralizationContext, problemPath, state, saveState);
         if (state.hasConnectorId()) {
             itemStack.set(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP, state.getGroupId());
         }
@@ -73,8 +76,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public State getState(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
-        State state = super.getState(valueDeseralizationContext, itemStack);
+    public State getState(ValueDeseralizationContext valueDeseralizationContext, ProblemReporter.PathElement problemPath, ItemStack itemStack) {
+        State state = super.getState(valueDeseralizationContext, problemPath, itemStack);
         if (itemStack.has(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP)) {
             state.setGroupId(itemStack.get(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP));
         } else {
@@ -124,10 +127,10 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     @Override
-    public void loadTooltip(ItemStack itemStack, List<Component> lines) {
-        super.loadTooltip(itemStack, lines);
+    public void loadTooltip(ItemStack itemStack, Consumer<Component> tooltipAdder) {
+        super.loadTooltip(itemStack, tooltipAdder);
         if (itemStack.has(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP)) {
-            lines.add(Component.translatable(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
+            tooltipAdder.accept(Component.translatable(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
                     itemStack.get(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP)));
         }
     }
@@ -192,15 +195,15 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
         private boolean addedToGroup = false;
 
         @Override
-        public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-            super.writeToNBT(valueDeseralizationContext, tag);
-            tag.putInt("groupId", groupId);
+        public void serialize(ValueOutput valueOutput) {
+            super.serialize(valueOutput);
+            valueOutput.putInt("groupId", groupId);
         }
 
         @Override
-        public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-            super.readFromNBT(valueDeseralizationContext, tag);
-            this.groupId = tag.getInt("groupId");
+        public void deserialize(ValueInput valueInput) {
+            super.deserialize(valueInput);
+            this.groupId = valueInput.getIntOr("groupId", -1);
         }
 
         @Override

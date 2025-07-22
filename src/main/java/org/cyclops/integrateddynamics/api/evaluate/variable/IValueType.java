@@ -1,31 +1,25 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Type of value
  * @author rubensworks
  */
 public interface IValueType<V extends IValue> {
+
+    public IValueTypeClient<V> getClient();
 
     /**
      * @return If this type is a category and should be handled accordingly.
@@ -60,11 +54,12 @@ public interface IValueType<V extends IValue> {
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
-     * @param lines The list to add lines to.
+     *
+     * @param tooltipAdder       The list to add lines to.
      * @param appendOptionalInfo If shift-to-show info should be added.
-     * @param value The value to show the tooltip for.
+     * @param value              The value to show the tooltip for.
      */
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo, @Nullable V value);
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo, @Nullable V value);
 
     /**
      * @param value The value
@@ -93,28 +88,27 @@ public interface IValueType<V extends IValue> {
     /**
      * Serialize the given value.
      *
-     * @param valueDeseralizationContext
-     * @param value                      The value to serialize.
-     * @return The serialized value.
+     * @param valueOutput Where to write the value to.
+     * @param value       The value to serialize.
      */
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, V value);
+    public void serialize(ValueOutput valueOutput, V value);
 
     /**
      * Check if the given value can be deserialized.
-     * @param valueDeseralizationContext Getter for blocks.
-     * @param value The value to deserialize.
+     *
+     * @param valueInput The value to deserialize.
      * @return An error or null.
      */
     @Nullable
-    public Component canDeserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value);
+    public Component canDeserialize(ValueInput valueInput);
 
     /**
      * Deserialize the given value.
-     * @param valueDeseralizationContext Deserialization context.
-     * @param value The value to deserialize.
+     *
+     * @param valueInput The value to deserialize.
      * @return The deserialized value.
      */
-    public V deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value);
+    public V deserialize(ValueInput valueInput);
 
     /**
      * Materialize the given value so that it can exist without any external references.
@@ -158,36 +152,6 @@ public interface IValueType<V extends IValue> {
      * @throws EvaluationException If the incorrect value type was found.
      */
     public V cast(IValue value) throws EvaluationException;
-
-    /**
-     * An optional baked model to override when rendering the variable as item.
-     * @param value The value to value to get the model for.
-     * @param model The original baked model.
-     * @param stack The variable stack.
-     * @param world The client world.
-     * @param livingEntity The entity holding the stack.
-     * @return The overridden model. Will fallback to default if null.
-     */
-    @Nullable
-    @OnlyIn(Dist.CLIENT)
-    public default BakedModel getVariableItemOverrideModel(V value, BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
-        return null;
-    }
-
-    /**
-     * Called during ISTER rendering of an variable item.
-     * @param value The value to value to render.
-     * @param stack The variable stack.
-     * @param transformType Transform type.
-     * @param matrixStack Matrix stack.
-     * @param buffer Render buffer.
-     * @param combinedLight Lighting.
-     * @param combinedOverlay Overlay.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public default void renderISTER(V value, ItemStack stack, ItemDisplayContext transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-
-    }
 
     /**
      * Use this comparator for any comparisons with value types.

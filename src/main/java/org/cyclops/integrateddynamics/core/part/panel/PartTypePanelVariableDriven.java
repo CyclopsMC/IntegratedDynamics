@@ -6,11 +6,8 @@ import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -24,17 +21,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
@@ -272,8 +267,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
                 }
             } else {
                 lines.add(Component.translatable(L10NValues.PART_TOOLTIP_ERRORS).withStyle(ChatFormatting.RED));
-                for (MutableComponent error : state.getGlobalErrors()) {
-                    lines.add(error.withStyle(ChatFormatting.RED));
+                for (Component error : state.getGlobalErrors()) {
+                    lines.add(error.copy().withStyle(ChatFormatting.RED));
                 }
             }
         } else {
@@ -302,39 +297,39 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
         }
 
         @Override
-        public void writeToNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-            super.writeToNBT(valueDeseralizationContext, tag);
+        public void serialize(ValueOutput valueOutput) {
+            super.serialize(valueOutput);
             IValue value = getDisplayValue();
             if(value != null) {
-                tag.putString("displayValueType", value.getType().getUniqueName().toString());
-                tag.put("displayValue", ValueHelpers.serializeRaw(valueDeseralizationContext, value));
+                valueOutput.putString("displayValueType", value.getType().getUniqueName().toString());
+                ValueHelpers.serializeRaw(valueOutput.child("displayValue"), value);
             }
-            tag.putInt("facingRotation", facingRotation.ordinal());
+            valueOutput.putInt("facingRotation", facingRotation.ordinal());
         }
 
         @Override
-        public void readFromNBT(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) {
-            super.readFromNBT(valueDeseralizationContext, tag);
-            if(tag.contains("displayValueType", Tag.TAG_STRING)
-                    && tag.contains("displayValue")) {
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("displayValueType")));
-                if(valueType != null) {
-                    Tag serializedValue = tag.get("displayValue");
-                    Component deserializationError = valueType.canDeserialize(valueDeseralizationContext, serializedValue);
-                    if(deserializationError == null) {
-                        setDisplayValue(ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, serializedValue));
-                    } else {
-                        IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, deserializationError.getString());
-                    }
-                } else {
-                    IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR,
-                            String.format("Tried to deserialize the value \"%s\" for type \"%s\" which could not be found.",
-                                    tag.getString("displayValueType"), tag.getString("value")));
-                }
-            } else {
-                setDisplayValue(null);
-            }
-            facingRotation = Direction.values()[Math.max(2, tag.getInt("facingRotation"))];
+        public void deserialize(ValueInput valueInput) {
+            super.deserialize(valueInput);
+            valueInput.getString("displayValueType")
+                    .ifPresentOrElse(displayValueType -> {
+                        IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(displayValueType));
+                        if(valueType != null) {
+                            ValueInput serializedValue = valueInput.child("displayValue").orElseThrow();
+                            Component deserializationError = valueType.canDeserialize(serializedValue);
+                            if(deserializationError == null) {
+                                setDisplayValue(ValueHelpers.deserializeRaw(serializedValue, valueType));
+                            } else {
+                                IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, deserializationError.getString());
+                            }
+                        } else {
+                            IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR,
+                                    String.format("Tried to deserialize the value \"%s\" for type \"%s\" which could not be found.",
+                                            valueInput.getString("displayValueType"), valueInput.getString("value")));
+                        }
+                    }, () -> {
+                        setDisplayValue(null);
+                    });
+            facingRotation = Direction.values()[Math.max(2, valueInput.getInt("facingRotation").orElseThrow())];
         }
     }
 

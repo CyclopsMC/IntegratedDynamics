@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetNumberField;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -59,7 +60,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.setMaxLength(64);
         numberFieldUpdateInterval.setMaxLength(15);
         numberFieldUpdateInterval.setVisible(true);
-        numberFieldUpdateInterval.setTextColor(16777215);
+        numberFieldUpdateInterval.setTextColor(ARGB.opaque(16777215));
         numberFieldUpdateInterval.setCanLoseFocus(true);
         addWidget(numberFieldUpdateInterval);
 
@@ -70,7 +71,7 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldCapacity.setMaxLength(64);
         numberFieldCapacity.setMaxLength(15);
         numberFieldCapacity.setVisible(true);
-        numberFieldCapacity.setTextColor(16777215);
+        numberFieldCapacity.setTextColor(ARGB.opaque(16777215));
         numberFieldCapacity.setCanLoseFocus(true);
         addWidget(numberFieldCapacity);
     }
@@ -132,15 +133,15 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
         numberFieldUpdateInterval.render(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
         numberFieldCapacity.render(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
         // MCP: drawString
-        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
-        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, IModHelpers.get().getBaseHelpers().RGBToInt(0, 0, 0), false);
+        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, IModHelpers.get().getBaseHelpers().RGBAToInt(0, 0, 0, 255), false);
+        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, IModHelpers.get().getBaseHelpers().RGBAToInt(0, 0, 0, 255), false);
     }
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
-        displayErrors.drawForeground(guiGraphics.pose(), getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
+        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
+        displayErrors.drawForeground(guiGraphics, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 
     @Override

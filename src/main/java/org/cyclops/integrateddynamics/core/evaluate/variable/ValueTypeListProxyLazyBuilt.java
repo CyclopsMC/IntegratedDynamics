@@ -2,8 +2,9 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -11,7 +12,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 
 import java.util.concurrent.TimeUnit;
@@ -67,17 +67,17 @@ public class ValueTypeListProxyLazyBuilt<T extends IValueType<V>, V extends IVal
         }
 
         @Override
-        protected void serializeNbt(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> value, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            tag.putString("valueType", value.value.getType().getUniqueName().toString());
-            tag.put("value", ValueHelpers.serializeRaw(valueDeseralizationContext, value.value));
-            tag.put("operator", Operators.REGISTRY.serialize(valueDeseralizationContext, value.operator));
+        protected void serializeNbt(ValueOutput valueOutput, ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+            valueOutput.putString("valueType", value.value.getType().getUniqueName().toString());
+            ValueHelpers.serializeRaw(valueOutput.child("v"), value.value);
+            Operators.REGISTRY.serialize(valueOutput.child("operator"), value.operator);
         }
 
         @Override
-        protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
-            IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(tag.getString("valueType")));
-            IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, tag.get("value"));
-            IOperator operator = Operators.REGISTRY.deserialize(valueDeseralizationContext, tag.get("operator"));
+        protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
+            IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueInput.getString("valueType").orElseThrow()));
+            IValue value = ValueHelpers.deserializeRaw(valueInput.child("v").orElseThrow(), valueType);
+            IOperator operator = Operators.REGISTRY.deserialize(valueInput.child("operator").orElseThrow());
             return new ValueTypeListProxyLazyBuilt<>(value, operator);
         }
     }

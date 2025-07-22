@@ -18,7 +18,7 @@ public interface IPartTypeReader<P extends IPartTypeReader<P, S>, S extends IPar
     /**
      * @return All possible read aspects that can be used in this part type.
      */
-    public List<IAspectRead> getReadAspects();
+    public List<IAspectRead<?, ?>> getReadAspects();
 
     /**
      * Get the singleton variable for an aspect.

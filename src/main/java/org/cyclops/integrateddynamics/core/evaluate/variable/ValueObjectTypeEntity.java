@@ -2,21 +2,20 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNamed;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNullable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeUniquelyNamed;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import javax.annotation.Nullable;
@@ -59,20 +58,13 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueEntity value) {
-        Optional<UUID> uuid = value.getUuid();
-        if(uuid.isPresent()) {
-            return StringTag.valueOf(uuid.get().toString());
-        }
-        return StringTag.valueOf("");
+    public void serialize(ValueOutput valueOutput, ValueEntity value) {
+        value.getUuid().ifPresent(v -> valueOutput.putString("v", v.toString()));
     }
 
     @Override
-    public ValueEntity deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        try {
-            return ValueEntity.of(UUID.fromString(value.getAsString()));
-        } catch (IllegalArgumentException e) {}
-        return ValueEntity.of((UUID) null);
+    public ValueEntity deserialize(ValueInput valueInput) {
+        return ValueEntity.of(valueInput.getString("v").map(UUID::fromString).orElse(null));
     }
 
     @Override

@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -24,7 +22,6 @@ import java.util.Random;
  * Overlay renderer for the omni-directional connector for rendering particle effects.
  * @author rubensworks
  */
-@OnlyIn(Dist.CLIENT)
 public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
 
     private static final Int2IntMap CACHED_GROUP_COLORS = new Int2IntOpenHashMap();

@@ -1,13 +1,13 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
 import java.util.Collections;
@@ -73,12 +73,12 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, V value) {
+    public void serialize(ValueOutput valueOutput, V value) {
         throw new UnsupportedOperationException("This operation is not allowed");
     }
 
     @Override
-    public V deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
+    public V deserialize(ValueInput valueInput) {
         throw new UnsupportedOperationException("This operation is not allowed");
     }
 

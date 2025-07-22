@@ -65,7 +65,7 @@ public class ContainerActiveVariableBase<T extends BlockEntityActiveVariableBase
         return ValueNotifierHelpers.getValueInt(this, readColorId);
     }
 
-    public List<MutableComponent> getReadErrors() {
+    public List<Component> getReadErrors() {
         return ValueNotifierHelpers.getValueTextComponentList(this, readErrorsId);
     }
 

@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.part.aspect.write;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -103,9 +101,8 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
         return "write" + unlocalizedTypeSuffix;
     }
 
-    @OnlyIn(Dist.CLIENT)
     protected void registerModelResourceLocation() {
-        Aspects.REGISTRY.registerAspectModel(this,
+        Aspects.REGISTRY.getClient().registerAspectModel(this,
                 ResourceLocation.parse(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
     }
 

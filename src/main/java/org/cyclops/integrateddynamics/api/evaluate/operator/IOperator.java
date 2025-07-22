@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Relation on value types.
@@ -84,10 +84,11 @@ public interface IOperator {
 
     /**
      * Add tooltip lines for this aspect when hovered in a gui.
-     * @param lines The list to add lines to.
+     *
+     * @param tooltipAdder       The list to add lines to.
      * @param appendOptionalInfo If shift-to-show info should be added.
      */
-    public void loadTooltip(List<Component> lines, boolean appendOptionalInfo);
+    public void loadTooltip(Consumer<Component> tooltipAdder, boolean appendOptionalInfo);
 
     /**
      * @return The ordered types of values that are used as input for this operator.

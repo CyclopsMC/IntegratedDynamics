@@ -1,13 +1,15 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Maps;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.network.packet.ActionLabelPacket;
@@ -22,15 +24,21 @@ import java.util.Objects;
  * Available client- and serverside and correctly synced.
  * @author rubensworks
  */
-public class LabelsWorldStorage extends WorldStorage {
+public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
 
     private static LabelsWorldStorage INSTANCE = null;
 
-    @NBTPersist
-    private Map<Integer, String> labels = Maps.newHashMap();
+    private final Map<Integer, String> labels;
 
     private LabelsWorldStorage(ModBaseNeoForge mod) {
         super(mod);
+        this.labels = Maps.newHashMap();
+        NeoForge.EVENT_BUS.register(this);
+    }
+
+    public LabelsWorldStorage(ModBaseNeoForge mod, Map<Integer, String> labels) {
+        super(mod);
+        this.labels = labels;
         NeoForge.EVENT_BUS.register(this);
     }
 
@@ -47,8 +55,15 @@ public class LabelsWorldStorage extends WorldStorage {
     }
 
     @Override
-    protected String getDataId() {
-        return "Labels";
+    protected SavedDataType<LabelsWorldStorage> constructSavedDataType() {
+        return new SavedDataType<>(
+                this.mod.getModId() + "_labels",
+                (ctx) -> new LabelsWorldStorage(this.mod),
+                ctx -> RecordCodecBuilder.create(instance -> instance.group(
+                        RecordCodecBuilder.point(ctx.levelOrThrow()),
+                        Codec.dispatchedMap(Codec.INT, (key) -> Codec.STRING).fieldOf("counters").forGetter(data -> data.labels)
+                ).apply(instance, (level, labels) -> new LabelsWorldStorage(this.mod, labels)))
+        );
     }
 
     /**

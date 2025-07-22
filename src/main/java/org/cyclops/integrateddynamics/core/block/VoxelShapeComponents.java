@@ -3,7 +3,6 @@ package org.cyclops.integrateddynamics.core.block;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.AxisCycle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,8 +24,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.block.shapes.CollisionContextBlockSupport;
 
@@ -222,7 +219,7 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         AttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(Attributes.BLOCK_INTERACTION_RANGE) : null;
         double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
 
-        double eyeHeight = entity.getCommandSenderWorld().isClientSide() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
+        double eyeHeight = entity.level().isClientSide() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
         Vec3 lookVec = entity.getLookAngle();
         Vec3 origin = new Vec3(entity.getX(), entity.getY() + eyeHeight, entity.getZ());
         Vec3 direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
@@ -379,15 +376,6 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
          * @return If the complete block was destroyed
          */
         public boolean destroy(Level world, BlockPos pos, Player player, boolean saveState);
-
-        /**
-         * @param world The world
-         * @param pos The position
-         * @return The model that will be used to render the breaking overlay.
-         */
-        @OnlyIn(Dist.CLIENT)
-        @Nullable
-        public BakedModel getBreakingBaseModel(Level world, BlockPos pos);
 
         /**
          * When this component has been activated.

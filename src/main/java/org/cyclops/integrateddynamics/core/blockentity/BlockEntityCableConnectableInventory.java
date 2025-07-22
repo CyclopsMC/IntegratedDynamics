@@ -1,12 +1,13 @@
 package org.cyclops.integrateddynamics.core.blockentity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
@@ -23,6 +24,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.capability.cable.CableTile;
 import org.cyclops.integrateddynamics.capability.network.NetworkCarrierDefault;
 import org.cyclops.integrateddynamics.capability.path.PathElementTile;
+import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 
 import javax.annotation.Nullable;
@@ -119,16 +121,16 @@ public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockE
 
 
     @Override
-    public void read(CompoundTag tag, HolderLookup.Provider provider) {
-        super.read(tag, provider);
+    public void read(ValueInput input) {
+        super.read(input);
         connected.clear();
-        inventory.readFromNBT(provider, tag, "inventory");
+        inventory.readFromNBT(input, "inventory");
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        inventory.writeToNBT(provider, tag, "inventory");
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(ValueOutput output) {
+        inventory.writeToNBT(output, "inventory");
+        super.saveAdditional(output);
     }
 
     /**
@@ -155,6 +157,16 @@ public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockE
             if (network != null) {
                 NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), network, getNetworkElementProvider());
             }
+        }
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+
+        Containers.dropContents(level, pos, this.getInventory());
+        if (!CableHelpers.isRemovingCable()) {
+            CableHelpers.onCableRemoving(level, pos, false, false, state);
         }
     }
 

@@ -2,15 +2,14 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeNumber;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.text.NumberFormat;
@@ -37,17 +36,13 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueDouble value) {
-        return DoubleTag.valueOf(value.getRawValue());
+    public void serialize(ValueOutput valueOutput, ValueDouble value) {
+        valueOutput.putDouble("v", value.getRawValue());
     }
 
     @Override
-    public ValueDouble deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) {
-        if (value.getId() == Tag.TAG_DOUBLE) {
-            return ValueDouble.of(((DoubleTag) value).getAsDouble());
-        } else {
-            throw new IllegalArgumentException(String.format("Value \"%s\" could not be parsed to a double.", value));
-        }
+    public ValueDouble deserialize(ValueInput valueInput) {
+        return ValueDouble.of(valueInput.getDoubleOr("v", 0));
     }
 
     @Override

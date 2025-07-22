@@ -1,17 +1,14 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
 /**
  * Factory for {@link ValueTypeListProxyMaterialized}.
@@ -25,9 +22,8 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
     }
 
     @Override
-    public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        CompoundTag tag = new CompoundTag();
-        ListTag list = new ListTag();
+    public void serialize(ValueOutput valueOutput, ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        ValueOutput.ValueOutputList list = valueOutput.childrenList("values");
 
         // Store headers
         IValueType<IValue> valueType = values.getValueType();
@@ -39,48 +35,32 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
                 heterogeneous = true;
             }
         } catch (EvaluationException e) {}
-        tag.putString("valueType", valueType.getUniqueName().toString());
-        tag.put("values", list);
+        valueOutput.putString("valueType", valueType.getUniqueName().toString());
 
         // Store values
         for (IValue value : values) {
-            Tag valueSerialized = ValueHelpers.serializeRaw(valueDeseralizationContext, value);
+            ValueOutput valueTag = list.addChild();
             if(heterogeneous) {
-                CompoundTag valueTag = new CompoundTag();
                 valueTag.putString("valueType", value.getType().getUniqueName().toString());
-                valueTag.put("value", valueSerialized);
-                list.add(valueTag);
-            } else {
-                list.add(valueSerialized);
             }
+            ValueHelpers.serializeRaw(valueTag, value);
         }
-
-        return tag;
     }
 
     @Override
-    public ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> deserialize(ValueDeseralizationContext valueDeseralizationContext, Tag value) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        if (!(value instanceof CompoundTag)) {
-            throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the materialized list value '%s' as it is not a CompoundTag.", value));
-        }
-        CompoundTag tag = (CompoundTag) value;
-        if (!tag.contains("valueType", Tag.TAG_STRING)) {
-            throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the materialized list value '%s' as it is missing a valueType.", value));
-        }
-        // This tag rewrite needed for loading variables in advancement icons
-        if (tag.contains("values", Tag.TAG_BYTE_ARRAY)) {
-            byte[] byteArray = tag.getByteArray("values");
-            ListTag list = new ListTag();
-            for (byte b : byteArray) {
-                list.add(IntTag.valueOf(b));
-            }
-            tag.put("values", list);
-        }
-        if (!tag.contains("values", Tag.TAG_LIST)) {
-            throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the materialized list value '%s' as it is missing values.", value));
-        }
+    public ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> deserialize(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        // TODO: is this still needed? If not, remove this.
+//        // This tag rewrite needed for loading variables in advancement icons
+//        if (tag.contains("values", Tag.TAG_BYTE_ARRAY)) {
+//            byte[] byteArray = tag.getByteArray("values");
+//            ListTag list = new ListTag();
+//            for (byte b : byteArray) {
+//                list.add(IntTag.valueOf(b));
+//            }
+//            tag.put("values", list);
+//        }
 
-        String valueTypeName = tag.getString("valueType");
+        String valueTypeName = valueInput.getString("valueType").orElseThrow();
         IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueTypeName));
         if (valueType == null) {
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", valueTypeName));
@@ -90,20 +70,16 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
         IValueType<IValue> elementValueType = valueType;
 
         ImmutableList.Builder<IValue> builder = ImmutableList.builder();
-        ListTag list = (ListTag) tag.get("values");
-        for (Tag valueTag : list) {
-            Tag valueSerialized;
+        ValueInput.ValueInputList list = valueInput.childrenList("values").orElseThrow();
+        for (ValueInput valueTag : list) {
             if (heterogeneous) {
-                String subValueTypeName = ((CompoundTag) valueTag).getString("valueType");
+                String subValueTypeName = valueTag.getString("valueType").orElseThrow();
                 elementValueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(subValueTypeName));
                 if (elementValueType == null) {
                     throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", subValueTypeName));
                 }
-                valueSerialized = ((CompoundTag) valueTag).get("value");
-            } else {
-                valueSerialized = valueTag;
             }
-            IValue deserializedValue = ValueHelpers.deserializeRaw(valueDeseralizationContext, elementValueType, valueSerialized);
+            IValue deserializedValue = ValueHelpers.deserializeRaw(valueTag, elementValueType);
             builder.add(deserializedValue);
         }
 

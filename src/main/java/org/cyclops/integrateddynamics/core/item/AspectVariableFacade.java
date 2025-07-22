@@ -2,27 +2,21 @@ package org.cyclops.integrateddynamics.core.item;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.cyclops.integrateddynamics.api.client.model.IVariableModelBaked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeClient;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
-import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Variable facade for variables determined by part aspects.
@@ -82,24 +76,17 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
         return aspect.getValueType();
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(List<Component> list, Item.TooltipContext context) {
-        if(isValid()) {
-            getAspect().loadTooltip(list, false);
-            list.add(Component.translatable(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
-        }
-        super.appendHoverText(list, context);
+    protected IVariableFacadeClient constructClient() {
+        return new AspectVariableFacadeClient(this);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void addModelOverlay(IVariableModelBaked variableModelBaked, List<BakedQuad> quads, RandomSource random, ModelData modelData) {
+    public void appendHoverText(Consumer<Component> tooltipAdder, Item.TooltipContext context) {
         if(isValid()) {
-            IAspect aspect = getAspect();
-            IValueType valueType = aspect.getValueType();
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.VALUETYPE).getBakedModels().get(valueType).getQuads(null, null, random, modelData, null));
-            quads.addAll(variableModelBaked.getSubModels(VariableModelProviders.ASPECT).getBakedModels().get(aspect).getQuads(null, null, random, modelData, null));
+            getAspect().loadTooltip(tooltipAdder, false);
+            tooltipAdder.accept(Component.translatable(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
         }
+        super.appendHoverText(tooltipAdder, context);
     }
 }

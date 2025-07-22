@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -54,8 +53,8 @@ public class NetworkDiagnosticsPartOverlayRenderer {
     }
 
     @SubscribeEvent
-    public void onRender(RenderLevelStageEvent event) {
-        if (!partPositions.isEmpty() && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
+    public void onRender(RenderLevelStageEvent.AfterSky event) {
+        if (!partPositions.isEmpty()) {
             Player player = Minecraft.getInstance().player;
 
             Vec3 eyePos = event.getCamera().getPosition();
@@ -63,10 +62,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             double offsetY = eyePos.y;
             double offsetZ = eyePos.z;
 
-            RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             RenderSystem.lineWidth(6.0F);
-            RenderSystem.depthMask(false);
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (PartPos partPos : partList) {
@@ -89,9 +85,6 @@ public class NetworkDiagnosticsPartOverlayRenderer {
                             bb, 1.0F, 0.2F, 0.1F, 0.8F);
                 }
             }
-
-            RenderSystem.depthMask(true);
-            RenderSystem.disableBlend();
         }
     }
 

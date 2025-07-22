@@ -9,8 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -33,7 +31,6 @@ public class BlockMenrilTorchConfig extends BlockConfigCommon<IntegratedDynamics
                         .lightLevel((blockState) -> 14)
                         .sound(SoundType.WOOD)) {
                     @Override
-                    @OnlyIn(Dist.CLIENT)
                     public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
                         // No particles
                     }
