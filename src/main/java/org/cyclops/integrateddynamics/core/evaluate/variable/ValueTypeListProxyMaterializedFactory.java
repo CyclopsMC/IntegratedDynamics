@@ -49,17 +49,6 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
 
     @Override
     public ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> deserialize(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-        // TODO: is this still needed? If not, remove this.
-//        // This tag rewrite needed for loading variables in advancement icons
-//        if (tag.contains("values", Tag.TAG_BYTE_ARRAY)) {
-//            byte[] byteArray = tag.getByteArray("values");
-//            ListTag list = new ListTag();
-//            for (byte b : byteArray) {
-//                list.add(IntTag.valueOf(b));
-//            }
-//            tag.put("values", list);
-//        }
-
         String valueTypeName = valueInput.getString("valueType").orElseThrow();
         IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueTypeName));
         if (valueType == null) {

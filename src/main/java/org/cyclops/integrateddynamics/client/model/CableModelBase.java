@@ -215,7 +215,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     public List<BakedQuad> getGeneralQuads() {
         Triple<IRenderState, Direction, ChunkSectionLayer> cacheKey = null;
         List<BakedQuad> cachedQuads = null;
-        if (GeneralConfig.cacheCableModels || false) { // TODO
+        if (GeneralConfig.cacheCableModels) {
             IRenderState renderState = getRenderState(modelData);
             if (renderState != null) {
                 cacheKey = Triple.of(renderState, this.facing, this.renderType);
