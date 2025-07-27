@@ -108,8 +108,8 @@ public class PartOffsetsOverlayRenderer {
         float maxX = entry.source().getX() - (float) offsetX + 0.5F + entry.targetOffset().getX() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepX() * 0.5F : 0);
         float maxY = entry.source().getY() - (float) offsetY + 0.5F + entry.targetOffset().getY() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepY() * 0.5F : 0);
         float maxZ = entry.source().getZ() - (float) offsetZ + 0.5F + entry.targetOffset().getZ() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepZ() * 0.5F : 0);
-        vb.addVertex(matrixStack.last().pose(), minX, minY, minZ).setColor(r, g, b, a);
-        vb.addVertex(matrixStack.last().pose(), maxX, maxY, maxZ).setColor(r, g, b, a);
+        vb.addVertex(matrixStack.last().pose(), minX, minY, minZ).setColor(r, g, b, a).setNormal(0.0F, 0.0F, 0.0F);
+        vb.addVertex(matrixStack.last().pose(), maxX, maxY, maxZ).setColor(r, g, b, a).setNormal(0.0F, 0.0F, 0.0F);
 
         // Draw target face
         AABB bb = new AABB(entry.targetSide().getStepX() == 1 ? 0.9 : 0, entry.targetSide().getStepY() == 1 ? 0.9 : 0, entry.targetSide().getStepZ() == 1 ? 0.9 : 0,
