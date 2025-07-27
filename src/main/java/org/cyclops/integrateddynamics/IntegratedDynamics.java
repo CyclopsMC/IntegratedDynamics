@@ -8,7 +8,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
@@ -97,15 +96,15 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
      */
     public static IntegratedDynamics _instance;
 
-    public static GlobalCounters globalCounters = null;
+    public static GlobalCounters.Access globalCounters = null;
 
     public IntegratedDynamics(IEventBus modEventBus) {
         super(Reference.MOD_ID, (instance) -> _instance = instance, modEventBus);
 
         // Register world storages
-        registerWorldStorage(NetworkWorldStorage.getInstance(this));
-        registerWorldStorage(globalCounters = new GlobalCounters(this, new SavedData.Context(null, 0)));
-        registerWorldStorage(LabelsWorldStorage.getInstance(this));
+        registerWorldStorage(NetworkWorldStorage.Access.getInstance(this));
+        registerWorldStorage(globalCounters = new GlobalCounters.Access(this));
+        registerWorldStorage(LabelsWorldStorage.Access.getInstance(this));
 
         getRegistryManager().addRegistry(IVariableFacadeHandlerRegistry.class, VariableFacadeHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(IValueTypeRegistry.class, ValueTypeRegistry.getInstance());

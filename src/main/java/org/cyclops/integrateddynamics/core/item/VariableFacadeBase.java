@@ -41,16 +41,16 @@ public abstract class VariableFacadeBase implements IVariableFacade {
      * @return A unique new variable id.
      */
     public static int generateId() {
-        return IntegratedDynamics.globalCounters.getNext("variable");
+        return IntegratedDynamics.globalCounters.get().getNext("variable");
     }
 
     @Override
     public String getLabel() {
-        return LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(getId());
+        return LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getLabel(getId());
     }
 
     protected String getReferenceDisplay(int variableId) {
-        String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableId);
+        String label = LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getLabel(variableId);
         if (label == null) {
             return String.valueOf(variableId);
         } else {

@@ -151,7 +151,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
      * Be careful when calling this!
      */
     public void generateNewProxyId() {
-        this.proxyId = IntegratedDynamics.globalCounters.getNext(GLOBALCOUNTER_KEY);
+        this.proxyId = IntegratedDynamics.globalCounters.get().getNext(GLOBALCOUNTER_KEY);
         setChanged();
     }
 

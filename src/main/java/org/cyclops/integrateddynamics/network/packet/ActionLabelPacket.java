@@ -45,18 +45,18 @@ public class ActionLabelPacket extends PacketCodec {
     @Override
     public void actionClient(Level world, Player player) {
         if(label == null) {
-            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).removeUnsafe(variableId);
+            LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().removeUnsafe(variableId);
         } else {
-            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).putUnsafe(variableId, label);
+            LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().putUnsafe(variableId, label);
         }
     }
 
     @Override
     public void actionServer(Level world, ServerPlayer player) {
         if(label == null) {
-            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).remove(variableId);
+            LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().remove(variableId);
         } else {
-            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableId, label);
+            LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().put(variableId, label);
         }
     }
 

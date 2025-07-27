@@ -37,7 +37,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
             ItemStack itemStack = temporaryInputSlots.getItem(0);
             IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
             IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(container.getPlayerIInventory().player.level()), itemStack);
-            String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableFacade.getId());
+            String label = LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getLabel(variableFacade.getId());
             if(label == null && !itemStack.isEmpty() && itemStack.has(DataComponents.CUSTOM_NAME)) {
                 label = itemStack.getHoverName().getString();
             }
@@ -64,7 +64,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
             if(variableFacade.isValid()) {
                 int variableId = variableFacade.getId();
                 String label = StringUtils.isBlank(searchField.getValue()) ? "" : searchField.getValue();
-                LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(variableId, label);
+                LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().put(variableId, label);
             } else if(!itemStack.isEmpty()) {
                 String name = searchField.getValue();
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(new ItemStackRenamePacket(name));

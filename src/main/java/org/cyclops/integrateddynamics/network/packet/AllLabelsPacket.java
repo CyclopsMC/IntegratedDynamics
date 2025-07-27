@@ -46,7 +46,7 @@ public class AllLabelsPacket extends PacketCodec {
     public void actionClient(Level world, Player player) {
         if (labels != null) {
             for (Map.Entry<Integer, String> entry : labels.entrySet()) {
-                LabelsWorldStorage.getInstance(IntegratedDynamics._instance).putUnsafe(entry.getKey(), entry.getValue());
+                LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().putUnsafe(entry.getKey(), entry.getValue());
             }
         }
     }

@@ -77,11 +77,11 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
                             .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!IModHelpers.get().getMinecraftHelpers().isClientSideThread(), element);
 
                     // If the input had a label, also copy the label
-                    String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(facade.getId());
+                    String label = LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getLabel(facade.getId());
                     if(label != null) {
                         IVariableFacade facadeCopy = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, copy);
                         if (facadeCopy != null) {
-                            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(facadeCopy.getId(), label);
+                            LabelsWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().put(facadeCopy.getId(), label);
                         }
                     }
 

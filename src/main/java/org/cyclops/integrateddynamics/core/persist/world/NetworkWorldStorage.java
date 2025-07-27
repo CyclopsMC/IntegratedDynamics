@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import org.apache.commons.compress.utils.Lists;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -22,43 +22,11 @@ import java.util.Set;
  */
 public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
 
-    private static NetworkWorldStorage INSTANCE = null;
-
-    private List<NetworkParams> networkParams;
+    private final List<NetworkParams> networkParams;
     private Set<Network> networks = Sets.newHashSet();
 
-    private NetworkWorldStorage(ModBaseNeoForge mod) {
-        super(mod);
-        this.networkParams = Lists.newArrayList();
-    }
-
-    public NetworkWorldStorage(ModBaseNeoForge mod, List<NetworkParams> networkParams) {
-        super(mod);
-        this.networkParams = networkParams;
-    }
-
-    public static NetworkWorldStorage getInstance(ModBaseNeoForge mod) {
-        if(INSTANCE == null) {
-            INSTANCE = new NetworkWorldStorage(mod);
-        }
-        return INSTANCE;
-    }
-
-    @Override
-    public void reset() {
-        networkParams.clear();
-    }
-
-    @Override
-    protected SavedDataType<NetworkWorldStorage> constructSavedDataType() {
-        return new SavedDataType<>(
-                this.mod.getModId() + "_networks",
-                (ctx) -> new NetworkWorldStorage(this.mod),
-                ctx -> RecordCodecBuilder.create(instance -> instance.group(
-                        RecordCodecBuilder.point(ctx.levelOrThrow()),
-                        Codec.list(NetworkParams.CODEC).fieldOf("networks").forGetter(data -> data.networkParams)
-                ).apply(instance, (level, networkParams) -> new NetworkWorldStorage(this.mod, networkParams)))
-        );
+    public NetworkWorldStorage(List<NetworkParams> networkParams) {
+        this.networkParams = Lists.newArrayList(networkParams);
     }
 
     /**
@@ -67,6 +35,7 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
      */
     public synchronized void addNewNetwork(Network network) {
         networks.add(network);
+        setDirty();
     }
 
     /**
@@ -76,6 +45,7 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
      */
     public synchronized void removeInvalidatedNetwork(Network network) {
         networks.remove(network);
+        setDirty();
     }
 
     /**
@@ -88,7 +58,6 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
     @Override
     public void afterLoad() {
         // Load from params
-        networks.clear();
         for (NetworkParams networkParam : networkParams) {
             Network network = new Network();
             network.fromParams(networkParam);
@@ -108,10 +77,35 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
         }
 
         // Save to params
-        this.networkParams.clear();
         for(Network network : networks) {
             // Save to params
             this.networkParams.add(network.toParams());
+        }
+
+        // Consider always dirty
+        setDirty();
+    }
+
+    public static class Access extends WorldStorage.Access<NetworkWorldStorage> {
+
+        private static NetworkWorldStorage.Access INSTANCE = null;
+
+        public static NetworkWorldStorage.Access getInstance(ModBaseNeoForge<?> mod) {
+            if(INSTANCE == null) {
+                INSTANCE = new NetworkWorldStorage.Access(mod);
+            }
+            return INSTANCE;
+        }
+
+        public Access(ModBaseNeoForge<?> mod) {
+            super(new SavedDataType<>(
+                    mod.getModId() + "_networks",
+                    (ctx) -> new NetworkWorldStorage(Lists.newArrayList()),
+                    ctx -> RecordCodecBuilder.create(instance -> instance.group(
+                            RecordCodecBuilder.point(ctx.levelOrThrow()),
+                            Codec.list(NetworkParams.CODEC).fieldOf("networks").forGetter(data -> data.networkParams)
+                    ).apply(instance, (level, networkParams) -> new NetworkWorldStorage(networkParams)))
+            ), mod);
         }
     }
 

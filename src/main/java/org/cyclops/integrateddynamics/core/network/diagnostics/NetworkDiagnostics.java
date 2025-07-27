@@ -4,11 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
-import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsNetworkPacket;
@@ -42,7 +38,7 @@ public class NetworkDiagnostics {
     public synchronized void registerPlayer(ServerPlayer player) {
         if (!players.contains(player.getUUID())) {
             players.add(player.getUUID());
-            for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+            for (INetwork network : NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getNetworks()) {
                 sendNetworkUpdateToPlayer(player, network);
             }
 

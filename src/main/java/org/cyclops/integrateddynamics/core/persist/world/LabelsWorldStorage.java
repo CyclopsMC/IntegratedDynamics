@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
@@ -26,44 +27,11 @@ import java.util.Objects;
  */
 public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
 
-    private static LabelsWorldStorage INSTANCE = null;
-
     private final Map<Integer, String> labels;
 
-    private LabelsWorldStorage(ModBaseNeoForge mod) {
-        super(mod);
-        this.labels = Maps.newHashMap();
+    public LabelsWorldStorage(Map<Integer, String> labels) {
+        this.labels = Maps.newHashMap(labels);
         NeoForge.EVENT_BUS.register(this);
-    }
-
-    public LabelsWorldStorage(ModBaseNeoForge mod, Map<Integer, String> labels) {
-        super(mod);
-        this.labels = labels;
-        NeoForge.EVENT_BUS.register(this);
-    }
-
-    public static LabelsWorldStorage getInstance(ModBaseNeoForge mod) {
-        if(INSTANCE == null) {
-            INSTANCE = new LabelsWorldStorage(mod);
-        }
-        return INSTANCE;
-    }
-
-    @Override
-    public void reset() {
-        labels.clear();
-    }
-
-    @Override
-    protected SavedDataType<LabelsWorldStorage> constructSavedDataType() {
-        return new SavedDataType<>(
-                this.mod.getModId() + "_labels",
-                (ctx) -> new LabelsWorldStorage(this.mod),
-                ctx -> RecordCodecBuilder.create(instance -> instance.group(
-                        RecordCodecBuilder.point(ctx.levelOrThrow()),
-                        Codec.dispatchedMap(Codec.INT, (key) -> Codec.STRING).fieldOf("counters").forGetter(data -> data.labels)
-                ).apply(instance, (level, labels) -> new LabelsWorldStorage(this.mod, labels)))
-        );
     }
 
     /**
@@ -75,6 +43,7 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
     public synchronized void putUnsafe(int variableId, @Nonnull String label) {
         Objects.requireNonNull(label);
         labels.put(variableId, label);
+        setDirty();
     }
 
     /**
@@ -84,6 +53,7 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
      */
     public synchronized void removeUnsafe(int variableId) {
         labels.remove(variableId);
+        setDirty();
     }
 
     /**
@@ -137,7 +107,34 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
         super.afterLoad();
         // Fix all null labels (#1038)
         // This should not be able to occur, but it does, no idea why...
+        int sizeBefore = labels.size();
         labels.entrySet().removeIf(integerStringEntry -> integerStringEntry.getValue() == null);
+        if (sizeBefore != labels.size()) {
+            setDirty();
+        }
+    }
+
+    public static class Access extends WorldStorage.Access<LabelsWorldStorage> {
+
+        private static LabelsWorldStorage.Access INSTANCE = null;
+
+        public static LabelsWorldStorage.Access getInstance(ModBaseNeoForge mod) {
+            if(INSTANCE == null) {
+                INSTANCE = new LabelsWorldStorage.Access(mod);
+            }
+            return INSTANCE;
+        }
+
+        public Access(ModBaseNeoForge<?> mod) {
+            super(new SavedDataType<>(
+                    mod.getModId() + "_labels",
+                    (ctx) -> new LabelsWorldStorage(Maps.newHashMap()),
+                    ctx -> RecordCodecBuilder.create(instance -> instance.group(
+                            RecordCodecBuilder.point(ctx.levelOrThrow()),
+                            NeoForgeExtraCodecs.unboundedMapAsList("k", Codec.INT, "v", Codec.STRING).fieldOf("counters").forGetter(data -> data.labels)
+                    ).apply(instance, (level, labels) -> new LabelsWorldStorage(labels)))
+            ), mod);
+        }
     }
 
 }

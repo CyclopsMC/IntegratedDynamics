@@ -153,7 +153,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
 
     @Override
     public void generateId() {
-        this.id = IntegratedDynamics.globalCounters.getNext(IPartState.GLOBALCOUNTER_KEY);
+        this.id = IntegratedDynamics.globalCounters.get().getNext(IPartState.GLOBALCOUNTER_KEY);
     }
 
     @Override

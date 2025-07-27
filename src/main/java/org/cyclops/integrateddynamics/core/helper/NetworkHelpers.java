@@ -304,7 +304,7 @@ public class NetworkHelpers {
             IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).ifPresent(networkElementProvider -> {
                 // Attempt to revalidate the network elements in this provider
                 boolean foundNetwork = false;
-                for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+                for (INetwork network : NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getNetworks()) {
                     if (network.containsSidedPathElement(SidedPathElement.of(pathElement, null))) {
                         // Revalidate all network elements
                         for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {

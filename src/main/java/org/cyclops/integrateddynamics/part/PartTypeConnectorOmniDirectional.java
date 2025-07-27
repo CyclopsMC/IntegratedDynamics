@@ -117,7 +117,7 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
     }
 
     public static int generateGroupId() {
-        return IntegratedDynamics.globalCounters.getNext("omnidir-connectors");
+        return IntegratedDynamics.globalCounters.get().getNext("omnidir-connectors");
     }
 
     @Override

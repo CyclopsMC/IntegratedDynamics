@@ -65,7 +65,7 @@ public class Network implements INetwork {
      */
     public static Network initiateNetworkSetup(ISidedPathElement sidedPathElement) {
         Network network = new Network(PathFinder.getConnectedCluster(sidedPathElement));
-        NetworkWorldStorage.getInstance(IntegratedDynamics._instance).addNewNetwork(network);
+        NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().addNewNetwork(network);
         return network;
     }
 
@@ -370,7 +370,7 @@ public class Network implements INetwork {
     public final synchronized void update() {
         this.changed = false;
         if(killIfEmpty() || killed) {
-            NetworkWorldStorage.getInstance(IntegratedDynamics._instance).removeInvalidatedNetwork(this);
+            NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().removeInvalidatedNetwork(this);
         } else {
             onUpdate();
 

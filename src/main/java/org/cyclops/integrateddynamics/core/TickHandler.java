@@ -44,7 +44,7 @@ public final class TickHandler {
             throw new RuntimeException("Forcefully crashed the server.");
         }
         // Invoke update logic irrespective of safe-mode
-        for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+        for (INetwork network : NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getNetworks()) {
             network.updateGuaranteed();
         }
 
@@ -55,7 +55,7 @@ public final class TickHandler {
                 tick = (tick + 1) % IModHelpers.get().getMinecraftHelpers().getSecondInTicks();
             }
             boolean shouldSendTickDurationInfo = isBeingDiagnozed && tick == 0;
-            for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
+            for (INetwork network : NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getNetworks()) {
                 if (isBeingDiagnozed && (shouldSendTickDurationInfo || network.hasChanged())) {
                     NetworkDiagnostics.getInstance().sendNetworkUpdate(network);
                     network.resetLastSecondDurations();
