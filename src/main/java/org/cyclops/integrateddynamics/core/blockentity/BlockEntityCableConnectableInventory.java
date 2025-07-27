@@ -166,7 +166,7 @@ public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockE
 
         Containers.dropContents(level, pos, this.getInventory());
         if (!CableHelpers.isRemovingCable()) {
-            CableHelpers.onCableRemoving(level, pos, false, false, state);
+            CableHelpers.onCableRemoving(level, pos, false, false, state, this);
         }
     }
 

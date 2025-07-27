@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
@@ -361,13 +362,16 @@ public class CableHelpers {
     /**
      * This should be called when a cable is being removed, while the part entity is still present.
      * This method won't do anything when called client-side.
-     * @param world The world.
-     * @param pos The position.
+     *
+     * @param world           The world.
+     * @param pos             The position.
      * @param dropMainElement If the main part element should be dropped.
-     * @param saveState If the element state should be saved in the item.
+     * @param saveState       If the element state should be saved in the item.
+     * @param blockState      The block state.
+     * @param blockEntity     The block entity.
      * @return If the cable was removed from the network.
      */
-    public static boolean onCableRemoving(Level world, BlockPos pos, boolean dropMainElement, boolean saveState, BlockState blockState) {
+    public static boolean onCableRemoving(Level world, BlockPos pos, boolean dropMainElement, boolean saveState, BlockState blockState, BlockEntity blockEntity) {
         CABLE_REMOVING_CONNECTIONS.put(Pair.of(world.dimension(), pos), CableHelpers.getExternallyConnectedCables(world, pos));
         if (!world.isClientSide() && CableHelpers.isNoFakeCable(world, pos, null)) {
             INetworkCarrier networkCarrier = NetworkHelpers.getNetworkCarrier(world, pos, null, blockState).orElse(null);
@@ -377,7 +381,7 @@ public class CableHelpers {
             INetworkElementProvider networkElementProvider = NetworkHelpers.getNetworkElementProvider(world, pos, null, blockState).orElse(null);
             if (networkElementProvider != null) {
                 for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-                    networkElement.addDrops(blockState, itemStacks, dropMainElement, saveState);
+                    networkElement.addDrops(blockState, blockEntity, itemStacks, dropMainElement, saveState);
                 }
                 for (ItemStack itemStack : itemStacks) {
                     Block.popResource(world, pos, itemStack);
@@ -388,12 +392,16 @@ public class CableHelpers {
             if(networkCarrier != null && networkCarrier.getNetwork() != null) {
                 IPathElement pathElement = getPathElement(world, pos, null, blockState)
                         .orElseThrow(() -> new IllegalStateException("Could not find a valid path element capability"));
-                INetwork network = networkCarrier.getNetwork();
-                networkCarrier.setNetwork(null);
-                return network.removePathElement(pathElement, null, blockState);
+                return onCableRemovingNetwork(blockState, blockEntity, networkCarrier, pathElement);
             }
         }
         return true;
+    }
+
+    public static boolean onCableRemovingNetwork(BlockState blockState, BlockEntity blockEntity, INetworkCarrier networkCarrier, IPathElement pathElement) {
+        INetwork network = networkCarrier.getNetwork();
+        networkCarrier.setNetwork(null);
+        return network.removePathElement(pathElement, null, blockState, blockEntity);
     }
 
     /**
@@ -447,12 +455,13 @@ public class CableHelpers {
         ICableFakeable cableFakeable = getCableFakeable(world, pos, null).orElse(null);
         IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, null).orElse(null);
         BlockState blockState = world.getBlockState(pos);
+        BlockEntity blockEntity = world.getBlockEntity(pos);
         if (cable == null) {
             removingCable = false;
             return;
         }
 
-        CableHelpers.onCableRemoving(world, pos, false, false, blockState);
+        CableHelpers.onCableRemoving(world, pos, false, false, blockState, blockEntity);
         // If the cable has no parts or is not fakeable, remove the block,
         // otherwise mark the cable as being fake.
         if (cableFakeable == null || partContainer == null || !partContainer.hasParts()) {

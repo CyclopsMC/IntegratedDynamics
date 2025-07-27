@@ -311,8 +311,18 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         super.preRemoveSideEffects(pos, state);
 
         if (!CableHelpers.isRemovingCable()) {
-            CableHelpers.onCableRemoving(level, pos, false, false, state);
+            CableHelpers.onCableRemoving(level, pos, false, false, state, this);
         }
+    }
+
+    @Override
+    public void setRemoved() {
+        // Only required for cases where cables are moved by commands or cleared after game tests.
+        if (getNetworkCarrier().getNetwork() != null) {
+            CableHelpers.onCableRemovingNetwork(getBlockState(), this, getNetworkCarrier(), new PathElementTileMultipartTicking(this, this.getCable()));
+        }
+
+        super.setRemoved();
     }
 
     public static class Ticker<T extends BlockEntityMultipartTicking> extends BlockEntityTickerDelayed<T> {

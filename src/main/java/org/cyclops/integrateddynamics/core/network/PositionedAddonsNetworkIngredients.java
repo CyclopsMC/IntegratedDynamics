@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -267,7 +268,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
-    public void removeNetworkElementPost(INetworkElement element, BlockState blockState) {
+    public void removeNetworkElementPost(INetworkElement element, BlockState blockState, BlockEntity blockEntity) {
 
     }
 
@@ -295,7 +296,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement, Direction side, BlockState blockState) {
+    public boolean removePathElement(IPathElement pathElement, Direction side, BlockState blockState, BlockEntity blockEntity) {
         return true;
     }
 

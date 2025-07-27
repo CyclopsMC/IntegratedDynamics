@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -85,17 +86,19 @@ public class PartHelpers {
 
     /**
      * Get the part container capability at the given position.
-     * @param dimPos The dimensional position.
-     * @param side The side.
-     * @param blockState The block state.
+     *
+     * @param dimPos      The dimensional position.
+     * @param side        The side.
+     * @param blockState  The block state.
+     * @param blockEntity The block entity.
      * @return The optional part container capability.
      */
-    public static Optional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side, BlockState blockState) {
+    public static Optional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side, BlockState blockState, BlockEntity blockEntity) {
         Level level = dimPos.getLevel(true);
         if (level == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(level.getCapability(Capabilities.PartContainer.BLOCK, dimPos.getBlockPos(), blockState, null, side));
+        return Optional.ofNullable(level.getCapability(Capabilities.PartContainer.BLOCK, dimPos.getBlockPos(), blockState, blockEntity, side));
     }
 
     /**
@@ -132,16 +135,17 @@ public class PartHelpers {
     /**
      * Get the part container capability at the given position.
      * If it is not present, then an illegal state exception will be thrown.
-     *
+     * <p>
      * This should only be called if you know for certain that there will be a part container present.
      *
-     * @param dimPos The dimensional position.
-     * @param side The side.
-     * @param blockState The block state.
+     * @param dimPos      The dimensional position.
+     * @param side        The side.
+     * @param blockState  The block state.
+     * @param blockEntity The block entity.
      * @return The part container capability.
      */
-    public static IPartContainer getPartContainerChecked(DimPos dimPos, @Nullable Direction side, BlockState blockState) {
-        return PartHelpers.getPartContainer(dimPos, side, blockState)
+    public static IPartContainer getPartContainerChecked(DimPos dimPos, @Nullable Direction side, BlockState blockState, BlockEntity blockEntity) {
+        return PartHelpers.getPartContainer(dimPos, side, blockState, blockEntity)
                 .orElseThrow(() -> new PartStateException(dimPos, side));
     }
 

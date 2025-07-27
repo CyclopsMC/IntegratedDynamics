@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.api.network;
 
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
 
@@ -20,7 +21,7 @@ public class FullNetworkListenerAdapter implements IFullNetworkListener {
     }
 
     @Override
-    public void removeNetworkElementPost(INetworkElement element, BlockState blockState) {
+    public void removeNetworkElementPost(INetworkElement element, BlockState blockState, BlockEntity blockEntity) {
 
     }
 
@@ -40,7 +41,7 @@ public class FullNetworkListenerAdapter implements IFullNetworkListener {
     }
 
     @Override
-    public boolean removePathElement(IPathElement pathElement, Direction side, BlockState blockState) {
+    public boolean removePathElement(IPathElement pathElement, Direction side, BlockState blockState, BlockEntity blockEntity) {
         return true;
     }
 

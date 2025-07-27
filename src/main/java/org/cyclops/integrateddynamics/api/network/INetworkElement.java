@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.redstone.Orientation;
 
@@ -49,10 +50,12 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Called right before the network is terminated or will be reset.
-     * @param network The network to update in.
-     * @param blockState The block state.
+     *
+     * @param network     The network to update in.
+     * @param blockState  The block state.
+     * @param blockEntity
      */
-    public default void beforeNetworkKill(INetwork network, BlockState blockState) {
+    public default void beforeNetworkKill(INetwork network, BlockState blockState, BlockEntity blockEntity) {
         beforeNetworkKill(network);
     }
 
@@ -80,12 +83,14 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Add the itemstacks to drop when this element is removed.
-     * @param blockState The block state of the container block.
-     * @param itemStacks The itemstack list to add to.
+     *
+     * @param blockState      The block state of the container block.
+     * @param blockEntity
+     * @param itemStacks      The itemstack list to add to.
      * @param dropMainElement If the part itself should also be dropped.
-     * @param saveState If the element state should be saved in the item.
+     * @param saveState       If the element state should be saved in the item.
      */
-    public default void addDrops(BlockState blockState, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
+    public default void addDrops(BlockState blockState, BlockEntity blockEntity, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
         this.addDrops(itemStacks, dropMainElement, saveState);
     }
 
@@ -105,10 +110,12 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Called when this element is removed from the network.
-     * @param network The network.
-     * @param blockState The block state.
+     *
+     * @param network     The network.
+     * @param blockState  The block state.
+     * @param blockEntity
      */
-    public default void onNetworkRemoval(INetwork network, BlockState blockState) {
+    public default void onNetworkRemoval(INetwork network, BlockState blockState, BlockEntity blockEntity) {
         onNetworkRemoval(network);
     }
 
@@ -121,7 +128,7 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Called when this element has been removed.
-     * This is called after {@link IFullNetworkListener#removeNetworkElementPost(INetworkElement, BlockState)}.
+     * This is called after {@link IFullNetworkListener#removeNetworkElementPost(INetworkElement, BlockState, BlockEntity)}.
      * @param network The network.
      */
     public void onPostRemoved(INetwork network);

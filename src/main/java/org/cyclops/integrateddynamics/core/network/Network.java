@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
@@ -132,7 +133,7 @@ public class Network implements INetwork {
                     // and set the new network to this.
                     INetwork network = networkCarrier.getNetwork();
                     if (network != null) {
-                        network.removePathElement(sidedPathElement.getPathElement(), side, world.getBlockState(pos));
+                        network.removePathElement(sidedPathElement.getPathElement(), side, world.getBlockState(pos), world.getBlockEntity(pos));
                     }
                     networkCarrier.setNetwork(null);
                     networkCarrier.setNetwork(this);
@@ -261,9 +262,9 @@ public class Network implements INetwork {
     }
 
     @Override
-    public void removeNetworkElementPost(INetworkElement element, BlockState blockState) {
+    public void removeNetworkElementPost(INetworkElement element, BlockState blockState, BlockEntity blockEntity) {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
-            fullNetworkListener.removeNetworkElementPost(element, blockState);
+            fullNetworkListener.removeNetworkElementPost(element, blockState, blockEntity);
         }
         if (element instanceof IEventListenableNetworkElement) {
             IEventListenableNetworkElement<?> listenableElement = (IEventListenableNetworkElement<?>) element;
@@ -273,8 +274,8 @@ public class Network implements INetwork {
                 }
             });
         }
-        element.beforeNetworkKill(this, blockState);
-        element.onNetworkRemoval(this, blockState);
+        element.beforeNetworkKill(this, blockState, blockEntity);
+        element.onNetworkRemoval(this, blockState, blockEntity);
         removeNetworkElementInternal(element);
         getEventBus().post(new NetworkElementRemoveEvent.Post(this, element));
         onNetworkChanged();
@@ -427,9 +428,9 @@ public class Network implements INetwork {
     }
 
     @Override
-    public synchronized boolean removePathElement(IPathElement pathElement, Direction side, BlockState blockState) {
+    public synchronized boolean removePathElement(IPathElement pathElement, Direction side, BlockState blockState, BlockEntity blockEntity) {
         for (IFullNetworkListener fullNetworkListener : this.fullNetworkListeners) {
-            if (!fullNetworkListener.removePathElement(pathElement, side, blockState)) {
+            if (!fullNetworkListener.removePathElement(pathElement, side, blockState, blockEntity)) {
                 return false;
             }
         }
@@ -438,7 +439,7 @@ public class Network implements INetwork {
             Level level = position.getLevel(true);
             INetworkElementProvider networkElementProvider = null;
             if (level != null) {
-                networkElementProvider = level.getCapability(Capabilities.NetworkElementProvider.BLOCK, position.getBlockPos(), blockState, null, side);
+                networkElementProvider = level.getCapability(Capabilities.NetworkElementProvider.BLOCK, position.getBlockPos(), blockState, blockEntity, side);
             }
             if (networkElementProvider != null) {
                 Collection<INetworkElement> networkElements = networkElementProvider.
@@ -449,7 +450,7 @@ public class Network implements INetwork {
                     }
                 }
                 for (INetworkElement networkElement : networkElements) {
-                    removeNetworkElementPost(networkElement, blockState);
+                    removeNetworkElementPost(networkElement, blockState, blockEntity);
                 }
                 onNetworkChanged();
                 return true;
