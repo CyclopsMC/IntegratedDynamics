@@ -29,10 +29,12 @@ public interface IPartTypeWriter<P extends IPartTypeWriter<P, S>, S extends IPar
 
     /**
      * Update the active aspect and active variable for this part.
-     * @param target The target block.
-     * @param partState The state of this part.
-     * @param player The player activating the aspect, can be null.
+     *
+     * @param target                The target block.
+     * @param partState             The state of this part.
+     * @param player                The player activating the aspect, can be null.
+     * @param isNetworkInitializing
      */
-    public void updateActivation(PartTarget target, S partState, @Nullable Player player);
+    public void updateActivation(PartTarget target, S partState, @Nullable Player player, boolean isNetworkInitializing);
 
 }

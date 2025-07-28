@@ -113,7 +113,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
     @Override
     public void onDirty() {
         if (!player.level().isClientSide()) {
-            getPartType().updateActivation(getTarget(), getPartState(), player);
+            getPartType().updateActivation(getTarget(), getPartState(), player, false);
         }
     }
 

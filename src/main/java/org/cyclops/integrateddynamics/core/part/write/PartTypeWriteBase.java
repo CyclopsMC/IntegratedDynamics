@@ -124,7 +124,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     @Override
     public void afterNetworkAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
         super.afterNetworkAlive(network, partNetwork, target, state);
-        updateActivation(target, state, null);
+        updateActivation(target, state, null, true);
     }
 
     @Override
@@ -151,9 +151,7 @@ public abstract class PartTypeWriteBase<P extends IPartTypeWriter<P, S>, S exten
     }
 
     @Override
-    public void updateActivation(PartTarget target, S partState, @Nullable Player player) {
-        boolean isNetworkInitializing = player == null; // TODO: in next major, also add isNetworkInitializing param to updateActivation so we don't need this hack!
-
+    public void updateActivation(PartTarget target, S partState, @Nullable Player player, boolean isNetworkInitializing) {
         // Check inside the inventory for a variable item and determine everything with that.
         int activeIndex = -1;
         for(int i = 0 ; i < partState.getInventory().getContainerSize(); i++) {

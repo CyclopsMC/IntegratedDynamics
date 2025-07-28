@@ -127,7 +127,7 @@ public class GameTestHelpersIntegratedDynamics {
         state.getInventory().setItem(aspectIndex, variableAspect);
 
         // Activate aspect
-        ((IPartTypeWriter) part).updateActivation(PartTarget.fromCenter(partPos), state, null);
+        ((IPartTypeWriter) part).updateActivation(PartTarget.fromCenter(partPos), state, null, false);
     }
 
     public static Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> placeVariableInDisplayPanel(Level level, PartPos partPos, ItemStack variableAspect) {
