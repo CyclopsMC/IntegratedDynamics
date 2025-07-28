@@ -70,7 +70,7 @@ public class GameTestsAspectsReadWorld {
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT, ValueTypeBoolean.ValueBoolean.of(false));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":weather_clear")
+    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":weather_clear2")
     public void testAspectsReadWorldRainCountdown(GameTestHelper helper) {
         helper.getLevel().setWeatherParameters(0, 123, true, false);
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.INTEGER_RAINCOUNTDOWN, ValueTypeInteger.ValueInteger.of(123));

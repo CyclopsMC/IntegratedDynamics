@@ -68,7 +68,12 @@ public class TestVariables {
         CompoundTag itemStack4 = new CompoundTag();
         itemStack4.put("i", serializeStack(ItemStack.EMPTY));
         itemStacks.add(itemStack4);
-        tag.put("minecraft:itemstack", itemStacks);
+        ListTag ingredientsList = new ListTag();
+        CompoundTag ingredientsListItemStacks = new CompoundTag();
+        ingredientsListItemStacks.putString("component", "minecraft:itemstack");
+        ingredientsListItemStacks.put("instances", itemStacks);
+        ingredientsList.add(ingredientsListItemStacks);
+        tag.put("v", ingredientsList);
 
         CompoundTag tagRoot = new CompoundTag();
         tagRoot.put("v", tag);
@@ -105,11 +110,24 @@ public class TestVariables {
         CompoundTag tag = new CompoundTag();
 
         CompoundTag output = new CompoundTag();
+        ListTag outputList = new ListTag();
+        output.put("v", outputList);
         ListTag energies = new ListTag();
         CompoundTag energy = new CompoundTag();
         energy.putLong("i", 777L);
         energies.add(energy);
-        output.put("minecraft:energy", energies);
+        CompoundTag outputListEnergy = new CompoundTag();
+        outputListEnergy.putString("component", "minecraft:energy");
+        outputListEnergy.put("instances", energies);
+        outputList.add(outputListEnergy);
+        ListTag fluidStacks = new ListTag();
+        CompoundTag fluidStack1 = new CompoundTag();
+        fluidStack1.put("i", serializeFluidStack(new FluidStack(Fluids.WATER, 123)));
+        fluidStacks.add(fluidStack1);
+        CompoundTag outputListFluidStack = new CompoundTag();
+        outputListFluidStack.putString("component", "minecraft:fluidstack");
+        outputListFluidStack.put("instances", fluidStacks);
+        outputList.add(outputListFluidStack);
         ListTag itemStacks = new ListTag();
         CompoundTag itemStack1 = new CompoundTag();
         itemStack1.put("i", serializeStack(new ItemStack(Items.OAK_BOAT)));
@@ -117,14 +135,12 @@ public class TestVariables {
         CompoundTag itemStack2 = new CompoundTag();
         itemStack2.put("i", serializeStack(new ItemStack(Blocks.STONE)));
         itemStacks.add(itemStack2);
-        output.put("minecraft:itemstack", itemStacks);
-        ListTag fluidStacks = new ListTag();
-        CompoundTag fluidStack1 = new CompoundTag();
-        fluidStack1.put("i", serializeFluidStack(new FluidStack(Fluids.WATER, 123)));
-        fluidStacks.add(fluidStack1);
-        output.put("minecraft:fluidstack", fluidStacks);
+        CompoundTag outputListItemStack = new CompoundTag();
+        outputListItemStack.putString("component", "minecraft:itemstack");
+        outputListItemStack.put("instances", itemStacks);
+        outputList.add(outputListItemStack);
 
-        CompoundTag input = new CompoundTag();
+        ListTag input = new ListTag();
         ListTag itemStacksIn = new ListTag();
         itemStacksIn.add(new CompoundTag());
         itemStacksIn.add(new CompoundTag());
@@ -163,16 +179,17 @@ public class TestVariables {
         itemStacksIn.getCompound(3).get().put("val", val3l);
         itemStacksIn.getCompound(3).get().putByte("type", (byte) 0);
 
-        input.put("minecraft:itemstack", itemStacksIn);
+        CompoundTag ingredientsListItemStacks = new CompoundTag();
+        ingredientsListItemStacks.putString("component", "minecraft:itemstack");
+        ingredientsListItemStacks.put("instances", itemStacksIn);
+        input.add(ingredientsListItemStacks);
 
-        CompoundTag inputReusable = new CompoundTag();
         int[] reusableBytes = new int[]{0, 0, 0, 0};
         IntArrayTag itemStacksReusable = new IntArrayTag(reusableBytes);
-        inputReusable.put("minecraft:itemstack", itemStacksReusable);
+        ingredientsListItemStacks.put("reusable", itemStacksReusable);
 
         tag.put("output", output);
         tag.put("input", input);
-        tag.put("inputReusable", inputReusable);
 
         CompoundTag topTag = new CompoundTag();
         topTag.put("v", tag);
