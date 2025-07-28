@@ -100,15 +100,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     protected void initializeSlotsPre() {
-        addSlot(new SlotVariable(writeSlot, 0, OUTPUT_X, OUTPUT_Y) {
-            @Override
-            public void setChanged() {
-                // We don't call super here to avoid dirty mark listeners to be called twice, which can cause issues with loading and immediate overwriting.
-                // This is because SimpleInventory will already call dirty mark listeners when calling setItem.
-                // Strictly this behaviour in SimpleInventory is not required, but due to backwards-compat, we keep it.
-                // TODO: refactor this in SimpleInventory in next major?
-            }
-        });
+        addSlot(new SlotVariable(writeSlot, 0, OUTPUT_X, OUTPUT_Y));
         SlotSingleItem filterSlotIn1 = new SlotVariable(filterSlots, 0, 6, 218);
         SlotSingleItem filterSlotIn2 = new SlotVariable(filterSlots, 1, 24, 218);
         SlotSingleItem filterSlotOut = new SlotVariable(filterSlots, 2, 58, 218);
