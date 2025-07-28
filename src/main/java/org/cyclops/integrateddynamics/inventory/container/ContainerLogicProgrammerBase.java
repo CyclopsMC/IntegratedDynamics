@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -195,8 +196,11 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         if(element != null) {
             Pair<Integer, Integer>[] slotPositions = element.getRenderPattern().getSlotPositions();
             for (int i = 0; i < temporaryInputSlots.getContainerSize(); i++) {
-                addSlot(element.createSlot(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
+                Slot slot = addSlot(element.createSlot(temporaryInputSlots, i, 1 + baseX + slotPositions[i].getLeft(),
                         1 + baseY + slotPositions[i].getRight()));
+
+                // Init remote slot as empty, as the server may otherwise unnecessarily overwrite the client-side-only value.
+                remoteSlots.get(slot.index).force(ItemStack.EMPTY);
             }
         }
         initializeSlotsPost();

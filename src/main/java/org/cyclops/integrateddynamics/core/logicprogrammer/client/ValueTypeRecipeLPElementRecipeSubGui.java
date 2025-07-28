@@ -12,6 +12,8 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.TooltipFlag;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -22,6 +24,8 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.IRenderPatternValueTy
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeRecipeLPElement;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeRecipeValueChangedPacket;
+
+import java.util.List;
 
 /**
  * @author rubensworks
@@ -87,11 +91,17 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                 int slotY = slot.y;
 
                 // Draw tooltips
-                if (gui.isHovering(slotX, slotY, 16, 16, mouseX, mouseY)) {
-                    gui.drawTooltip(Lists.newArrayList(
-                            Component.translatable("valuetype.integrateddynamics.ingredients.slot.info")
-                                    .withStyle(ChatFormatting.ITALIC)
-                    ), guiGraphics, mouseX, mouseY - (slot.getItem().isEmpty() ? 0 : 15));
+                if (gui.isHovering(slotX - 1, slotY - 1, 18, 18, mouseX, mouseY)) {
+                    List<Component> tooltipLines = slot.getItem().isEmpty() ?
+                            Lists.newArrayList() :
+                            slot.getItem().getTooltipLines(
+                                    Item.TooltipContext.of(getContainer().getPlayerIInventory().player.level()),
+                                    getContainer().getPlayerIInventory().player,
+                                    TooltipFlag.NORMAL
+                            );
+                    tooltipLines.add(Component.translatable("valuetype.integrateddynamics.ingredients.slot.info")
+                            .withStyle(ChatFormatting.ITALIC));
+                    gui.drawTooltip(tooltipLines, guiGraphics, mouseX, mouseY);
                 }
             }
         }

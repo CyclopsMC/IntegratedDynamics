@@ -43,7 +43,7 @@ public class ValueTypeIngredientsLPElementClient extends ValueTypeLPElementBaseC
     @Override
     public void setValueInGui(ISubGuiBox subGui) {
         if (!getElement().getSubElements().get(getElement().getCurrentType()).isEmpty()) {
-            setActiveElement(0);
+            getElement().setActiveElement(0);
         }
     }
 
