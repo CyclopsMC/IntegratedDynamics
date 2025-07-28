@@ -114,9 +114,14 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
         }
     }
 
+    public void clear() {
+        labels.clear();
+    }
+
     public static class Access extends WorldStorage.Access<LabelsWorldStorage> {
 
         private static LabelsWorldStorage.Access INSTANCE = null;
+        private LabelsWorldStorage clientInstance;
 
         public static LabelsWorldStorage.Access getInstance(ModBaseNeoForge mod) {
             if(INSTANCE == null) {
@@ -134,6 +139,17 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
                             NeoForgeExtraCodecs.unboundedMapAsList("k", Codec.INT, "v", Codec.STRING).fieldOf("counters").forGetter(data -> data.labels)
                     ).apply(instance, (level, labels) -> new LabelsWorldStorage(labels)))
             ), mod);
+        }
+
+        @Override
+        public LabelsWorldStorage get() {
+            if (IModHelpers.get().getMinecraftHelpers().isClientSide()) {
+                if (clientInstance == null) {
+                    clientInstance = new LabelsWorldStorage(Maps.newHashMap());
+                }
+                return clientInstance;
+            }
+            return super.get();
         }
     }
 
