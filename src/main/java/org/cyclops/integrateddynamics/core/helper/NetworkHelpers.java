@@ -35,12 +35,13 @@ public class NetworkHelpers {
 
     /**
      * Get the network carrier capability at the given position.
+     * If possible, prefer using the variant with block state.
      * @param world The world.
      * @param pos The position.
      * @param side The side.
      * @return The optional network carrier capability.
      */
-    @Deprecated // TODO: rm in favor of variant of BlockState param
+    @Deprecated
     public static Optional<INetworkCarrier> getNetworkCarrier(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.NetworkCarrier.BLOCK);
     }
@@ -59,12 +60,13 @@ public class NetworkHelpers {
 
     /**
      * Get the network element provider capability at the given position.
+     * If possible, prefer using the variant with block state.
      * @param world The world.
      * @param pos The position.
      * @param side The side.
      * @return The optional network element provider capability.
      */
-    @Deprecated // TODO: rm in favor of variant of BlockState param
+    @Deprecated
     public static Optional<INetworkElementProvider> getNetworkElementProvider(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.NetworkElementProvider.BLOCK);
     }

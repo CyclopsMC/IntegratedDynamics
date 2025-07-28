@@ -55,7 +55,7 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
         @Override
         public String getStateId(BlockState blockState, BlockGetter world, BlockPos blockPos) {
             String id = "fac";
-            Optional<BlockState> optionalFacade = CableHelpers.getFacade((Level) world, blockPos);
+            Optional<BlockState> optionalFacade = CableHelpers.getFacade((Level) world, blockPos, blockState);
             if (optionalFacade.isPresent()) {
                 id += "(" + optionalFacade.get().toString() + ")";
             }
@@ -70,7 +70,7 @@ public class VoxelShapeComponentsFactoryHandlerFacade implements VoxelShapeCompo
         @Override
         public ItemStack getCloneItemStack(Level world, BlockPos pos) {
             ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_FACADE);
-            CableHelpers.getFacade(world, pos)
+            CableHelpers.getFacade(world, pos, world.getBlockState(pos))
                     .ifPresent(facade -> RegistryEntries.ITEM_FACADE.get().writeFacadeBlock(itemStack, facade));
             return itemStack;
         }

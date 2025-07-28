@@ -319,7 +319,7 @@ public class Network implements INetwork {
             fullNetworkListener.kill();
         }
         for(INetworkElement element : elements) {
-            element.beforeNetworkKill(this);
+            element.beforeNetworkKill(this, null, null);
         }
         killed = true;
     }

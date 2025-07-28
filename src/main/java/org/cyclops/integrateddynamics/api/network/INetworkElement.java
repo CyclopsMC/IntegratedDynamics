@@ -43,21 +43,12 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Called right before the network is terminated or will be reset.
-     * @param network The network to update in.
-     */
-    @Deprecated // TODO: try to rm in next major
-    public void beforeNetworkKill(INetwork network);
-
-    /**
-     * Called right before the network is terminated or will be reset.
      *
      * @param network     The network to update in.
      * @param blockState  The block state.
-     * @param blockEntity
+     * @param blockEntity The block entity.
      */
-    public default void beforeNetworkKill(INetwork network, BlockState blockState, BlockEntity blockEntity) {
-        beforeNetworkKill(network);
-    }
+    public void beforeNetworkKill(INetwork network, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity);
 
     /**
      * Called right after this network is initialized.
@@ -74,25 +65,14 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Add the itemstacks to drop when this element is removed.
-     * @param itemStacks The itemstack list to add to.
-     * @param dropMainElement If the part itself should also be dropped.
-     * @param saveState If the element state should be saved in the item.
-     */
-    @Deprecated // TODO: try to rm in next major
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState);
-
-    /**
-     * Add the itemstacks to drop when this element is removed.
      *
      * @param blockState      The block state of the container block.
-     * @param blockEntity
+     * @param blockEntity     The block entity of the container block.
      * @param itemStacks      The itemstack list to add to.
      * @param dropMainElement If the part itself should also be dropped.
      * @param saveState       If the element state should be saved in the item.
      */
-    public default void addDrops(BlockState blockState, BlockEntity blockEntity, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
-        this.addDrops(itemStacks, dropMainElement, saveState);
-    }
+    public void addDrops(BlockState blockState, BlockEntity blockEntity, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState);
 
     /**
      * Called when this element is added to the network.
@@ -103,21 +83,12 @@ public interface INetworkElement extends Comparable<INetworkElement> {
 
     /**
      * Called when this element is removed from the network.
-     * @param network The network.
-     */
-    @Deprecated // TODO: try to rm in next major
-    public void onNetworkRemoval(INetwork network);
-
-    /**
-     * Called when this element is removed from the network.
      *
      * @param network     The network.
      * @param blockState  The block state.
-     * @param blockEntity
+     * @param blockEntity The block entity.
      */
-    public default void onNetworkRemoval(INetwork network, BlockState blockState, BlockEntity blockEntity) {
-        onNetworkRemoval(network);
-    }
+    public void onNetworkRemoval(INetwork network, BlockState blockState, BlockEntity blockEntity);
 
     /**
      * Called when this element is about to be removed.

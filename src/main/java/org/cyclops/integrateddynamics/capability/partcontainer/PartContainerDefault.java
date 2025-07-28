@@ -8,6 +8,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -124,7 +126,9 @@ public abstract class PartContainerDefault implements IPartContainer {
 
                 // Drop all parts types as item.
                 List<ItemStack> itemStacks = Lists.newLinkedList();
-                networkElement.addDrops(itemStacks, dropMainElement, saveState);
+                BlockState blockState = getLevel().getBlockState(getPos());
+                BlockEntity blockEntity = getLevel().getBlockEntity(getPos());
+                networkElement.addDrops(blockState, blockEntity, itemStacks, dropMainElement, saveState);
                 for(ItemStack itemStack : itemStacks) {
                     if(player != null) {
                         IModHelpers.get().getItemStackHelpers().spawnItemStackToPlayer(getLevel(), getPos(), itemStack, player);
@@ -134,7 +138,7 @@ public abstract class PartContainerDefault implements IPartContainer {
                 }
 
                 // Remove the element from the network.
-                getNetwork().removeNetworkElementPost(networkElement, getLevel().getBlockState(getPos()), getLevel().getBlockEntity(getPos()));
+                getNetwork().removeNetworkElementPost(networkElement, blockState, blockEntity);
 
                 // Finally remove the part data from this part.
                 IPartType ret = partData.remove(side).getPart();

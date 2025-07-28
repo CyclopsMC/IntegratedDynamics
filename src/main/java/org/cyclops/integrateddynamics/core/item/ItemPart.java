@@ -15,6 +15,7 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -72,9 +73,10 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
         InteractionHand hand = context.getHand();
         BlockPos pos = context.getClickedPos();
         Direction side = context.getClickedFace();
+        BlockState blockState = world.getBlockState(pos);
 
         ItemStack itemStack = player.getItemInHand(hand);
-        IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos, side).orElse(null);
+        IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos, side, blockState).orElse(null);
         if(partContainerFirst != null) {
             // Add part to existing cable
             if(PartHelpers.addPart(world, pos, side, getPart(), itemStack)) {
@@ -99,9 +101,10 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 ItemBlockCable itemBlockCable = (ItemBlockCable) Item.byBlock(RegistryEntries.BLOCK_CABLE.get());
                 itemStack.grow(1); // Temporarily grow, because ItemBlock will shrink it.
                 if (itemBlockCable.useOn(new UseOnContext(player, hand, targetRayTrace)).consumesAction()) {
-                    IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide).orElse(null);
+                    BlockState targetBlockState = world.getBlockState(target);
+                    IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide, targetBlockState).orElse(null);
                     if (partContainer != null) {
-                        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target, targetSide).orElse(null);
+                        ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, target, targetSide, targetBlockState).orElse(null);
                         if(!world.isClientSide()) {
                             PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack);
                             if (cableFakeable != null) {
@@ -121,7 +124,8 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                 }
                 itemStack.shrink(1); // Shrink manually if failed
             } else {
-                IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide).orElse(null);
+                BlockState targetBlockState = world.getBlockState(target);
+                IPartContainer partContainer = PartHelpers.getPartContainer(world, target, targetSide, targetBlockState).orElse(null);
                 if(partContainer != null) {
                     // Edge-case: if the pos was a full network block (part of the same network as target), make sure that we disconnect this part of the network first
                     if (!world.isClientSide() && NetworkHelpers.getNetwork(PartPos.of(world, pos, side)).isPresent() && partContainer.canAddPart(targetSide, getPart())) {

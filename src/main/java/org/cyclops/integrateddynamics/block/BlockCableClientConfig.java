@@ -64,8 +64,8 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
             @Override
             public boolean addHitEffects(BlockState blockState, Level world, HitResult target, ParticleEngine particleManager) {
                 BlockPos blockPos = ((BlockHitResult) target).getBlockPos();
-                if(CableHelpers.hasFacade(world, blockPos)) {
-                    CableHelpers.getFacade(world, blockPos)
+                if(CableHelpers.hasFacade(world, blockPos, blockState)) {
+                    CableHelpers.getFacade(world, blockPos, blockState)
                             .ifPresent(facadeState -> IModHelpers.get().getRenderHelpers().addBlockHitEffects(particleManager, (ClientLevel) world, facadeState, blockPos, ((BlockHitResult) target).getDirection()));
                     return true;
                 } else {
@@ -86,7 +86,7 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
         public int getColor(BlockState blockState, @Nullable BlockAndTintGetter world, @Nullable BlockPos blockPos, int color) {
             // Only modify color if we have a facade
             return blockPos == null || (!(world instanceof ILevelExtension levelExtension)) ?
-                    -1 : CableHelpers.getFacade(levelExtension, blockPos)
+                    -1 : CableHelpers.getFacade(levelExtension, blockPos, blockState)
                     .map(facadeState -> Minecraft.getInstance().getBlockColors().getColor(facadeState, world, blockPos, color))
                     .orElse(-1);
         }

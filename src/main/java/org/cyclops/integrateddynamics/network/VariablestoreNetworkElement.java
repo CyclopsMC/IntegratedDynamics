@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.network;
 
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.IEventListenableNetworkElement;
@@ -31,7 +33,7 @@ public class VariablestoreNetworkElement extends TileNetworkElement<BlockEntityV
     }
 
     @Override
-    public void onNetworkRemoval(INetwork network) {
+    public void onNetworkRemoval(INetwork network, BlockState blockState, BlockEntity blockEntity) {
         NetworkHelpers.getPartNetwork(network)
                 .ifPresent(partNetwork -> partNetwork.removeVariableContainer(getPos()));
     }

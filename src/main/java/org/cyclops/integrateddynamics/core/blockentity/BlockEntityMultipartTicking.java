@@ -186,11 +186,11 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         Tag lastFacadeBlock = facadeBlockTag;
         boolean lastRealCable = cableFakeable.isRealCable();
         partContainer.fromValueInput(input.child("partContainer").orElseThrow());
-        boolean wasLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null);
+        boolean wasLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null, getBlockState());
 
         super.read(input);
         cableFakeable.setRealCable(input.getBooleanOr("realCable", false));
-        boolean isLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null);
+        boolean isLightTransparent = getLevel() != null && CableHelpers.isLightTransparent(getLevel(), getBlockPos(), null, getBlockState());
         if (getLevel() != null && (lastConnected == null || connected == null || !lastConnected.equals(connected)
                 || !Objects.equals(lastFacadeBlock, facadeBlockTag)
                 || lastRealCable != cableFakeable.isRealCable() || wasLightTransparent != isLightTransparent)) {

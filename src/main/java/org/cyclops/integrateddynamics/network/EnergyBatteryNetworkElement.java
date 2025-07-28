@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -41,7 +43,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void beforeNetworkKill(INetwork network) {
+    public void beforeNetworkKill(INetwork network, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity) {
 
     }
 
@@ -51,7 +53,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void addDrops(List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
+    public void addDrops(BlockState blockState, BlockEntity blockEntity, List<ItemStack> itemStacks, boolean dropMainElement, boolean saveState) {
 
     }
 
@@ -64,7 +66,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void onNetworkRemoval(INetwork network) {
+    public void onNetworkRemoval(INetwork network, BlockState blockState, BlockEntity blockEntity) {
         PartPos pos = PartPos.of(getPos(), null);
         scheduleNetworkObservation(network, pos);
         NetworkHelpers.getEnergyNetworkChecked(network).removePosition(pos);

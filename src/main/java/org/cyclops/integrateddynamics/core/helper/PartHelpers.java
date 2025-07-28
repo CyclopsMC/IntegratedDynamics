@@ -51,12 +51,13 @@ public class PartHelpers {
 
     /**
      * Get the part container capability at the given position.
+     * If possible, prefer using the variant with block state.
      * @param world The world.
      * @param pos The position.
      * @param side The side.
      * @return The optional part container capability.
      */
-    @Deprecated // TODO: rm in favor of variant of BlockState param
+    @Deprecated
     public static Optional<IPartContainer> getPartContainer(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.PartContainer.BLOCK);
     }
@@ -75,11 +76,12 @@ public class PartHelpers {
 
     /**
      * Get the part container capability at the given position.
+     * If possible, prefer using the variant with block state.
      * @param dimPos The dimensional position.
      * @param side The side.
      * @return The optional part container capability.
      */
-    @Deprecated // TODO: rm in favor of variant of BlockState param
+    @Deprecated
     public static Optional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side) {
         return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, side, Capabilities.PartContainer.BLOCK);
     }
@@ -93,7 +95,7 @@ public class PartHelpers {
      * @param blockEntity The block entity.
      * @return The optional part container capability.
      */
-    public static Optional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side, BlockState blockState, BlockEntity blockEntity) {
+    public static Optional<IPartContainer> getPartContainer(DimPos dimPos, @Nullable Direction side, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity) {
         Level level = dimPos.getLevel(true);
         if (level == null) {
             return Optional.empty();
@@ -144,7 +146,7 @@ public class PartHelpers {
      * @param blockEntity The block entity.
      * @return The part container capability.
      */
-    public static IPartContainer getPartContainerChecked(DimPos dimPos, @Nullable Direction side, BlockState blockState, BlockEntity blockEntity) {
+    public static IPartContainer getPartContainerChecked(DimPos dimPos, @Nullable Direction side, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity) {
         return PartHelpers.getPartContainer(dimPos, side, blockState, blockEntity)
                 .orElseThrow(() -> new PartStateException(dimPos, side));
     }

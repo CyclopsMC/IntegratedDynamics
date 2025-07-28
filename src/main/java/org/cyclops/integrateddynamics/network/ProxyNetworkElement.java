@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.network;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -58,8 +60,8 @@ public class ProxyNetworkElement extends TileNetworkElement<BlockEntityProxy> im
     }
 
     @Override
-    public void onNetworkRemoval(INetwork network) {
-        super.onNetworkRemoval(network);
+    public void onNetworkRemoval(INetwork network, BlockState blockState, BlockEntity blockEntity) {
+        super.onNetworkRemoval(network, blockState, blockEntity);
         NetworkHelpers.getPartNetwork(network)
                 .ifPresent(partNetwork -> partNetwork.removeProxy(getId()));
     }

@@ -52,12 +52,13 @@ public class CableHelpers {
 
     /**
      * Get the cable capability at the given position.
+     * If possible, prefer the variant with block state.
      * @param world The world.
      * @param pos The position.
      * @param side The side.
      * @return The optional cable capability.
      */
-    @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
+    @Deprecated
     public static Optional<ICable> getCable(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.Cable.BLOCK);
     }
@@ -76,12 +77,13 @@ public class CableHelpers {
 
     /**
      * Get the fakeable cable capability at the given position.
+     * If possible, prefer the variant with block state.
      * @param world The world.
      * @param pos The position.
      * @param side The side.
      * @return The optional fakeable cable capability.
      */
-    @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
+    @Deprecated
     public static Optional<ICableFakeable> getCableFakeable(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.CableFakeable.BLOCK);
     }
@@ -96,18 +98,6 @@ public class CableHelpers {
      */
     public static Optional<ICableFakeable> getCableFakeable(ILevelExtension world, BlockPos pos, @Nullable Direction side, BlockState blockState) {
         return Optional.ofNullable(world.getCapability(Capabilities.CableFakeable.BLOCK, pos, blockState, null, side));
-    }
-
-    /**
-     * Get the path element capability at the given position.
-     * @param world The world.
-     * @param pos The position.
-     * @param side The side.
-     * @return The optional path element capability.
-     */
-    @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
-    public static Optional<IPathElement> getPathElement(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
-        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, side, Capabilities.PathElement.BLOCK);
     }
 
     /**
@@ -149,20 +139,6 @@ public class CableHelpers {
      * @param world The world.
      * @param pos The position.
      * @param side The side to check a connection for.
-     * @return If there is a cable that is connected.
-     */
-    @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
-    public static boolean isCableConnected(ILevelExtension world, BlockPos pos, Direction side) {
-        return getCable(world, pos, side)
-                .map(cable -> cable.isConnected(side))
-                .orElse(false);
-    }
-
-    /**
-     * Check if there is a cable at the given position AND if it is connected for the given side.
-     * @param world The world.
-     * @param pos The position.
-     * @param side The side to check a connection for.
      * @param blockState The block state.
      * @return If there is a cable that is connected.
      */
@@ -196,12 +172,14 @@ public class CableHelpers {
      * Check if the given position is not a fake cable.
      * This can mean that there is no cable at all!
      * But if there is a cable, this method will return true only if it is a real cable.
+     * If possible, prefer the variant with block state.
+     *
      * @param world The world.
      * @param pos The position.
      * @param side The side.
      * @return If there is no fake cable.
      */
-    @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
+    @Deprecated
     public static boolean isNoFakeCable(ILevelExtension world, BlockPos pos, @Nullable Direction side) {
         return getCableFakeable(world, pos, side)
                 .map(ICableFakeable::isRealCable)
@@ -451,10 +429,10 @@ public class CableHelpers {
      */
     public static void removeCable(Level world, BlockPos pos, @Nullable Player player) {
         removingCable = true;
-        ICable cable = getCable(world, pos, null).orElse(null);
-        ICableFakeable cableFakeable = getCableFakeable(world, pos, null).orElse(null);
-        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, null).orElse(null);
         BlockState blockState = world.getBlockState(pos);
+        ICable cable = getCable(world, pos, null, blockState).orElse(null);
+        ICableFakeable cableFakeable = getCableFakeable(world, pos, null, blockState).orElse(null);
+        IPartContainer partContainer = PartHelpers.getPartContainer(world, pos, null, blockState).orElse(null);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (cable == null) {
             removingCable = false;
@@ -485,19 +463,6 @@ public class CableHelpers {
      * Check if the target has a facade.
      * @param world The world.
      * @param pos The position.
-     * @return If it has a facade.
-     */
-    @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
-    public static boolean hasFacade(ILevelExtension world, BlockPos pos) {
-        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
-                .map(IFacadeable::hasFacade)
-                .orElse(false);
-    }
-
-    /**
-     * Check if the target has a facade.
-     * @param world The world.
-     * @param pos The position.
      * @param blockState The block state.
      * @return If it has a facade.
      */
@@ -511,39 +476,12 @@ public class CableHelpers {
      * Get the target's facade
      * @param world The world.
      * @param pos The position.
-     * @return The optional facade.
-     */
-    @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
-    public static Optional<BlockState> getFacade(ILevelExtension world, BlockPos pos) {
-        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, null, Capabilities.Facadeable.BLOCK)
-                .flatMap(facadeable -> Optional.ofNullable(facadeable.getFacade()));
-    }
-
-    /**
-     * Get the target's facade
-     * @param world The world.
-     * @param pos The position.
      * @param blockState The block state.
      * @return The optional facade.
      */
     public static Optional<BlockState> getFacade(ILevelExtension world, BlockPos pos, BlockState blockState) {
         return Optional.ofNullable(world.getCapability(Capabilities.Facadeable.BLOCK, pos, blockState, null, null))
                 .flatMap(facadeable -> Optional.ofNullable(facadeable.getFacade()));
-    }
-
-    @Deprecated // TODO: attempt to migrate all calls to method with BlockState param
-    public static boolean isLightTransparent(Level world, BlockPos pos, @Nullable Direction side) {
-        return PartHelpers.getPartContainer(world, pos, side)
-                .map(partContainer -> {
-                    for (Map.Entry<Direction, IPartType<?, ?>> entry : partContainer.getParts().entrySet()) {
-                        IPartType part = entry.getValue();
-                        if (part.forceLightTransparency(partContainer.getPartState(entry.getKey()))) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
-                .orElse(false);
     }
 
     public static boolean isLightTransparent(Level world, BlockPos pos, @Nullable Direction side, BlockState blockState) {

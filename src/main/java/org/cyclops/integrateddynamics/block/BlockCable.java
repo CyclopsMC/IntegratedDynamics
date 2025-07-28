@@ -167,7 +167,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Override
     public boolean canPlaceLiquid(@org.jetbrains.annotations.Nullable LivingEntity entity, BlockGetter worldIn, BlockPos pos, BlockState blockState, Fluid fluidIn) {
         return !blockState.getValue(BlockStateProperties.WATERLOGGED) && fluidIn == Fluids.WATER
-                && !(worldIn instanceof ILevelExtension levelExtension && CableHelpers.hasFacade(levelExtension, pos));
+                && !(worldIn instanceof ILevelExtension levelExtension && CableHelpers.hasFacade(levelExtension, pos, blockState));
     }
 
     @Override
@@ -347,7 +347,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
 
     @Override
     public boolean shouldDisplayFluidOverlay(BlockState state, BlockAndTintGetter world, BlockPos pos, FluidState fluidState) {
-        return world instanceof ILevelExtension levelExtension && CableHelpers.getFacade(levelExtension, pos).isPresent();
+        return world instanceof ILevelExtension levelExtension && CableHelpers.getFacade(levelExtension, pos, state).isPresent();
     }
 
     /* --------------- Start IDynamicRedstone --------------- */
