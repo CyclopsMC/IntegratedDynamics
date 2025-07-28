@@ -8,7 +8,7 @@
           "_id": 1,
           "_type": "integrateddynamics:valuetype",
           "typeName": "integrateddynamics:integer",
-          "value": 20
+          "value": { "v": 20 }
         }
       }
     },

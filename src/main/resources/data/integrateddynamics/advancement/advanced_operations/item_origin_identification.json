@@ -8,7 +8,14 @@
           "_id": 1,
           "_type": "integrateddynamics:valuetype",
           "typeName": "integrateddynamics:itemstack",
-          "value": "minecraft:apple"
+          "value": {
+            "v": {
+              "stack": {
+                "count": 1,
+                "id": "minecraft:apple"
+              }
+            }
+          }
         }
       }
     },
