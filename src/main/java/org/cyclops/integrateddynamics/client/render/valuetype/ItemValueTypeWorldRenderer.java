@@ -53,7 +53,7 @@ public class ItemValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         // Derived from ItemRenderer
         ItemStackRenderState renderState = new ItemStackRenderState();
-        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, null, null, 0);
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.GUI, null, null, 0);
         renderState.render(matrixStack, renderTypeBuffer, combinedLight, combinedOverlay);
 
         matrixStack.popPose();
