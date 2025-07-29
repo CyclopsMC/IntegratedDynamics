@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.26.0 or higher.
+
+Changes:
+* Add PT_BR localization (#1535)
+
+Fixes:
+* Fix crash on load operator variable in LP, Closes #1537

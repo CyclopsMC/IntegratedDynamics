@@ -10,6 +10,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import java.util.Set;
  */
 public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeBase<V> implements IValueTypeCategory<V> {
 
+    @Nullable
     protected final Set<IValueType<?>> elements;
 
     /**
@@ -88,7 +90,7 @@ public abstract class ValueTypeCategoryBase<V extends IValue> extends ValueTypeB
 
     @Override
     public Set<IValueType<?>> getElements() {
-        return Collections.unmodifiableSet(elements);
+        return elements == null ? Collections.emptySet() : Collections.unmodifiableSet(elements);
     }
 
     @Override
