@@ -20,6 +20,7 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.ConfigHandlerCommon;
+import org.cyclops.cyclopscore.gametest.GameTestLoaderHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.infobook.IInfoBookRegistry;
 import org.cyclops.cyclopscore.infobook.InfoBookRegistry;
@@ -250,6 +251,9 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
     }
 
     protected void registerIntegrationGameTests(RegisterGameTestsEvent event) {
+        if (!GameTestLoaderHelpers.areGameTestsEnabled(getModId())) {
+            return;
+        }
         try {
             Field field = RegisterGameTestsEvent.class.getDeclaredField("environmentsRegistry");
             field.setAccessible(true);
