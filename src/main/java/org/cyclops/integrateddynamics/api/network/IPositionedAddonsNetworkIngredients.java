@@ -16,7 +16,6 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * An ingredient network that can hold prioritized positions.
@@ -81,14 +80,11 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
     @Nullable
     public default IIngredientComponentStorage<T, M> getPositionedStorageUnsafe(PartPos pos) {
         DimPos dimPos = pos.getPos();
-        Level world = dimPos.getLevel(true);
-        if (world == null) {
+        Level level = dimPos.getLevel(true);
+        if (level == null) {
             return null;
         }
-        Optional<BlockEntity> tile = IModHelpers.get().getBlockEntityHelpers().get(world, dimPos.getBlockPos(), BlockEntity.class);
-        return tile
-                .map(tileEntity -> getComponent().getBlockStorage(pos.getPos().getLevel(true), pos.getPos().getBlockPos(), tileEntity.getBlockState(), tileEntity, pos.getSide()))
-                .orElse(null);
+        return getComponent().getBlockStorage(level, pos.getPos().getBlockPos(), level.getBlockState(dimPos.getBlockPos()), IModHelpers.get().getBlockEntityHelpers().get(level, dimPos.getBlockPos(), BlockEntity.class).orElse(null), pos.getSide());
     }
 
     /**

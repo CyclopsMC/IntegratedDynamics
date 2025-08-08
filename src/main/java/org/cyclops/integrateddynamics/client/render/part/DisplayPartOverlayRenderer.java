@@ -54,6 +54,10 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     public void renderPartOverlay(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                                   Direction direction, IPartType partType, float partialTicks, PoseStack matrixStack,
                                   MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
+        // Set max light value, to make independent of surrounding blocks.
+        // Otherwise, this value could become zero when in a facade with a solid block on top. #1531
+        combinedLight = 15728640;
+
         BlockPos pos = partContainer.getPosition().getBlockPos();
         if(!shouldRender(pos)) return;
 

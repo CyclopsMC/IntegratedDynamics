@@ -1,15 +1,11 @@
 {
-    "_comment": "General",
-    "itemGroup.integrateddynamics": "Integrated Dynamics",
+    "_comment": "------ Sobre o conteúdo da Dinâmica da Integração ------",
     "general.integrateddynamics.description": "Assuma o controle total e automatizado de suas máquinas.",
     "general.integrateddynamics.info.none": "Nenhum",
     "general.integrateddynamics.energy": "Energia",
-    "general.integrateddynamics.energy_unit": "RF",
     "general.integrateddynamics.error.no_network": "Nenhuma rede válida encontrada",
     "general.integrateddynamics.true": "Verdadeiro",
     "general.integrateddynamics.false": "Falso",
-
-    "_comment": "Gui",
     "gui.integrateddynamics.part_settings": "Configurações da Peça",
     "gui.integrateddynamics.aspect_settings": "Configurações de Aspecto",
     "gui.integrateddynamics.part_offsets": "Deslocamentos da Peça",
@@ -58,8 +54,6 @@
     "gui.integrateddynamics.recipe.reusable": "Reutilizável",
     "gui.integrateddynamics.operator.globalname": "Nome global: %s",
     "gui.integrateddynamics.operator.localname": "Nome do método: %s",
-
-    "_comment": "Diagnostics",
     "gui.integrateddynamics.diagnostics.title": "Integrated Dynamics - Diagnóstico de Rede",
     "gui.integrateddynamics.diagnostics.parts": "Peças",
     "gui.integrateddynamics.diagnostics.observers": "Observadores de Armazenamento",
@@ -71,17 +65,10 @@
     "gui.integrateddynamics.diagnostics.table.position": "Posição",
     "gui.integrateddynamics.diagnostics.table.side": "Lado",
     "gui.integrateddynamics.diagnostics.table.actions": "Ações",
-
-    "_comment": "Keybindings",
-    "key.categories.integrateddynamics": "Integrated Dynamics",
     "key.integrateddynamics.logic_programmer_focus_search": "Focar Busca no Programador Lógico",
     "key.integrateddynamics.logic_programmer_open_rename": "Renomear Variável no Programador Lógico",
-
-    "_comment": "Sound names",
     "subtitles.integrateddynamics.effect.page.flipsingle": "Virar Página",
     "subtitles.integrateddynamics.effect.page.flipmultiple": "Virar Páginas",
-
-    "_comment": "Blocks",
     "block.integrateddynamics.cable": "Cabo Lógico",
     "block.integrateddynamics.variablestore": "Armazenador de Variáveis",
     "block.integrateddynamics.energy_battery": "Bateria de Energia",
@@ -92,7 +79,6 @@
     "block.integrateddynamics.logic_programmer": "Programador Lógico",
     "block.integrateddynamics.coal_generator": "Gerador",
     "block.integrateddynamics.coal_generator.info": "Produz energia a partir de itens combustíveis",
-    "block.integrateddynamics.proxy": "Proxy",
     "block.integrateddynamics.proxy.info": "Expõe uma referência de variável como um aspecto. Limpe em uma grade de criação.",
     "block.integrateddynamics.materializer": "Materializador",
     "block.integrateddynamics.materializer.info": "Materializa o valor de uma variável em uma nova variável",
@@ -136,9 +122,6 @@
     "block.integrateddynamics.crystalized_menril_brick_slab": "Laje de Tijolo de Menril Cristalizado",
     "block.integrateddynamics.crystalized_chorus_block_slab": "Laje de Chorus Cristalizado",
     "block.integrateddynamics.crystalized_chorus_brick_slab": "Laje de Tijolo de Chorus Cristalizado",
-
-    "_comment": "Items",
-    "item.integrateddynamics.general.id": "§e§lID: §r%s",
     "item.integrateddynamics.wrench": "Chave Inglesa",
     "item.integrateddynamics.wrench.info": "Shift + Clique com o botão direito no ar para mudar o modo",
     "item.integrateddynamics.wrench.mode": "§eModo: §r%s",
@@ -178,21 +161,13 @@
     "item.integrateddynamics.on_the_dynamics_of_integration.info": "Um guia de referência completo do mod com tutoriais",
     "item.integrateddynamics.crystalized_chorus_chunk": "Pedaço de Chorus Cristalizado",
     "item.integrateddynamics.logic_director": "Diretor Lógico",
-    "item.integrateddynamics.proto_chorus": "Proto Chorus",
     "item.integrateddynamics.enhancement_offset": "Melhoria de Peça: Deslocamento",
     "item.integrateddynamics.enhancement_offset.info": "Aumenta o deslocamento máximo de uma peça ao clicar com o botão direito",
     "item.integrateddynamics.enhancement_offset.tooltip": "Aumento de deslocamento: %s",
     "item.integrateddynamics.enhancement_offset.increased": "Deslocamento da peça aumentado para %s",
     "item.integrateddynamics.enhancement_offset.limit": "O deslocamento da peça já está no limite (%s)",
-
-    "_comment": "Fluids",
     "fluid_type.integrateddynamics.menril_resin": "Resina de Menril",
     "fluid_type.integrateddynamics.liquid_chorus": "Chorus Líquido",
-
-    "_comment": "Biomes",
-    "biome.integrateddynamics.meneglin": "Meneglin",
-
-    "_comment": "Advancements",
     "advancement.integrateddynamics.meneglin_discovery": "Descoberta de Meneglin",
     "advancement.integrateddynamics.meneglin_discovery.desc": "Corte uma árvore de Menril, que pode ser encontrada mais facilmente nos biomas Meneglin.",
     "advancement.integrateddynamics.squeezing": "Espremendo com estilo",
@@ -241,7 +216,6 @@
     "advancement.integrateddynamics.lectern_book.desc": "Leia o campo Livro NBT dentro de um bloco Púlpito na tag NBT lida de um Leitor de Bloco.",
     "advancement.integrateddynamics.lectern_book_name": "Nome do Livro NBT do Púlpito",
     "advancement.integrateddynamics.lectern_book_name.desc": "Leia o nome (id) de um livro dentro de um bloco Púlpito aplicando uma expressão de Caminho NBT na tag NBT lida de um Leitor de Bloco.",
-
     "advancement.integrateddynamics.logic_programming": "Programação Lógica",
     "advancement.integrateddynamics.logic_programming.desc": "Abra a GUI de um Programador Lógico",
     "advancement.integrateddynamics.constant_definition": "Definição de Constante",
@@ -272,8 +246,6 @@
     "advancement.integrateddynamics.tool_for_obsidian.desc": "Verifique se uma Picareta de Pedra pode quebrar um bloco de Obsidian e mostre o resultado em um Painel de Exibição.",
     "advancement.integrateddynamics.smart_pressure_plate": "Placa de Pressão Inteligente",
     "advancement.integrateddynamics.smart_pressure_plate.desc": "Crie um sistema que abre automaticamente uma porta quando você passa por um Leitor de Entidade com base na correspondência do nome da entidade, usando um Escritor de Redstone apontando diretamente para a porta. (Dica: passe um nome de entidade como primeiro argumento no operador de igualdade)",
-
-    "_comment": "Value types",
     "valuetype.integrateddynamics.error.value": "Valor inválido",
     "valuetype.integrateddynamics.value_type": "Tipo de Valor",
     "valuetype.integrateddynamics.tooltip.type_name": "§eTipo: §r%s",
@@ -289,7 +261,6 @@
     "valuetype.integrateddynamics.error.fluid.no_fluid": "O item inserido não contém fluido.",
     "valuetype.integrateddynamics.error.no_light_calculator": "O tipo de valor %s não pode ser usado para derivar um nível de luz.",
     "valuetype.integrateddynamics.error.deserialize": "Algo deu errado ao desserializar '%s': %s",
-
     "valuetype.integrateddynamics.any": "Qualquer",
     "valuetype.integrateddynamics.any.info": "Aceita qualquer tipo de valor.",
     "valuetype.integrateddynamics.number": "Número",
@@ -300,27 +271,16 @@
     "valuetype.integrateddynamics.uniquely_named.info": "Algo que tem um nome único, como itens e blocos.",
     "operator.integrateddynamics.string.string_error": "Erro",
     "operator.integrateddynamics.string.string_error.info": "Lança um erro personalizado",
-
-
     "valuetype.integrateddynamics.boolean": "Booleano",
     "valuetype.integrateddynamics.integer": "Inteiro",
-    "valuetype.integrateddynamics.double": "Double",
-    "valuetype.integrateddynamics.long": "Long",
-    "valuetype.integrateddynamics.string": "String",
     "valuetype.integrateddynamics.operator": "Operador",
-    "valuetype.integrateddynamics.nbt": "NBT",
-
     "valuetype.integrateddynamics.list": "Lista",
     "valuetype.integrateddynamics.block": "Bloco",
-    "valuetype.integrateddynamics.itemstack": "Item",
     "valuetype.integrateddynamics.entity": "Entidade",
     "valuetype.integrateddynamics.fluidstack": "Fluido",
     "valuetype.integrateddynamics.ingredients": "Ingredientes",
     "valuetype.integrateddynamics.recipe": "Receita",
-
     "valuetype.integrateddynamics.ingredients.slot.info": "Shift clique para configurar",
-
-    "_comment": "Part types",
     "parttype.integrateddynamics.error.low_energy": "Energia insuficiente",
     "parttype.integrateddynamics.tooltip.disabled": "Sem Energia",
     "parttype.integrateddynamics.tooltip.inactive": "Inativo",
@@ -330,7 +290,6 @@
     "parttype.integrateddynamics.tooltip.monodirectionalconnector.group": "Grupo: %s",
     "parttype.integrateddynamics.tooltip.noaspects": "AVISO: Nenhum aspecto disponível. Isto pode se tornar utilizável quando outros mods forem instalados.",
     "parttype.integrateddynamics.tooltip.maxoffset": "Deslocamento Máx: %s",
-
     "parttype.integrateddynamics.audio_reader": "Leitor de Áudio",
     "parttype.integrateddynamics.audio_reader.info": "Lê informações de áudio",
     "parttype.integrateddynamics.block_reader": "Leitor de Bloco",
@@ -351,7 +310,6 @@
     "parttype.integrateddynamics.redstone_reader.info": "Lê valores de redstone",
     "parttype.integrateddynamics.world_reader": "Leitor de Mundo",
     "parttype.integrateddynamics.world_reader.info": "Lê coisas relacionadas ao mundo, blocos e entidades",
-
     "parttype.integrateddynamics.audio_writer": "Escritor de Áudio",
     "parttype.integrateddynamics.audio_writer.info": "Produz áudio e música",
     "parttype.integrateddynamics.effect_writer": "Escritor de Efeito",
@@ -364,7 +322,6 @@
     "parttype.integrateddynamics.inventory_writer.info": "Escreve em inventários",
     "parttype.integrateddynamics.redstone_writer": "Escritor de Redstone",
     "parttype.integrateddynamics.redstone_writer.info": "Escreve em redstone",
-
     "parttype.integrateddynamics.data_driven_panel.error.invalid_type": "Este painel não aceita um %s.",
     "parttype.integrateddynamics.static_light_panel": "Painel de Luz Estático",
     "parttype.integrateddynamics.static_light_panel.info": "Um painel de luz simples que está sempre ativo",
@@ -372,30 +329,21 @@
     "parttype.integrateddynamics.dynamic_light_panel.info": "Exibe visualmente o valor de uma variável no mundo como um valor de luz",
     "parttype.integrateddynamics.display_panel": "Painel de Exibição",
     "parttype.integrateddynamics.display_panel.info": "Exibe visualmente o valor de uma variável no mundo como texto",
-
     "parttype.integrateddynamics.connector_mono_directional": "Conector Monodirecional",
     "parttype.integrateddynamics.connector_mono_directional.info": "Pode se conectar a outros Conectores Monodirecionais a uma distância em linha reta",
     "parttype.integrateddynamics.connector_omni_directional": "Conector Onidirecional",
     "parttype.integrateddynamics.connector_omni_directional.info": "Pode se conectar a outros Conectores Onidirecionais em qualquer lugar, incluindo dimensões diferentes.",
-
-    "_comment": "Variables facades",
     "variable.integrateddynamics.error.invalid_item": "A variável atual não pode ser usada neste aspecto.",
     "variable.integrateddynamics.error.part_not_in_network": "A peça com ID %s não foi encontrada na rede atual.",
     "variable.integrateddynamics.error.recursion": "A variável com ID %s está se referindo a si mesma.",
-
-    "_comment": "Proxy",
     "proxy.integrateddynamics.tooltip.proxy_id": "§e§oID do Proxy: §r§o%s",
     "proxy.integrateddynamics.error.proxy_not_in_network": "O Proxy com ID %s não foi encontrado na rede atual.",
     "proxy.integrateddynamics.error.proxy_invalid": "O Proxy com ID %s não está expondo uma variável.",
     "proxy.integrateddynamics.error.proxy_invalid_type": "O Proxy com ID %s deveria expor uma variável do tipo %s, mas %s foi encontrado.",
-
-    "_comment": "Delay",
     "delay.integrateddynamics.tooltip.delay_id": "§e§oID do Atraso: §r§o%s",
     "delay.integrateddynamics.error.delay_not_in_network": "O Atrasador com ID %s não foi encontrado na rede atual.",
     "delay.integrateddynamics.error.delay_invalid": "O Atrasador com ID %s não está expondo uma variável.",
     "delay.integrateddynamics.error.delay_invalid_type": "O Atrasador com ID %s deveria expor uma variável do tipo %s, mas %s foi encontrado.",
-
-    "_comment": "Aspects",
     "aspect.integrateddynamics.tooltip.aspect_name": "§eAspecto: §r%s",
     "aspect.integrateddynamics.tooltip.value_type_name": "§eTipo: §r%s",
     "aspect.integrateddynamics.tooltip.part_id": "§e§oID da Peça: §r§o%s",
@@ -404,8 +352,6 @@
     "aspect.integrateddynamics.error.no_value_interface": "Nenhuma interface de valor válida foi encontrada.",
     "aspect.integrateddynamics.error.no_value_interface_value": "Nenhum valor de interface de valor válido foi encontrado.",
     "aspect.integrateddynamics.name": "Aspecto",
-
-    "_comment": "# Audio aspects",
     "aspect.integrateddynamics.read.integer.audio.instrument.harp": "Nota de Harpa",
     "aspect.integrateddynamics.read.integer.audio.instrument.harp.info": "Lê uma nota de harpa, intervalo esperado [0, 24]",
     "aspect.integrateddynamics.read.integer.audio.instrument.basedrum": "Nota de Bumbo",
@@ -452,8 +398,6 @@
     "aspect.integrateddynamics.read.integer.audio.instrument.piglin.info": "Lê uma nota de piglin, intervalo esperado [0, 24]",
     "aspect.integrateddynamics.read.integer.audio.instrument.custom_head": "Nota de Cabeça",
     "aspect.integrateddynamics.read.integer.audio.instrument.custom_head.info": "Lê uma nota de cabeça, intervalo esperado [0, 24]",
-
-
     "aspect.integrateddynamics.write.integer.audio.instrument.harp": "Nota de Harpa",
     "aspect.integrateddynamics.write.integer.audio.instrument.harp.info": "Produz uma nota de harpa, intervalo esperado [0, 24]",
     "aspect.integrateddynamics.write.integer.audio.instrument.basedrum": "Nota de Bumbo",
@@ -500,13 +444,10 @@
     "aspect.integrateddynamics.write.integer.audio.instrument.piglin.info": "Produz uma nota de piglin, intervalo esperado [0, 24]",
     "aspect.integrateddynamics.write.integer.audio.instrument.custom_head": "Nota de Cabeça",
     "aspect.integrateddynamics.write.integer.audio.instrument.custom_head.info": "Produz uma nota de cabeça, intervalo esperado [0, 24]",
-
     "aspect.integrateddynamics.write.string.audio.sound": "Som",
     "aspect.integrateddynamics.write.string.audio.sound.info": "Toca o nome do som fornecido",
     "aspect.integrateddynamics.write.string.audio.text": "Texto",
     "aspect.integrateddynamics.write.string.audio.text.info": "Converte o texto fornecido em fala",
-
-    "_comment": "# Effect aspects",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_angry_villager": "Partícula: Aldeão Zangado",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_angry_villager.info": "Emite uma partícula de aldeão zangado com uma certa velocidade.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_bubble": "Partícula: Bolha",
@@ -671,11 +612,8 @@
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_electric_spark.info": "Emite uma partícula de faísca elétrica com uma certa velocidade.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_scrape": "Partícula: Raspagem",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_scrape.info": "Emite uma partícula de raspagem com uma certa velocidade.",
-
-    "_comment": "# Block aspects",
     "aspect.integrateddynamics.read.boolean.block.block": "Tem Bloco",
     "aspect.integrateddynamics.read.boolean.block.block.info": "Se o espaço alvo tem um bloco",
-
     "aspect.integrateddynamics.read.string.block.dimension": "Dimensão",
     "aspect.integrateddynamics.read.string.block.dimension.info": "O id da dimensão do mundo alvo",
     "aspect.integrateddynamics.read.integer.block.posx": "Coordenada X",
@@ -690,38 +628,27 @@
     "aspect.integrateddynamics.read.string.block.biome.info": "O nome do bioma no alvo",
     "aspect.integrateddynamics.read.integer.block.light": "Nível de Luz",
     "aspect.integrateddynamics.read.integer.block.light.info": "O nível de luz no alvo",
-
     "aspect.integrateddynamics.read.block.block": "Bloco",
     "aspect.integrateddynamics.read.block.block.info": "O bloco alvo",
-
-    "_comment": "# Entity aspects",
     "aspect.integrateddynamics.read.integer.entity.itemframerotation": "Rotação da Moldura",
     "aspect.integrateddynamics.read.integer.entity.itemframerotation.info": "O índice da rotação que o item na Moldura anexada possui.",
-
     "aspect.integrateddynamics.read.list.entity.entities": "Entidades",
     "aspect.integrateddynamics.read.list.entity.entities.info": "As entidades no espaço alvo",
     "aspect.integrateddynamics.read.list.entity.players": "Jogadores",
     "aspect.integrateddynamics.read.list.entity.players.info": "Os jogadores que estão no espaço alvo",
-
     "aspect.integrateddynamics.read.entity.entity": "Entidade",
     "aspect.integrateddynamics.read.entity.entity.info": "A entidade selecionada no espaço alvo",
-
     "aspect.integrateddynamics.read.itemstack.entity.itemframecontents": "Moldura",
     "aspect.integrateddynamics.read.itemstack.entity.itemframecontents.info": "O item em uma Moldura anexada ao leitor",
-
-    "_comment": "# Extra-Dimensional aspects",
     "aspect.integrateddynamics.read.integer.extradimensional.random": "Aleatório",
     "aspect.integrateddynamics.read.integer.extradimensional.random.info": "Um valor inteiro aleatório",
     "aspect.integrateddynamics.read.integer.extradimensional.playercount": "Contagem de Jogadores",
     "aspect.integrateddynamics.read.integer.extradimensional.playercount.info": "A quantidade de jogadores no servidor",
     "aspect.integrateddynamics.read.integer.extradimensional.ticktime": "Tempo de Tick",
     "aspect.integrateddynamics.read.integer.extradimensional.ticktime.info": "O tempo médio de tick em nanossegundos para o servidor",
-    "aspect.integrateddynamics.read.double.extradimensional.tps": "TPS",
     "aspect.integrateddynamics.read.double.extradimensional.tps.info": "O número médio de ticks por segundo em todos os mundos",
     "aspect.integrateddynamics.read.list.extradimensional.players": "Jogadores",
     "aspect.integrateddynamics.read.list.extradimensional.players.info": "Os jogadores que estão online neste servidor",
-
-    "_comment": "# Fluid aspects",
     "aspect.integrateddynamics.read.boolean.fluid.empty": "Tanque Vazio",
     "aspect.integrateddynamics.read.boolean.fluid.empty.info": "Se o tanque de fluido alvo está vazio",
     "aspect.integrateddynamics.read.boolean.fluid.full": "Tanque Cheio",
@@ -730,7 +657,6 @@
     "aspect.integrateddynamics.read.boolean.fluid.nonempty.info": "Se o tanque de fluido alvo tem algo dentro",
     "aspect.integrateddynamics.read.boolean.fluid.applicable": "É Tanque",
     "aspect.integrateddynamics.read.boolean.fluid.applicable.info": "Se o alvo tem um tanque de fluido",
-
     "aspect.integrateddynamics.read.integer.fluid.amount": "Quantidade de Fluido",
     "aspect.integrateddynamics.read.integer.fluid.amount.info": "A quantidade de fluido em mB no tanque ativo",
     "aspect.integrateddynamics.read.integer.fluid.totalamount": "Quantidade Total de Fluido",
@@ -741,21 +667,16 @@
     "aspect.integrateddynamics.read.integer.fluid.totalcapacity.info": "Capacidade total do tanque",
     "aspect.integrateddynamics.read.integer.fluid.tanks": "Tanques",
     "aspect.integrateddynamics.read.integer.fluid.tanks.info": "A quantidade de tanques encontrados no alvo",
-
     "aspect.integrateddynamics.read.double.fluid.fillratio": "Taxa de Preenchimento de Fluido",
     "aspect.integrateddynamics.read.double.fluid.fillratio.info": "A quantidade de fluido no tanque ativo dividida por sua capacidade",
-
     "aspect.integrateddynamics.read.list.fluid.fluidstacks": "Fluidos do Tanque",
     "aspect.integrateddynamics.read.list.fluid.fluidstacks.info": "A lista de fluidos em todos os tanques",
     "aspect.integrateddynamics.read.list.fluid.capacities": "Capacidades do Tanque",
     "aspect.integrateddynamics.read.list.fluid.capacities.info": "A lista de capacidades de todos os tanques",
-
     "aspect.integrateddynamics.read.fluidstack.fluid": "Fluido do Tanque",
     "aspect.integrateddynamics.read.fluidstack.fluid.info": "O fluido no tanque alvo",
     "aspect.integrateddynamics.read.fluidstack.block": "Fluido do Bloco",
     "aspect.integrateddynamics.read.fluidstack.block.info": "O fluido no bloco alvo",
-
-    "_comment": "# Inventory aspects",
     "aspect.integrateddynamics.read.boolean.inventory.full": "Inventário Cheio",
     "aspect.integrateddynamics.read.boolean.inventory.full.info": "Se todos os slots tiverem pelo menos um item",
     "aspect.integrateddynamics.read.boolean.inventory.empty": "Inventário Vazio",
@@ -764,26 +685,19 @@
     "aspect.integrateddynamics.read.boolean.inventory.nonempty.info": "Se houver pelo menos um item",
     "aspect.integrateddynamics.read.boolean.inventory.applicable": "É Inventário",
     "aspect.integrateddynamics.read.boolean.inventory.applicable.info": "Se o alvo tem um inventário",
-
     "aspect.integrateddynamics.read.integer.inventory.count": "Contagem do Inventário",
     "aspect.integrateddynamics.read.integer.inventory.count.info": "Obtém a quantidade total de itens",
     "aspect.integrateddynamics.read.integer.inventory.countslot": "Tamanho da Pilha do Slot",
     "aspect.integrateddynamics.read.integer.inventory.countslot.info": "Obtém o tamanho da pilha no slot ativo",
-    "aspect.integrateddynamics.read.integer.inventory.slots": "Slots",
     "aspect.integrateddynamics.read.integer.inventory.slots.info": "O número de slots no inventário",
     "aspect.integrateddynamics.read.integer.inventory.slotsfilled": "Slots Preenchidos",
     "aspect.integrateddynamics.read.integer.inventory.slotsfilled.info": "O número de slots que têm um item",
-
     "aspect.integrateddynamics.read.double.inventory.fillratio": "Taxa de Preenchimento",
     "aspect.integrateddynamics.read.double.inventory.fillratio.info": "O número de slots não vazios dividido pelo número total de slots",
-
     "aspect.integrateddynamics.read.list.inventory.itemstacks": "Itens",
     "aspect.integrateddynamics.read.list.inventory.itemstacks.info": "Obtém uma lista dos itens no inventário",
-
     "aspect.integrateddynamics.read.itemstack.inventory": "Item do Slot",
     "aspect.integrateddynamics.read.itemstack.inventory.info": "Obtém o Item no slot ativo",
-
-    "_comment": "# Machine aspects",
     "aspect.integrateddynamics.read.boolean.machine.isworker": "É Trabalhador",
     "aspect.integrateddynamics.read.boolean.machine.isworker.info": "Se o alvo é uma máquina trabalhadora",
     "aspect.integrateddynamics.read.boolean.machine.haswork": "Tem Trabalho",
@@ -840,8 +754,6 @@
     "aspect.integrateddynamics.read.integer.fe.capacity.info": "A capacidade de FE do alvo",
     "aspect.integrateddynamics.read.double.fe.fillratio": "Taxa de Preenchimento de FE",
     "aspect.integrateddynamics.read.double.fe.fillratio.info": "A quantidade de FE no alvo dividida por sua capacidade",
-
-    "_comment": "# Network aspects",
     "aspect.integrateddynamics.read.boolean.network.applicable": "É Rede",
     "aspect.integrateddynamics.read.boolean.network.applicable.info": "Se o alvo tem uma rede",
     "aspect.integrateddynamics.read.integer.network.elementcount": "Elementos",
@@ -858,32 +770,22 @@
     "aspect.integrateddynamics.read.any.network.value.info": "O valor que está sendo exposto pelo alvo",
     "aspect.integrateddynamics.read.operator.network.variablebyid": "Valor da Variável por ID",
     "aspect.integrateddynamics.read.operator.network.variablebyid.info": "Um operador que retorna o valor de uma variável por seu identificador inteiro",
-
-    "_comment": "# Redstone aspects",
     "aspect.integrateddynamics.read.boolean.redstone.high": "Redstone Alto",
     "aspect.integrateddynamics.read.boolean.redstone.high.info": "Se o nível de redstone está no máximo",
     "aspect.integrateddynamics.read.boolean.redstone.low": "Redstone Baixo",
     "aspect.integrateddynamics.read.boolean.redstone.low.info": "Se não há nível de redstone",
-    "aspect.integrateddynamics.read.boolean.redstone.nonlow": "Redstone",
     "aspect.integrateddynamics.read.boolean.redstone.nonlow.info": "Se há um nível de redstone",
     "aspect.integrateddynamics.read.boolean.redstone.clock": "Clock de Redstone",
     "aspect.integrateddynamics.read.boolean.redstone.clock.info": "Pulsa com um comprimento e intervalo configuráveis.",
-    "aspect.integrateddynamics.read.integer.redstone.value": "Redstone",
     "aspect.integrateddynamics.read.integer.redstone.value.info": "Obtém o nível exato de redstone",
     "aspect.integrateddynamics.read.integer.redstone.comparator": "Comparador",
     "aspect.integrateddynamics.read.integer.redstone.comparator.info": "Obtém o valor do comparador",
-
-    "aspect.integrateddynamics.write.boolean.redstone": "Redstone",
     "aspect.integrateddynamics.write.boolean.redstone.info": "Produz um sinal de redstone completo se for verdadeiro",
     "aspect.integrateddynamics.write.boolean.redstone.pulse": "Pulso de Redstone",
     "aspect.integrateddynamics.write.boolean.redstone.pulse.info": "Produz um pulso com o valor de redstone configurado se o valor dado mudar.",
-
-    "aspect.integrateddynamics.write.integer.redstone": "Redstone",
     "aspect.integrateddynamics.write.integer.redstone.info": "Produz o valor como sinal de redstone exato",
     "aspect.integrateddynamics.write.integer.redstone.pulse": "Pulso de Redstone",
     "aspect.integrateddynamics.write.integer.redstone.pulse.info": "Produz um pulso com o valor de redstone configurado se o valor dado mudar.",
-
-    "_comment": "# World aspects",
     "aspect.integrateddynamics.read.boolean.world.entity": "Tem Entidade",
     "aspect.integrateddynamics.read.boolean.world.entity.info": "Se o espaço alvo tem uma entidade",
     "aspect.integrateddynamics.read.boolean.world.mob": "Tem Mob",
@@ -904,7 +806,6 @@
     "aspect.integrateddynamics.read.boolean.world.isday.info": "Se é dia no mundo alvo",
     "aspect.integrateddynamics.read.boolean.world.isnight": "É Noite",
     "aspect.integrateddynamics.read.boolean.world.isnight.info": "Se é noite no mundo alvo",
-
     "aspect.integrateddynamics.read.integer.world.entity": "Entidades",
     "aspect.integrateddynamics.read.integer.world.entity.info": "A quantidade de entidades no espaço alvo",
     "aspect.integrateddynamics.read.integer.world.raincountdown": "Contagem Regressiva da Chuva",
@@ -917,37 +818,24 @@
     "aspect.integrateddynamics.read.integer.world.lightlevel.info": "O nível de luz no alvo",
     "aspect.integrateddynamics.read.integer.world.players": "Contagem de Jogadores",
     "aspect.integrateddynamics.read.integer.world.players.info": "Os jogadores que estão online neste mundo",
-
-    "aspect.integrateddynamics.read.double.world.tps": "TPS",
     "aspect.integrateddynamics.read.double.world.tps.info": "O número de ticks por segundo neste mundo",
-
     "aspect.integrateddynamics.read.long.world.time": "Tempo",
     "aspect.integrateddynamics.read.long.world.time.info": "O tempo do mundo dependente do comando set time",
     "aspect.integrateddynamics.read.long.world.totaltime": "Tempo Total",
     "aspect.integrateddynamics.read.long.world.totaltime.info": "O tempo do mundo independente do comando set time",
-
     "aspect.integrateddynamics.read.string.world.worldname": "Nome do Mundo",
     "aspect.integrateddynamics.read.string.world.worldname.info": "O nome do mundo alvo",
-
     "aspect.integrateddynamics.read.list.world.players": "Jogadores",
     "aspect.integrateddynamics.read.list.world.players.info": "Os jogadores que estão neste mundo",
-
-    "_comment": "Aspect property types",
     "aspect.aspecttypes.integrateddynamics.integer.tankid": "ID do Tanque",
     "aspect.aspecttypes.integrateddynamics.integer.slotid": "ID do Slot",
     "aspect.aspecttypes.integrateddynamics.integer.listindex": "Elemento da Lista",
     "aspect.aspecttypes.integrateddynamics.integer.range": "Alcance",
-
     "aspect.aspecttypes.integrateddynamics.integer.channel": "Canal",
-
     "aspect.aspecttypes.integrateddynamics.integer.interval": "Intervalo do Pulso",
     "aspect.aspecttypes.integrateddynamics.integer.length": "Duração do Pulso",
     "aspect.aspecttypes.integrateddynamics.integer.offset": "Deslocamento de Tempo do Pulso",
-
-    "aspect.aspecttypes.integrateddynamics.double.volume": "Volume",
     "aspect.aspecttypes.integrateddynamics.double.frequency": "Frequência",
-    "aspect.aspecttypes.integrateddynamics.integer.range": "Alcance",
-
     "aspect.aspecttypes.integrateddynamics.double.offset_x": "Deslocamento X",
     "aspect.aspecttypes.integrateddynamics.double.offset_y": "Deslocamento Y",
     "aspect.aspecttypes.integrateddynamics.double.offset_z": "Deslocamento Z",
@@ -955,13 +843,10 @@
     "aspect.aspecttypes.integrateddynamics.double.spread_x": "Dispersão X",
     "aspect.aspecttypes.integrateddynamics.double.spread_y": "Dispersão Y",
     "aspect.aspecttypes.integrateddynamics.double.spread_z": "Dispersão Z",
-
     "aspect.aspecttypes.integrateddynamics.boolean.strong_power": "Carga Forte",
     "aspect.aspecttypes.integrateddynamics.boolean.strong_power.info": "Se uma Tocha de Redstone deve ser simulada em vez de Pó de Redstone normal",
     "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value": "Valor do Pulso",
     "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value.info": "O valor do pulso que deve ser emitido.",
-
-    "_comment": "Operators",
     "operator.integrateddynamics": "Operador",
     "operator.integrateddynamics.applied.operator_name": "%s Aplicado [%s]",
     "operator.integrateddynamics.applied.type": "§Aplicado a: §r%s",
@@ -1006,15 +891,11 @@
     "operator.integrateddynamics.error.slice.index_negative": "Os índices da fatia não devem ser negativos.",
     "operator.integrateddynamics.error.reduce.empty": "O operador reduce1 tentou obter o primeiro elemento de uma lista vazia. Use o operador reduce para fornecer um valor base para suportar listas vazias.",
     "operator.integrateddynamics.error.operator_not_found": "Não foi possível encontrar o operador com o nome \"%s\".",
-
     "operator.integrateddynamics.logical": "Lógico",
     "operator.integrateddynamics.logical.basename": "Lógico %s",
     "operator.integrateddynamics.logical.and": "E",
     "operator.integrateddynamics.logical.or": "Ou",
     "operator.integrateddynamics.logical.not": "Não",
-    "operator.integrateddynamics.logical.nand": "Nand",
-    "operator.integrateddynamics.logical.nor": "Nor",
-
     "operator.integrateddynamics.arithmetic": "Aritmético",
     "operator.integrateddynamics.arithmetic.basename": "Aritmético %s",
     "operator.integrateddynamics.arithmetic.addition": "Adição",
@@ -1028,13 +909,11 @@
     "operator.integrateddynamics.arithmetic.modulus": "Módulo",
     "operator.integrateddynamics.arithmetic.increment": "Incremento",
     "operator.integrateddynamics.arithmetic.decrement": "Decremento",
-
     "operator.integrateddynamics.integer": "Inteiro",
     "operator.integrateddynamics.integer.basename": "Inteiro %s",
     "operator.integrateddynamics.integer.modulus": "Módulo",
     "operator.integrateddynamics.integer.increment": "Incremento",
     "operator.integrateddynamics.integer.decrement": "Decremento",
-
     "operator.integrateddynamics.relational": "Relacional",
     "operator.integrateddynamics.relational.basename": "Relacional %s",
     "operator.integrateddynamics.relational.equals": "Igual a",
@@ -1045,21 +924,16 @@
     "operator.integrateddynamics.relational.notequals.info": "Testa se dois valores são diferentes. Os tipos de ambos devem ser os mesmos.",
     "operator.integrateddynamics.relational.ge": "Maior ou Igual a",
     "operator.integrateddynamics.relational.le": "Menor ou Igual a",
-
     "operator.integrateddynamics.binary": "Binário",
     "operator.integrateddynamics.binary.basename": "Binário %s",
     "operator.integrateddynamics.binary.and": "E",
     "operator.integrateddynamics.binary.or": "Ou",
-    "operator.integrateddynamics.binary.xor": "Xor",
     "operator.integrateddynamics.binary.complement": "Complemento",
     "operator.integrateddynamics.binary.rshift": "Deslocamento à Direita",
     "operator.integrateddynamics.binary.rshift.info": "Deslocamento à direita com preenchimento de uns",
     "operator.integrateddynamics.binary.lshift": "Deslocamento à Esquerda",
     "operator.integrateddynamics.binary.rzshift": "Deslocamento à Direita com Zero",
     "operator.integrateddynamics.binary.rzshift.info": "Deslocamento à direita com preenchimento de zeros",
-
-    "operator.integrateddynamics.string": "String",
-    "operator.integrateddynamics.string.basename": "String %s",
     "operator.integrateddynamics.string.length": "Comprimento",
     "operator.integrateddynamics.string.length.info": "O comprimento da String fornecida",
     "operator.integrateddynamics.string.concat": "Concatenar",
@@ -1082,7 +956,6 @@
     "operator.integrateddynamics.string.split_on.info": "Obtém uma lista contendo pedaços da string principal, dividida pelo delimitador (literal) fornecido.",
     "operator.integrateddynamics.string.split_on_regex": "Dividir por Regex",
     "operator.integrateddynamics.string.split_on_regex.info": "Obtém uma lista contendo pedaços da string principal, dividida pela expressão regular fornecida.",
-    "operator.integrateddynamics.string.substring": "Substring",
     "operator.integrateddynamics.string.substring.info": "Obtém uma substring da string principal, do índice inicial (inclusivo) ao índice final (exclusivo).",
     "operator.integrateddynamics.string.regex_group": "Grupo Regex",
     "operator.integrateddynamics.string.regex_group.info": "Procura pela expressão regular fornecida e retorna, nessa correspondência, o grupo no índice especificado, na string principal.",
@@ -1100,12 +973,8 @@
     "operator.integrateddynamics.string.name.info": "Obtém a string ou nome de um objeto nomeado ou o converte para uma string",
     "operator.integrateddynamics.string.unique_name": "Nome Único",
     "operator.integrateddynamics.string.unique_name.info": "Obtém o nome único de um objeto",
-
-    "operator.integrateddynamics.double": "Double",
-    "operator.integrateddynamics.double.basename": "Double %s",
     "operator.integrateddynamics.double.sqrt": "Raiz Quadrada",
     "operator.integrateddynamics.double.pow": "Potência",
-
     "operator.integrateddynamics.number": "Número",
     "operator.integrateddynamics.number.basename": "Número %s",
     "operator.integrateddynamics.number.round": "Arredondar",
@@ -1116,7 +985,6 @@
     "operator.integrateddynamics.number.floor.info": "Arredonda para baixo para o Inteiro mais próximo",
     "operator.integrateddynamics.number.compact": "Compactar",
     "operator.integrateddynamics.number.compact.info": "Mostra uma representação mais curta e menos precisa de um Número",
-
     "operator.integrateddynamics.list": "Lista",
     "operator.integrateddynamics.list.basename": "Lista %s",
     "operator.integrateddynamics.list.length": "Comprimento",
@@ -1159,14 +1027,11 @@
     "operator.integrateddynamics.list.equals_set.info": "Verifica se duas listas são iguais de acordo com a semântica de conjunto.",
     "operator.integrateddynamics.list.equals_multiset": "Igualdade de Lista (Multiconjunto)",
     "operator.integrateddynamics.list.equals_multiset.info": "Verifica se duas listas são iguais de acordo com a semântica de multiconjunto.",
-
     "operator.integrateddynamics.block": "Bloco",
     "operator.integrateddynamics.block.basename": "Bloco %s",
     "operator.integrateddynamics.block.opaque": "Opaco",
     "operator.integrateddynamics.block.opaque.info": "Se o bloco fornecido é opaco, não transparente",
-    "operator.integrateddynamics.block.itemstack": "Item",
     "operator.integrateddynamics.block.itemstack.info": "A representação em item do bloco fornecido",
-    "operator.integrateddynamics.block.mod": "Mod",
     "operator.integrateddynamics.block.mod.info": "O nome do mod proprietário do bloco fornecido",
     "operator.integrateddynamics.block.breaksound": "Som de Quebra do Bloco",
     "operator.integrateddynamics.block.breaksound.info": "O som de quebra do bloco fornecido",
@@ -1194,9 +1059,6 @@
     "operator.integrateddynamics.block.tag.info": "Os nomes de Tag (strings) do bloco fornecido",
     "operator.integrateddynamics.string.blocktag": "Valores de Tag de Bloco",
     "operator.integrateddynamics.string.blocktag.info": "Os valores de Tag (blocos) do nome de tag de bloco fornecido",
-
-    "operator.integrateddynamics.itemstack": "Item",
-    "operator.integrateddynamics.itemstack.basename": "Item %s",
     "operator.integrateddynamics.itemstack.size": "Tamanho",
     "operator.integrateddynamics.itemstack.size.info": "O tamanho atual da pilha",
     "operator.integrateddynamics.itemstack.maxsize": "Tamanho Máx.",
@@ -1235,7 +1097,6 @@
     "operator.integrateddynamics.itemstack.isitemequalnonbt.info": "Se os itens brutos das pilhas fornecidas são iguais, ignorando componentes de dados mas incluindo valores de dano.",
     "operator.integrateddynamics.itemstack.israwitemequal": "Item bruto igual",
     "operator.integrateddynamics.itemstack.israwitemequal.info": "Se os itens brutos dos itens fornecidos são iguais, ignorando NBT e valores de dano.",
-    "operator.integrateddynamics.itemstack.mod": "Mod",
     "operator.integrateddynamics.itemstack.mod.info": "O nome do mod proprietário do item fornecido",
     "operator.integrateddynamics.itemstack.burntime": "Tempo de Queima de Combustível",
     "operator.integrateddynamics.itemstack.burntime.info": "O tempo de queima de combustível em ticks do item fornecido",
@@ -1267,7 +1128,6 @@
     "operator.integrateddynamics.itemstack.datavalue.info": "Obtém o valor da chave de componente de dados fornecida.",
     "operator.integrateddynamics.itemstack.withdata": "Com Dados",
     "operator.integrateddynamics.itemstack.withdata.info": "Adiciona a chave e o valor do componente de dados fornecidos à pilha de itens fornecida.",
-
     "operator.integrateddynamics.entity": "Entidade",
     "operator.integrateddynamics.entity.basename": "Entidade %s",
     "operator.integrateddynamics.entity.ismob": "É Mob",
@@ -1280,7 +1140,6 @@
     "operator.integrateddynamics.entity.isplayer.info": "Se a entidade é um jogador",
     "operator.integrateddynamics.entity.isminecart": "É Carrinho de Minas",
     "operator.integrateddynamics.entity.isminecart.info": "Se a entidade é um carrinho de minas",
-    "operator.integrateddynamics.entity.item": "Item",
     "operator.integrateddynamics.entity.item.info": "O item da entidade-item",
     "operator.integrateddynamics.entity.health": "Vida",
     "operator.integrateddynamics.entity.health.info": "A vida da entidade",
@@ -1300,7 +1159,6 @@
     "operator.integrateddynamics.entity.armorinventory.info": "A lista de itens que a entidade está vestindo como armadura.",
     "operator.integrateddynamics.entity.inventory": "Inventário do Jogador",
     "operator.integrateddynamics.entity.inventory.info": "A lista de itens que o jogador está carregando.",
-    "operator.integrateddynamics.entity.mod": "Mod",
     "operator.integrateddynamics.entity.mod.info": "O nome do mod proprietário da entidade fornecida",
     "operator.integrateddynamics.entity.targetblock": "Bloco Alvo",
     "operator.integrateddynamics.entity.targetblock.info": "O bloco que a entidade fornecida está olhando no momento.",
@@ -1346,19 +1204,16 @@
     "operator.integrateddynamics.entity.entityenergystored.info": "A quantidade de energia que está armazenada nesta entidade.",
     "operator.integrateddynamics.entity.entityenergycapacity": "Capacidade de Energia da Entidade",
     "operator.integrateddynamics.entity.entityenergycapacity.info": "A capacidade de energia desta entidade.",
-
     "operator.integrateddynamics.entity.entityitemtooltip": "Dica de Ferramenta da Entidade",
     "operator.integrateddynamics.entity.entityitemtooltip.info": "No contexto da Entidade Jogador fornecida, obtém a dica de ferramenta do item fornecido como uma lista de strings.",
     "operator.integrateddynamics.itemstack.tooltip": "Dica de Ferramenta",
     "operator.integrateddynamics.itemstack.tooltip.info": "Obtém a dica de ferramenta do item fornecido como uma lista de strings.",
-
     "operator.integrateddynamics.itemstack.isfecontainer": "É Contêiner de FE",
     "operator.integrateddynamics.itemstack.isfecontainer.info": "Se o item fornecido pode conter FE",
     "operator.integrateddynamics.itemstack.storedfe": "FE Armazenado",
     "operator.integrateddynamics.itemstack.storedfe.info": "A quantidade de FE armazenada neste item",
     "operator.integrateddynamics.itemstack.fecapacity": "Capacidade de FE",
     "operator.integrateddynamics.itemstack.fecapacity.info": "A quantidade máxima de FE que pode ser armazenada neste item",
-
     "operator.integrateddynamics.fluidstack": "Fluido",
     "operator.integrateddynamics.fluidstack.basename": "Fluido %s",
     "operator.integrateddynamics.fluidstack.amount": "Quantidade",
@@ -1387,7 +1242,6 @@
     "operator.integrateddynamics.fluidstack.bucket.info": "O balde cheio para o fluido",
     "operator.integrateddynamics.fluidstack.israwfluidequal": "Fluido bruto igual",
     "operator.integrateddynamics.fluidstack.israwfluidequal.info": "Se os fluidos brutos são iguais",
-    "operator.integrateddynamics.fluidstack.mod": "Mod",
     "operator.integrateddynamics.fluidstack.mod.info": "O nome do mod proprietário do fluido fornecido",
     "operator.integrateddynamics.fluidstack.nbt": "NBT do Fluido",
     "operator.integrateddynamics.fluidstack.nbt.info": "Obtém os dados do fluido fornecido como NBT.",
@@ -1403,9 +1257,6 @@
     "operator.integrateddynamics.fluidstack.tag.info": "Os nomes de Tag (strings) do fluido fornecido",
     "operator.integrateddynamics.string.fluidtag": "Valores de Tag de Fluido",
     "operator.integrateddynamics.string.fluidtag.info": "Os valores de Tag (fluidos) do nome de tag de fluido fornecido",
-
-    "operator.integrateddynamics.nbt": "NBT",
-    "operator.integrateddynamics.nbt.basename": "NBT %s",
     "operator.integrateddynamics.nbt.compound_size": "Tamanho do Composto NBT",
     "operator.integrateddynamics.nbt.compound_size.info": "O número de entradas dentro da tag NBT composta fornecida",
     "operator.integrateddynamics.nbt.compound_keys": "Chaves do Composto NBT",
@@ -1524,7 +1375,6 @@
     "operator.integrateddynamics.nbt.path_match_all.info": "Aplica a expressão de Caminho NBT fornecida no valor NBT fornecido e retorna todas as correspondências como uma lista",
     "operator.integrateddynamics.nbt.path_test": "Teste de Caminho NBT",
     "operator.integrateddynamics.nbt.path_test.info": "Testa se a expressão de Caminho NBT fornecida corresponde ao valor NBT fornecido",
-
     "operator.integrateddynamics.operator": "Operador",
     "operator.integrateddynamics.operator.basename": "Operador %s",
     "operator.integrateddynamics.operator.apply": "Aplicar",
@@ -1547,9 +1397,7 @@
     "operator.integrateddynamics.operator.disjunction.info": "Pega a disjunção de dois predicados.",
     "operator.integrateddynamics.operator.negation": "Negação",
     "operator.integrateddynamics.operator.negation.info": "Pega a negação de um predicado.",
-    "operator.integrateddynamics.operator.pipe": "Pipe",
     "operator.integrateddynamics.operator.pipe.info": "Cria um novo operador que direciona a saída do primeiro operador para o segundo operador.",
-    "operator.integrateddynamics.operator.pipe2": "Pipe 2",
     "operator.integrateddynamics.operator.pipe2.info": "Cria um novo operador que fornece sua entrada para o primeiro e segundo operadores, e direciona as saídas de ambos para o terceiro operador.",
     "operator.integrateddynamics.operator.flip": "Inverter",
     "operator.integrateddynamics.operator.flip.info": "Inverte os dois primeiros parâmetros de entrada de um operador.",
@@ -1564,7 +1412,6 @@
     "operator.integrateddynamics.virtual.recipeinputsbyoutput": "Entradas da Receita por Saída",
     "operator.integrateddynamics.virtual.recipesbyinput": "Receitas por Entrada",
     "operator.integrateddynamics.virtual.recipesbyoutput": "Receitas por Saída",
-
     "operator.integrateddynamics.ingredients": "Ingredientes",
     "operator.integrateddynamics.ingredients.basename": "Ingredientes %s",
     "operator.integrateddynamics.ingredients.items": "Itens do ingrediente",
@@ -1585,7 +1432,6 @@
     "operator.integrateddynamics.ingredients.with_fluids.info": "Obtém uma cópia dos ingredientes fornecidos com a lista de fluidos fornecida na posição de ingrediente fornecida",
     "operator.integrateddynamics.ingredients.with_energies": "Ingredientes com Elementos de Energia",
     "operator.integrateddynamics.ingredients.with_energies.info": "Obtém uma cópia dos ingredientes fornecidos com a lista de elementos de energia fornecida na posição de ingrediente fornecida",
-
     "operator.integrateddynamics.recipe": "Receita",
     "operator.integrateddynamics.recipe.basename": "Receita %s",
     "operator.integrateddynamics.recipe.input": "Ingredientes de Entrada da Receita",
@@ -1598,7 +1444,6 @@
     "operator.integrateddynamics.recipe.with_output.info": "Obtém uma cópia da receita fornecida com os ingredientes fornecidos como saída",
     "operator.integrateddynamics.recipe.with_input_output": "Receita com Ingredientes de Entrada e Saída",
     "operator.integrateddynamics.recipe.with_input_output.info": "Cria uma receita com os primeiros ingredientes como entrada e os segundos ingredientes como saída",
-
     "operator.integrateddynamics.general": "Geral",
     "operator.integrateddynamics.general.basename": "Geral %s",
     "operator.integrateddynamics.general.choice": "Escolha",
@@ -1611,9 +1456,7 @@
     "operator.integrateddynamics.general.isnull.info": "Se o valor fornecido é nulo",
     "operator.integrateddynamics.general.isnotnull": "Não é Nulo",
     "operator.integrateddynamics.general.isnotnull.info": "Se o valor fornecido não é nulo",
-
     "operator.integrateddynamics.virtual": "Operador Virtual",
-    "operator.integrateddynamics.virtual.basename": "Virtual %s",
     "operator.integrateddynamics.virtual.p_conjunction": "Conjunção de Predicado",
     "operator.integrateddynamics.virtual.p_conjunction.info": "A conjunção de dois predicados",
     "operator.integrateddynamics.virtual.p_disjunction": "Disjunção de Predicado",
@@ -1624,51 +1467,38 @@
     "operator.integrateddynamics.virtual.piped.info": "Uma cadeia de operadores",
     "operator.integrateddynamics.virtual.piped2": "Operador em Cadeia 2 (Piped 2)",
     "operator.integrateddynamics.virtual.piped2.info": "Uma cadeia de operadores 'piped 2'",
-
     "operator.integrateddynamics.cast": "Conversão (Cast)",
     "operator.integrateddynamics.cast.basename": "Conversão",
     "operator.integrateddynamics.cast.tooltip": "Converte %s para %s",
-
     "operator.integrateddynamics.parse": "Analisar (Parse)",
     "operator.integrateddynamics.parse.basename": "Analisar",
     "operator.integrateddynamics.parse.tooltip": "Analisar %s",
-
-    "_comment": "------ Sobre o conteúdo da Dinâmica da Integração ------",
-
     "info_book.integrateddynamics.section.main": "Sobre a Dinâmica da Integração",
     "info_book.integrateddynamics.tag_index": "&oÍndice&r",
-
     "info_book.integrateddynamics.introduction": "Introdução",
     "info_book.integrateddynamics.introduction.text1": "Por muito tempo, as possibilidades de automação foram muito limitadas. O &1Integrated Dynamics&0 visa ser o mod ideal para automatizar seus sistemas lógicos. Ele faz isso fornecendo uma experiência de programação lógica imersiva e expressiva com ganchos e suporte para a maioria dos elementos do &lMinecraft&r e suas modificações.",
     "info_book.integrateddynamics.introduction.text2": "Circuitos de Redstone sempre foram um método muito básico, mas funcional e facilmente compreensível para automação. A basicidade da redstone, no entanto, também é um inconveniente. Para redes de automação com maior complexidade, os circuitos de redstone podem se tornar muito grandes e, consequentemente, difíceis de gerenciar. Além disso, um pequeno vazamento de água pode causar grandes dores de cabeça a qualquer 'redstoner'.",
     "info_book.integrateddynamics.introduction.text3": "O objetivo deste livro é duplo. Primeiro, um &ltutorial&r é fornecido para aprender os conceitos mais importantes por trás deste mod. Em segundo lugar, um &lmanual&r detalhado explica todos os elementos e mecanismos para jogadores que não estão interessados no tutorial.",
     "info_book.integrateddynamics.introduction.text4": "Você pode navegar por este livro clicando nas setas na parte inferior; clicar com shift irá virar seções inteiras em vez de páginas únicas. No início de grandes seções, você verá um índice com hiperlinks para suas subseções para uma navegação mais rápida. Ao encontrar receitas, os itens explicados neste livro são clicáveis como uma referência rápida para a seção em que são explicados. Você também notará um botão no canto superior esquerdo deste livro, que o levará para a seção acima da atual. O botão no canto superior direito voltará para a página visitada anteriormente a cada clique.",
-
     "info_book.integrateddynamics.tutorials": "Tutoriais",
-
     "info_book.integrateddynamics.tutorials.introduction": "Introdução",
     "info_book.integrateddynamics.tutorials.introduction.text1": "Esta parte do livro contém vários tutoriais que o ajudarão a entender o básico do mod. Além disso, permitirá que você ganhe algumas &lrecompensas&r ao completar as conquistas de cada tutorial.",
-
     "info_book.integrateddynamics.tutorials.menrilBasics": "Noções Básicas de Menril",
     "info_book.integrateddynamics.tutorials.menrilBasics.text1": "Para começar com este mod, você precisará encontrar algumas &lMenril Trees&r, que podem ser encontradas mais facilmente em &lMeneglin Biomes&r.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text2": "Depois disso, você precisará criar um &lSqueezer&r e uma &lDrying Basin&r para processar &lMenril Logs&r. Isso pode ser feito colocando um bloco de madeira no &lSqueezer&r e pulando nele até que fique plano. Feito isso, a &lMenril Resin&r tentará ir para os dois lados do &lSqueezer&r. Em seguida, coloque uma &lDrying Basin&r ao lado do &lSqueezer&r para que ela se encha com a &lMenril Resin&r que você acabou de espremer.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text3": "Se você quiser repetir o processo, pode reiniciar o &lSqueezer&r aplicando um pulso de redstone.",
     "info_book.integrateddynamics.tutorials.menrilBasics.text4": "No futuro, você também poderá criar variantes aprimoradas dessas máquinas que são mais fáceis de automatizar, mas são mais caras: o &lMechanical Squeezer&r e a &lMechanical Drying Basin&r.",
-
     "info_book.integrateddynamics.tutorials.networkFoundations": "Fundações de Rede",
     "info_book.integrateddynamics.tutorials.networkFoundations.text1": "O objetivo principal deste mod é construir redes de controle para automação. Isso é feito usando &lCabos Lógicos&r. Tente fazer uma rede com dez desses cabos.",
     "info_book.integrateddynamics.tutorials.networkFoundations.text2": "O próximo passo será criar alguns &lCartões de Variável&r e &lTransformadores de Variável&r. &lCartões de Variável&r são usados para armazenar referências a valores na rede. &lTransformadores de Variável&r são elementos de criação para componentes que podem ser colocados em &lCabos Lógicos&r para ler e escrever esses valores.",
-
     "info_book.integrateddynamics.tutorials.basicNetworkComponents": "Componentes Básicos de Rede",
     "info_book.integrateddynamics.tutorials.basicNetworkComponents.text1": "Um dos métodos para vincular &lCartões de Variável&r a certos valores é lendo valores de &lLeitores&r. Vamos começar criando alguns leitores básicos. Depois disso, crie um &lPainel de Exibição&r, que é útil para exibir os valores dos &lCartões de Variável&r.",
-
     "info_book.integrateddynamics.tutorials.aspects": "Aspectos",
     "info_book.integrateddynamics.tutorials.aspects.text1": "Como um exemplo simples, vamos tentar ler um valor de redstone e exibi-lo.",
     "info_book.integrateddynamics.tutorials.aspects.text2": "Faça isso conectando um &lLeitor de Redstone&r a um &lCabo Lógico&r no mundo. Certifique-se de que o leitor esteja mirando em algo com um valor de redstone, como uma &lTocha de Redstone&r.",
     "info_book.integrateddynamics.tutorials.aspects.text3": "Depois disso, clique com o botão direito no &lLeitor de Redstone&r para abrir a GUI, após o qual você deve inserir um &lCartão de Variável&r no aspecto &6Valor de Redstone&0 &lInteiro&r, para vincular o valor de redstone do alvo a esse &lCartão de Variável&r.",
     "info_book.integrateddynamics.tutorials.aspects.text4": "Em seguida, coloque um &lPainel de Exibição&r na mesma rede que o &lLeitor de Redstone&r e insira seu &lCartão de Variável&r vinculado para exibir seu valor.",
     "info_book.integrateddynamics.tutorials.aspects.text5": "Como próximo passo, crie um &lEscritor de Redstone&r e faça-o escrever um valor de redstone inteiro máximo que foi lido por um Leitor de Redstone.",
-
     "info_book.integrateddynamics.tutorials.logicOperations": "Operações Lógicas",
     "info_book.integrateddynamics.tutorials.logicOperations.text1": "Embora exibir valores que se originam de leitores possa ser útil, as coisas ficam realmente interessantes quando você começa a combinar certos valores com outros usando &2Operadores&0. Todos os &2Operadores&0 podem ser encontrados no &lProgramador Lógico&r.",
     "info_book.integrateddynamics.tutorials.logicOperations.text2": "Comece criando um &lProgramador Lógico&r, que existe tanto na forma de item quanto de bloco. Abra sua GUI para ver a lista de todos os &loperadores&r.",
@@ -1678,7 +1508,6 @@
     "info_book.integrateddynamics.tutorials.logicOperations.text6": "Como o &1Integrated Dynamics&0 avalia as variáveis de maneira &opreguiçosa&r, este &lCartão de Variável&r de &lAdição&r não contém a adição desses &6Inteiros&0 diretamente, mas a adição só será realizada quando o valor for necessário na rede, com base nas referências das variáveis. Para isso, a rede precisa ser capaz de encontrar esses &lCartões de Variável&r referenciados. Para isso, você precisará criar e colocar um &lArmazenador de Variáveis&r. Insira os dois &lCartões de Variável&r &6Inteiro&0 neste armazenador para torná-los disponíveis para a rede.",
     "info_book.integrateddynamics.tutorials.logicOperations.text7": "Finalmente, agora você pode conectar um cabo ao &lArmazenador de Variáveis&r, anexar um &lPainel de Exibição&r e inserir o &lCartão de Variável&r de &lAdição&r para exibir a soma.",
     "info_book.integrateddynamics.tutorials.logicOperations.text8": "O &lProgramador Lógico&r e os &lArmazenadores de Variáveis&r serão seus melhores amigos quando você quiser fazer automação mais complexa.",
-
     "info_book.integrateddynamics.tutorials.recipe_handling": "Manuseio de Receitas",
     "info_book.integrateddynamics.tutorials.recipe_handling.text1": "&oReceitas&r são uma grande parte do &lMinecraft&r. É por isso que este mod oferece suporte de primeira classe a elas por meio de valores de &8Receita&0 e valores de &lIngredientes&r para representar suas coleções de entrada e saída. Neste tutorial, veremos como as receitas podem ser obtidas e usadas.",
     "info_book.integrateddynamics.tutorials.recipe_handling.text2": "A maneira mais fácil de obter &8Receitas&0 é simplesmente lendo-as de uma máquina que pode manusear receitas. Então, vamos começar lendo todas as receitas de criação colocando um &lLeitor de Máquina&r em uma &lBancada de Trabalho&r e lendo a lista de receitas.",
@@ -1686,78 +1515,56 @@
     "info_book.integrateddynamics.tutorials.recipe_handling.text4": "Nesta última parte do tutorial, levaremos a leitura de receitas um passo adiante. Usando o aspecto &lReceita por Saída&r, podemos recuperar um operador que, quando aplicado a uma instância de &8Ingredientes&0, retornará a primeira &8Receita&0 que retorna os &8Ingredientes&0 dados como saída. Usaremos isso para procurar a receita de um &lBaú&r.",
     "info_book.integrateddynamics.tutorials.recipe_handling.text5": "Vamos começar criando uma instância de &8Ingredientes&0 com um único &8Baú&0 em seu &lProgramador Lógico&r. Em seguida, leia o aspecto &lReceita por Saída&r de um &lLeitor de Máquina&r que tem como alvo uma &lBancada de Trabalho&r. Depois disso, use o operador &oAplicar&r para aplicar seu &8Ingrediente&0 de &lBaú&r ao operador que você obteve do &lLeitor de Máquina&r. Finalmente, insira a variável resultante em um &lPainel de Exibição&r para ver a receita do &lBaú&r. (Não se esqueça de inserir todas as suas variáveis usadas em um &lArmazenador de Variáveis&r).",
     "info_book.integrateddynamics.tutorials.recipe_handling.text6": "Obviamente, há muito mais que você pode fazer com &8Receitas&0 e &8Ingredientes&0. Dê uma olhada no &lLeitor de Máquina&r e no &lProgramador Lógico&r para descobrir que outra funcionalidade avançada está disponível para você.",
-
-    "info_book.integrateddynamics.tutorials.nbt": "NBT",
     "info_book.integrateddynamics.tutorials.nbt.text1": "Tags &4NBT&0 são usadas para representar estruturas de dados complexas. Elas são normalmente usadas internamente no Minecraft para armazenar informações de máquinas e entidades. Neste tutorial, abordaremos a leitura e manipulação simples de tags NBT.",
     "info_book.integrateddynamics.tutorials.nbt.text2": "Como primeiro passo, use um &lLeitor de Bloco&r em um atril, leia seus dados &4NBT&0 e visualize-os em um &lPainel de Exibição&r.",
     "info_book.integrateddynamics.tutorials.nbt.text3": "Em seguida, a partir da tag &4NBT&0 do &lAtril&r lida, leia a sub-tag &3Livro&0 como uma tag composta e visualize-a.",
     "info_book.integrateddynamics.tutorials.nbt.text4": "Como passo final, leremos o campo &3id&0 desta sub-tag &3Livro&0. No entanto, em vez de começar pela nossa última sub-tag lida, começaremos pela raiz e aplicaremos uma expressão de &lCaminho NBT&r. Tais expressões são úteis para obter valores &4NBT&0 profundamente aninhados. Por exemplo, aplicar a expressão &4”.root.child1.child2”&0 na tag &3NBT&0 &3{ root: { child1: { child2: ”algum valor” }}}&0 resultará em &3”algum valor”&0. Recursos mais avançados do &lCaminho NBT&r são descritos posteriormente na parte avançada do manual.",
     "info_book.integrateddynamics.tutorials.nbt.text5": "Para completar o avanço final, crie uma expressão de &lCaminho NBT&r que seleciona o campo &3Livro&0/&3id&0, aplique-a em nossa tag de &lAtril&r e visualize-a em um &lPainel de Exibição&r.",
-
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents": "Componentes Avançados de Rede",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text1": "Agora que você está familiarizado com a lógica básica, podemos dar uma olhada nos componentes de rede mais avançados: o &lMaterializador&r e o &lProxy&r.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text2": "Como você deve se lembrar, o &lProgramador Lógico&r permite que você crie variáveis com valores &oestáticos&r, ou você pode criar variáveis mais complexas baseadas na avaliação de valores &odinâmicos&r.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text3": "O &lMaterializador&r pode ser usado para converter um valor &odinâmico&r em um &oestático&r. Isso pode ser feito inserindo o &lCartão de Variável&r &odinâmico&r no slot superior do &lMaterializador&r. Todo &lCartão de Variável&r que for inserido no slot esquerdo será definido com o valor que a variável superior tem naquele momento.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text4": "O &lProxy&r permite que você adicione um nível extra de indireção para suas variáveis. Você pode, por exemplo, ter um programa lógico que requer um valor &oestático&r. Se em algum momento no futuro você quiser alterar esse valor, teria que reescrever seu programa, a menos que esse valor estivesse &oproxied&r (intermediado), caso em que você simplesmente teria que atualizar o valor no &lProxy&r.",
     "info_book.integrateddynamics.tutorials.advancedNetworkComponents.text5": "Para este tutorial, crie &lCartões de Variável&r materializados e 'proxied' (intermediados).",
-
     "info_book.integrateddynamics.tutorials.advancedOperations": "Operações Avançadas",
     "info_book.integrateddynamics.tutorials.advancedOperations.text1": "Como você deve ter notado durante o último tutorial, o &lProgramador Lógico&r permite que você faça muito mais do que apenas somar números. Neste tutorial, veremos as estruturas de dados mais avançadas e o encadeamento de operadores.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text2": "Vamos começar criando uma &7Lista&0 estática dos &6Inteiros&0 &61&0, &610&0 e &6100&0, e visualizá-la em um &lPainel de Exibição&r.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text3": "&7Itens&0 são um dos possíveis tipos de valor neste mod. Vamos fazer um &lCartão de Variável&r de &7Item&0 estático, recuperar dinamicamente o nome do mod daquele item e visualizá-lo em um &lPainel de Exibição&r.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text4": "Lembre-se de que você terá que usar um &lArmazenador de Variáveis&r para armazenar sua variável referenciada.",
     "info_book.integrateddynamics.tutorials.advancedOperations.text5": "Para a parte final deste tutorial, combinaremos variáveis dinâmicas com operadores. Conecte um &lLeitor de Entidade&r a uma rede, leia a &7Entidade&0 alvo, recupere o &7Bloco&0 que a &7Entidade&0 alvo está olhando e visualize esse &7Bloco&0 em um &lPainel de Exibição&r.",
-
     "info_book.integrateddynamics.tutorials.theValueOfOperators": "O Valor dos Operadores",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text1": "Em &1Integrated Dynamics&0, &2Operadores&0 são cidadãos de primeira classe. Até agora, nós os usamos apenas manualmente usando o &lProgramador Lógico&r, mas neste tutorial, veremos como eles podem ser usados de uma maneira mais dinâmica, armazenando &2Operadores&0 em &lCartões de Variável&r e invocando-os dinamicamente.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text2": "Como primeiro passo, vá para o &lProgramador Lógico&r e crie um novo &2Operador&0 estático, começando a digitar &oAdição Aritmética&r &2Operador&0 na lista suspensa de preenchimento automático e clicando nele, e escreva-o em um &lCartão de Variável&r. Depois disso, crie duas variáveis &6Inteiro&0. Em seguida, encontre o operador &oAplicar&r e aplique o primeiro &6Inteiro&0 ao &2Operador&0, o que &ovinculará&r o primeiro argumento de entrada do &2Operador&0 de adição a esse &6Inteiro&0, e resultará em um novo &2Operador&0 com um argumento de entrada restante. Em seguida, use o operador &oAplicar&r novamente para &ovincular&r o argumento de entrada final do &2Operador&0 recém-criado. Finalmente, use um &lPainel de Exibição&r para visualizar sua adição invocada dinamicamente.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text3": "Além de aplicar &2Operadores&0, há muitas outras operações avançadas de &2Operador&0. Agora veremos o uso de &2Operadores&0 em &7Listas&0, mais especificamente o &2Operador&0 &oFiltro&r que recebe uma &7Lista&0 e um &oPredicado&r (um &2Operador&0 com um argumento de entrada e uma saída &9Booleana&0). Comece criando uma &7Lista&0 dos &6Inteiros&0 &61&0, &610&0 e &6100&0. Em seguida, armazene o &2Operador&0 &oIgualdade Relacional&r em uma variável. Depois, aplique este operador no &6Inteiro&0 &610&0. Em seguida, use o &2Operador&0 &oFiltro&r com sua &7Lista&0 e o &2Operador&0 aplicado. Isso filtrará todos os itens da &7Lista&0 que retornam &9Falso&0 ao aplicá-los no operador dado, o que neste caso significa que todos os elementos que não são iguais a &610&0 serão removidos da lista. Visualize o resultado em um &lPainel de Exibição&r.",
     "info_book.integrateddynamics.tutorials.theValueOfOperators.text4": "Existem muitas outras operações em &2Operadores&0, como combinar &oPredicados&r, inverter argumentos de &2Operador&0 e mais operações em &7Listas&0.",
-
     "info_book.integrateddynamics.tutorials.challenges": "Desafios",
     "info_book.integrateddynamics.tutorials.challenges.text1": "Esta seção final de tutoriais contém vários desafios não triviais para mostrar que você entende o básico de &1Integrated Dynamics&0. Nenhuma informação adicional será dada para cada desafio, então boa sorte!",
-
-    "info_book.integrateddynamics.manual": "Manual",
-
     "info_book.integrateddynamics.manual.introduction": "Introdução",
     "info_book.integrateddynamics.manual.introduction.text1": "Esta parte do livro contém descrições detalhadas de todas as partes do mod.",
-
     "info_book.integrateddynamics.manual.prerequisites": "Pré-requisitos",
-
     "info_book.integrateddynamics.manual.prerequisites.menril_trees": "Árvores de Menril",
     "info_book.integrateddynamics.manual.prerequisites.menril_trees.text1": "Você pode ocasionalmente encontrar árvores azuis altas. Tais árvores são chamadas de &lÁrvores de Menril&r e possuem algumas propriedades muito interessantes. Primeiro, as folhas emitem luz. Isso é causado pelas bagas iluminadoras, que também são muito saborosas! Segundo, a madeira de aparência agradável da árvore contém muita resina, que pode ser usada para criar a maioria das coisas neste mod.",
-
     "info_book.integrateddynamics.manual.prerequisites.meneglin_biome": "Bioma Meneglin",
     "info_book.integrateddynamics.manual.prerequisites.meneglin_biome.text1": "&lÁrvores de Menril&r são, infelizmente, muito difíceis de encontrar. Felizmente, existe um bioma, o &lBioma Meneglin&r, no qual essas árvores prosperam. A grande quantidade de &lÁrvores de Menril&r faz com que algumas coisas neste bioma se tornem azuis, o que se deve à &lResina de Menril&r que é liberada por essas árvores no ambiente.",
-
-    "info_book.integrateddynamics.manual.prerequisites.squeezer": "Squeezer",
     "info_book.integrateddynamics.manual.prerequisites.squeezer.text1": "O &lSqueezer&r é uma máquina de início de jogo que permite pular em blocos e itens para quebrá-los ou espremê-los. Não apenas jogadores, mas qualquer tipo de entidade pode pular ou cair sobre ele para realizar o processo de espremer. Os itens resultantes cairão em qualquer inventário adjacente ou no chão. Os fluidos resultantes permanecerão na máquina e fluirão para um dos dois lados quando houver um tanque alvo. A máquina contém uma pequena suspensão que pode ser ativada com um pulso de redstone para reiniciá-la. Mais notavelmente, esta máquina pode ser usada para espremer a resina das &lToras de Menril&r.",
-
     "info_book.integrateddynamics.manual.prerequisites.drying_basin": "Bacia de Secagem",
     "info_book.integrateddynamics.manual.prerequisites.drying_basin.text1": "Secar blocos e itens pode ser feito usando a &lBacia de Secagem&r. Isso pode ser útil, por exemplo, quando você quer deixar sua &lResina de Menril&r secar para se transformar em &lMenril Cristalizado&r.",
     "info_book.integrateddynamics.manual.prerequisites.drying_basin.text2": "O que quer que você faça, não insira fluidos quentes!",
-
     "info_book.integrateddynamics.manual.networks": "Redes",
     "info_book.integrateddynamics.manual.networks.text1": "As &lredes&r do &lIntegrated Dynamics&r são a base de qualquer bom sistema de automação. Uma rede consiste em uma coleção de &lCabos Lógicos&r conectados e peças podem ser colocadas neles. Esses cabos devem ser gerenciados com uma &lChave Inglesa&r. Clicar com shift+botão direito em um cabo ou peça o removerá, enquanto um clique com o botão direito normal o desconectará de outros cabos.",
     "info_book.integrateddynamics.manual.networks.text2": "Mesmo que os &lCabos Lógicos&r possam parecer bonitos, em alguns casos você provavelmente vai querer escondê-los. Você pode fazer isso usando &lFachadas&r, que podem se assemelhar a qualquer material. Além disso, esses cabos também são compatíveis com &lMC MultiPart&r, o que significa que você pode esconder seus cabos em estruturas de fachada mais complexas.",
-
     "info_book.integrateddynamics.manual.logic": "Lógica",
-
     "info_book.integrateddynamics.manual.logic.value_types": "Tipos de Valor",
-
     "info_book.integrateddynamics.manual.logic.value_types.boolean": "Booleano",
     "info_book.integrateddynamics.manual.logic.value_types.boolean.text1": "O tipo de valor mais simples, seus valores podem ser &9Verdadeiro&0 ou &9Falso&0.",
     "info_book.integrateddynamics.manual.logic.value_types.integer": "Inteiro",
     "info_book.integrateddynamics.manual.logic.value_types.integer.text1": "Um tipo de valor para representar números positivos e negativos. Por exemplo, &6-20&0, &60&0, &61000&0, &6333&0, ...",
     "info_book.integrateddynamics.manual.logic.value_types.integer.text2": "Os valores podem variar entre &6–2147483648&0 e &62147483647&0.",
     "info_book.integrateddynamics.manual.logic.value_types.integer.text3": "Este tipo de valor faz parte da categoria &lNúmero&r.",
-    "info_book.integrateddynamics.manual.logic.value_types.double": "Double",
     "info_book.integrateddynamics.manual.logic.value_types.double.text1": "Números reais, que também podem ser positivos ou negativos. Por exemplo, &e3.1415&0, &e4815162342&0, &e3.33333333&0, ...",
     "info_book.integrateddynamics.manual.logic.value_types.double.text2": "Este tipo de valor faz parte da categoria &lNúmero&r.",
-    "info_book.integrateddynamics.manual.logic.value_types.long": "Long",
     "info_book.integrateddynamics.manual.logic.value_types.long.text1": "O mesmo que &6Inteiros&0, mas com um intervalo de valores maior, que vai de &e-9223372036854775808&0 a &e9223372036854775807&0",
     "info_book.integrateddynamics.manual.logic.value_types.long.text2": "Este tipo de valor faz parte da categoria &lNúmero&r.",
-    "info_book.integrateddynamics.manual.logic.value_types.string": "String",
     "info_book.integrateddynamics.manual.logic.value_types.string.text1": "Uma sequência de caracteres, por exemplo &4”aaa”&0, &4“Olá!”&0, &4“x!(àà)ç”&0, ...",
     "info_book.integrateddynamics.manual.logic.value_types.list": "Lista",
     "info_book.integrateddynamics.manual.logic.value_types.list.text1": "Uma lista contendo valores de um certo &lTipo de Valor&r. Todos os elementos em uma determinada lista só podem conter valores dos mesmos tipos de valor. Por exemplo &8(0, 1, 2, 3)&0, &8(“a”, “b”, “c”)&0, &8(3.33, 1.14, 5, 6)&0",
@@ -1765,13 +1572,11 @@
     "info_book.integrateddynamics.manual.logic.value_types.operator.text1": "Um valor contendo uma referência a um &2Operador&0. Os operadores podem ser parcialmente aplicados para avaliações mais flexíveis com base no conceito de &lCurrying&r. Isso faz parte do conceito de &lmetaprogramação&r (pesquise, é uma coisa real!), onde os operadores são tratados como dados por outros operadores. Isso basicamente permite que você crie novos operadores, que podem ser usados para operações mais complexas.",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text2": "Você pode, por exemplo, armazenar o &2Operador&0 de adição em um cartão de variável. Faça isso começando a digitar o nome do operador e selecionando-o na lista suspensa de preenchimento automático e clicando nele. Você pode então aplicá-lo parcialmente com um &lCartão de Variável&r &6Inteiro&0, o que resultará em um novo operador virtual com um tipo de entrada e um tipo de saída, que internamente contém uma referência a esse &6Inteiro&0 aplicado. Aplicar outro &6Inteiro&0 resultará em um &6Inteiro&0.",
     "info_book.integrateddynamics.manual.logic.value_types.operator.text3": "Outras operações de &2Operadores&0 estão presentes no &lProgramador Lógico&r para avaliações mais avançadas, como reduzir uma lista a um único valor ou filtrar uma lista com base em um &lPredicado&r.",
-    "info_book.integrateddynamics.manual.logic.value_types.nbt": "NBT",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text1": "Certas coisas no &lMinecraft&r usam internamente a estrutura de dados &3NBT&0. Uma tag &3NBT&0 é um tipo especial de objeto que pode conter múltiplos valores de diferentes tipos. Por exemplo, a representação NBT de um &8Baú&0 contendo todos os seus itens, as informações de encantamento de uma &8Picareta&0, ...",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text2": "As variáveis podem conter referências a tais tags &3NBT&0, e existem operadores correspondentes para ler ou estender essas tags.",
     "info_book.integrateddynamics.manual.logic.value_types.nbt.text3": "Tags &3NBT&0 são tipicamente usadas neste mod como um mecanismo de fallback de baixo nível, caso você não consiga ler certas informações usando operadores dedicados.",
     "info_book.integrateddynamics.manual.logic.value_types.block": "Bloco",
     "info_book.integrateddynamics.manual.logic.value_types.block.text1": "Uma referência a um bloco do &lMinecraft&r. Por exemplo, &8Terra&0, &8Pedregulho&0, &8Argila Tingida de Vermelho&0, &8Baú&0, ....",
-    "info_book.integrateddynamics.manual.logic.value_types.item": "Item",
     "info_book.integrateddynamics.manual.logic.value_types.item.text1": "Uma referência a um item do &lMinecraft&r. Por exemplo, &8Maçã&0, &8Pedregulho&0, &8Picareta de Diamante&0, &8Espada Encantada&0, ....",
     "info_book.integrateddynamics.manual.logic.value_types.entity": "Entidade",
     "info_book.integrateddynamics.manual.logic.value_types.entity.text1": "Uma referência a uma certa entidade do &lMinecraft&r. Por exemplo, &8Zumbi&0, &8Vaca&0, &8Jogador_abc&0 ....",
@@ -1785,20 +1590,15 @@
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text3": "Essas receitas podem ser usadas para mods de autocrafting como o &lIntegrated Crafting&r.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text4": "Para encontrar rapidamente receitas específicas entre os &lCartões de Variável&r existentes dentro de uma GUI, você pode segurar shift para exibir temporariamente qual é o item de saída da receita.",
     "info_book.integrateddynamics.manual.logic.value_types.recipe.text5": "Clicar com shift em um slot de entrada dentro do &lProgramador Lógico&r permite que você configure propriedades detalhadas deste slot de entrada. Por exemplo, permite indicar se o NBT deve ser considerado ou não, se este item pode ser reutilizado em várias receitas (por exemplo, se não será totalmente consumido após o trabalho de criação) e se alternativas baseadas em tags devem ser consideradas para este item.",
-
     "info_book.integrateddynamics.manual.logic.variables": "Variáveis",
-
     "info_book.integrateddynamics.manual.logic.variables.variable_card": "Cartão de Variável",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text1": "&lCartões de Variável&r são o principal modo de transporte de lógica neste mod. Uma variável contém uma referência a um certo &lValor&r com um certo &lTipo de Valor&r.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text2": "As variáveis podem ser estáticas ou dinâmicas. Variáveis estáticas são definidas uma vez e nunca mudarão depois. Variáveis dinâmicas são o resultado de alguma forma de &lAvaliação Lógica&r, que são feitas por &lOperadores&r ou &lAspectos de Leitor&r. Um exemplo de uma variável dinâmica é o tempo no mundo do &lMinecraft&r, que muda continuamente.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text3": "Variáveis dinâmicas só serão avaliadas quando seu valor for solicitado de alguma forma, como exibir o valor em um &lPainel de Exibição&r, ou ser solicitado como parte da avaliação de outra variável dinâmica.",
     "info_book.integrateddynamics.manual.logic.variables.variable_card.text4": "Cada &lCartão de Variável&r tem um ID único, que é usado internamente em redes para &lAvaliação Lógica&r. Quando um erro ocorre na rede, esses IDs serão mostrados ao jogador para ajudar na depuração. Para melhor usabilidade, uma etiqueta pode ser dada aos &lCartões de Variável&r usando um &lEtiquetador&r, que permitirá aos jogadores ver a etiqueta em vez dos IDs.",
-
     "info_book.integrateddynamics.manual.logic.variables.variable_store": "Armazenador de Variáveis",
     "info_book.integrateddynamics.manual.logic.variables.variable_store.text1": "Algumas variáveis dinâmicas são avaliadas com base em outras variáveis, onde o acesso a essas variáveis referenciadas deve ser possível. Uma variável dinâmica representando a adição de duas outras variáveis deve ser capaz de acessar essas duas outras variáveis quando é avaliada. O acesso a essas outras variáveis deve ser possível dentro da mesma rede onde a variável dinâmica está sendo avaliada, o que pode ser feito colocando os outros cartões de variável em um &lArmazenador de Variáveis&r. Múltiplos &lArmazenadores de Variáveis&r podem estar presentes em uma rede. Essas outras variáveis também podem referenciar certas variáveis, que também devem estar presentes na mesma rede.",
-
     "info_book.integrateddynamics.manual.logic.advanced": "Avançado",
-
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path": "Caminho NBT",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text1": "Ao trabalhar com tags &3NBT&0 complexas, você pode rapidamente precisar de cadeias de operadores complexas para ler valores NBT profundamente aninhados. Para simplificar esta tarefa, expressões de &lCaminho NBT&r baseadas em &4String&0 podem ser usadas para determinar o caminho dentro de uma tag &3NBT&0.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text2": "A expressão de Caminho NBT mais simples é composta por uma cadeia de &lseletores de campo&r, como &4.fieldName&0 ou &4.[”fieldName”]&0.",
@@ -1811,39 +1611,32 @@
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text9": "Por exemplo, aplicar a expressão &4”.a[1:4:2]”&0 na tag &3NBT&0 &3{ a: [0,1,2,3,4,5] }&0 resultará em &3[1,3]&0.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text10": "Expressões de filtro mais avançadas também são possíveis usando a sintaxe de filtro, por exemplo &4[?(@.childName < 10)]&0 (@ se refere à tag atual, .. se refere à tag pai, $ se refere à tag raiz)",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text11": "Por exemplo, aplicar a expressão &4”$.a[?(@ == 3)]”&0 na tag &3NBT&0 &3{ a: [0,1,2,3,4,5] }&0 resultará em &3[3]&0.",
-
     "info_book.integrateddynamics.manual.parts": "Peças",
-
     "info_book.integrateddynamics.manual.parts.introduction": "Introdução",
     "info_book.integrateddynamics.manual.parts.introduction.text1": "Peças podem ser colocadas em cada lado de um &lCabo Lógico&r. Esta seção descreve peças que podem ler &lValores&r e torná-los disponíveis com um &lCartão de Variável&r, e peças que podem realizar ações com base nos &lValores&r dentro dos &lCartões de Variável&r.",
     "info_book.integrateddynamics.manual.parts.introduction.text2": "A maioria das peças tem configurações configuráveis, que podem ser acessadas usando o botão no canto superior esquerdo na GUI de uma peça. Isso permite que você altere os &lTicks/Operação&r da peça, ou seja, a cada quantos ticks esta peça deve realizar suas ações. Em segundo lugar, a &lPrioridade&r da peça pode ser alterada, o que indica a ordem em que esta peça pode agir em relação às outras peças na mesma rede no mesmo tick. Se a peça A tem uma prioridade de -1, e a peça B tem uma prioridade de 1, então a peça B sempre realizará suas ações antes da peça A. Se as prioridades das peças forem as mesmas, então a ordem relativa é aleatória.",
     "info_book.integrateddynamics.manual.parts.introduction.text3": "O &lCanal de Energia&r de uma peça determina de onde ela pode extrair sua energia. -1 é o canal curinga (corresponderá a todos os canais), e 0 é o canal padrão (usado por peças como células de energia que não têm configuração de canal). Finalmente, o &lLado Alvo&r determina com qual lado de seu bloco alvo será interagido. O padrão é o lado oposto ao que ele está realmente colocado.",
     "info_book.integrateddynamics.manual.parts.introduction.text4": "Algumas peças de leitor e escritor só contêm aspectos quando certos outros mods estão presentes. Se nenhum aspecto estiver presente para uma determinada peça, um aviso será adicionado à dica de ferramenta do item sempre que você tentar criá-lo.",
-
     "info_book.integrateddynamics.manual.parts.settings": "Configurações",
     "info_book.integrateddynamics.manual.parts.settings.text1": "A maioria das peças tem uma tela de &lConfigurações&r através da qual as configurações básicas da peça podem ser modificadas.",
     "info_book.integrateddynamics.manual.parts.settings.text2": "O Lado Alvo é o lado com o qual esta peça irá interagir. O padrão é o oposto do lado do cabo em que esta peça foi colocada.",
     "info_book.integrateddynamics.manual.parts.settings.text3": "Os Ticks/Operação permitem que você configure a frequência de tique desta peça. Quanto maior, mais lento ela opera.",
     "info_book.integrateddynamics.manual.parts.settings.text4": "A Prioridade determina a ordem em que esta peça é executada dentro de um único tique de rede.",
     "info_book.integrateddynamics.manual.parts.settings.text5": "O Canal de Energia indica o canal do qual a energia deve ser consumida quando esta peça tica. Isso só é aplicável se o consumo de energia para redes estiver habilitado.",
-
     "info_book.integrateddynamics.manual.parts.offsets": "Deslocamentos",
     "info_book.integrateddynamics.manual.parts.offsets.text1": "Por padrão, as peças terão como alvo a posição vizinha direta. No entanto, quando &lAprimoramentos de Peça&r são aplicados, a posição alvo pode ser alterada através da tela de &lDeslocamento&r da peça.",
     "info_book.integrateddynamics.manual.parts.offsets.text2": "Os deslocamentos são sempre relativos à posição alvo da peça e são limitados pelo número de Aprimoramentos de Peça que foram aplicados.",
     "info_book.integrateddynamics.manual.parts.offsets.text3": "Os deslocamentos podem ser definidos manualmente ou visualmente usando a &lChave Inglesa&r. Ao definir a &lChave Inglesa&r para o modo de deslocamento, uma posição pode ser armazenada com shift + clique direito. Esta posição pode ser salva em peças clicando com o botão direito nelas com essa &lChave Inglesa&r.",
     "info_book.integrateddynamics.manual.parts.offsets.text4": "Os deslocamentos não podem ser definidos apenas estaticamente, mas também podem ser &odinâmicos&r usando &lCartões de Variável&r.",
-
     "info_book.integrateddynamics.manual.parts.reader": "Leitores",
     "info_book.integrateddynamics.manual.parts.reader.introduction": "Introdução",
     "info_book.integrateddynamics.manual.parts.reader.introduction.text1": "O método mais simples para criar uma variável dinâmica é usando &lLeitores&r. Diferentes tipos de leitores existem para ler informações do mundo e armazená-las dentro de um &lCartão de Variável&r. Cada &lLeitor&r contém um ou mais &lAspectos&r para ler coisas diferentes com diferentes &lTipos de Valor&r.",
-
     "info_book.integrateddynamics.manual.parts.reader.audio": "Áudio",
     "info_book.integrateddynamics.manual.parts.reader.audio.text1": "Informações sobre música e áudio que estão tocando no ambiente.",
     "info_book.integrateddynamics.manual.parts.reader.block": "Bloco",
     "info_book.integrateddynamics.manual.parts.reader.block.text1": "Informações sobre o bloco que a peça está de frente.",
     "info_book.integrateddynamics.manual.parts.reader.entity": "Entidade",
     "info_book.integrateddynamics.manual.parts.reader.entity.text1": "Informações sobre a entidade ou entidades que estão dentro do quadrado que a peça está de frente.",
-    "info_book.integrateddynamics.manual.parts.reader.extra_dimensional": "Extra-Dimensional",
     "info_book.integrateddynamics.manual.parts.reader.extra_dimensional.text1": "Informações sobre o servidor, como a lista de jogadores online.",
     "info_book.integrateddynamics.manual.parts.reader.fluid": "Fluido",
     "info_book.integrateddynamics.manual.parts.reader.fluid.text1": "Lê valores do tanque de fluido que esta peça está de frente.",
@@ -1853,11 +1646,9 @@
     "info_book.integrateddynamics.manual.parts.reader.machine.text1": "A máquina que esta peça está de frente pode ser lida, como o trabalho que estão fazendo.",
     "info_book.integrateddynamics.manual.parts.reader.network": "Rede",
     "info_book.integrateddynamics.manual.parts.reader.network.text1": "Lê informações sobre a rede &lIntegrated Dynamics&r que esta peça está de frente. Esta não precisa ser a mesma rede em que esta peça está.",
-    "info_book.integrateddynamics.manual.parts.reader.redstone": "Redstone",
     "info_book.integrateddynamics.manual.parts.reader.redstone.text1": "Lê informações de redstone do bloco à frente.",
     "info_book.integrateddynamics.manual.parts.reader.world": "Mundo",
     "info_book.integrateddynamics.manual.parts.reader.world.text1": "Informações sobre o mundo em que esta peça está, como o clima e a hora atuais.",
-
     "info_book.integrateddynamics.manual.parts.writer": "Escritores",
     "info_book.integrateddynamics.manual.parts.writer.audio": "Áudio",
     "info_book.integrateddynamics.manual.parts.writer.audio.text1": "Toca sons e músicas.",
@@ -1869,9 +1660,7 @@
     "info_book.integrateddynamics.manual.parts.writer.machine.text1": "Configura e controla máquinas.",
     "info_book.integrateddynamics.manual.parts.writer.inventory": "Inventário",
     "info_book.integrateddynamics.manual.parts.writer.inventory.text1": "Realiza ações relacionadas a inventários e tubos. Isso não transferirá os itens em si.",
-    "info_book.integrateddynamics.manual.parts.writer.redstone": "Redstone",
     "info_book.integrateddynamics.manual.parts.writer.redstone.text1": "Emite um certo nível de redstone.",
-
     "info_book.integrateddynamics.manual.parts.other": "Outros",
     "info_book.integrateddynamics.manual.parts.other.light": "Luz",
     "info_book.integrateddynamics.manual.parts.other.light.text1": "Uma luz simples que está sempre ligada ou pode ser controlada usando um &lCartão de Variável&r &1Booleano&0 ou &6Inteiro&0.",
@@ -1886,39 +1675,29 @@
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text2": "Você pode, por exemplo, querer conectar mais de duas redes usando um único conector ou conectar-se a redes em outras dimensões. Para esses casos, você pode usar os conectores &lOmnidirecionais&r.",
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text3": "Esses conectores terão um ID de grupo único quando criados pela primeira vez, que identifica o grupo no qual as redes podem ser conectadas. Cada grupo de conectores tem uma cor única de partículas quando colocado no mundo, o ID do grupo pode ser visto na dica de ferramenta do item ou clicando com o botão direito no conector quando colocado. Conectores adicionais podem ser adicionados a um grupo criando um novo usando um conector existente dentro de um grupo.",
     "info_book.integrateddynamics.manual.parts.other.connector_omni_directional.text4": "Você também pode alterar o grupo de conectores existentes de duas maneiras. Criar um sozinho em uma mesa de trabalho o atribuirá a um novo grupo sem outros membros, e criar dois juntos copiará o grupo do primeiro para o segundo.",
-
     "info_book.integrateddynamics.manual.machines": "Máquinas",
-
     "info_book.integrateddynamics.manual.machines.materializer": "Materializador",
     "info_book.integrateddynamics.manual.machines.materializer.text1": "Para tornar estático um &lCartão de Variável&r dinâmico, um &lMaterializador&r pode ser usado. O &lCartão de Variável&r dinâmico deve ser inserido, e um novo &lCartão de Variável&r vazio deve ser inserido, o que fará com que ele contenha o valor atual do &lCartão de Variável&r dinâmico como um valor estático.",
     "info_book.integrateddynamics.manual.machines.materializer.text2": "Isso pode ser útil em situações em que você deseja registrar os valores de um determinado &lCartão de Variável&r dinâmico, ou quando não precisa mais da avaliação dinâmica de um &lCartão de Variável&r.",
     "info_book.integrateddynamics.manual.machines.materializer.text3": "&lCartões de Variável&r podem ser inseridos e retirados do &lMaterializador&r por meio de canos/automação.",
-
-    "info_book.integrateddynamics.manual.machines.proxy": "Proxy",
     "info_book.integrateddynamics.manual.machines.proxy.text1": "Um &lProxy&r pode ser usado para fazer uma referência dinâmica a um determinado &lCartão de Variável&r. Ele permite que você insira um &lCartão de Variável&r no slot superior e escreva um novo &lCartão de Variável&r, que assumirá dinamicamente o valor do &lCartão de Variável&r que está presente no proxy. Note que o &lCartão de Variável&r referenciado (ou qualquer outro) deve permanecer no slot superior para que o proxy funcione.",
     "info_book.integrateddynamics.manual.machines.proxy.text2": "Isso é útil em situações em que você tem uma cadeia de &lCartões de Variável&r, mas ainda gostaria de poder alterar um valor manualmente. Você poderia então intermediar (proxy) essa variável, o que permitirá que ela seja trocada por outra variável a qualquer momento.",
     "info_book.integrateddynamics.manual.machines.proxy.text3": "Assim como com o &lMaterializador&r, &lCartões de Variável&r podem ser inseridos e retirados dele por meio de canos/automação.",
-
     "info_book.integrateddynamics.manual.machines.delay": "Atrasador",
     "info_book.integrateddynamics.manual.machines.delay.text1": "Em algumas situações, você pode precisar manter algum tipo de histórico de valores de variáveis. Por exemplo, quando você quer calcular a média ou a diferença dos últimos valores.",
     "info_book.integrateddynamics.manual.machines.delay.text2": "Para isso, você pode usar um &lAtrasador&r, com o qual pode manter o histórico dos valores de uma determinada variável. Você pode fazer isso inserindo um &lCartão de Variável&r no slot superior para o qual deseja manter o histórico. Agora você pode criar &lCartões de Variável&r que se referirão a uma lista de valores, que corresponde ao histórico. O &lCartão de Variável&r referenciado (ou qualquer outro) deve permanecer no slot superior para que o atrasador funcione.",
     "info_book.integrateddynamics.manual.machines.delay.text3": "Os valores mais antigos correspondem aos últimos elementos da lista. Você pode escolher o comprimento máximo do histórico de dentro da GUI.",
-
     "info_book.integrateddynamics.manual.machines.energy_battery": "Bateria de Energia",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "Redes do &lIntegrated Dynamics&r podem ser configuradas para consumir energia. Para isso, você pode conectar &lBaterias de Energia&r à rede para adicionar capacidade de armazenamento de energia a ela.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text2": "Essas baterias aceitam energia baseada em &lRF&r e &lTesla&r.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "Aplicar um sinal de redstone ativará o modo de exportação automática de energia para todos os lados.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "Quando esta bateria é mantida em seu inventário, o modo de &lfornecimento automático&r pode ser ativado com shift + clique direito. Quando ativado, esta bateria tentará preencher automaticamente com energia os itens que você está segurando em suas duas mãos.",
-
     "info_book.integrateddynamics.manual.machines.generator": "Gerador",
     "info_book.integrateddynamics.manual.machines.generator.text1": "Quando você precisar de energia &lRF&r ou &lTesla&r, pode usar o &lGerador&r para criar energia a partir de itens &oqueimáveis&r.",
-
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "Squeezer Mecânico",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer.text1": "Chegará um momento em que você se cansará de pular em &lSqueezers&r. Se até lá você não tiver automatizado seus &lSqueezers&r, talvez seja hora de pensar em fazer um &lSqueezer Mecânico&r. Ele não requer nenhum esforço manual, mas precisa de energia para funcionar. Isso também o torna significativamente mais rápido que os &lSqueezers&r regulares e permite que mais coisas sejam espremidas com um rendimento maior.",
-
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin": "Bacia de Secagem Mecânica",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1": "A secagem com a &lBacia de Secagem&r pode demorar um pouco. Se você quer que as coisas vão mais rápido, ou se quer ser capaz de secar mais coisas, pode usar a &lBacia de Secagem Mecânica&r, que requer energia para funcionar.",
-
     "info_book.integrateddynamics.manual.logic_programming": "Programação Lógica",
     "info_book.integrateddynamics.manual.logic_programming.text1": "Outro método para criar cartões de variável dinâmicos é aplicando um &lOperador&r em um ou mais &lCartões de Variável&r para produzir um novo &lCartão de Variável&r. Um exemplo de &lOperador&r é a adição de dois &lNúmeros&r, resultando em um novo &lNúmero&r.",
     "info_book.integrateddynamics.manual.logic_programming.text2": "Um &lOperador&r pode ter um ou mais valores de entrada e tem um valor de saída. Na maioria dos casos, as entradas e a saída têm um certo &lTipo de Valor&r, caso contrário, terão o tipo de valor &lQualquer&r. Um &lOperador&r com uma única entrada e uma saída &lBooleana&r é chamado de &lPredicado&r.",
@@ -1927,7 +1706,6 @@
     "info_book.integrateddynamics.manual.logic_programming.text5": "O &lProgramador Lógico&r permite que você pesquise na lista de &lOperadores&r por nome usando a caixa de texto na parte superior. Ele também permite filtrar por tipos de valor de entrada ou saída, inserindo um &lCartão de Variável&r desses tipos nos slots inferiores esquerdos.",
     "info_book.integrateddynamics.manual.logic_programming.text6": "Se um &lEtiquetador&r estiver presente no inventário do jogador, o &lCartão de Variável&r resultante pode ser etiquetado imediatamente clicando no botão 'E' ao lado do slot de saída.",
     "info_book.integrateddynamics.manual.logic_programming.text7": "O &lProgramador Lógico&r existe tanto na forma de bloco quanto de item. Ambos podem ser trocados colocando-os em uma grade de criação.",
-
     "info_book.integrateddynamics.manual.diagnostics": "Diagnóstico de Rede",
     "info_book.integrateddynamics.manual.diagnostics.text1": "Jogadores com status de operador têm acesso à ferramenta de &lDiagnóstico de Rede&r, que permite inspecionar o tempo de tique em todas as redes no servidor.",
     "info_book.integrateddynamics.manual.diagnostics.text2": "Para habilitar esta ferramenta, o comando &o\\integrateddynamics networkdiagnostics&r pode ser executado, o que iniciará um servidor web local temporário.",
