@@ -68,7 +68,7 @@ def getModrinthKey() {
 }
 def getChangelog() {
     if (System.getenv().RELEASE) {
-        return file("./resources/changelog/${project.minecraft_version}-${project.mod_version}.txt").getText();
+        return file("./CHANGELOG-${project.minecraft_version}.md").getText();
     } else {
         return "Changes since last release: ${project.github_url}/compare/${project.minecraft_version}-${project.mod_version}...${System.getenv().GITHUB_SHA}"
     }
@@ -347,7 +347,7 @@ task publishCurseForge(type: TaskPublishCurseForge) {
     apiToken = secrets.curseforgeKey;
     def mainFile = upload(project.curseforge_project_id, shadowJar)
     mainFile.releaseType = secrets.build_number.equals("RELEASE") ? Constants.RELEASE_TYPE_RELEASE : Constants.RELEASE_TYPE_BETA
-    mainFile.changelogType = "text"
+    mainFile.changelogType = "markdown"
     mainFile.changelog = secrets.changelog
     mainFile.addJavaVersion("Java ${project.java_version}")
     mainFile.addGameVersion(project.minecraft_version)
