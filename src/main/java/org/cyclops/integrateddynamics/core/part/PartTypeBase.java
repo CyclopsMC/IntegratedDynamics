@@ -72,11 +72,15 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getUniqueName() {
-        return new ResourceLocation(getMod().getModId(), this.name);
+        return new ResourceLocation(getModId(), this.name);
     }
 
     protected ModBase getMod() {
         return IntegratedDynamics._instance;
+    }
+
+    protected String getModId() {
+        return getMod().getModId();
     }
 
     /**
@@ -121,12 +125,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getBlockModelPath() {
-        return new ResourceLocation(getMod().getModId(), "part_" + this.name);
+        return new ResourceLocation(getModId(), "part_" + this.name);
     }
 
     @Override
     protected String createTranslationKey() {
-        return "parttype." + getMod().getModId() + "." + this.name;
+        return "parttype." + getModId() + "." + this.name;
     }
 
     @SuppressWarnings("unchecked")
