@@ -1,0 +1,27 @@
+{
+  "type": "integrateddynamics:mechanical_squeezer",
+  "input_item": "minecraft:cactus_flower",
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:pink_dye",
+        "count": 4
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:pink_dye",
+        "count": 1
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:pink_dye",
+        "count": 1
+      },
+      "chance": 0.5
+    }
+  ],
+  "duration": 5
+}

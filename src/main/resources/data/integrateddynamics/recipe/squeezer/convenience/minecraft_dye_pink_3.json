@@ -1,0 +1,12 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": "minecraft:cactus_flower",
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:pink_dye",
+        "count": 4
+      }
+    }
+  ]
+}
