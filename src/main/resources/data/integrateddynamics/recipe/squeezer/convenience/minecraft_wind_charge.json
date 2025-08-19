@@ -1,0 +1,20 @@
+{
+  "type": "integrateddynamics:squeezer",
+  "input_item": {
+    "item": "minecraft:breeze_rod"
+  },
+  "output_items": [
+    {
+      "item": {
+        "id": "minecraft:wind_charge",
+        "count": 5
+      }
+    },
+    {
+      "item": {
+        "id": "minecraft:wind_charge",
+        "chance": 0.5
+      }
+    }
+  ]
+}
