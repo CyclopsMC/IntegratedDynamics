@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.command;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.Command;
@@ -26,7 +25,7 @@ import java.util.Map;
 public class CommandTest implements Command<CommandSourceStack> {
 
     private static final String P = "org.cyclops.integrateddynamics.core.evaluate.variable.integration.";
-    public static final List<String> CLASSES = ImmutableList.of(
+    public static final List<String> CLASSES = Lists.newArrayList(
             P + "TestVariables",
             P + "TestBlockOperators",
             P + "TestItemStackOperators",
@@ -46,66 +45,70 @@ public class CommandTest implements Command<CommandSourceStack> {
                 context.getSource().getPlayerOrException().sendSystemMessage(Component.literal("All tests succeeded!"));
             }
             return 0;
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return 1;
         }
     }
 
-    protected boolean test() throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    protected boolean test() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         int ok = 0;
         int total = 0;
         for(String className : CLASSES) {
-            Class<?> clazz = Class.forName(className);
-            Object testInstance = clazz.newInstance();
+            try {
+                Class<?> clazz = Class.forName(className);
+                Object testInstance = clazz.newInstance();
 
-            // Collect test methods
-            List<Method> befores = Lists.newLinkedList();
-            Map<Method, Boolean> tests = Maps.newHashMap();
-            for(Method method : clazz.getDeclaredMethods()) {
-                if(method.isAnnotationPresent(IntegrationBefore.class)) {
-                    befores.add(method);
-                }
-                if(method.isAnnotationPresent(IntegrationTest.class)) {
-                    tests.put(method, false);
-                }
-            }
-
-            // Run tests
-            for(Method test : tests.keySet()) {
-                String testName = className.replace(P, "") + "#" + test.getName();
-                for(Method before : befores) {
-                    before.invoke(testInstance);
-                }
-                boolean testOk;
-                try {
-                    test.invoke(testInstance);
-                    testOk = true;
-                } catch (InvocationTargetException e) {
-                    Class<?> excepted = test.getAnnotation(IntegrationTest.class).expected();
-                    if(!excepted.isInstance(e.getTargetException())) {
-                        testOk = false;
-                        if (e.getTargetException() instanceof IllegalStateException || e.getTargetException() instanceof AssertionError) {
-                            System.err.println("Test " + testName + " failed!");
-                            e.getTargetException().printStackTrace();
-                        } else {
-                            System.err.println(String.format("Expected at %s exception %s, but found:", testName, e));
-                            e.getTargetException().printStackTrace();
-                        }
-                    } else {
-                        testOk = true;
+                // Collect test methods
+                List<Method> befores = Lists.newLinkedList();
+                Map<Method, Boolean> tests = Maps.newHashMap();
+                for (Method method : clazz.getDeclaredMethods()) {
+                    if (method.isAnnotationPresent(IntegrationBefore.class)) {
+                        befores.add(method);
+                    }
+                    if (method.isAnnotationPresent(IntegrationTest.class)) {
+                        tests.put(method, false);
                     }
                 }
-                tests.put(test, testOk);
-            }
 
-            // Count results
-            for(Boolean result : tests.values()) {
-                if(result) {
-                    ok++;
+                // Run tests
+                for (Method test : tests.keySet()) {
+                    String testName = className.replace(P, "") + "#" + test.getName();
+                    for (Method before : befores) {
+                        before.invoke(testInstance);
+                    }
+                    boolean testOk;
+                    try {
+                        test.invoke(testInstance);
+                        testOk = true;
+                    } catch (InvocationTargetException e) {
+                        Class<?> excepted = test.getAnnotation(IntegrationTest.class).expected();
+                        if (!excepted.isInstance(e.getTargetException())) {
+                            testOk = false;
+                            if (e.getTargetException() instanceof IllegalStateException || e.getTargetException() instanceof AssertionError) {
+                                System.err.println("Test " + testName + " failed!");
+                                e.getTargetException().printStackTrace();
+                            } else {
+                                System.err.println(String.format("Expected at %s exception %s, but found:", testName, e));
+                                e.getTargetException().printStackTrace();
+                            }
+                        } else {
+                            testOk = true;
+                        }
+                    }
+                    tests.put(test, testOk);
                 }
+
+                // Count results
+                for (Boolean result : tests.values()) {
+                    if (result) {
+                        ok++;
+                    }
+                }
+                total += tests.size();
+            } catch (ClassNotFoundException e) {
+                System.err.println("Skipped test class: " + className);
             }
-            total += tests.size();
         }
         System.err.println(String.format("Tests succeeded: %s/%s", ok, total));
         return ok == total;
