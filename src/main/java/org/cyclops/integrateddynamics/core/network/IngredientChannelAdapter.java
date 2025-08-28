@@ -90,14 +90,18 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
     public long getMaxQuantity() {
         long sum = 0;
         Iterator<PartPos> it = getAllPositions();
-        while (it.hasNext()) {
+        while (it.hasNext() && sum < Long.MAX_VALUE) {
             PartPos pos = it.next();
             // Skip if the position is not loaded
             if (!pos.getPos().isLoaded() || network.isPositionDisabled(pos)) {
                 continue;
             }
             this.network.disablePosition(pos);
-            sum = Math.addExact(sum, this.network.getPositionedStorage(pos).getMaxQuantity());
+            try {
+                sum = Math.addExact(sum, this.network.getPositionedStorage(pos).getMaxQuantity());
+            } catch (ArithmeticException e) {
+                sum = Long.MAX_VALUE; // If we had an overflow, we're already at max quantity.
+            }
             this.network.enablePosition(pos);
         }
 
