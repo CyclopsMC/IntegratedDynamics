@@ -253,6 +253,8 @@ public class AspectReadBuilders {
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "fluid");
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IFluidHandler>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "fluid");
+        public static final AspectBuilder<ValueTypeLong.ValueLong, ValueTypeLong, IFluidHandler>
+                BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET, "fluid");
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<IFluidHandler, Integer>>
                 BUILDER_INTEGER_ACTIVATABLE = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
         public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Pair<IFluidHandler, Integer>>

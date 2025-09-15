@@ -733,12 +733,12 @@
 
     "aspect.integrateddynamics.read.integer.fluid.amount": "Fluid Amount",
     "aspect.integrateddynamics.read.integer.fluid.amount.info": "The amount of fluid in mB in the active tank",
-    "aspect.integrateddynamics.read.integer.fluid.totalamount": "Total Fluid Amount",
-    "aspect.integrateddynamics.read.integer.fluid.totalamount.info": "The total amount of fluid in mB",
+    "aspect.integrateddynamics.read.long.fluid.totalamount": "Total Fluid Amount",
+    "aspect.integrateddynamics.read.long.fluid.totalamount.info": "The total amount of fluid in mB",
     "aspect.integrateddynamics.read.integer.fluid.capacity": "Fluid Capacity",
     "aspect.integrateddynamics.read.integer.fluid.capacity.info": "Total capacity of the active tank",
-    "aspect.integrateddynamics.read.integer.fluid.totalcapacity": "Total Fluid Capacity",
-    "aspect.integrateddynamics.read.integer.fluid.totalcapacity.info": "Total capacity of the tank",
+    "aspect.integrateddynamics.read.long.fluid.totalcapacity": "Total Fluid Capacity",
+    "aspect.integrateddynamics.read.long.fluid.totalcapacity.info": "Total capacity of the tanks",
     "aspect.integrateddynamics.read.integer.fluid.tanks": "Tanks",
     "aspect.integrateddynamics.read.integer.fluid.tanks.info": "The amount of tanks found at the target",
 

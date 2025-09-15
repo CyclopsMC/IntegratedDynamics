@@ -321,26 +321,26 @@ public class Aspects {
                     AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(
                             FluidStack::getAmount
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "amount").buildRead();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_AMOUNTTOTAL =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(tankInfo -> {
-                        int amount = 0;
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_AMOUNTTOTAL =
+                    AspectReadBuilders.Fluid.BUILDER_LONG.handle(tankInfo -> {
+                        long amount = 0;
                         for (int i = 0; i < tankInfo.getTanks(); i++) {
                             amount += tankInfo.getFluidInTank(i).getAmount();
                         }
                         return amount;
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "totalamount").buildRead();
+                    }).handle(AspectReadBuilders.PROP_GET_LONG, "totalamount").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CAPACITY =
                     AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(
                         tankInfo -> tankInfo != null ? tankInfo.getLeft().getTankCapacity(tankInfo.getRight()) : 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "capacity").buildRead();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CAPACITYTOTAL =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(tankInfo -> {
-                        int capacity = 0;
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_CAPACITYTOTAL =
+                    AspectReadBuilders.Fluid.BUILDER_LONG.handle(tankInfo -> {
+                        long capacity = 0;
                         for (int i = 0; i < tankInfo.getTanks(); i++) {
                             capacity += tankInfo.getTankCapacity(i);
                         }
                         return capacity;
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "totalcapacity").buildRead();
+                    }).handle(AspectReadBuilders.PROP_GET_LONG, "totalcapacity").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TANKS =
                     AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(
                             IFluidHandler::getTanks
