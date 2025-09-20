@@ -42,6 +42,10 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
         this.container = container;
     }
 
+    public C getContainer() {
+        return container;
+    }
+
     protected void drawSlot(GuiGraphics guiGraphics, int x, int y) {
         guiGraphics.blit(SubGuiBox.TEXTURE, x, y, 19, 0, 18, 18);
     }
