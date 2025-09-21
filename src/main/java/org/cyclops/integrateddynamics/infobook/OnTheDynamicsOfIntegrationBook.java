@@ -15,12 +15,7 @@ import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
-import org.cyclops.integrateddynamics.infobook.pageelement.AspectAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.DryingBasinRecipeAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.MechanicalDryingBasinRecipeAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.MechanicalSqueezerRecipeAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.OperatorAppendix;
-import org.cyclops.integrateddynamics.infobook.pageelement.SqueezerRecipeAppendix;
+import org.cyclops.integrateddynamics.infobook.pageelement.*;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.w3c.dom.Element;
 
@@ -89,6 +84,14 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
             public List<SectionAppendix> create(final IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
                 String categoryName = node.getTextContent();
                 List<IOperator> operators = Lists.newArrayList("*".equals(categoryName) ? Operators.REGISTRY.getOperators() : Operators.REGISTRY.getOperatorsInCategory(categoryName));
+                if (operators.isEmpty()) {
+                    operators = Lists.newArrayList();
+                    for (IOperator operator : Operators.REGISTRY.getOperators()) {
+                        if (operator.getUniqueName().toString().matches(categoryName)) {
+                            operators.add(operator);
+                        }
+                    }
+                }
                 return Lists.transform(operators, new Function<IOperator, SectionAppendix>() {
                     @Nullable
                     @Override
