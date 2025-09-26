@@ -17,7 +17,7 @@ import java.util.List;
 class ValueTypeRecipeLPElementMasterSubGui extends RenderPattern<ValueTypeRecipeLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     protected final ValueTypeRecipeLPElementRecipeSubGui subGuiRecipe;
-    protected final List<ValueTypeRecipeLPElementPropertiesSubGui> propertiesSubGuis;
+    protected final List<ValueTypeRecipeAdapterLPElementPropertiesSubGui> propertiesSubGuis;
     protected final int baseX;
     protected final int baseY;
 

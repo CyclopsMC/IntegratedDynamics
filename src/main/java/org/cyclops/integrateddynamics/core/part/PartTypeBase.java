@@ -37,12 +37,7 @@ import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.item.ItemEnhancement;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * An abstract {@link IPartType} with a default implementation for creating
@@ -72,11 +67,15 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(getMod().getModId(), this.name);
+        return ResourceLocation.fromNamespaceAndPath(getModId(), this.name);
     }
 
     protected ModBase getMod() {
         return IntegratedDynamics._instance;
+    }
+
+    protected String getModId() {
+        return getMod().getModId();
     }
 
     /**
@@ -121,12 +120,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getBlockModelPath() {
-        return ResourceLocation.fromNamespaceAndPath(getMod().getModId(), "part_" + this.name);
+        return ResourceLocation.fromNamespaceAndPath(getModId(), "part_" + this.name);
     }
 
     @Override
     protected String createTranslationKey() {
-        return "parttype." + getMod().getModId() + "." + this.name;
+        return "parttype." + getModId() + "." + this.name;
     }
 
     @SuppressWarnings("unchecked")
