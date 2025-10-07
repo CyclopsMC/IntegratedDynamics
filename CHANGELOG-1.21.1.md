@@ -1,8 +1,25 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.28.0"></a>
+## [1.21.1-1.28.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.27.9...1.21.1-1.28.0) - 2025-10-07 07:47:47
+
+
+### Added
+* Add Squeezer recipes for Wind Charges
+* Add config option to disable cable collisions(#1538)
+
+### Fixed
+* Properly handle long overflows in channel quantities
+
+Internal changes: (required for Integrated Mekanism)
+* Support regexes in operators_output appendix
+* Abstract parts of recipe LP element
+* Make CommandTest more extensible
+* Make API less dependent on ModBase
+
 <a name="1.21.1-1.27.9"></a>
-## [1.21.1-1.27.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.27.8...1.21.1-1.27.9) - 2025-08-08 21:39:51
+## [1.21.1-1.27.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.27.8...1.21.1-1.27.9) - 2025-08-08 21:39:51 +0200
 
 
 ### Fixed
@@ -124,7 +141,7 @@ All notable changes to this project will be documented in this file.
   Closes CyclopsMC/IntegratedTerminals#168
 
 <a name="1.21.1-1.26.0"></a>
-## [1.21.1-1.26.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.9...1.21.1-1.26.0) - 2025-05-03 16:32:19 +0200
+## [1.21.1-1.26.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.12...1.21.1-1.26.0) - 2025-05-03 16:32:19 +0200
 
 
 ### Added
@@ -136,6 +153,40 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 * Fix non-fluid items being insertable into LP, Closes #1507
+
+<a name="1.21.1-1.25.12"></a>
+## [1.21.1-1.25.12](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.11...1.21.1-1.25.12) - 2025-04-20 15:32:52 +0200
+
+
+### Added
+* Add skull-based note support to audio reader and writer
+
+### Fixed
+* Fix wrench not removing cables after using off-hand item, Closes #1504
+* Fix proxies placed by non-players not having an id
+
+<a name="1.21.1-1.25.11"></a>
+## [1.21.1-1.25.11](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.10...1.21.1-1.25.11) - 2025-04-04 17:12:35 +0200
+
+
+### Added
+* Add compostables, Closes #1498
+* Add stripped logs and woods tags, Closes #1500
+
+<a name="1.21.1-1.25.10"></a>
+## [1.21.1-1.25.10](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.9...1.21.1-1.25.10) - 2025-03-22 15:14:29 +0100
+
+
+### Added
+* Add ja_jp translations through Crowdin (#1492)
+
+### Fixed
+* Fix NBT from int list not working for any lists
+  Closes CyclopsMC/IntegratedScripting#37
+* Fix typos in manual
+* Fixed number typo
+* Fixed variable description
+* Fixed typo in reader introduction
 
 <a name="1.21.1-1.25.9"></a>
 ## [1.21.1-1.25.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.8...1.21.1-1.25.9) - 2025-03-12 14:41:33 +0100
@@ -225,45 +276,11 @@ Added:
   Closes CyclopsMC/IntegratedTunnels#321
 
 <a name="1.21.1-1.25.2"></a>
-## [1.21.1-1.25.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.12...1.21.1-1.25.2) - 2025-01-13 16:11:55 +0100
+## [1.21.1-1.25.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.1...1.21.1-1.25.2) - 2025-01-13 16:11:55 +0100
 
 
 ### Fixed
 * Fix conflicting item/fluid data value operator names, Closes #1462
-
-<a name="1.21.1-1.25.12"></a>
-## [1.21.1-1.25.12](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.11...1.21.1-1.25.12) - 2025-04-20 15:32:52 +0200
-
-
-### Added
-* Add skull-based note support to audio reader and writer
-
-### Fixed
-* Fix wrench not removing cables after using off-hand item, Closes #1504
-* Fix proxies placed by non-players not having an id
-
-<a name="1.21.1-1.25.11"></a>
-## [1.21.1-1.25.11](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.10...1.21.1-1.25.11) - 2025-04-04 17:12:35 +0200
-
-
-### Added
-* Add compostables, Closes #1498
-* Add stripped logs and woods tags, Closes #1500
-
-<a name="1.21.1-1.25.10"></a>
-## [1.21.1-1.25.10](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.1...1.21.1-1.25.10) - 2025-03-22 15:14:29 +0100
-
-
-### Added
-* Add ja_jp translations through Crowdin (#1492)
-
-### Fixed
-* Fix NBT from int list not working for any lists
-  Closes CyclopsMC/IntegratedScripting#37
-* Fix typos in manual
-* Fixed number typo
-* Fixed variable description
-* Fixed typo in reader introduction
 
 <a name="1.21.1-1.25.1"></a>
 ## [1.21.1-1.25.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.25.0...1.21.1-1.25.1) - 2025-01-09 16:10:11 +0100
@@ -323,7 +340,7 @@ Added:
 * Fix Jade integration not working, Closes #1438
 
 <a name="1.21.1-1.24.0"></a>
-## [1.21.1-1.24.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.9...1.21.1-1.24.0) - 2024-12-06 16:10:51 +0100
+## [1.21.1-1.24.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.19...1.21.1-1.24.0) - 2024-12-06 16:10:51 +0100
 
 
 ### Added
@@ -341,84 +358,6 @@ Added:
   Related to #1415
 * Fix cable placement with commands initializing networks
   This was broken since CyclopsMC/IntegratedTunnels#243
-
-<a name="1.21.1-1.23.9"></a>
-## [1.21.1-1.23.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.8...1.21.1-1.23.9) - 2024-10-14 15:19:24 +0200
-
-
-### Fixed
-* Fix incorrect type checking in complex reduce operation, Closes #1387
-
-<a name="1.21.1-1.23.8"></a>
-## [1.21.1-1.23.8](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.7...1.21.1-1.23.8) - 2024-10-06 14:03:24 +0200
-
-
-### Fixed
-* Fix crash when connecting cables with redstone with Sodium
-
-<a name="1.21.1-1.23.7"></a>
-## [1.21.1-1.23.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.6...1.21.1-1.23.7) - 2024-10-03 19:11:53 +0200
-
-
-### Changed
-* Improve performance by posting AttachCapabilitiesEventPart to other bus, Closes #1400
-
-### Fixed
-* Fix JEI ghosts items not working for lists in the LP
-  Closes CyclopsMC/IntegratedDynamics#1398
-* Fix wrong sided part being shown in The One Probe, Closes #1401
-* Fix auto-supply on batteries not working, Closes #1399
-* Fix round-robin misbehaving with filtered interfaces, Closes CyclopsMC/IntegratedTunnels#302
-
-<a name="1.21.1-1.23.6"></a>
-## [1.21.1-1.23.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.5...1.21.1-1.23.6) - 2024-09-23 17:26:41 +0200
-
-
-### Fixed
-* Fix errors in conditional squeezer recipes, Closes CyclopsMC/CyclopsCore#191
-* Fix crash when placing creative energy battery, Closes #1397
-
-<a name="1.21.1-1.23.5"></a>
-## [1.21.1-1.23.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.4...1.21.1-1.23.5) - 2024-09-17 20:28:05 +0200
-
-
-### Changed
-* Combine cable voxel shape components in getShape rather than getCollisionShape
-
-### Fixed
-* Fix broken offset enchancement recipe, Closes #1367
-* Fix crash when placing Proxy or Materializer in SMP, Closes #1392
-
-<a name="1.21.1-1.23.4"></a>
-## [1.21.1-1.23.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.3...1.21.1-1.23.4) - 2024-08-24 07:17:19 +0200
-
-
-### Fixed
-* Delay Terrablender registration
-  This fixes rare crashes when Terrablender was not yet fully initialized.
-  CyclopsMC/IntegratedDynamics#1385
-
-<a name="1.21.1-1.23.3"></a>
-## [1.21.1-1.23.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.2...1.21.1-1.23.3) - 2024-08-22 19:01:40 +0200
-
-
-### Fixed
-* Fix Redstone Writers not always updating signals
-  Closes #1377
-  Closes #1382
-* Fix crash when getting facade colors for specific blocks, Closes #1380
-* Fix op_by_name crashing if ResourceLocation is invalid, Closes #1381
-* Fix regex scan producing illegal lists for non-zero groups, Closes #1378
-* Refer to NeoForge's updateJSONURL instead of Forge's
-* Fixed Feature Order Cycle (FOC)
-
-<a name="1.21.1-1.23.2"></a>
-## [1.21.1-1.23.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.19...1.21.1-1.23.2) - 2024-08-09 21:06:15 +0200
-
-
-### Changed
-* Update to updated CommonCapabilities API
-  Required for CyclopsMC/IntegratedDynamics#1375
 
 <a name="1.21.1-1.23.19"></a>
 ## [1.21.1-1.23.19](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.18...1.21.1-1.23.19) - 2024-11-22 10:08:55 +0100
@@ -507,7 +446,7 @@ Closes CyclopsMC/IntegratedScripting#20
   This improves performance with Integrated Tunnels and Terminals.
 
 <a name="1.21.1-1.23.10"></a>
-## [1.21.1-1.23.10] - 2024-10-24 16:50:13 +0200
+## [1.21.1-1.23.10](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.9...1.21.1-1.23.10) - 2024-10-24 16:50:13 +0200
 
 
 ### Fixed
@@ -516,3 +455,81 @@ Closes CyclopsMC/IntegratedScripting#20
   This could occur when using AE2's Spatial IO.
   Closes #1410
 * Fix unable to insert into part offset slots, Closes #1409
+
+<a name="1.21.1-1.23.9"></a>
+## [1.21.1-1.23.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.8...1.21.1-1.23.9) - 2024-10-14 15:19:24 +0200
+
+
+### Fixed
+* Fix incorrect type checking in complex reduce operation, Closes #1387
+
+<a name="1.21.1-1.23.8"></a>
+## [1.21.1-1.23.8](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.7...1.21.1-1.23.8) - 2024-10-06 14:03:24 +0200
+
+
+### Fixed
+* Fix crash when connecting cables with redstone with Sodium
+
+<a name="1.21.1-1.23.7"></a>
+## [1.21.1-1.23.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.6...1.21.1-1.23.7) - 2024-10-03 19:11:53 +0200
+
+
+### Changed
+* Improve performance by posting AttachCapabilitiesEventPart to other bus, Closes #1400
+
+### Fixed
+* Fix JEI ghosts items not working for lists in the LP
+  Closes CyclopsMC/IntegratedDynamics#1398
+* Fix wrong sided part being shown in The One Probe, Closes #1401
+* Fix auto-supply on batteries not working, Closes #1399
+* Fix round-robin misbehaving with filtered interfaces, Closes CyclopsMC/IntegratedTunnels#302
+
+<a name="1.21.1-1.23.6"></a>
+## [1.21.1-1.23.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.5...1.21.1-1.23.6) - 2024-09-23 17:26:41 +0200
+
+
+### Fixed
+* Fix errors in conditional squeezer recipes, Closes CyclopsMC/CyclopsCore#191
+* Fix crash when placing creative energy battery, Closes #1397
+
+<a name="1.21.1-1.23.5"></a>
+## [1.21.1-1.23.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.4...1.21.1-1.23.5) - 2024-09-17 20:28:05 +0200
+
+
+### Changed
+* Combine cable voxel shape components in getShape rather than getCollisionShape
+
+### Fixed
+* Fix broken offset enchancement recipe, Closes #1367
+* Fix crash when placing Proxy or Materializer in SMP, Closes #1392
+
+<a name="1.21.1-1.23.4"></a>
+## [1.21.1-1.23.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.3...1.21.1-1.23.4) - 2024-08-24 07:17:19 +0200
+
+
+### Fixed
+* Delay Terrablender registration
+  This fixes rare crashes when Terrablender was not yet fully initialized.
+  CyclopsMC/IntegratedDynamics#1385
+
+<a name="1.21.1-1.23.3"></a>
+## [1.21.1-1.23.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.23.2...1.21.1-1.23.3) - 2024-08-22 19:01:40 +0200
+
+
+### Fixed
+* Fix Redstone Writers not always updating signals
+  Closes #1377
+  Closes #1382
+* Fix crash when getting facade colors for specific blocks, Closes #1380
+* Fix op_by_name crashing if ResourceLocation is invalid, Closes #1381
+* Fix regex scan producing illegal lists for non-zero groups, Closes #1378
+* Refer to NeoForge's updateJSONURL instead of Forge's
+* Fixed Feature Order Cycle (FOC)
+
+<a name="1.21.1-1.23.2"></a>
+## [1.21.1-1.23.2] - 2024-08-09 21:06:15 +0200
+
+
+### Changed
+* Update to updated CommonCapabilities API
+  Required for CyclopsMC/IntegratedDynamics#1375
