@@ -80,6 +80,14 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
             public List<SectionAppendix> create(final IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
                 String categoryName = node.getTextContent();
                 List<IOperator> operators = Lists.newArrayList("*".equals(categoryName) ? Operators.REGISTRY.getOperators() : Operators.REGISTRY.getOperatorsInCategory(categoryName));
+                if (operators.isEmpty()) {
+                    operators = Lists.newArrayList();
+                    for (IOperator operator : Operators.REGISTRY.getOperators()) {
+                        if (operator.getUniqueName().toString().matches(categoryName)) {
+                            operators.add(operator);
+                        }
+                    }
+                }
                 List<SectionAppendix> appendices = Lists.newArrayList();
                 for (IOperator operator : operators) {
                     appendices.add(new OperatorAppendix(infoBook, operator));

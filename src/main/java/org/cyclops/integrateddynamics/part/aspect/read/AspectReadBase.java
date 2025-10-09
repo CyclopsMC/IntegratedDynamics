@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.part.aspect.read;
 
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -33,9 +32,9 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
     private final String unlocalizedTypeSuffix;
     private final AspectUpdateType updateType;
 
-    public AspectReadBase(ModBaseNeoForge mod, String unlocalizedTypeSuffix,
+    public AspectReadBase(String modId, String unlocalizedTypeSuffix,
                           IAspectProperties defaultProperties, AspectUpdateType updateType) {
-        super(mod, defaultProperties);
+        super(modId, defaultProperties);
         if(unlocalizedTypeSuffix == null) {
             unlocalizedTypeSuffix = "";
         }

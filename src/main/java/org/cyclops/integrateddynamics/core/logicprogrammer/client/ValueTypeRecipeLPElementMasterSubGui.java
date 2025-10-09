@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.cyclops.cyclopscore.inventory.container.ContainerExtended;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGui;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeRecipeAdapterLPElementPropertiesSubGui;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeRecipeLPElement;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class ValueTypeRecipeLPElementMasterSubGui extends RenderPattern<ValueTypeRecipeLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     protected final ValueTypeRecipeLPElementRecipeSubGui subGuiRecipe;
-    protected final List<ValueTypeRecipeLPElementPropertiesSubGui> propertiesSubGuis;
+    protected final List<ValueTypeRecipeAdapterLPElementPropertiesSubGui> propertiesSubGuis;
     protected final int baseX;
     protected final int baseY;
 

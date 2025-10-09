@@ -9,14 +9,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartState;
-import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.PartPos;
-import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
@@ -39,11 +34,11 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     private final IAspectProperties defaultProperties;
 
-    private final ModBaseNeoForge mod;
+    private final String modId;
     private String translationKey = null;
 
-    public AspectBase(ModBaseNeoForge mod, IAspectProperties defaultProperties) {
-        this.mod = mod;
+    public AspectBase(String modId, IAspectProperties defaultProperties) {
+        this.modId = modId;
         this.defaultProperties = defaultProperties == null ? createDefaultProperties() : defaultProperties;
     }
 
@@ -138,12 +133,8 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         return null;
     }
 
-    protected ModBaseNeoForge getMod() {
-        return mod;
-    }
-
     protected String getModId() {
-        return getMod().getModId();
+        return this.modId;
     }
 
 }

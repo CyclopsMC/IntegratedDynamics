@@ -68,11 +68,15 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(getMod().getModId(), this.name);
+        return ResourceLocation.fromNamespaceAndPath(getModId(), this.name);
     }
 
     protected ModBaseNeoForge getMod() {
         return IntegratedDynamics._instance;
+    }
+
+    protected String getModId() {
+        return getMod().getModId();
     }
 
     /**
@@ -120,12 +124,12 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
 
     @Override
     public ResourceLocation getBlockModelPath() {
-        return ResourceLocation.fromNamespaceAndPath(getMod().getModId(), "part_" + this.name);
+        return ResourceLocation.fromNamespaceAndPath(getModId(), "part_" + this.name);
     }
 
     @Override
     protected String createTranslationKey() {
-        return "parttype." + getMod().getModId() + "." + this.name;
+        return "parttype." + getModId() + "." + this.name;
     }
 
     @SuppressWarnings("unchecked")

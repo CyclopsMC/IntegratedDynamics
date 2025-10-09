@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -217,7 +218,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
         }
     }
 
-    protected ItemStack getFluidBucket(FluidStack fluidStack) {
+    public static ItemStack getFluidBucket(FluidStack fluidStack) {
         ItemStack itemStack = new ItemStack(Items.BUCKET);
         IFluidHandlerItem fluidHandler = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
         fluidHandler.fill(new FluidStack(fluidStack.getFluid(), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume()), IFluidHandler.FluidAction.EXECUTE);
@@ -309,16 +310,31 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
 
     @Override
     public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, Player player) {
-        if (slotId >= SLOT_OFFSET && slotId < 9 + SLOT_OFFSET) {
+        return slotClickCommon(slotId, slot, mouseButton, clickType, player, getInputStacks(), 9, (i) -> {
+            if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
+                getClient().setPropertySubGui(i);
+            }
+        }, (i) -> {
+            if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
+                getClient().refreshPropertiesGui(i);
+            }
+        }) || super.slotClick(slotId, slot, mouseButton, clickType, player);
+    }
+
+    public static boolean slotClickCommon(int slotId, Slot slot, int mouseButton, ClickType clickType, Player player,
+                                          List<ItemMatchProperties> inputStacks, int propertySlotCount,
+                                          Consumer<Integer> setPropertySubGui,
+                                          Consumer<Integer> refreshPropertiesGui) {
+        if (slotId >= SLOT_OFFSET && slotId < propertySlotCount + SLOT_OFFSET) {
             if (clickType == ClickType.QUICK_MOVE && mouseButton == 0) {
                 if (player.level().isClientSide()) {
                     int id = slotId - SLOT_OFFSET;
-                    getClient().setPropertySubGui(id);
+                    setPropertySubGui.accept(id);
                 }
                 return true;
             } else {
                 // Similar logic as ContainerExtended.adjustPhantomSlot
-                ItemMatchProperties props = getInputStacks().get(slotId - SLOT_OFFSET);
+                ItemMatchProperties props = inputStacks.get(slotId - SLOT_OFFSET);
                 int quantityCurrent = props.getTagQuantity();
                 int quantityNew;
                 if (clickType == ClickType.QUICK_MOVE) {
@@ -340,13 +356,13 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
                     props.setItemTag(null);
                     props.setTagQuantity(1);
                     if (IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
-                        getClient().refreshPropertiesGui(slotId - SLOT_OFFSET);
+                        refreshPropertiesGui.accept(slotId - SLOT_OFFSET);
                     }
                 }
             }
         }
 
-        return super.slotClick(slotId, slot, mouseButton, clickType, player);
+        return false;
     }
 
     @Override
@@ -360,29 +376,34 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
             @Override
             public ItemStack getItem() {
                 if (IModHelpers.get().getMinecraftHelpers().isClientSideThread() && slotId < 9) {
-                    ItemMatchProperties props = getInputStacks().get(slotId);
-                    String tagName = props.getItemTag();
-                    if (tagName != null) {
-                        try {
-                            Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.get(TagKey.create(Registries.ITEM, ResourceLocation.parse(tagName)));
-                            if (!tag.isEmpty()) {
-                                List<Item> items = tag.stream()
-                                        .flatMap(holders -> holders.stream())
-                                        .map(holder -> holder.value()).toList();
-                                int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;
-                                Item item = items.get(tick % items.size());
-                                return new ItemStack(item, props.getTagQuantity());
-                            }
-                        } catch (ResourceLocationException e) {
-                            // Ignore invalid tags
-                        }
-                    }
+                    return getRotatingItemFromTag(getInputStacks().get(slotId))
+                            .orElseGet(super::getItem);
                 }
                 return super.getItem();
             }
         };
         slot.setPhantom(true);
         return slot;
+    }
+
+    public static Optional<ItemStack> getRotatingItemFromTag(ItemMatchProperties props) {
+        String tagName = props.getItemTag();
+        if (tagName != null) {
+            try {
+                Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.get(TagKey.create(Registries.ITEM, ResourceLocation.parse(tagName)));
+                if (!tag.isEmpty()) {
+                    List<Item> items = tag.stream()
+                            .flatMap(holders -> holders.stream())
+                            .map(holder -> holder.value()).toList();
+                    int tick = ((int) Minecraft.getInstance().level.getGameTime()) / TICK_DELAY;
+                    Item item = items.get(tick % items.size());
+                    return Optional.of(new ItemStack(item, props.getTagQuantity()));
+                }
+            } catch (ResourceLocationException e) {
+                // Ignore invalid tags
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -433,7 +454,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
         return inputs;
     }
 
-    protected Map<IngredientComponent<?, ?>, List<Boolean>> getInputsReusable(List<ItemMatchProperties> itemStacks) {
+    public static Map<IngredientComponent<?, ?>, List<Boolean>> getInputsReusable(List<ItemMatchProperties> itemStacks) {
         Map<IngredientComponent<?, ?>, List<Boolean>> inputs = Maps.newIdentityHashMap();
 
         List<Boolean> items = itemStacks.stream()

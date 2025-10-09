@@ -41,6 +41,7 @@ import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
@@ -327,7 +328,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
 
     @Override
     public VoxelShape getCollisionShape(BlockState blockState, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
-        return disableCollisionBox ? Shapes.empty() : super.getCollisionShape(blockState, world, pos, selectionContext);
+        return (disableCollisionBox || GeneralConfig.disableCableCollision) ? Shapes.empty() : super.getCollisionShape(blockState, world, pos, selectionContext);
     }
 
     @Override
