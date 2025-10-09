@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
  * @param <M> The matching condition parameter.
  * @author rubensworks
  */
+@Deprecated // TODO: remove in next major in favor of org.cyclops.integrateddynamics.api.ingredient.capability.IIngredientComponentValueHandler
 public interface IIngredientComponentHandler<VT extends IValueType<V>, V extends IValue, T, M> {
 
     /**
