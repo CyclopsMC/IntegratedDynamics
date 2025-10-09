@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.gametest.integration;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -10,7 +11,6 @@ import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Rotation;
-import org.apache.commons.compress.utils.Lists;
 import org.cyclops.integrateddynamics.command.CommandTest;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 

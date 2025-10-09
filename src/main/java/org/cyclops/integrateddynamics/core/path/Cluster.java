@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.path;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.experimental.Delegate;
@@ -10,7 +11,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import org.apache.commons.compress.utils.Lists;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
