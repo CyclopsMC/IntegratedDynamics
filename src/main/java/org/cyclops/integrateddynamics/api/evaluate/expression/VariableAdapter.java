@@ -28,4 +28,9 @@ public abstract class VariableAdapter<V extends IValue> implements IVariable<V> 
     public void addInvalidationListener(IVariableInvalidateListener invalidateListener) {
         invalidateListeners.add(invalidateListener);
     }
+
+    @Override
+    public void removeInvalidationListener(IVariableInvalidateListener invalidateListener) {
+        invalidateListeners.remove(invalidateListener);
+    }
 }

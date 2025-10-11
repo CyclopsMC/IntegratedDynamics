@@ -39,6 +39,7 @@ public class PartStateOffsetHandler<P extends IPartType> {
     public boolean offsetVariablesDirty = true;
     public final IntSet offsetVariableSlotDirty = new IntArraySet();
     public final Map<IVariable, Boolean> offsetVariableListeners = new MapMaker().weakKeys().makeMap();
+    protected final Int2ObjectMap<IVariable> slotVariables = new Int2ObjectArrayMap<>();
 
     public void initializeVariableEvaluators(SimpleInventory offsetVariablesInventory) {
         offsetVariableEvaluators.clear();
@@ -110,11 +111,16 @@ public class PartStateOffsetHandler<P extends IPartType> {
         if (this.offsetVariablesSlotMessages.size() > slot) {
             this.offsetVariablesSlotMessages.remove(slot);
         }
+        IVariable lastVariable = slotVariables.get(slot);
+        if (lastVariable != null) {
+            lastVariable.invalidate();
+        }
 
         InventoryVariableEvaluator<ValueTypeInteger.ValueInteger> evaluator = offsetVariableEvaluators.get(slot);
         evaluator.refreshVariable(network, false);
         IVariable<ValueTypeInteger.ValueInteger> variable = evaluator.getVariable(network);
         if (variable != null) {
+            slotVariables.put(slot, variable);
             try {
                 // Refresh the recipe if variable is changed
                 // The map is needed because we only want to register the listener once for each variable
