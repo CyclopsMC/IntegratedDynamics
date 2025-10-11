@@ -1,8 +1,19 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.28.1"></a>
+## [1.20.1-1.28.1](/compare/1.20.1-1.28.0...1.20.1-1.28.1) - 2025-10-11 11:35:27
+
+
+### Changed
+* Improve offset gui error tooltip
+
+### Fixed
+* Fix memory leak when reloading offset variables, Closes #1549
+* Handle overflows in fluid reader total aspects, Closes #1547
+
 <a name="1.20.1-1.28.0"></a>
-## [1.20.1-1.28.0](/compare/1.20.1-1.27.6...1.20.1-1.28.0) - 2025-10-07 07:36:20
+## [1.20.1-1.28.0](/compare/1.20.1-1.27.6...1.20.1-1.28.0) - 2025-10-07 07:36:20 +0200
 
 
 ### Added
