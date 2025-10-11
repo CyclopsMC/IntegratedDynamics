@@ -133,6 +133,9 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
+        font.drawInBatch(Component.translatable("gui.integrateddynamics.part_offsets"), leftPos + (float)this.titleLabelX, topPos + (float)this.titleLabelY, 4210752, false,
+                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+
         font.drawInBatch("X", leftPos + 45 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0), false,
                 guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
         font.drawInBatch("Y", leftPos + 99 + 5, topPos + 19, Helpers.RGBToInt(0, 0, 0), false,
@@ -159,9 +162,6 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        this.font.drawInBatch(Component.translatable("gui.integrateddynamics.part_offsets"), (float)this.titleLabelX, (float)this.titleLabelY, 4210752, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
-
         if (isHovering(0, 0, 90, 18, mouseX, mouseY)) {
             List<Component> lines = Lists.newArrayList(
                     Component.translatable("gui.integrateddynamics.partoffset.offsets"),
@@ -170,7 +170,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
             );
             if (getMenu().getMaxOffset() == 0) {
                 lines.add(Component.translatable("gui.integrateddynamics.partoffset.offsets.max.howtoincrease", getMenu().getMaxOffset())
-                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+                        .withStyle(ChatFormatting.RED));
             }
             drawTooltip(lines, guiGraphics.pose(), mouseX - leftPos, mouseY - topPos);
         }
