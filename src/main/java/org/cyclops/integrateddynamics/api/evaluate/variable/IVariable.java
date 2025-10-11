@@ -34,4 +34,11 @@ public interface IVariable<V extends IValue> extends IVariableInvalidateListener
      */
     public void addInvalidationListener(IVariableInvalidateListener invalidateListener);
 
+    /**
+     * Remove a dependency relation.
+     *
+     * @param invalidateListener A listener for invalidations.
+     */
+    public void removeInvalidationListener(IVariableInvalidateListener invalidateListener);
+
 }

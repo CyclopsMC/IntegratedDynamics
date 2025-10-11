@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.20.0 or higher.
+
+Changes:
+* Improve offset gui error tooltip
+
+Fixes:
+* Fix memory leak when reloading offset variables, Closes #1549
+* Handle overflows in fluid reader total aspects, Closes #1547
