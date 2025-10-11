@@ -303,7 +303,14 @@ public class Aspects {
                     AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(tankInfo -> {
                         int amount = 0;
                         for (int i = 0; i < tankInfo.getTanks(); i++) {
-                            amount += tankInfo.getFluidInTank(i).getAmount();
+                            try {
+                                amount = Math.addExact(amount, tankInfo.getFluidInTank(i).getAmount());
+                            } catch (ArithmeticException e) {
+                                amount = Integer.MAX_VALUE;
+                            }
+                            if (amount == Integer.MAX_VALUE) {
+                                break;
+                            }
                         }
                         return amount;
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "totalamount").buildRead();
@@ -315,7 +322,14 @@ public class Aspects {
                     AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(tankInfo -> {
                         int capacity = 0;
                         for (int i = 0; i < tankInfo.getTanks(); i++) {
-                            capacity += tankInfo.getTankCapacity(i);
+                            try {
+                                capacity = Math.addExact(capacity, tankInfo.getTankCapacity(i));
+                            } catch (ArithmeticException e) {
+                                capacity = Integer.MAX_VALUE;
+                            }
+                            if (capacity == Integer.MAX_VALUE) {
+                                break;
+                            }
                         }
                         return capacity;
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "totalcapacity").buildRead();
