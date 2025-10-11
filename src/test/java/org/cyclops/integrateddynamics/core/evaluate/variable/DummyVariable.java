@@ -46,6 +46,11 @@ public class DummyVariable<V extends IValue> implements IVariable<V> {
 
     }
 
+    @Override
+    public void removeInvalidationListener(IVariableInvalidateListener invalidateListener) {
+
+    }
+
     public void setValue(V value) {
         this.value = value;
     }

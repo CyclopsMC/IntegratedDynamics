@@ -131,9 +131,12 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
 
+        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.part_offsets"), this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
+
         guiGraphics.drawString(font, "X", leftPos + 45 + 5, topPos + 19, ARGB.opaque(0), false);
         guiGraphics.drawString(font, "Y", leftPos + 99 + 5, topPos + 19, ARGB.opaque(0), false);
         guiGraphics.drawString(font, "Z", leftPos + 153 + 5, topPos + 19, ARGB.opaque(0), false);
+
         numberFieldX.render(guiGraphics, mouseX, mouseY, partialTicks);
         numberFieldY.render(guiGraphics, mouseX, mouseY, partialTicks);
         numberFieldZ.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -153,8 +156,6 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.part_offsets"), this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
-
         if (isHovering(0, 0, 90, 18, mouseX, mouseY)) {
             List<Component> lines = Lists.newArrayList(
                     Component.translatable("gui.integrateddynamics.partoffset.offsets"),
@@ -163,7 +164,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
             );
             if (getMenu().getMaxOffset() == 0) {
                 lines.add(Component.translatable("gui.integrateddynamics.partoffset.offsets.max.howtoincrease", getMenu().getMaxOffset())
-                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+                        .withStyle(ChatFormatting.RED));
             }
             drawTooltip(lines, guiGraphics, mouseX, mouseY);
         }

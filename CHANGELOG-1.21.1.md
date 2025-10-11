@@ -1,8 +1,19 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.28.1"></a>
+## [1.21.1-1.28.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.28.0...1.21.1-1.28.1) - 2025-10-11 11:39:17
+
+
+### Changed
+* Improve offset gui error tooltip
+
+### Fixed
+* Fix memory leak when reloading offset variables, Closes #1549
+* Handle overflows in fluid reader total aspects, Closes #1547
+
 <a name="1.21.1-1.28.0"></a>
-## [1.21.1-1.28.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.27.9...1.21.1-1.28.0) - 2025-10-07 07:47:47
+## [1.21.1-1.28.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.27.9...1.21.1-1.28.0) - 2025-10-07 07:47:47 +0200
 
 
 ### Added

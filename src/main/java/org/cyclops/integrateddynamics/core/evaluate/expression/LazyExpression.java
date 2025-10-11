@@ -84,6 +84,9 @@ public class LazyExpression<V extends IValue> extends VariableAdapter<V> impleme
     public void invalidate() {
         valueCache.removeValue(id);
         super.invalidate();
+        for (IVariable inputVariable : input) {
+            inputVariable.removeInvalidationListener(this);
+        }
     }
 
     public IOperator getOperator() {
