@@ -62,6 +62,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
 
     @Override
     public void serialize(ValueOutput valueOutput, ValueItemStack value) {
+        valueOutput = valueOutput.child("v");
         ItemStack itemStack;
         itemStack = value.getRawValue();
         int count = itemStack.getCount();
@@ -69,16 +70,17 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             itemStack = itemStack.copy();
             itemStack.setCount(99);
         }
-        if (count > 127) {
-            valueOutput.child("v").putInt("ExtendedCount", count);
+        if (count > 99) {
+            valueOutput.putInt("ExtendedCount", count);
         }
-        valueOutput.store("v", ItemStack.OPTIONAL_CODEC, itemStack);
+        valueOutput.store("stack", ItemStack.OPTIONAL_CODEC, itemStack);
     }
 
     @Override
     public ValueItemStack deserialize(ValueInput valueInput) {
-        ItemStack itemStack = valueInput.read("v", ItemStack.OPTIONAL_CODEC).orElseThrow();
-        valueInput.child("v").orElseThrow().getInt("ExtendedCount").ifPresent(itemStack::setCount);
+        valueInput = valueInput.child("v").orElseThrow();
+        ItemStack itemStack = valueInput.read("stack", ItemStack.OPTIONAL_CODEC).orElseThrow();
+        valueInput.getInt("ExtendedCount").ifPresent(itemStack::setCount);
         return ValueItemStack.of(itemStack);
     }
 
