@@ -263,7 +263,7 @@ public class NetworkHelpers {
             getNetwork(world, pos, side).ifPresent(network -> {
                 getNetworkElementProvider(world, pos, side).ifPresent(networkElementProvider -> {
                     for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-                        networkElement.onNeighborBlockChange(network, world);
+                        networkElement.onNeighborBlockChange(network, world, side);
                     }
                 });
             });

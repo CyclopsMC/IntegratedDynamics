@@ -253,7 +253,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @org.jetbrains.annotations.Nullable Orientation orientation, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
-        NetworkHelpers.onElementProviderBlockNeighborChange(level, pos, null);
+        NetworkHelpers.onElementProviderBlockNeighborChange(level, pos, orientation != null ? orientation.getFront().getOpposite() : null);
     }
 
     @Override

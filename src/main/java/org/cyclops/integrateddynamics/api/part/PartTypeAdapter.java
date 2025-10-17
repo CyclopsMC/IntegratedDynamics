@@ -282,6 +282,12 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
+    public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
+                                      BlockGetter world, @Nullable Direction side) {
+
+    }
+
+    @Override
     public int getConsumptionRate(S state) {
         return 0;
     }

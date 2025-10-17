@@ -113,7 +113,23 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * @param network The network to update in.
      * @param world   The world in which the neighbour was updated.
      */
+    @Deprecated // TODO: rm in next major
     public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world);
+
+    /**
+     * Called when a neighbouring block is updated, more specifically when
+     * {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, Orientation, boolean)},
+     * {@link Block#onNeighborChange(BlockState, LevelReader, BlockPos, BlockPos)}
+     * or {@link Block#updateShape(BlockState, LevelReader, ScheduledTickAccess, BlockPos, Direction, BlockPos, BlockState, RandomSource)} is called.
+     *
+     * @param network The network to update in.
+     * @param world   The world in which the neighbour was updated.
+     * @param side    The side at the center block.
+     */
+    // TODO: rm default impl in next major
+    public default void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, @Nullable Direction side) {
+
+    }
 
     /**
      * Set the priority and channel of this element in the network.
