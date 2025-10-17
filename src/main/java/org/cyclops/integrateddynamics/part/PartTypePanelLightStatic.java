@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.part;
 
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -11,6 +12,8 @@ import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.block.IgnoredBlock;
 import org.cyclops.integrateddynamics.core.part.PartStateEmpty;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanel;
+
+import javax.annotation.Nullable;
 
 /**
  * A panel part that simply emits light.
@@ -52,8 +55,8 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target,
-                                      PartStateEmpty<PartTypePanelLightStatic> state, BlockGetter world) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world);
+                                      PartStateEmpty<PartTypePanelLightStatic> state, BlockGetter world, @Nullable Direction side) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world, side);
         PartTypePanelLightDynamic.setLightLevel(target, LIGHT_LEVEL);
     }
 

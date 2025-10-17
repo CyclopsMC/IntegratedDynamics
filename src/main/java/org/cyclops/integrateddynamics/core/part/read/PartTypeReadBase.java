@@ -101,8 +101,8 @@ public abstract class PartTypeReadBase<P extends IPartTypeReader<P, S>, S extend
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
-                                      BlockGetter world) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world);
+                                      BlockGetter world, @Nullable Direction side) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world, side);
         for(IAspect aspect : getUpdateAspects(AspectUpdateType.BLOCK_UPDATE)) {
             aspect.update(network, partNetwork, this, target, state);
         }

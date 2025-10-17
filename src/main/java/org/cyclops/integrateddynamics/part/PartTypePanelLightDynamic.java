@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.part;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -24,6 +25,8 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLightLevels;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
+
+import javax.annotation.Nullable;
 
 /**
  * A part that can display variables.
@@ -100,8 +103,8 @@ public class PartTypePanelLightDynamic extends PartTypePanelVariableDriven<PartT
 
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, State state,
-                                      BlockGetter world) {
-        super.onBlockNeighborChange(network, partNetwork, target, state, world);
+                                      BlockGetter world, @Nullable Direction side) {
+        super.onBlockNeighborChange(network, partNetwork, target, state, world, side);
         setLightLevel(target, state.getDisplayValue() == null ? 0 : getLightLevel(state, state.getDisplayValue()));
     }
 
