@@ -1,8 +1,6 @@
 {
   "type": "integrateddynamics:mechanical_squeezer",
-  "input_item": {
-    "item": "minecraft:breeze_rod"
-  },
+  "input_item": "minecraft:breeze_rod",
   "output_items": [
     {
       "item": {
