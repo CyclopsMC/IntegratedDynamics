@@ -817,7 +817,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 2, "size(tag(stone)) = 2");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iWrench});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 1, "size(tag(wrench)) = 1");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 2, "size(tag(wrench)) = 2");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
