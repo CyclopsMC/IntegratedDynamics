@@ -66,11 +66,9 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
             tag.putInt("count", itemStack.getCount());
             int count = itemStack.getCount();
             if (itemStack.getCount() > 99) {
+                tag.putInt("ExtendedCount", count);
                 itemStack = itemStack.copy();
                 itemStack.setCount(99);
-            }
-            if (count > 127) {
-                tag.putInt("ExtendedCount", count);
             }
             return itemStack.save(valueDeseralizationContext.holderLookupProvider(), tag);
         }
