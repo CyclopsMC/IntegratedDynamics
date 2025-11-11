@@ -1,8 +1,25 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.29.0"></a>
+## [1.20.1-1.29.0](/compare/1.20.1-1.28.1...1.20.1-1.29.0) - 2025-11-11 13:56:48
+
+
+### Added
+* Add fluid by name operator, Closes #1522
+
+### Changed
+* Ensure consistent order of ingredient types in LP, Closes #1539
+
+### Fixed
+* Fix transparent facades having incorrect alpha value, Closes #1563
+* Fix lists materialization not applying to elements
+  This could cause issues when displaying lists of items from inventory
+  readers over Functional Storage Drawers.
+  Closes #1557
+
 <a name="1.20.1-1.28.1"></a>
-## [1.20.1-1.28.1](/compare/1.20.1-1.28.0...1.20.1-1.28.1) - 2025-10-11 11:35:27
+## [1.20.1-1.28.1](/compare/1.20.1-1.28.0...1.20.1-1.28.1) - 2025-10-11 11:49:46 +0200
 
 
 ### Changed
