@@ -1,8 +1,28 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.29.0"></a>
+## [1.21.1-1.29.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.28.1...1.21.1-1.29.0) - 2025-11-11 14:11:35
+
+
+### Added
+* Add translations through Crowdin (#1554)
+* Add fluid by name operator, Closes #1522
+
+### Changed
+* Ensure consistent order of ingredient types in LP, Closes #1539
+
+### Fixed
+* Fix Grass Block Facades not having biome tints, Closes #1564
+* Fix transparent facades having incorrect alpha value, Closes #1563
+* Fix incorrect item (de)serialization when count is > 99, Closes #1558
+* Fix lists materialization not applying to elements
+  This could cause issues when displaying lists of items from inventory
+  readers over Functional Storage Drawers.
+  Closes #1557
+
 <a name="1.21.1-1.28.1"></a>
-## [1.21.1-1.28.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.28.0...1.21.1-1.28.1) - 2025-10-11 11:39:17
+## [1.21.1-1.28.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.28.0...1.21.1-1.28.1) - 2025-10-11 11:39:17 +0200
 
 
 ### Changed

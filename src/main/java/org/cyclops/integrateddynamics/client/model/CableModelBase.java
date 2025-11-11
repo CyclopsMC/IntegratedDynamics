@@ -130,9 +130,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         for (BlockModelPart collectPart : facadeModel.collectParts(level, BlockPos.ZERO, blockState, rand)) {
             if (collectPart.getRenderType(blockState) == renderType) {
                 originalQuads.addAll(collectPart.getQuads(null));
-                for (Direction direction : Direction.values()) {
-                    originalQuads.addAll(collectPart.getQuads(direction));
-                }
+                originalQuads.addAll(collectPart.getQuads(side));
             }
         }
 
@@ -280,16 +278,14 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                 }
             }
 
-            if (blockStateHolder.isPresent() && shouldRenderParts(modelData) && this.renderType != null) {
+            if (blockStateHolder.isPresent() && shouldRenderParts(modelData) && this.renderType != null && this.facing != null) {
                 BlockStateModel facadeModel = IModHelpers.get().getRenderHelpers().getBakedModel(blockStateHolder.get());
-                for (Direction side : Direction.values()) {
-                    boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
-                    PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
-                    boolean hasPart = !isItemStack() && hasPart(modelData, side);
-                    if (hasPart) partRenderPosition = getPartRenderPosition(modelData, side);
-                    else if (isConnected) partRenderPosition = CABLE_RENDERPOSITION;
-                    ret.addAll(getFacadeQuads(facadeModel, blockStateHolder.get(), side, partRenderPosition, this.renderType));
-                }
+                boolean isConnected = isItemStack() ? this.facing == Direction.EAST || this.facing == Direction.WEST : isConnected(modelData, this.facing);
+                PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
+                boolean hasPart = !isItemStack() && hasPart(modelData, this.facing);
+                if (hasPart) partRenderPosition = getPartRenderPosition(modelData, this.facing);
+                else if (isConnected) partRenderPosition = CABLE_RENDERPOSITION;
+                ret.addAll(getFacadeQuads(facadeModel, blockStateHolder.get(), this.facing, partRenderPosition, this.renderType));
             }
 
             // Close the cable connections for items

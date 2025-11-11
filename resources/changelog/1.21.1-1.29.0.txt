@@ -1,0 +1,18 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.26.0 or higher.
+
+Additions:
+* Add translations through Crowdin (#1554)
+* Add fluid by name operator, Closes #1522
+
+Changes:
+* Ensure consistent order of ingredient types in LP, Closes #1539
+
+Fixes:
+* Fix Grass Block Facades not having biome tints, Closes #1564
+* Fix transparent facades having incorrect alpha value, Closes #1563
+* Fix incorrect item (de)serialization when count is > 99, Closes #1558
+* Fix lists materialization not applying to elements
+  This could cause issues when displaying lists of items from inventory
+  readers over Functional Storage Drawers.
+  Closes #1557

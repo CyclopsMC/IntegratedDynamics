@@ -20,7 +20,6 @@ import net.neoforged.neoforge.client.event.RegisterItemModelsEvent;
 import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.client.model.IDynamicModelElementCommon;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockClientConfig;
@@ -85,8 +84,8 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
         @Override
         public int getColor(BlockState blockState, @Nullable BlockAndTintGetter world, @Nullable BlockPos blockPos, int color) {
             // Only modify color if we have a facade
-            return blockPos == null || (!(world instanceof ILevelExtension levelExtension)) ?
-                    -1 : CableHelpers.getFacade(levelExtension, blockPos, blockState)
+            return blockPos == null ?
+                    -1 : CableHelpers.getFacadeMultipartTicking(world, blockPos)
                     .map(facadeState -> Minecraft.getInstance().getBlockColors().getColor(facadeState, world, blockPos, color))
                     .orElse(-1);
         }

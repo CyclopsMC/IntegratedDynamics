@@ -41,6 +41,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -60,6 +61,7 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIng
 import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinition;
 import org.cyclops.commoncapabilities.api.ingredient.*;
 import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
 import org.cyclops.cyclopscore.nbt.path.NbtParseException;
 import org.cyclops.cyclopscore.nbt.path.NbtPath;
@@ -2908,6 +2910,22 @@ public final class Operators {
                 }
                 return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_FLUIDSTACK, builder.build());
             }).build());
+
+    /**
+     * Get an fluid by name.
+     */
+    public static final IOperator OBJECT_FLUIDSTACK_BY_NAME = REGISTRY.register(OperatorBuilders.FLUIDSTACK_1_PREFIX_LONG
+            .inputType(ValueTypes.STRING).output(ValueTypes.OBJECT_FLUIDSTACK)
+            .symbol("fluid_by_name").operatorName("fluidbyname").interactName("fluidByName")
+            .function(OperatorBuilders.FUNCTION_STRING_TO_RESOURCE_LOCATION
+                    .build(input -> {
+                        Fluid fluid = BuiltInRegistries.FLUID.getValue(input);
+                        FluidStack fluidStack = FluidStack.EMPTY;
+                        if (fluid != null) {
+                            fluidStack = new FluidStack(fluid, IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume());
+                        }
+                        return ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack);
+                    })).build());
 
     /**
      * ----------------------------------- OPERATOR OPERATORS -----------------------------------

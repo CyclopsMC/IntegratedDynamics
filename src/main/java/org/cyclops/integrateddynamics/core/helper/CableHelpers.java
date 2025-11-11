@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,6 +31,8 @@ import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.capability.facadeable.FacadeableTileMultipartTicking;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
@@ -482,6 +485,18 @@ public class CableHelpers {
     public static Optional<BlockState> getFacade(ILevelExtension world, BlockPos pos, BlockState blockState) {
         return Optional.ofNullable(world.getCapability(Capabilities.Facadeable.BLOCK, pos, blockState, null, null))
                 .flatMap(facadeable -> Optional.ofNullable(facadeable.getFacade()));
+    }
+
+    /**
+     * Get the target's facade from {@link BlockEntityMultipartTicking} without going through capabilities.
+     * This is necessary because some BlockColor's rely on BlockGetter, which do not support capabilities.
+     * @param world The world.
+     * @param pos The position.
+     * @return The optional facade.
+     */
+    public static Optional<BlockState> getFacadeMultipartTicking(BlockGetter world, BlockPos pos) {
+        return IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityMultipartTicking.class)
+                .flatMap(blockEntity -> Optional.ofNullable(new FacadeableTileMultipartTicking(blockEntity).getFacade()));
     }
 
     public static boolean isLightTransparent(Level world, BlockPos pos, @Nullable Direction side, BlockState blockState) {
