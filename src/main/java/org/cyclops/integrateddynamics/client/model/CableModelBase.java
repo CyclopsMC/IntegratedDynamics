@@ -286,15 +286,14 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                     && this.renderType != null) {
                 BakedModel facadeModel = RenderHelpers.getBakedModel(blockStateHolder.get());
                 if (facadeModel.getRenderTypes(blockStateHolder.get(), rand, ModelData.EMPTY)
-                        .contains(this.renderType)) {
-                    for (Direction side : Direction.values()) {
-                        boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
-                        PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
-                        boolean hasPart = !isItemStack() && hasPart(modelData, side);
-                        if (hasPart) partRenderPosition = getPartRenderPosition(modelData, side);
-                        else if (isConnected) partRenderPosition = CABLE_RENDERPOSITION;
-                        ret.addAll(getFacadeQuads(facadeModel, blockStateHolder.get(), side, partRenderPosition));
-                    }
+                        .contains(this.renderType)
+                        && this.facing != null) {
+                    boolean isConnected = isItemStack() ? this.facing == Direction.EAST || this.facing == Direction.WEST : isConnected(modelData, this.facing);
+                    PartRenderPosition partRenderPosition = PartRenderPosition.NONE;
+                    boolean hasPart = !isItemStack() && hasPart(modelData, this.facing);
+                    if (hasPart) partRenderPosition = getPartRenderPosition(modelData, this.facing);
+                    else if (isConnected) partRenderPosition = CABLE_RENDERPOSITION;
+                    ret.addAll(getFacadeQuads(facadeModel, blockStateHolder.get(), this.facing, partRenderPosition));
                 }
             }
 

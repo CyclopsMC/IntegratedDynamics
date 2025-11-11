@@ -680,4 +680,31 @@ public class TestFluidStackOperators {
         Operators.OBJECT_FLUIDSTACK_TAG_STACKS.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
+    /**
+     * ----------------------------------- FLUIDBYNAME -----------------------------------
+     */
+
+    @IntegrationTest
+    public void testFluidFluidByName() throws EvaluationException {
+        IValue res1 = Operators.OBJECT_FLUIDSTACK_BY_NAME.evaluate(new IVariable[]{sWater});
+        Asserts.check(res1 instanceof ValueObjectTypeFluidStack.ValueFluidStack, "result is a fluid");
+        TestHelpers.assertEqual(((ValueObjectTypeFluidStack.ValueFluidStack) res1).getRawValue().getFluid(),
+                new FluidStack(Fluids.WATER, 1000).getFluid(), "fluidbyname(minecraft:water) = water");
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeFluidByNameLarge() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_BY_NAME.evaluate(new IVariable[]{sWater, sWater});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputSizeFluidByNameSmall() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_BY_NAME.evaluate(new IVariable[]{});
+    }
+
+    @IntegrationTest(expected = EvaluationException.class)
+    public void testInvalidInputTypeFluidByName() throws EvaluationException {
+        Operators.OBJECT_FLUIDSTACK_BY_NAME.evaluate(new IVariable[]{DUMMY_VARIABLE});
+    }
+
 }
