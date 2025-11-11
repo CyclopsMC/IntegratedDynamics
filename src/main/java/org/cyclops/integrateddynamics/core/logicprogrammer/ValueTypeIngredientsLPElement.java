@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -39,6 +40,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerSetElementInventory;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeIngredientsValueChangedPacket;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -347,7 +349,7 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
     @OnlyIn(Dist.CLIENT)
     protected static class SelectionSubGui extends RenderPattern<ValueTypeIngredientsLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> implements IInputListener {
 
-        private WidgetArrowedListField<IngredientComponent> valueTypeSelector = null;
+        private WidgetArrowedListField<IngredientComponent<?, ?>> valueTypeSelector = null;
         private Button arrowAdd;
 
         public SelectionSubGui(ValueTypeIngredientsLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
@@ -360,14 +362,22 @@ public class ValueTypeIngredientsLPElement extends ValueTypeLPElementBase {
             return super.getHeight() / 4;
         }
 
-        protected static List<IngredientComponent> getValueTypes() {
-            return Lists.newArrayList(IngredientComponentHandlers.REGISTRY.getComponents());
+        protected static List<IngredientComponent<?, ?>> getValueTypes() {
+            // By coincidence, sorting by name (in reverse) is sufficient to achieve the order we want,
+            // for the following known ingredient components:
+            // - minecraft:itemstack
+            // - minecraft:fluidstack
+            // - minecraft:energy
+            // - mekanism:chemicalstack
+            return IngredientComponentHandlers.REGISTRY.getComponents().stream()
+                    .sorted(Comparator.<IngredientComponent<?, ?>, ResourceLocation>comparing(IngredientComponent::getName).reversed())
+                    .toList();
         }
 
         @Override
         public void init(int guiLeft, int guiTop) {
             super.init(guiLeft, guiTop);
-            valueTypeSelector = new WidgetArrowedListField<IngredientComponent>(Minecraft.getInstance().font,
+            valueTypeSelector = new WidgetArrowedListField<>(Minecraft.getInstance().font,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 2, 100, 15, true, Component.translatable("valuetype.integrateddynamics.value_type"), true, getValueTypes()) {
                 @Override
                 protected String activeElementToString(IngredientComponent element) {

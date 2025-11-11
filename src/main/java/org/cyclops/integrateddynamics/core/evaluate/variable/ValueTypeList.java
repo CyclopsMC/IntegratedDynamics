@@ -88,7 +88,10 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         if (list.isInfinite()) {
             return ValueList.ofList(list.getValueType(), Lists.newArrayList(list.get(0)));
         }
-        List<IValue> values = ImmutableList.copyOf(list);
+        List<IValue> values = Lists.newArrayListWithExpectedSize(list.getLength());
+        for (IValue listValue : list) {
+            values.add(listValue.getType().materialize(listValue));
+        }
         return ValueList.ofList(list.getValueType(), values);
     }
 
