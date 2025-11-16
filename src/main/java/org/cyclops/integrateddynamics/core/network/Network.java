@@ -568,6 +568,9 @@ public class Network implements INetwork {
 
     @Override
     public boolean isValid(INetworkElement element) {
+        if (!element.isLoaded()) {
+            return false;
+        }
         if (invalidatedElements.contains(element)) {
             if (element.canRevalidate(this)) {
                 element.revalidate(this);

@@ -115,7 +115,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public boolean isLoaded() {
-        return this.center.getPos().isLoaded();
+        return INetworkElement.shouldTick(this.center.getPos());
     }
 
     public boolean hasPartState() {

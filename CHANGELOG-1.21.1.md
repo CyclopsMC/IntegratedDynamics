@@ -1,8 +1,18 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.29.1"></a>
+## [1.21.1-1.29.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.0...1.21.1-1.29.1) - 2025-11-16 14:33:41
+
+
+### Added
+* Add translations through Crowdin (#1566)
+
+### Fixed
+* Fix ticking network elements preventing chunk unloading, Closes #1567
+
 <a name="1.21.1-1.29.0"></a>
-## [1.21.1-1.29.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.28.1...1.21.1-1.29.0) - 2025-11-11 14:11:35
+## [1.21.1-1.29.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.28.1...1.21.1-1.29.0) - 2025-11-11 14:11:35 +0100
 
 
 ### Added
