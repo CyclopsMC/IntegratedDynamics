@@ -57,4 +57,9 @@ public class CoalGeneratorNetworkElement extends NetworkElementBase implements I
     public DimPos getPosition() {
         return this.pos;
     }
+
+    @Override
+    public boolean isLoaded() {
+        return INetworkElement.shouldTick(this.getPos());
+    }
 }
