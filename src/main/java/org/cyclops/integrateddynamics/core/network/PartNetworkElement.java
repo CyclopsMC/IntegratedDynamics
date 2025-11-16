@@ -9,17 +9,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
-import org.cyclops.integrateddynamics.api.part.IPartContainer;
-import org.cyclops.integrateddynamics.api.part.IPartState;
-import org.cyclops.integrateddynamics.api.part.IPartType;
-import org.cyclops.integrateddynamics.api.part.PartPos;
-import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.network.*;
+import org.cyclops.integrateddynamics.api.part.*;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -121,7 +112,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public boolean isLoaded() {
-        return this.center.getPos().isLoaded();
+        return INetworkElement.shouldTick(this.center.getPos());
     }
 
     public boolean hasPartState() {

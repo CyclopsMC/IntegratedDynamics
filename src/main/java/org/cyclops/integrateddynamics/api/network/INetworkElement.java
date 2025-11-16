@@ -9,6 +9,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -141,5 +142,22 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * @param network The network.
      */
     public void revalidate(INetwork network);
+
+    /**
+     * @return If this element's position is currently loaded in the world.
+     */
+    public default boolean isLoaded() { // TODO: in next major, remove default implementation
+        return true;
+    }
+
+    /**
+     * If a network element on the given position should tick.
+     * This can be used as implementation for {@link INetworkElement#isLoaded()}.
+     * @param pos A position.
+     * @return If it should tick.
+     */
+    public static boolean shouldTick(DimPos pos) {
+        return pos.isLoaded() && pos.getLevel(true).shouldTickBlocksAt(pos.getBlockPos());
+    }
 
 }
