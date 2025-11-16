@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.28.1"></a>
+## [1.19.2-1.28.1](/compare/1.19.2-1.28.0...1.19.2-1.28.1) - 2025-11-16 14:29:27
+
+
+### Fixed
+* Fix ticking network elements preventing chunk unloading, Closes #1567
+
 <a name="1.19.2-1.28.0"></a>
-## [1.19.2-1.28.0](/compare/1.19.2-1.27.6...1.19.2-1.28.0) - 2025-11-11 13:55:36
+## [1.19.2-1.28.0](/compare/1.19.2-1.27.6...1.19.2-1.28.0) - 2025-11-11 13:55:36 +0100
 
 
 ### Added
