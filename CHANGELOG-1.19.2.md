@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.28.2"></a>
+## [1.19.2-1.28.2](/compare/1.19.2-1.28.1...1.19.2-1.28.2) - 2025-11-18 05:31:19
+
+
+### Fixed
+* Fix read fluids not always updating in display panel, Closes #1570
+
 <a name="1.19.2-1.28.1"></a>
-## [1.19.2-1.28.1](/compare/1.19.2-1.28.0...1.19.2-1.28.1) - 2025-11-16 14:29:27
+## [1.19.2-1.28.1](/compare/1.19.2-1.28.0...1.19.2-1.28.1) - 2025-11-16 14:29:27 +0100
 
 
 ### Fixed

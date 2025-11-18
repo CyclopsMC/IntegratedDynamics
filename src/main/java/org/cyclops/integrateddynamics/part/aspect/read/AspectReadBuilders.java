@@ -240,7 +240,7 @@ public class AspectReadBuilders {
             return null;
         };
         public static final IAspectValuePropagator<Pair<IFluidHandler, Integer>, FluidStack>
-                PROP_GET_FLUIDSTACK = tankInfo -> tankInfo != null ? tankInfo.getLeft().getFluidInTank(tankInfo.getRight()) : FluidStack.EMPTY;
+                PROP_GET_FLUIDSTACK = tankInfo -> tankInfo != null ? tankInfo.getLeft().getFluidInTank(tankInfo.getRight()).copy() : FluidStack.EMPTY;
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>
                 PROP_GET_LIST_FLUIDSTACKS = input -> ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankFluidStacks(
