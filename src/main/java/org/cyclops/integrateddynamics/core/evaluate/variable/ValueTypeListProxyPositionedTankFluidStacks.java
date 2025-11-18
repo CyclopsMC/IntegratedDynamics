@@ -36,7 +36,7 @@ public class ValueTypeListProxyPositionedTankFluidStacks extends ValueTypeListPr
     @Override
     public ValueObjectTypeFluidStack.ValueFluidStack get(int index) {
         return ValueObjectTypeFluidStack.ValueFluidStack.of(getTank()
-                .map(fluidHandler -> fluidHandler.getFluidInTank(index))
+                .map(fluidHandler -> fluidHandler.getFluidInTank(index).copy())
                 .orElse(FluidStack.EMPTY));
     }
 }
