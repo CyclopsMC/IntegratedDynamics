@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.29.2"></a>
+## [1.20.1-1.29.2](/compare/1.20.1-1.29.1...1.20.1-1.29.2) - 2025-11-18 05:32:15
+
+
+### Fixed
+* Fix read fluids not always updating in display panel, Closes #1570
+
 <a name="1.20.1-1.29.1"></a>
-## [1.20.1-1.29.1](/compare/1.20.1-1.29.0...1.20.1-1.29.1) - 2025-11-16 14:30:49
+## [1.20.1-1.29.1](/compare/1.20.1-1.29.0...1.20.1-1.29.1) - 2025-11-16 14:30:49 +0100
 
 
 ### Fixed
