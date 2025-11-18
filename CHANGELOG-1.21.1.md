@@ -1,8 +1,18 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.29.2"></a>
+## [1.21.1-1.29.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.1...1.21.1-1.29.2) - 2025-11-18 05:33:01
+
+
+### Added
+* Add translations through Crowdin (#1568)
+
+### Fixed
+* Fix read fluids not always updating in display panel, Closes #1570
+
 <a name="1.21.1-1.29.1"></a>
-## [1.21.1-1.29.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.0...1.21.1-1.29.1) - 2025-11-16 14:33:41
+## [1.21.1-1.29.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.0...1.21.1-1.29.1) - 2025-11-16 14:33:41 +0100
 
 
 ### Added
