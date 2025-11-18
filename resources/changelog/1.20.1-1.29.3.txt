@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.20.0 or higher.
+
+Fixes:
+* Temporarily disable chunk unload check
+  It is causing issues with delayers when worlds/chunks are reloaded.
+  Once a proper fix is available, this will be re-enabled.
+  Related to #1571
