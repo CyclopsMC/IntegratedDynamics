@@ -52,4 +52,9 @@ public interface IIngredientPositionsIndex<T, M> extends IIngredientCollection<T
      */
     public long getQuantity(T instance);
 
+    /**
+     * @return Iterates over all instances in an uncollapsed manner.
+     */
+    public Iterator<T> iteratorUncollapsed();
+
 }

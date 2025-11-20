@@ -81,4 +81,9 @@ public class IngredientPositionsIndexEmpty<T, M> implements IIngredientPositions
     public Iterator<T> iterator() {
         return Iterators.forArray();
     }
+
+    @Override
+    public Iterator<T> iteratorUncollapsed() {
+        return Iterators.forArray();
+    }
 }

@@ -114,6 +114,14 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
     public IIngredientComponentStorageSlotted<T, M> getChannelSlotted(int channel);
 
     /**
+     * Get the uncollapsed storage at the given channel.
+     * This means that instances of the same type will not be stacked together if they are spread across slots.
+     * @param channel A channel id.
+     * @return A slotted storage.
+     */
+    public IIngredientComponentStorage<T, M> getChannelUncollapsed(int channel);
+
+    /**
      * Get the external storage at the given channel.
      * @param capability A capability to wrap the channel in.
      * @param channel A channel id.

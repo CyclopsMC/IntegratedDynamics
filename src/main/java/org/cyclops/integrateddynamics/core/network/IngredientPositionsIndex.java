@@ -6,10 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.datastructure.MultitransformIterator;
-import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollapsedCollectionMutable;
-import org.cyclops.cyclopscore.ingredient.collection.IIngredientMapMutable;
-import org.cyclops.cyclopscore.ingredient.collection.IngredientCollectionHelpers;
-import org.cyclops.cyclopscore.ingredient.collection.IngredientHashMap;
+import org.cyclops.cyclopscore.ingredient.collection.*;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientPositionsIndex;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
@@ -31,12 +28,14 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
 
     private final IngredientComponent<T, M> component;
     private final AbstractInt2ObjectSortedMap<IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>>> prioritizedPositionsMap;
-    private final AbstractInt2ObjectSortedMap<IIngredientCollapsedCollectionMutable<T, M>> ingredientInstances;
+    private final AbstractInt2ObjectSortedMap<IIngredientCollapsedCollectionMutable<T, M>> ingredientInstancesCollapsed;
+    private final AbstractInt2ObjectSortedMap<IIngredientCollectionMutable<T, M>> ingredientInstancesUncollapsed;
 
     public IngredientPositionsIndex(IngredientComponent<T, M> component) {
         this.component = component;
         this.prioritizedPositionsMap = new Int2ObjectAVLTreeMap<>();
-        this.ingredientInstances = new Int2ObjectAVLTreeMap<>();
+        this.ingredientInstancesCollapsed = new Int2ObjectAVLTreeMap<>();
+        this.ingredientInstancesUncollapsed = new Int2ObjectAVLTreeMap<>();
     }
 
     protected T getPrototype(T instance) {
@@ -110,7 +109,7 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
 
     @Override
     public long getQuantity(T instance) {
-        return this.ingredientInstances.values().stream()
+        return this.ingredientInstancesCollapsed.values().stream()
                 .mapToLong(ingredients -> ingredients.getQuantity(instance))
                 .sum();
     }
@@ -122,58 +121,90 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
 
     @Override
     public int size() {
-        return this.ingredientInstances.values().stream()
+        return this.ingredientInstancesCollapsed.values().stream()
                 .mapToInt(IIngredientCollapsedCollectionMutable::size)
                 .sum();
     }
 
     @Override
     public boolean contains(T instance) {
-        return this.ingredientInstances.values().stream()
+        return this.ingredientInstancesCollapsed.values().stream()
                 .anyMatch(ingredients -> ingredients.contains(instance));
     }
 
     @Override
     public boolean contains(T instance, M matchCondition) {
-        return this.ingredientInstances.values().stream()
+        return this.ingredientInstancesCollapsed.values().stream()
                 .anyMatch(ingredients -> ingredients.contains(instance, matchCondition));
     }
 
     @Override
     public int count(T instance, M matchCondition) {
-        return this.ingredientInstances.values().stream()
+        return this.ingredientInstancesCollapsed.values().stream()
                 .mapToInt(ingredients -> ingredients.count(instance, matchCondition))
                 .sum();
     }
 
     @Override
     public Iterator<T> iterator(T instance, M matchCondition) {
-        return new MultitransformIterator<>(this.ingredientInstances.values().iterator(),
+        return new MultitransformIterator<>(this.ingredientInstancesCollapsed.values().iterator(),
                 ingredients -> ingredients.iterator(instance, matchCondition));
     }
 
     @Override
     public Iterator<T> iterator() {
-        return new MultitransformIterator<>(this.ingredientInstances.values().iterator(),
+        return new MultitransformIterator<>(this.ingredientInstancesCollapsed.values().iterator(),
                 IIngredientCollapsedCollectionMutable::iterator);
     }
 
+    @Override
+    public Iterator<T> iteratorUncollapsed() {
+        return new MultitransformIterator<>(this.ingredientInstancesUncollapsed.values().iterator(),
+                IIngredientCollectionMutable::iterator);
+    }
+
     public void removeAll(PrioritizedPartPos pos, Iterable<? extends T> instances) {
-        IIngredientCollapsedCollectionMutable<T, M> ingredients = this.ingredientInstances.get(getInternalPriority(pos));
-        if (ingredients != null) {
-            ingredients.removeAll(instances);
-            if (ingredients.isEmpty()) {
-                this.ingredientInstances.remove(getInternalPriority(pos));
+        IIngredientCollapsedCollectionMutable<T, M> ingredientsCollapsed = this.ingredientInstancesCollapsed.get(getInternalPriority(pos));
+        if (ingredientsCollapsed != null) {
+            ingredientsCollapsed.removeAll(instances);
+            if (ingredientsCollapsed.isEmpty()) {
+                this.ingredientInstancesCollapsed.remove(getInternalPriority(pos));
+            }
+        }
+
+        IIngredientCollectionMutable<T, M> ingredientsUncollapsed = this.ingredientInstancesUncollapsed.get(getInternalPriority(pos));
+        if (ingredientsUncollapsed != null) {
+            ingredientsUncollapsed.removeAll(instances);
+            if (ingredientsUncollapsed.isEmpty()) {
+                this.ingredientInstancesUncollapsed.remove(getInternalPriority(pos));
             }
         }
     }
 
     public void addAll(PrioritizedPartPos pos, Iterable<? extends T> instances) {
-        IIngredientCollapsedCollectionMutable<T, M> ingredients = this.ingredientInstances.get(getInternalPriority(pos));
-        if (ingredients == null) {
-            ingredients = IngredientCollectionHelpers.createCollapsedCollection(component);
-            this.ingredientInstances.put(getInternalPriority(pos), ingredients);
+        IIngredientCollapsedCollectionMutable<T, M> ingredientsCollapsed = this.ingredientInstancesCollapsed.get(getInternalPriority(pos));
+        if (ingredientsCollapsed == null) {
+            ingredientsCollapsed = IngredientCollectionHelpers.createCollapsedCollection(component);
+            this.ingredientInstancesCollapsed.put(getInternalPriority(pos), ingredientsCollapsed);
         }
-        ingredients.addAll(instances);
+        ingredientsCollapsed.addAll(instances);
+
+        IIngredientCollectionMutable<T, M> ingredientsUncollapsed = this.ingredientInstancesUncollapsed.get(getInternalPriority(pos));
+        if (ingredientsUncollapsed == null) {
+            ingredientsUncollapsed = createUncollapsedCollection(component);
+            this.ingredientInstancesUncollapsed.put(getInternalPriority(pos), ingredientsUncollapsed);
+        }
+        ingredientsUncollapsed.addAll(instances);
+    }
+
+    // TODO: move to CyclopsCore IngredientCollectionHelpers in next major
+    public static <T, M> IIngredientCollectionMutable<T, M> createUncollapsedCollection(IngredientComponent<T, M> ingredientComponent) {
+        if (ingredientComponent.getCategoryTypes().size() == 1) {
+            return new IngredientArrayList<>(ingredientComponent);
+        }
+        return new IngredientCollectionSingleClassified<>(
+                ingredientComponent,
+                () -> new IngredientArrayList<>(ingredientComponent),
+                ingredientComponent.getCategoryTypes().get(0));
     }
 }
