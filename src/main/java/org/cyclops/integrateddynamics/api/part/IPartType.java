@@ -392,7 +392,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     // TODO: rm default impl in next major
     public default void onBlockNeighborChange(@Nullable INetwork network, @Nullable IPartNetwork partNetwork, PartTarget target,
                                               S state, BlockGetter world, @Nullable Direction side) {
-
+        this.onBlockNeighborChange(network, partNetwork, target, state, world);
     }
 
     /**

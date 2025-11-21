@@ -284,7 +284,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     @Override
     public void onBlockNeighborChange(INetwork network, IPartNetwork partNetwork, PartTarget target, S state,
                                       BlockGetter world, @Nullable Direction side) {
-
+        this.onBlockNeighborChange(network, partNetwork, target, state, world);
     }
 
     @Override
