@@ -154,7 +154,7 @@ public class OperatorRegistry implements IOperatorRegistry {
             throw new EvaluationException(
                     Component.translatable(L10NValues.OPERATOR_ERROR_NO_DESERIALIZER, valueInput.toString()));
         }
-        return serializer.deserialize(valueInput);
+        return serializer.deserialize(valueInput.child("value").orElse(valueInput));
     }
 
     @Override
