@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -30,6 +29,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectableInventory;
 import org.cyclops.integrateddynamics.core.evaluate.InventoryVariableEvaluator;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -177,7 +177,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
         return Component.translatable("block.integrateddynamics.proxy");
     }
 
-    public static class Ticker<T extends BlockEntityProxy> extends BlockEntityTickerDelayed<T> {
+    public static class Ticker<T extends BlockEntityProxy> extends BlockEntityCableConnectableInventory.Ticker<T> {
         @Override
         protected void update(Level level, BlockPos pos, BlockState blockState, T blockEntity) {
             super.update(level, pos, blockState, blockEntity);

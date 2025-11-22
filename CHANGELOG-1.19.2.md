@@ -1,8 +1,18 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.28.4"></a>
+## [1.19.2-1.28.4](/compare/1.19.2-1.28.3...1.19.2-1.28.4) - 2025-11-22 11:25:24
+
+
+### Fixed
+* Restore network element chunk unloading
+  This was temporarily disabled as it broke delayers and proxies on
+  world/chunk reload, which this commit fixes.
+  Closes #1571
+
 <a name="1.19.2-1.28.3"></a>
-## [1.19.2-1.28.3](/compare/1.19.2-1.28.2...1.19.2-1.28.3) - 2025-11-18 18:46:25
+## [1.19.2-1.28.3](/compare/1.19.2-1.28.2...1.19.2-1.28.3) - 2025-11-18 18:46:25 +0100
 
 
 ### Fixed

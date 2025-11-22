@@ -157,7 +157,7 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * @return If it should tick.
      */
     public static boolean shouldTick(DimPos pos) {
-        return pos.isLoaded(); // TODO: the following should work, but is causing issues during chunk/world reload (#1571): && pos.getLevel(true).shouldTickBlocksAt(pos.getBlockPos());
+        return pos.isLoaded() && pos.getLevel(true).shouldTickBlocksAt(pos.getBlockPos());
     }
 
 }

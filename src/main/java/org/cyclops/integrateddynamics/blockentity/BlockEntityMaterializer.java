@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -29,6 +28,7 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectableInventory;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
@@ -140,7 +140,7 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
         return Component.translatable("block.integrateddynamics.materializer");
     }
 
-    public static class Ticker extends BlockEntityTickerDelayed<BlockEntityMaterializer> {
+    public static class Ticker extends BlockEntityCableConnectableInventory.Ticker<BlockEntityMaterializer> {
         @Override
         protected void update(Level level, BlockPos pos, BlockState blockState, BlockEntityMaterializer blockEntity) {
             super.update(level, pos, blockState, blockEntity);
