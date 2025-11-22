@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.20.0 or higher.
+
+Fixes:
+* Restore network element chunk unloading
+  This was temporarily disabled as it broke delayers and proxies on
+  world/chunk reload, which this commit fixes.
+  Closes #1571
+

@@ -165,7 +165,9 @@ public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockE
             if (blockEntity.getConnected().isEmpty()) {
                 blockEntity.getCable().updateConnections();
             }
-            NetworkHelpers.revalidateNetworkElements(level, pos);
+            if (NetworkHelpers.revalidateNetworkElements(level, pos)) {
+                blockEntity.afterNetworkReAlive();
+            }
         }
     }
 

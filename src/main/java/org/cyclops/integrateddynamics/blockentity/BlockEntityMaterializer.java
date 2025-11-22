@@ -11,7 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -166,7 +165,7 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
         return Component.translatable("block.integrateddynamics.materializer");
     }
 
-    public static class Ticker extends BlockEntityTickerDelayed<BlockEntityMaterializer> {
+    public static class Ticker extends BlockEntityCableConnectableInventory.Ticker<BlockEntityMaterializer> {
         @Override
         protected void update(Level level, BlockPos pos, BlockState blockState, BlockEntityMaterializer blockEntity) {
             super.update(level, pos, blockState, blockEntity);

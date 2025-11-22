@@ -299,14 +299,15 @@ public class NetworkHelpers {
      * Warning: this assumes unsided network carrier capabilities, for example full-block network elements.
      * @param world The world.
      * @param pos The position.
+     * @return If the network was revalidated in this tick.
      */
-    public static void revalidateNetworkElements(Level world, BlockPos pos) {
+    public static boolean revalidateNetworkElements(Level world, BlockPos pos) {
         INetworkCarrier networkCarrier = BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkCarrier.BLOCK).orElse(null);
         IPathElement pathElement = BlockEntityHelpers.getCapability(world, pos, Capabilities.PathElement.BLOCK).orElse(null);
         if (TickHandler.getInstance().ticked
                 && networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null
-                && BlockEntityHelpers.getCapability(world, pos, Capabilities.CableFakeable.BLOCK).map(ICableFakeable::isRealCable).orElse(false)) {
-            BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).ifPresent(networkElementProvider -> {
+                && BlockEntityHelpers.getCapability(world, pos, Capabilities.CableFakeable.BLOCK).map(ICableFakeable::isRealCable).orElse(true)) {
+            BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).map(networkElementProvider -> {
                 // Attempt to revalidate the network elements in this provider
                 boolean foundNetwork = false;
                 for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
@@ -325,9 +326,13 @@ public class NetworkHelpers {
                     IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Detected network position at " +
                             "position %s in world %s with corrupted network, recreating network...", pos, world.dimension().location()));
                     NetworkHelpers.initNetwork(world, pos, null);
+                    return true;
                 }
-            });
+
+                return foundNetwork;
+            }).orElse(false);
         }
+        return false;
     }
 
 }
