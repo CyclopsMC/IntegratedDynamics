@@ -1,8 +1,20 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.29.5"></a>
+## [1.21.1-1.29.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.4...1.21.1-1.29.5) - 2025-11-24 16:59:00
+
+
+### Fixed
+* Temporarily disable chunk unload check again
+
+It is causing issues with delayers after chunk reloaded.
+Once a proper fix is available, this will be re-enabled.
+
+Related to #1571
+
 <a name="1.21.1-1.29.4"></a>
-## [1.21.1-1.29.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.3...1.21.1-1.29.4) - 2025-11-22 11:29:48
+## [1.21.1-1.29.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.3...1.21.1-1.29.4) - 2025-11-22 11:29:48 +0100
 
 
 ### Fixed
