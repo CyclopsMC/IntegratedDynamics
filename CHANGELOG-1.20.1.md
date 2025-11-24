@@ -1,8 +1,20 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.29.5"></a>
+## [1.20.1-1.29.5](/compare/1.20.1-1.29.4...1.20.1-1.29.5) - 2025-11-24 16:57:21
+
+
+### Fixed
+* Temporarily disable chunk unload check again
+
+It is causing issues with delayers after chunk reloaded.
+Once a proper fix is available, this will be re-enabled.
+
+Related to #1571
+
 <a name="1.20.1-1.29.4"></a>
-## [1.20.1-1.29.4](/compare/1.20.1-1.29.3...1.20.1-1.29.4) - 2025-11-22 11:26:51
+## [1.20.1-1.29.4](/compare/1.20.1-1.29.3...1.20.1-1.29.4) - 2025-11-22 11:26:51 +0100
 
 
 ### Fixed
