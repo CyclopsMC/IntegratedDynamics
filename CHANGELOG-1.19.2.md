@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.28.6"></a>
+## [1.19.2-1.28.6](/compare/1.19.2-1.28.5...1.19.2-1.28.6) - 2025-11-25 16:57:54
+
+
+### Fixed
+* Restore network element chunk unloading again, Closes #1571
+
 <a name="1.19.2-1.28.5"></a>
-## [1.19.2-1.28.5](/compare/1.19.2-1.28.4...1.19.2-1.28.5) - 2025-11-24 16:56:01
+## [1.19.2-1.28.5](/compare/1.19.2-1.28.4...1.19.2-1.28.5) - 2025-11-24 16:56:01 +0100
 
 
 ### Fixed

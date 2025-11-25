@@ -307,7 +307,7 @@ public class NetworkHelpers {
         if (TickHandler.getInstance().ticked
                 && networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null
                 && BlockEntityHelpers.getCapability(world, pos, Capabilities.CableFakeable.BLOCK).map(ICableFakeable::isRealCable).orElse(true)) {
-            BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).map(networkElementProvider -> {
+            return BlockEntityHelpers.getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).map(networkElementProvider -> {
                 // Attempt to revalidate the network elements in this provider
                 boolean foundNetwork = false;
                 for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
