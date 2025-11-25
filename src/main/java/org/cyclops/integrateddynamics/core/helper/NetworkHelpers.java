@@ -304,7 +304,7 @@ public class NetworkHelpers {
         if (TickHandler.getInstance().ticked
                 && networkCarrier != null && pathElement != null && networkCarrier.getNetwork() == null
                 && IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.CableFakeable.BLOCK).map(ICableFakeable::isRealCable).orElse(true)) {
-            IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).map(networkElementProvider -> {
+            return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, Capabilities.NetworkElementProvider.BLOCK).map(networkElementProvider -> {
                 // Attempt to revalidate the network elements in this provider
                 boolean foundNetwork = false;
                 for (INetwork network : NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getNetworks()) {
