@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.29.6"></a>
+## [1.21.1-1.29.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.5...1.21.1-1.29.6) - 2025-11-25 17:01:08
+
+
+### Fixed
+* Restore network element chunk unloading again, Closes #1571
+
 <a name="1.21.1-1.29.5"></a>
-## [1.21.1-1.29.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.4...1.21.1-1.29.5) - 2025-11-24 16:59:00
+## [1.21.1-1.29.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.4...1.21.1-1.29.5) - 2025-11-24 16:59:00 +0100
 
 
 ### Fixed
