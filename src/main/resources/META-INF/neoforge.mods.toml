@@ -19,7 +19,7 @@ description="${description}"
     modId="cyclopscore"
     type="required"
     versionRange="[${cyclopscore_version_semver},)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"
 [[dependencies.${mod_id}]]
     modId="commoncapabilities"
