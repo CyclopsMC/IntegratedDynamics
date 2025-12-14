@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -200,16 +199,6 @@ public class AspectBuilder<V extends IValue, T extends IValueType<V>, O> {
                 beforeUpdateListeners,
                 afterUpdateListeners,
                 updateType);
-    }
-
-    /**
-     * Set the mod that provides the aspect.
-     * @param mod The mod.
-     * @return The new builder instance.
-     */
-    @Deprecated // TODO: RM in next major
-    public AspectBuilder<V, T, O> byMod(ModBaseNeoForge mod) {
-        return byMod(mod.getModId());
     }
 
     /**

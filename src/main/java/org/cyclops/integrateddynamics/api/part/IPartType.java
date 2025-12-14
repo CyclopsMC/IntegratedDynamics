@@ -15,7 +15,10 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.redstone.Orientation;
@@ -24,11 +27,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
-import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.api.network.*;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -371,29 +370,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target      The target block.
      * @param state       The state
      * @param world       The world in which the neighbour was updated.
-     */
-    @Deprecated // TODO: rm in next major
-    public void onBlockNeighborChange(@Nullable INetwork network, @Nullable IPartNetwork partNetwork, PartTarget target,
-                                      S state, BlockGetter world);
-
-    /**
-     * Called when a neighbouring block is updated, more specifically when
-     * {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, Orientation, boolean)},
-     * {@link Block#onNeighborChange(BlockState, LevelReader, BlockPos, BlockPos)}
-     * or {@link Block#updateShape(BlockState, LevelReader, ScheduledTickAccess, BlockPos, Direction, BlockPos, BlockState, RandomSource)} is called.
-     *
-     * @param network     The network to update in.
-     * @param partNetwork The part network to update in.
-     * @param target      The target block.
-     * @param state       The state
-     * @param world       The world in which the neighbour was updated.
      * @param side        The side at the center block.
      */
-    // TODO: rm default impl in next major
-    public default void onBlockNeighborChange(@Nullable INetwork network, @Nullable IPartNetwork partNetwork, PartTarget target,
-                                              S state, BlockGetter world, @Nullable Direction side) {
-        this.onBlockNeighborChange(network, partNetwork, target, state, world);
-    }
+    public void onBlockNeighborChange(@Nullable INetwork network, @Nullable IPartNetwork partNetwork, PartTarget target,
+                                              S state, BlockGetter world, @Nullable Direction side);
 
     /**
      * @param state The state

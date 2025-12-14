@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.network;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -83,7 +84,7 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world) {
+    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, @Nullable Direction side) {
 
     }
 

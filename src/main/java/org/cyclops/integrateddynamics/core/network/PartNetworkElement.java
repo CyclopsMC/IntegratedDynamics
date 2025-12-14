@@ -223,11 +223,6 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world) {
-        part.onBlockNeighborChange(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState(), world, null);
-    }
-
-    @Override
     public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, @Nullable Direction side) {
         part.onBlockNeighborChange(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState(), world, side);
     }

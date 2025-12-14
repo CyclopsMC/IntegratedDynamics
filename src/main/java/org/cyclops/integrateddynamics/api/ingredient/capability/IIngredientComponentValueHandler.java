@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
  * @param <M> The matching condition parameter.
  * @author rubensworks
  */
+@Deprecated // TODO: try to rm in next major, as we have IIngredientComponentHandler and IIngredientComponentHandlerRegistry that do the same
 public interface IIngredientComponentValueHandler<VT extends IValueType<V>, V extends IValue, T, M> {
 
     /**

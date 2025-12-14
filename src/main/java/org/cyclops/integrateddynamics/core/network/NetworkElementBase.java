@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import lombok.Data;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -76,7 +77,7 @@ public abstract class NetworkElementBase implements INetworkElement {
     }
 
     @Override
-    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world) {
+    public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, @Nullable Direction side) {
 
     }
 

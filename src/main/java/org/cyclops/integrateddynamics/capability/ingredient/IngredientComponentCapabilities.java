@@ -21,6 +21,7 @@ import java.util.Optional;
  * Value handlers for ingredient components.
  * @author rubensworks
  */
+@Deprecated // TODO: try to rm in next major, as we have IIngredientComponentHandler and IIngredientComponentHandlerRegistry that do the same
 public class IngredientComponentCapabilities {
 
     public static final ResourceLocation INGREDIENT_ITEMSTACK_NAME = ResourceLocation.fromNamespaceAndPath("minecraft", "itemstack");
