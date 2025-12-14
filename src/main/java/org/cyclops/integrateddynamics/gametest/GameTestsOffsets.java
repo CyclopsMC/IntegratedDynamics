@@ -368,8 +368,9 @@ public class GameTestsOffsets {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove part!
         facePlayerToPart(player, posReader);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
-        helper.getBlockState(POS.above()).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS.above()), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS.above())));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
+        helper.getBlockState(POS.above()).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS.above()), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS.above())));
 
         helper.succeedWhen(() -> {
             helper.assertTrue(changedOffsetReader, Component.literal("Setting offset in reader failed"));
@@ -393,8 +394,9 @@ public class GameTestsOffsets {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove part!
         facePlayerToPart(player, posReader);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
-        helper.getBlockState(POS.above()).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS.above()), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS.above())));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
+        helper.getBlockState(POS.above()).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS.above()), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS.above())));
 
         helper.succeedWhen(() -> {
             helper.assertItemEntityPresent(PartTypes.REDSTONE_READER.getItem());

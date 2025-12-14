@@ -33,7 +33,7 @@ public class DynamicRedstoneTileMultipartTicking implements IDynamicRedstone {
 
     @Override
     public void setRedstoneLevel(int level, boolean direct) {
-        if(!tile.getLevel().isClientSide) {
+        if(!tile.getLevel().isClientSide()) {
             EnumFacingMap<Integer> redstoneLevels = getRedstoneLevels();
             EnumFacingMap<Boolean> redstoneStrongs = getRedstoneStrong();
             boolean sendUpdate = false;

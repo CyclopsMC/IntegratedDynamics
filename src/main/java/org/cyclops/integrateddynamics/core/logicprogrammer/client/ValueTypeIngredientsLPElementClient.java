@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -198,8 +199,8 @@ public class ValueTypeIngredientsLPElementClient extends ValueTypeLPElementBaseC
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            return super.mouseClicked(mouseX, mouseY, mouseButton) || valueTypeSelector.mouseClicked(mouseX, mouseY, mouseButton);
+        public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+            return super.mouseClicked(evt, isDoubleClick) || valueTypeSelector.mouseClicked(evt, isDoubleClick);
         }
 
         @Override

@@ -4,9 +4,10 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
@@ -14,7 +15,6 @@ import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IPrototypedIngredient;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.PrototypedIngredient;
-import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -43,9 +43,9 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             .getRenderer(ValueTypes.OBJECT_INGREDIENTS);
 
     @Override
-    public void renderValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
+    public void submitValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                             Direction direction, IPartType partType, IValue value, float partialTicks,
-                            PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
+                            PoseStack matrixStack, SubmitNodeCollector nodeCollector,
                             int combinedLight, int combinedOverlay, float alpha) {
         Optional<IRecipeDefinition> recipeOptional = ((ValueObjectTypeRecipe.ValueRecipe) value).getRawValue();
         if(recipeOptional.isPresent()) {
@@ -56,19 +56,18 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
             matrixStack.pushPose();
             matrixStack.scale(0.3F, 0.3F, 1F);
-            context.getFont().drawInBatch(IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.input_short"), 8, 15, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255),
-                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
-            context.getFont().drawInBatch(IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.output_short"), 46, 15, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255),
-                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
+            nodeCollector.submitText(matrixStack, 8, 15, Component.translatable("gui.integrateddynamics.input_short").getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255), 0, 0);
+            nodeCollector.submitText(matrixStack, 8, 15, Component.translatable("gui.integrateddynamics.input_short").getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255), 0, 0);
+            nodeCollector.submitText(matrixStack, 46, 15, Component.translatable("gui.integrateddynamics.output_short").getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255), 0, 0);
             matrixStack.popPose();
 
             matrixStack.translate(0, 2 * DisplayPartOverlayRenderer.MAX / 3, 0);
             renderInput(context, partContainer, direction, partType, recipe, partialTicks,
-                    matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
+                    matrixStack, nodeCollector, combinedLight, combinedOverlay, alpha);
             matrixStack.translate(DisplayPartOverlayRenderer.MAX, 0, 0);
-            INGREDIENTS_RENDERER.renderValue(context, partContainer, direction, partType,
+            INGREDIENTS_RENDERER.submitValue(context, partContainer, direction, partType,
                     ValueObjectTypeIngredients.ValueIngredients.of(recipe.getOutput()), partialTicks,
-                    matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
+                    matrixStack, nodeCollector, combinedLight, combinedOverlay, alpha);
 
             matrixStack.popPose();
         }
@@ -76,7 +75,7 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     protected void renderInput(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                                Direction direction, IPartType partType, IRecipeDefinition recipe, float partialTicks,
-                               PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
+                               PoseStack matrixStack, SubmitNodeCollector nodeCollector,
                                int combinedLight, int combinedOverlay, float alpha) {
         // Get a list of all values
         int ingredientCount = recipe.getInputComponents().stream().mapToInt((c) -> recipe.getInputs(c).size()).sum();
@@ -95,7 +94,7 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
         // Render ingredients in a square matrix
         IngredientsValueTypeWorldRenderer.renderGrid(context, partContainer, direction, partType, values,
-                partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
+                partialTicks, matrixStack, nodeCollector, combinedLight, combinedOverlay, alpha);
     }
 
     protected <T, M> Stream<List<IPrototypedIngredient>> enhanceRecipeInputs(IngredientComponent<T, M> ingredientComponent,

@@ -3,13 +3,16 @@ package org.cyclops.integrateddynamics.client.render.blockentity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
@@ -35,11 +38,14 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
     }
 
     @Override
-    public void render(@Nullable ItemStack itemStackIn, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, boolean hasFoilType) {
+    public void submit(@Nullable ItemStack itemStack, ItemDisplayContext itemDisplayContext, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int packedLight, int packedOverlay, boolean outline, int outlineColor) {
         BlockEntityEnergyBattery tile = new BlockEntityEnergyBattery(BlockPos.ZERO, RegistryEntries.BLOCK_ENERGY_BATTERY.get().defaultBlockState());
         tile.setLevel(Minecraft.getInstance().level);
-        BlockEnergyBatteryBase.itemStackToTile(itemStackIn, tile);
-        this.blockEntityRenderDispatcher.render(tile, 0, poseStack, bufferSource);
+        BlockEnergyBatteryBase.itemStackToTile(itemStack, tile);
+        BlockEntityRenderer<BlockEntityEnergyBattery, BlockEntityRenderState> renderer = this.blockEntityRenderDispatcher.getRenderer(tile);
+        BlockEntityRenderState renderState = renderer.createRenderState();
+        renderer.extractRenderState(tile, renderer.createRenderState(), 0, Vec3.ZERO, null);
+        this.blockEntityRenderDispatcher.submit(renderState, poseStack, submitNodeCollector, new CameraRenderState());
     }
 
     @Override
@@ -56,7 +62,7 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(EntityModelSet entityModelSet) {
+        public SpecialModelRenderer<?> bake(BakingContext bakingContext) {
             return new ItemStackBlockEntityEnergyBatteryRender();
         }
     }

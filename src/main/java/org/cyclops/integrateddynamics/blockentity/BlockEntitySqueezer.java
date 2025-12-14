@@ -14,11 +14,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.capability.registrar.BlockEntityCapabilityRegistrar;
@@ -100,15 +103,15 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
         @Override
         public void populate() {
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                    (blockEntity, direction) -> new InvWrapper(blockEntity.getInventory())
+                    net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
+                    (blockEntity, direction) -> VanillaContainerWrapper.of(blockEntity.getInventory())
             );
             add(
                     org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
                     (blockEntity, direction) -> new SimpleInventoryState(blockEntity.getInventory())
             );
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK,
                     (blockEntity, direction) -> blockEntity.getTank()
             );
             add(
@@ -171,14 +174,11 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                         .map(axisDirection -> Direction.get(axisDirection, axis))
                         .forEach(side -> {
                             if (!blockEntity.getTank().isEmpty()) {
-                                IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK)
+                                IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK)
                                         .ifPresent(handler -> {
                                             FluidStack fluidStack = new FluidStack(blockEntity.getTank().getFluid().getFluid(),
                                                     Math.min(100, blockEntity.getTank().getFluidAmount()));
-                                            if (handler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
-                                                int filled = handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
-                                                blockEntity.getTank().drain(filled, IFluidHandler.FluidAction.EXECUTE);
-                                            }
+                                            ResourceHandlerUtil.move(blockEntity.getTank(), handler, f -> f.matches(fluidStack), fluidStack.getAmount(), null);
                                         });
                             }
                         });
@@ -193,9 +193,13 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                                 ItemStack resultStack = itemStackChance.getIngredientFirst().copy();
                                 for (Direction side : Direction.values()) {
                                     if (!resultStack.isEmpty() && side != Direction.UP) {
-                                        IItemHandler itemHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side), side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
+                                        ResourceHandler<ItemResource> itemHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side), side.getOpposite(), Capabilities.Item.BLOCK).orElse(null);
                                         if (itemHandler != null) {
-                                            resultStack = ItemHandlerHelper.insertItem(itemHandler, resultStack, false);
+                                            try (var tx = Transaction.openRoot()) {
+                                                int inserted = itemHandler.insert(ItemResource.of(resultStack), resultStack.getCount(), tx);
+                                                tx.commit();
+                                                resultStack.shrink(inserted);
+                                            }
                                         }
                                     }
                                 }
@@ -205,7 +209,11 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
                             }
                         }
                         if (recipe.getOutputFluid().isPresent()) {
-                            blockEntity.getTank().fill(recipe.getOutputFluid().get(), IFluidHandler.FluidAction.EXECUTE);
+                            try (var tx = Transaction.openRoot()) {
+                                FluidStack fluidStack = recipe.getOutputFluid().get();
+                                blockEntity.getTank().insert(FluidResource.of(fluidStack), fluidStack.getAmount(), tx);
+                                tx.commit();
+                            }
                         }
                     }
                 }

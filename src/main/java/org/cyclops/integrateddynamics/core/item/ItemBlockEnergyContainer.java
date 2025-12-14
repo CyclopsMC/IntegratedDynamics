@@ -9,7 +9,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.item.IInformationProvider;
 import org.cyclops.cyclopscore.item.ItemBlockNBT;
@@ -22,7 +23,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * {@link BlockItem} that can be used for blocks that implement the {@link IEnergyStorage} capability.
+ * {@link BlockItem} that can be used for blocks that implement the {@link EnergyHandler} capability.
  * Instances of this will also keep it's energy level.
  * @author rubensworks
  *
@@ -43,8 +44,8 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         return block;
     }
 
-    public Optional<IEnergyStorage> getEnergyBattery(ItemStack itemStack) {
-        return Optional.ofNullable(itemStack.getCapability(Capabilities.EnergyStorage.ITEM));
+    public Optional<EnergyHandler> getEnergyBattery(ItemStack itemStack) {
+        return Optional.ofNullable(itemStack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(itemStack)));
     }
 
     @Override
@@ -52,8 +53,8 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         super.appendHoverText(itemStack, context, tooltipDisplay, tooltipAdder, flag);
         getEnergyBattery(itemStack)
                 .ifPresent(energyStorage -> {
-                    long amount = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getEnergyStoredLong();
-                    long capacity = ((EnergyStorageItemBlockEnergyContainer) energyStorage).getMaxEnergyStoredLong();
+                    long amount = energyStorage.getAmountAsLong();
+                    long capacity = energyStorage.getCapacityAsLong();
                     String line = String.format(Locale.ROOT, "%,d", amount) + " / " + String.format(Locale.ROOT, "%,d", capacity) + " " + IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT);
                     tooltipAdder.accept(Component.literal(IInformationProvider.ITEM_PREFIX + line));
                 });
@@ -68,8 +69,8 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
     public int getBarWidth(ItemStack itemStack) {
         return getEnergyBattery(itemStack)
                 .map(energyStorage -> {
-                    double amount = energyStorage.getEnergyStored();
-                    double capacity = energyStorage.getMaxEnergyStored();
+                    double amount = energyStorage.getAmountAsLong();
+                    double capacity = energyStorage.getCapacityAsLong();
                     return (int) Math.round(amount / capacity * 13);
                 })
                 .orElse(0);
@@ -80,11 +81,11 @@ public class ItemBlockEnergyContainer extends ItemBlockNBT {
         return Mth.hsvToRgb(Math.max(0.0F, ((float) getBarWidth(stack)) / 13) / 3.0F, 1.0F, 1.0F);
     }
 
-    public EnergyStorageItemBlockEnergyContainer createCapability(ItemStack itemStack) {
-        return new EnergyStorageItemBlockEnergyContainer(this, itemStack) {
+    public EnergyStorageItemBlockEnergyContainer createCapability(ItemStack itemStack, ItemAccess itemAccess) {
+        return new EnergyStorageItemBlockEnergyContainer(this, itemStack, itemAccess) {
             @Override
             public int getRate() {
-                return BlockEntityEnergyBattery.getEnergyPerTick(getMaxEnergyStored());
+                return BlockEntityEnergyBattery.getEnergyPerTick(getCapacityAsLong());
             }
         };
     }

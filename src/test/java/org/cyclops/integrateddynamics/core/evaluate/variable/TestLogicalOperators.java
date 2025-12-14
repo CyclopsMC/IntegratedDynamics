@@ -6,20 +6,25 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different logical operators.
+ *
  * @author rubensworks
  */
 public class TestLogicalOperators {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
@@ -27,7 +32,7 @@ public class TestLogicalOperators {
     private DummyVariableBoolean bTrue;
     private DummyVariableBoolean bFalse;
 
-    @Before
+    @BeforeEach
     public void before() {
         bTrue = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
         bFalse = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(false));
@@ -53,19 +58,19 @@ public class TestLogicalOperators {
         assertThat("false && false = false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeAndLarge() throws EvaluationException {
-        Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue, bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeAndSmall() throws EvaluationException {
-        Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_AND.evaluate(new IVariable[]{bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeAnd() throws EvaluationException {
-        Operators.LOGICAL_AND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_AND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     @Test
@@ -95,19 +100,19 @@ public class TestLogicalOperators {
         assertThat("false || false = false", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeOrLarge() throws EvaluationException {
-        Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue, bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeOrSmall() throws EvaluationException {
-        Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_OR.evaluate(new IVariable[]{bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeOr() throws EvaluationException {
-        Operators.LOGICAL_OR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_OR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     @Test
@@ -131,19 +136,19 @@ public class TestLogicalOperators {
         assertThat("!false = true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeNotLarge() throws EvaluationException {
-        Operators.LOGICAL_NOT.evaluate(new IVariable[]{bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NOT.evaluate(new IVariable[]{bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeNotSmall() throws EvaluationException {
-        Operators.LOGICAL_NOT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NOT.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNot() throws EvaluationException {
-        Operators.LOGICAL_NOT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NOT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -166,19 +171,19 @@ public class TestLogicalOperators {
         assertThat("false !&& false = true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeNandLarge() throws EvaluationException {
-        Operators.LOGICAL_NAND.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NAND.evaluate(new IVariable[]{bTrue, bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeNandSmall() throws EvaluationException {
-        Operators.LOGICAL_NAND.evaluate(new IVariable[]{bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NAND.evaluate(new IVariable[]{bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNand() throws EvaluationException {
-        Operators.LOGICAL_NAND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NAND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     @Test
@@ -208,19 +213,19 @@ public class TestLogicalOperators {
         assertThat("false !|| false = true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeNorLarge() throws EvaluationException {
-        Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue, bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeNorSmall() throws EvaluationException {
-        Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NOR.evaluate(new IVariable[]{bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNor() throws EvaluationException {
-        Operators.LOGICAL_NOR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.LOGICAL_NOR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     @Test

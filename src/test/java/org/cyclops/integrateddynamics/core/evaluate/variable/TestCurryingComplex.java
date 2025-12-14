@@ -8,20 +8,25 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CombinedOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test complex currying cases
+ *
  * @author rubensworks
  */
 public class TestCurryingComplex {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
@@ -32,12 +37,12 @@ public class TestCurryingComplex {
     private DummyVariableInteger i4;
     private DummyVariableInteger i8;
 
-    @Before
+    @BeforeEach
     public void before() {
         ValueTypeListProxyFactories.load();
 
         bFalse = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(false));
-        bTrue  = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
+        bTrue = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
 
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
         i8 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(8));
@@ -80,7 +85,7 @@ public class TestCurryingComplex {
         assertThat("result is 12", ((ValueTypeInteger.ValueInteger) iResult).getRawValue(), is(12));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testBind2Overflow() throws EvaluationException {
         // When more outputs are passed to an operator than it can handle, so they have to be passed to the next one.
         DummyVariableOperator oApply2 = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_APPLY_2));
@@ -94,17 +99,17 @@ public class TestCurryingComplex {
 
         DummyVariableOperator oAdd = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
 
-        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{new DummyVariable(ValueTypes.OPERATOR, oBound4_8), oAdd, oAdd});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{new DummyVariable(ValueTypes.OPERATOR, oBound4_8), oAdd, oAdd}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testOmegaOperator() throws EvaluationException {
         // This is supposed to throw an EvaluationException, and not result in infinite recursion
         DummyVariableOperator oId = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
         DummyVariableOperator oApply = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_APPLY));
 
         IValue oX = Operators.OPERATOR_PIPE2.evaluate(new IVariable[]{oId, oId, oApply});
-        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{new DummyVariable(ValueTypes.OPERATOR, oX), new DummyVariable(ValueTypes.OPERATOR, oX)});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(new IVariable[]{new DummyVariable(ValueTypes.OPERATOR, oX), new DummyVariable(ValueTypes.OPERATOR, oX)}));
     }
 
 }

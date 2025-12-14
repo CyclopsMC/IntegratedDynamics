@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import org.cyclops.commoncapabilities.api.ingredient.IMixedIngredients;
@@ -28,9 +28,9 @@ import java.util.Optional;
 public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
-    public void renderValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
+    public void submitValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                             Direction direction, IPartType partType, IValue value, float partialTicks,
-                            PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
+                            PoseStack matrixStack, SubmitNodeCollector nodeCollector,
                             int combinedLight, int combinedOverlay, float alpha) {
         Optional<IMixedIngredients> ingredientsOptional = ((ValueObjectTypeIngredients.ValueIngredients) value).getRawValue();
         if(ingredientsOptional.isPresent()) {
@@ -47,13 +47,13 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
 
             // Render ingredients in a square matrix
             renderGrid(context, partContainer, direction, partType, values, partialTicks,
-                    matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
+                    matrixStack, nodeCollector, combinedLight, combinedOverlay, alpha);
         }
     }
 
     public static void renderGrid(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                                   Direction direction, IPartType partType, List<IValue> values, float partialTicks,
-                                  PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
+                                  PoseStack matrixStack, SubmitNodeCollector nodeCollector,
                                   int combinedLight, int combinedOverlay, float alpha) {
         matrixStack.pushPose();
         int matrixRadius = getSmallestSquareFrom(values.size());
@@ -75,8 +75,8 @@ public class IngredientsValueTypeWorldRenderer implements IValueTypeWorldRendere
                     if (renderer == null) {
                         renderer = ValueTypeWorldRenderers.DEFAULT;
                     }
-                    renderer.renderValue(context, partContainer, direction, partType, renderValue,
-                            partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, alpha);
+                    renderer.submitValue(context, partContainer, direction, partType, renderValue,
+                            partialTicks, matrixStack, nodeCollector, combinedLight, combinedOverlay, alpha);
                     matrixStack.popPose();
                 }
             }

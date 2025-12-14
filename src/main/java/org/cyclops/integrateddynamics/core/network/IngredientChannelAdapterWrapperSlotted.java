@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Iterators;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.commoncapabilities.api.ingredient.storage.IIngredientComponentStorage;
@@ -139,7 +141,7 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
     }
 
     @Override
-    public T insert(int slotAbsolute, @Nonnull T ingredient, boolean simulate) {
+    public T insert(int slotAbsolute, @Nonnull T ingredient, TransactionContext transaction) {
         Triple<IIngredientComponentStorage<T, M>, Integer, PartPos> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
         IIngredientComponentStorage<T, M> storage = storageAndSlot.getLeft();
         int slotRelative = storageAndSlot.getMiddle();
@@ -154,14 +156,14 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
         }
 
         if (storage instanceof IIngredientComponentStorageSlotted) {
-            return ((IIngredientComponentStorageSlotted<T, M>) storage).insert(slotRelative, ingredient, simulate);
+            return ((IIngredientComponentStorageSlotted<T, M>) storage).insert(slotRelative, ingredient, transaction);
         } else {
-            return storage.insert(ingredient, simulate);
+            return storage.insert(ingredient, transaction);
         }
     }
 
     @Override
-    public T extract(int slotAbsolute, long maxQuantity, boolean simulate) {
+    public T extract(int slotAbsolute, long maxQuantity, TransactionContext transaction) {
         Triple<IIngredientComponentStorage<T, M>, Integer, PartPos> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
         IIngredientComponentStorage<T, M> storage = storageAndSlot.getLeft();
         int slotRelative = storageAndSlot.getMiddle();
@@ -172,28 +174,25 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
 
         // If we do an effective extraction, first simulate to check if it matches the filter
         PositionedAddonsNetworkIngredientsFilter<T> filter = this.channel.getNetwork().getPositionedStorageFilter(pos);
-        if (filter != null && !simulate) {
-            T extractedSimulated;
-            if (storage instanceof IIngredientComponentStorageSlotted) {
-                extractedSimulated = ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, true);
-            } else {
-                extractedSimulated = storage.extract(maxQuantity, true);
-            }
-            if (!filter.testExtraction(extractedSimulated)) {
-                return getComponent().getMatcher().getEmptyInstance();
+        if (filter != null) {
+            try (var tx = Transaction.open(transaction)) {
+                T extractedSimulated;
+                if (storage instanceof IIngredientComponentStorageSlotted) {
+                    extractedSimulated = ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, tx);
+                } else {
+                    extractedSimulated = storage.extract(maxQuantity, tx);
+                }
+                if (!filter.testExtraction(extractedSimulated)) {
+                    return getComponent().getMatcher().getEmptyInstance();
+                }
             }
         }
 
         T extracted;
         if (storage instanceof IIngredientComponentStorageSlotted) {
-            extracted = ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, simulate);
+            extracted = ((IIngredientComponentStorageSlotted<T, M>) storage).extract(slotRelative, maxQuantity, transaction);
         } else {
-            extracted = storage.extract(maxQuantity, simulate);
-        }
-
-        // If simulating, just check the output
-        if (filter != null && simulate && !filter.testExtraction(extracted)) {
-            return getComponent().getMatcher().getEmptyInstance();
+            extracted = storage.extract(maxQuantity, transaction);
         }
 
         return extracted;
@@ -220,17 +219,17 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
     }
 
     @Override
-    public T insert(@Nonnull T ingredient, boolean simulate) {
-        return channel.insert(ingredient, simulate);
+    public T insert(@Nonnull T ingredient, TransactionContext transaction) {
+        return channel.insert(ingredient, transaction);
     }
 
     @Override
-    public T extract(@Nonnull T prototype, M matchCondition, boolean simulate) {
-        return channel.extract(prototype, matchCondition, simulate);
+    public T extract(@Nonnull T prototype, M matchCondition, TransactionContext transaction) {
+        return channel.extract(prototype, matchCondition, transaction);
     }
 
     @Override
-    public T extract(long maxQuantity, boolean simulate) {
-        return channel.extract(maxQuantity, simulate);
+    public T extract(long maxQuantity, TransactionContext transaction) {
+        return channel.extract(maxQuantity, transaction);
     }
 }

@@ -5,6 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -233,32 +236,32 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
+    public boolean charTyped(CharacterEvent evt) {
         if (inputTagsDropdown.isFocused()) {
-            if (inputTagsDropdown.charTyped(typedChar, keyCode)) {
+            if (inputTagsDropdown.charTyped(evt)) {
                 return true;
             }
         }
-        return super.charTyped(typedChar, keyCode);
+        return super.charTyped(evt);
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+    public boolean keyPressed(KeyEvent evt) {
         if (inputTagsDropdown.isFocused()) {
-            inputTagsDropdown.keyPressed(typedChar, keyCode, modifiers);
+            inputTagsDropdown.keyPressed(evt);
             return true;
         }
-        return super.keyPressed(typedChar, keyCode, modifiers);
+        return super.keyPressed(evt);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        return inputNbt.mouseClicked(mouseX, mouseY, mouseButton)
-                || inputReusable.mouseClicked(mouseX, mouseY, mouseButton)
-                || inputTags.mouseClicked(mouseX, mouseY, mouseButton)
-                || inputTagsDropdown.mouseClicked(mouseX, mouseY, mouseButton)
-                || inputSave.mouseClicked(mouseX, mouseY, mouseButton)
-                || super.mouseClicked(mouseX, mouseY, mouseButton);
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+        return inputNbt.mouseClicked(evt, isDoubleClick)
+                || inputReusable.mouseClicked(evt, isDoubleClick)
+                || inputTags.mouseClicked(evt, isDoubleClick)
+                || inputTagsDropdown.mouseClicked(evt, isDoubleClick)
+                || inputSave.mouseClicked(evt, isDoubleClick)
+                || super.mouseClicked(evt, isDoubleClick);
     }
 
     public static class DropdownEntry implements IDropdownEntry<ResourceLocation> {

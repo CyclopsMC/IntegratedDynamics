@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
@@ -19,12 +20,15 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.fluids.FluidActionResult;
-import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import org.cyclops.cyclopscore.block.BlockWithEntityGui;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
+import org.cyclops.cyclopscore.helper.IFluidHelpersNeoForge;
 import org.cyclops.cyclopscore.helper.IModHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
 
@@ -58,7 +62,7 @@ public class BlockDryingBasin extends BlockWithEntityGui {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_DRYING_BASIN.get(), level.isClientSide ? new BlockEntityDryingBasin.TickerClient() : new BlockEntityDryingBasin.TickerServer());
+        return createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_DRYING_BASIN.get(), level.isClientSide() ? new BlockEntityDryingBasin.TickerClient() : new BlockEntityDryingBasin.TickerServer());
     }
 
     @Override
@@ -66,12 +70,13 @@ public class BlockDryingBasin extends BlockWithEntityGui {
                                              BlockHitResult rayTraceResult) {
         return IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityDryingBasin.class)
                 .map(tile -> {
-                    ItemStack itemStack = player.getInventory().getSelectedItem();
-                    IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack).orElse(null);
+                    IFluidHelpersNeoForge fh = IModHelpersNeoForge.get().getFluidHelpers();
+                    ItemAccess itemAccess = ItemAccess.forPlayerSlot(player, player.getInventory().getSelectedSlot());
+                    ResourceHandler<FluidResource> itemFluidHandler = itemAccess.getCapability(Capabilities.Fluid.ITEM);
                     SingleUseTank tank = tile.getTank();
                     ItemStack tileStack = tile.getInventory().getItem(0);
 
-                    if (itemStack.isEmpty() && !tileStack.isEmpty()) {
+                    if (itemAccess.getAmount() == 0 && !tileStack.isEmpty()) {
                         player.getInventory().setItem(player.getInventory().getSelectedSlot(), tileStack);
                         tile.getInventory().setItem(0, ItemStack.EMPTY);
                         tile.sendUpdate();
@@ -80,26 +85,15 @@ public class BlockDryingBasin extends BlockWithEntityGui {
                         tile.getInventory().setItem(0, ItemStack.EMPTY);
                         tile.sendUpdate();
                         return InteractionResult.SUCCESS;
-                    } else if (itemFluidHandler != null && !tank.isFull()
-                            && !itemFluidHandler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE).isEmpty()) {
-                        FluidActionResult fluidAction = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
-                        if (fluidAction.isSuccess()) {
-                            ItemStack newItemStack = fluidAction.getResult();
-                            IModHelpers.get().getInventoryHelpers().tryReAddToStack(player, itemStack, newItemStack, player.getUsedItemHand());
-                            tile.sendUpdate();
-                        }
+                    } else if (itemFluidHandler != null && !tank.isFull() && fh.canExtract(itemFluidHandler)) {
+                        fh.move(itemFluidHandler, tank, Integer.MAX_VALUE, player, true, false);
                         return InteractionResult.SUCCESS;
-                    } else if (itemFluidHandler != null && !tank.isEmpty() &&
-                            itemFluidHandler.fill(tank.getFluid(), IFluidHandler.FluidAction.SIMULATE) > 0) {
-                        FluidActionResult fluidAction = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
-                        if (fluidAction.isSuccess()) {
-                            ItemStack newItemStack = fluidAction.getResult();
-                            IModHelpers.get().getInventoryHelpers().tryReAddToStack(player, itemStack, newItemStack, player.getUsedItemHand());
-                        }
+                    } else if (itemFluidHandler != null && !tank.isEmpty() && fh.canInsert(itemFluidHandler, tank.getFluid())) {
+                        fh.move(tank, itemFluidHandler, Integer.MAX_VALUE, player, false, false);
                         return InteractionResult.SUCCESS;
-                    } else if (!itemStack.isEmpty() && tileStack.isEmpty()) {
-                        tile.getInventory().setItem(0, itemStack.split(1));
-                        if(itemStack.getCount() <= 0) player.getInventory().setItem(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
+                    } else if (itemAccess.getAmount() > 0 && tileStack.isEmpty()) {
+                        tile.getInventory().setItem(0, itemAccess.getResource().toStack());
+                        if(itemAccess.getAmount() == 1) player.getInventory().setItem(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
                         tile.sendUpdate();
                         return InteractionResult.SUCCESS;
                     }
@@ -114,10 +108,9 @@ public class BlockDryingBasin extends BlockWithEntityGui {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos blockPos) {
-        return IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityDryingBasin.class)
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+        return IModHelpers.get().getBlockEntityHelpers().get(level, pos, BlockEntityDryingBasin.class)
                 .map(tile -> tile.getInventory().getItem(0) != null ? 15 : 0)
                 .orElse(0);
     }

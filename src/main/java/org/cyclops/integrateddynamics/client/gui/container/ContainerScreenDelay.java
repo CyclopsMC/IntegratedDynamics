@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -77,10 +80,10 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        if (!this.numberFieldUpdateInterval.charTyped(typedChar, keyCode)
-                && !this.numberFieldCapacity.charTyped(typedChar, keyCode)) {
-            return super.charTyped(typedChar, keyCode);
+    public boolean charTyped(CharacterEvent evt) {
+        if (!this.numberFieldUpdateInterval.charTyped(evt)
+                && !this.numberFieldCapacity.charTyped(evt)) {
+            return super.charTyped(evt);
         } else {
             onValueChanged();
         }
@@ -89,10 +92,10 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (!this.numberFieldUpdateInterval.keyPressed(typedChar, keyCode, modifiers)
-                && !this.numberFieldCapacity.keyPressed(typedChar, keyCode, modifiers)) {
-            return super.keyPressed(typedChar, keyCode, modifiers);
+    public boolean keyPressed(KeyEvent evt) {
+        if (!this.numberFieldUpdateInterval.keyPressed(evt)
+                && !this.numberFieldCapacity.keyPressed(evt)) {
+            return super.keyPressed(evt);
         } else {
             onValueChanged();
         }
@@ -114,17 +117,17 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
         boolean clicked = false;
-        if (this.numberFieldUpdateInterval.mouseClicked(mouseX, mouseY, mouseButton)) {
+        if (this.numberFieldUpdateInterval.mouseClicked(evt, isDoubleClick)) {
             onValueChanged();
             clicked = true;
         }
-        if (this.numberFieldCapacity.mouseClicked(mouseX, mouseY, mouseButton)) {
+        if (this.numberFieldCapacity.mouseClicked(evt, isDoubleClick)) {
             onValueChanged();
             clicked = true;
         }
-        return clicked || super.mouseClicked(mouseX, mouseY, mouseButton);
+        return clicked || super.mouseClicked(evt, isDoubleClick);
     }
 
     @Override

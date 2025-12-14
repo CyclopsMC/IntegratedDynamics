@@ -35,7 +35,7 @@ public class BlockMenrilSaplingConfig extends BlockConfigCommon<IntegratedDynami
                 IntegratedDynamics._instance,
                 "menril_sapling",
                 (eConfig, properties) -> new SaplingBlock(MENRIL_TREE_GROWER, properties
-                        .noCollission()
+                        .noCollision()
                         .randomTicks()
                         .strength(0)
                         .sound(SoundType.GRASS)),

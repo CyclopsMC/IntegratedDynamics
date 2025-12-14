@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -192,8 +193,8 @@ public class ValueTypeListLPElementClient extends ValueTypeLPElementBaseClient<V
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            return valueTypeSelector.mouseClicked(mouseX, mouseY, mouseButton) || super.mouseClicked(mouseX, mouseY, mouseButton);
+        public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+            return valueTypeSelector.mouseClicked(evt, isDoubleClick) || super.mouseClicked(evt, isDoubleClick);
         }
 
         @Override

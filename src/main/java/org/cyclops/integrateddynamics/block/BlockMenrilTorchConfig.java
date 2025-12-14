@@ -26,7 +26,7 @@ public class BlockMenrilTorchConfig extends BlockConfigCommon<IntegratedDynamics
                 IntegratedDynamics._instance,
                 "menril_torch",
                 (eConfig, properties) -> new TorchBlock(ParticleTypes.FLAME, properties
-                        .noCollission()
+                        .noCollision()
                         .strength(0)
                         .lightLevel((blockState) -> 14)
                         .sound(SoundType.WOOD)) {

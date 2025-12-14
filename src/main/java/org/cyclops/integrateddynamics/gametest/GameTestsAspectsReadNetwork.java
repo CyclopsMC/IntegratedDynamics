@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLong;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -72,7 +73,7 @@ public class GameTestsAspectsReadNetwork {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadNetworkEnergyStoredInvalid(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.INTEGER_ENERGY_STORED, ValueTypeInteger.ValueInteger.of(0));
+        testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.LONG_ENERGY_STORED, ValueTypeLong.ValueLong.of(0));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -81,12 +82,12 @@ public class GameTestsAspectsReadNetwork {
         helper.setBlock(POS.west().west(), RegistryEntries.BLOCK_ENERGY_BATTERY.get());
         helper.getBlockEntity(POS.west(), BlockEntityEnergyBattery.class).setEnergyStored(100);
         helper.getBlockEntity(POS.west().west(), BlockEntityEnergyBattery.class).setEnergyStored(200);
-        testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.INTEGER_ENERGY_STORED, ValueTypeInteger.ValueInteger.of(300));
+        testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.LONG_ENERGY_STORED, ValueTypeLong.ValueLong.of(300));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadNetworkEnergyMaxInvalid(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.INTEGER_ENERGY_MAX, ValueTypeInteger.ValueInteger.of(0));
+        testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.LONG_ENERGY_MAX, ValueTypeLong.ValueLong.of(0));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -95,7 +96,7 @@ public class GameTestsAspectsReadNetwork {
         helper.setBlock(POS.west().west(), RegistryEntries.BLOCK_ENERGY_BATTERY.get());
         helper.getBlockEntity(POS.west(), BlockEntityEnergyBattery.class).setEnergyStored(100);
         helper.getBlockEntity(POS.west().west(), BlockEntityEnergyBattery.class).setEnergyStored(200);
-        testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.INTEGER_ENERGY_MAX, ValueTypeInteger.ValueInteger.of(2_000_000));
+        testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.LONG_ENERGY_MAX, ValueTypeLong.ValueLong.of(2_000_000));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)

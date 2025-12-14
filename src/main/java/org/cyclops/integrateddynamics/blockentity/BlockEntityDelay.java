@@ -16,8 +16,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.inventory.InventorySlotMasked;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -100,7 +101,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
             super.populate();
 
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
                     (blockEntity, direction) -> {
                         int slot = -1;
                         if (direction != null) {
@@ -115,7 +116,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
                         } else {
                             slot = SLOT_READ;
                         }
-                        return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
+                        return VanillaContainerWrapper.of(new InventorySlotMasked(blockEntity.getInventory(), slot));
                     }
             );
             add(
@@ -211,7 +212,7 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
         protected void update(Level level, BlockPos pos, BlockState blockState, BlockEntityDelay blockEntity) {
             super.update(level, pos, blockState, blockEntity);
 
-            if (!level.isClientSide && blockEntity.updateInterval > 0 && level.getGameTime() % blockEntity.updateInterval == 0) {
+            if (!level.isClientSide() && blockEntity.updateInterval > 0 && level.getGameTime() % blockEntity.updateInterval == 0) {
                 // Remove oldest elements from the queue until we have room for a new one.
                 while (blockEntity.getValues().size() >= blockEntity.capacity) {
                     blockEntity.getValues().poll();

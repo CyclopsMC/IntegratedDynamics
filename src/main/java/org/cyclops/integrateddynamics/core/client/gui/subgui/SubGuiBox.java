@@ -5,6 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
@@ -110,21 +113,21 @@ public abstract class SubGuiBox implements ISubGuiBox {
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        return subGuiHolder.charTyped(typedChar, keyCode);
+    public boolean charTyped(CharacterEvent evt) {
+        return subGuiHolder.charTyped(evt);
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        return subGuiHolder.keyPressed(typedChar, keyCode, modifiers);
+    public boolean keyPressed(KeyEvent evt) {
+        return subGuiHolder.keyPressed(evt);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton);
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+        subGuiHolder.mouseClicked(evt, isDoubleClick);
         for (int i = 0; i < this.buttonList.size(); ++i) {
             Button guibutton = this.buttonList.get(i);
-            if (guibutton.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (guibutton.mouseClicked(evt, isDoubleClick)) {
                 guibutton.playDownSound(Minecraft.getInstance().getSoundManager());
                 this.actionPerformed(guibutton);
                 return true;
@@ -202,18 +205,18 @@ public abstract class SubGuiBox implements ISubGuiBox {
         }
 
         @Override
-        public boolean charTyped(char typedChar, int keyCode) {
+        public boolean charTyped(CharacterEvent evt) {
             return false;
         }
 
         @Override
-        public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        public boolean keyPressed(KeyEvent evt) {
             return false;
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            return super.mouseClicked(mouseX, mouseY, mouseButton);
+        public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+            return super.mouseClicked(evt, isDoubleClick);
         }
 
     }

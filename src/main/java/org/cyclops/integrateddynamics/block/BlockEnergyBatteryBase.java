@@ -13,7 +13,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
@@ -37,7 +39,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY.get(), new BlockEntityEnergyBattery.Ticker());
+        return level.isClientSide() ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY.get(), new BlockEntityEnergyBattery.Ticker());
     }
 
     public abstract boolean isCreative();
@@ -64,14 +66,17 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled {
     }
 
     /**
-     * Fill an IEnergyStorage with all the energy it can hold
-     * @param energyStorage IEnergyStorage that is to be filled
+     * Fill an EnergyHandler with all the energy it can hold
+     * @param energyStorage EnergyHandler that is to be filled
      */
-    public static void fill(IEnergyStorage energyStorage){
-        int max = energyStorage.getMaxEnergyStored();
+    public static void fill(EnergyHandler energyStorage){
+        int max = energyStorage.getCapacityAsInt();
         int stored = 1;
         while (stored > 0) {
-            stored = energyStorage.receiveEnergy(max, false);
+            try (var tx = Transaction.openRoot()) {
+                stored = energyStorage.insert(max, tx);
+                tx.commit();
+            }
         }
     }
 
@@ -85,10 +90,10 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled {
     }
 
     public static void itemStackToTile(ItemStack itemStack, BlockEntityEnergyBattery tile) {
-        Optional.ofNullable(itemStack.getCapability(Capabilities.EnergyStorage.ITEM))
+        Optional.ofNullable(itemStack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(itemStack)))
                 .ifPresent(energyStorage -> {
-                    tile.setEnergyStored(energyStorage.getEnergyStored());
-                    tile.setCapacity(energyStorage.getMaxEnergyStored());
+                    tile.setEnergyStored(energyStorage.getAmountAsInt());
+                    tile.getEnergyHandler().setCapacity(energyStorage.getCapacityAsInt());
                 });
     }
 

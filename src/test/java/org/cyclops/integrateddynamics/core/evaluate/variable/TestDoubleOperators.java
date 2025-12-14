@@ -4,12 +4,13 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different integer operators.
@@ -25,7 +26,7 @@ public class TestDoubleOperators {
     private DummyVariableDouble d2;
     private DummyVariableDouble d3;
 
-    @Before
+    @BeforeEach
     public void before() {
         d16 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(16));
         d2 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(2));
@@ -43,21 +44,18 @@ public class TestDoubleOperators {
         assertThat("sqrt(16) = 4", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(4D));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeSqrtLarge() throws EvaluationException {
-        Operators.DOUBLE_SQRT.evaluate(new IVariable[]{d16, d16});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.DOUBLE_SQRT.evaluate(new IVariable[]{d16, d16}));
     }
-
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeSqrtSmall() throws EvaluationException {
-        Operators.DOUBLE_SQRT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.DOUBLE_SQRT.evaluate(new IVariable[]{}));
     }
-
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeSqrt() throws EvaluationException {
-        Operators.DOUBLE_SQRT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.DOUBLE_SQRT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
-
     /**
      * ----------------------------------- POW -----------------------------------
      */
@@ -69,19 +67,16 @@ public class TestDoubleOperators {
         assertThat("pow(2, 3) = 8", ((ValueTypeDouble.ValueDouble) res1).getRawValue(), is(8D));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePowLarge() throws EvaluationException {
-        Operators.DOUBLE_POW.evaluate(new IVariable[]{d16, d16, d16});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.DOUBLE_POW.evaluate(new IVariable[]{d16, d16, d16}));
     }
-
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePowSmall() throws EvaluationException {
-        Operators.DOUBLE_POW.evaluate(new IVariable[]{d16});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.DOUBLE_POW.evaluate(new IVariable[]{d16}));
     }
-
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypePow() throws EvaluationException {
-        Operators.DOUBLE_POW.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.DOUBLE_POW.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
-
 }

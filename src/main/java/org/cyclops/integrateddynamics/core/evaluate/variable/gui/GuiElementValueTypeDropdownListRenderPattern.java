@@ -5,6 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
@@ -75,24 +78,24 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
+    public boolean charTyped(CharacterEvent evt) {
         if (searchField.isFocused()) {
-            if (searchField.charTyped(typedChar, keyCode)) {
+            if (searchField.charTyped(evt)) {
                 onTyped();
                 return true;
             }
         }
-        return super.charTyped(typedChar, keyCode);
+        return super.charTyped(evt);
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+    public boolean keyPressed(KeyEvent evt) {
         if (searchField.isFocused()) {
-            searchField.keyPressed(typedChar, keyCode, modifiers);
+            searchField.keyPressed(evt);
             onTyped();
             return true;
         }
-        return super.keyPressed(typedChar, keyCode, modifiers);
+        return super.keyPressed(evt);
     }
 
     public void onTyped() {
@@ -105,8 +108,8 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        return searchField.mouseClicked(mouseX, mouseY, mouseButton) || super.mouseClicked(mouseX, mouseY, mouseButton);
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+        return searchField.mouseClicked(evt, isDoubleClick) || super.mouseClicked(evt, isDoubleClick);
     }
 
     @Override

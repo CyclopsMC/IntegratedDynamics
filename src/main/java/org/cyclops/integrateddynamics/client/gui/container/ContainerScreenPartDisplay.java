@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.client.gui.container;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
@@ -76,12 +77,12 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        if (GLFW.GLFW_KEY_C == keyCode && KeyModifier.CONTROL.isActive(KeyConflictContext.GUI)) {
+    public boolean charTyped(CharacterEvent evt) {
+        if (GLFW.GLFW_KEY_C == evt.codepoint() && KeyModifier.CONTROL.isActive(KeyConflictContext.GUI)) {
             valueToClipboard();
             return true;
         }
-        return super.charTyped(typedChar, keyCode);
+        return super.charTyped(evt);
     }
 
     @Override

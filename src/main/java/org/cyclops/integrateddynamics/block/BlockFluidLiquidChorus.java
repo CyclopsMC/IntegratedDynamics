@@ -24,8 +24,8 @@ public class BlockFluidLiquidChorus extends LiquidBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
-        super.entityInside(state, level, pos, entity, effectApplier);
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean intersects) {
+        super.entityInside(state, level, pos, entity, effectApplier, intersects);
 
         // Simulate chorus-eating
         if (entity instanceof LivingEntity) {

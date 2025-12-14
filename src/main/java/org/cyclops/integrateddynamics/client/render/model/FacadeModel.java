@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.item.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,7 +34,7 @@ public class FacadeModel implements ItemModel {
     }
 
     @Override
-    public void update(ItemStackRenderState renderState, ItemStack itemStack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @org.jetbrains.annotations.Nullable ClientLevel level, @org.jetbrains.annotations.Nullable LivingEntity entity, int seed) {
+    public void update(ItemStackRenderState renderState, ItemStack itemStack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @org.jetbrains.annotations.Nullable ClientLevel level, @org.jetbrains.annotations.Nullable ItemOwner entity, int seed) {
         BlockState blockState = RegistryEntries.ITEM_FACADE.get().getFacadeBlock(itemStack);
         if(blockState == null) {
             emptyModel.update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);

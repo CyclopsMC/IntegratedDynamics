@@ -1,7 +1,8 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.Direction;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
@@ -21,21 +22,21 @@ public class ValueTypeListProxyPositionedTankCapacities extends ValueTypeListPro
         this(null, null);
     }
 
-    protected Optional<IFluidHandler> getTank() {
-        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(getPos(), getSide(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK);
+    protected Optional<ResourceHandler<FluidResource>> getTank() {
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(getPos(), getSide(), net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK);
     }
 
     @Override
     public int getLength() {
         return getTank()
-                .map(IFluidHandler::getTanks)
+                .map(ResourceHandler<FluidResource>::size)
                 .orElse(0);
     }
 
     @Override
     public ValueTypeInteger.ValueInteger get(int index) {
         return ValueTypeInteger.ValueInteger.of(getTank()
-                .map(fluidHandler -> fluidHandler.getTankCapacity(index))
+                .map(fluidHandler -> fluidHandler.getCapacityAsInt(index, FluidResource.EMPTY))
                 .orElse(0));
     }
 }

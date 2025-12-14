@@ -35,8 +35,6 @@ public class PartTypeMachineReader extends PartTypeReadBase<PartTypeMachineReade
                 Aspects.Read.Machine.OPERATOR_GETRECIPEOUTPUT,
                 Aspects.Read.Machine.OPERATOR_GETRECIPEINPUTS,
                 Aspects.Read.Machine.BOOLEAN_ISENERGY,
-                Aspects.Read.Machine.BOOLEAN_ISENERGYRECEIVER,
-                Aspects.Read.Machine.BOOLEAN_ISENERGYPROVIDER,
                 Aspects.Read.Machine.BOOLEAN_CANEXTRACTENERGY,
                 Aspects.Read.Machine.BOOLEAN_CANINSERTENERGY,
                 Aspects.Read.Machine.BOOLEAN_ISENERGYFULL,

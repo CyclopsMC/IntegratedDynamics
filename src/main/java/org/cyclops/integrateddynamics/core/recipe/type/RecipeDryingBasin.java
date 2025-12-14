@@ -67,8 +67,8 @@ public class RecipeDryingBasin implements Recipe<IInventoryFluid> {
     @Override
     public boolean matches(IInventoryFluid inv, Level worldIn) {
         return inputIngredient.map(p -> p.test(inv.getItem(0))).orElse(inv.getItem(0).isEmpty())
-                && inputFluid.map(f -> f.getFluid() == inv.getFluidHandler().getFluidInTank(0).getFluid()).orElse(inv.getFluidHandler().getFluidInTank(0).isEmpty())
-                && inputFluid.map(f -> f.getAmount() <= inv.getFluidHandler().getFluidInTank(0).getAmount()).orElse(inv.getFluidHandler().getFluidInTank(0).isEmpty());
+                && inputFluid.map(f -> f.getFluid() == inv.getFluidHandler().getResource(0).getFluid()).orElse(inv.getFluidHandler().getResource(0).isEmpty())
+                && inputFluid.map(f -> f.getAmount() <= inv.getFluidHandler().getAmountAsInt(0)).orElse(inv.getFluidHandler().getAmountAsInt(0) == 0);
     }
 
     @Override

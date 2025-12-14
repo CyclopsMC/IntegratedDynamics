@@ -91,7 +91,7 @@ public class BlockSqueezer extends BlockWithEntity {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_SQUEEZER.get(), new BlockEntitySqueezer.Ticker());
+        return level.isClientSide() ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_SQUEEZER.get(), new BlockEntitySqueezer.Ticker());
     }
 
     @Override
@@ -165,7 +165,7 @@ public class BlockSqueezer extends BlockWithEntity {
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @org.jetbrains.annotations.Nullable Orientation orientation, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             for (Direction enumfacing : Direction.values()) {
                 if (level.hasSignal(pos.relative(enumfacing), enumfacing)) {
                     level.setBlockAndUpdate(pos, state.setValue(HEIGHT, 1));
@@ -204,9 +204,8 @@ public class BlockSqueezer extends BlockWithEntity {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos blockPos) {
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos pos, Direction direction) {
         return (int) (((double) blockState.getValue(HEIGHT) - 1) / 6D * 15D);
     }
 

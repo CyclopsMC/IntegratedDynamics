@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
 import org.cyclops.cyclopscore.capability.registrar.BlockEntityCapabilityRegistrar;
@@ -86,8 +86,8 @@ public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockE
                     (blockEntity, context) -> new PathElementTile<>(blockEntity, blockEntity.getCable())
             );
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                    (blockEntity, context) -> new InvWrapper(blockEntity.getInventory())
+                    net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
+                    (blockEntity, context) -> VanillaContainerWrapper.of(blockEntity.getInventory())
             );
             add(
                     org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
@@ -152,7 +152,7 @@ public abstract class BlockEntityCableConnectableInventory extends CyclopsBlockE
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
-        if (getLevel() != null && !getLevel().isClientSide) {
+        if (getLevel() != null && !getLevel().isClientSide()) {
             INetwork network = getNetworkCarrier().getNetwork();
             if (network != null) {
                 NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), network, getNetworkElementProvider());

@@ -11,7 +11,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
@@ -37,7 +37,7 @@ public class CableModel extends CableModelBase {
         super(level, state, facing, rand, modelData, renderType);
     }
 
-    public CableModel(ItemStack itemStack, Level world, LivingEntity entity) {
+    public CableModel(ItemStack itemStack, Level world, ItemOwner entity) {
         super(itemStack, world, entity);
     }
 
@@ -97,7 +97,7 @@ public class CableModel extends CableModelBase {
     }
 
     @Override
-    public List<BakedQuad> handleItemState(@Nullable ItemStack stack, @Nullable Level world, @Nullable LivingEntity entity) {
+    public List<BakedQuad> handleItemState(@Nullable ItemStack stack, @Nullable Level world, @Nullable ItemOwner entity) {
         return new CableModel(stack, world, entity).getGeneralQuads();
     }
 

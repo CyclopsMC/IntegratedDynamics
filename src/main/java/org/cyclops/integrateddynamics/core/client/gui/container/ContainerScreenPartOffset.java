@@ -3,6 +3,9 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -91,40 +94,40 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        if (!this.numberFieldX.charTyped(typedChar, keyCode)
-                && !this.numberFieldY.charTyped(typedChar, keyCode)
-                && !this.numberFieldZ.charTyped(typedChar, keyCode)) {
+    public boolean charTyped(CharacterEvent evt) {
+        if (!this.numberFieldX.charTyped(evt)
+                && !this.numberFieldY.charTyped(evt)
+                && !this.numberFieldZ.charTyped(evt)) {
             onSave();
-            return super.charTyped(typedChar, keyCode);
+            return super.charTyped(evt);
         }
         return true;
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
-            if (this.numberFieldX.keyPressed(typedChar, keyCode, modifiers)
-                    || this.numberFieldY.keyPressed(typedChar, keyCode, modifiers)
-                    || this.numberFieldZ.keyPressed(typedChar, keyCode, modifiers)) {
+    public boolean keyPressed(KeyEvent evt) {
+        if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+            if (this.numberFieldX.keyPressed(evt)
+                    || this.numberFieldY.keyPressed(evt)
+                    || this.numberFieldZ.keyPressed(evt)) {
                 onSave();
                 return true;
             }
             return true;
         } else {
-            return super.keyPressed(typedChar, keyCode, modifiers);
+            return super.keyPressed(evt);
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (this.numberFieldX.mouseClicked(mouseX, mouseY, mouseButton)
-                || this.numberFieldY.mouseClicked(mouseX, mouseY, mouseButton)
-                || this.numberFieldZ.mouseClicked(mouseX, mouseY, mouseButton)) {
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+        if (this.numberFieldX.mouseClicked(evt, isDoubleClick)
+                || this.numberFieldY.mouseClicked(evt, isDoubleClick)
+                || this.numberFieldZ.mouseClicked(evt, isDoubleClick)) {
             onSave();
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, mouseButton);
+        return super.mouseClicked(evt, isDoubleClick);
     }
 
     @Override

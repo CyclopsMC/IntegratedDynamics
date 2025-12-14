@@ -47,11 +47,13 @@ import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.common.SoundActions;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.api.capability.itemhandler.ItemMatch;
@@ -1627,9 +1629,9 @@ public final class Operators {
      * The capacity of the fluidstack from the stack.
      */
     public static final IOperator OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER)
+            .output(ValueTypes.LONG)
             .symbol("fluidstack_capacity").operatorName("fluidstackcapacity").interactName("fluidCapacity")
-            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(
+            .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_LONG.build(
                 itemStack -> !itemStack.isEmpty() ? Helpers.getFluidStackCapacity(itemStack) : 0
             )).build());
 
@@ -1786,11 +1788,11 @@ public final class Operators {
             }).build());
 
     /**
-     * Check if the item is an RF container item
+     * Check if the item is an energy container item
      */
-    public static final IOperator OBJECT_ITEMSTACK_ISFECONTAINER = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+    public static final IOperator OBJECT_ITEMSTACK_ISENERGYCONTAINER = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
             .output(ValueTypes.BOOLEAN)
-            .symbol("is_fe_container").operatorName("isfecontainer").interactName("isFeContainer")
+            .symbol("is_energy_container").operatorName("isenergycontainer").interactName("isEnergyContainer")
             .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_BOOLEAN.build(
                 Objects::nonNull
             )).build());
@@ -1798,21 +1800,21 @@ public final class Operators {
     /**
      * Get the storage energy
      */
-    public static final IOperator OBJECT_ITEMSTACK_STOREDFE = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER)
-            .symbol("stored_fe").operatorName("storedfe").interactName("feStored")
-            .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_INT.build(
-                input -> input != null ? input.getEnergyStored() : 0
+    public static final IOperator OBJECT_ITEMSTACK_STOREDENERGY = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LONG)
+            .symbol("stored_energy").operatorName("storedenergy").interactName("energyStored")
+            .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_LONG.build(
+                input -> input != null ? input.getAmountAsLong() : 0
             )).build());
 
     /**
      * Get the energy capacity
      */
-    public static final IOperator OBJECT_ITEMSTACK_FECAPACITY = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER)
-            .symbol("capacity_fe").operatorName("fecapacity").interactName("feCapacity")
-            .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_INT.build(
-                input -> input != null ? input.getMaxEnergyStored() : 0
+    public static final IOperator OBJECT_ITEMSTACK_ENERGYCAPACITY = Operators.REGISTRY.register(OperatorBuilders.ITEMSTACK_1_SUFFIX_LONG
+            .output(ValueTypes.LONG)
+            .symbol("capacity_energy").operatorName("energycapacity").interactName("energyCapacity")
+            .function(OperatorBuilders.FUNCTION_CONTAINERITEM_TO_LONG.build(
+                input -> input != null ? input.getCapacityAsLong() : 0
             )).build());
 
 
@@ -1824,7 +1826,7 @@ public final class Operators {
             .symbol("has_inventory").operatorName("hasinventory").interactName("hasInventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && a.getRawValue().getCapability(Capabilities.ItemHandler.ITEM) != null);
+                return ValueTypeBoolean.ValueBoolean.of(!a.getRawValue().isEmpty() && ItemAccess.forStack(a.getRawValue()).getCapability(Capabilities.Item.ITEM) != null);
             }).build());
 
 
@@ -1838,8 +1840,8 @@ public final class Operators {
             .symbol("inventory_size").operatorName("inventorysize").interactName("inventorySize")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                IItemHandler itemHandler = a.getRawValue().getCapability(Capabilities.ItemHandler.ITEM);
-                return ValueTypeInteger.ValueInteger.of(itemHandler != null ? itemHandler.getSlots() : 0);
+                ResourceHandler<ItemResource> itemHandler = ItemAccess.forStack(a.getRawValue()).getCapability(Capabilities.Item.ITEM);
+                return ValueTypeInteger.ValueInteger.of(itemHandler != null ? itemHandler.size() : 0);
             }).build());
 
     /**
@@ -1849,11 +1851,11 @@ public final class Operators {
             .output(ValueTypes.LIST).symbolOperator("inventory").interactName("inventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                IItemHandler itemHandler = a.getRawValue().getCapability(Capabilities.ItemHandler.ITEM);
+                ResourceHandler<ItemResource> itemHandler = ItemAccess.forStack(a.getRawValue()).getCapability(Capabilities.Item.ITEM);
                 if (itemHandler != null) {
-                    List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.getSlots());
-                    for (int i = 0; i < itemHandler.getSlots(); i++) {
-                        values.add(ValueObjectTypeItemStack.ValueItemStack.of(itemHandler.getStackInSlot(i)));
+                    List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.size());
+                    for (int i = 0; i < itemHandler.size(); i++) {
+                        values.add(ValueObjectTypeItemStack.ValueItemStack.of(itemHandler.getResource(i).toStack(itemHandler.getAmountAsInt(i))));
                     }
                     return ValueTypeList.ValueList.ofList(ValueTypes.OBJECT_ITEMSTACK, values);
                 }
@@ -2578,32 +2580,32 @@ public final class Operators {
      * The entity energy stored.
      */
     public static final IOperator OBJECT_ENTITY_ENERGY_STORED = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbol("entity_stored_fe").operatorName("entityenergystored").interactName("energy")
+            .output(ValueTypes.LONG).symbol("entity_stored_energy").operatorName("entityenergystored").interactName("energy")
             .function(input -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    IEnergyStorage energyStorage = entity.getCapability(Capabilities.EnergyStorage.ENTITY, null);
-                    return ValueTypeInteger.ValueInteger.of(energyStorage != null ? energyStorage.getEnergyStored() : 0);
+                    EnergyHandler energyStorage = entity.getCapability(Capabilities.Energy.ENTITY, null);
+                    return ValueTypeLong.ValueLong.of(energyStorage != null ? energyStorage.getAmountAsLong() : 0);
                 }
-                return ValueTypeInteger.ValueInteger.of(0);
+                return ValueTypeLong.ValueLong.of(0);
             }).build());
 
     /**
      * The entity energy stored.
      */
     public static final IOperator OBJECT_ENTITY_ENERGY_CAPACITY = REGISTRY.register(OperatorBuilders.ENTITY_1_SUFFIX_LONG
-            .output(ValueTypes.INTEGER).symbol("entity_capacity_fe").operatorName("entityenergycapacity").interactName("energyCapacity")
+            .output(ValueTypes.LONG).symbol("entity_capacity_energy").operatorName("entityenergycapacity").interactName("energyCapacity")
             .function(input -> {
                 ValueObjectTypeEntity.ValueEntity valueEntity = input.getValue(0, ValueTypes.OBJECT_ENTITY);
                 Optional<Entity> a = valueEntity.getRawValue();
                 if(a.isPresent()) {
                     Entity entity = a.get();
-                    IEnergyStorage energyStorage = entity.getCapability(Capabilities.EnergyStorage.ENTITY, null);
-                    return ValueTypeInteger.ValueInteger.of(energyStorage != null ? energyStorage.getMaxEnergyStored() : 0);
+                    EnergyHandler energyStorage = entity.getCapability(Capabilities.Energy.ENTITY, null);
+                    return ValueTypeLong.ValueLong.of(energyStorage != null ? energyStorage.getCapacityAsLong() : 0);
                 }
-                return ValueTypeInteger.ValueInteger.of(0);
+                return ValueTypeLong.ValueLong.of(0);
             }).build());
 
     /**

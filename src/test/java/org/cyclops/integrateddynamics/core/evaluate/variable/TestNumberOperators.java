@@ -6,20 +6,25 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different number operators.
+ *
  * @author rubensworks
  */
 public class TestNumberOperators {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
@@ -33,9 +38,9 @@ public class TestNumberOperators {
     private DummyVariableInteger i1k;
     private DummyVariableInteger i1m;
 
-    @Before
+    @BeforeEach
     public void before() {
-        d0   = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0  ));
+        d0 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0));
         dm10 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(-10));
         d0P5 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.5));
         d0P1 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.1));
@@ -72,19 +77,19 @@ public class TestNumberOperators {
         assertThat("||10|| = 10", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(10));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeDoubleRoundLarge() throws EvaluationException {
-        Operators.NUMBER_ROUND.evaluate(new IVariable[]{d0, d0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_ROUND.evaluate(new IVariable[]{d0, d0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeDoubleRoundSmall() throws EvaluationException {
-        Operators.NUMBER_ROUND.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_ROUND.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeDoubleRound() throws EvaluationException {
-        Operators.NUMBER_ROUND.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_ROUND.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -113,19 +118,19 @@ public class TestNumberOperators {
         assertThat("⌈10⌉ = 10", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(10));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeDoubleCeilLarge() throws EvaluationException {
-        Operators.NUMBER_CEIL.evaluate(new IVariable[]{d0, d0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_CEIL.evaluate(new IVariable[]{d0, d0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeDoubleCeilSmall() throws EvaluationException {
-        Operators.NUMBER_CEIL.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_CEIL.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeDoubleCeil() throws EvaluationException {
-        Operators.NUMBER_CEIL.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_CEIL.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -154,19 +159,19 @@ public class TestNumberOperators {
         assertThat("⌊10⌋ = 10", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(10));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeDoubleFloorLarge() throws EvaluationException {
-        Operators.NUMBER_FLOOR.evaluate(new IVariable[]{d0, d0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_FLOOR.evaluate(new IVariable[]{d0, d0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeDoubleFloorSmall() throws EvaluationException {
-        Operators.NUMBER_FLOOR.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_FLOOR.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeDoubleFloor() throws EvaluationException {
-        Operators.NUMBER_FLOOR.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NUMBER_FLOOR.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -30,9 +30,9 @@ public class ValueTypeVariableFacadeClient<V extends IValue> implements IVariabl
     }
 
     @Override
-    public void renderISTER(ItemStack stack, ItemDisplayContext transformType, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    public void renderISTER(ItemStack stack, ItemDisplayContext transformType, PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, int combinedLight, int combinedOverlay) {
         if(this.variableFacade.isValid()) {
-            this.variableFacade.getValueType().getClient().renderISTER(this.variableFacade.getValue(), stack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
+            this.variableFacade.getValueType().getClient().renderISTER(this.variableFacade.getValue(), stack, transformType, matrixStack, submitNodeCollector, combinedLight, combinedOverlay);
         }
     }
 }

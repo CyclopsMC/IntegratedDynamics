@@ -16,7 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
@@ -69,7 +70,7 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
             super.populate();
 
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK,
                     (blockEntity, direction) -> direction == Direction.DOWN ? blockEntity.getTankOutput() : blockEntity.getTankInput()
             );
             add(
@@ -159,8 +160,6 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
 
     @Override
     protected boolean finalizeRecipe(RecipeMechanicalDryingBasin recipe, boolean simulate) {
-        IFluidHandler.FluidAction fluidAction = IModHelpersNeoForge.get().getFluidHelpers().simulateBooleanToAction(simulate);
-
         // Output items
         ItemStack outputStack = recipe.getOutputItemFirst().orElse(ItemStack.EMPTY).copy();
         if (!outputStack.isEmpty()) {
@@ -172,8 +171,14 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         // Output fluid
         Optional<FluidStack> outputFluid = recipe.getOutputFluid();
         if (outputFluid.isPresent()) {
-            if (getTankOutput().fill(outputFluid.get().copy(), fluidAction) != outputFluid.get().getAmount()) {
-                return false;
+            try (var tx = Transaction.openRoot()) {
+                int inserted = getTankOutput().insert(FluidResource.of(outputFluid.get()), outputFluid.get().getAmount(), tx);
+                if (!simulate) {
+                    tx.commit();
+                }
+                if (inserted != outputFluid.get().getAmount()) {
+                    return false;
+                }
             }
         }
 
@@ -187,8 +192,14 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         // Consume fluid
         Optional<FluidStack> inputFluid = recipe.getInputFluid();
         if (inputFluid.isPresent()) {
-            if (IModHelpersNeoForge.get().getFluidHelpers().getAmount(getTankInput().drain(inputFluid.get(), fluidAction)) != inputFluid.get().getAmount()) {
-                return false;
+            try (var tx = Transaction.openRoot()) {
+                int extracted = getTankInput().extract(FluidResource.of(inputFluid.get()), inputFluid.get().getAmount(), tx);
+                if (!simulate) {
+                    tx.commit();
+                }
+                if (extracted != inputFluid.get().getAmount()) {
+                    return false;
+                }
             }
         }
 

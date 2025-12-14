@@ -5,7 +5,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
 import javax.annotation.Nullable;
@@ -13,11 +14,11 @@ import javax.annotation.Nullable;
 /**
  * A list proxy for the fluid handler fluids of an entity.
  */
-public class ValueTypeListProxyEntityFluids extends ValueTypeListProxyEntityCapability<IFluidHandler, Direction, ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
+public class ValueTypeListProxyEntityFluids extends ValueTypeListProxyEntityCapability<ResourceHandler<FluidResource>, Direction, ValueObjectTypeFluidStack, ValueObjectTypeFluidStack.ValueFluidStack> implements INBTProvider {
 
     public ValueTypeListProxyEntityFluids(Level world, Entity entity, @Nullable Direction side) {
         super(ValueTypeListProxyFactories.ENTITY_CAPABILITY_FLUIDS.getName(), ValueTypes.OBJECT_FLUIDSTACK,
-                world, entity, Capabilities.FluidHandler.ENTITY, side);
+                world, entity, Capabilities.Fluid.ENTITY, side);
     }
 
     public ValueTypeListProxyEntityFluids() {
@@ -27,14 +28,14 @@ public class ValueTypeListProxyEntityFluids extends ValueTypeListProxyEntityCapa
     @Override
     public int getLength() {
         return getCapability()
-                .map(IFluidHandler::getTanks)
+                .map(ResourceHandler<FluidResource>::size)
                 .orElse(0);
     }
 
     @Override
     public ValueObjectTypeFluidStack.ValueFluidStack get(int index) {
         return ValueObjectTypeFluidStack.ValueFluidStack.of(getCapability()
-                .map(handler -> handler.getFluidInTank(index))
+                .map(handler -> handler.getResource(index).toStack(handler.getAmountAsInt(index)))
                 .orElse(FluidStack.EMPTY));
     }
 }

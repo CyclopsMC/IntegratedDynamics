@@ -9,11 +9,14 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import org.apache.commons.lang3.ArrayUtils;
-import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
+import org.cyclops.cyclopscore.inventory.InventorySlotMasked;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -33,16 +36,15 @@ import java.util.function.Supplier;
  * @param <RCK> The recipe cache key type.
  * @param <R> The recipe type.
  */
-public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> extends BlockEntityCableConnectableInventory
-        implements IEnergyStorage {
+public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> extends BlockEntityCableConnectableInventory {
 
     /**
      * The number of ticks to sleep when the recipe could not be finalized.
      */
     private static int SLEEP_TIME = 40;
 
-    @NBTPersist
-    private int energy;
+    private final SimpleEnergyHandler energyHandler;
+
     @NBTPersist
     private int progress = -1;
     @NBTPersist
@@ -52,6 +54,14 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> ext
 
     public BlockEntityMechanicalMachine(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState, int inventorySize) {
         super(type, blockPos, blockState, inventorySize, 64);
+
+        this.energyHandler = new SimpleEnergyHandler(getMaxEnergyStored(), getMaxEnergyStored(), 0, 0) {
+            @Override
+            protected void onEnergyChanged(int previousAmount) {
+                super.onEnergyChanged(previousAmount);
+                setChanged();
+            }
+        };
 
         // Efficient cache to retrieve the current craftable recipe.
         recipeCache = new SingleCache<>(createCacheUpdater());
@@ -71,14 +81,14 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> ext
                     (blockEntity, direction) -> blockEntity.getNetworkElementProvider()
             );
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
-                    (blockEntity, direction) -> blockEntity
+                    net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK,
+                    (blockEntity, direction) -> blockEntity.getEnergyHandler()
             );
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
                     (blockEntity, direction) -> {
                         int[] slots = direction == Direction.DOWN ? blockEntity.getOutputSlots() : blockEntity.getInputSlots();
-                        return new ItemHandlerSlotMasked(blockEntity.getInventory(), slots);
+                        return VanillaContainerWrapper.of(new InventorySlotMasked(blockEntity.getInventory(), slots));
                     }
             );
         }
@@ -92,6 +102,10 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> ext
                 return new MechanicalMachineNetworkElement(DimPos.of(world, blockPos));
             }
         };
+    }
+
+    public SimpleEnergyHandler getEnergyHandler() {
+        return energyHandler;
     }
 
     /**
@@ -276,54 +290,26 @@ public abstract class BlockEntityMechanicalMachine<RCK, R extends Recipe<?>> ext
 
     protected int extractEnergyInternal(int energy, boolean simulate) {
         energy = Math.max(0, energy);
-        int stored = getEnergyStored();
+        int stored = getEnergyHandler().getAmountAsInt();
         int newEnergy = Math.max(stored - energy, 0);
         if(!simulate) {
-            setEnergy(newEnergy);
+            getEnergyHandler().set(newEnergy);
         }
         return stored - newEnergy;
     }
 
-    public int getEnergy() {
-        return energy;
-    }
+    protected abstract int getMaxEnergyStored();
 
-    public void setEnergy(int energy) {
-        int lastEnergy = this.energy;
-        if (lastEnergy != energy) {
-            this.energy = energy;
-            setChanged();
-        }
+    @Override
+    public void read(ValueInput input) {
+        super.read(input);
+        energyHandler.deserialize(input);
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        int stored = getEnergyStored();
-        int energyReceived = Math.min(getMaxEnergyStored() - stored, maxReceive);
-        if(!simulate) {
-            setEnergy(stored + energyReceived);
-        }
-        return energyReceived;
-    }
-
-    @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
-        return 0;
-    }
-
-    @Override
-    public int getEnergyStored() {
-        return this.energy;
-    }
-
-    @Override
-    public boolean canExtract() {
-        return false;
-    }
-
-    @Override
-    public boolean canReceive() {
-        return true;
+    public void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        energyHandler.serialize(output);
     }
 
     public static class Ticker<RCK, R extends Recipe<?>, BE extends BlockEntityMechanicalMachine<RCK, R>> extends BlockEntityCableConnectableInventory.Ticker<BE> {

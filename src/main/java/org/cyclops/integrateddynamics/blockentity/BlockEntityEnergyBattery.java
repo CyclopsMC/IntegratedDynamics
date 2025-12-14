@@ -5,16 +5,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
-import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
+import org.cyclops.integrateddynamics.capability.energystorage.SimpleEnergyHandlerCapacity;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectable;
 import org.cyclops.integrateddynamics.core.helper.EnergyHelpers;
@@ -27,15 +29,20 @@ import java.util.function.Supplier;
  * Internally, this also acts as an expression cache
  * @author rubensworks
  */
-public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implements IEnergyStorageCapacity {
+public class BlockEntityEnergyBattery extends BlockEntityCableConnectable {
 
-    @NBTPersist
-    private int energy;
-    @NBTPersist(useDefaultValue = false)
-    private int capacity = BlockEnergyBatteryConfig.capacity;
+    private SimpleEnergyHandlerCapacity energyHandler;
 
     public BlockEntityEnergyBattery(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_ENERGY_BATTERY.get(), blockPos, blockState);
+        this.energyHandler = new SimpleEnergyHandlerCapacity(BlockEnergyBatteryConfig.capacity) {
+            @Override
+            protected void onEnergyChanged(int previousAmount) {
+                super.onEnergyChanged(previousAmount);
+                setChanged();
+                sendUpdate();
+            }
+        };
     }
 
     public static class CapabilityRegistrar extends BlockEntityCableConnectable.CapabilityRegistrar<BlockEntityEnergyBattery> {
@@ -52,8 +59,8 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
                     (blockEntity, context) -> blockEntity.getNetworkElementProvider()
             );
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
-                    (blockEntity, context) -> blockEntity
+                    net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK,
+                    (blockEntity, context) -> blockEntity.getEnergyHandler()
             );
         }
     }
@@ -68,46 +75,37 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
         };
     }
 
+    @Override
+    public void read(ValueInput input) {
+        super.read(input);
+        energyHandler.deserialize(input);
+    }
+
+    @Override
+    public void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        energyHandler.serialize(output);
+    }
+
+    public SimpleEnergyHandlerCapacity getEnergyHandler() {
+        return energyHandler;
+    }
+
     public boolean isCreative() {
         Block block = getBlockState().getBlock();
         return block instanceof BlockEnergyBatteryBase && ((BlockEnergyBatteryBase) block).isCreative();
     }
 
     public void setEnergyStored(int energy) {
-        this.energy = energy;
+        this.energyHandler.set(energy);
     }
 
-    @Override
     public int getEnergyStored() {
-        if(isCreative()) return Integer.MAX_VALUE;
-        return this.energy;
+        return this.energyHandler.getAmountAsInt();
     }
 
-    @Override
     public int getMaxEnergyStored() {
-        if(isCreative()) return Integer.MAX_VALUE;
-        return capacity;
-    }
-
-    @Override
-    public boolean canExtract() {
-        return true;
-    }
-
-    @Override
-    public boolean canReceive() {
-        return true;
-    }
-
-    protected void setEnergy(int energy) {
-        if(!isCreative()) {
-            int lastEnergy = this.energy;
-            if (lastEnergy != energy) {
-                this.energy = energy;
-                setChanged();
-                sendUpdate();
-            }
-        }
+        return this.energyHandler.getCapacityAsInt();
     }
 
     @Override
@@ -115,52 +113,25 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
         return 20;
     }
 
-    public static int getEnergyPerTick(int capacity) {
-        return Math.max(capacity / BlockEnergyBatteryConfig.energyRateCapacityFraction, BlockEnergyBatteryConfig.minEnergyRate);
+    public static int getEnergyPerTick(long capacity) {
+        return Math.max(IModHelpers.get().getBaseHelpers().castSafe(capacity) / BlockEnergyBatteryConfig.energyRateCapacityFraction, BlockEnergyBatteryConfig.minEnergyRate);
     }
 
-    protected int getEnergyPerTick() {
+    protected long getEnergyPerTick() {
         return getEnergyPerTick(getMaxEnergyStored());
-    }
-
-    @Override
-    public int receiveEnergy(int energy, boolean simulate) {
-        if(!isCreative()) {
-            int stored = getEnergyStored();
-            int energyReceived = Math.min(getMaxEnergyStored() - stored, energy);
-            if(!simulate) {
-                setEnergy(stored + energyReceived);
-            }
-            return energyReceived;
-        }
-        return 0;
-    }
-
-    @Override
-    public int extractEnergy(int energy, boolean simulate) {
-        if(isCreative()) return energy;
-        energy = Math.max(0, Math.min(energy, getEnergyPerTick()));
-        int stored = getEnergyStored();
-        int newEnergy = Math.max(stored - energy, 0);;
-        if(!simulate) {
-            setEnergy(newEnergy);
-        }
-        return stored - newEnergy;
     }
 
     protected int addEnergy(int energy) {
         int filled = addEnergyFe(energy, false);
-        extractEnergy(filled, false);
+        try (var tx = Transaction.openRoot()) {
+            this.energyHandler.extract(filled, tx);
+            tx.commit();
+        }
         return filled;
     }
 
     protected int addEnergyFe(int energy, boolean simulate) {
         return EnergyHelpers.fillNeigbours(getLevel(), getBlockPos(), energy, simulate);
-    }
-
-    @Override
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     public static class Ticker extends BlockEntityCableConnectable.Ticker<BlockEntityEnergyBattery> {
@@ -169,7 +140,7 @@ public class BlockEntityEnergyBattery extends BlockEntityCableConnectable implem
             super.update(level, pos, blockState, blockEntity);
 
             if (blockEntity.getEnergyStored() > 0 && level.hasNeighborSignal(pos)) {
-                blockEntity.addEnergy(Math.min(blockEntity.getEnergyPerTick(), blockEntity.getEnergyStored()));
+                blockEntity.addEnergy(Math.min((int) blockEntity.getEnergyPerTick(), blockEntity.getEnergyStored()));
             }
         }
 

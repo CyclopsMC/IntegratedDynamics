@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -22,16 +22,16 @@ import java.util.Optional;
 public class BlockValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
     @Override
-    public void renderValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
+    public void submitValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                             Direction direction, IPartType partType, IValue value, float partialTicks,
-                            PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
+                            PoseStack matrixStack, SubmitNodeCollector nodeCollector,
                             int combinedLight, int combinedOverlay, float alpha) {
         Optional<BlockState> blockOptional = ((ValueObjectTypeBlock.ValueBlock) value).getRawValue();
         if(blockOptional.isPresent()) {
             // ItemStack
             ItemStack itemStack = IModHelpers.get().getBlockHelpers().getItemStackFromBlockState(blockOptional.get());
             if(!itemStack.isEmpty()) {
-                ItemValueTypeWorldRenderer.renderItemStack(matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, itemStack, alpha);
+                ItemValueTypeWorldRenderer.renderItemStack(matrixStack, nodeCollector, combinedLight, combinedOverlay, 0, itemStack, alpha);
             }
         }
     }

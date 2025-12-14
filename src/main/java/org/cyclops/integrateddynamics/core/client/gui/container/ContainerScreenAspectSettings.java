@@ -5,6 +5,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -136,13 +139,13 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        if(!subGuiHolder.charTyped(typedChar, keyCode)) {
-            if (keyCode == 1 || this.getMinecraft().options.keyInventory.getKey().getValue() == keyCode) {
+    public boolean charTyped(CharacterEvent evt) {
+        if(!subGuiHolder.charTyped(evt)) {
+            if (evt.codepoint() == 1 || this.getMinecraft().options.keyInventory.getKey().getValue() == evt.codepoint()) {
                 saveSetting();
                 this.getMinecraft().player.closeContainer();
             } else {
-                return super.charTyped(typedChar, keyCode);
+                return super.charTyped(evt);
             }
         } else {
             if(guiElement != null) {
@@ -153,9 +156,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
-            if (this.subGuiHolder.keyPressed(typedChar, keyCode, modifiers)) {
+    public boolean keyPressed(KeyEvent evt) {
+        if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+            if (this.subGuiHolder.keyPressed(evt)) {
                 if(guiElement != null) {
                     onValueChanged();
                 }
@@ -165,14 +168,14 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
             }
         } else {
             saveSetting();
-            return super.keyPressed(typedChar, keyCode, modifiers);
+            return super.keyPressed(evt);
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        return subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton)
-                || super.mouseClicked(mouseX, mouseY, mouseButton);
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+        return subGuiHolder.mouseClicked(evt, isDoubleClick)
+                || super.mouseClicked(evt, isDoubleClick);
     }
 
     protected void onValueChanged() {

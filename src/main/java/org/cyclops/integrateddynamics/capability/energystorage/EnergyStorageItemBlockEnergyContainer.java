@@ -2,6 +2,9 @@ package org.cyclops.integrateddynamics.capability.energystorage;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.cyclops.cyclopscore.RegistryEntries;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
@@ -16,20 +19,24 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     private final ItemBlockEnergyContainer itemBlockEnergyContainer;
     private final ItemStack itemStack;
+    private final ItemAccess itemAccess;
     private final int rate;
+    private final Journal journal;
 
-    public EnergyStorageItemBlockEnergyContainer(ItemBlockEnergyContainer itemBlockEnergyContainer, ItemStack itemStack, int rate) {
+    public EnergyStorageItemBlockEnergyContainer(ItemBlockEnergyContainer itemBlockEnergyContainer, ItemStack itemStack, ItemAccess itemAccess, int rate) {
         this.itemBlockEnergyContainer = itemBlockEnergyContainer;
         this.itemStack = itemStack;
+        this.itemAccess = itemAccess;
         this.rate = rate;
+        this.journal = new Journal();
 
         if (!this.itemStack.has(RegistryEntries.COMPONENT_ENERGY_STORAGE)) {
             setItemStackEnergy(itemStack, 0);
         }
     }
 
-    public EnergyStorageItemBlockEnergyContainer(ItemBlockEnergyContainer itemBlockEnergyContainer, ItemStack itemStack) {
-        this(itemBlockEnergyContainer, itemStack, Integer.MAX_VALUE);
+    public EnergyStorageItemBlockEnergyContainer(ItemBlockEnergyContainer itemBlockEnergyContainer, ItemStack itemStack, ItemAccess itemAccess) {
+        this(itemBlockEnergyContainer, itemStack, itemAccess, Integer.MAX_VALUE);
     }
 
     public int getRate() {
@@ -47,11 +54,12 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     }
 
     @Override
-    public int getEnergyStored() {
+    public int getAmountAsInt() {
         return IModHelpers.get().getBaseHelpers().multiplySafe(getEnergyStoredSingular(), this.itemStack.getCount());
     }
 
-    public long getEnergyStoredLong() {
+    @Override
+    public long getAmountAsLong() {
         return ((long) getEnergyStoredSingular()) * this.itemStack.getCount();
     }
 
@@ -64,26 +72,17 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     }
 
     @Override
-    public int getMaxEnergyStored() {
+    public int getCapacityAsInt() {
         return IModHelpers.get().getBaseHelpers().multiplySafe(getMaxEnergyStoredSingular(), this.itemStack.getCount());
     }
 
-    public long getMaxEnergyStoredLong() {
+    @Override
+    public long getCapacityAsLong() {
         return ((long) getMaxEnergyStoredSingular()) * this.itemStack.getCount();
     }
 
     @Override
-    public boolean canExtract() {
-        return true;
-    }
-
-    @Override
-    public boolean canReceive() {
-        return true;
-    }
-
-    @Override
-    public int receiveEnergy(int energy, boolean simulate) {
+    public int insert(int energy, TransactionContext transaction) {
         if(isCreative()) return 0;
         int stackSize = this.itemStack.getCount();
         if (stackSize == 0) return 0;
@@ -91,14 +90,13 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         energy = Math.min(energy, getRate());
         int stored = getEnergyStoredSingular();
         int energyReceived = Math.min(getMaxEnergyStoredSingular() - stored, energy);
-        if(!simulate) {
-            setItemStackEnergy(itemStack, stored + energyReceived);
-        }
+        this.journal.updateSnapshots(transaction);
+        setItemStackEnergy(itemStack, stored + energyReceived);
         return energyReceived * stackSize;
     }
 
     @Override
-    public int extractEnergy(int energy, boolean simulate) {
+    public int extract(int energy, TransactionContext transaction) {
         if(isCreative()) return energy;
         int stackSize = this.itemStack.getCount();
         if (stackSize == 0) return energy;
@@ -106,9 +104,8 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         energy = Math.min(energy, getRate());
         int stored = getEnergyStoredSingular();
         int newEnergy = Math.max(stored - energy, 0);
-        if(!simulate) {
-            setItemStackEnergy(itemStack, newEnergy);
-        }
+        this.journal.updateSnapshots(transaction);
+        setItemStackEnergy(itemStack, newEnergy);
         return (stored - newEnergy) * stackSize;
     }
 
@@ -129,5 +126,18 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
     @Override
     public void setEnergy(int energy) {
         setItemStackEnergy(itemStack, energy);
+    }
+
+    public class Journal extends SnapshotJournal<Integer> {
+
+        @Override
+        protected Integer createSnapshot() {
+            return getEnergyStoredSingular();
+        }
+
+        @Override
+        protected void revertToSnapshot(Integer snapshot) {
+            setItemStackEnergy(itemStack, snapshot);
+        }
     }
 }

@@ -4,7 +4,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.ItemCapability;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import org.cyclops.commoncapabilities.api.ingredient.capability.IngredientComponentCapability;
 import org.cyclops.integrateddynamics.api.block.IDynamicLight;
 import org.cyclops.integrateddynamics.api.block.IDynamicRedstone;
@@ -16,11 +16,7 @@ import org.cyclops.integrateddynamics.api.evaluate.IValueInterface;
 import org.cyclops.integrateddynamics.api.ingredient.capability.IIngredientComponentValueHandler;
 import org.cyclops.integrateddynamics.api.ingredient.capability.IPositionedAddonsNetworkIngredientsHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHolder;
-import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkCarrier;
-import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
-import org.cyclops.integrateddynamics.api.network.NetworkCapability;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartCapability;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -97,7 +93,7 @@ public class Capabilities {
         public static final NetworkCapability<IPartNetwork> NETWORK = NetworkCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "part_network"), IPartNetwork.class);
     }
 
-    public static final class EnergyStorage {
-        public static final NetworkCapability<IEnergyStorage> NETWORK = NetworkCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "energy_storage"), IEnergyStorage.class);
+    public static final class Energy {
+        public static final NetworkCapability<EnergyHandler> NETWORK = NetworkCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "energy_storage"), EnergyHandler.class);
     }
 }

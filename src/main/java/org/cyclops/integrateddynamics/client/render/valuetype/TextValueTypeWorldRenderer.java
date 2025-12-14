@@ -2,9 +2,10 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRenderer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -21,11 +22,11 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     private static final float MARGIN_FACTOR = 1.1F;
 
     @Override
-    public void renderValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
+    public void submitValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                             Direction direction, IPartType partType, IValue value, float partialTicks,
-                            PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
+                            PoseStack matrixStack, SubmitNodeCollector nodeCollector,
                             int combinedLight, int combinedOverlay, float alpha) {
-        Font fontRenderer = context.getFont();
+        Font fontRenderer = context.font();
         float maxWidth = 0;
 
         String[] lines = value.getType().toCompactString(value).getString().split("(?<=[^\\\\])\\\\n");
@@ -50,8 +51,7 @@ public class TextValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         int offset = 0;
         for(String line : lines) {
             int color = IModHelpers.get().getBaseHelpers().addAlphaToColor(value.getType().getDisplayColor(), alpha);
-            context.getFont().drawInBatch(polishLine(line), 0, offset, color,
-                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
+            nodeCollector.submitText(matrixStack, 0, offset, Component.literal(polishLine(line)).getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, color, 0, 0);
             offset += singleHeight;
         }
 

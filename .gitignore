@@ -30,3 +30,6 @@ keystore.jks
 # Ignore files specific to dev environments
 secrets.properties
 changelog.txt
+
+.cache
+config

@@ -39,7 +39,7 @@ public class BlockCreativeEnergyBatteryConfig extends BlockConfigCommon<Integrat
     }
 
     protected void registerCapability(RegisterCapabilitiesEvent event) {
-        event.registerItem(Capabilities.EnergyStorage.ITEM, (stack, context) -> ((ItemBlockEnergyContainer) getItemInstance()).createCapability(stack), getInstance());
+        event.registerItem(Capabilities.Energy.ITEM, (stack, context) -> ((ItemBlockEnergyContainer) getItemInstance()).createCapability(stack, context), getInstance());
     }
 
     protected void fillCreativeTab(BuildCreativeModeTabContentsEvent event) {

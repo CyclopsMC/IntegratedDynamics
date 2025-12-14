@@ -5,7 +5,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
 
 import javax.annotation.Nullable;
@@ -13,11 +14,11 @@ import javax.annotation.Nullable;
 /**
  * A list proxy for the item handler items of an entity.
  */
-public class ValueTypeListProxyEntityItems extends ValueTypeListProxyEntityCapability<IItemHandler, Void, ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
+public class ValueTypeListProxyEntityItems extends ValueTypeListProxyEntityCapability<ResourceHandler<ItemResource>, Void, ValueObjectTypeItemStack, ValueObjectTypeItemStack.ValueItemStack> implements INBTProvider {
 
     public ValueTypeListProxyEntityItems(Level world, Entity entity, @Nullable Direction side) {
         super(ValueTypeListProxyFactories.ENTITY_CAPABILITY_ITEMS.getName(), ValueTypes.OBJECT_ITEMSTACK,
-                world, entity, Capabilities.ItemHandler.ENTITY, side);
+                world, entity, Capabilities.Item.ENTITY, side);
     }
 
     public ValueTypeListProxyEntityItems() {
@@ -26,11 +27,11 @@ public class ValueTypeListProxyEntityItems extends ValueTypeListProxyEntityCapab
 
     @Override
     public int getLength() {
-        return getCapability().map(IItemHandler::getSlots).orElse(0);
+        return getCapability().map(ResourceHandler::size).orElse(0);
     }
 
     @Override
     public ValueObjectTypeItemStack.ValueItemStack get(int index) {
-        return ValueObjectTypeItemStack.ValueItemStack.of(getCapability().map(handler -> handler.getStackInSlot(index)).orElse(ItemStack.EMPTY));
+        return ValueObjectTypeItemStack.ValueItemStack.of(getCapability().map(handler -> handler.getResource(index).toStack(handler.getAmountAsInt(index))).orElse(ItemStack.EMPTY));
     }
 }

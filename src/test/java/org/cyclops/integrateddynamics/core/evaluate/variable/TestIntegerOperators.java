@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 
 /**
@@ -19,7 +19,7 @@ public class TestIntegerOperators {
     private DummyVariableInteger i10;
     private DummyVariableInteger i15;
 
-    @Before
+    @BeforeEach
     public void before() {
         i0   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0  ));
         i1   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1  ));

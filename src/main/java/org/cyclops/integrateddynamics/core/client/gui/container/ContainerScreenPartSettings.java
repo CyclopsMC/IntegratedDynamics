@@ -4,6 +4,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -171,68 +174,68 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        if (!(isFieldUpdateIntervalEnabled() && this.numberFieldUpdateInterval.charTyped(typedChar, keyCode))
-                && !(isFieldPriorityEnabled() && this.numberFieldPriority.charTyped(typedChar, keyCode))
-                && !(isFieldChannelEnabled() && this.numberFieldChannel.charTyped(typedChar, keyCode))
-                && !(isFieldSideEnabled() && this.dropdownFieldSide.charTyped(typedChar, keyCode))) {
-            return super.charTyped(typedChar, keyCode);
+    public boolean charTyped(CharacterEvent evt) {
+        if (!(isFieldUpdateIntervalEnabled() && this.numberFieldUpdateInterval.charTyped(evt))
+                && !(isFieldPriorityEnabled() && this.numberFieldPriority.charTyped(evt))
+                && !(isFieldChannelEnabled() && this.numberFieldChannel.charTyped(evt))
+                && !(isFieldSideEnabled() && this.dropdownFieldSide.charTyped(evt))) {
+            return super.charTyped(evt);
         }
         return true;
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
+    public boolean keyPressed(KeyEvent evt) {
+        if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
             if (isFieldSideEnabled()) {
-                if (this.dropdownFieldSide.keyPressed(typedChar, keyCode, modifiers)) {
+                if (this.dropdownFieldSide.keyPressed(evt)) {
                     return true;
                 }
             }
             if (isFieldUpdateIntervalEnabled()) {
-                if (this.numberFieldUpdateInterval.keyPressed(typedChar, keyCode, modifiers)) {
+                if (this.numberFieldUpdateInterval.keyPressed(evt)) {
                     return true;
                 }
             }
             if (isFieldPriorityEnabled()) {
-                if (this.numberFieldPriority.keyPressed(typedChar, keyCode, modifiers)) {
+                if (this.numberFieldPriority.keyPressed(evt)) {
                     return true;
                 }
             }
             if (isFieldChannelEnabled()) {
-                if (this.numberFieldChannel.keyPressed(typedChar, keyCode, modifiers)) {
+                if (this.numberFieldChannel.keyPressed(evt)) {
                     return true;
                 }
             }
             return true;
         } else {
-            return super.keyPressed(typedChar, keyCode, modifiers);
+            return super.keyPressed(evt);
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
         if (isFieldSideEnabled()) {
-            if (this.dropdownFieldSide.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (this.dropdownFieldSide.mouseClicked(evt, isDoubleClick)) {
                 return true;
             }
         }
         if (isFieldUpdateIntervalEnabled()) {
-            if (this.numberFieldUpdateInterval.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (this.numberFieldUpdateInterval.mouseClicked(evt, isDoubleClick)) {
                 return true;
             }
         }
         if (isFieldPriorityEnabled()) {
-            if (this.numberFieldPriority.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (this.numberFieldPriority.mouseClicked(evt, isDoubleClick)) {
                 return true;
             }
         }
         if (isFieldChannelEnabled()) {
-            if (this.numberFieldChannel.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (this.numberFieldChannel.mouseClicked(evt, isDoubleClick)) {
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, mouseButton);
+        return super.mouseClicked(evt, isDoubleClick);
     }
 
     @Override

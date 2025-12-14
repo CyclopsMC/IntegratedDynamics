@@ -5,7 +5,7 @@ import com.google.common.math.DoubleMath;
 import com.google.common.math.Stats;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -27,11 +27,13 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.transfer.EmptyResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -283,9 +285,9 @@ public class Aspects {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_FULL =
                     AspectReadBuilders.Fluid.BUILDER_BOOLEAN.handle(tankInfo -> {
                         boolean allFull = true;
-                        for (int i = 0; i < tankInfo.getTanks(); i++) {
-                            if (tankInfo.getFluidInTank(i).isEmpty() && tankInfo.getTankCapacity(i) > 0
-                                    || (!tankInfo.getFluidInTank(i).isEmpty() && tankInfo.getFluidInTank(i).getAmount() < tankInfo.getTankCapacity(i))) {
+                        for (int i = 0; i < tankInfo.size(); i++) {
+                            if (tankInfo.getResource(i).isEmpty() && tankInfo.getCapacityAsLong(i, FluidResource.EMPTY) > 0
+                                    || (!tankInfo.getResource(i).isEmpty() && tankInfo.getAmountAsLong(i) < tankInfo.getCapacityAsLong(i, FluidResource.EMPTY))) {
                                 allFull = false;
                             }
                         }
@@ -293,9 +295,9 @@ public class Aspects {
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "full").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_EMPTY =
                     AspectReadBuilders.Fluid.BUILDER_BOOLEAN.handle(tankInfo -> {
-                        for (int i = 0; i < tankInfo.getTanks(); i++) {
-                            if (!tankInfo.getFluidInTank(i).isEmpty() && tankInfo.getTankCapacity(i) > 0
-                                    || (!tankInfo.getFluidInTank(i).isEmpty() && tankInfo.getFluidInTank(i).getAmount() < tankInfo.getTankCapacity(i))) {
+                        for (int i = 0; i < tankInfo.size(); i++) {
+                            if (!tankInfo.getResource(i).isEmpty() && tankInfo.getCapacityAsLong(i, FluidResource.EMPTY) > 0
+                                    || (!tankInfo.getResource(i).isEmpty() && tankInfo.getAmountAsLong(i) < tankInfo.getCapacityAsLong(i, FluidResource.EMPTY))) {
                                 return false;
                             }
                         }
@@ -304,8 +306,8 @@ public class Aspects {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONEMPTY =
                     AspectReadBuilders.Fluid.BUILDER_BOOLEAN.handle(tankInfo -> {
                         boolean hasFluid = false;
-                        for (int i = 0; i < tankInfo.getTanks(); i++) {
-                            if (!tankInfo.getFluidInTank(i).isEmpty() && tankInfo.getFluidInTank(i).getAmount() > 0) {
+                        for (int i = 0; i < tankInfo.size(); i++) {
+                            if (!tankInfo.getResource(i).isEmpty() && tankInfo.getAmountAsLong(i) > 0) {
                                 hasFluid = true;
                             }
                         }
@@ -313,50 +315,49 @@ public class Aspects {
                     }).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "nonempty").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_APPLICABLE =
                     AspectReadBuilders.Fluid.BUILDER_BOOLEAN.handle(
-                        tankInfo -> tankInfo.getTanks() > 0 && tankInfo != EmptyFluidHandler.INSTANCE
+                        tankInfo -> tankInfo.size() > 0 && tankInfo != EmptyResourceHandler.<FluidResource>instance()
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").buildRead();
 
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_AMOUNT =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(AspectReadBuilders.Fluid.PROP_GET_FLUIDSTACK).handle(
-                            FluidStack::getAmount
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "amount").buildRead();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_AMOUNTTOTAL =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(tankInfo -> {
-                        int amount = 0;
-                        for (int i = 0; i < tankInfo.getTanks(); i++) {
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_AMOUNT =
+                    AspectReadBuilders.Fluid.BUILDER_LONG_ACTIVATABLE.handle(tankInfo -> tankInfo.getLeft().getAmountAsLong(tankInfo.getRight())
+                    ).handle(AspectReadBuilders.PROP_GET_LONG, "amount").buildRead();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_AMOUNTTOTAL =
+                    AspectReadBuilders.Fluid.BUILDER_LONG.handle(tankInfo -> {
+                        long amount = 0;
+                        for (int i = 0; i < tankInfo.size(); i++) {
                             try {
-                                amount = Math.addExact(amount, tankInfo.getFluidInTank(i).getAmount());
+                                amount = Math.addExact(amount, tankInfo.getAmountAsLong(i));
                             } catch (ArithmeticException e) {
-                                amount = Integer.MAX_VALUE;
+                                amount = Long.MAX_VALUE;
                             }
                             if (amount == Integer.MAX_VALUE) {
                                 break;
                             }
                         }
                         return amount;
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "totalamount").buildRead();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CAPACITY =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER_ACTIVATABLE.handle(
-                        tankInfo -> tankInfo != null ? tankInfo.getLeft().getTankCapacity(tankInfo.getRight()) : 0
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "capacity").buildRead();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_CAPACITYTOTAL =
-                    AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(tankInfo -> {
-                        int capacity = 0;
-                        for (int i = 0; i < tankInfo.getTanks(); i++) {
+                    }).handle(AspectReadBuilders.PROP_GET_LONG, "totalamount").buildRead();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_CAPACITY =
+                    AspectReadBuilders.Fluid.BUILDER_LONG_ACTIVATABLE.handle(
+                        tankInfo -> tankInfo != null ? tankInfo.getLeft().getCapacityAsLong(tankInfo.getRight(), FluidResource.EMPTY) : 0
+                    ).handle(AspectReadBuilders.PROP_GET_LONG, "capacity").buildRead();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_CAPACITYTOTAL =
+                    AspectReadBuilders.Fluid.BUILDER_LONG.handle(tankInfo -> {
+                        long capacity = 0;
+                        for (int i = 0; i < tankInfo.size(); i++) {
                             try {
-                                capacity = Math.addExact(capacity, tankInfo.getTankCapacity(i));
+                                capacity = Math.addExact(capacity, tankInfo.getCapacityAsLong(i, FluidResource.EMPTY));
                             } catch (ArithmeticException e) {
-                                capacity = Integer.MAX_VALUE;
+                                capacity = Long.MAX_VALUE;
                             }
-                            if (capacity == Integer.MAX_VALUE) {
+                            if (capacity == Long.MAX_VALUE) {
                                 break;
                             }
                         }
                         return capacity;
-                    }).handle(AspectReadBuilders.PROP_GET_INTEGER, "totalcapacity").buildRead();
+                    }).handle(AspectReadBuilders.PROP_GET_LONG, "totalcapacity").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TANKS =
                     AspectReadBuilders.Fluid.BUILDER_INTEGER.handle(
-                            IFluidHandler::getTanks
+                            ResourceHandler::size
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "tanks").buildRead();
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_FILLRATIO =
@@ -364,8 +365,8 @@ public class Aspects {
                         if(tankInfo == null) {
                             return 0D;
                         }
-                        double amount = tankInfo.getLeft().getFluidInTank(tankInfo.getRight()).getAmount();
-                        return amount / (double) tankInfo.getLeft().getTankCapacity(tankInfo.getRight());
+                        double amount = tankInfo.getLeft().getAmountAsLong(tankInfo.getRight());
+                        return amount / (double) tankInfo.getLeft().getCapacityAsLong(tankInfo.getRight(), FluidResource.EMPTY);
                     }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "fillratio").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_TANKFLUIDS =
@@ -397,8 +398,8 @@ public class Aspects {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_FULL =
                     AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(inventory -> {
                         if(inventory != null) {
-                            for (int i = 0; i < inventory.getSlots(); i++) {
-                                ItemStack itemStack = inventory.getStackInSlot(i);
+                            for (int i = 0; i < inventory.size(); i++) {
+                                ItemStack itemStack = inventory.getResource(i).toStack(inventory.getAmountAsInt(i));
                                 if (itemStack.isEmpty()) {
                                     return false;
                                 }
@@ -409,8 +410,8 @@ public class Aspects {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_EMPTY =
                     AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(inventory -> {
                         if(inventory != null) {
-                            for(int i = 0; i < inventory.getSlots(); i++) {
-                                ItemStack itemStack = inventory.getStackInSlot(i);
+                            for(int i = 0; i < inventory.size(); i++) {
+                                ItemStack itemStack = inventory.getResource(i).toStack(inventory.getAmountAsInt(i));
                                 if(!itemStack.isEmpty()) {
                                     return false;
                                 }
@@ -421,8 +422,8 @@ public class Aspects {
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_NONEMPTY =
                     AspectReadBuilders.Inventory.BUILDER_BOOLEAN.handle(inventory -> {
                         if(inventory != null) {
-                            for(int i = 0; i < inventory.getSlots(); i++) {
-                                ItemStack itemStack = inventory.getStackInSlot(i);
+                            for(int i = 0; i < inventory.size(); i++) {
+                                ItemStack itemStack = inventory.getResource(i).toStack(inventory.getAmountAsInt(i));
                                 if(!itemStack.isEmpty()) {
                                     return true;
                                 }
@@ -439,8 +440,8 @@ public class Aspects {
                     AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(inventory -> {
                         int count = 0;
                         if(inventory != null) {
-                            for (int i = 0; i < inventory.getSlots(); i++) {
-                                ItemStack itemStack = inventory.getStackInSlot(i);
+                            for (int i = 0; i < inventory.size(); i++) {
+                                ItemStack itemStack = inventory.getResource(i).toStack(inventory.getAmountAsInt(i));
                                 if (!itemStack.isEmpty()) {
                                     count += itemStack.getCount();
                                 }
@@ -450,14 +451,14 @@ public class Aspects {
                     }).handle(AspectReadBuilders.PROP_GET_INTEGER, "count").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_SLOTS =
                     AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(
-                        inventory -> inventory != null ? inventory.getSlots() : 0
+                        inventory -> inventory != null ? inventory.size() : 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "slots").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_SLOTSFILLED =
                     AspectReadBuilders.Inventory.BUILDER_INTEGER.handle(inventory -> {
                         int count = 0;
                         if(inventory != null) {
-                            for (int i = 0; i < inventory.getSlots(); i++) {
-                                ItemStack itemStack = inventory.getStackInSlot(i);
+                            for (int i = 0; i < inventory.size(); i++) {
+                                ItemStack itemStack = inventory.getResource(i).toStack(inventory.getAmountAsInt(i));
                                 if (!itemStack.isEmpty()) {
                                     count++;
                                 }
@@ -470,14 +471,14 @@ public class Aspects {
                     AspectReadBuilders.Inventory.BUILDER_DOUBLE.handle(inventory -> {
                         int count = 0;
                         if(inventory != null) {
-                            for (int i = 0; i < inventory.getSlots(); i++) {
-                                ItemStack itemStack = inventory.getStackInSlot(i);
+                            for (int i = 0; i < inventory.size(); i++) {
+                                ItemStack itemStack = inventory.getResource(i).toStack(inventory.getAmountAsInt(i));
                                 if (!itemStack.isEmpty()) {
                                     count++;
                                 }
                             }
                         }
-                        return ((double) count) / (double) (inventory != null ? inventory.getSlots() : 1);
+                        return ((double) count) / (double) (inventory != null ? inventory.size() : 1);
                     }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "fillratio").buildRead();
 
             public static final IAspectRead<ValueTypeList.ValueList, ValueTypeList> LIST_ITEMSTACKS =
@@ -592,66 +593,72 @@ public class Aspects {
                         PositionedOperatorRecipeHandlerRecipeByOutput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_output")));
             }
 
-            public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IEnergyStorage>
+            public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EnergyHandler>
                     PROP_GET = input -> EnergyHelpers.getEnergyStorage(input.getLeft().getTarget()).orElse(null);
 
-            public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IEnergyStorage>
-                    BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "fe");
-            public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IEnergyStorage>
-                    BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "fe");
-            public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, IEnergyStorage>
-                    BUILDER_DOUBLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET, "fe");
+            public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, EnergyHandler>
+                    BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "energy");
+            public static final AspectBuilder<ValueTypeLong.ValueLong, ValueTypeLong, EnergyHandler>
+                    BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET, "energy");
+            public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, EnergyHandler>
+                    BUILDER_DOUBLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET, "energy");
 
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISENERGY =
                     BUILDER_BOOLEAN.handle(
                         Objects::nonNull
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").buildRead();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISENERGYRECEIVER =
-                    BUILDER_BOOLEAN.handle(
-                        data -> data != null && data.canReceive()
-                    ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isreceiver").buildRead();
-            public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISENERGYPROVIDER =
-                    BUILDER_BOOLEAN.handle(
-                        data -> data != null && data.canExtract()
-                    ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isprovider").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_CANEXTRACTENERGY =
                     BUILDER_BOOLEAN.handle(
-                        data -> data != null && data.extractEnergy(1, true) == 1
+                        data -> {
+                            if (data != null) {
+                                try (var tx = Transaction.openRoot()) {
+                                    return data.extract(1, tx) == 1;
+                                }
+                            }
+                            return false;
+                        }
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "canextract").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_CANINSERTENERGY =
                     BUILDER_BOOLEAN.handle(
-                        data -> data != null && data.receiveEnergy(1, true) == 1
+                        data -> {
+                            if (data != null) {
+                                try (var tx = Transaction.openRoot()) {
+                                    return data.insert(1, tx) == 1;
+                                }
+                            }
+                            return false;
+                        }
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "caninsert").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISENERGYFULL =
                     BUILDER_BOOLEAN.handle(
-                        data -> data != null && data.getEnergyStored() == data.getMaxEnergyStored()
+                        data -> data != null && data.getAmountAsLong() == data.getCapacityAsLong()
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isfull").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISENERGYEMPTY =
                     BUILDER_BOOLEAN.handle(
-                        data -> data != null && data.getEnergyStored() == 0
+                        data -> data != null && data.getAmountAsLong() == 0
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isempty").buildRead();
             public static final IAspectRead<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean> BOOLEAN_ISENERGYNONEMPTY =
                     BUILDER_BOOLEAN.handle(
-                        data -> data != null && data.getEnergyStored() != 0
+                        data -> data != null && data.getAmountAsLong() != 0
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "isnonempty").buildRead();
 
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGYSTORED =
-                    BUILDER_INTEGER.handle(
-                        data -> data != null ? data.getEnergyStored() : 0
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "amount").buildRead();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGYCAPACITY =
-                    BUILDER_INTEGER.handle(
-                        data -> data != null ? data.getMaxEnergyStored() : 0
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "capacity").buildRead();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> INTEGER_ENERGYSTORED =
+                    BUILDER_LONG.handle(
+                        data -> data != null ? data.getAmountAsLong() : 0
+                    ).handle(AspectReadBuilders.PROP_GET_LONG, "amount").buildRead();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> INTEGER_ENERGYCAPACITY =
+                    BUILDER_LONG.handle(
+                        data -> data != null ? data.getCapacityAsLong() : 0
+                    ).handle(AspectReadBuilders.PROP_GET_LONG, "capacity").buildRead();
 
             public static final IAspectRead<ValueTypeDouble.ValueDouble, ValueTypeDouble> DOUBLE_ENERGYFILLRATIO =
                     BUILDER_DOUBLE.handle(data -> {
                         if(data != null) {
-                            double capacity = (double) data.getMaxEnergyStored();
+                            double capacity = (double) data.getCapacityAsLong();
                             if(capacity == 0.0D) {
                                 return 0.0D;
                             }
-                            return ((double) data.getEnergyStored()) / capacity;
+                            return ((double) data.getAmountAsLong()) / capacity;
                         }
                         return 0.0D;
                     }).handle(AspectReadBuilders.PROP_GET_DOUBLE, "fillratio").buildRead();
@@ -675,14 +682,14 @@ public class Aspects {
                                 .map(energyNetwork -> energyNetwork.getPrioritizedPositions().size())
                                 .orElse(0): 0
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("batterycount").buildRead();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_STORED =
-                    AspectReadBuilders.Network.ENERGY_BUILDER.handle(
-                        storage -> storage != null ? storage.getEnergyStored() : 0
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("stored").buildRead();
-            public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_MAX =
-                    AspectReadBuilders.Network.ENERGY_BUILDER.handle(
-                        storage -> storage != null ? storage.getMaxEnergyStored() : 0
-                    ).handle(AspectReadBuilders.PROP_GET_INTEGER, "energy").appendKind("max").buildRead();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_ENERGY_STORED =
+                    AspectReadBuilders.Network.ENERGY_BUILDER_LONG.handle(
+                        storage -> storage != null ? storage.getAmountAsLong() : 0
+                    ).handle(AspectReadBuilders.PROP_GET_LONG, "energy").appendKind("stored").buildRead();
+            public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_ENERGY_MAX =
+                    AspectReadBuilders.Network.ENERGY_BUILDER_LONG.handle(
+                        storage -> storage != null ? storage.getCapacityAsLong() : 0
+                    ).handle(AspectReadBuilders.PROP_GET_LONG, "energy").appendKind("max").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_ENERGY_CONSUMPTION_RATE =
                     AspectReadBuilders.Network.BUILDER_INTEGER.handle(
                             network -> network != null && GeneralConfig.energyConsumptionMultiplier > 0
@@ -960,6 +967,21 @@ public class Aspects {
         }
 
         public static final class Effect {
+
+            public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticleSpell(final ParticleType<SpellParticleOption> type) {
+                // TODO: expose these params as aspect settings?
+                return createForParticle(SpellParticleOption.create(type, 0, 1));
+            }
+
+            public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticlePower(final ParticleType<PowerParticleOption> type) {
+                // TODO: expose these params as aspect settings?
+                return createForParticle(PowerParticleOption.create(type, 1));
+            }
+
+            public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticleColor(final ParticleType<ColorParticleOption> type) {
+                // TODO: expose these params as aspect settings?
+                return createForParticle(ColorParticleOption.create(type, 0));
+            }
 
             public static IAspectWrite<ValueTypeDouble.ValueDouble, ValueTypeDouble> createForParticle(final ParticleOptions particle) {
                 return AspectWriteBuilders.Effect.BUILDER_DOUBLE_PARTICLE.appendKind("particle").appendKind(BuiltInRegistries

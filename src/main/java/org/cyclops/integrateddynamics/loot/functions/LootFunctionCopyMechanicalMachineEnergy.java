@@ -33,7 +33,7 @@ public class LootFunctionCopyMechanicalMachineEnergy extends LootItemConditional
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
         BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalMachine) {
-            itemStack.set(RegistryEntries.COMPONENT_ENERGY_STORAGE, ((BlockEntityMechanicalMachine) tile).getEnergy());
+            itemStack.set(RegistryEntries.COMPONENT_ENERGY_STORAGE, ((BlockEntityMechanicalMachine) tile).getEnergyHandler().getAmountAsInt());
         }
         return itemStack;
     }

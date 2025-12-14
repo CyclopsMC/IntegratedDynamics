@@ -1,7 +1,6 @@
 plugins {
-    id 'net.neoforged.gradle.userdev' version '7.0.192'
-    id 'net.neoforged.gradle.mixin' version '7.0.97'
-    id 'net.darkhax.curseforgegradle' version '1.1.26'
+    id 'net.neoforged.moddev' version '2.0.119'
+    id 'net.darkhax.curseforgegradle' version '1.1.28'
     id 'com.diffplug.spotless' version '6.25.0'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 	id 'com.modrinth.minotaur' version '2.+'
@@ -11,7 +10,6 @@ apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 
-import net.neoforged.gradle.common.tasks.PotentiallySignJar
 import net.darkhax.curseforgegradle.Constants
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
@@ -114,7 +112,13 @@ repositories {
 }
 
 dependencies {
-    implementation "net.neoforged:neoforge:${project.neoforge_version}"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.1'
+    testImplementation 'org.junit.platform:junit-platform-suite-api:1.14.1'
+    testImplementation 'org.hamcrest:hamcrest:2.1'
+    testImplementation "org.mockito:mockito-core:2.+"
+    testRuntimeOnly 'org.junit.platform:junit-platform-suite-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Add something like 'cyclopscore_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local CyclopsCore version.
     if(secrets.cyclopscore_version_local) {
@@ -124,15 +128,16 @@ dependencies {
     }
 	
     // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local Integrated Dynamics Compat version.
-    if(secrets.integrateddynamicscompat_version_local) {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
-            transitive = false
-        }
-    } else {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${project.integrateddynamicscompat_version}") {
-            transitive = false
-        }
-    }
+    // TODO: restore
+//    if(secrets.integrateddynamicscompat_version_local) {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
+//            transitive = false
+//        }
+//    } else {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${project.integrateddynamicscompat_version}") {
+//            transitive = false
+//        }
+//    }
 
     if(secrets.commoncapabilities_version_local) {
         implementation "org.cyclops.commoncapabilities:commoncapabilities-${project.minecraft_version}-neoforge:${secrets.commoncapabilities_version_local}:deobf"
@@ -155,55 +160,56 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 	testCompileOnly 'org.projectlombok:lombok:1.18.30'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
-	
-	testImplementation "junit:junit:4.12"
 }
 
-minecraft {
-    accessTransformers {
-        file('src/main/resources/META-INF/accesstransformer.cfg')
-	}
+test {
+    useJUnitPlatform()
 }
 
-subsystems {
+neoForge {
+    version = "${neoforge_version}"
+
     parchment {
-        minecraftVersion = "${project.parchment_minecraft_version}"
-        mappingsVersion = "${project.parchment_version}"
+        mappingsVersion = "${parchment_version}"
+        minecraftVersion = "${parchment_minecraft_version}"
     }
-}
 
-runs {
-    configureEach {
-		systemProperty 'forge.logging.markers', 'REGISTRIES'
-        systemProperty 'forge.logging.console.level', 'debug'
-        systemProperty 'forge.logging.console.level', 'debug'
-        modSource project.sourceSets.main
+    // Automatically enable neoforge AccessTransformers if the file exists
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers = [ at.absolutePath ]
+    }
 
-        dependencies {
-            runtime project.configurations.modLib
+    validateAccessTransformers = true
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        gameTestServer {
+            type = "gameTestServer"
+        }
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+            systemProperty 'neoforge.enabledGameTestNamespaces', "cyclopscore,${mod_id}"
         }
     }
-	
-    client {
-        systemProperty 'neoforge.enabledGameTestNamespaces', "cyclopscore,${mod_id}"
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
     }
 
-    server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', "cyclopscore,${mod_id}"
-        argument '--nogui'
+    unitTest {
+        enable()
+        testedMod = mods.integrateddynamics
     }
-
-    gameTestServer {
-        systemProperty 'neoforge.enabledGameTestNamespaces', "cyclopscore,${mod_id}"
-    }
-
-    clientData {
-        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-    }
-}
-
-mixin {
-    config 'mixins.integrateddynamics.json'
 }
 
 jar {
@@ -227,21 +233,6 @@ javadoc {
     source = [sourceSets.main.allJava]
     // prevent java 8's strict doclint for javadocs from failing builds
     options.addStringOption('Xdoclint:accessibility,html,reference,syntax', '-quiet')
-}
-
-task signJar(type: PotentiallySignJar, dependsOn: jar) {
-	dependsOn(tasks.jar)
-
-    onlyIf {
-        System.getenv().SIGN_KEYSTORE
-    }
-
-    keyStore = System.getenv().SIGN_KEYSTORE
-    alias = System.getenv().SIGN_ALIAS
-    storePass = System.getenv().SIGN_STOREPASS
-    keyPass = System.getenv().SIGN_KEYPASS
-    input = jar.archivePath
-    output = jar.archivePath
 }
 
 task deobfJar(type: Jar) {
@@ -447,14 +438,4 @@ compileJava.dependsOn updateGitHooks
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
-// The following is required to fix running unit tests during build phase
-tasks.configureEach { task ->
-    if (task.name.startsWith("test")) {
-        task.enabled = true
-    }
-    if (task.name.startsWith("testJunit")) {
-        task.enabled = false
-    }
 }

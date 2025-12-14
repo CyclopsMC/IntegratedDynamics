@@ -26,9 +26,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
@@ -54,7 +57,7 @@ public final class Helpers {
      * @return The fluidstack or null.
      */
     public static FluidStack getFluidStack(ItemStack itemStack) {
-        FluidStack fluidStack = FluidUtil.getFluidContained(itemStack).orElse(FluidStack.EMPTY);
+        FluidStack fluidStack = FluidUtil.getFirstStackContained(itemStack);
         if (fluidStack.isEmpty()
                 && itemStack.getItem() instanceof BlockItem
                 && ((BlockItem) itemStack.getItem()).getBlock() instanceof LiquidBlock) {
@@ -68,11 +71,11 @@ public final class Helpers {
      * @param itemStack The itemstack.
      * @return The capacity
      */
-    public static int getFluidStackCapacity(ItemStack itemStack) {
-        IFluidHandler fluidHandler = FluidUtil.getFluidHandler(itemStack).orElse(null);
+    public static long getFluidStackCapacity(ItemStack itemStack) {
+        ResourceHandler<FluidResource> fluidHandler = ItemAccess.forStack(itemStack).getCapability(Capabilities.Fluid.ITEM);
         if (fluidHandler != null) {
-            if (fluidHandler.getTanks() > 0) {
-                return fluidHandler.getTankCapacity(0);
+            if (fluidHandler.size() > 0) {
+                return fluidHandler.getCapacityAsLong(0, FluidResource.EMPTY);
             }
         }
         return 0;

@@ -14,8 +14,9 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.ItemCapability;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -150,21 +151,23 @@ public class OperatorBuilders {
             });
     public static final IterativeFunction.PrePostBuilder<ItemStack, Integer> FUNCTION_ITEMSTACK_TO_INT =
             FUNCTION_ITEMSTACK.appendPost(PROPAGATOR_INTEGER_VALUE);
+    public static final IterativeFunction.PrePostBuilder<ItemStack, Long> FUNCTION_ITEMSTACK_TO_LONG =
+            FUNCTION_ITEMSTACK.appendPost(PROPAGATOR_LONG_VALUE);
     public static final IterativeFunction.PrePostBuilder<ItemStack, Boolean> FUNCTION_ITEMSTACK_TO_BOOLEAN =
             FUNCTION_ITEMSTACK.appendPost(PROPAGATOR_BOOLEAN_VALUE);
 
-    public static final IterativeFunction.PrePostBuilder<IEnergyStorage, IValue> FUNCTION_ENERGYSTORAGEITEM = IterativeFunction.PrePostBuilder.begin()
+    public static final IterativeFunction.PrePostBuilder<EnergyHandler, IValue> FUNCTION_ENERGYSTORAGEITEM = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueObjectTypeItemStack.ValueItemStack a = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 if(!a.getRawValue().isEmpty()) {
-                    return a.getRawValue().getCapability(Capabilities.EnergyStorage.ITEM);
+                    return ItemAccess.forStack(a.getRawValue()).getCapability(Capabilities.Energy.ITEM);
                 }
                 return null;
             });
-    public static final IterativeFunction.PrePostBuilder<IEnergyStorage, Integer> FUNCTION_CONTAINERITEM_TO_INT =
-            FUNCTION_ENERGYSTORAGEITEM.appendPost(org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders.PROPAGATOR_INTEGER_VALUE);
-    public static final IterativeFunction.PrePostBuilder<IEnergyStorage, Boolean> FUNCTION_CONTAINERITEM_TO_BOOLEAN =
-            FUNCTION_ENERGYSTORAGEITEM.appendPost(org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders.PROPAGATOR_BOOLEAN_VALUE);
+    public static final IterativeFunction.PrePostBuilder<EnergyHandler, Long> FUNCTION_CONTAINERITEM_TO_LONG =
+            FUNCTION_ENERGYSTORAGEITEM.appendPost(OperatorBuilders.PROPAGATOR_LONG_VALUE);
+    public static final IterativeFunction.PrePostBuilder<EnergyHandler, Boolean> FUNCTION_CONTAINERITEM_TO_BOOLEAN =
+            FUNCTION_ENERGYSTORAGEITEM.appendPost(OperatorBuilders.PROPAGATOR_BOOLEAN_VALUE);
 
     // --------------- Entity builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> ENTITY = OperatorBuilder.forType(ValueTypes.OBJECT_ENTITY).appendKind("entity");

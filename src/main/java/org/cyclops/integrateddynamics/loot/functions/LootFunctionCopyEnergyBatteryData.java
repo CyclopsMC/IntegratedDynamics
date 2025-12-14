@@ -10,7 +10,8 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageMutable;
@@ -36,7 +37,7 @@ public class LootFunctionCopyEnergyBatteryData extends LootItemConditionalFuncti
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
         BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityEnergyBattery) {
-            IEnergyStorage energyStorage = itemStack.getCapability(Capabilities.EnergyStorage.ITEM);
+            EnergyHandler energyStorage = itemStack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(itemStack));
             if (energyStorage != null) {
                 ((IEnergyStorageMutable) energyStorage).setEnergy(((BlockEntityEnergyBattery) tile).getEnergyStored());
                 ((IEnergyStorageCapacity) energyStorage).setCapacity(((BlockEntityEnergyBattery) tile).getMaxEnergyStored());

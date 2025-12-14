@@ -28,7 +28,7 @@ public abstract class BlockMechanicalMachine extends BlockWithEntityGuiCabled {
             IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, BlockEntityMechanicalMachine.class)
                     .ifPresent(tile -> {
                         if (itemStack.has(RegistryEntries.COMPONENT_ENERGY_STORAGE)) {
-                            tile.setEnergy(itemStack.get(RegistryEntries.COMPONENT_ENERGY_STORAGE));
+                            tile.getEnergyHandler().set(itemStack.get(RegistryEntries.COMPONENT_ENERGY_STORAGE));
                         }
                     });
         }

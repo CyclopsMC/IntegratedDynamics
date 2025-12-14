@@ -6,20 +6,25 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different general operators.
+ *
  * @author rubensworks
  */
 public class TestGeneralOperators {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
@@ -27,7 +32,7 @@ public class TestGeneralOperators {
     private DummyVariableBoolean bTrue;
     private DummyVariableBoolean bFalse;
 
-    @Before
+    @BeforeEach
     public void before() {
         bTrue = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
         bFalse = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(false));
@@ -50,25 +55,25 @@ public class TestGeneralOperators {
         assertThat("false ? 1 : 2 = 1", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeChoiceLarge() throws EvaluationException {
-        Operators.GENERAL_CHOICE.evaluate(new IVariable[]{bTrue, bTrue, bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.GENERAL_CHOICE.evaluate(new IVariable[]{bTrue, bTrue, bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeChoiceSmall() throws EvaluationException {
-        Operators.GENERAL_CHOICE.evaluate(new IVariable[]{bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.GENERAL_CHOICE.evaluate(new IVariable[]{bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeChoice() throws EvaluationException {
-        Operators.GENERAL_CHOICE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.GENERAL_CHOICE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidLogicalChoiceDifferentTypes() throws EvaluationException {
         DummyVariableInteger i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
-        Operators.GENERAL_CHOICE.evaluate(new IVariable[]{bFalse, i1, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.GENERAL_CHOICE.evaluate(new IVariable[]{bFalse, i1, DUMMY_VARIABLE}));
     }
 
     /**
@@ -87,14 +92,14 @@ public class TestGeneralOperators {
         assertThat("false = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeIdentityLarge() throws EvaluationException {
-        Operators.GENERAL_IDENTITY.evaluate(new IVariable[]{bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.GENERAL_IDENTITY.evaluate(new IVariable[]{bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeIdentitySmall() throws EvaluationException {
-        Operators.GENERAL_IDENTITY.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.GENERAL_IDENTITY.evaluate(new IVariable[]{}));
     }
 
     /**
@@ -114,14 +119,14 @@ public class TestGeneralOperators {
         assertThat("K false 1 = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeConstantLarge() throws EvaluationException {
-        Operators.GENERAL_CONSTANT.evaluate(new IVariable[]{bTrue, bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.GENERAL_CONSTANT.evaluate(new IVariable[]{bTrue, bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeConstantSmall() throws EvaluationException {
-        Operators.GENERAL_CONSTANT.evaluate(new IVariable[]{bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.GENERAL_CONSTANT.evaluate(new IVariable[]{bTrue}));
     }
 
     /**
@@ -139,14 +144,14 @@ public class TestGeneralOperators {
         assertThat("result is false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeIsNullLarge() throws EvaluationException {
-        Operators.NULLABLE_ISNULL.evaluate(new IVariable[]{bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NULLABLE_ISNULL.evaluate(new IVariable[]{bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeIsNullSmall() throws EvaluationException {
-        Operators.NULLABLE_ISNULL.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NULLABLE_ISNULL.evaluate(new IVariable[]{}));
     }
 
     /**
@@ -164,14 +169,14 @@ public class TestGeneralOperators {
         assertThat("result is true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeIsNotNullLarge() throws EvaluationException {
-        Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{bTrue, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{bTrue, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeIsNotNullSmall() throws EvaluationException {
-        Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NULLABLE_ISNOTNULL.evaluate(new IVariable[]{}));
     }
 
 }

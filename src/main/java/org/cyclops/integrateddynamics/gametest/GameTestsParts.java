@@ -211,9 +211,10 @@ public class GameTestsParts {
 
         // Remove redstone reader as player with pickaxe
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter().add(0.25, -1.5, -0.5));
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.NORTH));
@@ -237,9 +238,10 @@ public class GameTestsParts {
         helper.placeAt(player, itemStack, POS.north().north(), Direction.SOUTH);
 
         // Remove redstone reader as player with pickaxe
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter().add(0.25, -1.5, -0.5));
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.NORTH));
@@ -321,10 +323,11 @@ public class GameTestsParts {
 
         // Remove redstone reader as player with pickaxe
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter().add(0, -1.5, 0.5));
         player.setYRot(180);
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.NORTH));

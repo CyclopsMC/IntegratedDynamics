@@ -11,8 +11,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.inventory.InventorySlotMasked;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -67,7 +68,7 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
             super.populate();
 
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
                     (blockEntity, direction) -> {
                         int slot = -1;
                         if (direction != null) {
@@ -82,7 +83,7 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
                         } else {
                             slot = SLOT_READ;
                         }
-                        return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
+                        return VanillaContainerWrapper.of(new InventorySlotMasked(blockEntity.getInventory(), slot));
                     }
             );
             add(
@@ -174,7 +175,7 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
                 blockEntity.writeVariable = false;
 
                 // Write proxy reference
-                ItemStack outputStack = blockEntity.writeMaterialized(!blockEntity.getLevel().isClientSide, blockEntity.getInventory().getItem(SLOT_WRITE_IN));
+                ItemStack outputStack = blockEntity.writeMaterialized(!blockEntity.getLevel().isClientSide(), blockEntity.getInventory().getItem(SLOT_WRITE_IN));
                 if(!outputStack.isEmpty()) {
                     blockEntity.getInventory().setItem(SLOT_WRITE_OUT, outputStack);
                     blockEntity.getInventory().removeItemNoUpdate(SLOT_WRITE_IN);

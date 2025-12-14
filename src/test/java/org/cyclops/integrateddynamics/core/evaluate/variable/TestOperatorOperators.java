@@ -11,19 +11,24 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different integer operators.
+ *
  * @author rubensworks
  */
 public class TestOperatorOperators {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
@@ -66,12 +71,12 @@ public class TestOperatorOperators {
     private DummyVariableString sAnd;
     private DummyVariableString sOther;
 
-    @Before
+    @BeforeEach
     public void before() {
         ValueTypeListProxyFactories.load();
 
         bFalse = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(false));
-        bTrue  = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
+        bTrue = new DummyVariableBoolean(ValueTypeBoolean.ValueBoolean.of(true));
 
         s1 = new DummyVariableString(ValueTypeString.ValueString.of("1"));
 
@@ -82,24 +87,24 @@ public class TestOperatorOperators {
         i4 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(4));
         i4Any = new DummyVariable<>(ValueTypes.CATEGORY_ANY, ValueTypeInteger.ValueInteger.of(4));
 
-        oGeneralIdentity          = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
-        oLogicalNot               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
-        oLogicalAnd               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_AND));
-        oParseInt                 = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.PARSE_INTEGER));
-        oRelationalEquals         = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
-        oRelationalGreaterThan    = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_GT));
-        oRelationalLessThan       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_LT));
-        oArithmeticIncrement      = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_INCREMENT));
-        oArithmeticModulus        = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_MODULUS));
-        oArithmeticAddition       = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
+        oGeneralIdentity = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_IDENTITY));
+        oLogicalNot = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT));
+        oLogicalAnd = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_AND));
+        oParseInt = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.PARSE_INTEGER));
+        oRelationalEquals = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_EQUALS));
+        oRelationalGreaterThan = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_GT));
+        oRelationalLessThan = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.RELATIONAL_LT));
+        oArithmeticIncrement = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_INCREMENT));
+        oArithmeticModulus = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_MODULUS));
+        oArithmeticAddition = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION));
         oArithmeticMultiplication = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_MULTIPLICATION));
-        oChoice                   = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE));
-        oPipe                     = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_PIPE));
-        oListLength               = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_LENGTH));
-        oListContains             = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_CONTAINS));
-        oOperatorMap              = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_MAP));
-        oSubStr                   = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.STRING_SUBSTRING));
-        oGetConstStr              = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(new OperatorBase("NONE", "NONE", "NONE", "NONE", false, new IValueType[0], ValueTypes.STRING, variables -> ValueTypeString.ValueString.of("HI"), null) {
+        oChoice = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.GENERAL_CHOICE));
+        oPipe = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_PIPE));
+        oListLength = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_LENGTH));
+        oListContains = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.LIST_CONTAINS));
+        oOperatorMap = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_MAP));
+        oSubStr = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(Operators.STRING_SUBSTRING));
+        oGetConstStr = new DummyVariableOperator(ValueTypeOperator.ValueOperator.of(new OperatorBase("NONE", "NONE", "NONE", "NONE", false, new IValueType[0], ValueTypes.STRING, variables -> ValueTypeString.ValueString.of("HI"), null) {
             @Override
             protected String getUnlocalizedType() {
                 return "NONE";
@@ -158,43 +163,43 @@ public class TestOperatorOperators {
         assertThat("and(false)(false) == false", ((ValueTypeBoolean.ValueBoolean) res4_2).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeApplyLarge() throws EvaluationException {
-        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oGeneralIdentity, bFalse, bFalse});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oGeneralIdentity, bFalse, bFalse}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeApplyCurryingLarge() throws EvaluationException {
         DummyVariableOperator curriedOperatorValue = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bTrue}));
-        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{curriedOperatorValue, bFalse, bFalse});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(new IVariable[]{curriedOperatorValue, bFalse, bFalse}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeApplySmall() throws EvaluationException {
-        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oGeneralIdentity});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oGeneralIdentity}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeApplyCurringSmall() throws EvaluationException {
         DummyVariableOperator curriedOperatorValue = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalAnd, bTrue}));
-        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{curriedOperatorValue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(new IVariable[]{curriedOperatorValue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypeApply() throws EvaluationException {
-        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{bFalse, bFalse});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(new IVariable[]{bFalse, bFalse}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypeApply() throws EvaluationException {
-        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalNot, oGeneralIdentity});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oLogicalNot, oGeneralIdentity}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypeAnyApply() throws EvaluationException {
-        Operators.OPERATOR_APPLY.evaluate(new IVariable[]{i4Any, i4Any});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(new IVariable[]{i4Any, i4Any}));
     }
 
     @Test
@@ -266,24 +271,24 @@ public class TestOperatorOperators {
         assertThat("apply_2(?, true, 1)(2)", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(1));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeApply2Large() throws EvaluationException {
-        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bFalse, bFalse, bFalse});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bFalse, bFalse, bFalse}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeApply2Small() throws EvaluationException {
-        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalAnd, bTrue}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypeApply2() throws EvaluationException {
-        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{bFalse, bFalse, bFalse});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{bFalse, bFalse, bFalse}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypeApply2() throws EvaluationException {
-        Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalNot, oGeneralIdentity, bTrue});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY_2.evaluate(new IVariable[]{oLogicalNot, oGeneralIdentity, bTrue}));
     }
 
     @Test
@@ -446,24 +451,24 @@ public class TestOperatorOperators {
         assertThat(list4.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeMapLarge() throws EvaluationException {
-        Operators.OPERATOR_MAP.evaluate(new IVariable[]{oArithmeticIncrement, lintegers, lintegers});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_MAP.evaluate(new IVariable[]{oArithmeticIncrement, lintegers, lintegers}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeMapSmall() throws EvaluationException {
-        Operators.OPERATOR_MAP.evaluate(new IVariable[]{oArithmeticIncrement});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_MAP.evaluate(new IVariable[]{oArithmeticIncrement}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypeMap() throws EvaluationException {
-        Operators.OPERATOR_MAP.evaluate(new IVariable[]{bFalse, bFalse});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_MAP.evaluate(new IVariable[]{bFalse, bFalse}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypeMap() throws EvaluationException {
-        Operators.OPERATOR_MAP.evaluate(new IVariable[]{oArithmeticIncrement, oArithmeticIncrement});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_MAP.evaluate(new IVariable[]{oArithmeticIncrement, oArithmeticIncrement}));
     }
 
     @Test
@@ -509,33 +514,33 @@ public class TestOperatorOperators {
         assertThat("0< && 2>(2) == false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicateConjunctionLarge() throws EvaluationException {
         DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
 
-        Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan, zeroLessThan});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan, zeroLessThan}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicateConjunctionSmall() throws EvaluationException {
         DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
-        Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{zeroLessThan});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{zeroLessThan}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypePredicateConjunction() throws EvaluationException {
         DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
-        Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{bFalse, zeroLessThan});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{bFalse, zeroLessThan}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypePredicateConjunction() throws EvaluationException {
         DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
-        Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{equalsTwo, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_CONJUNCTION.evaluate(new IVariable[]{equalsTwo, i0}));
     }
 
     @Test
@@ -577,33 +582,33 @@ public class TestOperatorOperators {
         assertThat("0< || 2>(2) == false", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicateDisjunctionLarge() throws EvaluationException {
         DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
 
-        Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan, zeroLessThan});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan, zeroLessThan}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicateDisjunctionSmall() throws EvaluationException {
         DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
-        Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{zeroLessThan});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{zeroLessThan}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypePredicateDisjunction() throws EvaluationException {
         DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
-        Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{bFalse, zeroLessThan});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{bFalse, zeroLessThan}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypePredicateDisjunction() throws EvaluationException {
         DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
-        Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{equalsTwo, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_DISJUNCTION.evaluate(new IVariable[]{equalsTwo, i0}));
     }
 
     @Test
@@ -645,22 +650,22 @@ public class TestOperatorOperators {
         assertThat("!2>(3) == true", ((ValueTypeBoolean.ValueBoolean) res4).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicateNegationLarge() throws EvaluationException {
         DummyVariableOperator zeroLessThan = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalLessThan, i0}));
 
-        Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{zeroLessThan, zeroLessThan}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicateNegationSmall() throws EvaluationException {
-        Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypePredicateNegation() throws EvaluationException {
-        Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{bFalse});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_NEGATION.evaluate(new IVariable[]{bFalse}));
     }
 
     @Test
@@ -762,7 +767,7 @@ public class TestOperatorOperators {
         assertThat("++|++|++(2) == 5", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(5));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testPredicatePipeAddAddError() throws EvaluationException {
         DummyVariableOperator op = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticAddition, oArithmeticAddition}));
@@ -772,7 +777,7 @@ public class TestOperatorOperators {
         assertThat(op.getValue().getRawValue().getInputTypes()[1], is(ValueTypes.CATEGORY_NUMBER));
         assertThat(op.getValue().getRawValue().getOutputType(), is(ValueTypes.CATEGORY_NUMBER));
 
-        Operators.OPERATOR_APPLY.evaluate(op, i2, i2);
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_APPLY.evaluate(op, i2, i2));
     }
 
     @Test
@@ -796,24 +801,24 @@ public class TestOperatorOperators {
                 )));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicatePipeLarge() throws EvaluationException {
-        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticIncrement, oArithmeticIncrement, oArithmeticIncrement});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticIncrement, oArithmeticIncrement, oArithmeticIncrement}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicatePipeSmall() throws EvaluationException {
-        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticIncrement});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticIncrement}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypePredicatePipe() throws EvaluationException {
-        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{bFalse, oArithmeticIncrement});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_PIPE.evaluate(new IVariable[]{bFalse, oArithmeticIncrement}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypePredicatePipe() throws EvaluationException {
-        Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticIncrement, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_PIPE.evaluate(new IVariable[]{oArithmeticIncrement, i0}));
     }
 
     @Test
@@ -894,19 +899,19 @@ public class TestOperatorOperators {
         assertThat("flip choice 0 true 1 = 0", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicateFlipLarge() throws EvaluationException {
-        Operators.OPERATOR_FLIP.evaluate(new IVariable[]{oRelationalLessThan, oRelationalLessThan});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_FLIP.evaluate(new IVariable[]{oRelationalLessThan, oRelationalLessThan}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizePredicateFlipSmall() throws EvaluationException {
-        Operators.OPERATOR_FLIP.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_FLIP.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypePredicateFlip() throws EvaluationException {
-        Operators.OPERATOR_FLIP.evaluate(new IVariable[]{bFalse});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_FLIP.evaluate(new IVariable[]{bFalse}));
     }
 
     @Test
@@ -974,33 +979,33 @@ public class TestOperatorOperators {
         assertThat(list2.getValueType(), CoreMatchers.<IValueType>is(ValueTypes.INTEGER));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeFilterLarge() throws EvaluationException {
         DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
 
-        Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo, lintegers, lintegers});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo, lintegers, lintegers}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeFilterSmall() throws EvaluationException {
         DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
 
-        Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypeFilter() throws EvaluationException {
-        Operators.OPERATOR_FILTER.evaluate(new IVariable[]{bFalse, lintegers});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_FILTER.evaluate(new IVariable[]{bFalse, lintegers}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypeFilter() throws EvaluationException {
         DummyVariableOperator equalsTwo = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
                 Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oRelationalEquals, i2}));
 
-        Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo, oArithmeticIncrement});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_FILTER.evaluate(new IVariable[]{equalsTwo, oArithmeticIncrement}));
     }
 
     @Test
@@ -1031,29 +1036,29 @@ public class TestOperatorOperators {
         assertThat("reduce([0, 1, 2, 3], +, 0) == 6", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(6));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeReduceLarge() throws EvaluationException {
-        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeReduceSmall() throws EvaluationException {
-        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypeReduce() throws EvaluationException {
-        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{bFalse, lintegers, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{bFalse, lintegers, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypeReduce() throws EvaluationException {
-        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorAccumulatorTypeReduce() throws EvaluationException {
-        Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers, lintegers});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE.evaluate(new IVariable[]{oArithmeticAddition, lintegers, lintegers}));
     }
 
     @Test
@@ -1103,29 +1108,29 @@ public class TestOperatorOperators {
         assertThat("reduce1(reducer, [0, 1, 2, 3]) == 3", ((ValueTypeInteger.ValueInteger) res1).getRawValue(), is(3));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeReduce1Large() throws EvaluationException {
-        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, lintegers, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, lintegers, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeReduce1Small() throws EvaluationException {
-        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorTypeReduce1() throws EvaluationException {
-        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{bFalse, lintegers});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{bFalse, lintegers}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypeReduce1() throws EvaluationException {
-        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidEmptyListReduce1() throws EvaluationException {
-        Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, lempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_REDUCE1.evaluate(new IVariable[]{oArithmeticAddition, lempty}));
     }
 
     @Test
@@ -1154,24 +1159,24 @@ public class TestOperatorOperators {
         assertThat("operator_by_name(and) == and", ((ValueTypeOperator.ValueOperator) res1).getRawValue(), is(Operators.LOGICAL_AND));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testByNameNonExisting() throws EvaluationException {
-        Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{sOther});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{sOther}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeByNameLarge() throws EvaluationException {
-        Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{sAnd, sAnd});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{sAnd, sAnd}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeByNameSmall() throws EvaluationException {
-        Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidOperatorInputTypeByName() throws EvaluationException {
-        Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{oArithmeticIncrement});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.OPERATOR_BY_NAME.evaluate(new IVariable[]{oArithmeticIncrement}));
     }
 
 }

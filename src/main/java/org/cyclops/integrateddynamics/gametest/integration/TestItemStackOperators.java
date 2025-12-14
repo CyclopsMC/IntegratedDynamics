@@ -12,10 +12,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.cyclopscore.helper.EnchantmentHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -111,14 +114,17 @@ public class TestItemStackOperators {
         iWrench = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(RegistryEntries.ITEM_WRENCH)));
         iEnergyBatteryEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(RegistryEntries.ITEM_ENERGY_BATTERY)));
         ItemStack energyBatteryFull = new ItemStack(RegistryEntries.ITEM_ENERGY_BATTERY);
-        IEnergyStorage energyStorage = energyBatteryFull.getCapability(Capabilities.EnergyStorage.ITEM);
+        EnergyHandler energyStorage = energyBatteryFull.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(energyBatteryFull));
         BlockEnergyBatteryBase.fill(energyStorage);
         iEnergyBatteryFull = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(energyBatteryFull));
         iIronOre = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.IRON_ORE)));
         ItemStack shulkerBox = new ItemStack(Blocks.BLACK_SHULKER_BOX);
-        IItemHandler itemHandler = shulkerBox.getCapability(Capabilities.ItemHandler.ITEM);
-        itemHandler.insertItem(0, new ItemStack(Items.APPLE), false);
-        itemHandler.insertItem(10, new ItemStack(Items.APPLE, 10), false);
+        ResourceHandler<ItemResource> itemHandler = shulkerBox.getCapability(Capabilities.Item.ITEM, ItemAccess.forStack(shulkerBox));
+        try (var tx = Transaction.openRoot()) {
+            itemHandler.insert(0, ItemResource.of(Items.APPLE), 1, tx);
+            itemHandler.insert(10, ItemResource.of(Items.APPLE), 10, tx);
+            tx.commit();
+        }
         iShulkerBox = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(shulkerBox));
         iSeedWheat = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.WHEAT_SEEDS)));
         iEmpty = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(ItemStack.EMPTY));
@@ -602,11 +608,11 @@ public class TestItemStackOperators {
     @IntegrationTest
     public void testItemStackFluidStackCapacity() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY.evaluate(new IVariable[]{iHoe});
-        Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is a fluidstack");
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "fluidstackcapacity(hoe) = 0");
+        Asserts.check(res1 instanceof ValueTypeLong.ValueLong, "result is a fluidstack");
+        TestHelpers.assertEqual(((ValueTypeLong.ValueLong) res1).getRawValue(), 0L, "fluidstackcapacity(hoe) = 0");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY.evaluate(new IVariable[]{iBucketLava});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume(), "fluidstackcapacity(bucketlava) = 1000");
+        TestHelpers.assertEqual(((ValueTypeLong.ValueLong) res2).getRawValue(), (long) IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume(), "fluidstackcapacity(bucketlava) = 1000");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
@@ -900,30 +906,30 @@ public class TestItemStackOperators {
 
     @IntegrationTest
     public void testItemStackIsFeContainer() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_ISFECONTAINER.evaluate(new IVariable[]{iApple});
+        IValue res1 = Operators.OBJECT_ITEMSTACK_ISENERGYCONTAINER.evaluate(new IVariable[]{iApple});
         Asserts.check(res1 instanceof ValueTypeBoolean.ValueBoolean, "result is a boolean");
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res1).getRawValue(), false, "isfecontainer(apple) == false");
 
-        IValue res2 = Operators.OBJECT_ITEMSTACK_ISFECONTAINER.evaluate(new IVariable[]{iEnergyBatteryEmpty});
+        IValue res2 = Operators.OBJECT_ITEMSTACK_ISENERGYCONTAINER.evaluate(new IVariable[]{iEnergyBatteryEmpty});
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), true, "isfecontainer(energyBatteryEmpty) == true");
 
-        IValue res3 = Operators.OBJECT_ITEMSTACK_ISFECONTAINER.evaluate(new IVariable[]{iEnergyBatteryFull});
+        IValue res3 = Operators.OBJECT_ITEMSTACK_ISENERGYCONTAINER.evaluate(new IVariable[]{iEnergyBatteryFull});
         TestHelpers.assertEqual(((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), true, "isfecontainer(energyBatteryFull) == true");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeIsFeContainerLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISFECONTAINER.evaluate(new IVariable[]{iApple, iApple});
+        Operators.OBJECT_ITEMSTACK_ISENERGYCONTAINER.evaluate(new IVariable[]{iApple, iApple});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeIsFeContainerSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISFECONTAINER.evaluate(new IVariable[]{});
+        Operators.OBJECT_ITEMSTACK_ISENERGYCONTAINER.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeIsFeContainer() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_ISFECONTAINER.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_ITEMSTACK_ISENERGYCONTAINER.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**
@@ -932,30 +938,30 @@ public class TestItemStackOperators {
 
     @IntegrationTest
     public void testItemStackStoredFe() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_STOREDFE.evaluate(new IVariable[]{iApple});
-        Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "storedfe(apple) == false");
+        IValue res1 = Operators.OBJECT_ITEMSTACK_STOREDENERGY.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeLong.ValueLong, "result is a long");
+        TestHelpers.assertEqual(((ValueTypeLong.ValueLong) res1).getRawValue(), 0L, "storedfe(apple) == false");
 
-        IValue res2 = Operators.OBJECT_ITEMSTACK_STOREDFE.evaluate(new IVariable[]{iEnergyBatteryEmpty});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), 0, "storedfe(energyBatteryEmpty) == 0");
+        IValue res2 = Operators.OBJECT_ITEMSTACK_STOREDENERGY.evaluate(new IVariable[]{iEnergyBatteryEmpty});
+        TestHelpers.assertEqual(((ValueTypeLong.ValueLong) res2).getRawValue(), 0L, "storedfe(energyBatteryEmpty) == 0");
 
-        IValue res3 = Operators.OBJECT_ITEMSTACK_STOREDFE.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), BlockEnergyBatteryConfig.capacity, "storedfe(energyBatteryFull) == BlockEnergyBatteryConfig.capacity");
+        IValue res3 = Operators.OBJECT_ITEMSTACK_STOREDENERGY.evaluate(new IVariable[]{iEnergyBatteryFull});
+        TestHelpers.assertEqual(((ValueTypeLong.ValueLong) res3).getRawValue(), (long) BlockEnergyBatteryConfig.capacity, "storedfe(energyBatteryFull) == BlockEnergyBatteryConfig.capacity");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeStoredFeLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_STOREDFE.evaluate(new IVariable[]{iEnergyBatteryEmpty, iEnergyBatteryEmpty});
+        Operators.OBJECT_ITEMSTACK_STOREDENERGY.evaluate(new IVariable[]{iEnergyBatteryEmpty, iEnergyBatteryEmpty});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeStoredFeSmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_STOREDFE.evaluate(new IVariable[]{});
+        Operators.OBJECT_ITEMSTACK_STOREDENERGY.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeStoredFe() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_STOREDFE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_ITEMSTACK_STOREDENERGY.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**
@@ -964,30 +970,30 @@ public class TestItemStackOperators {
 
     @IntegrationTest
     public void testItemStackFeCapacity() throws EvaluationException {
-        IValue res1 = Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{iApple});
-        Asserts.check(res1 instanceof ValueTypeInteger.ValueInteger, "result is an integer");
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res1).getRawValue(), 0, "fecapacity(apple) == false");
+        IValue res1 = Operators.OBJECT_ITEMSTACK_ENERGYCAPACITY.evaluate(new IVariable[]{iApple});
+        Asserts.check(res1 instanceof ValueTypeLong.ValueLong, "result is an integer");
+        TestHelpers.assertEqual(((ValueTypeLong.ValueLong) res1).getRawValue(), 0L, "fecapacity(apple) == false");
 
-        IValue res2 = Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{iEnergyBatteryEmpty});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res2).getRawValue(), BlockEnergyBatteryConfig.capacity, "fecapacity(energyBatteryEmpty) == BlockEnergyBatteryConfig.capacity");
+        IValue res2 = Operators.OBJECT_ITEMSTACK_ENERGYCAPACITY.evaluate(new IVariable[]{iEnergyBatteryEmpty});
+        TestHelpers.assertEqual(((ValueTypeLong.ValueLong) res2).getRawValue(), (long) BlockEnergyBatteryConfig.capacity, "fecapacity(energyBatteryEmpty) == BlockEnergyBatteryConfig.capacity");
 
-        IValue res3 = Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{iEnergyBatteryFull});
-        TestHelpers.assertEqual(((ValueTypeInteger.ValueInteger) res3).getRawValue(), BlockEnergyBatteryConfig.capacity, "fecapacity(energyBatteryFull) == BlockEnergyBatteryConfig.capacity");
+        IValue res3 = Operators.OBJECT_ITEMSTACK_ENERGYCAPACITY.evaluate(new IVariable[]{iEnergyBatteryFull});
+        TestHelpers.assertEqual(((ValueTypeLong.ValueLong) res3).getRawValue(), (long) BlockEnergyBatteryConfig.capacity, "fecapacity(energyBatteryFull) == BlockEnergyBatteryConfig.capacity");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeFeCapacityLarge() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{iEnergyBatteryEmpty, iEnergyBatteryEmpty});
+        Operators.OBJECT_ITEMSTACK_ENERGYCAPACITY.evaluate(new IVariable[]{iEnergyBatteryEmpty, iEnergyBatteryEmpty});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputSizeFeCapacitySmall() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{});
+        Operators.OBJECT_ITEMSTACK_ENERGYCAPACITY.evaluate(new IVariable[]{});
     }
 
     @IntegrationTest(expected = EvaluationException.class)
     public void testInvalidInputTypeFeCapacity() throws EvaluationException {
-        Operators.OBJECT_ITEMSTACK_FECAPACITY.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Operators.OBJECT_ITEMSTACK_ENERGYCAPACITY.evaluate(new IVariable[]{DUMMY_VARIABLE});
     }
 
     /**

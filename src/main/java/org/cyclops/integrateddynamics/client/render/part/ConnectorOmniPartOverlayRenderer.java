@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,9 +39,9 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
     }
 
     @Override
-    public void renderPartOverlay(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
+    public void submitPartOverlay(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                                   Direction direction, IPartType partType, float partialTicks, PoseStack matrixStack,
-                                  MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
+                                  SubmitNodeCollector submitNodeCollector, int combinedLight, int combinedOverlay) {
         BlockPos pos = partContainer.getPosition().getBlockPos();
         if(!shouldRender(pos)) return;
 
@@ -64,8 +64,8 @@ public class ConnectorOmniPartOverlayRenderer extends PartOverlayRendererBase {
                     float blue = colors.getRight() + rand.nextFloat() * 0.1F - 0.05F;
                     float ageMultiplier = 17F;
 
-                    Minecraft.getInstance().levelRenderer.addParticle(
-                            new ParticleBlurData(red, green, blue, scale, ageMultiplier), false,
+                    Minecraft.getInstance().level.addParticle(
+                            new ParticleBlurData(red, green, blue, scale, ageMultiplier),
                             tx, ty, tz,
                             -(direction.getStepX() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),
                             -(direction.getStepY() * 0.05F + rand.nextFloat() * 0.02F - 0.01F),

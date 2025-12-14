@@ -6,20 +6,25 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different binary operators.
+ *
  * @author rubensworks
  */
 public class TestBinaryOperators {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
@@ -33,16 +38,16 @@ public class TestBinaryOperators {
     private DummyVariableInteger i10;
     private DummyVariableInteger i15;
 
-    @Before
+    @BeforeEach
     public void before() {
-        i0   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0  ));
-        i1   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1  ));
-        i2   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2  ));
-        i3   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3  ));
-        i5   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(5  ));
+        i0 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+        i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
+        i2 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(2));
+        i3 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(3));
+        i5 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(5));
         im10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-10));
-        i10  = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10 ));
-        i15  = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(15 ));
+        i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
+        i15 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(15));
     }
 
     /**
@@ -74,19 +79,19 @@ public class TestBinaryOperators {
         assertThat("5 & 3 = 1", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(1));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeAndLarge() throws EvaluationException {
-        Operators.BINARY_AND.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_AND.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeAndSmall() throws EvaluationException {
-        Operators.BINARY_AND.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_AND.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeAnd() throws EvaluationException {
-        Operators.BINARY_AND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_AND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -118,19 +123,19 @@ public class TestBinaryOperators {
         assertThat("5 | 3 = 7", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(7));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeOrLarge() throws EvaluationException {
-        Operators.BINARY_OR.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_OR.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeOrSmall() throws EvaluationException {
-        Operators.BINARY_OR.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_OR.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeOr() throws EvaluationException {
-        Operators.BINARY_OR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_OR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -162,19 +167,19 @@ public class TestBinaryOperators {
         assertThat("5 ^ 3 = 6", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(6));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeXorLarge() throws EvaluationException {
-        Operators.BINARY_XOR.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_XOR.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeXorSmall() throws EvaluationException {
-        Operators.BINARY_XOR.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_XOR.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeXor() throws EvaluationException {
-        Operators.BINARY_XOR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_XOR.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -191,19 +196,19 @@ public class TestBinaryOperators {
         assertThat("~-10 = 9", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(9));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeComplementLarge() throws EvaluationException {
-        Operators.BINARY_COMPLEMENT.evaluate(new IVariable[]{i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_COMPLEMENT.evaluate(new IVariable[]{i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeComplementSmall() throws EvaluationException {
-        Operators.BINARY_COMPLEMENT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_COMPLEMENT.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeComplement() throws EvaluationException {
-        Operators.BINARY_COMPLEMENT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_COMPLEMENT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -235,19 +240,19 @@ public class TestBinaryOperators {
         assertThat("5 << 3 = 40", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(40));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeLShiftLarge() throws EvaluationException {
-        Operators.BINARY_LSHIFT.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_LSHIFT.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeLShiftSmall() throws EvaluationException {
-        Operators.BINARY_LSHIFT.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_LSHIFT.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeLShift() throws EvaluationException {
-        Operators.BINARY_LSHIFT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_LSHIFT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -279,19 +284,19 @@ public class TestBinaryOperators {
         assertThat("5 >> 3 = 0", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeRShiftLarge() throws EvaluationException {
-        Operators.BINARY_RSHIFT.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_RSHIFT.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeRShiftSmall() throws EvaluationException {
-        Operators.BINARY_RSHIFT.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_RSHIFT.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeRShift() throws EvaluationException {
-        Operators.BINARY_RSHIFT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_RSHIFT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -323,19 +328,19 @@ public class TestBinaryOperators {
         assertThat("5 >>> 3 = 0", ((ValueTypeInteger.ValueInteger) res7).getRawValue(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeRZShiftLarge() throws EvaluationException {
-        Operators.BINARY_RZSHIFT.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_RZSHIFT.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeRZShiftSmall() throws EvaluationException {
-        Operators.BINARY_RZSHIFT.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_RZSHIFT.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeRZShift() throws EvaluationException {
-        Operators.BINARY_RZSHIFT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.BINARY_RZSHIFT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
 }

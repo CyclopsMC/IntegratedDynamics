@@ -27,7 +27,7 @@ public class BlockMenrilTorchWallConfig extends BlockConfigCommon<IntegratedDyna
                 "menril_torch_wall",
                 (eConfig, properties) -> {
                     return new WallTorchBlock(ParticleTypes.FLAME, properties
-                            .noCollission()
+                            .noCollision()
                             .strength(0)
                             .lightLevel((blockState) -> 14)
                             .sound(SoundType.WOOD)) {

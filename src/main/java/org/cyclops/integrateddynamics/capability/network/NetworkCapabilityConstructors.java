@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.capability.network;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.modcompat.capabilities.DefaultCapabilityProvider;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -23,11 +23,11 @@ public class NetworkCapabilityConstructors {
         PartNetwork partNetwork = new PartNetwork();
         EnergyNetwork energyNetwork = new EnergyNetwork(IngredientComponent.ENERGY);
         energyNetwork.setNetwork(network);
-        IEnergyStorage energyChannel = energyNetwork.getChannelExternal(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
+        EnergyHandler energyChannel = energyNetwork.getChannelExternal(net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK, IPositionedAddonsNetwork.DEFAULT_CHANNEL);
 
         event.register(Capabilities.PartNetwork.NETWORK, new DefaultCapabilityProvider<>(partNetwork));
         event.register(Capabilities.EnergyNetwork.NETWORK, new DefaultCapabilityProvider<>(energyNetwork));
-        event.register(Capabilities.EnergyStorage.NETWORK, new DefaultCapabilityProvider<>(energyChannel));
+        event.register(Capabilities.Energy.NETWORK, new DefaultCapabilityProvider<>(energyChannel));
 
         event.addFullNetworkListener(partNetwork);
         event.addFullNetworkListener(energyNetwork);

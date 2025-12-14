@@ -11,8 +11,9 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
 import org.cyclops.cyclopscore.datastructure.DataSlotSupplied;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -39,7 +40,7 @@ import java.util.function.Supplier;
  * A part entity for the coal energy generator.
  * @author rubensworks
  */
-public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInventory implements IEnergyStorage, MenuProvider {
+public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInventory implements MenuProvider {
 
     public static final int INVENTORY_SIZE = 1;
     public static final int MAX_PROGRESS = 13;
@@ -50,9 +51,11 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
     private int currentlyBurningMax;
     @NBTPersist
     private int currentlyBurning;
+    private final EnergyHandler energyHandler;
 
     public BlockEntityCoalGenerator(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_COAL_GENERATOR.get(), blockPos, blockState, BlockEntityCoalGenerator.INVENTORY_SIZE, 64);
+        this.energyHandler = new SimpleEnergyHandler(0);
     }
 
     public static class CapabilityRegistrar extends BlockEntityCableConnectableInventory.CapabilityRegistrar<BlockEntityCoalGenerator> {
@@ -69,8 +72,8 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
                     (blockEntity, context) -> blockEntity.getNetworkElementProvider()
             );
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
-                    (blockEntity, context) -> blockEntity
+                    net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK,
+                    (blockEntity, context) -> blockEntity.getEnergyHandler()
             );
         }
     }
@@ -83,6 +86,10 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
                 return new CoalGeneratorNetworkElement(DimPos.of(world, blockPos));
             }
         };
+    }
+
+    public EnergyHandler getEnergyHandler() {
+        return energyHandler;
     }
 
     public Optional<IEnergyNetwork> getEnergyNetwork() {
@@ -137,36 +144,6 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
 
     public static int getFuelTime(ItemStack itemStack) {
         return itemStack.getBurnTime(RecipeType.SMELTING, ServerLifecycleHooks.getCurrentServer().fuelValues());
-    }
-
-    @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        return 0;
-    }
-
-    @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
-        return 0;
-    }
-
-    @Override
-    public int getEnergyStored() {
-        return 0;
-    }
-
-    @Override
-    public int getMaxEnergyStored() {
-        return 0;
-    }
-
-    @Override
-    public boolean canExtract() {
-        return false;
-    }
-
-    @Override
-    public boolean canReceive() {
-        return false;
     }
 
     @Override

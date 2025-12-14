@@ -1,19 +1,22 @@
 package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
+import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBatteryConfigClient;
-import org.joml.Matrix4f;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Renderer for rendering the energy overlay on the {@link org.cyclops.integrateddynamics.block.BlockEnergyBattery}.
@@ -21,7 +24,7 @@ import org.joml.Matrix4f;
  * @author rubensworks
  *
  */
-public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<BlockEntityEnergyBattery> {
+public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<BlockEntityEnergyBattery, RenderBlockEntityEnergyBattery.RenderState> {
 
     private static final float OFFSET = 0.001F;
     private static final float MINY = 0F;
@@ -77,47 +80,74 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
     }
 
     @Override
-    public void render(BlockEntityEnergyBattery tile, float partialTicks, PoseStack matrixStack,
-                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
-        if(tile != null && tile.getEnergyStored() > 0) {
-            float height = (float) tile.getEnergyStored() / tile.getMaxEnergyStored();
+    public RenderState createRenderState() {
+        return new RenderState();
+    }
 
+    @Override
+    public void extractRenderState(BlockEntityEnergyBattery blockEntity, RenderState renderState, float partialTick, Vec3 cameraPosition, @Nullable ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPosition, breakProgress);
+        renderState.energyStored = blockEntity.getEnergyStored();
+        renderState.maxEnergyStored = blockEntity.getMaxEnergyStored();
+        renderState.combinedLights = new EnumFacingMap<>();
+        for(Direction side : Direction.Plane.HORIZONTAL) {
+            renderState.combinedLights.put(side, LevelRenderer.getLightColor(blockEntity.getLevel(), blockEntity.getBlockPos().offset(side.getUnitVec3i())));
+        }
+        renderState.creative = blockEntity.isCreative();
+        renderState.gameTime = blockEntity.getLevel().getGameTime();
+    }
+
+    @Override
+    public void submit(RenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        if(renderState.energyStored > 0) {
             // Re-scale height to [0.125, 0.875] range as the energy bar does not take up 100% of the height.
-            height = (height * 12 / 16) + 0.125F;
+            float height = (((float) renderState.energyStored / renderState.maxEnergyStored) * 12 / 16) + 0.125F;;
 
-            matrixStack.pushPose();
+            poseStack.pushPose();
 
             for(Direction side : Direction.Plane.HORIZONTAL) {
-                combinedLight = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(side.getUnitVec3i()));
+                int combinedLight = renderState.combinedLights.get(side);
                 TextureAtlasSprite icon = BlockEntityEnergyBatteryConfigClient.ICON_OVERLAY;
 
                 float[][] c = coordinates[side.ordinal()];
                 float replacedMaxV = icon.getV1();
                 float replacedMinV = (icon.getV0() - icon.getV1()) * height + icon.getV1();
 
-                float r = 1.0F;
-                float g = 1.0F;
-                float b = 1.0F;
-                if (tile.isCreative()) {
-                    float tickFactor = (((float) tile.getLevel().getGameTime() % 20) / 10);
+                float r;
+                float g;
+                float b;
+                if (renderState.creative) {
+                    float tickFactor = (((float) renderState.gameTime % 20) / 10);
                     if (tickFactor > 1) {
                         tickFactor = -tickFactor + 1;
                     }
                     r = 0.8F + 0.2F * tickFactor;
                     g = 0.42F;
                     b = 0.60F + 0.40F * tickFactor;
+                } else {
+                    b = 1.0F;
+                    g = 1.0F;
+                    r = 1.0F;
                 }
 
-                VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
-                Matrix4f matrix = matrixStack.last().pose();
-                vb.addVertex(matrix, c[0][0], c[0][1] * height, c[0][2]).setColor(r, g, b, 1).setUv(icon.getU0(), replacedMaxV).setLight(combinedLight);
-                vb.addVertex(matrix, c[1][0], c[1][1] * height, c[1][2]).setColor(r, g, b, 1).setUv(icon.getU0(), replacedMinV).setLight(combinedLight);
-                vb.addVertex(matrix, c[2][0], c[2][1] * height, c[2][2]).setColor(r, g, b, 1).setUv(icon.getU1(), replacedMinV).setLight(combinedLight);
-                vb.addVertex(matrix, c[3][0], c[3][1] * height, c[3][2]).setColor(r, g, b, 1).setUv(icon.getU1(), replacedMaxV).setLight(combinedLight);
+                submitNodeCollector.submitCustomGeometry(poseStack, RenderType.text(icon.atlasLocation()), (pose, vb) -> {
+                    vb.addVertex(pose, c[0][0], c[0][1] * height, c[0][2]).setColor(r, g, b, 1).setUv(icon.getU0(), replacedMaxV).setLight(combinedLight);
+                    vb.addVertex(pose, c[1][0], c[1][1] * height, c[1][2]).setColor(r, g, b, 1).setUv(icon.getU0(), replacedMinV).setLight(combinedLight);
+                    vb.addVertex(pose, c[2][0], c[2][1] * height, c[2][2]).setColor(r, g, b, 1).setUv(icon.getU1(), replacedMinV).setLight(combinedLight);
+                    vb.addVertex(pose, c[3][0], c[3][1] * height, c[3][2]).setColor(r, g, b, 1).setUv(icon.getU1(), replacedMaxV).setLight(combinedLight);
+                });
             }
 
-            matrixStack.popPose();
+            poseStack.popPose();
         }
+    }
+
+    public static class RenderState extends BlockEntityRenderState {
+        public int energyStored;
+        public int maxEnergyStored;
+        public EnumFacingMap<Integer> combinedLights;
+        public boolean creative;
+        public long gameTime;
     }
 
 }

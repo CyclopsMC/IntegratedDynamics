@@ -5,7 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -19,26 +20,26 @@ import java.util.Optional;
  */
 public class EnergyHelpers {
 
-    private static final List<IEnergyStorageProxy> ENERGY_STORAGE_PROXIES = Lists.newArrayList();
+    private static final List<EnergyHandlerProxy> ENERGY_STORAGE_PROXIES = Lists.newArrayList();
 
-    public static void addEnergyStorageProxy(IEnergyStorageProxy energyStorageProxy) {
+    public static void addEnergyStorageProxy(EnergyHandlerProxy energyStorageProxy) {
         ENERGY_STORAGE_PROXIES.add(energyStorageProxy);
     }
 
-    public static Optional<IEnergyStorage> getEnergyStorage(PartPos pos) {
+    public static Optional<EnergyHandler> getEnergyStorage(PartPos pos) {
         return getEnergyStorage(pos.getPos(), pos.getSide());
     }
 
-    public static Optional<IEnergyStorage> getEnergyStorage(DimPos pos, Direction facing) {
+    public static Optional<EnergyHandler> getEnergyStorage(DimPos pos, Direction facing) {
         Level world = pos.getLevel(true);
         return world != null ? getEnergyStorage(world, pos.getBlockPos(), facing) : Optional.empty();
     }
 
-    public static Optional<IEnergyStorage> getEnergyStorage(Level world, BlockPos pos, Direction facing) {
-        IEnergyStorage energyStorage = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, facing, net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK)
+    public static Optional<EnergyHandler> getEnergyStorage(Level world, BlockPos pos, Direction facing) {
+        EnergyHandler energyStorage = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(world, pos, facing, net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK)
                 .orElseGet(() -> {
-                    for (IEnergyStorageProxy energyStorageProxy : ENERGY_STORAGE_PROXIES) {
-                        Optional<IEnergyStorage> optionalEnergyStorage = energyStorageProxy.getEnergyStorageProxy(world, pos, facing);
+                    for (EnergyHandlerProxy energyStorageProxy : ENERGY_STORAGE_PROXIES) {
+                        Optional<EnergyHandler> optionalEnergyStorage = energyStorageProxy.getEnergyStorageProxy(world, pos, facing);
                         if (optionalEnergyStorage.isPresent()) {
                             return optionalEnergyStorage.orElse(null);
                         }
@@ -59,9 +60,14 @@ public class EnergyHelpers {
     public static int fillNeigbours(Level world, BlockPos pos, int energy, boolean simulate) {
         int toFill = energy;
         for(Direction side : Direction.values()) {
-            IEnergyStorage energyStorage = getEnergyStorage(world, pos.relative(side), side.getOpposite()).orElse(null);
+            EnergyHandler energyStorage = getEnergyStorage(world, pos.relative(side), side.getOpposite()).orElse(null);
             if(energyStorage != null) {
-                toFill -= energyStorage.receiveEnergy(toFill, simulate);
+                try (var tx = Transaction.openRoot()) {
+                    toFill -= energyStorage.insert(toFill, tx);
+                    if (!simulate) {
+                        tx.commit();
+                    }
+                }
                 if(toFill <= 0) {
                     return energy;
                 }
@@ -70,8 +76,8 @@ public class EnergyHelpers {
         return energy - toFill;
     }
 
-    public static interface IEnergyStorageProxy {
-        public Optional<IEnergyStorage> getEnergyStorageProxy(BlockGetter world, BlockPos pos, Direction facing);
+    public static interface EnergyHandlerProxy {
+        public Optional<EnergyHandler> getEnergyStorageProxy(BlockGetter world, BlockPos pos, Direction facing);
     }
 
 }

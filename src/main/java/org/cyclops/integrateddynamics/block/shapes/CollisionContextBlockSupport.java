@@ -10,6 +10,6 @@ import net.minecraft.world.phys.shapes.EntityCollisionContext;
  */
 public class CollisionContextBlockSupport extends EntityCollisionContext {
     public CollisionContextBlockSupport() {
-        super(false, false, -Double.MAX_VALUE, ItemStack.EMPTY, p_205118_ -> false, null);
+        super(false, false, -Double.MAX_VALUE, ItemStack.EMPTY, false, null);
     }
 }

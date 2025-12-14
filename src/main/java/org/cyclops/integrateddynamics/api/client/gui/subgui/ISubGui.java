@@ -2,6 +2,9 @@ package org.cyclops.integrateddynamics.api.client.gui.subgui;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
 
 import java.util.Comparator;
@@ -22,22 +25,19 @@ public interface ISubGui {
 
     /**
      * Char type event
-     * @param typedChar The character typed
-     * @param keyCode The keycode of the character typed
+     * @param evt The character event
      * @return True if all next actions should be skipped
      */
-    public boolean charTyped(char typedChar, int keyCode);
+    public boolean charTyped(CharacterEvent evt);
 
     /**
      * Key press event
-     * @param typedChar The character typed
-     * @param keyCode The keycode of the character typed
-     * @param modifiers Key modifiers
+     * @param evt The key event
      * @return True if all next actions should be skipped
      */
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers);
+    public boolean keyPressed(KeyEvent evt);
 
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton);
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick);
 
     public static class SubGuiComparator implements Comparator<ISubGui> {
 

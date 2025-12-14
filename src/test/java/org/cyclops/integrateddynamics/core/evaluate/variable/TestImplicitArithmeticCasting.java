@@ -6,12 +6,12 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test implicit casting in arithmetic operators.
@@ -29,7 +29,7 @@ public class TestImplicitArithmeticCasting {
     private DummyVariableLong l0;
     private DummyVariableDouble d0;
 
-    @Before
+    @BeforeEach
     public void before() {
         ValueCastMappings.load();
 

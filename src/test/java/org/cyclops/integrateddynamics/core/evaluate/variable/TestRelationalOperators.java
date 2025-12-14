@@ -6,20 +6,25 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different integer operators.
+ *
  * @author rubensworks
  */
 public class TestRelationalOperators {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
@@ -34,17 +39,17 @@ public class TestRelationalOperators {
     private DummyVariableDouble dm10;
     private DummyVariableDouble d10;
 
-    @Before
+    @BeforeEach
     public void before() {
-        i0   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0  ));
-        i1   = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1  ));
+        i0 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(0));
+        i1 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(1));
         im10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(-10));
-        i10  = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10 ));
+        i10 = new DummyVariableInteger(ValueTypeInteger.ValueInteger.of(10));
 
-        d0   = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.1  ));
-        d1   = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(1.1  ));
+        d0 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(0.1));
+        d1 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(1.1));
         dm10 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(-10.1));
-        d10  = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(10.1 ));
+        d10 = new DummyVariableDouble(ValueTypeDouble.ValueDouble.of(10.1));
     }
 
     /**
@@ -70,14 +75,14 @@ public class TestRelationalOperators {
         assertThat("10 == -10 = false", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeEqualsLarge() throws EvaluationException {
-        Operators.RELATIONAL_EQUALS.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_EQUALS.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeEqualsSmall() throws EvaluationException {
-        Operators.RELATIONAL_EQUALS.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_EQUALS.evaluate(new IVariable[]{i0}));
     }
 
     /**
@@ -103,19 +108,19 @@ public class TestRelationalOperators {
         assertThat("10 > -10 = true", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeGTLarge() throws EvaluationException {
-        Operators.RELATIONAL_GT.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_GT.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeGTSmall() throws EvaluationException {
-        Operators.RELATIONAL_GT.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_GT.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeGT() throws EvaluationException {
-        Operators.RELATIONAL_GT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_GT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -141,19 +146,19 @@ public class TestRelationalOperators {
         assertThat("10 < -10 = false", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeLTLarge() throws EvaluationException {
-        Operators.RELATIONAL_LT.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_LT.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeLTSmall() throws EvaluationException {
-        Operators.RELATIONAL_LT.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_LT.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeLT() throws EvaluationException {
-        Operators.RELATIONAL_LT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_LT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -179,14 +184,14 @@ public class TestRelationalOperators {
         assertThat("10 != -10 = true", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeNotEqualsLarge() throws EvaluationException {
-        Operators.RELATIONAL_NOTEQUALS.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_NOTEQUALS.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeNotEqualsSmall() throws EvaluationException {
-        Operators.RELATIONAL_NOTEQUALS.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_NOTEQUALS.evaluate(new IVariable[]{i0}));
     }
 
     /**
@@ -231,19 +236,19 @@ public class TestRelationalOperators {
         assertThat("10 >= -10 = true", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeGELarge() throws EvaluationException {
-        Operators.RELATIONAL_GE.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_GE.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeGESmall() throws EvaluationException {
-        Operators.RELATIONAL_GE.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_GE.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeGE() throws EvaluationException {
-        Operators.RELATIONAL_GE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_GE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -269,19 +274,19 @@ public class TestRelationalOperators {
         assertThat("10 <= -10 = false", ((ValueTypeBoolean.ValueBoolean) res5).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeLELarge() throws EvaluationException {
-        Operators.RELATIONAL_LE.evaluate(new IVariable[]{i0, i0, i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_LE.evaluate(new IVariable[]{i0, i0, i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputSizeLESmall() throws EvaluationException {
-        Operators.RELATIONAL_LE.evaluate(new IVariable[]{i0});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_LE.evaluate(new IVariable[]{i0}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeLE() throws EvaluationException {
-        Operators.RELATIONAL_LE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.RELATIONAL_LE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
 }

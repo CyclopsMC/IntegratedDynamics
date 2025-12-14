@@ -46,7 +46,7 @@ public class BlockDelay extends BlockWithEntityGuiCabled {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_DELAY.get(), new BlockEntityDelay.Ticker());
+        return level.isClientSide() ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_DELAY.get(), new BlockEntityDelay.Ticker());
     }
 
     @Override

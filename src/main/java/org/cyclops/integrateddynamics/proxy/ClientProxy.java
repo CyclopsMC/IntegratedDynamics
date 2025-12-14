@@ -29,16 +29,8 @@ public class ClientProxy extends ClientProxyComponent {
 
     public static DiagnosticsWebServer DIAGNOSTICS_SERVER;
 
-    private static final String KEYBINDING_CATEGORY_NAME = "key.categories." + Reference.MOD_ID;
-
-    public static final KeyMapping FOCUS_LP_SEARCH = new KeyMapping(
-            "key." + Reference.MOD_ID + ".logic_programmer_focus_search",
-            KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F,
-            KEYBINDING_CATEGORY_NAME);
-    public static final KeyMapping FOCUS_LP_RENAME = new KeyMapping(
-            "key." + Reference.MOD_ID + ".logic_programmer_open_rename",
-            KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R,
-            KEYBINDING_CATEGORY_NAME);
+    public static KeyMapping FOCUS_LP_SEARCH;
+    public static KeyMapping FOCUS_LP_RENAME;
 
     public ClientProxy() {
         super(new CommonProxy());
@@ -61,8 +53,14 @@ public class ClientProxy extends ClientProxyComponent {
     @Override
     public void registerKeyBindings(IKeyRegistry keyRegistry, RegisterKeyMappingsEvent event) {
         super.registerKeyBindings(keyRegistry, event);
-        event.register(FOCUS_LP_SEARCH);
-        event.register(FOCUS_LP_RENAME);
+        event.register(FOCUS_LP_SEARCH = new KeyMapping(
+                "key." + Reference.MOD_ID + ".logic_programmer_focus_search",
+                KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F,
+                getMainKeyCategory()));
+        event.register(FOCUS_LP_RENAME = new KeyMapping(
+                "key." + Reference.MOD_ID + ".logic_programmer_open_rename",
+                KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R,
+                getMainKeyCategory()));
     }
 
     public void onPostTextureStitch(TextureAtlasStitchedEvent event) {

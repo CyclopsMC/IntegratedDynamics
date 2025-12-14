@@ -9,7 +9,8 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
@@ -17,15 +18,19 @@ import static org.cyclops.integrateddynamics.core.test.TestHelpers.deserialize;
 import static org.cyclops.integrateddynamics.core.test.TestHelpers.serialize;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different variable types.
+ *
  * @author rubensworks
  */
 public class TestVariables {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     public static final ValueDeseralizationContext context = ValueDeseralizationContextMocked.get();
 
     @Test
@@ -338,9 +343,9 @@ public class TestVariables {
         assertThat("deserializing string tag returns tag", strTagVariable.getType().parseString("\"abc\""), is(strTagVariable.getValue()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testNbtTypeInvalidString() throws EvaluationException {
-        ValueTypes.NBT.parseString("\"");
+        Assertions.assertThrows(EvaluationException.class, () -> ValueTypes.NBT.parseString("\""));
     }
 
 }

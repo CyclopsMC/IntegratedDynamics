@@ -124,7 +124,7 @@ public class TestEntityOperators {
         zombieHeldItems.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.POTATO));
         eZombieHeldItems = new DummyVariableEntity(makeEntity(zombieHeldItems));
         Boat boat = new Boat(EntityType.ACACIA_BOAT, world, () -> ItemStack.EMPTY.getItem());
-        eZombie.getValue().getRawValue().get().startRiding(boat, true);
+        eZombie.getValue().getRawValue().get().startRiding(boat, true, true);
         eBoat = new DummyVariableEntity(makeEntity(boat));
         ItemFrame itemframe = new ItemFrame(world, new BlockPos(0, 0, 0), Direction.NORTH);
         itemframe.setItem(new ItemStack(Items.POTATO));

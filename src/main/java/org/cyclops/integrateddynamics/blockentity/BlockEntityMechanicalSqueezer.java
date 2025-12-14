@@ -19,7 +19,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.cyclopscore.datastructure.SingleCache;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -73,7 +76,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
             super.populate();
 
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK,
                     (blockEntity, direction) -> blockEntity.getTank()
             );
             add(
@@ -168,8 +171,14 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         // Output fluid
         Optional<FluidStack> outputFluid = recipe.getOutputFluid();
         if (outputFluid.isPresent()) {
-            if (getTank().fill(outputFluid.get().copy(), IModHelpersNeoForge.get().getFluidHelpers().simulateBooleanToAction(simulate)) != outputFluid.get().getAmount()) {
-                return false;
+            try (var tx = Transaction.openRoot()) {
+                int inserted = getTank().insert(FluidResource.of(outputFluid.get()), outputFluid.get().getAmount(), tx);
+                if (!simulate) {
+                    tx.commit();
+                }
+                if (inserted != outputFluid.get().getAmount()) {
+                    return false;
+                }
             }
         }
 
@@ -219,14 +228,17 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
             // Auto-eject fluid
             if (blockEntity.isAutoEjectFluids() && !blockEntity.getTank().isEmpty()) {
                 for (Direction side : Direction.values()) {
-                    IFluidHandler handler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side),
-                            side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK).orElse(null);
+                    ResourceHandler<FluidResource> handler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(level, pos.relative(side),
+                            side.getOpposite(), net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK).orElse(null);
                     if(handler != null) {
                         FluidStack fluidStack = blockEntity.getTank().getFluid().copy();
                         fluidStack.setAmount(Math.min(BlockMechanicalSqueezerConfig.autoEjectFluidRate, fluidStack.getAmount()));
-                        if (handler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
-                            blockEntity.getTank().drain(handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
-                            break;
+                        try (var tx = Transaction.openRoot()) {
+                            int moved = ResourceHandlerUtil.move(blockEntity.getTank(), handler, null, BlockMechanicalSqueezerConfig.autoEjectFluidRate, tx);
+                            tx.commit();
+                            if (moved > 0) {
+                                break;
+                            }
                         }
                     }
                 }

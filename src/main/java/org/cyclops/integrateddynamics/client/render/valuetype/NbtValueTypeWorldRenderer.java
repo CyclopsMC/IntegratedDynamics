@@ -3,11 +3,12 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -31,11 +32,11 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
     private static final float MARGIN_FACTOR = 1.1F;
 
     @Override
-    public void renderValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
+    public void submitValue(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                             Direction direction, IPartType partType, IValue value, float partialTicks,
-                            PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
+                            PoseStack matrixStack, SubmitNodeCollector nodeCollector,
                             int combinedLight, int combinedOverlay, float alpha) {
-        Font fontRenderer = context.getFont();
+        Font fontRenderer = context.font();
         Wrapper<Float> maxWidth = new Wrapper<>(0F);
 
         List<String> lines = Lists.newLinkedList();
@@ -79,8 +80,9 @@ public class NbtValueTypeWorldRenderer implements IValueTypeWorldRenderer {
         int offset = 0;
         for(String line : lines) {
             int color = IModHelpers.get().getBaseHelpers().addAlphaToColor(ValueTypes.NBT.getDisplayColor(), alpha);
-            context.getFont().drawInBatch(line, 0, offset, color,
-                    false, matrixStack.last().pose(), renderTypeBuffer, Font.DisplayMode.NORMAL, 0, combinedLight);
+            nodeCollector.submitText(matrixStack, 0, offset, Component.literal(line).getVisualOrderText(),
+                    false, Font.DisplayMode.NORMAL, combinedLight, color,
+                    0, 0);
             offset += singleHeight;
         }
 

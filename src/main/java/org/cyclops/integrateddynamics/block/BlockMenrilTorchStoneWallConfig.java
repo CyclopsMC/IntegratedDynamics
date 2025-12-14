@@ -27,7 +27,7 @@ public class BlockMenrilTorchStoneWallConfig extends BlockConfigCommon<Integrate
                 "menril_torch_stone_wall",
                 (eConfig, properties) -> {
                     return new WallTorchBlock(ParticleTypes.FLAME, properties
-                            .noCollission()
+                            .noCollision()
                             .strength(0)
                             .lightLevel((blockState) -> 14)
                             .sound(SoundType.STONE)) {

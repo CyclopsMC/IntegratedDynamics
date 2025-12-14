@@ -5,7 +5,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public record ItemModelVariableOverlay(ItemModelVariableOverlays variableModelBaked) implements ItemModel {
 
     @Override
-    public void update(ItemStackRenderState renderState, ItemStack stack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
+    public void update(ItemStackRenderState renderState, ItemStack stack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @Nullable ClientLevel level, @Nullable ItemOwner entity, int seed) {
         ItemModel model = this.variableModelBaked.getModelForItem(stack, level);
         if (model != null) {
             model.update(renderState, stack, itemModelResolver, displayContext, level, entity, seed);

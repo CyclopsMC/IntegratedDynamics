@@ -6,7 +6,7 @@ import net.minecraft.client.color.item.Constant;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.client.render.model.FacadeModel;
@@ -18,9 +18,10 @@ import java.util.List;
  * @author rubensworks
  */
 public record ItemModelFacade(FacadeModel facadeModel) implements ItemModel {
+
     @Override
-    public void update(ItemStackRenderState renderState, ItemStack stack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
-        facadeModel.update(renderState, stack, itemModelResolver, displayContext, level, entity, seed);
+    public void update(ItemStackRenderState itemStackRenderState, ItemStack itemStack, ItemModelResolver itemModelResolver, ItemDisplayContext itemDisplayContext, @Nullable ClientLevel clientLevel, @Nullable ItemOwner itemOwner, int seed) {
+        facadeModel.update(itemStackRenderState, itemStack, itemModelResolver, itemDisplayContext, clientLevel, itemOwner, seed);
     }
 
     public static record Unbaked(ResourceLocation modelEmpty) implements ItemModel.Unbaked {

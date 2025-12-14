@@ -28,8 +28,8 @@ public class ContainerMechanicalMachine<T extends BlockEntityMechanicalMachine<?
         this.tileSupplier = tileSupplier;
         this.variableMaxProgress = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getMaxProgress());
         this.variableProgress = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getProgress());
-        this.variableMaxEnergy = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getMaxEnergyStored());
-        this.variableEnergy = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getEnergyStored());
+        this.variableMaxEnergy = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getEnergyHandler().getCapacityAsInt());
+        this.variableEnergy = registerSyncedVariable(Integer.class, () -> getTileSupplier().get().getEnergyHandler().getAmountAsInt());
     }
 
     public Optional<T> getTileSupplier() {

@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -92,26 +95,26 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        if (!this.searchField.charTyped(typedChar, keyCode)) {
-            return super.charTyped(typedChar, keyCode);
+    public boolean charTyped(CharacterEvent evt) {
+        if (!this.searchField.charTyped(evt)) {
+            return super.charTyped(evt);
         }
         return true;
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (typedChar != GLFW.GLFW_KEY_ESCAPE) {
-            this.searchField.keyPressed(typedChar, keyCode, modifiers);
+    public boolean keyPressed(KeyEvent evt) {
+        if (evt.input() != GLFW.GLFW_KEY_ESCAPE) {
+            this.searchField.keyPressed(evt);
             return true;
         }
-        return super.keyPressed(typedChar, keyCode, modifiers);
+        return super.keyPressed(evt);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        return this.searchField.mouseClicked(mouseX, mouseY, mouseButton)
-                || super.mouseClicked(mouseX, mouseY, mouseButton);
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+        return this.searchField.mouseClicked(evt, isDoubleClick)
+                || super.mouseClicked(evt, isDoubleClick);
     }
 
     @Override

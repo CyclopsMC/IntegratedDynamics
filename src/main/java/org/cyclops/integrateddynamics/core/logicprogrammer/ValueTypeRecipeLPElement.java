@@ -22,8 +22,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeDefinition;
@@ -220,9 +222,13 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
 
     public static ItemStack getFluidBucket(FluidStack fluidStack) {
         ItemStack itemStack = new ItemStack(Items.BUCKET);
-        IFluidHandlerItem fluidHandler = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
-        fluidHandler.fill(new FluidStack(fluidStack.getFluid(), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume()), IFluidHandler.FluidAction.EXECUTE);
-        return fluidHandler.getContainer();
+        ItemAccess itemAccess = ItemAccess.forStack(itemStack);
+        ResourceHandler<FluidResource> fluidHandler = itemAccess.getCapability(Capabilities.Fluid.ITEM);
+        try (var tx = Transaction.openRoot()) {
+            fluidHandler.insert(FluidResource.of(fluidStack.getFluid()), IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume(), tx);
+            tx.commit();
+        }
+        return itemAccess.getResource().toStack(itemAccess.getAmount());
     }
 
     protected boolean isInputValid() {

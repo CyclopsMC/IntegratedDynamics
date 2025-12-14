@@ -7,6 +7,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
@@ -123,8 +126,8 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        if (inputFluidAmountBox.charTyped(typedChar, keyCode)) {
+    public boolean charTyped(CharacterEvent evt) {
+        if (inputFluidAmountBox.charTyped(evt)) {
             element.setInputFluidAmount(inputFluidAmountBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
@@ -132,7 +135,7 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                             LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_FLUID));
             return true;
         }
-        if (inputEnergyBox.charTyped(typedChar, keyCode)) {
+        if (inputEnergyBox.charTyped(evt)) {
             element.setInputEnergy(inputEnergyBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
@@ -140,7 +143,7 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                             LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_ENERGY));
             return true;
         }
-        if (outputFluidAmountBox.charTyped(typedChar, keyCode)) {
+        if (outputFluidAmountBox.charTyped(evt)) {
             element.setOutputFluidAmount(outputFluidAmountBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
@@ -148,7 +151,7 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                             LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_FLUID));
             return true;
         }
-        if (outputEnergyBox.charTyped(typedChar, keyCode)) {
+        if (outputEnergyBox.charTyped(evt)) {
             element.setOutputEnergy(outputEnergyBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
@@ -156,12 +159,12 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                             LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_ENERGY));
             return true;
         }
-        return super.charTyped(typedChar, keyCode);
+        return super.charTyped(evt);
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (inputFluidAmountBox.keyPressed(typedChar, keyCode, modifiers)) {
+    public boolean keyPressed(KeyEvent evt) {
+        if (inputFluidAmountBox.keyPressed(evt)) {
             element.setInputFluidAmount(inputFluidAmountBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
@@ -169,7 +172,7 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                             LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_FLUID));
             return true;
         }
-        if (inputEnergyBox.keyPressed(typedChar, keyCode, modifiers)) {
+        if (inputEnergyBox.keyPressed(evt)) {
             element.setInputEnergy(inputEnergyBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
@@ -177,7 +180,7 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                             LogicProgrammerValueTypeRecipeValueChangedPacket.Type.INPUT_ENERGY));
             return true;
         }
-        if (outputFluidAmountBox.keyPressed(typedChar, keyCode, modifiers)) {
+        if (outputFluidAmountBox.keyPressed(evt)) {
             element.setOutputFluidAmount(outputFluidAmountBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
@@ -185,7 +188,7 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                             LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_FLUID));
             return true;
         }
-        if (outputEnergyBox.keyPressed(typedChar, keyCode, modifiers)) {
+        if (outputEnergyBox.keyPressed(evt)) {
             element.setOutputEnergy(outputEnergyBox.getValue());
             container.onDirty();
             IntegratedDynamics._instance.getPacketHandler().sendToServer(
@@ -193,15 +196,15 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
                             LogicProgrammerValueTypeRecipeValueChangedPacket.Type.OUTPUT_ENERGY));
             return true;
         }
-        return super.keyPressed(typedChar, keyCode, modifiers);
+        return super.keyPressed(evt);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        return inputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton)
-                || inputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton)
-                || outputFluidAmountBox.mouseClicked(mouseX, mouseY, mouseButton)
-                || outputEnergyBox.mouseClicked(mouseX, mouseY, mouseButton)
-                || super.mouseClicked(mouseX, mouseY, mouseButton);
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+        return inputFluidAmountBox.mouseClicked(evt, isDoubleClick)
+                || inputEnergyBox.mouseClicked(evt, isDoubleClick)
+                || outputFluidAmountBox.mouseClicked(evt, isDoubleClick)
+                || outputEnergyBox.mouseClicked(evt, isDoubleClick)
+                || super.mouseClicked(evt, isDoubleClick);
     }
 }

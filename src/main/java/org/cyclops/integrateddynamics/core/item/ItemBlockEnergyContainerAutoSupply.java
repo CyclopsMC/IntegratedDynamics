@@ -14,7 +14,10 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -41,37 +44,40 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
         return InteractionResult.SUCCESS.heldItemTransformedTo(toggleActivation(player.getItemInHand(hand), world, player));
     }
 
-    public static void autofill(IEnergyStorage source, Level world, Entity entity) {
+    public static void autofill(EnergyHandler source, Level world, Entity entity) {
         if(entity instanceof Player && !world.isClientSide()) {
-            int tickAmount = source.extractEnergy(Integer.MAX_VALUE, true);
+            int tickAmount;
+            try (var tx = Transaction.openRoot()) {
+                tickAmount = source.extract(Integer.MAX_VALUE, tx);
+            }
             if(tickAmount > 0) {
                 Player player = (Player) entity;
                 for (InteractionHand hand : InteractionHand.values()) {
-                    ItemStack held = player.getItemInHand(hand);
-                    ItemStack filled = tryFillContainerForPlayer(source, held, tickAmount, player);
-                    if (!filled.isEmpty()) {
-                        player.setItemInHand(hand, filled);
-                    }
+                    tryFillContainerForPlayer(source, ItemAccess.forPlayerInteraction(player, hand), tickAmount);
                 }
             }
         }
     }
 
-    public static ItemStack tryFillContainerForPlayer(IEnergyStorage source, ItemStack held, int tickAmount, Player player) {
-        IEnergyStorage target = held.getCapability(Capabilities.EnergyStorage.ITEM, null);
+    public static boolean tryFillContainerForPlayer(EnergyHandler source, ItemAccess held, int tickAmount) {
+        EnergyHandler target = held.getCapability(Capabilities.Energy.ITEM);
         if (target != null) {
-            int moved = target.receiveEnergy(source.extractEnergy(target.receiveEnergy(tickAmount, true), false), false);
+            int moved;
+            try (var tx = Transaction.openRoot()) {
+                moved = EnergyHandlerUtil.move(source, target, tickAmount, tx);
+                tx.commit();
+            }
             if (moved > 0) {
-                return held;
+                return true;
             }
         }
-        return ItemStack.EMPTY;
+        return false;
     }
 
     @Override
     public void inventoryTick(ItemStack itemStack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
         if (isActivated(itemStack)) {
-            IEnergyStorage energyStorage = itemStack.getCapability(Capabilities.EnergyStorage.ITEM, null);
+            EnergyHandler energyStorage = itemStack.getCapability(Capabilities.Energy.ITEM, null);
             if (energyStorage != null) {
                 autofill(energyStorage, world, entity);
             }

@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import com.google.common.collect.Lists;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -121,7 +124,8 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
         return Pair.of(handler, handler.handleIterator(iteratorSupplier, channel));
     }
 
-    protected void savePartPosIteratorHandler(IPartPosIteratorHandler partPosIteratorHandler) {
+    protected void savePartPosIteratorHandler(IPartPosIteratorHandler partPosIteratorHandler, TransactionContext transaction) {
+        new PartPosIteratorHandledJournal(partPosIteratorHandler.clone()).updateSnapshots(transaction);
         network.setPartPosIteratorHandler(partPosIteratorHandler);
     }
 
@@ -130,7 +134,7 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
     }
 
     @Override
-    public T insert(@Nonnull T ingredient, boolean simulate) {
+    public T insert(@Nonnull T ingredient, TransactionContext transaction) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
 
         // Quickly return if the to-be-inserted ingredient was already empty
@@ -170,11 +174,11 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
 
             this.network.disablePosition(pos);
             long quantityBefore = matcher.getQuantity(ingredient);
-            ingredient = this.network.getPositionedStorage(pos).insert(ingredient, simulate);
+            ingredient = this.network.getPositionedStorage(pos).insert(ingredient, transaction);
             long quantityAfter = matcher.getQuantity(ingredient);
             this.network.enablePosition(pos);
-            if (!simulate && quantityBefore != quantityAfter) {
-                markStoragePositionChanged(channel, pos);
+            if (quantityBefore != quantityAfter) {
+                new MarkStoragePositionChangedOnRootCommitJournal(pos).updateSnapshots(transaction);
             }
             if (matcher.isEmpty(ingredient)) {
                 break;
@@ -187,15 +191,13 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
             ingredient = matcher.withQuantity(ingredientOriginal, skippedQuantity + matcher.getQuantity(ingredient));
         }
 
-        if (!simulate) {
-            savePartPosIteratorHandler(partPosIteratorData.getLeft());
-        }
+        savePartPosIteratorHandler(partPosIteratorData.getLeft(), transaction);
 
         return ingredient;
     }
 
     @Override
-    public T extract(long maxQuantity, boolean simulate) {
+    public T extract(long maxQuantity, TransactionContext transaction) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
 
         // Limit rate
@@ -221,33 +223,26 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
 
             // If we do an effective extraction, first simulate to check if it matches the filter
             PositionedAddonsNetworkIngredientsFilter<T> filter = this.network.getPositionedStorageFilter(pos);
-            if (filter != null && !simulate) {
-                T extractedSimulated = positionedStorage.extract(maxQuantity, true);
-                if (!filter.testExtraction(extractedSimulated)) {
-                    continue;
+            if (filter != null) {
+                try (var tx = Transaction.open(transaction)) {
+                    T extractedSimulated = positionedStorage.extract(maxQuantity, tx);
+                    if (!filter.testExtraction(extractedSimulated)) {
+                        continue;
+                    }
                 }
             }
 
-            T extracted = positionedStorage.extract(maxQuantity, simulate);
-
-            // If simulating, just check the output
-            if (filter != null && simulate && !filter.testExtraction(extracted)) {
-                continue;
-            }
+            T extracted = positionedStorage.extract(maxQuantity, transaction);
 
             this.network.enablePosition(pos);
             if (!matcher.isEmpty(extracted)) {
-                if (!simulate) {
-                    markStoragePositionChanged(channel, pos);
-                    savePartPosIteratorHandler(partPosIteratorData.getLeft());
-                }
+                new MarkStoragePositionChangedOnRootCommitJournal(pos).updateSnapshots(transaction);
+                savePartPosIteratorHandler(partPosIteratorData.getLeft(), transaction);
                 return extracted;
             }
         }
 
-        if (!simulate) {
-            savePartPosIteratorHandler(partPosIteratorData.getLeft());
-        }
+        savePartPosIteratorHandler(partPosIteratorData.getLeft(), transaction);
 
         // Schedule an observation if nothing was extracted, because the index may not be initialized yet.
         scheduleObservation();
@@ -256,7 +251,7 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
     }
 
     @Override
-    public T extract(@Nonnull T prototype, M matchFlags, boolean simulate) {
+    public T extract(@Nonnull T prototype, M matchFlags, TransactionContext transaction) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
         boolean checkQuantity = matcher.hasCondition(matchFlags, getComponent().getPrimaryQuantifier().getMatchCondition());
 
@@ -326,20 +321,16 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
             // If the count is sufficient for our query, return
             if (newCount >= requiredQuantity) {
                 // Save the iterator state before returning
-                if (!simulate) {
-                    savePartPosIteratorHandler(partPosIteratorData.getLeft());
-                }
+                savePartPosIteratorHandler(partPosIteratorData.getLeft(), transaction);
                 existingValue.getLeft().set(requiredQuantity);
-                return finalizeExtraction(storagePrototype, matchFlags, existingValue, simulate);
+                return finalizeExtraction(storagePrototype, matchFlags, existingValue, transaction);
             }
         }
 
         // If we reach this point, then our effective count is below requiredQuantity
 
         // Save the iterator state before returning
-        if (!simulate) {
-            savePartPosIteratorHandler(partPosIteratorData.getLeft());
-        }
+        savePartPosIteratorHandler(partPosIteratorData.getLeft(), transaction);
 
         // Fail if we required an exact quantity
         if (checkQuantity) {
@@ -359,21 +350,21 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
         // Schedule an observation, as since this method is called, there may be a need for changes later on.
         scheduleObservation();
 
-        return finalizeExtraction(maxInstance, matchFlags, maxValue, simulate);
+        return finalizeExtraction(maxInstance, matchFlags, maxValue, transaction);
     }
 
     protected T finalizeExtraction(T instancePrototype, M matchFlags, Pair<Wrapper<Long>, List<PartPos>> value,
-                                   boolean simulate) {
+                                   TransactionContext transaction) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
         long extractedCount = value.getLeft().get();
-        if (!simulate && extractedCount > 0) {
+        if (extractedCount > 0) {
             long toExtract = extractedCount;
             for (PartPos pos : value.getRight()) {
                 // Update the remaining prototype quantity for this iteration
                 instancePrototype = matcher.withQuantity(instancePrototype, toExtract);
 
                 this.network.disablePosition(pos);
-                T extracted = this.network.getPositionedStorage(pos).extract(instancePrototype, matchFlags, false);
+                T extracted = this.network.getPositionedStorage(pos).extract(instancePrototype, matchFlags, transaction);
                 this.network.enablePosition(pos);
                 markStoragePositionChanged(channel, pos);
                 long thisExtractedAmount = matcher.getQuantity(extracted);
@@ -392,6 +383,48 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
 
     protected void scheduleObservation() {
         this.network.scheduleObservation();
+    }
+
+    class MarkStoragePositionChangedOnRootCommitJournal extends SnapshotJournal<Void> {
+        private final PartPos pos;
+
+        MarkStoragePositionChangedOnRootCommitJournal(PartPos pos) {
+            this.pos = pos;
+        }
+
+        @Override
+        protected Void createSnapshot() {
+            return null;
+        }
+
+        @Override
+        protected void revertToSnapshot(Void unused) {
+
+        }
+
+        @Override
+        protected void onRootCommit(Void originalState) {
+            super.onRootCommit(originalState);
+            markStoragePositionChanged(channel, pos);
+        }
+    }
+
+    class PartPosIteratorHandledJournal extends SnapshotJournal<Void> {
+        private final IPartPosIteratorHandler iteratorHandler;
+
+        PartPosIteratorHandledJournal(IPartPosIteratorHandler iteratorHandler) {
+            this.iteratorHandler = iteratorHandler;
+        }
+
+        @Override
+        protected Void createSnapshot() {
+            return null;
+        }
+
+        @Override
+        protected void revertToSnapshot(Void unused) {
+            network.setPartPosIteratorHandler(iteratorHandler);
+        }
     }
 
 }

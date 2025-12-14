@@ -2,8 +2,7 @@ package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -29,12 +28,12 @@ public class SpecialModelRendererVariableOverlay implements SpecialModelRenderer
     }
 
     @Override
-    public void render(@Nullable Pair<Boolean, ItemStack> stateIn, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, boolean hasFoilType) {
+    public void submit(@Nullable Pair<Boolean, ItemStack> stateIn, ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int packedLight, int packedOverlay, boolean outline, int outlineColor) {
         if (displayContext == ItemDisplayContext.GUI) {
             IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.ofClient(), stateIn.getRight());
             displayContext = ItemDisplayContext.GUI;
             poseStack.translate(0.5F, 0.5F, 0.7F);
-            variableFacade.getClient().renderISTER(stateIn.getRight(), displayContext, poseStack, bufferSource, packedLight, packedOverlay);
+            variableFacade.getClient().renderISTER(stateIn.getRight(), displayContext, poseStack, submitNodeCollector, packedLight, packedOverlay);
         }
     }
 
@@ -52,7 +51,7 @@ public class SpecialModelRendererVariableOverlay implements SpecialModelRenderer
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(EntityModelSet entityModelSet) {
+        public SpecialModelRenderer<?> bake(BakingContext bakingContext) {
             return new SpecialModelRendererVariableOverlay();
         }
     }

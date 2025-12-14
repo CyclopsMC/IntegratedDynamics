@@ -17,9 +17,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.blockentity.BlockEntityTickerDelayed;
 import org.cyclops.cyclopscore.blockentity.CyclopsBlockEntity;
@@ -111,15 +113,15 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
         @Override
         public void populate() {
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                    (blockEntity, direction) -> new InvWrapper(blockEntity.getInventory())
+                    net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
+                    (blockEntity, direction) -> VanillaContainerWrapper.of(blockEntity.getInventory())
             );
             add(
                     org.cyclops.commoncapabilities.api.capability.Capabilities.InventoryState.BLOCK,
                     (blockEntity, direction) -> new SimpleInventoryState(blockEntity.getInventory())
             );
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    Capabilities.Fluid.BLOCK,
                     (blockEntity, direction) -> blockEntity.getTank()
             );
             add(
@@ -208,7 +210,10 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 if (blockEntity.getProgress() >= recipe.getDuration()) {
                     // Consume input fluid
                     int amount = IModHelpersNeoForge.get().getFluidHelpers().getAmount(recipe.getInputFluid().orElse(FluidStack.EMPTY));
-                    blockEntity.getTank().drain(amount, IFluidHandler.FluidAction.EXECUTE);
+                    try (var tx = Transaction.openRoot()) {
+                        blockEntity.getTank().extract(FluidResource.of(recipe.getInputFluid().get()), amount, tx);
+                        tx.commit();
+                    }
 
                     // Produce output item
                     ItemStack output = recipe.getOutputItemFirst().orElse(ItemStack.EMPTY);
@@ -221,7 +226,13 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
 
                     // Produce output fluid
                     if (recipe.getOutputFluid().isPresent()) {
-                        if (blockEntity.getTank().fill(recipe.getOutputFluid().get(), IFluidHandler.FluidAction.EXECUTE) == 0) {
+                        int inserted;
+                        try (var tx = Transaction.openRoot()) {
+                            FluidStack fluidStack = recipe.getOutputFluid().get();
+                            inserted = blockEntity.getTank().insert(FluidResource.of(fluidStack), fluidStack.getAmount(), tx);
+                            tx.commit();
+                        }
+                        if (inserted == 0) {
                             IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, "Encountered an invalid recipe: " + currentRecipe.get().id());
                         }
                     }

@@ -7,15 +7,15 @@ import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
 import static org.cyclops.integrateddynamics.core.test.TestHelpers.deserialize;
 import static org.cyclops.integrateddynamics.core.test.TestHelpers.serialize;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the factory types of value list proxies.
@@ -26,7 +26,7 @@ public class TestValueTypeListProxyFactories {
 
     static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         ValueTypeListProxyFactories.load();
     }

@@ -1,19 +1,22 @@
 package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -22,7 +25,7 @@ import org.cyclops.cyclopscore.helper.DirectionHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.blockentity.BlockEntitySqueezer;
-import org.joml.Matrix4f;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Renderer for the item inside the {@link org.cyclops.integrateddynamics.block.BlockDryingBasin}.
@@ -30,7 +33,7 @@ import org.joml.Matrix4f;
  * @author rubensworks
  *
  */
-public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntitySqueezer> {
+public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntitySqueezer, RenderBlockEntitySqueezer.RenderState> {
 
     private static final float OFFSET = 0.01F;
     private static final float MINY = 0.0625F;
@@ -81,60 +84,70 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
     }
 
     @Override
-    public void render(BlockEntitySqueezer tile, float partialTicks, PoseStack matrixStack,
-                       MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
-        if(tile != null) {
-            if(!tile.getInventory().getItem(0).isEmpty()) {
-                matrixStack.pushPose();
-                matrixStack.translate(-0.5F, -0.5F, -0.5F);
-                renderItem(matrixStack, renderTypeBuffer, tile.getInventory().getItem(0), tile);
-                matrixStack.popPose();
-            }
+    public RenderState createRenderState() {
+        return new RenderState();
+    }
 
-            if(!tile.getTank().isEmpty()) {
-                FluidStack fluid = tile.getTank().getFluid();
-                int combinedLightCorrected = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().offset(Direction.UP.getUnitVec3i()));
-                IModHelpersNeoForge.get().getRenderHelpers().renderFluidContext(fluid, matrixStack, () -> {
-                    float height = Math.max(0.0625F - OFFSET, fluid.getAmount() * 0.0625F / IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() + 0.0625F - OFFSET);
-                    int brightness = Math.max(combinedLightCorrected, fluid.getFluid().getFluidType().getLightLevel(fluid));
-                    int l2 = brightness >> 0x10 & 0xFFFF;
-                    int i3 = brightness & 0xFFFF;
+    @Override
+    public void extractRenderState(BlockEntitySqueezer blockEntity, RenderState renderState, float partialTick, Vec3 cameraPosition, @Nullable ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPosition, breakProgress);
+        renderState.itemStack = blockEntity.getInventory().getItem(0);
+        renderState.fluidStack = blockEntity.getTank().getFluid();
+        renderState.level = blockEntity.getLevel();
+        renderState.itemHeight = blockEntity.getItemHeight();
+    }
 
-                    for(Direction side : DirectionHelpers.DIRECTIONS) {
-                        TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluid, Direction.UP);
-                        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
-                        Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluid));
+    @Override
+    public void submit(RenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        if(!renderState.itemStack.isEmpty()) {
+            poseStack.pushPose();
+            poseStack.translate(-0.5F, -0.5F, -0.5F);
+            renderItem(poseStack, submitNodeCollector, renderState);
+            poseStack.popPose();
+        }
 
-                        VertexConsumer vb = renderTypeBuffer.getBuffer(RenderType.text(icon.atlasLocation()));
-                        Matrix4f matrix = matrixStack.last().pose();
+        if(!renderState.fluidStack.isEmpty()) {
+            FluidStack fluid = renderState.fluidStack;
+            int combinedLightCorrected = LevelRenderer.getLightColor(renderState.level, renderState.blockPos.offset(Direction.UP.getUnitVec3i()));
+            IModHelpersNeoForge.get().getRenderHelpers().renderFluidContext(fluid, poseStack, () -> {
+                float height = Math.max(0.0625F - OFFSET, fluid.getAmount() * 0.0625F / IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() + 0.0625F - OFFSET);
+                int brightness = Math.max(combinedLightCorrected, fluid.getFluid().getFluidType().getLightLevel(fluid));
+                int l2 = brightness >> 0x10 & 0xFFFF;
+                int i3 = brightness & 0xFFFF;
 
+                for(Direction side : DirectionHelpers.DIRECTIONS) {
+                    TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluid, Direction.UP);
+                    IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
+                    Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluid));
+
+                    submitNodeCollector.submitCustomGeometry(poseStack, RenderType.text(icon.atlasLocation()), (pose, vb) -> {
                         float[][] c = coordinates[side.ordinal()];
                         float replacedMaxV = (side == Direction.UP || side == Direction.DOWN) ?
                                 icon.getV1() : ((icon.getV1() - icon.getV0()) * height + icon.getV0());
-                        vb.addVertex(matrix, c[0][0], getHeight(side, c[0][1], height), c[0][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU0(), replacedMaxV).setUv2(l2, i3);
-                        vb.addVertex(matrix, c[1][0], getHeight(side, c[1][1], height), c[1][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU0(), icon.getV0()).setUv2(l2, i3);
-                        vb.addVertex(matrix, c[2][0], getHeight(side, c[2][1], height), c[2][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU1(), icon.getV0()).setUv2(l2, i3);
-                        vb.addVertex(matrix, c[3][0], getHeight(side, c[3][1], height), c[3][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU1(), replacedMaxV).setUv2(l2, i3);
-                    }
-                });
-            }
+                        vb.addVertex(pose, c[0][0], getHeight(side, c[0][1], height), c[0][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU0(), replacedMaxV).setUv2(l2, i3);
+                        vb.addVertex(pose, c[1][0], getHeight(side, c[1][1], height), c[1][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU0(), icon.getV0()).setUv2(l2, i3);
+                        vb.addVertex(pose, c[2][0], getHeight(side, c[2][1], height), c[2][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU1(), icon.getV0()).setUv2(l2, i3);
+                        vb.addVertex(pose, c[3][0], getHeight(side, c[3][1], height), c[3][2]).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU1(), replacedMaxV).setUv2(l2, i3);
+                    });
+                }
+            });
         }
     }
 
-    private void renderItem(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, ItemStack itemStack, BlockEntitySqueezer tile) {
+    private void renderItem(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, RenderState renderStateSqueezer) {
         ItemStackRenderState renderState = new ItemStackRenderState();
-        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, itemStack, ItemDisplayContext.FIXED, tile.getLevel(), null, 0);
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, renderStateSqueezer.itemStack, ItemDisplayContext.FIXED, renderStateSqueezer.level, null, 0);
 
-        matrixStack.pushPose();
-        float yTop = (9 - tile.getItemHeight()) * 0.125F;
-        matrixStack.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
+        poseStack.pushPose();
+        float yTop = (9 - renderStateSqueezer.itemHeight) * 0.125F;
+        poseStack.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
         if (renderState.isOversizedInGui()) {
-            matrixStack.scale(1.7F, 1.7F, 1.7F);
+            poseStack.scale(1.7F, 1.7F, 1.7F);
         }
-        matrixStack.scale(1F, yTop - 0.125F, 1F);
+        poseStack.scale(1F, yTop - 0.125F, 1F);
 
-        Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemDisplayContext.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, tile.getLevel(), 0);
-        matrixStack.popPose();
+        renderState.submit(poseStack, submitNodeCollector, 15728880, OverlayTexture.NO_OVERLAY, 0);
+        poseStack.popPose();
     }
 
     private static float getHeight(Direction side, float height, float replaceHeight) {
@@ -142,6 +155,13 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
             return replaceHeight;
         }
         return height;
+    }
+
+    public static class RenderState extends BlockEntityRenderState {
+        public ItemStack itemStack;
+        public FluidStack fluidStack;
+        public Level level;
+        public int itemHeight;
     }
 
 }

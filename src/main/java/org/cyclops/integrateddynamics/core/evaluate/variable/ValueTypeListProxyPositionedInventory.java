@@ -3,7 +3,8 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Iterators;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
@@ -25,21 +26,21 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
         this(null, null);
     }
 
-    protected Optional<IItemHandler> getInventory() {
-        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(getPos(), getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK);
+    protected Optional<ResourceHandler<ItemResource>> getInventory() {
+        return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(getPos(), getSide(), net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK);
     }
 
     @Override
     public int getLength() {
         return getInventory()
-                .map(IItemHandler::getSlots)
+                .map(ResourceHandler<ItemResource>::size)
                 .orElse(0);
     }
 
     @Override
     public ValueObjectTypeItemStack.ValueItemStack get(int index) {
         return ValueObjectTypeItemStack.ValueItemStack.of(getInventory()
-                .map(itemHandler -> itemHandler.getStackInSlot(index))
+                .map(itemHandler -> itemHandler.getResource(index).toStack(itemHandler.getAmountAsInt(index)))
                 .orElse(ItemStack.EMPTY));
     }
 
@@ -56,21 +57,21 @@ public class ValueTypeListProxyPositionedInventory extends ValueTypeListProxyPos
     public static class ListFactoryIterator implements Iterator<ValueObjectTypeItemStack.ValueItemStack> {
 
         @Nullable
-        private final IItemHandler itemHandler;
+        private final ResourceHandler<ItemResource> itemHandler;
         private int index = 0;
 
-        public ListFactoryIterator(@Nullable IItemHandler itemHandler) {
+        public ListFactoryIterator(@Nullable ResourceHandler<ItemResource> itemHandler) {
             this.itemHandler = itemHandler;
         }
 
         @Override
         public boolean hasNext() {
-            return itemHandler != null && index < itemHandler.getSlots();
+            return itemHandler != null && index < itemHandler.size();
         }
 
         @Override
         public ValueObjectTypeItemStack.ValueItemStack next() {
-            return ValueObjectTypeItemStack.ValueItemStack.of(this.itemHandler == null ? ItemStack.EMPTY : this.itemHandler.getStackInSlot(index++));
+            return ValueObjectTypeItemStack.ValueItemStack.of(this.itemHandler == null ? ItemStack.EMPTY : this.itemHandler.getResource(index).toStack(itemHandler.getAmountAsInt(index++)));
         }
 
         @Override

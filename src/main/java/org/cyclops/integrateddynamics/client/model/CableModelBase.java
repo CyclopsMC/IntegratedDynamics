@@ -14,7 +14,7 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -76,7 +76,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         super(level, blockState, facing, rand, modelData, renderType);
     }
 
-    public CableModelBase(ItemStack itemStack, Level world, LivingEntity entity) {
+    public CableModelBase(ItemStack itemStack, Level world, ItemOwner entity) {
         super(itemStack, world, entity);
     }
 

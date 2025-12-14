@@ -7,6 +7,7 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
@@ -64,7 +65,7 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
     @Override
     public ItemStack assemble(CraftingInput grid, HolderLookup.Provider registryAccess) {
         ItemStack output = getResultItem(registryAccess).copy();
-        IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(Capabilities.EnergyStorage.ITEM);
+        IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(output));
 
         int totalCapacity = 0;
         int totalEnergy = 0;
@@ -75,10 +76,10 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
             ItemStack element = grid.getItem(j).copy().split(1);
             if(!element.isEmpty()) {
                 if(this.batteryItem.test(element)) {
-                    IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(Capabilities.EnergyStorage.ITEM);
+                    IEnergyStorageCapacity currentEnergyStorage = (IEnergyStorageCapacity) element.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(element));
                     inputItems++;
-                    totalEnergy = IModHelpers.get().getBaseHelpers().addSafe(totalEnergy, currentEnergyStorage.getEnergyStored());
-                    totalCapacity = IModHelpers.get().getBaseHelpers().addSafe(totalCapacity, currentEnergyStorage.getMaxEnergyStored());
+                    totalEnergy = IModHelpers.get().getBaseHelpers().addSafe(totalEnergy, currentEnergyStorage.getAmountAsInt());
+                    totalCapacity = IModHelpers.get().getBaseHelpers().addSafe(totalCapacity, currentEnergyStorage.getCapacityAsInt());
                 } else {
                     return ItemStack.EMPTY;
                 }

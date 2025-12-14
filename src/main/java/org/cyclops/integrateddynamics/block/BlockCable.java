@@ -134,7 +134,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING.get(), new BlockEntityMultipartTicking.Ticker<>());
+        return level.isClientSide() ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING.get(), new BlockEntityMultipartTicking.Ticker<>());
     }
 
     @Override
@@ -181,13 +181,13 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, ItemStack toolStack, boolean willHarvest, FluidState fluid) {
         BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, pos, CollisionContext.of(player))
                 .rayTrace(pos, player);
         if (rayTraceResult != null && rayTraceResult.getComponent().destroy(world, pos, player, false)) {
             return false;
         }
-        return rayTraceResult != null && super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
+        return rayTraceResult != null && super.onDestroyedByPlayer(state, world, pos, player, toolStack, willHarvest, fluid);
     }
 
     @Override

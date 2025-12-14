@@ -6,6 +6,9 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ARGB;
@@ -100,8 +103,8 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
-        if (super.charTyped(typedChar, keyCode)) {
+    public boolean charTyped(CharacterEvent evt) {
+        if (super.charTyped(evt)) {
             refreshDropdownList();
             return true;
         }
@@ -109,11 +112,11 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+    public boolean keyPressed(KeyEvent evt) {
         IDropdownEntry<T> oldPossibility = selectedDropdownPossibility;
         selectedDropdownPossibility = null;
         if (!possibilities.isEmpty()) {
-            switch (typedChar) {
+            switch (evt.key()) {
                 case GLFW.GLFW_KEY_UP:
                     if (visiblePossibilitiesIndex >= 0) {
                         visiblePossibilitiesIndex--;
@@ -139,7 +142,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                     }
             }
         }
-        if (super.keyPressed(typedChar, keyCode, modifiers)) {
+        if (super.keyPressed(evt)) {
             refreshDropdownList();
             return true;
         }
@@ -236,15 +239,15 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
         if (this.isVisible() && isFocused()) {
-            int i = getHoveredVisiblePossibility(mouseX, mouseY);
+            int i = getHoveredVisiblePossibility(evt.x(), evt.y());
             if (i >= 0) {
                 selectVisiblePossibility(i);
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, mouseButton);
+        return super.mouseClicked(evt, isDoubleClick);
     }
 
     public int getHoveredVisiblePossibility(double mouseX, double mouseY) {

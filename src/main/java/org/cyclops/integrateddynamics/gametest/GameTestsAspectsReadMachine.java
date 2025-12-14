@@ -342,30 +342,6 @@ public class GameTestsAspectsReadMachine {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsReadMachineIsEnergyReceiverInvalid(GameTestHelper helper) {
-        helper.setBlock(POS.west(), Blocks.STONE);
-        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.BOOLEAN_ISENERGYRECEIVER, ValueTypeBoolean.ValueBoolean.of(false));
-    }
-
-    @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsReadMachineIsEnergyReceiverValid(GameTestHelper helper) {
-        helper.setBlock(POS.west(), RegistryEntries.BLOCK_ENERGY_BATTERY.get());
-        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.BOOLEAN_ISENERGYRECEIVER, ValueTypeBoolean.ValueBoolean.of(true));
-    }
-
-    @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsReadMachineIsEnergyProviderInvalid(GameTestHelper helper) {
-        helper.setBlock(POS.west(), Blocks.STONE);
-        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.BOOLEAN_ISENERGYPROVIDER, ValueTypeBoolean.ValueBoolean.of(false));
-    }
-
-    @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectsReadMachineIsEnergyProviderValid(GameTestHelper helper) {
-        helper.setBlock(POS.west(), RegistryEntries.BLOCK_ENERGY_BATTERY.get());
-        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.BOOLEAN_ISENERGYPROVIDER, ValueTypeBoolean.ValueBoolean.of(true));
-    }
-
-    @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadMachineCanExtractEnergyInvalid(GameTestHelper helper) {
         helper.setBlock(POS.west(), Blocks.STONE);
         testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.BOOLEAN_CANEXTRACTENERGY, ValueTypeBoolean.ValueBoolean.of(false));
@@ -468,7 +444,7 @@ public class GameTestsAspectsReadMachine {
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadMachineEnergyStoredInvalid(GameTestHelper helper) {
         helper.setBlock(POS.west(), Blocks.STONE);
-        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.INTEGER_ENERGYSTORED, ValueTypeInteger.ValueInteger.of(0));
+        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.INTEGER_ENERGYSTORED, ValueTypeLong.ValueLong.of(0));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -476,13 +452,13 @@ public class GameTestsAspectsReadMachine {
         helper.setBlock(POS.west(), RegistryEntries.BLOCK_ENERGY_BATTERY.get());
         BlockEntityEnergyBattery battery = helper.getBlockEntity(POS.west(), BlockEntityEnergyBattery.class);
         battery.setEnergyStored(100);
-        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.INTEGER_ENERGYSTORED, ValueTypeInteger.ValueInteger.of(100));
+        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.INTEGER_ENERGYSTORED, ValueTypeLong.ValueLong.of(100));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadMachineEnergyCapacityInvalid(GameTestHelper helper) {
         helper.setBlock(POS.west(), Blocks.STONE);
-        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.INTEGER_ENERGYCAPACITY, ValueTypeInteger.ValueInteger.of(0));
+        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.INTEGER_ENERGYCAPACITY, ValueTypeLong.ValueLong.of(0));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -490,7 +466,7 @@ public class GameTestsAspectsReadMachine {
         helper.setBlock(POS.west(), RegistryEntries.BLOCK_ENERGY_BATTERY.get());
         BlockEntityEnergyBattery battery = helper.getBlockEntity(POS.west(), BlockEntityEnergyBattery.class);
         battery.setEnergyStored(100);
-        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.INTEGER_ENERGYCAPACITY, ValueTypeInteger.ValueInteger.of(1_000_000));
+        testReadAspect(POS, helper, PartTypes.MACHINE_READER, Aspects.Read.Machine.INTEGER_ENERGYCAPACITY, ValueTypeLong.ValueLong.of(1_000_000));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)

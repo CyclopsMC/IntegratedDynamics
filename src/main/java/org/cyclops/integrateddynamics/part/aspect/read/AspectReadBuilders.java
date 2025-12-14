@@ -13,13 +13,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.event.level.NoteBlockEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.transfer.EmptyResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.commoncapabilities.api.capability.Capabilities;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IRecipeHandler;
@@ -219,26 +220,26 @@ public class AspectReadBuilders {
             PROPERTIES.setValue(PROP_TANKID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         }
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IFluidHandler> PROP_GET = input -> {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ResourceHandler<FluidResource>> PROP_GET = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK)
-                    .orElse(EmptyFluidHandler.INSTANCE);
+                    net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK)
+                    .orElse(EmptyResourceHandler.instance());
         };
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Pair<IFluidHandler, Integer>> PROP_GET_ACTIVATABLE = input -> {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Pair<ResourceHandler<FluidResource>, Integer>> PROP_GET_ACTIVATABLE = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
-            IFluidHandler fluidHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, input.getLeft().getTarget().getSide(),
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK).orElse(null);
+            ResourceHandler<FluidResource> fluidHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(dimPos, input.getLeft().getTarget().getSide(),
+                    net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK).orElse(null);
             if(fluidHandler != null) {
                 int i = input.getRight().getValue(PROP_TANKID).getRawValue();
-                if(i < fluidHandler.getTanks()) {
+                if(i < fluidHandler.size()) {
                     return Pair.of(fluidHandler, i);
                 }
             }
             return null;
         };
-        public static final IAspectValuePropagator<Pair<IFluidHandler, Integer>, FluidStack>
-                PROP_GET_FLUIDSTACK = tankInfo -> tankInfo != null ? tankInfo.getLeft().getFluidInTank(tankInfo.getRight()).copy() : FluidStack.EMPTY;
+        public static final IAspectValuePropagator<Pair<ResourceHandler<FluidResource>, Integer>, FluidStack>
+                PROP_GET_FLUIDSTACK = tankInfo -> tankInfo != null ? tankInfo.getLeft().getResource(tankInfo.getRight()).toStack(tankInfo.getLeft().getAmountAsInt(tankInfo.getRight())) : FluidStack.EMPTY;
 
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>
                 PROP_GET_LIST_FLUIDSTACKS = input -> ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedTankFluidStacks(
@@ -249,13 +250,15 @@ public class AspectReadBuilders {
                         input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()
                 ));
 
-        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IFluidHandler>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, ResourceHandler<FluidResource>>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "fluid");
-        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IFluidHandler>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, ResourceHandler<FluidResource>>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "fluid");
-        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, Pair<IFluidHandler, Integer>>
-                BUILDER_INTEGER_ACTIVATABLE = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
-        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Pair<IFluidHandler, Integer>>
+        public static final AspectBuilder<ValueTypeLong.ValueLong, ValueTypeLong, ResourceHandler<FluidResource>>
+                BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET, "fluid");
+        public static final AspectBuilder<ValueTypeLong.ValueLong, ValueTypeLong, Pair<ResourceHandler<FluidResource>, Integer>>
+                BUILDER_LONG_ACTIVATABLE = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, Pair<ResourceHandler<FluidResource>, Integer>>
                 BUILDER_DOUBLE_ACTIVATABLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET_ACTIVATABLE, "fluid").withProperties(PROPERTIES);
 
     }
@@ -271,27 +274,27 @@ public class AspectReadBuilders {
             PROPERTIES.setValue(PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(0)); // Not required in this case, but we do this here just as an example on how to set default values.
         }
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IItemHandler> PROP_GET = input -> {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ResourceHandler<ItemResource>> PROP_GET = input -> {
             PartPos target = input.getLeft().getTarget();
-            return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
+            return IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK).orElse(null);
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ItemStack> PROP_GET_SLOT = input -> {
             PartPos target = input.getLeft().getTarget();
-            IItemHandler itemHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK).orElse(null);
+            ResourceHandler<ItemResource> itemHandler = IModHelpersNeoForge.get().getCapabilityHelpers().getCapability(target.getPos().getLevel(true), target.getPos().getBlockPos(), target.getSide(), net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK).orElse(null);
             int slotId = input.getRight().getValue(PROPERTY_SLOTID).getRawValue();
-            if(itemHandler != null && slotId >= 0 && slotId < itemHandler.getSlots()) {
-                return itemHandler.getStackInSlot(slotId);
+            if(itemHandler != null && slotId >= 0 && slotId < itemHandler.size()) {
+                return itemHandler.getResource(slotId).toStack(itemHandler.getAmountAsInt(slotId));
             }
             return ItemStack.EMPTY;
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, ValueTypeList.ValueList>
                 PROP_GET_LIST = input -> ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedInventory(input.getLeft().getTarget().getPos(), input.getLeft().getTarget().getSide()));
 
-        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, IItemHandler>
+        public static final AspectBuilder<ValueTypeBoolean.ValueBoolean, ValueTypeBoolean, ResourceHandler<ItemResource>>
                 BUILDER_BOOLEAN = AspectReadBuilders.BUILDER_BOOLEAN.handle(PROP_GET, "inventory");
-        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IItemHandler>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, ResourceHandler<ItemResource>>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET, "inventory");
-        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, IItemHandler>
+        public static final AspectBuilder<ValueTypeDouble.ValueDouble, ValueTypeDouble, ResourceHandler<ItemResource>>
                 BUILDER_DOUBLE = AspectReadBuilders.BUILDER_DOUBLE.handle(PROP_GET, "inventory");
         public static final AspectBuilder<ValueObjectTypeItemStack.ValueItemStack, ValueObjectTypeItemStack, ItemStack>
                 BUILDER_ITEMSTACK = BUILDER_OBJECT_ITEMSTACK.handle(PROP_GET_SLOT, "inventory").withProperties(PROPERTIES);
@@ -353,17 +356,19 @@ public class AspectReadBuilders {
         public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, INetwork>
                 BUILDER_INTEGER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_NETWORK, "network");
 
-        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, IEnergyStorage> PROP_GET_ENERGY_CHANNEL = input -> {
+        public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EnergyHandler> PROP_GET_ENERGY_CHANNEL = input -> {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             INetwork network = NetworkHelpers.getNetwork(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide()).orElse(null);
             int channel = input.getRight().getValue(PROPERTY_CHANNEL).getRawValue();
             return network != null ? network.getCapability(org.cyclops.integrateddynamics.Capabilities.EnergyNetwork.NETWORK)
-                    .map(energyNetwork -> energyNetwork.getChannelExternal(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, channel))
+                    .map(energyNetwork -> energyNetwork.getChannelExternal(net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK, channel))
                     .orElse(null) : null;
         };
 
-        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, IEnergyStorage>
+        public static final AspectBuilder<ValueTypeInteger.ValueInteger, ValueTypeInteger, EnergyHandler>
                 ENERGY_BUILDER = AspectReadBuilders.BUILDER_INTEGER.handle(PROP_GET_ENERGY_CHANNEL, "network").withProperties(PROPERTIES);
+        public static final AspectBuilder<ValueTypeLong.ValueLong, ValueTypeLong, EnergyHandler>
+                ENERGY_BUILDER_LONG = AspectReadBuilders.BUILDER_LONG.handle(PROP_GET_ENERGY_CHANNEL, "network").withProperties(PROPERTIES);
 
     }
 
@@ -399,7 +404,7 @@ public class AspectReadBuilders {
             DimPos dimPos = input.getLeft().getTarget().getPos();
             BlockState blockState = dimPos.getLevel(true).getBlockState(dimPos.getBlockPos());
             return blockState.hasAnalogOutputSignal()
-                    ? blockState.getAnalogOutputSignal(dimPos.getLevel(true), dimPos.getBlockPos()) : 0;
+                    ? blockState.getAnalogOutputSignal(dimPos.getLevel(true), dimPos.getBlockPos(), input.getLeft().getTarget().getSide()) : 0;
         };
         public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, Boolean> PROP_GET_CLOCK = input -> {
             int interval = Math.max(1, input.getRight().getValue(PROPERTY_INTERVAL).getRawValue());

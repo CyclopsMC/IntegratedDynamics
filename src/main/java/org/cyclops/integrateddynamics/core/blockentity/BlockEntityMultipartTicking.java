@@ -289,7 +289,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     }
 
     protected void invalidateParts() {
-        if (getLevel() != null && !getLevel().isClientSide) {
+        if (getLevel() != null && !getLevel().isClientSide()) {
             INetwork network = getNetwork();
             if (network != null) {
                 for (Map.Entry<Direction, PartHelpers.PartStateHolder<?, ?>> entry : partContainer.getPartData().entrySet()) {

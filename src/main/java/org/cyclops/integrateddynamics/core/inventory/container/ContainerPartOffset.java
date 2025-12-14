@@ -93,7 +93,7 @@ public class ContainerPartOffset extends InventoryContainer {
 
         offsetVariablesInventory = new SimpleInventory(3, 1);
         offsetVariablesInventory.addDirtyMarkListener(() -> dirtyInv = true);
-        if (!player.level().isClientSide) {
+        if (!player.level().isClientSide()) {
             getPartState().loadInventoryNamed("offsetVariablesInventory", offsetVariablesInventory);
         }
         addSlot(new SlotVariable(offsetVariablesInventory, 0, 45, 51));
@@ -186,7 +186,7 @@ public class ContainerPartOffset extends InventoryContainer {
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        if (!player.level().isClientSide) {
+        if (!player.level().isClientSide()) {
             IPartState partState = getPartState();
 
             if (this.dirtyInv) {

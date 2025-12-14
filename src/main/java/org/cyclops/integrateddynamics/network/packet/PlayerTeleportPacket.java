@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
@@ -67,7 +68,8 @@ public class PlayerTeleportPacket extends PacketCodec {
         if (!dimensionType.location().equals(player.level().dimension().location())) {
             player.teleport(new TeleportTransition(
                     ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType),
-                    player,
+                    new Vec3(x, y, z),
+                    Vec3.ZERO, yaw, pitch,
                     TeleportTransition.DO_NOTHING
             ));
         }

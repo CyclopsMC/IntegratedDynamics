@@ -3,6 +3,9 @@ package org.cyclops.integrateddynamics.core.client.gui.subgui;
 import com.google.common.collect.Sets;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGui;
 
@@ -65,9 +68,9 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
+    public boolean charTyped(CharacterEvent evt) {
         for(ISubGui subGui : getSubGuis()) {
-            if(subGui.charTyped(typedChar, keyCode)) {
+            if(subGui.charTyped(evt)) {
                 return true;
             }
         }
@@ -75,9 +78,9 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
-    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+    public boolean keyPressed(KeyEvent evt) {
         for(ISubGui subGui : getSubGuis()) {
-            if(subGui.keyPressed(typedChar, keyCode, modifiers)) {
+            if(subGui.keyPressed(evt)) {
                 return true;
             }
         }
@@ -85,9 +88,9 @@ public class SubGuiHolder implements ISubGui {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
         for(ISubGui subGui : getSubGuis()) {
-            if (subGui.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (subGui.mouseClicked(evt, isDoubleClick)) {
                 return true;
             }
         }

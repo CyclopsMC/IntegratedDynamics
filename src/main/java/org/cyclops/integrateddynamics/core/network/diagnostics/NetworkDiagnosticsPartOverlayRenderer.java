@@ -57,7 +57,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
         if (!partPositions.isEmpty()) {
             Player player = Minecraft.getInstance().player;
 
-            Vec3 eyePos = event.getCamera().getPosition();
+            Vec3 eyePos = event.getLevelRenderState().cameraRenderState.pos;
             double offsetX = eyePos.x;
             double offsetY = eyePos.y;
             double offsetZ = eyePos.z;
@@ -81,7 +81,7 @@ public class NetworkDiagnosticsPartOverlayRenderer {
                             .move(-offsetX, -offsetY, -offsetZ)
                             .inflate(0.05, 0.05, 0.05)
                             .inflate(-0.05, -0.05, -0.05);
-                    ShapeRenderer.renderLineBox(event.getPoseStack(), Minecraft.getInstance().renderBuffers().outlineBufferSource().getBuffer(RenderType.lines()),
+                    ShapeRenderer.renderLineBox(event.getPoseStack().last(), Minecraft.getInstance().renderBuffers().outlineBufferSource().getBuffer(RenderType.lines()),
                             bb, 1.0F, 0.2F, 0.1F, 0.8F);
                 }
             }

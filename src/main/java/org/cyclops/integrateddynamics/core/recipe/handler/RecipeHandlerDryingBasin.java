@@ -8,7 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.cyclops.commoncapabilities.api.capability.fluidhandler.FluidMatch;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.IPrototypedIngredientAlternatives;
 import org.cyclops.commoncapabilities.api.capability.recipehandler.PrototypedIngredientAlternativesList;
@@ -47,7 +48,11 @@ public class RecipeHandlerDryingBasin<T extends RecipeDryingBasin> extends Recip
             inventory.setItem(0, input.getInstances(IngredientComponent.ITEMSTACK).get(0));
         }
         if (!input.getInstances(IngredientComponent.FLUIDSTACK).isEmpty()) {
-            inventory.getFluidHandler().fill(input.getInstances(IngredientComponent.FLUIDSTACK).get(0), IFluidHandler.FluidAction.EXECUTE);
+            FluidStack fluidStack = input.getInstances(IngredientComponent.FLUIDSTACK).get(0);
+            try (var tx = Transaction.openRoot()) {
+                inventory.getFluidHandler().insert(FluidResource.of(fluidStack), fluidStack.getAmount(), tx);
+                tx.commit();
+            }
         }
         return inventory;
     }

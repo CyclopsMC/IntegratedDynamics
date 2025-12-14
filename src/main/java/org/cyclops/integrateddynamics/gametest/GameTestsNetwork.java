@@ -682,9 +682,10 @@ public class GameTestsNetwork {
 
         // Break variable store with wrench
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter());
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_VARIABLE_STORE.value(), POS);
@@ -913,9 +914,10 @@ public class GameTestsNetwork {
 
         // Break variable store with wrench
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter());
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_VARIABLE_STORE.value(), POS);
@@ -1143,9 +1145,10 @@ public class GameTestsNetwork {
 
         // Break variable store with wrench
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter());
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_VARIABLE_STORE.value(), POS);
@@ -1374,9 +1377,10 @@ public class GameTestsNetwork {
 
         // Break variable store with wrench
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter());
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_DELAY.value(), POS);
@@ -1605,9 +1609,10 @@ public class GameTestsNetwork {
 
         // Break variable store with wrench
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter());
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_MATERIALIZER.value(), POS);
@@ -1836,9 +1841,10 @@ public class GameTestsNetwork {
 
         // Break variable store with wrench
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
         player.setPos(helper.absolutePos(POS).getCenter());
-        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
+        helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_PROXY.value(), POS);

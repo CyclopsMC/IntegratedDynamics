@@ -8,23 +8,28 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test the different NBT operators.
+ *
  * @author rubensworks
  */
 public class TestNbtOperators {
 
-    static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
+    static {
+        CyclopsCoreInstance.MOD = new ModBaseMocked();
+    }
+
     private static final DummyValueType DUMMY_TYPE = DummyValueType.TYPE;
     private static final DummyVariable<DummyValueType.DummyValue> DUMMY_VARIABLE =
             new DummyVariable<DummyValueType.DummyValue>(DUMMY_TYPE, DummyValueType.DummyValue.of());
@@ -73,12 +78,12 @@ public class TestNbtOperators {
     private DummyVariableNbt nintlist;
     private DummyVariableNbt nlonglist;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ValueTypeListProxyFactories.load();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         sa = new DummyVariableString(ValueTypeString.ValueString.of("a"));
         sb = new DummyVariableString(ValueTypeString.ValueString.of("b"));
@@ -118,14 +123,14 @@ public class TestNbtOperators {
         nsasasbsc = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tsasasbsc));
 
         CompoundTag tall = new CompoundTag();
-        tall.putByte("byte", (byte)1);
+        tall.putByte("byte", (byte) 1);
         tall.putShort("short", (short) 2);
         tall.putInt("integer", 3);
         tall.putLong("long", 4L);
         tall.putFloat("float", 5.5F);
         tall.putDouble("double", 6.5D);
         tall.putString("string", "seven");
-        tall.putByteArray("bytearray", new byte[]{8,9,10});
+        tall.putByteArray("bytearray", new byte[]{8, 9, 10});
         tall.putIntArray("intarray", new int[]{11, 12, 13});
         tall.putLongArray("longarray", new long[]{14, 15, 16});
         tall.putBoolean("boolean", true);
@@ -139,7 +144,7 @@ public class TestNbtOperators {
         nall = new DummyVariableNbt(ValueTypeNbt.ValueNbt.of(tall));
 
         CompoundTag tsome = new CompoundTag();
-        tsome.putByte("byte", (byte)1);
+        tsome.putByte("byte", (byte) 1);
         tsome.putInt("integer", 3);
         tsome.putFloat("float", 5.5F);
         tsome.putString("string", "seven");
@@ -199,19 +204,19 @@ public class TestNbtOperators {
         assertThat("size({a:a;b:b}) = 2", ((ValueTypeInteger.ValueInteger) res3).getRawValue(), is(2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtSizeSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_SIZE.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_SIZE.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtSizeSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_SIZE.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_SIZE.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtSize() throws EvaluationException {
-        Operators.NBT_COMPOUND_SIZE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_SIZE.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -230,19 +235,19 @@ public class TestNbtOperators {
         assertThat("keys({a:a;b:b})[1] = b", ((ValueTypeList.ValueList) res2).getRawValue().get(1), is(ValueTypeString.ValueString.of("b")));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtKeysSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_KEYS.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_KEYS.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtKeysSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_KEYS.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_KEYS.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtKeys() throws EvaluationException {
-        Operators.NBT_COMPOUND_KEYS.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_KEYS.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -259,19 +264,19 @@ public class TestNbtOperators {
         assertThat("haskey({a:a}, a) = true", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtHasKeySizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_HASKEY.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_HASKEY.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtHasKeySizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_HASKEY.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_HASKEY.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtHasKey() throws EvaluationException {
-        Operators.NBT_COMPOUND_HASKEY.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_HASKEY.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -310,19 +315,19 @@ public class TestNbtOperators {
                 Operators.NBT_COMPOUND_VALUE_TYPE.evaluate(new IVariable[]{nall, slist})).getRawValue(), is("LIST"));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueTypeSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_TYPE.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_TYPE.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueTypeSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_TYPE.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_TYPE.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueType() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_TYPE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_TYPE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -342,19 +347,19 @@ public class TestNbtOperators {
         assertThat("valuetag({...}, integer) = true", ((ValueTypeNbt.ValueNbt) res3).getRawValue().get(), is(IntTag.valueOf(3)));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueTagSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_TAG.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_TAG.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueTagSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_TAG.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_TAG.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueTag() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -374,19 +379,19 @@ public class TestNbtOperators {
         assertThat("valueboolean({...}, byte) = true", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueBooleanSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_BOOLEAN.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_BOOLEAN.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueBooleanSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_BOOLEAN.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_BOOLEAN.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueBoolean() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -409,19 +414,19 @@ public class TestNbtOperators {
         assertThat("valueinteger({...}, short) = 2", ((ValueTypeInteger.ValueInteger) res4).getRawValue(), is(2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueIntegerSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_INTEGER.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_INTEGER.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueIntegerSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_INTEGER.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_INTEGER.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueInteger() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_INTEGER.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_INTEGER.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -438,19 +443,19 @@ public class TestNbtOperators {
         assertThat("valuelong({...}, long) = 4", ((ValueTypeLong.ValueLong) res2).getRawValue(), is(4L));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueLongSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LONG.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LONG.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueLongSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LONG.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LONG.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueLong() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -470,19 +475,19 @@ public class TestNbtOperators {
         assertThat("valuedouble({...}, float) = 5.5", ((ValueTypeDouble.ValueDouble) res3).getRawValue(), is(5.5D));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueDoubleSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_DOUBLE.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_DOUBLE.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueDoubleSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_DOUBLE.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_DOUBLE.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueDouble() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -499,19 +504,19 @@ public class TestNbtOperators {
         assertThat("valuestring({...}, string) = seven", ((ValueTypeString.ValueString) res2).getRawValue(), is("seven"));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueStringSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_STRING.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_STRING.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueStringSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_STRING.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_STRING.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueString() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -530,19 +535,19 @@ public class TestNbtOperators {
         assertThat("valuecompound({...}, compound) = {hello:world}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(subTag));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueCompoundSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_COMPOUND.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_COMPOUND.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueCompoundSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_COMPOUND.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_COMPOUND.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueCompound() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_COMPOUND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_COMPOUND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -565,19 +570,19 @@ public class TestNbtOperators {
         assertThat("valuelisttag({...}, listtag)[1] = ..list..", ((ValueTypeList.ValueList) res2).getRawValue().get(1), is(ValueTypeNbt.ValueNbt.of(subTag)));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueListTagSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_TAG.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_TAG.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueListTagSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_TAG.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_TAG.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueListTag() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -597,19 +602,19 @@ public class TestNbtOperators {
         assertThat("valuelistint({...}, listint)[2] = 13", ((ValueTypeList.ValueList) res2).getRawValue().get(2), is(ValueTypeInteger.ValueInteger.of(13)));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueListIntSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_INT.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_INT.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueListIntSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_INT.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_INT.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueListInt() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_INT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_INT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -629,19 +634,19 @@ public class TestNbtOperators {
         assertThat("valuelistlong({...}, listlong)[2] = 16", ((ValueTypeList.ValueList) res2).getRawValue().get(2), is(ValueTypeLong.ValueLong.of(16)));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueListLongSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueListLongSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueListLong() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -661,19 +666,19 @@ public class TestNbtOperators {
         assertThat("valuelistbyte({...}, listbyte)[2] = 10", ((ValueTypeList.ValueList) res2).getRawValue().get(2), is(ValueTypeInteger.ValueInteger.of(10)));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueListByteSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_BYTE.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_BYTE.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtValueListByteSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_BYTE.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_BYTE.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtValueListByte() throws EvaluationException {
-        Operators.NBT_COMPOUND_VALUE_LIST_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_VALUE_LIST_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -692,19 +697,19 @@ public class TestNbtOperators {
         assertThat("without({a:a;b:c}, a) = {b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(tsbc));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithoutSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITHOUT.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITHOUT.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithoutSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITHOUT.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITHOUT.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithout() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITHOUT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITHOUT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -727,19 +732,19 @@ public class TestNbtOperators {
         assertThat("withboolean({a:a;b:c}, a, true) = {a:true;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithBooleanSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_BOOLEAN.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_BOOLEAN.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithBooleanSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_BOOLEAN.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_BOOLEAN.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithBoolean() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -762,19 +767,19 @@ public class TestNbtOperators {
         assertThat("withshort({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithShortSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_SHORT.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_SHORT.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithShortSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_SHORT.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_SHORT.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithShort() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_SHORT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_SHORT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -797,19 +802,19 @@ public class TestNbtOperators {
         assertThat("withinteger({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithIntegerSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_INTEGER.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_INTEGER.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithIntegerSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_INTEGER.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_INTEGER.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithInteger() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_INTEGER.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_INTEGER.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -832,19 +837,19 @@ public class TestNbtOperators {
         assertThat("withlong({a:a;b:c}, a, 1) = {a:1;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithLongSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LONG.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LONG.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithLongSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LONG.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LONG.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithLong() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -867,19 +872,19 @@ public class TestNbtOperators {
         assertThat("withdouble({a:a;b:c}, a, 1.5) = {a:1.5;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithDoubleSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_DOUBLE.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_DOUBLE.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithDoubleSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_DOUBLE.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_DOUBLE.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithDouble() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -902,19 +907,19 @@ public class TestNbtOperators {
         assertThat("withfloat({a:a;b:c}, a, 1.5) = {a:1.5;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithFloatSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_FLOAT.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_FLOAT.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithFloatSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_FLOAT.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_FLOAT.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithFloat() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_FLOAT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_FLOAT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -937,19 +942,19 @@ public class TestNbtOperators {
         assertThat("withstring({a:a;b:c}, a, c) = {a:c;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithStringSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_STRING.evaluate(new IVariable[]{nempty, sa, i1});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_STRING.evaluate(new IVariable[]{nempty, sa, i1}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithStringSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_STRING.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_STRING.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithString() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -975,19 +980,19 @@ public class TestNbtOperators {
         assertThat("withtag({a:a;b:c}, a, tag) = {a:tag;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithTagSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_COMPOUND.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_COMPOUND.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithTagSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_COMPOUND.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_COMPOUND.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithTag() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_COMPOUND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_COMPOUND.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1017,19 +1022,19 @@ public class TestNbtOperators {
         assertThat("withlisttag({a:a;b:c}, a, listtag) = {a:listtag;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithListTagSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_TAG.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_TAG.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithListTagSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_TAG.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_TAG.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithListTag() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_TAG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1056,19 +1061,19 @@ public class TestNbtOperators {
         assertThat("withlistbyte({a:a;b:c}, a, listbyte) = {a:listbyte;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithListByteSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_BYTE.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_BYTE.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithListByteSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_BYTE.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_BYTE.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithListByte() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1095,19 +1100,19 @@ public class TestNbtOperators {
         assertThat("withlistint({a:a;b:c}, a, listint) = {a:listint;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithListIntSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_INT.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_INT.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithListIntSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_INT.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_INT.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithListInt() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_INT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_INT.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1134,19 +1139,19 @@ public class TestNbtOperators {
         assertThat("withlistlong({a:a;b:c}, a, listlong) = {a:listlong;b:c}", ((ValueTypeNbt.ValueNbt) res2).getRawValue().get(), is(t2));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithListLongSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_LONG.evaluate(new IVariable[]{nempty, sa, sa});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_LONG.evaluate(new IVariable[]{nempty, sa, sa}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtWithListLongSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_LONG.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_LONG.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtWithListLong() throws EvaluationException {
-        Operators.NBT_COMPOUND_WITH_LIST_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_WITH_LIST_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1166,19 +1171,19 @@ public class TestNbtOperators {
         assertThat("subset(some, all) = true", ((ValueTypeBoolean.ValueBoolean) res3).getRawValue(), is(true));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtSubsetSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_SUBSET.evaluate(new IVariable[]{nempty, nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_SUBSET.evaluate(new IVariable[]{nempty, nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtSubsetSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_SUBSET.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_SUBSET.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtSubset() throws EvaluationException {
-        Operators.NBT_COMPOUND_SUBSET.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_SUBSET.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1204,19 +1209,19 @@ public class TestNbtOperators {
         assertThat("union(sasa, sbsb) = sasasbsb", ((ValueTypeNbt.ValueNbt) res4).getRawValue().get(), is(tsasasbsb));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtUnionSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_UNION.evaluate(new IVariable[]{nempty, nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_UNION.evaluate(new IVariable[]{nempty, nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtUnionSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_UNION.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_UNION.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtUnion() throws EvaluationException {
-        Operators.NBT_COMPOUND_UNION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_UNION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1242,19 +1247,19 @@ public class TestNbtOperators {
         assertThat("intersection(sasa, sasasbsc) = {}", ((ValueTypeNbt.ValueNbt) res5).getRawValue().get(), is(nsasa.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtIntersectionSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nempty, nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nempty, nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtIntersectionSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtIntersection() throws EvaluationException {
-        Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_INTERSECTION.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1282,19 +1287,19 @@ public class TestNbtOperators {
         assertThat("minus(sasasbsc, sasa) = {}", ((ValueTypeNbt.ValueNbt) res5).getRawValue().get(), is(tsbsc));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtMinusSizeLarge() throws EvaluationException {
-        Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nempty, nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nempty, nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtMinusSizeSmall() throws EvaluationException {
-        Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtMinus() throws EvaluationException {
-        Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_COMPOUND_MINUS.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -1311,19 +1316,19 @@ public class TestNbtOperators {
         assertThat("as_boolean(empty) = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsBooleanSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_BOOLEAN.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BOOLEAN.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsBooleanSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_BOOLEAN.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BOOLEAN.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsBoolean() throws EvaluationException {
-        Operators.NBT_AS_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1340,19 +1345,19 @@ public class TestNbtOperators {
         assertThat("as_byte(empty) = 0", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsByteSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_BYTE.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BYTE.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsByteSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_BYTE.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BYTE.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsByte() throws EvaluationException {
-        Operators.NBT_AS_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1369,19 +1374,19 @@ public class TestNbtOperators {
         assertThat("as_short(empty) = 0", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsShortSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_SHORT.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_SHORT.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsShortSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_SHORT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_SHORT.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsShort() throws EvaluationException {
-        Operators.NBT_AS_SHORT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_SHORT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1398,19 +1403,19 @@ public class TestNbtOperators {
         assertThat("as_int(empty) = 0", ((ValueTypeInteger.ValueInteger) res2).getRawValue(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsIntSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_INT.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_INT.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsIntSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_INT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_INT.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsInt() throws EvaluationException {
-        Operators.NBT_AS_INT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_INT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1427,19 +1432,19 @@ public class TestNbtOperators {
         assertThat("as_long(empty) = 0", ((ValueTypeLong.ValueLong) res2).getRawValue(), is(0L));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsLongSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_LONG.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_LONG.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsLongSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_LONG.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_LONG.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsLong() throws EvaluationException {
-        Operators.NBT_AS_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1456,19 +1461,19 @@ public class TestNbtOperators {
         assertThat("as_double(empty) = 0", ((ValueTypeDouble.ValueDouble) res2).getRawValue(), is(0D));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsDoubleSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_DOUBLE.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_DOUBLE.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsDoubleSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_DOUBLE.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_DOUBLE.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsDouble() throws EvaluationException {
-        Operators.NBT_AS_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1485,19 +1490,19 @@ public class TestNbtOperators {
         assertThat("as_float(empty) = 0", ((ValueTypeDouble.ValueDouble) res2).getRawValue(), is(0D));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsFloatSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_FLOAT.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_FLOAT.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsFloatSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_FLOAT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_FLOAT.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsFloat() throws EvaluationException {
-        Operators.NBT_AS_FLOAT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_FLOAT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1514,19 +1519,19 @@ public class TestNbtOperators {
         assertThat("as_string(empty) = ", ((ValueTypeString.ValueString) res2).getRawValue(), is(""));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsStringSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_STRING.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_STRING.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsStringSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_STRING.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_STRING.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsString() throws EvaluationException {
-        Operators.NBT_AS_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1549,19 +1554,19 @@ public class TestNbtOperators {
         assertThat("as_taglist(...).length = 0", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsTagListSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_TAG_LIST.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_TAG_LIST.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsTagListSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_TAG_LIST.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_TAG_LIST.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsTagList() throws EvaluationException {
-        Operators.NBT_AS_TAG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_TAG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1582,19 +1587,19 @@ public class TestNbtOperators {
         assertThat("as_ bytelist(...).length = 0", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsByteListSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_BYTE_LIST.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BYTE_LIST.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsByteListSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_BYTE_LIST.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BYTE_LIST.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsByteList() throws EvaluationException {
-        Operators.NBT_AS_BYTE_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_BYTE_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1615,19 +1620,19 @@ public class TestNbtOperators {
         assertThat("as_ intlist(...).length = 0", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsIntListSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_INT_LIST.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_INT_LIST.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsIntListSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_INT_LIST.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_INT_LIST.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsIntList() throws EvaluationException {
-        Operators.NBT_AS_INT_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_INT_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1648,19 +1653,19 @@ public class TestNbtOperators {
         assertThat("as_ longlist(...).length = 0", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsLongListSizeLarge() throws EvaluationException {
-        Operators.NBT_AS_LONG_LIST.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_LONG_LIST.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtAsLongListSizeSmall() throws EvaluationException {
-        Operators.NBT_AS_LONG_LIST.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_LONG_LIST.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtAsLongList() throws EvaluationException {
-        Operators.NBT_AS_LONG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_AS_LONG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1674,19 +1679,19 @@ public class TestNbtOperators {
         assertThat("from_boolean(true) = nbt(true)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nboolean.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromBooleanSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_BOOLEAN.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BOOLEAN.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromBooleanSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_BOOLEAN.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BOOLEAN.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromBoolean() throws EvaluationException {
-        Operators.NBT_FROM_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BOOLEAN.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1700,19 +1705,19 @@ public class TestNbtOperators {
         assertThat("from_byte(1) = nbt(1)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nbyte.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromByteSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_BYTE.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BYTE.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromByteSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_BYTE.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BYTE.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromByte() throws EvaluationException {
-        Operators.NBT_FROM_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BYTE.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1726,19 +1731,19 @@ public class TestNbtOperators {
         assertThat("from_short(2) = nbt(2)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nshort.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromShortSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_SHORT.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_SHORT.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromShortSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_SHORT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_SHORT.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromShort() throws EvaluationException {
-        Operators.NBT_FROM_SHORT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_SHORT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1752,19 +1757,19 @@ public class TestNbtOperators {
         assertThat("from_int(3) = nbt(3)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nint.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromIntSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_INT.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_INT.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromIntSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_INT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_INT.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromInt() throws EvaluationException {
-        Operators.NBT_FROM_INT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_INT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1778,19 +1783,19 @@ public class TestNbtOperators {
         assertThat("from_long(4) = nbt(4)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nlong.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromLongSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_LONG.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_LONG.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromLongSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_LONG.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_LONG.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromLong() throws EvaluationException {
-        Operators.NBT_FROM_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_LONG.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1804,19 +1809,19 @@ public class TestNbtOperators {
         assertThat("from_double(5.5) = nbt(5.5)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(ndouble.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromDoubleSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_DOUBLE.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_DOUBLE.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromDoubleSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_DOUBLE.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_DOUBLE.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromDouble() throws EvaluationException {
-        Operators.NBT_FROM_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_DOUBLE.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1830,19 +1835,19 @@ public class TestNbtOperators {
         assertThat("from_float(6.5) = nbt(6.5)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nfloat.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromFloatSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_FLOAT.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_FLOAT.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromFloatSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_FLOAT.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_FLOAT.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromFloat() throws EvaluationException {
-        Operators.NBT_FROM_FLOAT.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_FLOAT.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1856,19 +1861,19 @@ public class TestNbtOperators {
         assertThat("from_string(7) = nbt(7)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nstring.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromStringSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_STRING.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_STRING.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromStringSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_STRING.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_STRING.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromString() throws EvaluationException {
-        Operators.NBT_FROM_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_STRING.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1887,19 +1892,19 @@ public class TestNbtOperators {
         assertThat("from_taglist(7) = nbt(7)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(ntaglist.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromTagListSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_TAG_LIST.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_TAG_LIST.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromTagListSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_TAG_LIST.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_TAG_LIST.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromTagList() throws EvaluationException {
-        Operators.NBT_FROM_TAG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_TAG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1919,19 +1924,19 @@ public class TestNbtOperators {
         assertThat("from_bytelist(7) = nbt(7)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nbytelist.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromByteListSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_BYTE_LIST.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BYTE_LIST.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromByteListSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_BYTE_LIST.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BYTE_LIST.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromByteList() throws EvaluationException {
-        Operators.NBT_FROM_BYTE_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_BYTE_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1964,19 +1969,19 @@ public class TestNbtOperators {
         assertThat("from_intlist(7) = nbt(7)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nintlist.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromIntListSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_INT_LIST.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_INT_LIST.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromIntListSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_INT_LIST.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_INT_LIST.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromIntList() throws EvaluationException {
-        Operators.NBT_FROM_INT_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_INT_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -1996,19 +2001,19 @@ public class TestNbtOperators {
         assertThat("from_longlist(7) = nbt(7)", ((ValueTypeNbt.ValueNbt) res1).getRawValue().get(), is(nlonglist.getValue().getRawValue().get()));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromLongListSizeLarge() throws EvaluationException {
-        Operators.NBT_FROM_LONG_LIST.evaluate(new IVariable[]{nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_LONG_LIST.evaluate(new IVariable[]{nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtFromLongListSizeSmall() throws EvaluationException {
-        Operators.NBT_FROM_LONG_LIST.evaluate(new IVariable[]{});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_LONG_LIST.evaluate(new IVariable[]{}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtFromLongList() throws EvaluationException {
-        Operators.NBT_FROM_LONG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_FROM_LONG_LIST.evaluate(new IVariable[]{DUMMY_VARIABLE}));
     }
 
     /**
@@ -2037,24 +2042,24 @@ public class TestNbtOperators {
         assertThat("path_match_first(empty) = empty", ((ValueTypeNbt.ValueNbt) res2).getRawValue().isPresent(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathMatchFirstInvalidPathExpression() throws EvaluationException {
-        Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathMatchFirstSizeLarge() throws EvaluationException {
-        Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring, nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring, nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathMatchFirstSizeSmall() throws EvaluationException {
-        Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{nstring}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtPathMatchFirst() throws EvaluationException {
-        Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_MATCH_FIRST.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -2088,24 +2093,24 @@ public class TestNbtOperators {
         assertThat("path_match_all(empty).length = 0", ((ValueTypeList.ValueList) res2).getRawValue().getLength(), is(0));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathMatchAllInvalidPathExpression() throws EvaluationException {
-        Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathMatchAllSizeLarge() throws EvaluationException {
-        Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring, nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring, nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathMatchAllSizeSmall() throws EvaluationException {
-        Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{nstring}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtPathMatchAll() throws EvaluationException {
-        Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_MATCH_ALL.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
     /**
@@ -2134,24 +2139,24 @@ public class TestNbtOperators {
         assertThat("path_test(empty) = false", ((ValueTypeBoolean.ValueBoolean) res2).getRawValue(), is(false));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathTestInvalidPathExpression() throws EvaluationException {
-        Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathTestSizeLarge() throws EvaluationException {
-        Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring, nempty, nempty});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring, nempty, nempty}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputNbtPathTestSizeSmall() throws EvaluationException {
-        Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_TEST.evaluate(new IVariable[]{nstring}));
     }
 
-    @Test(expected = EvaluationException.class)
+    @Test
     public void testInvalidInputTypeNbtPathTest() throws EvaluationException {
-        Operators.NBT_PATH_TEST.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE});
+        Assertions.assertThrows(EvaluationException.class, () -> Operators.NBT_PATH_TEST.evaluate(new IVariable[]{DUMMY_VARIABLE, DUMMY_VARIABLE}));
     }
 
 }

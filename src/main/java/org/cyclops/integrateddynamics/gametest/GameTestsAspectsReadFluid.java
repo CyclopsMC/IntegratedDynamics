@@ -81,7 +81,7 @@ public class GameTestsAspectsReadFluid {
         helper.setBlock(POS.west(), RegistryEntries.BLOCK_DRYING_BASIN.get());
         BlockEntityDryingBasin dryingBasin = helper.getBlockEntity(POS.west(), BlockEntityDryingBasin.class);
         dryingBasin.getTank().setFluid(new FluidStack(Fluids.WATER, 10));
-        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.INTEGER_AMOUNT, ValueTypeInteger.ValueInteger.of(10));
+        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.LONG_AMOUNT, ValueTypeLong.ValueLong.of(10));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -89,29 +89,29 @@ public class GameTestsAspectsReadFluid {
         helper.setBlock(POS.west(), RegistryEntries.BLOCK_DRYING_BASIN.get());
         BlockEntityDryingBasin dryingBasin = helper.getBlockEntity(POS.west(), BlockEntityDryingBasin.class);
         dryingBasin.getTank().setFluid(new FluidStack(Fluids.WATER, 10));
-        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.INTEGER_AMOUNTTOTAL, ValueTypeInteger.ValueInteger.of(10));
+        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.LONG_AMOUNTTOTAL, ValueTypeLong.ValueLong.of(10));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadFluidCapacityValid(GameTestHelper helper) {
         helper.setBlock(POS.west(), RegistryEntries.BLOCK_DRYING_BASIN.get());
-        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.INTEGER_CAPACITY, ValueTypeInteger.ValueInteger.of(1_000));
+        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.LONG_CAPACITY, ValueTypeLong.ValueLong.of(1_000));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadFluidCapacityInvalid(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.INTEGER_CAPACITY, ValueTypeInteger.ValueInteger.of(0));
+        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.LONG_CAPACITY, ValueTypeLong.ValueLong.of(0));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadFluidCapacityTotalValid(GameTestHelper helper) {
         helper.setBlock(POS.west(), RegistryEntries.BLOCK_DRYING_BASIN.get());
-        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.INTEGER_CAPACITYTOTAL, ValueTypeInteger.ValueInteger.of(1_000));
+        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.LONG_CAPACITYTOTAL, ValueTypeLong.ValueLong.of(1_000));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadFluidCapacityTotalInvalid(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.INTEGER_CAPACITYTOTAL, ValueTypeInteger.ValueInteger.of(0));
+        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.LONG_CAPACITYTOTAL, ValueTypeLong.ValueLong.of(0));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -122,7 +122,7 @@ public class GameTestsAspectsReadFluid {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadFluidTanksInvalid(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.INTEGER_TANKS, ValueTypeInteger.ValueInteger.of(1));
+        testReadAspect(POS, helper, PartTypes.FLUID_READER, Aspects.Read.Fluid.INTEGER_TANKS, ValueTypeInteger.ValueInteger.of(0));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)

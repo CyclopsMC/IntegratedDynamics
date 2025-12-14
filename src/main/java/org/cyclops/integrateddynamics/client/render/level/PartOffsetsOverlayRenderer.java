@@ -78,7 +78,7 @@ public class PartOffsetsOverlayRenderer {
                 this.subscribeToServerChanges();
             }
 
-            Vec3 eyePos = event.getCamera().getPosition();
+            Vec3 eyePos = event.getLevelRenderState().cameraRenderState.pos;
             for (PartOffsetsClientNotifier.Entry entry : this.data) {
                 this.renderOffset(event.getPoseStack(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), entry, eyePos);
             }
@@ -120,7 +120,7 @@ public class PartOffsetsOverlayRenderer {
                 .move(-offsetX, -offsetY, -offsetZ)
                 .inflate(0.05, 0.05, 0.05)
                 .inflate(-0.05, -0.05, -0.05);
-        ShapeRenderer.renderLineBox(matrixStack, renderTypeBuffer.getBuffer(RenderType.lines()),
+        ShapeRenderer.renderLineBox(matrixStack.last(), renderTypeBuffer.getBuffer(RenderType.lines()),
                 bb, r, g, b, a);
     }
 

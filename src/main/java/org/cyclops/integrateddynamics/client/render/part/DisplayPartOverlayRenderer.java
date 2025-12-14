@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.client.render.part;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,9 +51,9 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
     }
 
     @Override
-    public void renderPartOverlay(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
+    public void submitPartOverlay(BlockEntityRendererProvider.Context context, IPartContainer partContainer,
                                   Direction direction, IPartType partType, float partialTicks, PoseStack matrixStack,
-                                  MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
+                                  SubmitNodeCollector submitNodeCollector, int combinedLight, int combinedOverlay) {
         // Set max light value, to make independent of surrounding blocks.
         // Otherwise, this value could become zero when in a facade with a solid block on top. #1531
         combinedLight = 15728640;
@@ -76,11 +76,11 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
 
         IPartState partStateUnsafe = partContainer.getPartState(direction);
         if(!(partStateUnsafe instanceof PartTypePanelDisplay.State)) {
-            drawError(context, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
+            drawError(context, matrixStack, submitNodeCollector, combinedLight, combinedOverlay, distanceAlpha);
         } else {
             PartTypePanelDisplay.State partState = (PartTypePanelDisplay.State) partStateUnsafe;
             if (partState.getFacingRotation() == null) {
-                drawError(context, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
+                drawError(context, matrixStack, submitNodeCollector, combinedLight, combinedOverlay, distanceAlpha);
                 return;
             }
             int rotation = partState.getFacingRotation().ordinal() - 2;
@@ -95,17 +95,17 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
                 if (renderer == null) {
                     renderer = ValueTypeWorldRenderers.DEFAULT;
                 }
-                renderer.renderValue(context, partContainer, direction, partType, value, partialTicks, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
+                renderer.submitValue(context, partContainer, direction, partType, value, partialTicks, matrixStack, submitNodeCollector, combinedLight, combinedOverlay, distanceAlpha);
             } else if (!partState.getInventory().isEmpty()) {
-                drawError(context, matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, distanceAlpha);
+                drawError(context, matrixStack, submitNodeCollector, combinedLight, combinedOverlay, distanceAlpha);
             }
         }
 
         matrixStack.popPose();
     }
 
-    protected void drawError(BlockEntityRendererProvider.Context context, PoseStack matrixStack, MultiBufferSource renderTypeBuffer,
+    protected void drawError(BlockEntityRendererProvider.Context context, PoseStack matrixStack, SubmitNodeCollector submitNodeCollector,
                              int combinedLight, int combinedOverlay, float distanceAlpha) {
-        Images.ERROR.drawWorldWithAlpha(Minecraft.getInstance().getTextureManager(), matrixStack, renderTypeBuffer, combinedLight, combinedOverlay, 12.5F, 12.5F, distanceAlpha);
+        Images.ERROR.drawWorldWithAlpha(Minecraft.getInstance().getTextureManager(), matrixStack, submitNodeCollector, combinedLight, combinedOverlay, 12.5F, 12.5F, distanceAlpha);
     }
 }

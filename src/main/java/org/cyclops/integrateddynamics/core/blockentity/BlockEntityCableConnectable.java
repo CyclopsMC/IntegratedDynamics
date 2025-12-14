@@ -102,7 +102,7 @@ public abstract class BlockEntityCableConnectable extends CyclopsBlockEntity {
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
-        if (getLevel() != null && !getLevel().isClientSide) {
+        if (getLevel() != null && !getLevel().isClientSide()) {
             INetwork network = getNetworkCarrier().getNetwork();
             if (network != null) {
                 NetworkHelpers.invalidateNetworkElements(getLevel(), getBlockPos(), network, getNetworkElementProvider());

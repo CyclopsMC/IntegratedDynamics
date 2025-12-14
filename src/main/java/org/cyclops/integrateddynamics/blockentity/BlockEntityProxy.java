@@ -12,8 +12,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.cyclops.cyclopscore.capability.item.ItemHandlerSlotMasked;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.inventory.InventorySlotMasked;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.integrateddynamics.Capabilities;
@@ -81,7 +82,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
             super.populate();
 
             add(
-                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
                     (blockEntity, direction) -> {
                         int slot = -1;
                         if (direction != null) {
@@ -96,7 +97,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
                         } else {
                             slot = SLOT_READ;
                         }
-                        return new ItemHandlerSlotMasked(blockEntity.getInventory(), slot);
+                        return VanillaContainerWrapper.of(new InventorySlotMasked(blockEntity.getInventory(), slot));
                     }
             );
             add(
@@ -216,7 +217,7 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
             if (blockEntity.isWriteVariable()) {
                 if (!blockEntity.getInventory().getItem(blockEntity.getSlotWriteIn()).isEmpty() && blockEntity.getInventory().getItem(blockEntity.getSlotWriteOut()).isEmpty()) {
                     // Write proxy reference
-                    ItemStack outputStack = blockEntity.writeProxyInfo(!blockEntity.getLevel().isClientSide, blockEntity.getInventory().removeItemNoUpdate(blockEntity.getSlotWriteIn()), blockEntity.getProxyId());
+                    ItemStack outputStack = blockEntity.writeProxyInfo(!blockEntity.getLevel().isClientSide(), blockEntity.getInventory().removeItemNoUpdate(blockEntity.getSlotWriteIn()), blockEntity.getProxyId());
                     blockEntity.getInventory().setItem(blockEntity.getSlotWriteOut(), outputStack);
                 }
             }

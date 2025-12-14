@@ -20,7 +20,7 @@ public class BlockFluidLiquidChorusConfig extends BlockConfigCommon<IntegratedDy
                 IntegratedDynamics._instance,
                 "block_liquid_chorus",
                 (eConfig, properties) -> new BlockFluidLiquidChorus(properties
-                        .noCollission()
+                        .noCollision()
                         .strength(100.0F)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );

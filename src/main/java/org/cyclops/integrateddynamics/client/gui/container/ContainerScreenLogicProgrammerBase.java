@@ -5,6 +5,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
@@ -331,9 +334,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         return false;
     }
 
-    protected boolean handleKeyCode(int keyCode, int scanCode) {
-        InputConstants.Key inputCode = InputConstants.getKey(keyCode, scanCode);
-        if(keyCode != GLFW.GLFW_KEY_LEFT_SHIFT && keyCode != GLFW.GLFW_KEY_RIGHT_SHIFT) {
+    protected boolean handleKeyCode(KeyEvent evt) {
+        InputConstants.Key inputCode = InputConstants.getKey(evt);
+        if(evt.key() != GLFW.GLFW_KEY_LEFT_SHIFT && evt.key() != GLFW.GLFW_KEY_RIGHT_SHIFT) {
             ContainerLogicProgrammerBase container = getMenu();
             int pageSize = container.getPageSize();
             int stepModifier = IModHelpers.get().getMinecraftClientHelpers().isShifted() ? pageSize - 1 : 1;
@@ -349,11 +352,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 operatorInfoPattern.onButtonEditClick();
                 swallowNextCharacter = true;
                 return true;
-            } else if (GLFW.GLFW_KEY_LEFT == keyCode && (!isElementFocused && isSearchFieldFocussed())) {
+            } else if (GLFW.GLFW_KEY_LEFT == evt.key() && (!isElementFocused && isSearchFieldFocussed())) {
                 // Unfocus search field
                 setSearchFieldFocussed(isSearchFieldFocussed());
                 return true;
-            } else if (!isElementFocused && GLFW.GLFW_KEY_DOWN == keyCode) {
+            } else if (!isElementFocused && GLFW.GLFW_KEY_DOWN == evt.key()) {
                 // Scroll down
                 if (!selectPageElement(relativeStep += stepModifier)) {
                     relativeStep -= stepModifier;
@@ -363,7 +366,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     }
                 }
                 return true;
-            } else if (!isElementFocused && GLFW.GLFW_KEY_UP == keyCode) {
+            } else if (!isElementFocused && GLFW.GLFW_KEY_UP == evt.key()) {
                 // Scroll up
                 if (!(relativeStep >= 0 && selectPageElement(relativeStep -= stepModifier))) {
                     getScrollbar().scrollRelative(stepModifier);
@@ -371,8 +374,8 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 }
                 return true;
             } else if (!isElementFocused
-                    && (GLFW.GLFW_KEY_RIGHT == keyCode || GLFW.GLFW_KEY_TAB == keyCode
-                    || GLFW.GLFW_KEY_ENTER == keyCode || GLFW.GLFW_KEY_KP_ENTER == keyCode)) {
+                    && (GLFW.GLFW_KEY_RIGHT == evt.key() || GLFW.GLFW_KEY_TAB == evt.key()
+                    || GLFW.GLFW_KEY_ENTER == evt.key() || GLFW.GLFW_KEY_KP_ENTER == evt.key())) {
                 if (container.getActiveElement() != null) {
                     container.getActiveElement().getClient().setFocused(operatorConfigPattern, true);
                     setSearchFieldFocussed(false);
@@ -384,28 +387,28 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    public boolean charTyped(char keyCode, int scanCode) {
+    public boolean charTyped(CharacterEvent evt) {
         if (swallowNextCharacter) {
             swallowNextCharacter = false;
             return true;
         }
 
-        return subGuiHolder.charTyped(keyCode, scanCode) || handleKeyCode(keyCode, scanCode) || super.charTyped(keyCode, scanCode);
+        return subGuiHolder.charTyped(evt) || handleKeyCode(new KeyEvent(evt.codepoint(), evt.modifiers(), 0)) || super.charTyped(evt);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode != GLFW.GLFW_KEY_ESCAPE) {
-            if (this.subGuiHolder.keyPressed(keyCode, scanCode, modifiers) || handleKeyCode(keyCode, scanCode)) {
+    public boolean keyPressed(KeyEvent evt) {
+        if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+            if (this.subGuiHolder.keyPressed(evt) || handleKeyCode(evt)) {
                 return true;
             }
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(evt);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton)) {
+    public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+        if (subGuiHolder.mouseClicked(evt, isDoubleClick)) {
             if (isSearchFieldFocussed()) {
                 setSearchFieldFocussed(false);
             }
@@ -416,7 +419,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         for(int i = 0; i < container.getPageSize(); i++) {
             if (container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
-                if (isPointInRegion(getElementPosition(container, i, false), new Point((int) mouseX, (int) mouseY))) {
+                if (isPointInRegion(getElementPosition(container, i, false), new Point((int) evt.x(), (int) evt.y()))) {
                     boolean activated = handleElementActivation(element, true);
                     relativeStep = activated ? i : -1;
                     if (activated) {
@@ -427,7 +430,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 }
             }
         }
-        boolean superRet = super.mouseClicked(mouseX, mouseY, mouseButton);
+        boolean superRet = super.mouseClicked(evt, isDoubleClick);
 
         // If the search box has been selected, de-active the current element.
         if(isSearchFieldFocussed() &&
@@ -502,9 +505,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
 
         @Override
-        public boolean charTyped(char typedChar, int keyCode) {
-            if (!this.searchField.isFocused() || !this.searchField.charTyped(typedChar, keyCode)) {
-                return super.charTyped(typedChar, keyCode);
+        public boolean charTyped(CharacterEvent evt) {
+            if (!this.searchField.isFocused() || !this.searchField.charTyped(evt)) {
+                return super.charTyped(evt);
             } else {
                 label(this.searchField.getValue());
                 return true;
@@ -512,21 +515,21 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
 
         @Override
-        public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-            if (this.searchField.isFocused() && typedChar != GLFW.GLFW_KEY_ESCAPE) {
-                this.searchField.keyPressed(typedChar, keyCode, modifiers);
+        public boolean keyPressed(KeyEvent evt) {
+            if (this.searchField.isFocused() && evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+                this.searchField.keyPressed(evt);
                 label(this.searchField.getValue());
                 return true;
             }
-            return super.keyPressed(typedChar, keyCode, modifiers);
+            return super.keyPressed(evt);
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            if(this.searchField.isVisible() && this.searchField.mouseClicked(mouseX, mouseY, mouseButton)) {
+        public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
+            if(this.searchField.isVisible() && this.searchField.mouseClicked(evt, isDoubleClick)) {
                 return true;
             }
-            return super.mouseClicked(mouseX, mouseY, mouseButton);
+            return super.mouseClicked(evt, isDoubleClick);
         }
 
         @Override

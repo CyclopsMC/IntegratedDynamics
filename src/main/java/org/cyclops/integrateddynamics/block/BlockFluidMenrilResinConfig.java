@@ -20,7 +20,7 @@ public class BlockFluidMenrilResinConfig extends BlockConfigCommon<IntegratedDyn
                 IntegratedDynamics._instance,
                 "block_menril_resin",
                 (eConfig, properties) -> new BlockFluidMenrilResin(properties
-                        .noCollission()
+                        .noCollision()
                         .strength(100.0F)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
