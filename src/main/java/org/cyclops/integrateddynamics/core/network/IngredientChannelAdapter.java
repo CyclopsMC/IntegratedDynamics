@@ -296,7 +296,10 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
 
             // Do a simulated extraction
             this.network.disablePosition(pos);
-            T extractedSimulated = this.network.getPositionedStorage(pos).extract(prototypeFinal, finalMatchFlags, true);
+            T extractedSimulated;
+            try (var tx = Transaction.open(transaction)) {
+                extractedSimulated = this.network.getPositionedStorage(pos).extract(prototypeFinal, finalMatchFlags, tx);
+            }
             this.network.enablePosition(pos);
             T storagePrototype = getComponent().getMatcher().withQuantity(extractedSimulated, 1);
 
