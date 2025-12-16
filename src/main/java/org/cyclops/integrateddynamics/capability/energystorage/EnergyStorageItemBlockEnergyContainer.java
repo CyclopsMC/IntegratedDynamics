@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.capability.energystorage;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.cyclops.cyclopscore.RegistryEntries;
@@ -10,6 +11,8 @@ import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryConfig;
 import org.cyclops.integrateddynamics.core.item.ItemBlockEnergyContainer;
+
+import javax.annotation.Nullable;
 
 /**
  * Energy Battery implementation for ItemBlock's.
@@ -31,7 +34,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         this.journal = new Journal();
 
         if (!this.itemStack.has(RegistryEntries.COMPONENT_ENERGY_STORAGE)) {
-            setItemStackEnergy(itemStack, 0);
+            setItemStackEnergy(itemStack, 0, null);
         }
     }
 
@@ -91,7 +94,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         int stored = getEnergyStoredSingular();
         int energyReceived = Math.min(getMaxEnergyStoredSingular() - stored, energy);
         this.journal.updateSnapshots(transaction);
-        setItemStackEnergy(itemStack, stored + energyReceived);
+        setItemStackEnergy(itemStack, stored + energyReceived, transaction);
         return energyReceived * stackSize;
     }
 
@@ -105,13 +108,16 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
         int stored = getEnergyStoredSingular();
         int newEnergy = Math.max(stored - energy, 0);
         this.journal.updateSnapshots(transaction);
-        setItemStackEnergy(itemStack, newEnergy);
+        setItemStackEnergy(itemStack, newEnergy, transaction);
         return (stored - newEnergy) * stackSize;
     }
 
-    protected void setItemStackEnergy(ItemStack itemStack, int energy) {
+    protected void setItemStackEnergy(ItemStack itemStack, int energy, @Nullable TransactionContext transaction) {
         if(isCreative()) return;
         itemStack.set(RegistryEntries.COMPONENT_ENERGY_STORAGE, energy);
+        if (transaction != null) {
+            itemAccess.exchange(ItemResource.of(itemStack), itemAccess.getAmount(), transaction);
+        }
     }
 
     @Override
@@ -125,7 +131,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
     @Override
     public void setEnergy(int energy) {
-        setItemStackEnergy(itemStack, energy);
+        setItemStackEnergy(itemStack, energy, null);
     }
 
     public class Journal extends SnapshotJournal<Integer> {
@@ -137,7 +143,7 @@ public class EnergyStorageItemBlockEnergyContainer implements IEnergyStorageCapa
 
         @Override
         protected void revertToSnapshot(Integer snapshot) {
-            setItemStackEnergy(itemStack, snapshot);
+            setItemStackEnergy(itemStack, snapshot, null);
         }
     }
 }
