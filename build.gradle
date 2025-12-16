@@ -409,14 +409,10 @@ jacocoTestReport {
 }
 
 // Also measure coverage for game tests
-tasks.whenTaskAdded { task ->
-    if (task.name.equals('runGameTestServer')) {
-        jacocoTestReport.dependsOn test, task
-        jacoco {
-            toolVersion = "0.8.12"
-            applyTo task
-        }
-    }
+jacocoTestReport.dependsOn test, runGameTestServer
+jacoco {
+    toolVersion = "0.8.12"
+    applyTo runGameTestServer
 }
 
 spotless {
