@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
@@ -16,18 +16,18 @@ import java.util.List;
 public class OperatorLPElementType implements ILogicProgrammerElementType<OperatorLPElement> {
 
     @Override
-    public OperatorLPElement getByName(ResourceLocation name) {
+    public OperatorLPElement getByName(Identifier name) {
         return new OperatorLPElement(Operators.REGISTRY.getOperator(name));
     }
 
     @Override
-    public ResourceLocation getName(OperatorLPElement element) {
+    public Identifier getName(OperatorLPElement element) {
         return element.getOperator().getUniqueName();
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "operator");
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "operator");
     }
 
     @Override

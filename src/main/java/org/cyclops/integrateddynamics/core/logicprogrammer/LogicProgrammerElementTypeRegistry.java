@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementTypeRegistry;
 
@@ -41,7 +41,7 @@ public class LogicProgrammerElementTypeRegistry implements ILogicProgrammerEleme
     }
 
     @Override
-    public ILogicProgrammerElementType getType(ResourceLocation name) {
+    public ILogicProgrammerElementType getType(Identifier name) {
         return namedTypes.get(name.toString());
     }
 }

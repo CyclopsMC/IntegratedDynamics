@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -41,8 +41,8 @@ public class CastOperator<T1 extends IValueType<V1>, T2 extends IValueType<V2>, 
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "operator." + getModId() + ".cast"
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "operator." + getModId() + ".cast"
                 + from.getUniqueName().toString().replaceAll(":", "_") + "__"
                 + to.getUniqueName().toString().replaceAll(":", "_"));
     }

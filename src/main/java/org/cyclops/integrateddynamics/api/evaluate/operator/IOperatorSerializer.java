@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -21,7 +21,7 @@ public interface IOperatorSerializer<O extends IOperator> {
     /**
      * @return The unique name of this serializer.
      */
-    public ResourceLocation getUniqueName();
+    public Identifier getUniqueName();
 
     /**
      * Serialize the given operator.

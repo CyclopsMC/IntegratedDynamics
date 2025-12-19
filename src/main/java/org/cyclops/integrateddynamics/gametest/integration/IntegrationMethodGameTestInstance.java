@@ -7,7 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.core.test.IntegrationBefore;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
 
@@ -106,7 +106,7 @@ public class IntegrationMethodGameTestInstance extends GameTestInstance {
         return Component.literal("Method-based test instance for " + getClassName() + "." + getMethodName());
     }
 
-    public ResourceLocation getId() {
-        return ResourceLocation.fromNamespaceAndPath(this.modId, (this.className.replaceAll("org.cyclops\\.[^.]*\\.[^.]*\\.", "") + "." + this.methodName).toLowerCase(Locale.ROOT).replace('.', '_'));
+    public Identifier getId() {
+        return Identifier.fromNamespaceAndPath(this.modId, (this.className.replaceAll("org.cyclops\\.[^.]*\\.[^.]*\\.", "") + "." + this.methodName).toLowerCase(Locale.ROOT).replace('.', '_'));
     }
 }

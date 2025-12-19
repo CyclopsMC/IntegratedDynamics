@@ -5,7 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.logging.LogUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
@@ -65,7 +65,7 @@ public class ContainerAspectSettings extends InventoryContainer {
 
     protected static IAspect<?, ?> readAspect(FriendlyByteBuf packetBuffer) {
         String name = packetBuffer.readUtf();
-        return Objects.requireNonNull(AspectRegistry.getInstance().getAspect(ResourceLocation.parse(name)),
+        return Objects.requireNonNull(AspectRegistry.getInstance().getAspect(Identifier.parse(name)),
                 String.format("Could not find an aspect by name %s", name));
     }
 

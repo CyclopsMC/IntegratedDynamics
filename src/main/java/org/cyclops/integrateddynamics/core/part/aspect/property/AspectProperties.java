@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.part.aspect.property;
 
 import com.google.common.collect.Maps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -83,7 +83,7 @@ public class AspectProperties implements IAspectProperties {
         values.clear();
         for (ValueInput entry : valueInput.childrenList("map").orElseThrow()) {
             String valueTypeName = entry.getString("key").orElseThrow();
-            IValueType type = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueTypeName));
+            IValueType type = ValueTypes.REGISTRY.getValueType(Identifier.parse(valueTypeName));
             if(type == null) {
                 IntegratedDynamics.clog(org.apache.logging.log4j.Level.ERROR, String.format("Could not find value type with name %s, skipping loading.", valueTypeName));
             } else {

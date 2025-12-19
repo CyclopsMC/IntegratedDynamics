@@ -4,14 +4,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -300,8 +300,8 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
         for (ItemMatchProperties inputStack : inputStacks) {
             if (inputStack.getItemTag() != null) {
                 try {
-                    ResourceLocation.parse(inputStack.getItemTag());
-                } catch (ResourceLocationException e) {
+                    Identifier.parse(inputStack.getItemTag());
+                } catch (IdentifierException e) {
                     return Component.translatable(L10NValues.VALUETYPE_ERROR_INVALIDINPUT, inputStack.getItemTag());
                 }
             }
@@ -396,7 +396,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
         String tagName = props.getItemTag();
         if (tagName != null) {
             try {
-                Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.get(TagKey.create(Registries.ITEM, ResourceLocation.parse(tagName)));
+                Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM.get(TagKey.create(Registries.ITEM, Identifier.parse(tagName)));
                 if (!tag.isEmpty()) {
                     List<Item> items = tag.stream()
                             .flatMap(holders -> holders.stream())
@@ -405,7 +405,7 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
                     Item item = items.get(tick % items.size());
                     return Optional.of(new ItemStack(item, props.getTagQuantity()));
                 }
-            } catch (ResourceLocationException e) {
+            } catch (IdentifierException e) {
                 // Ignore invalid tags
             }
         }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.item;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -48,7 +48,7 @@ public interface IVariableFacadeHandlerRegistry extends IRegistry {
      * @return The handler.
      */
     @Nullable
-    public IVariableFacadeHandler getHandler(ResourceLocation type);
+    public IVariableFacadeHandler getHandler(Identifier type);
 
     /**
      * @return All registered handler names.

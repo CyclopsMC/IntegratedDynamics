@@ -4,7 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -22,7 +22,7 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class PlayerTeleportPacket extends PacketCodec {
 
-    public static final Type<PlayerTeleportPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "player_teleport"));
+    public static final Type<PlayerTeleportPacket> ID = new Type<>(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "player_teleport"));
     public static final StreamCodec<RegistryFriendlyByteBuf, PlayerTeleportPacket> CODEC = getCodec(PlayerTeleportPacket::new);
 
     @CodecField
@@ -44,7 +44,7 @@ public class PlayerTeleportPacket extends PacketCodec {
 
     public PlayerTeleportPacket(ResourceKey<Level> dimension, double x, double y, double z, float yaw, float pitch) {
         super(ID);
-        this.dimension = dimension.location().toString();
+        this.dimension = dimension.identifier().toString();
         this.x = x;
         this.y = y;
         this.z = z;
@@ -64,8 +64,8 @@ public class PlayerTeleportPacket extends PacketCodec {
 
     @Override
     public void actionServer(Level world, ServerPlayer player) {
-        ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(this.dimension));
-        if (!dimensionType.location().equals(player.level().dimension().location())) {
+        ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, Identifier.parse(this.dimension));
+        if (!dimensionType.identifier().equals(player.level().dimension().identifier())) {
             player.teleport(new TeleportTransition(
                     ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType),
                     new Vec3(x, y, z),

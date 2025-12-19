@@ -4,36 +4,27 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.PartOffsetsClientNotifier;
 import org.cyclops.integrateddynamics.network.packet.PartOffsetsSubscribePacket;
 
 import java.util.List;
-import java.util.OptionalDouble;
 import java.util.Random;
 
 /**
  * @author rubensworks
  */
 public class PartOffsetsOverlayRenderer {
-
-    public static final RenderType RENDER_TYPE_LINE = RenderType.create(Reference.MOD_ID + "line",
-            128,
-            RenderPipelines.SECONDARY_BLOCK_OUTLINE,
-            RenderType.CompositeState.builder()
-                    .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
-                    .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
-                    .createCompositeState(false));
 
     private static final PartOffsetsOverlayRenderer _INSTANCE = new PartOffsetsOverlayRenderer();
 
@@ -80,7 +71,7 @@ public class PartOffsetsOverlayRenderer {
 
             Vec3 eyePos = event.getLevelRenderState().cameraRenderState.pos;
             for (PartOffsetsClientNotifier.Entry entry : this.data) {
-                this.renderOffset(event.getPoseStack(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), entry, eyePos);
+                this.renderOffset(event.getPoseStack(), Minecraft.getInstance().renderBuffers().bufferSource(), entry, eyePos);
             }
 
         } else if (subscribedToServerChanges) {
@@ -101,15 +92,15 @@ public class PartOffsetsOverlayRenderer {
         float a = 0.90F;
 
         // Draw line from center to target
-        VertexConsumer vb = renderTypeBuffer.getBuffer(RENDER_TYPE_LINE);
+        VertexConsumer vb = renderTypeBuffer.getBuffer(RenderTypes.SECONDARY_BLOCK_OUTLINE);
         float minX = entry.source().getX() - (float) offsetX + 0.5F + entry.sourceSide().getStepX() * 0.5F;
         float minY = entry.source().getY() - (float) offsetY + 0.5F + entry.sourceSide().getStepY() * 0.5F;
         float minZ = entry.source().getZ() - (float) offsetZ + 0.5F + entry.sourceSide().getStepZ() * 0.5F;
         float maxX = entry.source().getX() - (float) offsetX + 0.5F + entry.targetOffset().getX() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepX() * 0.5F : 0);
         float maxY = entry.source().getY() - (float) offsetY + 0.5F + entry.targetOffset().getY() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepY() * 0.5F : 0);
         float maxZ = entry.source().getZ() - (float) offsetZ + 0.5F + entry.targetOffset().getZ() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepZ() * 0.5F : 0);
-        vb.addVertex(matrixStack.last().pose(), minX, minY, minZ).setColor(r, g, b, a).setNormal(0.0F, 0.0F, 0.0F);
-        vb.addVertex(matrixStack.last().pose(), maxX, maxY, maxZ).setColor(r, g, b, a).setNormal(0.0F, 0.0F, 0.0F);
+        vb.addVertex(matrixStack.last().pose(), minX, minY, minZ).setLineWidth(2).setColor(r, g, b, a).setNormal(0.0F, 0.0F, 0.0F);
+        vb.addVertex(matrixStack.last().pose(), maxX, maxY, maxZ).setLineWidth(2).setColor(r, g, b, a).setNormal(0.0F, 0.0F, 0.0F);
 
         // Draw target face
         AABB bb = new AABB(entry.targetSide().getStepX() == 1 ? 0.9 : 0, entry.targetSide().getStepY() == 1 ? 0.9 : 0, entry.targetSide().getStepZ() == 1 ? 0.9 : 0,
@@ -120,8 +111,8 @@ public class PartOffsetsOverlayRenderer {
                 .move(-offsetX, -offsetY, -offsetZ)
                 .inflate(0.05, 0.05, 0.05)
                 .inflate(-0.05, -0.05, -0.05);
-        ShapeRenderer.renderLineBox(matrixStack.last(), renderTypeBuffer.getBuffer(RenderType.lines()),
-                bb, r, g, b, a);
+        IModHelpers.get().getRenderHelpers().renderLineBox(matrixStack, renderTypeBuffer.getBuffer(RenderTypes.lines()),
+                bb, r, g, b, a, 2.5f);
     }
 
 }

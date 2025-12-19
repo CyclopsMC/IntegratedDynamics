@@ -3,13 +3,13 @@ package org.cyclops.integrateddynamics.client.render.blockentity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -120,7 +120,7 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
                     IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
                     Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluid));
 
-                    submitNodeCollector.submitCustomGeometry(poseStack, RenderType.text(icon.atlasLocation()), (pose, vb) -> {
+                    submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                         float[][] c = coordinates[side.ordinal()];
                         float replacedMaxV = (side == Direction.UP || side == Direction.DOWN) ?
                                 icon.getV1() : ((icon.getV1() - icon.getV0()) * height + icon.getV0());

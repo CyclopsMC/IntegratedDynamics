@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueInput;
@@ -137,7 +137,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
 
     public void readAspectProperties(ValueInput valueInput) {
         for (ValueInput entryTag : valueInput.childrenList("map").orElseThrow()) {
-            IAspect key = Aspects.REGISTRY.getAspect(ResourceLocation.parse(entryTag.getString("key").orElseThrow()));
+            IAspect key = Aspects.REGISTRY.getAspect(Identifier.parse(entryTag.getString("key").orElseThrow()));
             IAspectProperties value = entryTag.child("value")
                     .map(v -> {
                         AspectProperties ap = new AspectProperties();

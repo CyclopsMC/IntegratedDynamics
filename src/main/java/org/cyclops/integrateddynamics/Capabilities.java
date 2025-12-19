@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics;
 
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
@@ -27,74 +27,74 @@ import org.cyclops.integrateddynamics.api.path.IPathElement;
  */
 public class Capabilities {
     public static final class Cable {
-        public static final BlockCapability<ICable, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "cable"), ICable.class);
+        public static final BlockCapability<ICable, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "cable"), ICable.class);
     }
 
     public static final class CableFakeable {
-        public static final BlockCapability<ICableFakeable, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "cable_fakeable"), ICableFakeable.class);
+        public static final BlockCapability<ICableFakeable, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "cable_fakeable"), ICableFakeable.class);
     }
 
     public static final class DynamicLight {
-        public static final BlockCapability<IDynamicLight, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "dynamic_light"), IDynamicLight.class);
+        public static final BlockCapability<IDynamicLight, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "dynamic_light"), IDynamicLight.class);
     }
 
     public static final class DynamicRedstone {
-        public static final BlockCapability<IDynamicRedstone, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "dynamic_redstone"), IDynamicRedstone.class);
+        public static final BlockCapability<IDynamicRedstone, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "dynamic_redstone"), IDynamicRedstone.class);
     }
 
     public static final class Facadeable {
-        public static final BlockCapability<IFacadeable, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "facadeable"), IFacadeable.class);
+        public static final BlockCapability<IFacadeable, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "facadeable"), IFacadeable.class);
     }
 
     public static final class NetworkCarrier {
-        public static final BlockCapability<INetworkCarrier, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "network_carrier"), INetworkCarrier.class);
+        public static final BlockCapability<INetworkCarrier, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "network_carrier"), INetworkCarrier.class);
     }
 
     public static final class NetworkElementProvider {
-        public static final BlockCapability<INetworkElementProvider, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "network_element_provider"), INetworkElementProvider.class);
+        public static final BlockCapability<INetworkElementProvider, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "network_element_provider"), INetworkElementProvider.class);
     }
 
     public static final class PartContainer {
-        public static final BlockCapability<IPartContainer, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "part_container"), IPartContainer.class);
+        public static final BlockCapability<IPartContainer, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "part_container"), IPartContainer.class);
     }
 
     public static final class PathElement {
-        public static final BlockCapability<IPathElement, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "path_element"), IPathElement.class);
-        public static final PartCapability<IPathElement> PART = PartCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "path_element"), IPathElement.class);
+        public static final BlockCapability<IPathElement, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "path_element"), IPathElement.class);
+        public static final PartCapability<IPathElement> PART = PartCapability.create(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "path_element"), IPathElement.class);
     }
 
     public static final class VariableFacade {
-        public static final ItemCapability<IVariableFacadeHolder, Void> ITEM = ItemCapability.createVoid(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable_facade_holder"), IVariableFacadeHolder.class);
+        public static final ItemCapability<IVariableFacadeHolder, Void> ITEM = ItemCapability.createVoid(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "variable_facade_holder"), IVariableFacadeHolder.class);
     }
 
     public static final class IngredientComponentValueHandler {
         @Deprecated // TODO: try to rm in next major, as we have IIngredientComponentHandler and IIngredientComponentHandlerRegistry that do the same
-        public static final IngredientComponentCapability<IIngredientComponentValueHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "ingredient_component_value_handler"), IIngredientComponentValueHandler.class);
+        public static final IngredientComponentCapability<IIngredientComponentValueHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "ingredient_component_value_handler"), IIngredientComponentValueHandler.class);
     }
 
     public static final class PositionedAddonsNetworkIngredientsHandler {
-        public static final IngredientComponentCapability<IPositionedAddonsNetworkIngredientsHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_addons_network_ingredients_handler"), IPositionedAddonsNetworkIngredientsHandler.class);
+        public static final IngredientComponentCapability<IPositionedAddonsNetworkIngredientsHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "positioned_addons_network_ingredients_handler"), IPositionedAddonsNetworkIngredientsHandler.class);
     }
 
     public static final class ValueInterface {
-        public static final BlockCapability<IValueInterface, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "value_interface"), IValueInterface.class);
-        public static final PartCapability<IValueInterface> PART = PartCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "value_interface"), IValueInterface.class);
+        public static final BlockCapability<IValueInterface, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "value_interface"), IValueInterface.class);
+        public static final PartCapability<IValueInterface> PART = PartCapability.create(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "value_interface"), IValueInterface.class);
     }
 
     public static final class VariableContainer {
-        public static final BlockCapability<IVariableContainer, Direction> BLOCK = BlockCapability.createSided(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable_container"), IVariableContainer.class);
-        public static final PartCapability<IVariableContainer> PART = PartCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable_container"), IVariableContainer.class);
+        public static final BlockCapability<IVariableContainer, Direction> BLOCK = BlockCapability.createSided(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "variable_container"), IVariableContainer.class);
+        public static final PartCapability<IVariableContainer> PART = PartCapability.create(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "variable_container"), IVariableContainer.class);
     }
 
     public static final class EnergyNetwork {
-        public static final NetworkCapability<IEnergyNetwork> NETWORK = NetworkCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "energy_network"), IEnergyNetwork.class);
+        public static final NetworkCapability<IEnergyNetwork> NETWORK = NetworkCapability.create(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "energy_network"), IEnergyNetwork.class);
     }
 
     public static final class PartNetwork {
-        public static final NetworkCapability<IPartNetwork> NETWORK = NetworkCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "part_network"), IPartNetwork.class);
+        public static final NetworkCapability<IPartNetwork> NETWORK = NetworkCapability.create(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "part_network"), IPartNetwork.class);
     }
 
     public static final class Energy {
-        public static final NetworkCapability<EnergyHandler> NETWORK = NetworkCapability.create(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "energy_storage"), EnergyHandler.class);
+        public static final NetworkCapability<EnergyHandler> NETWORK = NetworkCapability.create(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "energy_storage"), EnergyHandler.class);
     }
 }

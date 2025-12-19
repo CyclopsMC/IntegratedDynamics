@@ -1211,7 +1211,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res1).getRawValue().getLength(), 0, "datakeys(empty) = []");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_DATA_KEYS.evaluate(new IVariable[]{iAppleTag});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res2).getRawValue().getLength(), 13, "datakeys(appleTag).length = 13");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList<?,?>) res2).getRawValue().getLength(), 15, "datakeys(appleTag).length = 15");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(0))).getRawValue(), "minecraft:attribute_modifiers", "datakeys(appleTag)[0] == ...");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(1))).getRawValue(), "minecraft:break_sound", "datakeys(appleTag)[1] == ...");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(2))).getRawValue(), "minecraft:consumable", "datakeys(appleTag)[2] == ...");
@@ -1224,7 +1224,7 @@ public class TestItemStackOperators {
         TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(9))).getRawValue(), "minecraft:ominous_bottle_amplifier", "datakeys(appleTag)[9] == ...");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(10))).getRawValue(), "minecraft:rarity", "datakeys(appleTag)[10] == ...");
         TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(11))).getRawValue(), "minecraft:repair_cost", "datakeys(appleTag)[11] == ...");
-        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(12))).getRawValue(), "minecraft:tooltip_display", "datakeys(appleTag)[12] == ...");
+        TestHelpers.assertEqual(((ValueTypeString.ValueString) (((ValueTypeList.ValueList) res2).getRawValue().get(12))).getRawValue(), "minecraft:swing_animation", "datakeys(appleTag)[12] == ...");
     }
 
     @IntegrationTest(expected = EvaluationException.class)

@@ -7,7 +7,7 @@ import com.google.re2j.PatternSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.logging.LogUtils;
 import lombok.Lombok;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -16,7 +16,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.AgeableMob;
@@ -30,7 +30,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -1291,7 +1291,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeBlock.ValueBlock a = variables.getValue(0, ValueTypes.OBJECT_BLOCK);
-                        return a.getRawValue().isPresent() ? BuiltInRegistries.BLOCK.getKey(a.getRawValue().get().getBlock()) : ResourceLocation.parse("");
+                        return a.getRawValue().isPresent() ? BuiltInRegistries.BLOCK.getKey(a.getRawValue().get().getBlock()) : Identifier.parse("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1468,7 +1468,7 @@ public final class Operators {
                         Helpers.getBlockTagValues(a.getRawValue())
                                 .map(ValueObjectTypeBlock.ValueBlock::of)
                                 .forEach(builder::add);
-                    } catch (ResourceLocationException e) {
+                    } catch (IdentifierException e) {
                         throw new EvaluationException(Component.translatable(e.getMessage()));
                     }
                 }
@@ -1700,7 +1700,7 @@ public final class Operators {
             .function(new IterativeFunction(Lists.newArrayList(
                     (OperatorBase.SafeVariablesGetter variables) -> {
                         ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                        return !a.getRawValue().isEmpty() ? BuiltInRegistries.ITEM.getKey(a.getRawValue().getItem()) : ResourceLocation.parse("");
+                        return !a.getRawValue().isEmpty() ? BuiltInRegistries.ITEM.getKey(a.getRawValue().getItem()) : Identifier.parse("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             ))).build());
@@ -1763,7 +1763,7 @@ public final class Operators {
                         Helpers.getTagValues(a.getRawValue())
                                 .map(ValueObjectTypeItemStack.ValueItemStack::of)
                                 .forEach(builder::add);
-                    } catch (ResourceLocationException e) {
+                    } catch (IdentifierException e) {
                         throw new EvaluationException(Component.translatable(e.getMessage()));
                     }
                 }
@@ -1980,8 +1980,8 @@ public final class Operators {
                 // Determine data component type
                 DataComponentType<?> dataComponentType;
                 try {
-                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
-                } catch (ResourceLocationException e) {
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(Identifier.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                } catch (IdentifierException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
 
@@ -2018,8 +2018,8 @@ public final class Operators {
                 // Determine data component type
                 DataComponentType<?> dataComponentType;
                 try {
-                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
-                } catch (ResourceLocationException e) {
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(Identifier.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                } catch (IdentifierException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
 
@@ -2232,7 +2232,7 @@ public final class Operators {
                             Entity entity = a.getRawValue().get();
                             return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
                         }
-                        return ResourceLocation.parse("");
+                        return Identifier.parse("");
                     },
                     OperatorBuilders.PROPAGATOR_RESOURCELOCATION_MODNAME
             )))
@@ -2819,8 +2819,8 @@ public final class Operators {
                 // Determine data component type
                 DataComponentType<?> dataComponentType;
                 try {
-                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
-                } catch (ResourceLocationException e) {
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(Identifier.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                } catch (IdentifierException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
 
@@ -2857,8 +2857,8 @@ public final class Operators {
                 // Determine data component type
                 DataComponentType<?> dataComponentType;
                 try {
-                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ResourceLocation.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
-                } catch (ResourceLocationException e) {
+                    dataComponentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(Identifier.parse(input.getValue(1, ValueTypes.STRING).getRawValue()));
+                } catch (IdentifierException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
 
@@ -2906,7 +2906,7 @@ public final class Operators {
                         Helpers.getFluidTagValues(a.getRawValue())
                                 .map(ValueObjectTypeFluidStack.ValueFluidStack::of)
                                 .forEach(builder::add);
-                    } catch (ResourceLocationException e) {
+                    } catch (IdentifierException e) {
                         throw new EvaluationException(Component.translatable(e.getMessage()));
                     }
                 }
@@ -3200,14 +3200,14 @@ public final class Operators {
             .function(input -> {
                 ValueTypeString.ValueString name = input.getValue(0, ValueTypes.STRING);
                 try {
-                    ResourceLocation id = ResourceLocation.parse(name.getRawValue());
+                    Identifier id = Identifier.parse(name.getRawValue());
                     IOperator operator = Operators.REGISTRY.getOperator(id);
                     if (operator == null) {
                         throw new EvaluationException(Component.translatable(
                                 L10NValues.OPERATOR_ERROR_OPERATORNOTFOUND, name.getRawValue()));
                     }
                     return ValueTypeOperator.ValueOperator.of(operator);
-                } catch (ResourceLocationException e) {
+                } catch (IdentifierException e) {
                     throw new EvaluationException(Component.literal(e.getMessage()));
                 }
             }).build());

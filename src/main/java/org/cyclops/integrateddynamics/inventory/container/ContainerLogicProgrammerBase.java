@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 import com.google.common.collect.Lists;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -131,7 +131,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         return 1;
     }
 
-    public void setActiveElementById(ResourceLocation typeId, ResourceLocation elementId) {
+    public void setActiveElementById(Identifier typeId, Identifier elementId) {
         ILogicProgrammerElementType type = LogicProgrammerElementTypes.REGISTRY.getType(typeId);
         if (type != null) {
             ILogicProgrammerElement element = type.getByName(elementId);

@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.helper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  */
 public final class WrenchHelpers {
 
-    public static final TagKey<Item> TAG_WRENCH = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "tools/wrench"));
+    public static final TagKey<Item> TAG_WRENCH = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "tools/wrench"));
 
     /**
      * Checks if the given player can wrench something.

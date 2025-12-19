@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -138,13 +138,13 @@ public final class AspectRegistry implements IAspectRegistry {
     }
 
     @Override
-    public IAspect getAspect(ResourceLocation name) {
+    public IAspect getAspect(Identifier name) {
         return unlocalizedAspects.get(name.toString());
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "aspect");
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "aspect");
     }
 
     @Override
@@ -153,7 +153,7 @@ public final class AspectRegistry implements IAspectRegistry {
             return INVALID_FACADE;
         }
         int partId = tag.getInt("partId").orElseThrow();
-        IAspect aspect = getAspect(ResourceLocation.parse(tag.getString("aspectName").orElseThrow()));
+        IAspect aspect = getAspect(Identifier.parse(tag.getString("aspectName").orElseThrow()));
         if(aspect == null) {
             return INVALID_FACADE;
         }

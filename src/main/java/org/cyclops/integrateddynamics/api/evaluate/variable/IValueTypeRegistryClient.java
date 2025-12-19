@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 
@@ -17,7 +17,7 @@ public interface IValueTypeRegistryClient {
      * @param valueType The value type.
      * @param modelLocation The facadeModel resource location.
      */
-    public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, ResourceLocation modelLocation);
+    public <V extends IValue, T extends IValueType<V>> void registerValueTypeModel(T valueType, Identifier modelLocation);
 
     /**
      * Get the facadeModel resource location of the given value type.

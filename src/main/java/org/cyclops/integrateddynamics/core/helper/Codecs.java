@@ -10,8 +10,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.ResourceLocationException;
-import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.IdentifierException;
+import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
@@ -23,7 +23,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
@@ -71,7 +71,7 @@ public class Codecs {
 
     public static final Codec<IPartType> PART_TYPE = Codec.STRING.xmap(
             name -> {
-                IPartType<?, ?> partType = PartTypes.REGISTRY.getPartType(ResourceLocation.parse(name));
+                IPartType<?, ?> partType = PartTypes.REGISTRY.getPartType(Identifier.parse(name));
                 if (partType == null) {
                     throw new JsonSyntaxException("No part type found with name: " + name);
                 }
@@ -80,7 +80,7 @@ public class Codecs {
 
     public static final Codec<IAspect> ASPECT = Codec.STRING.xmap(
             name -> {
-                IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(ResourceLocation.parse(name));
+                IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(Identifier.parse(name));
                 if (aspect == null) {
                     throw new JsonSyntaxException("No aspect found with name: " + name);
                 }
@@ -89,7 +89,7 @@ public class Codecs {
 
     public static final Codec<IOperator> OPERATOR = Codec.STRING.xmap(
             name -> {
-                IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.parse(name));
+                IOperator operator = Operators.REGISTRY.getOperator(Identifier.parse(name));
                 if (operator == null) {
                     throw new JsonSyntaxException("No operator found with name: " + name);
                 }
@@ -98,7 +98,7 @@ public class Codecs {
 
     public static final Codec<IValueType> VALUE_TYPE = Codec.STRING.xmap(
             name -> {
-                IValueType<?> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(name));
+                IValueType<?> valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(name));
                 if (valueType == null) {
                     throw new JsonSyntaxException("Unknown value type '" + name + "', valid types are: "
                             + ValueTypes.REGISTRY.getValueTypes().stream().map(IValueType::getUniqueName).collect(Collectors.toList()));
@@ -109,8 +109,8 @@ public class Codecs {
     public static final Codec<EntityType<? extends Entity>> ENTITY_TYPE = Codec.STRING.xmap(
             name -> {
                 try {
-                    return BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.parse(name));
-                } catch (ResourceLocationException e) {
+                    return BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(name));
+                } catch (IdentifierException e) {
                     throw new JsonSyntaxException("Invalid entity type name '" + name + "'");
                 }
             }, (entityType) -> BuiltInRegistries.ENTITY_TYPE.getKey(entityType).toString());
@@ -227,13 +227,13 @@ public class Codecs {
                 ),
                 RecordCodecBuilder.<VariablePredicateTyped>create(
                         builder -> builder.group(
-                                        Codec.STRING.validate(type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type)) == null ?
+                                        Codec.STRING.validate(type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(Identifier.parse(type)) == null ?
                                                 DataResult.error(() -> "Variable facade predicate is expected to have as 'type' one of: " + String.join(", ", IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandlerNames())) :
                                                 DataResult.success(type)).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString()),
                                         VALUE_TYPE.optionalFieldOf("value_type").forGetter(VariablePredicate::getValueType),
                                         VALUE.optionalFieldOf("value").forGetter(VariablePredicate::getValuePredicate)
                                 )
-                                .apply(builder, (type, valueType, valuePredicate) -> new VariablePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type)), valueType, valuePredicate))
+                                .apply(builder, (type, valueType, valuePredicate) -> new VariablePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(Identifier.parse(type)), valueType, valuePredicate))
                 )
         ));
     }
@@ -257,11 +257,11 @@ public class Codecs {
             ),
             RecordCodecBuilder.<VariableFacadePredicateTyped>create(
                     builder -> builder.group(
-                                    Codec.STRING.validate(type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type)) == null ?
+                                    Codec.STRING.validate(type -> IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(Identifier.parse(type)) == null ?
                                             DataResult.error(() -> "Variable facade predicate is expected to have as 'type' one of: " + String.join(", ", IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandlerNames())) :
                                             DataResult.success(type)).fieldOf("type").forGetter(p -> p.getHandler().getUniqueName().toString())
                             )
-                            .apply(builder, (type) -> new VariableFacadePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(ResourceLocation.parse(type))))
+                            .apply(builder, (type) -> new VariableFacadePredicateTyped(IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).getHandler(Identifier.parse(type))))
             )
     ));
 

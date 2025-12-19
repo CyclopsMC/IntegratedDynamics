@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.part.aspect.read;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -41,7 +41,7 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
         this.unlocalizedTypeSuffix = unlocalizedTypeSuffix;
         this.updateType = updateType;
         if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
-            registerModelResourceLocation();
+            registerModelIdentifier();
         }
     }
 
@@ -56,9 +56,9 @@ public abstract class AspectReadBase<V extends IValue, T extends IValueType<V>> 
         return "read" + this.unlocalizedTypeSuffix;
     }
 
-    protected void registerModelResourceLocation() {
+    protected void registerModelIdentifier() {
         Aspects.REGISTRY.getClient().registerAspectModel(this,
-                ResourceLocation.parse(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
+                Identifier.parse(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
     }
 
     /**

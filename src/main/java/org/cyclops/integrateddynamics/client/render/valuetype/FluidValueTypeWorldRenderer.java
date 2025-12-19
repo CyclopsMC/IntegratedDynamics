@@ -2,9 +2,9 @@ package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -42,7 +42,7 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluidStack.getFluid());
             Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluidStack));
 
-            nodeCollector.submitCustomGeometry(matrixStack, RenderType.text(icon.atlasLocation()), (pose, vb) -> {
+            nodeCollector.submitCustomGeometry(matrixStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                 float min = 0F;
                 float max = 12.5F;
                 float u1 = icon.getU0();

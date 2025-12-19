@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.capability.ingredient;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -24,9 +24,9 @@ import java.util.Optional;
 @Deprecated // TODO: try to rm in next major, as we have IIngredientComponentHandler and IIngredientComponentHandlerRegistry that do the same
 public class IngredientComponentCapabilities {
 
-    public static final ResourceLocation INGREDIENT_ITEMSTACK_NAME = ResourceLocation.fromNamespaceAndPath("minecraft", "itemstack");
-    public static final ResourceLocation INGREDIENT_FLUIDSTACK_NAME = ResourceLocation.fromNamespaceAndPath("minecraft", "fluidstack");
-    public static final ResourceLocation INGREDIENT_ENERGY_NAME = ResourceLocation.fromNamespaceAndPath("minecraft", "energy");
+    public static final Identifier INGREDIENT_ITEMSTACK_NAME = Identifier.fromNamespaceAndPath("minecraft", "itemstack");
+    public static final Identifier INGREDIENT_FLUIDSTACK_NAME = Identifier.fromNamespaceAndPath("minecraft", "fluidstack");
+    public static final Identifier INGREDIENT_ENERGY_NAME = Identifier.fromNamespaceAndPath("minecraft", "energy");
 
     public static void load() {
         IngredientComponentCapabilityAttacherManager attacherManager = new IngredientComponentCapabilityAttacherManager();

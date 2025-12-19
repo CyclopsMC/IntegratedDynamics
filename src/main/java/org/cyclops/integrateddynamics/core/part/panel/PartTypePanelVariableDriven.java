@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -312,7 +312,7 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
             super.deserialize(valueInput);
             valueInput.getString("displayValueType")
                     .ifPresentOrElse(displayValueType -> {
-                        IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(displayValueType));
+                        IValueType valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(displayValueType));
                         if(valueType != null) {
                             ValueInput serializedValue = valueInput.child("displayValue").orElseThrow();
                             Component deserializationError = valueType.canDeserialize(serializedValue);

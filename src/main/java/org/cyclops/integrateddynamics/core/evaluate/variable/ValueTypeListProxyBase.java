@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Iterables;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -19,10 +19,10 @@ import java.util.Iterator;
  */
 public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends IValue> implements IValueTypeListProxy<T, V> {
 
-    private final ResourceLocation name;
+    private final Identifier name;
     private final T valueType;
 
-    public ValueTypeListProxyBase(ResourceLocation name, T valueType) {
+    public ValueTypeListProxyBase(Identifier name, T valueType) {
         this.name = name;
         this.valueType = valueType;
     }
@@ -33,7 +33,7 @@ public abstract class ValueTypeListProxyBase<T extends IValueType<V>, V extends 
     }
 
     @Override
-    public ResourceLocation getName() {
+    public Identifier getName() {
         return name;
     }
 

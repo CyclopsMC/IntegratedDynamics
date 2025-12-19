@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.MenuProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -30,7 +30,7 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
     /**
      * @return The unique name for this aspecy, only used for internal storage.
      */
-    public ResourceLocation getUniqueName();
+    public Identifier getUniqueName();
 
     /**
      * @return The unique unlocalized name for this aspect.

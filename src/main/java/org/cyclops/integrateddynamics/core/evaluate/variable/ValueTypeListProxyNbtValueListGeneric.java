@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -22,7 +22,7 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends Tag, T ext
     private final String key;
     private final Optional<CompoundTag> tag;
 
-    public ValueTypeListProxyNbtValueListGeneric(ResourceLocation name, T valueType, String key, Optional<Tag> tag) {
+    public ValueTypeListProxyNbtValueListGeneric(Identifier name, T valueType, String key, Optional<Tag> tag) {
         super(name, valueType);
         this.key = key;
         this.tag = tag.filter(t -> t instanceof CompoundTag).map(t -> (CompoundTag) t);
@@ -69,8 +69,8 @@ public abstract class ValueTypeListProxyNbtValueListGeneric<N extends Tag, T ext
     public static abstract class Factory<L extends ValueTypeListProxyNbtValueListGeneric<N, T, V>, N extends Tag, T extends IValueType<V>, V extends IValue> extends ValueTypeListProxyNBTFactorySimple<T, V, L> {
 
         @Override
-        public ResourceLocation getName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "nbt.list_value");
+        public Identifier getName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "nbt.list_value");
         }
 
         @Override

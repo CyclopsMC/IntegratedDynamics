@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.client.gui.container;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.infobook.ScreenInfoBook;
@@ -83,8 +83,8 @@ public class ContainerScreenOnTheDynamicsOfIntegration extends ScreenInfoBook<Co
     }
 
     @Override
-    protected ResourceLocation constructGuiTexture() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID,
+    protected Identifier constructGuiTexture() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID,
                 Reference.TEXTURE_PATH_GUI + "on_the_dynamics_of_integration_gui.png");
     }
 }

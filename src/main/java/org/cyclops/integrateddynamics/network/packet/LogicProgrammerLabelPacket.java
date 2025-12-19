@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -18,7 +18,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerLabelPacket extends PacketCodec {
 
-    public static final Type<LogicProgrammerLabelPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_label"));
+    public static final Type<LogicProgrammerLabelPacket> ID = new Type<>(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_label"));
     public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerLabelPacket> CODEC = getCodec(LogicProgrammerLabelPacket::new);
 
     @CodecField

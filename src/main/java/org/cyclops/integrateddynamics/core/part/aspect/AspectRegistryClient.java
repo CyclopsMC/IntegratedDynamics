@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.part.aspect;
 import net.minecraft.client.color.item.Constant;
 import net.minecraft.client.renderer.item.BlockModelWrapper;
 import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRegistryClient;
 
@@ -17,7 +17,7 @@ public class AspectRegistryClient implements IAspectRegistryClient {
     private Map<IAspect, ItemModel.Unbaked> aspectModels = new IdentityHashMap<>();;
 
     @Override
-    public void registerAspectModel(IAspect aspect, ResourceLocation modelLocation) {
+    public void registerAspectModel(IAspect aspect, Identifier modelLocation) {
         aspectModels.put(aspect, new BlockModelWrapper.Unbaked(modelLocation, List.of(new Constant(-1))));
     }
 

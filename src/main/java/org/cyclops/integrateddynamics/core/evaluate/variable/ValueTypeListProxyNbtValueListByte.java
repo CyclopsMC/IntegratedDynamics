@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.Reference;
 
 import java.util.Optional;
@@ -29,8 +29,8 @@ public class ValueTypeListProxyNbtValueListByte extends ValueTypeListProxyNbtVal
     public static class Factory extends ValueTypeListProxyNbtValueListGeneric.Factory<ValueTypeListProxyNbtValueListByte, ByteArrayTag, ValueTypeInteger, ValueTypeInteger.ValueInteger> {
 
         @Override
-        public ResourceLocation getName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "nbt.list_value_byte");
+        public Identifier getName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "nbt.list_value_byte");
         }
 
         @Override

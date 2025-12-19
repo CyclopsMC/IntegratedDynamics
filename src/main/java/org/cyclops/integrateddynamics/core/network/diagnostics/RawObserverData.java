@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 /**
@@ -23,12 +23,12 @@ public class RawObserverData implements IRawData {
 
     @Override
     public String toString() {
-        return String.format("%s: %s,%s,%s,%s (%s)", name, pos.getX(), pos.getY(), pos.getZ(), side, dimension.location());
+        return String.format("%s: %s,%s,%s,%s (%s)", name, pos.getX(), pos.getY(), pos.getZ(), side, dimension.identifier());
     }
 
     public CompoundTag toNbt() {
         CompoundTag tag = new CompoundTag();
-        tag.putString("dimension", dimension.location().toString());
+        tag.putString("dimension", dimension.identifier().toString());
         tag.putLong("pos", pos.asLong());
         if (side != null) {
             tag.putInt("side", side.ordinal());
@@ -40,7 +40,7 @@ public class RawObserverData implements IRawData {
 
     public static RawObserverData fromNbt(CompoundTag tag) {
         return new RawObserverData(
-                ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString("dimension").orElseThrow())),
+                ResourceKey.create(Registries.DIMENSION, Identifier.parse(tag.getString("dimension").orElseThrow())),
                 BlockPos.of(tag.getLong("pos").orElseThrow()),
                 tag.contains("side") ? Direction.values()[tag.getInt("side").orElseThrow()] : null,
                 tag.getString("name").orElseThrow(),

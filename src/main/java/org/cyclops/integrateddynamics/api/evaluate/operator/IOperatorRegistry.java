@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.operator;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.init.IRegistry;
@@ -36,7 +36,7 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
      * @param operatorName The unique operator name.
      * @return The corresponding operator or null.
      */
-    public IOperator getOperator(ResourceLocation operatorName);
+    public IOperator getOperator(Identifier operatorName);
 
     /**
      * Get the operators with the given input value types in that specific order.

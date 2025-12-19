@@ -9,7 +9,7 @@ import net.minecraft.gametest.framework.GameTestInstance;
 import net.minecraft.gametest.framework.TestData;
 import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Rotation;
 import org.cyclops.integrateddynamics.command.CommandTest;
 import org.cyclops.integrateddynamics.core.test.IntegrationTest;
@@ -26,7 +26,7 @@ public class GameTester {
 
     public static GameTestHelper GAME_TEST_HELPER;
 
-    public static void registerCommonTests(String modId, BiConsumer<ResourceLocation, GameTestInstance> registrar, Registry<TestEnvironmentDefinition> testEnvironmentRegistry) {
+    public static void registerCommonTests(String modId, BiConsumer<Identifier, GameTestInstance> registrar, Registry<TestEnvironmentDefinition> testEnvironmentRegistry) {
         for (IntegrationMethodGameTestInstance testInstance : GameTester.integrationTests(modId, testEnvironmentRegistry)) {
             registrar.accept(testInstance.getId(), testInstance);
         }
@@ -51,12 +51,12 @@ public class GameTester {
                 for(Method method : tests) {
                     Holder.Reference<TestEnvironmentDefinition> environment = testEnvironmentRegistry.getOrThrow(ResourceKey.create(
                             Registries.TEST_ENVIRONMENT,
-                            ResourceLocation.parse("default")
+                            Identifier.parse("default")
                     ));
                     testsList.add(new IntegrationMethodGameTestInstance(
                             new TestData<>(
                                     environment,
-                                    ResourceLocation.parse("integrateddynamics:test"),
+                                    Identifier.parse("integrateddynamics:test"),
                                     1,
                                     1,
                                     true,

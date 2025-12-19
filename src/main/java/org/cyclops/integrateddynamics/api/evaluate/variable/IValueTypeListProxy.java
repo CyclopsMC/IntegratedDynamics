@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 
 /**
@@ -34,7 +34,7 @@ public interface IValueTypeListProxy<T extends IValueType<V>, V extends IValue> 
      * @return The proxy type name that must exist in the {@link IValueTypeListProxyFactoryTypeRegistry}
      * so that this can be correctly (de)serialized.
      */
-    public ResourceLocation getName();
+    public Identifier getName();
 
     /**
      * @return A short string representation used in guis to show the value.

@@ -321,7 +321,7 @@ public class NetworkHelpers {
                 // If no existing network was found, create a new network
                 if (!foundNetwork && GeneralConfig.recreateCorruptedNetworks) {
                     IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, String.format("Detected network position at " +
-                            "position %s in world %s with corrupted network, recreating network...", pos, world.dimension().location()));
+                            "position %s in world %s with corrupted network, recreating network...", pos, world.dimension().identifier()));
                     NetworkHelpers.initNetwork(world, pos, null);
                     return true;
                 }

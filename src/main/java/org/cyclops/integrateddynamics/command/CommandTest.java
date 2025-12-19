@@ -116,7 +116,7 @@ public class CommandTest implements Command<CommandSourceStack> {
 
     public static LiteralArgumentBuilder<CommandSourceStack> make() {
         return Commands.literal("test")
-                .requires((commandSource) -> commandSource.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .executes(new CommandTest());
     }
 

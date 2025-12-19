@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.network;
 
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -292,7 +292,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     }
 
     @Override
-    public ResourceLocation getGroup() {
+    public Identifier getGroup() {
         return IPartNetworkElement.GROUP;
     }
 }

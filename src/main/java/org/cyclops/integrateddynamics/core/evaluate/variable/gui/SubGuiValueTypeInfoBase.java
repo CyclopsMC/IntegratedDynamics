@@ -5,7 +5,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
 import org.cyclops.cyclopscore.client.gui.image.Images;
@@ -38,7 +38,7 @@ public abstract class SubGuiValueTypeInfoBase<S extends ISubGuiBox, G extends Co
 
     protected abstract Component getLastError();
 
-    protected abstract ResourceLocation getTexture();
+    protected abstract Identifier getTexture();
 
     protected int getSignalX() {
         return getWidth() - 22;

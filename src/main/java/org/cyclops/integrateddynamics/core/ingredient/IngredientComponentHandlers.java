@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.ingredient;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -43,11 +43,11 @@ public class IngredientComponentHandlers {
         if (event.getRegistryKey().equals(IngredientComponent.REGISTRY.key())) {
             // Components are still loading here, so grab them by name
             IngredientComponent componentItem = IngredientComponent.REGISTRY.getValue(
-                    ResourceLocation.parse("minecraft:itemstack"));
+                    Identifier.parse("minecraft:itemstack"));
             IngredientComponent componentFluid = IngredientComponent.REGISTRY.getValue(
-                    ResourceLocation.parse("minecraft:fluidstack"));
+                    Identifier.parse("minecraft:fluidstack"));
             IngredientComponent componentEnergy = IngredientComponent.REGISTRY.getValue(
-                    ResourceLocation.parse("minecraft:energy"));
+                    Identifier.parse("minecraft:energy"));
 
             REGISTRY.register(new IIngredientComponentHandler<ValueObjectTypeItemStack,
                     ValueObjectTypeItemStack.ValueItemStack, ItemStack, Integer>() {

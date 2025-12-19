@@ -5,7 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.RandomSource;
@@ -47,7 +47,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * @return The unique name for this part type.
      */
-    public ResourceLocation getUniqueName();
+    public Identifier getUniqueName();
 
     /**
      * @return The unlocalized name of this part.
@@ -57,7 +57,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     /**
      * @return JSON facadeModel path for the block representation of this part.
      */
-    public ResourceLocation getBlockModelPath();
+    public Identifier getBlockModelPath();
 
     /**
      * @return The item associated with this part type.

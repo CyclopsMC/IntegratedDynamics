@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.api.evaluate.variable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -45,7 +45,7 @@ public interface IValueType<V extends IValue> {
     /**
      * @return The unique name for this value type, only used for internal storage.
      */
-    public ResourceLocation getUniqueName();
+    public Identifier getUniqueName();
 
     /**
      * @return The unique name of this type that will also be used for display.

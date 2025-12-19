@@ -4,7 +4,7 @@ import net.minecraft.client.color.item.Constant;
 import net.minecraft.client.renderer.item.BlockModelWrapper;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.resources.model.ResolvableModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
 
     private ItemModel.Unbaked modelUnbaked;
 
-    public SingleVariableModelProvider(ResourceLocation model) {
+    public SingleVariableModelProvider(Identifier model) {
         this.modelUnbaked = new BlockModelWrapper.Unbaked(model, List.of(new Constant(-1)));
     }
 

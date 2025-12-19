@@ -9,7 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
@@ -108,7 +108,7 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public IOperator getOperator(ResourceLocation uniqueName) {
+    public IOperator getOperator(Identifier uniqueName) {
         return namedOperators.get(uniqueName.toString());
     }
 
@@ -158,8 +158,8 @@ public class OperatorRegistry implements IOperatorRegistry {
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "operator");
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "operator");
     }
 
     @Override

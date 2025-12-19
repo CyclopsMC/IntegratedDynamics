@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
@@ -37,7 +37,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         this.valueClass = valueClass;
         if(IModHelpers.get().getMinecraftHelpers().isModdedEnvironment() && IModHelpers.get().getMinecraftHelpers().isClientSide()) {
             this.client = constructClient();
-            this.client.registerModelResourceLocation();
+            this.client.registerModelIdentifier();
         }
     }
 
@@ -61,8 +61,8 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(getModId(), getTypeName());
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(getModId(), getTypeName());
     }
 
     protected String getUnlocalizedPrefix() {

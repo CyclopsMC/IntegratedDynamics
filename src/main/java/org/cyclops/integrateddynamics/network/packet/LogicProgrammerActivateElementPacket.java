@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -18,7 +18,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerActivateElementPacket extends PacketCodec {
 
-    public static final Type<LogicProgrammerActivateElementPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_activate_element"));
+    public static final Type<LogicProgrammerActivateElementPacket> ID = new Type<>(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_activate_element"));
     public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerActivateElementPacket> CODEC = getCodec(LogicProgrammerActivateElementPacket::new);
 
     @CodecField
@@ -30,7 +30,7 @@ public class LogicProgrammerActivateElementPacket extends PacketCodec {
         super(ID);
     }
 
-    public LogicProgrammerActivateElementPacket(ResourceLocation typeId, ResourceLocation elementId) {
+    public LogicProgrammerActivateElementPacket(Identifier typeId, Identifier elementId) {
         super(ID);
         this.typeId = typeId.toString();
         this.elementId = elementId.toString();
@@ -49,12 +49,12 @@ public class LogicProgrammerActivateElementPacket extends PacketCodec {
     @Override
     public void actionServer(Level world, ServerPlayer player) {
         if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
-            ResourceLocation type = ResourceLocation.parse(typeId);
+            Identifier type = Identifier.parse(typeId);
             if (type.getPath().isEmpty()) {
                 ((ContainerLogicProgrammerBase) player.containerMenu).returnWriteItemToPlayer();
             }
             ((ContainerLogicProgrammerBase) player.containerMenu).setActiveElementById(
-                    type, ResourceLocation.parse(elementId));
+                    type, Identifier.parse(elementId));
         }
     }
 

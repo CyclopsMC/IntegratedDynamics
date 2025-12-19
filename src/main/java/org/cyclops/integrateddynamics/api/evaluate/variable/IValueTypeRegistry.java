@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -39,7 +39,7 @@ public interface IValueTypeRegistry extends IRegistry, IVariableFacadeHandler<IV
      * @param name The unique name.
      * @return The value type or null if not found.
      */
-    public IValueType getValueType(ResourceLocation name);
+    public IValueType getValueType(Identifier name);
 
     /**
      * @return All registered value types.

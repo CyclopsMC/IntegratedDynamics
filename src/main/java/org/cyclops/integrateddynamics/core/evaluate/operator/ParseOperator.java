@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
@@ -31,8 +31,8 @@ public class ParseOperator<T2 extends IValueType<V2>, V2 extends IValue> extends
   }
 
   @Override
-  public ResourceLocation getUniqueName() {
-    return ResourceLocation.fromNamespaceAndPath(getModId(), "operator." + getModId() + ".parse." + to.getTranslationKey());
+  public Identifier getUniqueName() {
+    return Identifier.fromNamespaceAndPath(getModId(), "operator." + getModId() + ".parse." + to.getTranslationKey());
   }
 
   @Override

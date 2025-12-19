@@ -12,6 +12,6 @@ import org.cyclops.integrateddynamics.client.render.blockentity.ItemStackBlockEn
 public class BlockEnergyBatteryConfigClient extends BlockClientConfig<IntegratedDynamics> {
     public BlockEnergyBatteryConfigClient(BlockConfigCommon<IntegratedDynamics> blockConfig) {
         super(blockConfig);
-        blockConfig.getMod().getModEventBus().addListener((RegisterSpecialModelRendererEvent event) -> event.register(blockConfig.getResourceKey().location(), ItemStackBlockEntityEnergyBatteryRender.Unbaked.MAP_CODEC));
+        blockConfig.getMod().getModEventBus().addListener((RegisterSpecialModelRendererEvent event) -> event.register(blockConfig.getResourceKey().identifier(), ItemStackBlockEntityEnergyBatteryRender.Unbaked.MAP_CODEC));
     }
 }

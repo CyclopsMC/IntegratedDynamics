@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.part.write;
 import com.google.common.collect.Maps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.helper.CollectionHelpers;
@@ -48,7 +48,7 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
     @Override
     public void deserialize(ValueInput valueInput) {
         valueInput.getString("activeAspectName").ifPresent(activeAspect -> {
-            IAspect aspect = Aspects.REGISTRY.getAspect(ResourceLocation.parse(activeAspect));
+            IAspect aspect = Aspects.REGISTRY.getAspect(Identifier.parse(activeAspect));
             if (aspect instanceof IAspectWrite) {
                 this.activeAspect = (IAspectWrite) aspect;
             }

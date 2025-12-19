@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Maps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.IPartTypeRegistry;
@@ -47,7 +47,7 @@ public final class PartTypeRegistry implements IPartTypeRegistry {
     }
 
     @Override
-    public IPartType getPartType(ResourceLocation partName) {
+    public IPartType getPartType(Identifier partName) {
         return partTypes.get(partName.toString());
     }
 

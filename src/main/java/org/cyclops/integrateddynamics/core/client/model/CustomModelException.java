@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.model;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Exception that can occur while loading custom models.
@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class CustomModelException extends RuntimeException {
 
-    public CustomModelException(ResourceLocation modelLocation) {
+    public CustomModelException(Identifier modelLocation) {
         super(String.format("The facadeModel %s could not be loaded.", modelLocation));
     }
 

@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
@@ -62,8 +62,8 @@ public class ValueTypeListProxyLazyBuilt<T extends IValueType<V>, V extends IVal
     public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue>> {
 
         @Override
-        public ResourceLocation getName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "lazybuilt");
+        public Identifier getName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "lazybuilt");
         }
 
         @Override
@@ -75,7 +75,7 @@ public class ValueTypeListProxyLazyBuilt<T extends IValueType<V>, V extends IVal
 
         @Override
         protected ValueTypeListProxyLazyBuilt<IValueType<IValue>, IValue> deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException, EvaluationException {
-            IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueInput.getString("valueType").orElseThrow()));
+            IValueType valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(valueInput.getString("valueType").orElseThrow()));
             IValue value = ValueHelpers.deserializeRaw(valueInput.child("v").orElseThrow(), valueType);
             IOperator operator = Operators.REGISTRY.deserialize(valueInput.child("operator").orElseThrow());
             return new ValueTypeListProxyLazyBuilt<>(value, operator);

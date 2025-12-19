@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.api.evaluate.operator;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -27,7 +27,7 @@ public interface IOperator {
     /**
      * @return The unique name for this operator, only used for internal storage.
      */
-    public ResourceLocation getUniqueName();
+    public Identifier getUniqueName();
 
     /**
      * @return The unique interact name for this operator, when interacting with this operator using external contexts,

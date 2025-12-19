@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.init.IRegistry;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
@@ -77,6 +77,6 @@ public interface IAspectRegistry extends IRegistry, IVariableFacadeHandler<IAspe
      * @param name The name of the aspect.
      * @return The matching aspect.
      */
-    public IAspect getAspect(ResourceLocation name);
+    public IAspect getAspect(Identifier name);
 
 }

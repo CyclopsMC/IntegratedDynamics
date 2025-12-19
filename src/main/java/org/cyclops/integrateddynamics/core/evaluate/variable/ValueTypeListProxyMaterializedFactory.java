@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
@@ -17,8 +17,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyF
 public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProxyFactoryTypeRegistry.IProxyFactory<IValueType<IValue>, IValue, ValueTypeListProxyMaterialized<IValueType<IValue>, IValue>> {
 
     @Override
-    public ResourceLocation getName() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "materialized");
+    public Identifier getName() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "materialized");
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
     @Override
     public ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> deserialize(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         String valueTypeName = valueInput.getString("valueType").orElseThrow();
-        IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueTypeName));
+        IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(valueTypeName));
         if (valueType == null) {
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", valueTypeName));
         }
@@ -63,7 +63,7 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
         for (ValueInput valueTag : list) {
             if (heterogeneous) {
                 String subValueTypeName = valueTag.getString("valueType").orElseThrow();
-                elementValueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(subValueTypeName));
+                elementValueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(subValueTypeName));
                 if (elementValueType == null) {
                     throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the serialized materialized list proxy value because the value type by name '%s' was not found.", subValueTypeName));
                 }

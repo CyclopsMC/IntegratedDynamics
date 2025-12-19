@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.helper;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -12,7 +12,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -87,9 +87,9 @@ public final class Helpers {
      * @param name The tag name
      * @return A Stream containing ItemStacks registered for this tag
      */
-    public static Stream<ItemStack> getTagValues(String name) throws ResourceLocationException {
+    public static Stream<ItemStack> getTagValues(String name) throws IdentifierException {
         Optional<HolderSet.Named<Item>> tag = BuiltInRegistries.ITEM
-                .get(TagKey.create(Registries.ITEM, ResourceLocation.parse(name)));
+                .get(TagKey.create(Registries.ITEM, Identifier.parse(name)));
         return tag.stream().flatMap(named -> named.stream().map(ItemStack::new));
     }
 
@@ -99,9 +99,9 @@ public final class Helpers {
      * @param name The tag name
      * @return A Stream containing Blocks registered for this tag
      */
-    public static Stream<BlockState> getBlockTagValues(String name) throws ResourceLocationException {
+    public static Stream<BlockState> getBlockTagValues(String name) throws IdentifierException {
         Optional<HolderSet.Named<Block>> tag = BuiltInRegistries.BLOCK
-                .get(TagKey.create(Registries.BLOCK, ResourceLocation.parse(name)));
+                .get(TagKey.create(Registries.BLOCK, Identifier.parse(name)));
         return tag.stream().flatMap(named -> named.stream().map(block -> block.value().defaultBlockState()));
     }
 
@@ -111,9 +111,9 @@ public final class Helpers {
      * @param name The tag name
      * @return A Stream containing Fluids registered for this tag
      */
-    public static Stream<FluidStack> getFluidTagValues(String name) throws ResourceLocationException {
+    public static Stream<FluidStack> getFluidTagValues(String name) throws IdentifierException {
         Optional<HolderSet.Named<Fluid>> tag = BuiltInRegistries.FLUID
-                .get(TagKey.create(Registries.FLUID, ResourceLocation.parse(name)));
+                .get(TagKey.create(Registries.FLUID, Identifier.parse(name)));
         return tag.stream().flatMap(named -> named.stream().map(fluid -> new FluidStack(fluid, IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume())));
     }
 

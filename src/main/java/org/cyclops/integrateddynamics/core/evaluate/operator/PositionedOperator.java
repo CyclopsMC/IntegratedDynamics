@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -70,9 +70,9 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
     public static class Serializer implements IOperatorSerializer<PositionedOperator> {
 
         private final Class<? extends PositionedOperator> clazz;
-        private final ResourceLocation uniqueName;
+        private final Identifier uniqueName;
 
-        public Serializer(Class<? extends PositionedOperator> clazz, ResourceLocation uniqueName) {
+        public Serializer(Class<? extends PositionedOperator> clazz, Identifier uniqueName) {
             this.clazz = clazz;
             this.uniqueName = uniqueName;
         }
@@ -83,7 +83,7 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
         }
 
         @Override
-        public ResourceLocation getUniqueName() {
+        public Identifier getUniqueName() {
             return this.uniqueName;
         }
 

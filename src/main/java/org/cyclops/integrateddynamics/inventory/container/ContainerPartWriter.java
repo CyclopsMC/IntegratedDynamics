@@ -5,7 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -189,7 +189,7 @@ public class ContainerPartWriter<P extends IPartTypeWriter<P, S>, S extends IPar
         if (aspectName == null) {
             return null;
         }
-        return AspectRegistry.getInstance().getAspect(ResourceLocation.parse(aspectName));
+        return AspectRegistry.getInstance().getAspect(Identifier.parse(aspectName));
     }
 
 }

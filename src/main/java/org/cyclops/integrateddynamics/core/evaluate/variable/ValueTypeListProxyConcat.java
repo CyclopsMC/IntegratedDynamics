@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
@@ -51,8 +51,8 @@ public class ValueTypeListProxyConcat<T extends IValueType<V>, V extends IValue>
     public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyConcat<IValueType<IValue>, IValue>> {
 
         @Override
-        public ResourceLocation getName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "concat");
+        public Identifier getName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "concat");
         }
 
         @Override

@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
@@ -60,7 +60,7 @@ public class OperatorBuilders {
     public static final IOperatorValuePropagator<String, IValue> PROPAGATOR_STRING_VALUE = ValueTypeString.ValueString::of;
     public static final IOperatorValuePropagator<Optional<Tag>, IValue> PROPAGATOR_NBT_VALUE = ValueTypeNbt.ValueNbt::of;
     public static final IOperatorValuePropagator<Optional<CompoundTag>, IValue> PROPAGATOR_NBT_COMPOUND_VALUE = opt -> ValueTypeNbt.ValueNbt.of(opt.map(t -> (Tag) t));
-    public static final IOperatorValuePropagator<ResourceLocation, ValueTypeString.ValueString> PROPAGATOR_RESOURCELOCATION_MODNAME = resourceLocation -> {
+    public static final IOperatorValuePropagator<Identifier, ValueTypeString.ValueString> PROPAGATOR_RESOURCELOCATION_MODNAME = resourceLocation -> {
         String modId = resourceLocation.getNamespace();
         Optional<? extends ModContainer> mod = ModList.get().getModContainerById(modId);
         String modName = mod
@@ -371,10 +371,10 @@ public class OperatorBuilders {
 
     // --------------- String builders ---------------
 
-    public static final IterativeFunction.PrePostBuilder<ResourceLocation, IValue> FUNCTION_STRING_TO_RESOURCE_LOCATION = IterativeFunction.PrePostBuilder.begin()
+    public static final IterativeFunction.PrePostBuilder<Identifier, IValue> FUNCTION_STRING_TO_RESOURCE_LOCATION = IterativeFunction.PrePostBuilder.begin()
             .appendPre(input -> {
                 ValueTypeString.ValueString a = input.getValue(0, ValueTypes.STRING);
-                return ValueHelpers.createResourceLocationInEvaluation(a.getRawValue());
+                return ValueHelpers.createIdentifierInEvaluation(a.getRawValue());
             });
 
     // --------------- Operator helpers ---------------

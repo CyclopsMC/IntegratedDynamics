@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.item;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 
@@ -16,7 +16,7 @@ public interface IVariableFacadeHandler<F extends IVariableFacade> {
     /**
      * @return The unique name of this type used to identity variables to this handler.
      */
-    public ResourceLocation getUniqueName();
+    public Identifier getUniqueName();
 
     /**
      * Get the variable facade for the given tag.

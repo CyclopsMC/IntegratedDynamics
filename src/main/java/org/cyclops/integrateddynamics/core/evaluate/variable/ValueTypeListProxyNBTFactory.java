@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.persist.nbt.INBTProvider;
@@ -18,11 +18,11 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V> & INBTProvider> implements IValueTypeListProxyFactoryTypeRegistry.IProxyFactory<T, V, P> {
 
-    private final ResourceLocation name;
+    private final Identifier name;
     private final Class<P> proxyClass;
     private final Constructor<P> proxyClassConstructor;
 
-    public ValueTypeListProxyNBTFactory(ResourceLocation name, Class<P> proxyClass) {
+    public ValueTypeListProxyNBTFactory(Identifier name, Class<P> proxyClass) {
         this.name = name;
         this.proxyClass = proxyClass;
 
@@ -36,7 +36,7 @@ public class ValueTypeListProxyNBTFactory<T extends IValueType<V>, V extends IVa
     }
 
     @Override
-    public ResourceLocation getName() {
+    public Identifier getName() {
         return this.name;
     }
 

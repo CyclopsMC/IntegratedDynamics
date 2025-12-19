@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonArrow;
@@ -176,7 +176,7 @@ public class ValueTypeIngredientsLPElementClient extends ValueTypeLPElementBaseC
             // - minecraft:energy
             // - mekanism:chemicalstack
             return IngredientComponentHandlers.REGISTRY.getComponents().stream()
-                    .sorted(Comparator.<IngredientComponent<?, ?>, ResourceLocation>comparing(IngredientComponent::getName).reversed())
+                    .sorted(Comparator.<IngredientComponent<?, ?>, Identifier>comparing(IngredientComponent::getName).reversed())
                     .toList();
         }
 

@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.gametest.integration;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -50,7 +50,7 @@ public class DummyValueType implements IValueType<DummyValueType.DummyValue> {
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
+    public Identifier getUniqueName() {
         return null;
     }
 

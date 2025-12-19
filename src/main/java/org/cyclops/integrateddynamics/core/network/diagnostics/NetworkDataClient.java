@@ -153,7 +153,7 @@ public class NetworkDataClient {
                 jsonPart.addProperty("cables", part.getNetworkCables());
                 jsonPart.addProperty("part", IModHelpers.get().getL10NHelpers().localize(part.getName()));
                 jsonPart.addProperty("ticktime", Float.parseFloat(String.format(Locale.ENGLISH, "%.6f", ((double) part.getLast20TicksDurationNs()) / IModHelpers.get().getMinecraftHelpers().getSecondInTicks() / 1000000)));
-                jsonPart.addProperty("dimension", part.getDimension().location().toString());
+                jsonPart.addProperty("dimension", part.getDimension().identifier().toString());
                 jsonPart.addProperty("position", part.getPos().toShortString());
                 jsonPart.addProperty("side", part.getSide().name());
                 jsonPart.addProperty("highlighted", NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(part.toPartPos()));
@@ -172,7 +172,7 @@ public class NetworkDataClient {
                 jsonPart.addProperty("network", observer.getNetworkId());
                 jsonPart.addProperty("part", observer.getName());
                 jsonPart.addProperty("ticktime", String.format("%.6f", ((double) observer.getLast20TicksDurationNs()) / IModHelpers.get().getMinecraftHelpers().getSecondInTicks() / 1000000));
-                jsonPart.addProperty("dimension", observer.getDimension().location().toString());
+                jsonPart.addProperty("dimension", observer.getDimension().identifier().toString());
                 jsonPart.addProperty("position", observer.getPos().toShortString());
                 jsonPart.addProperty("side", observer.getSide() != null ? observer.getSide().name() : "null");
                 jsonPart.addProperty("highlighted", NetworkDiagnosticsPartOverlayRenderer.getInstance().hasPartPos(observer.toPartPos()));
@@ -230,7 +230,7 @@ public class NetworkDataClient {
 
         public PartPos toPartPos() {
             Level world = Minecraft.getInstance().level;
-            if (getDimension().location().equals(world.dimension().location())) {
+            if (getDimension().identifier().equals(world.dimension().identifier())) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;
@@ -248,7 +248,7 @@ public class NetworkDataClient {
 
         public PartPos toPartPos() {
             Level world = Minecraft.getInstance().level;
-            if (getDimension().location().equals(world.dimension().location())) {
+            if (getDimension().identifier().equals(world.dimension().identifier())) {
                 return PartPos.of(DimPos.of(world, getPos()), getSide());
             }
             return null;

@@ -11,7 +11,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
@@ -62,8 +62,8 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     @Override
-    protected ResourceLocation constructGuiTexture() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/aspect_settings.png");
+    protected Identifier constructGuiTexture() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/aspect_settings.png");
     }
 
     public int getActivePropertyIndex() {
@@ -252,7 +252,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
         }
 
         @Override
-        protected ResourceLocation getTexture() {
+        protected Identifier getTexture() {
             return texture;
         }
 

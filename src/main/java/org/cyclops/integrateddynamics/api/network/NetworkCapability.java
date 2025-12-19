@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.CapabilityRegistry;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class NetworkCapability<T> extends BaseCapability<T, Void> {
 
-    public static <T> NetworkCapability<T> create(ResourceLocation name, Class<T> typeClass) {
+    public static <T> NetworkCapability<T> create(Identifier name, Class<T> typeClass) {
         return (NetworkCapability<T>) registry.create(name, typeClass, void.class);
     }
 
@@ -28,7 +28,7 @@ public class NetworkCapability<T> extends BaseCapability<T, Void> {
     // Requires explicitly-typed constructor due to ECJ inference failure.
     private static final CapabilityRegistry<NetworkCapability<?>> registry = new CapabilityRegistry<NetworkCapability<?>>((name, type, clazz) -> new NetworkCapability<>(name, type));
 
-    private NetworkCapability(ResourceLocation name, Class<T> typeClass) {
+    private NetworkCapability(Identifier name, Class<T> typeClass) {
         super(name, typeClass, void.class);
     }
 

@@ -17,9 +17,9 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.block.BlockEnergyBatteryBase;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * @author rubensworks
@@ -49,7 +49,7 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
     }
 
     @Override
-    public void getExtents(Set<Vector3f> vectors) {
+    public void getExtents(Consumer<Vector3fc> consumer) {
 
     }
 

@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.network;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * A network element that is identifiable within a certain group.
@@ -17,6 +17,6 @@ public interface IIdentifiableNetworkElement {
     /**
      * @return A group within which the element is unique.
      */
-    public ResourceLocation getGroup();
+    public Identifier getGroup();
 
 }

@@ -7,9 +7,9 @@ import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.apache.http.util.Asserts;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.command.CommandTest;
+import org.cyclops.integrateddynamics.gametest.integration.Asserts;
 
 import java.util.Objects;
 import java.util.function.Consumer;

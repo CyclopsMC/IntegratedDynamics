@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Maps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -43,7 +43,7 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> IProxyFactory<T, V, P> getFactory(ResourceLocation name) {
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> IProxyFactory<T, V, P> getFactory(Identifier name) {
         return factories.get(name.toString());
     }
 
@@ -60,7 +60,7 @@ public class ValueTypeListProxyFactoryTypeRegistry implements IValueTypeListProx
     @Override
     public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> P deserialize(ValueInput valueInput) throws SerializationException {
         String name = valueInput.getString("proxyName").orElseThrow();
-        IProxyFactory<T, V, P> factory = getFactory(ResourceLocation.parse(name));
+        IProxyFactory<T, V, P> factory = getFactory(Identifier.parse(name));
         if (factory == null) {
             throw new SerializationException(String.format("No deserialization factory exists for the list proxy type name '%s'.", name));
         }

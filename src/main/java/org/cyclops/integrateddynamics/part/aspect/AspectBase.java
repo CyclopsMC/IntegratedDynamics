@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -43,8 +43,8 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(getModId(), getUnlocalizedType().replaceAll("\\.", "_"));
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(getModId(), getUnlocalizedType().replaceAll("\\.", "_"));
     }
 
     @Override

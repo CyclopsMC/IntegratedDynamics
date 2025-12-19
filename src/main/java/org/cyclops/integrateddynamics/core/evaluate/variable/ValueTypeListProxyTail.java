@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
@@ -41,8 +41,8 @@ public class ValueTypeListProxyTail<T extends IValueType<V>, V extends IValue> e
     public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyTail<IValueType<IValue>, IValue>> {
 
         @Override
-        public ResourceLocation getName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "tail");
+        public Identifier getName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "tail");
         }
 
         @Override

@@ -15,7 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
@@ -47,7 +47,7 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
     protected ButtonCheckbox inputNbt;
     protected ButtonCheckbox inputTags;
     protected ButtonCheckbox inputReusable;
-    protected WidgetTextFieldDropdown<ResourceLocation> inputTagsDropdown;
+    protected WidgetTextFieldDropdown<Identifier> inputTagsDropdown;
     protected ButtonImage inputSave;
 
     public ValueTypeRecipeAdapterLPElementPropertiesSubGui(E element, int baseX, int baseY, int maxWidth, int maxHeight,
@@ -123,8 +123,8 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
 
     public abstract ItemMatchProperties getSlotProperties();
 
-    private Set<IDropdownEntry<ResourceLocation>> getDropdownEntries() {
-        LinkedHashSet<IDropdownEntry<ResourceLocation>> set = Sets.newLinkedHashSet();
+    private Set<IDropdownEntry<Identifier>> getDropdownEntries() {
+        LinkedHashSet<IDropdownEntry<Identifier>> set = Sets.newLinkedHashSet();
         if (getSlotContents().isEmpty()) {
             BuiltInRegistries.ITEM.listTagIds()
                     .forEach(registeredTag -> set.add(new DropdownEntry(registeredTag.location())));
@@ -144,7 +144,7 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
         this.inputTagsDropdown.setVisible(this.inputTags.isChecked());
 
         if (this.inputTags.isChecked()) {
-            Set<IDropdownEntry<ResourceLocation>> dropdownEntries = getDropdownEntries();
+            Set<IDropdownEntry<Identifier>> dropdownEntries = getDropdownEntries();
             this.inputTagsDropdown.setPossibilities(dropdownEntries);
             if (props.getItemTag() != null) {
                 this.inputTagsDropdown.selectPossibility(dropdownEntries.stream()
@@ -200,13 +200,13 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
         if (this.inputTagsDropdown.isFocused()) {
             int i = this.inputTagsDropdown.getHoveredVisiblePossibility(mouseX, mouseY);
             if (i >= 0) {
-                IDropdownEntry<ResourceLocation> hoveredPossibility = this.inputTagsDropdown.getVisiblePossibility(i);
+                IDropdownEntry<Identifier> hoveredPossibility = this.inputTagsDropdown.getVisiblePossibility(i);
                 drawTagsTooltip(guiGraphics, hoveredPossibility, guiLeft, guiTop, mouseX + 10, mouseY - 20, 6, IModHelpers.get().getGuiHelpers().getSlotSize());
             }
         }
     }
 
-    protected void drawTagsTooltip(GuiGraphics guiGraphics, IDropdownEntry<ResourceLocation> hoveredPossibility, int guiLeft, int guiTop,
+    protected void drawTagsTooltip(GuiGraphics guiGraphics, IDropdownEntry<Identifier> hoveredPossibility, int guiLeft, int guiTop,
                                    int mouseX, int mouseY, int columns, int offset) {
         int x = mouseX - guiLeft;
         int y = mouseY - guiTop;
@@ -264,10 +264,10 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
                 || super.mouseClicked(evt, isDoubleClick);
     }
 
-    public static class DropdownEntry implements IDropdownEntry<ResourceLocation> {
-        private final ResourceLocation tag;
+    public static class DropdownEntry implements IDropdownEntry<Identifier> {
+        private final Identifier tag;
 
-        public DropdownEntry(ResourceLocation tag) {
+        public DropdownEntry(Identifier tag) {
             this.tag = tag;
         }
 
@@ -287,7 +287,7 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
         }
 
         @Override
-        public ResourceLocation getValue() {
+        public Identifier getValue() {
             return this.tag;
         }
     }

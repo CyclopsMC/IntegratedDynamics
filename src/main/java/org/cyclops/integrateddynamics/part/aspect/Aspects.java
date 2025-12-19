@@ -10,7 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -162,7 +162,7 @@ public class Aspects {
                             .handle(AspectReadBuilders.PROP_GET_BOOLEAN, "block").buildRead();
             public static final IAspectRead<ValueTypeString.ValueString, ValueTypeString> STRING_DIMENSION =
                     AspectReadBuilders.Block.BUILDER_STRING.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                            world -> world.dimension().location().toString()
+                            world -> world.dimension().identifier().toString()
                     ).withUpdateType(AspectUpdateType.NEVER)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "dimension").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_POSX =
@@ -203,7 +203,7 @@ public class Aspects {
                             .handle(
                                     // Copied from DebugScreenOverlay#printBiome
                                     dimPos -> dimPos.getLevel(true).getBiome(dimPos.getBlockPos())
-                                            .unwrap().map(key -> key.location().toString(), biome -> "[unregistered " + biome + "]")
+                                            .unwrap().map(key -> key.identifier().toString(), biome -> "[unregistered " + biome + "]")
                             ).withUpdateType(AspectUpdateType.BLOCK_UPDATE)
                             .handle(AspectReadBuilders.PROP_GET_STRING, "biome").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHT =
@@ -545,7 +545,7 @@ public class Aspects {
                             ))).appendKind("recipeoutputbyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerOutput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_output")));
+                        PositionedOperatorRecipeHandlerOutput.class, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_output")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEINPUTS =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(input ->
@@ -554,7 +554,7 @@ public class Aspects {
                             ))).appendKind("recipeinputsbyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerInputs.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_inputs")));
+                        PositionedOperatorRecipeHandlerInputs.class, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_inputs")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPESBYINPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -563,7 +563,7 @@ public class Aspects {
                             ))).appendKind("recipesbyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipesByInput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_input")));
+                        PositionedOperatorRecipeHandlerRecipesByInput.class, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_input")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPESBYOUTPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -572,7 +572,7 @@ public class Aspects {
                             ))).appendKind("recipesbyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipesByOutput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_output")));
+                        PositionedOperatorRecipeHandlerRecipesByOutput.class, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipes_by_output")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYINPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -581,7 +581,7 @@ public class Aspects {
                             ))).appendKind("recipebyinput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipeByInput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_input")));
+                        PositionedOperatorRecipeHandlerRecipeByInput.class, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_input")));
             }
             public static final IAspectRead<ValueTypeOperator.ValueOperator, ValueTypeOperator> OPERATOR_GETRECIPEBYOUTPUT =
                     AspectReadBuilders.Machine.BUILDER_RECIPE_HANDLER_OPERATOR.handle(
@@ -590,7 +590,7 @@ public class Aspects {
                             ))).appendKind("recipebyoutput").buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorRecipeHandlerRecipeByOutput.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_output")));
+                        PositionedOperatorRecipeHandlerRecipeByOutput.class, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "positioned_recipe_handler_recipe_by_output")));
             }
 
             public static final IAspectValuePropagator<Pair<PartTarget, IAspectProperties>, EnergyHandler>
@@ -726,7 +726,7 @@ public class Aspects {
                     .buildRead();
             static {
                 Operators.REGISTRY.registerSerializer(new PositionedOperator.Serializer(
-                        PositionedOperatorNetworkVariableById.class, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "positioned_network_variable_by_id")));
+                        PositionedOperatorNetworkVariableById.class, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "positioned_network_variable_by_id")));
             }
 
         }
@@ -940,7 +940,7 @@ public class Aspects {
                                         ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcast(null,
                                                 (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 64.0D,
                                                 world.dimension(),
-                                                new ClientboundSoundPacket(Holder.direct(SoundEvent.createVariableRangeEvent(ValueHelpers.createResourceLocationInEvaluation(input.getRight()))),
+                                                new ClientboundSoundPacket(Holder.direct(SoundEvent.createVariableRangeEvent(ValueHelpers.createIdentifierInEvaluation(input.getRight()))),
                                                         SoundSource.RECORDS,
                                                         (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
                                                         volume, f, world.getRandom().nextLong()));

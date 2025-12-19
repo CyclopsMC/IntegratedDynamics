@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.inventory.container.slot;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.RegistryEntries;
  */
 public class SlotVariable extends SlotSingleItem {
 
-    public static ResourceLocation VARIABLE_EMPTY = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "slot/variable_empty");
+    public static Identifier VARIABLE_EMPTY = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "slot/variable_empty");
 
     /**
      * Make a new instance.

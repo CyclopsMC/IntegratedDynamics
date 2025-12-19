@@ -2,12 +2,12 @@ package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -130,7 +130,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
                     r = 1.0F;
                 }
 
-                submitNodeCollector.submitCustomGeometry(poseStack, RenderType.text(icon.atlasLocation()), (pose, vb) -> {
+                submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                     vb.addVertex(pose, c[0][0], c[0][1] * height, c[0][2]).setColor(r, g, b, 1).setUv(icon.getU0(), replacedMaxV).setLight(combinedLight);
                     vb.addVertex(pose, c[1][0], c[1][1] * height, c[1][2]).setColor(r, g, b, 1).setUv(icon.getU0(), replacedMinV).setLight(combinedLight);
                     vb.addVertex(pose, c[2][0], c[2][1] * height, c[2][2]).setColor(r, g, b, 1).setUv(icon.getU1(), replacedMinV).setLight(combinedLight);

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.part.aspect.write;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -37,7 +37,7 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
         }
         this.unlocalizedTypeSuffix = unlocalizedTypeSuffix;
         if(IModHelpers.get().getMinecraftHelpers().isClientSide()) {
-            registerModelResourceLocation();
+            registerModelIdentifier();
         }
     }
 
@@ -100,9 +100,9 @@ public abstract class AspectWriteBase<V extends IValue, T extends IValueType<V>>
         return "write" + unlocalizedTypeSuffix;
     }
 
-    protected void registerModelResourceLocation() {
+    protected void registerModelIdentifier() {
         Aspects.REGISTRY.getClient().registerAspectModel(this,
-                ResourceLocation.parse(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
+                Identifier.parse(getModId() + ":aspect/" + getUnlocalizedType().replaceAll("\\.", "/")));
     }
 
 }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
@@ -21,7 +21,7 @@ public abstract class ValueTypeListProxyEntityCapability<C, Context, T extends I
     private final EntityCapability<C, Context> capability;
     private Direction side;
 
-    public ValueTypeListProxyEntityCapability(ResourceLocation name, T valueType, Level world, Entity entity,
+    public ValueTypeListProxyEntityCapability(Identifier name, T valueType, Level world, Entity entity,
                                               EntityCapability<C, Context> capability, @Nullable Direction side) {
         super(name, valueType, world, entity);
         this.capability = capability;

@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -238,7 +238,7 @@ public class PartHelpers {
      */
     public static Pair<Direction, IPartType> deserializePartType(ValueInput valueInput, @Nullable INetwork network, BlockPos pos) {
         String partTypeName = valueInput.getString("__partType").orElseThrow();
-        IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(ResourceLocation.parse(partTypeName)));
+        IPartType partType = validatePartType(network, partTypeName, PartTypes.REGISTRY.getPartType(Identifier.parse(partTypeName)));
         if(partType != null) {
             Direction side = Direction.byName(valueInput.getString("__side").orElseThrow());
             if (side != null) {
@@ -545,7 +545,7 @@ public class PartHelpers {
      */
     public static <P extends IPartType<P, S>, S extends IPartState<P>> P readPart(FriendlyByteBuf packetBuffer) {
         String name = packetBuffer.readUtf();
-        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(ResourceLocation.parse(name)),
+        return (P) Objects.requireNonNull(PartTypeRegistry.getInstance().getPartType(Identifier.parse(name)),
                 String.format("Could not find a part by name %s", name));
     }
 

@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.client.gui.container;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.helper.IGuiHelpers;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -22,8 +22,8 @@ public class ContainerScreenMechanicalDryingBasin extends ContainerScreenMechani
     }
 
     @Override
-    protected ResourceLocation constructGuiTexture() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/mechanical_drying_basin.png");
+    protected Identifier constructGuiTexture() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/mechanical_drying_basin.png");
     }
 
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {

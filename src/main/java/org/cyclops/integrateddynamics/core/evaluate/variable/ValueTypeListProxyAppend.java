@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
@@ -45,8 +45,8 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
     public static class Factory extends ValueTypeListProxyNBTFactorySimple<IValueType<IValue>, IValue, ValueTypeListProxyAppend<IValueType<IValue>, IValue>> {
 
         @Override
-        public ResourceLocation getName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "append");
+        public Identifier getName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "append");
         }
 
         @Override
@@ -58,7 +58,7 @@ public class ValueTypeListProxyAppend<T extends IValueType<V>, V extends IValue>
 
         @Override
         protected ValueTypeListProxyAppend<IValueType<IValue>, IValue> deserializeNbt(ValueInput valueInput) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
-            IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueInput.getString("valueType").orElseThrow()));
+            IValueType valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(valueInput.getString("valueType").orElseThrow()));
             IValue value = ValueHelpers.deserializeRaw(valueInput.child("v").orElseThrow(), valueType);
             IValueTypeListProxy<IValueType<IValue>, IValue> list = ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput.child("sublist").orElseThrow());
             return new ValueTypeListProxyAppend<>(list, value);

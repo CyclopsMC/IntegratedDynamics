@@ -4,12 +4,13 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
 import com.mojang.math.Quadrant;
+import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,8 +21,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.ClientHooks;
+import net.neoforged.neoforge.client.model.quad.BakedColors;
+import net.neoforged.neoforge.client.model.quad.BakedNormals;
 import net.neoforged.neoforge.model.data.ModelData;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.model.DelegatingDynamicItemAndBlockModel;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
  */
 public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel {
 
+    public static ModelBaker MODEL_BAKER;
     private static final FaceBakery FACE_BAKERY = new FaceBakery();
     private static final Cache<Triple<IRenderState, Direction, ChunkSectionLayer>, List<BakedQuad>> CACHE_QUADS = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
 
@@ -113,7 +115,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         };
     }
 
-    private Direction getSideFromVecs(Vec3 a, Vec3 b, Vec3 c) {
+    private Direction getSideFromVecs(Vector3f a, Vector3f b, Vector3f c) {
         int dir = a.y == b.y && b.y == c.y ? 0 : (a.x == b.x && b.x == c.x ? 2 : 4);
         if (dir == 0) {
             dir += (c.y >= 0.5) ? 1 : 0;
@@ -185,17 +187,17 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         ModelState transformation = getRotation(side);
         BlockElementRotation DEFAULT_ROTATION = null;
         boolean APPLY_SHADING = true;
-        quads.add(FACE_BAKERY.bakeQuad(from, to, blockPartFace, texture, Direction.NORTH, transformation, DEFAULT_ROTATION, APPLY_SHADING, 0));
+        quads.add(FACE_BAKERY.bakeQuad(MODEL_BAKER.parts(), from, to, blockPartFace, texture, Direction.NORTH, transformation, DEFAULT_ROTATION, APPLY_SHADING, 0));
     }
 
     public static BlockModelRotation getRotation(Direction facing) {
         switch (facing) {
-            case DOWN:  return BlockModelRotation.X90_Y180;
-            case UP:    return BlockModelRotation.X270_Y180;
-            case NORTH: return BlockModelRotation.X0_Y0;
-            case SOUTH: return BlockModelRotation.X0_Y180;
-            case WEST:  return BlockModelRotation.X0_Y270;
-            case EAST:  return BlockModelRotation.X0_Y90;
+            case DOWN:  return BlockModelRotation.get(Quadrant.fromXYAngles(Quadrant.R90, Quadrant.R180));
+            case UP:    return BlockModelRotation.get(Quadrant.fromXYAngles(Quadrant.R270, Quadrant.R180));
+            case NORTH: return BlockModelRotation.get(Quadrant.fromXYAngles(Quadrant.R0, Quadrant.R0));
+            case SOUTH: return BlockModelRotation.get(Quadrant.fromXYAngles(Quadrant.R0, Quadrant.R180));
+            case WEST:  return BlockModelRotation.get(Quadrant.fromXYAngles(Quadrant.R0, Quadrant.R270));
+            case EAST:  return BlockModelRotation.get(Quadrant.fromXYAngles(Quadrant.R0, Quadrant.R90));
         }
         throw new IllegalArgumentException(String.valueOf(facing));
     }
@@ -249,28 +251,34 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                             quadVertexes = makeQuadVertexes(MIN, MAX, 1F - depthFactor);
                         }
                         for (float[][] v : quadVertexes) {
-                            Vec3 v1 = rotate(new Vec3(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), side).add(.5, .5, .5);
-                            Vec3 v2 = rotate(new Vec3(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), side).add(.5, .5, .5);
-                            Vec3 v3 = rotate(new Vec3(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), side).add(.5, .5, .5);
-                            Vec3 v4 = rotate(new Vec3(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), side).add(.5, .5, .5);
+                            Vector3f v1 = rotate(new Vector3f(v[0][0] - .5f, v[0][1] - .5f, v[0][2] - .5f), side).add(.5f, .5f, .5f);
+                            Vector3f v2 = rotate(new Vector3f(v[1][0] - .5f, v[1][1] - .5f, v[1][2] - .5f), side).add(.5f, .5f, .5f);
+                            Vector3f v3 = rotate(new Vector3f(v[2][0] - .5f, v[2][1] - .5f, v[2][2] - .5f), side).add(.5f, .5f, .5f);
+                            Vector3f v4 = rotate(new Vector3f(v[3][0] - .5f, v[3][1] - .5f, v[3][2] - .5f), side).add(.5f, .5f, .5f);
                             Direction realSide = getSideFromVecs(v1, v2, v3);
 
                             boolean invert = i == 2 || i == 1;
                             int length = hasPart ? LENGTH_CONNECTION_LIMITED : LENGTH_CONNECTION;
 
-                            int[] data = Ints.concat(
-                                    vertexToInts((float) v1.x, (float) v1.y, (float) v1.z, -1, texture,
-                                            LENGTH_CONNECTION, invert ? length : 0),
-                                    vertexToInts((float) v2.x, (float) v2.y, (float) v2.z, -1, texture,
-                                            INV_LENGTH_CONNECTION, invert ? length : 0),
-                                    vertexToInts((float) v3.x, (float) v3.y, (float) v3.z, -1, texture,
-                                            INV_LENGTH_CONNECTION, invert ? 0 : length),
-                                    vertexToInts((float) v4.x, (float) v4.y, (float) v4.z, -1, texture,
-                                            LENGTH_CONNECTION, invert ? 0 : length)
-                            );
                             i++;
-                            ClientHooks.fillNormal(data); // This fixes lighting issues when item is rendered in hand/inventory
-                            ret.add(new BakedQuad(data, -1, realSide, texture, true, 0, true));
+                            ret.add(new BakedQuad(
+                                    v1,
+                                    v2,
+                                    v3,
+                                    v4,
+                                    UVPair.pack(texture.getU(LENGTH_CONNECTION / 16f), texture.getV(invert ? length / 16f : 0)),
+                                    UVPair.pack(texture.getU(INV_LENGTH_CONNECTION / 16f), texture.getV(invert ? length / 16f : 0)),
+                                    UVPair.pack(texture.getU(INV_LENGTH_CONNECTION / 16f), texture.getV(invert ? 0 : length / 16f)),
+                                    UVPair.pack(texture.getU(LENGTH_CONNECTION / 16f), texture.getV(invert ? 0 : length / 16f)),
+                                    -1,
+                                    realSide,
+                                    texture,
+                                    true,
+                                    0,
+                                    BakedNormals.UNSPECIFIED,
+                                    BakedColors.DEFAULT,
+                                    true
+                            ));
                         }
                     } else {
                         addBakedQuad(ret, MIN, MAX, MIN, MAX, MAX, texture, side);

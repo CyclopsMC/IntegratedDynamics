@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -22,7 +22,7 @@ public class BlockEntityEnergyBatteryConfigClient {
 
     public void postTextureStitch(TextureAtlasStitchedEvent event) {
         if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
-            ICON_OVERLAY = event.getAtlas().getSprite(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/energy_battery_overlay"));
+            ICON_OVERLAY = event.getAtlas().getSprite(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/energy_battery_overlay"));
         }
     }
 

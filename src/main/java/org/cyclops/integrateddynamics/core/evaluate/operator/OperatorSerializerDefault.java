@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -18,7 +18,7 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
+    public Identifier getUniqueName() {
         return null; // Only the default serializer can have name null
     }
 
@@ -29,6 +29,6 @@ public class OperatorSerializerDefault implements IOperatorSerializer<IOperator>
 
     @Override
     public IOperator deserialize(ValueInput valueInput) {
-        return Operators.REGISTRY.getOperator(ResourceLocation.parse(valueInput.getString("v").orElseThrow()));
+        return Operators.REGISTRY.getOperator(Identifier.parse(valueInput.getString("v").orElseThrow()));
     }
 }

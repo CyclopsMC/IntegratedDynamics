@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.network;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -25,7 +25,7 @@ import java.util.Optional;
 public class ProxyNetworkElement extends TileNetworkElement<BlockEntityProxy> implements
         IEventListenableNetworkElement<BlockEntityProxy>, IIdentifiableNetworkElement {
 
-    public static final ResourceLocation GROUP = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "proxy");
+    public static final Identifier GROUP = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "proxy");
 
     public ProxyNetworkElement(DimPos pos) {
         super(pos);
@@ -37,7 +37,7 @@ public class ProxyNetworkElement extends TileNetworkElement<BlockEntityProxy> im
     }
 
     @Override
-    public ResourceLocation getGroup() {
+    public Identifier getGroup() {
         return ProxyNetworkElement.GROUP;
     }
 

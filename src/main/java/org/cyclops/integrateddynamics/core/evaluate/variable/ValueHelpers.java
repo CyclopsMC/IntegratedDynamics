@@ -1,9 +1,9 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.apache.commons.lang3.ArrayUtils;
@@ -199,7 +199,7 @@ public class ValueHelpers {
      * @return The value.
      */
     public static IValue deserialize(ValueInput input) {
-        IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(input.getString("valueType").orElseThrow()));
+        IValueType valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(input.getString("valueType").orElseThrow()));
         if (valueType == null) {
             return null;
         }
@@ -288,16 +288,16 @@ public class ValueHelpers {
     }
 
     /**
-     * Create a ResourceLocation from the given value.
-     * Any ResourceLocationExceptions will be emitted as EvaluationException.
-     * @param value A ResourceLocation value.
-     * @return A ResourceLocation
-     * @throws EvaluationException If a ResourceLocationException was thrown.
+     * Create a Identifier from the given value.
+     * Any IdentifierExceptions will be emitted as EvaluationException.
+     * @param value A Identifier value.
+     * @return A Identifier
+     * @throws EvaluationException If a IdentifierException was thrown.
      */
-    public static ResourceLocation createResourceLocationInEvaluation(String value) throws EvaluationException {
+    public static Identifier createIdentifierInEvaluation(String value) throws EvaluationException {
         try {
-            return ResourceLocation.parse(value);
-        } catch (ResourceLocationException e) {
+            return Identifier.parse(value);
+        } catch (IdentifierException e) {
             throw new EvaluationException(Component.literal(e.getMessage()));
         }
     }

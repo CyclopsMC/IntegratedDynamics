@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.sound;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import org.cyclops.cyclopscore.init.IModBase;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -13,7 +13,7 @@ public class SoundEventEffectPageFlipSingleConfig extends org.cyclops.cyclopscor
         super(
                 IntegratedDynamics._instance,
                 "effect_page_flipsingle",
-                (eConfig) -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(eConfig.getMod().getModId(), eConfig.getNamedId()))
+                (eConfig) -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(eConfig.getMod().getModId(), eConfig.getNamedId()))
         );
     }
 }

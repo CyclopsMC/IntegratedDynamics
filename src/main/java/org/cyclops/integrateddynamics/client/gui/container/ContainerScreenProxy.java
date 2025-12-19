@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.gui.ContainerScreenActiveVariableBase;
@@ -21,8 +21,8 @@ public class ContainerScreenProxy extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    protected ResourceLocation constructGuiTexture() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/proxy.png");
+    protected Identifier constructGuiTexture() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/proxy.png");
     }
 
     @Override

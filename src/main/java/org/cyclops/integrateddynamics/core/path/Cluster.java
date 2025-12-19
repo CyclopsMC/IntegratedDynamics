@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
@@ -47,7 +47,7 @@ public class Cluster implements Collection<ISidedPathElement> {
 
     public void fromParams(List<SidedPathElementParams> pathElements) {
         for (SidedPathElementParams pathElementParam : pathElements) {
-            ResourceLocation dimensionId = ResourceLocation.parse(pathElementParam.dimension());
+            Identifier dimensionId = Identifier.parse(pathElementParam.dimension());
             ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimensionId);
             Level world = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
             BlockPos pos = pathElementParam.pos();

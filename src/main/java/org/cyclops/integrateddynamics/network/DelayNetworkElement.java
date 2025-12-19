@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.network;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.Reference;
 
@@ -10,14 +10,14 @@ import org.cyclops.integrateddynamics.Reference;
  */
 public class DelayNetworkElement extends ProxyNetworkElement {
 
-    public static final ResourceLocation GROUP = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "delay");
+    public static final Identifier GROUP = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "delay");
 
     public DelayNetworkElement(DimPos pos) {
         super(pos);
     }
 
     @Override
-    public ResourceLocation getGroup() {
+    public Identifier getGroup() {
         return DelayNetworkElement.GROUP;
     }
 

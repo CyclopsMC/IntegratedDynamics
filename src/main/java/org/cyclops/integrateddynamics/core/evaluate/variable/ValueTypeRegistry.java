@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 import com.google.common.collect.Maps;
 import com.mojang.logging.LogUtils;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
@@ -69,7 +69,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public IValueType getValueType(ResourceLocation name) {
+    public IValueType getValueType(Identifier name) {
         return valueTypes.get(name.toString());
     }
 
@@ -79,8 +79,8 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "valuetype");
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "valuetype");
     }
 
     @Override
@@ -88,7 +88,7 @@ public final class ValueTypeRegistry implements IValueTypeRegistry {
         if(!tag.contains("typeName") || !tag.contains("value")) {
             return INVALID_FACADE;
         }
-        IValueType type = getValueType(ResourceLocation.parse(tag.getString("typeName").orElseThrow()));
+        IValueType type = getValueType(Identifier.parse(tag.getString("typeName").orElseThrow()));
         if(type == null) {
             return INVALID_FACADE;
         }

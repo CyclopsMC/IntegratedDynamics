@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -105,7 +105,7 @@ public class TestStringOperators {
             }
 
             @Override
-            public ResourceLocation getName() {
+            public Identifier getName() {
                 return null;
             }
 

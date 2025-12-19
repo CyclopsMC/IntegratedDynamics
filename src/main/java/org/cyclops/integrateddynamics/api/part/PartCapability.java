@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.part;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.CapabilityRegistry;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class PartCapability<T> extends BaseCapability<T, PartTarget> {
 
-    public static <T> PartCapability<T> create(ResourceLocation name, Class<T> typeClass) {
+    public static <T> PartCapability<T> create(Identifier name, Class<T> typeClass) {
         return (PartCapability<T>) registry.create(name, typeClass, PartTarget.class);
     }
 
@@ -29,7 +29,7 @@ public class PartCapability<T> extends BaseCapability<T, PartTarget> {
     // Requires explicitly-typed constructor due to ECJ inference failure.
     private static final CapabilityRegistry<PartCapability<?>> registry = new CapabilityRegistry<PartCapability<?>>((name, type, clazz) -> new PartCapability<>(name, type));
 
-    private PartCapability(ResourceLocation name, Class<T> typeClass) {
+    private PartCapability(Identifier name, Class<T> typeClass) {
         super(name, typeClass, PartTarget.class);
     }
 

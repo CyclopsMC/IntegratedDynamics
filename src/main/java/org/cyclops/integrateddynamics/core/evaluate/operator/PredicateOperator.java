@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
@@ -58,8 +58,8 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
         }
 
         @Override
-        public ResourceLocation getUniqueName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "predicate");
+        public Identifier getUniqueName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "predicate");
         }
 
         @Override
@@ -73,7 +73,7 @@ public class PredicateOperator<T extends IValueType<V>, V extends IValue> extend
 
         @Override
         public PredicateOperator<IValueType<IValue>, IValue> deserialize(ValueInput valueInput) throws EvaluationException {
-            IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valueInput.getString("valueType").orElseThrow()));
+            IValueType<IValue> valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(valueInput.getString("valueType").orElseThrow()));
             ValueInput.ValueInputList list = valueInput.childrenList("values").orElseThrow();
             List<IValue> values = Lists.newArrayList();
             for (ValueInput subTag : list) {

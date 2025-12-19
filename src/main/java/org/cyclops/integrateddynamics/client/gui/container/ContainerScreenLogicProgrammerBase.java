@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -137,8 +137,8 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    protected ResourceLocation constructGuiTexture() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/logic_programmer.png");
+    protected Identifier constructGuiTexture() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/logic_programmer.png");
     }
 
     protected float colorSmoothener(float color, boolean hover) {
@@ -290,7 +290,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                         new LogicProgrammerActivateElementPacket(type.getUniqueName(), type.getName(newActive)));
             } else if (deselect) {
                 IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                        new LogicProgrammerActivateElementPacket(ResourceLocation.parse(""), ResourceLocation.parse("")));
+                        new LogicProgrammerActivateElementPacket(Identifier.parse(""), Identifier.parse("")));
             }
         }
         return activate;
@@ -500,7 +500,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
 
         @Override
-        protected ResourceLocation getTexture() {
+        protected Identifier getTexture() {
             return texture;
         }
 

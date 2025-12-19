@@ -135,7 +135,7 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
                     mod.getModId() + "_labels",
                     (ctx) -> new LabelsWorldStorage(Maps.newHashMap()),
                     ctx -> RecordCodecBuilder.create(instance -> instance.group(
-                            RecordCodecBuilder.point(ctx.levelOrThrow()),
+                            RecordCodecBuilder.point(ctx.getLevel()),
                             NeoForgeExtraCodecs.unboundedMapAsList("k", Codec.INT, "v", Codec.STRING).fieldOf("counters").forGetter(data -> data.labels)
                     ).apply(instance, (level, labels) -> new LabelsWorldStorage(labels)))
             ), mod);

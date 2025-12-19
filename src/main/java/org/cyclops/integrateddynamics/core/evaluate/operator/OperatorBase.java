@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
@@ -72,8 +72,8 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(getModId(), this.getUnlocalizedType().replaceAll("\\.", "_") + "_" + getOperatorName());
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(getModId(), this.getUnlocalizedType().replaceAll("\\.", "_") + "_" + getOperatorName());
     }
 
     @Override

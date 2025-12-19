@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
@@ -17,18 +17,18 @@ import java.util.List;
 public class ValueTypeLPElementType implements ILogicProgrammerElementType<IValueTypeLogicProgrammerElement> {
 
     @Override
-    public IValueTypeLogicProgrammerElement getByName(ResourceLocation name) {
+    public IValueTypeLogicProgrammerElement getByName(Identifier name) {
         return ValueTypes.REGISTRY.getValueType(name).createLogicProgrammerElement();
     }
 
     @Override
-    public ResourceLocation getName(IValueTypeLogicProgrammerElement element) {
+    public Identifier getName(IValueTypeLogicProgrammerElement element) {
         return element.getValueType().getUniqueName();
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "valuetype");
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "valuetype");
     }
 
     @Override

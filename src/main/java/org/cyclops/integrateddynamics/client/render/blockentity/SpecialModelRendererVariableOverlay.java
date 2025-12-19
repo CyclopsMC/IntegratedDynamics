@@ -12,9 +12,9 @@ import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * @author rubensworks
@@ -38,7 +38,7 @@ public class SpecialModelRendererVariableOverlay implements SpecialModelRenderer
     }
 
     @Override
-    public void getExtents(Set<Vector3f> p_428206_) {
+    public void getExtents(Consumer<Vector3fc> consumer) {
 
     }
 

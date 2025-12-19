@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.image;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.client.gui.image.Image;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -11,7 +11,7 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class Images {
 
-    public static final ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(IntegratedDynamics._instance.getModId(),
+    public static final Identifier ICONS = Identifier.fromNamespaceAndPath(IntegratedDynamics._instance.getModId(),
             IntegratedDynamics._instance.getReferenceValue(ModBaseNeoForge.REFKEY_TEXTURE_PATH_GUI) + "icons.png");
 
     public static final Image BUTTON_BACKGROUND_INACTIVE = new Image(ICONS, 0, 0, 18, 18);

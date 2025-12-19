@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -21,14 +21,14 @@ public abstract class ValueTypeListProxyEntityBase<T extends IValueType<V>, V ex
     private String world;
     private int entity;
 
-    public ValueTypeListProxyEntityBase(ResourceLocation name, T valueType, Level world, Entity entity) {
+    public ValueTypeListProxyEntityBase(Identifier name, T valueType, Level world, Entity entity) {
         super(name, valueType);
-        this.world = (world == null ? Level.OVERWORLD : world.dimension()).location().toString();
+        this.world = (world == null ? Level.OVERWORLD : world.dimension()).identifier().toString();
         this.entity = entity == null ? -1 : entity.getId();
     }
 
     protected Entity getEntity() {
-        ServerLevel worldServer = ServerLifecycleHooks.getCurrentServer().getLevel(ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(this.world)));
+        ServerLevel worldServer = ServerLifecycleHooks.getCurrentServer().getLevel(ResourceKey.create(Registries.DIMENSION, Identifier.parse(this.world)));
         if(worldServer != null) {
             return worldServer.getEntity(entity);
         }

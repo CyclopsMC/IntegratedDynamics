@@ -30,7 +30,7 @@ public class GameTestsAspectsReadBlock {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadBlockDimension(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.BLOCK_READER, Aspects.Read.Block.STRING_DIMENSION, ValueTypeString.ValueString.of(helper.getLevel().dimension().location().toString()));
+        testReadAspect(POS, helper, PartTypes.BLOCK_READER, Aspects.Read.Block.STRING_DIMENSION, ValueTypeString.ValueString.of(helper.getLevel().dimension().identifier().toString()));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)

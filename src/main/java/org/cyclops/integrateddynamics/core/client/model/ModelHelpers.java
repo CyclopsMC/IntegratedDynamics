@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.client.model;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 
 import java.io.IOException;
@@ -23,9 +23,9 @@ public final class ModelHelpers {
      * @return The corresponding facadeModel.
      * @throws IOException If the facadeModel file was invalid.
      */
-    public static BlockModel loadModelBlock(ResourceLocation modelLocation) throws IOException {
+    public static BlockModel loadModelBlock(Identifier modelLocation) throws IOException {
         Resource resource = Minecraft.getInstance().getResourceManager().getResource(
-                ResourceLocation.fromNamespaceAndPath(modelLocation.getNamespace(), "models/" + modelLocation.getPath() + ".json"))
+                Identifier.fromNamespaceAndPath(modelLocation.getNamespace(), "models/" + modelLocation.getPath() + ".json"))
                 .get();
         Reader reader = resource.openAsReader();
 

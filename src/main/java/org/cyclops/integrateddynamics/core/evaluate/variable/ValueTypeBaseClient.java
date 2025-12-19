@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeClient;
 
@@ -19,9 +19,9 @@ public class ValueTypeBaseClient<V extends IValue> implements IValueTypeClient<V
         return valueType;
     }
 
-    protected void registerModelResourceLocation() {
+    protected void registerModelIdentifier() {
         ValueTypes.REGISTRY.getClient().registerValueTypeModel(getValueType(),
-                ResourceLocation.parse(getValueType().getModId() + ":valuetype" + getValueType().getTypeNamespace().replace('.', '/') + getValueType().getTypeName().replace('.', '/')));
+                Identifier.parse(getValueType().getModId() + ":valuetype" + getValueType().getTypeNamespace().replace('.', '/') + getValueType().getTypeName().replace('.', '/')));
     }
 
 }

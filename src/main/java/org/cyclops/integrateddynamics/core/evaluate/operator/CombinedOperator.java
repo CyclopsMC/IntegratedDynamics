@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 
 import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.apache.commons.lang3.ArrayUtils;
@@ -386,8 +386,8 @@ public class CombinedOperator extends OperatorBase {
         }
 
         @Override
-        public ResourceLocation getUniqueName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "combined." + functionName);
+        public Identifier getUniqueName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "combined." + functionName);
         }
 
         @Override

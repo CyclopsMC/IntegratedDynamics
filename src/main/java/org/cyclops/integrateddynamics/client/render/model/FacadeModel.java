@@ -46,7 +46,7 @@ public class FacadeModel implements ItemModel {
                     quads.addAll(collectPart.getQuads(direction));
                 }
             }
-            new BlockModelWrapper(List.of(new Constant(-1)), quads, this.modelrenderproperties).update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
+            new BlockModelWrapper(List.of(new Constant(-1)), quads, this.modelrenderproperties, BlockModelWrapper.detectRenderType(quads)).update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
         }
     }
 }

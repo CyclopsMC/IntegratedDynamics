@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -22,7 +22,7 @@ import java.util.Optional;
 public class BlockMenrilSaplingConfig extends BlockConfigCommon<IntegratedDynamics> {
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> MENTRIL_TREE = ResourceKey
-            .create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "tree_menril"));
+            .create(Registries.CONFIGURED_FEATURE, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "tree_menril"));
     public static final TreeGrower MENRIL_TREE_GROWER = new TreeGrower(
             Reference.MOD_ID + ":menril_sapling",
             Optional.empty(), // Mega tree

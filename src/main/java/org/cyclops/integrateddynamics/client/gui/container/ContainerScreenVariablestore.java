@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.client.gui.container;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
@@ -21,8 +21,8 @@ public class ContainerScreenVariablestore extends ContainerScreenExtended<Contai
     }
 
     @Override
-    protected ResourceLocation constructGuiTexture() {
-        return ResourceLocation.parse("textures/gui/container/generic_54.png");
+    protected Identifier constructGuiTexture() {
+        return Identifier.parse("textures/gui/container/generic_54.png");
     }
 
     @Override

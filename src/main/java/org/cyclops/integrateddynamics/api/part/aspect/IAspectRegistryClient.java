@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.api.part.aspect;
 
 import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 
@@ -15,7 +15,7 @@ public interface IAspectRegistryClient {
      * @param aspect The aspect.
      * @param modelLocation The facadeModel resource location.
      */
-    public void registerAspectModel(IAspect aspect, ResourceLocation modelLocation);
+    public void registerAspectModel(IAspect aspect, Identifier modelLocation);
 
     /**
      * Get the facadeModel resource location of the given aspect.

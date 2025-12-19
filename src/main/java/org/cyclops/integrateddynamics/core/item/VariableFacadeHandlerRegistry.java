@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.item;
 import com.google.common.collect.Maps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -80,7 +80,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         }
         String type = tagCompound.getString("_type").orElseThrow();
         int id = tagCompound.getInt("_id").orElseThrow();
-        IVariableFacadeHandler handler = getHandler(ResourceLocation.parse(type));
+        IVariableFacadeHandler handler = getHandler(Identifier.parse(type));
         if(handler != null) {
             return handler.getVariableFacade(valueDeseralizationContext, id, tagCompound);
         }
@@ -89,7 +89,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
 
     @Nullable
     @Override
-    public IVariableFacadeHandler getHandler(ResourceLocation type) {
+    public IVariableFacadeHandler getHandler(Identifier type) {
         return handlers.get(type.toString());
     }
 

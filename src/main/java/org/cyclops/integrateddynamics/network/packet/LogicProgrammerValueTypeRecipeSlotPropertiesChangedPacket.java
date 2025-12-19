@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.network.packet;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -21,7 +21,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  */
 public class LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket extends PacketCodec {
 
-    public static final Type<LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_value_type_recipe_slot_properties_value_changed"));
+    public static final Type<LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket> ID = new Type<>(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_value_type_recipe_slot_properties_value_changed"));
     public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket> CODEC = getCodec(LogicProgrammerValueTypeRecipeSlotPropertiesChangedPacket::new);
 
     @CodecField

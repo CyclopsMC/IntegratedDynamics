@@ -40,7 +40,7 @@ public class CommandNetworkDiagnostics implements Command<CommandSourceStack> {
 
     public static LiteralArgumentBuilder<CommandSourceStack> make() {
         return Commands.literal("networkdiagnostics")
-                .requires((commandSource) -> commandSource.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .executes(new CommandNetworkDiagnostics(false, false))
                 .then(Commands.argument("operation", new ArgumentTypeEnum(StartStop.class))
                         .executes(new CommandNetworkDiagnostics(true, false))

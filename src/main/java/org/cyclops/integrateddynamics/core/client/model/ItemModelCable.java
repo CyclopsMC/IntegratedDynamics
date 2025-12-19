@@ -2,12 +2,14 @@ package org.cyclops.integrateddynamics.core.client.model;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.item.*;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.client.model.DynamicItemAndBlockModel;
 import org.cyclops.integrateddynamics.client.model.CableModel;
+import org.cyclops.integrateddynamics.client.model.CableModelBase;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -19,7 +21,8 @@ public record ItemModelCable(DynamicItemAndBlockModel model) implements ItemMode
     @Override
     public void update(ItemStackRenderState renderState, ItemStack stack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @Nullable ClientLevel level, @Nullable ItemOwner entity, int seed) {
         ModelRenderProperties modelRenderProperties = new ModelRenderProperties(false, model.particleIcon(), model.getTopTransforms());
-        new BlockModelWrapper(List.of(), this.model.handleItemState(stack, level, entity), modelRenderProperties)
+        List<BakedQuad> quads = this.model.handleItemState(stack, level, entity);
+        new BlockModelWrapper(List.of(), quads, modelRenderProperties, BlockModelWrapper.detectRenderType(quads))
                 .update(renderState, stack, itemModelResolver, displayContext, level, entity, seed);
     }
 
@@ -33,6 +36,7 @@ public record ItemModelCable(DynamicItemAndBlockModel model) implements ItemMode
 
         @Override
         public ItemModel bake(BakingContext bakingContext) {
+            CableModelBase.MODEL_BAKER = bakingContext.blockModelBaker(); // Yes, this is a hack...
             return new ItemModelCable(new CableModel());
         }
 

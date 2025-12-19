@@ -4,7 +4,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 public class LogicProgrammerValueTypeOperatorValueChangedPacket extends PacketCodec {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    public static final Type<LogicProgrammerValueTypeOperatorValueChangedPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_value_type_operator_value_changed"));
+    public static final Type<LogicProgrammerValueTypeOperatorValueChangedPacket> ID = new Type<>(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_value_type_operator_value_changed"));
     public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerValueTypeOperatorValueChangedPacket> CODEC = getCodec(LogicProgrammerValueTypeOperatorValueChangedPacket::new);
 
     @CodecField

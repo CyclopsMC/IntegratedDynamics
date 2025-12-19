@@ -1,13 +1,14 @@
 package org.cyclops.integrateddynamics.network.packet;
 
-import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.network.CodecField;
@@ -28,7 +29,7 @@ import java.net.URISyntaxException;
  */
 public class NetworkDiagnosticsTriggerClient extends PacketCodec {
 
-    public static final Type<NetworkDiagnosticsTriggerClient> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "network_diagnostics_trigger"));
+    public static final Type<NetworkDiagnosticsTriggerClient> ID = new Type<>(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "network_diagnostics_trigger"));
     public static final StreamCodec<RegistryFriendlyByteBuf, NetworkDiagnosticsTriggerClient> CODEC = getCodec(NetworkDiagnosticsTriggerClient::new);
 
     @CodecField
@@ -59,9 +60,26 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                 new Thread(() -> {
                     ClientProxy.DIAGNOSTICS_SERVER = new DiagnosticsWebServer(port);
                     ClientProxy.DIAGNOSTICS_SERVER.initialize();
+                    Minecraft.getInstance().execute(() -> {
+                        try {
+                            player.displayClientMessage(
+                                    Component.literal("Diagnostics server has been started on ")
+                                            .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
+                                                    .setStyle(Style.EMPTY
+                                                            .withUnderlined(true)
+                                                            .withClickEvent(new ClickEvent.OpenUrl(Util.parseAndValidateUntrustedUri(ClientProxy.DIAGNOSTICS_SERVER.getUrl()))))),
+                                    false
+                            );
+                        } catch (URISyntaxException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                }).start();
+            } else {
+                Minecraft.getInstance().execute(() -> {
                     try {
                         player.displayClientMessage(
-                                Component.literal("Diagnostics server has been started on ")
+                                Component.literal("Diagnostics server is already running on ")
                                         .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
                                                 .setStyle(Style.EMPTY
                                                         .withUnderlined(true)
@@ -71,20 +89,7 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                     } catch (URISyntaxException e) {
                         throw new RuntimeException(e);
                     }
-                }).start();
-            } else {
-                try {
-                    player.displayClientMessage(
-                            Component.literal("Diagnostics server is already running on ")
-                                    .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
-                                            .setStyle(Style.EMPTY
-                                                    .withUnderlined(true)
-                                                    .withClickEvent(new ClickEvent.OpenUrl(Util.parseAndValidateUntrustedUri(ClientProxy.DIAGNOSTICS_SERVER.getUrl()))))),
-                            false
-                    );
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
-                }
+                });
             }
         } else {
             if (ClientProxy.DIAGNOSTICS_SERVER != null) {
@@ -94,10 +99,14 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                     NetworkDataClient.clearNetworkData();
                     ClientProxy.DIAGNOSTICS_SERVER.deinitialize();
                     ClientProxy.DIAGNOSTICS_SERVER = null;
-                    player.displayClientMessage(Component.literal("Stopped diagnostics server"), false);
+                    Minecraft.getInstance().execute(() -> {
+                        player.displayClientMessage(Component.literal("Stopped diagnostics server"), false);
+                    });
                 }).start();
             } else {
-                player.displayClientMessage(Component.literal("No diagnostics server is running"), false);
+                Minecraft.getInstance().execute(() -> {
+                    player.displayClientMessage(Component.literal("No diagnostics server is running"), false);
+                });
             }
         }
     }

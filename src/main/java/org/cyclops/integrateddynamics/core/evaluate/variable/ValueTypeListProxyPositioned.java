@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.datastructure.DimPos;
@@ -18,7 +18,7 @@ public abstract class ValueTypeListProxyPositioned<T extends IValueType<V>, V ex
     private DimPos pos;
     private Direction side;
 
-    public ValueTypeListProxyPositioned(ResourceLocation name, T valueType, DimPos pos, Direction side) {
+    public ValueTypeListProxyPositioned(Identifier name, T valueType, DimPos pos, Direction side) {
         super(name, valueType);
         this.pos = pos;
         this.side = side;

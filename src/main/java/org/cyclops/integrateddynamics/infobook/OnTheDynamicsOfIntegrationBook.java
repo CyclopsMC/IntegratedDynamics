@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.infobook;
 
 import com.google.common.collect.Lists;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.cyclops.cyclopscore.infobook.IInfoBook;
 import org.cyclops.cyclopscore.infobook.InfoBook;
 import org.cyclops.cyclopscore.infobook.InfoBookParser;
@@ -38,7 +38,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
             @Override
             public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
                 String aspectName = node.getTextContent();
-                IAspect aspect = Aspects.REGISTRY.getAspect(ResourceLocation.parse(aspectName));
+                IAspect aspect = Aspects.REGISTRY.getAspect(Identifier.parse(aspectName));
                 if (aspect == null) {
                     throw new InfoBookParser.InvalidAppendixException(String.format("Could not find an aspect by name %s.", aspectName));
                 }
@@ -50,7 +50,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
             @Override
             public List<SectionAppendix> create(final IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
                 String partName = node.getTextContent();
-                IPartType partType = PartTypes.REGISTRY.getPartType(ResourceLocation.parse(partName));
+                IPartType partType = PartTypes.REGISTRY.getPartType(Identifier.parse(partName));
                 if (partType == null) {
                     throw new InfoBookParser.InvalidAppendixException(String.format("Could not find a part type by name '%s'.", partName));
                 }
@@ -67,7 +67,7 @@ public class OnTheDynamicsOfIntegrationBook extends InfoBook {
             @Override
             public SectionAppendix create(IInfoBook infoBook, Element node) throws InfoBookParser.InvalidAppendixException {
                 String operatorName = node.getTextContent();
-                IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.parse(operatorName));
+                IOperator operator = Operators.REGISTRY.getOperator(Identifier.parse(operatorName));
                 if (operator == null) {
                     throw new InfoBookParser.InvalidAppendixException(String.format("Could not find an operator by name %s.", operatorName));
                 }

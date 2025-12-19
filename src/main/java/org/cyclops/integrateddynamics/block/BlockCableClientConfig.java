@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,7 +45,7 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
         blockConfig.getMod().getModEventBus().addListener(this::onRegisterColors);
         blockConfig.getMod().getModEventBus().addListener(this::registerClientExtensions);
         blockConfig.getMod().getModEventBus().addListener(this::postTextureStitch);
-        blockConfig.getMod().getModEventBus().addListener((RegisterItemModelsEvent event) -> event.register(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "cable"), ItemModelCable.Unbaked.MAP_CODEC));
+        blockConfig.getMod().getModEventBus().addListener((RegisterItemModelsEvent event) -> event.register(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "cable"), ItemModelCable.Unbaked.MAP_CODEC));
     }
 
     public void onRegisterColors(RegisterColorHandlersEvent.Block event) {
@@ -54,7 +54,7 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
 
     public void postTextureStitch(TextureAtlasStitchedEvent event) {
         if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
-            BLOCK_TEXTURE = event.getAtlas().getSprite(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/cable"));
+            BLOCK_TEXTURE = event.getAtlas().getSprite(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/cable"));
         }
     }
 
@@ -101,9 +101,9 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
         }
 
         @Override
-        public ItemModel createDynamicItemModel(Consumer<Pair<ResourceLocation, ItemModel>> modelConsumer, Function<ResourceLocation, ItemModel> modelRetriever) {
+        public ItemModel createDynamicItemModel(Consumer<Pair<Identifier, ItemModel>> modelConsumer, Function<Identifier, ItemModel> modelRetriever) {
             ItemModelCable model = new ItemModelCable(new CableModel());
-            ResourceLocation registryName = BuiltInRegistries.BLOCK.getKey(RegistryEntries.BLOCK_CABLE.get());
+            Identifier registryName = BuiltInRegistries.BLOCK.getKey(RegistryEntries.BLOCK_CABLE.get());
             modelConsumer.accept(Pair.of(registryName, model));
             return model;
         }

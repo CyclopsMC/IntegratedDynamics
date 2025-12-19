@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -67,8 +67,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.fromNamespaceAndPath(getModId(), this.name);
+    public Identifier getUniqueName() {
+        return Identifier.fromNamespaceAndPath(getModId(), this.name);
     }
 
     protected ModBaseNeoForge getMod() {
@@ -123,8 +123,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
     }
 
     @Override
-    public ResourceLocation getBlockModelPath() {
-        return ResourceLocation.fromNamespaceAndPath(getModId(), "part_" + this.name);
+    public Identifier getBlockModelPath() {
+        return Identifier.fromNamespaceAndPath(getModId(), "part_" + this.name);
     }
 
     @Override

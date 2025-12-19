@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -28,7 +28,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
     private final int x, y;
     protected final G gui;
     protected final C container;
-    protected ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/logic_programmer.png");
+    protected Identifier texture = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/logic_programmer.png");
 
     public RenderPattern(E element, int baseX, int baseY, int maxWidth, int maxHeight,
                          G gui, C container) {

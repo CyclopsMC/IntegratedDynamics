@@ -102,7 +102,7 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
                     mod.getModId() + "_networks",
                     (ctx) -> new NetworkWorldStorage(Lists.newArrayList()),
                     ctx -> RecordCodecBuilder.create(instance -> instance.group(
-                            RecordCodecBuilder.point(ctx.levelOrThrow()),
+                            RecordCodecBuilder.point(ctx.getLevel()),
                             Codec.list(NetworkParams.CODEC).fieldOf("networks").forGetter(data -> data.networkParams)
                     ).apply(instance, (level, networkParams) -> new NetworkWorldStorage(networkParams)))
             ), mod);

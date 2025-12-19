@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.api.evaluate.variable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.cyclopscore.init.IRegistry;
@@ -30,7 +30,7 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
      * @param name The name.
      * @return The corresponding instance.
      */
-    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> IProxyFactory<T, V, P> getFactory(ResourceLocation name);
+    public <T extends IValueType<V>, V extends IValue, P extends IValueTypeListProxy<T, V>> IProxyFactory<T, V, P> getFactory(Identifier name);
 
     /**
      * Serialize the given list proxy.
@@ -67,7 +67,7 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
         /**
          * @return The unique indentifier of this proxy.
          */
-        public ResourceLocation getName();
+        public Identifier getName();
 
         /**
          * Serialize the given value.

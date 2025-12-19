@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.operator;
 import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.Reference;
@@ -58,8 +58,8 @@ public class CurriedOperator implements IOperator {
     }
 
     @Override
-    public ResourceLocation getUniqueName() {
-        return ResourceLocation.parse("curried_operator");
+    public Identifier getUniqueName() {
+        return Identifier.parse("curried_operator");
     }
 
     @Override
@@ -192,8 +192,8 @@ public class CurriedOperator implements IOperator {
         }
 
         @Override
-        public ResourceLocation getUniqueName() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "curry");
+        public Identifier getUniqueName() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "curry");
         }
 
         @Override
@@ -220,7 +220,7 @@ public class CurriedOperator implements IOperator {
             ValueInput.ValueInputList list = valueInput.childrenList("values").orElseThrow();
             List<IVariable> variables = Lists.newArrayList();
             for (ValueInput valuetag : list) {
-                IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(valuetag.getString("valueType").orElseThrow()));
+                IValueType valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(valuetag.getString("valueType").orElseThrow()));
                 IValue value = ValueHelpers.deserializeRaw(valuetag.child("value").orElseThrow(), valueType);
                 variables.add(new Variable(valueType, value));
             }
