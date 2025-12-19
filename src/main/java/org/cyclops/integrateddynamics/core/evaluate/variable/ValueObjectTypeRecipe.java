@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
+import com.google.gson.JsonParseException;
 import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.ToString;
 import net.minecraft.client.Minecraft;
@@ -101,7 +102,7 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
         }
         try {
             return ValueRecipe.of(IRecipeDefinition.deserialize(valueDeseralizationContext.holderLookupProvider(), (CompoundTag) value));
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | JsonParseException e) {
             return ValueRecipe.of(null);
         }
     }
