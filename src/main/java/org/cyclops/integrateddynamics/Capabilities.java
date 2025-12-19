@@ -13,7 +13,6 @@ import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.evaluate.IValueInterface;
-import org.cyclops.integrateddynamics.api.ingredient.capability.IIngredientComponentValueHandler;
 import org.cyclops.integrateddynamics.api.ingredient.capability.IPositionedAddonsNetworkIngredientsHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHolder;
 import org.cyclops.integrateddynamics.api.network.*;
@@ -65,11 +64,6 @@ public class Capabilities {
 
     public static final class VariableFacade {
         public static final ItemCapability<IVariableFacadeHolder, Void> ITEM = ItemCapability.createVoid(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "variable_facade_holder"), IVariableFacadeHolder.class);
-    }
-
-    public static final class IngredientComponentValueHandler {
-        @Deprecated // TODO: try to rm in next major, as we have IIngredientComponentHandler and IIngredientComponentHandlerRegistry that do the same
-        public static final IngredientComponentCapability<IIngredientComponentValueHandler, Void> INGREDIENT = IngredientComponentCapability.createVoid(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "ingredient_component_value_handler"), IIngredientComponentValueHandler.class);
     }
 
     public static final class PositionedAddonsNetworkIngredientsHandler {
