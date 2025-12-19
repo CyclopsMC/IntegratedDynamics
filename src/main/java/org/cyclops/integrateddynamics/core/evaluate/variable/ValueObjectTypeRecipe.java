@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
+import com.google.gson.JsonParseException;
 import lombok.ToString;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -84,7 +85,11 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
 
     @Override
     public ValueRecipe deserialize(ValueInput valueInput) {
-        return ValueRecipe.of(valueInput.child("v").map(IRecipeDefinition::deserialize).orElse(null));
+        try {
+            return ValueRecipe.of(valueInput.child("v").map(IRecipeDefinition::deserialize).orElse(null));
+        } catch (IllegalArgumentException | JsonParseException e) {
+            return ValueRecipe.of(null);
+        }
     }
 
     @Override

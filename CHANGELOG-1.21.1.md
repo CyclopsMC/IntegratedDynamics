@@ -1,8 +1,20 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.29.7"></a>
+## [1.21.1-1.29.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.6...1.21.1-1.29.7) - 2025-12-19 20:04:36
+
+
+### Fixed
+* Catch exceptions when deserializing invalid recipes
+
+This could occur in Integrated Crafting after removing a mod for which a
+recipe was stored.
+
+Closes CyclopsMC/CommonCapabilities#46
+
 <a name="1.21.1-1.29.6"></a>
-## [1.21.1-1.29.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.5...1.21.1-1.29.6) - 2025-11-25 17:01:08
+## [1.21.1-1.29.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.5...1.21.1-1.29.6) - 2025-11-25 17:01:08 +0100
 
 
 ### Fixed
