@@ -10,7 +10,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class RecipeSerializerMechanicalSqueezerFacade implements RecipeSerializer<RecipeMechanicalSqueezerFacade> {
 
@@ -20,7 +19,7 @@ public class RecipeSerializerMechanicalSqueezerFacade implements RecipeSerialize
         //Duration
         int duration = GsonHelper.getAsInt(json, "duration");
 
-        return new RecipeMechanicalSqueezerFacade(recipeId, Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("integrateddynamics", "facade"))), null, FluidStack.EMPTY, duration);
+        return new RecipeMechanicalSqueezerFacade(recipeId, Ingredient.of(org.cyclops.integrateddynamics.RegistryEntries.ITEM_FACADE), null, FluidStack.EMPTY, duration);
     }
 
     @Override
@@ -29,7 +28,7 @@ public class RecipeSerializerMechanicalSqueezerFacade implements RecipeSerialize
         // Output
         int duration = buffer.readVarInt();
 
-        return new RecipeMechanicalSqueezerFacade(recipeId, Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("integrateddynamics", "facade"))), null, FluidStack.EMPTY, duration);
+        return new RecipeMechanicalSqueezerFacade(recipeId, Ingredient.of(org.cyclops.integrateddynamics.RegistryEntries.ITEM_FACADE), null, FluidStack.EMPTY, duration);
     }
 
     @Override

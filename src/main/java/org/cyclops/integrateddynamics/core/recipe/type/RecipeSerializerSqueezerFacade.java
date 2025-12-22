@@ -9,18 +9,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class RecipeSerializerSqueezerFacade implements RecipeSerializer<RecipeSqueezerFacade> {
 
     @Override
     public RecipeSqueezerFacade fromJson(ResourceLocation recipeId, JsonObject json) {
-        return new RecipeSqueezerFacade(recipeId, Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("integrateddynamics", "facade"))), null, FluidStack.EMPTY);
+        return new RecipeSqueezerFacade(recipeId, Ingredient.of(org.cyclops.integrateddynamics.RegistryEntries.ITEM_FACADE), null, FluidStack.EMPTY);
     }
 
     @Override
     public @Nullable RecipeSqueezerFacade fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-        return new RecipeSqueezerFacade(recipeId, Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("integrateddynamics", "facade"))), null, FluidStack.EMPTY);
+        return new RecipeSqueezerFacade(recipeId, Ingredient.of(org.cyclops.integrateddynamics.RegistryEntries.ITEM_FACADE), null, FluidStack.EMPTY);
     }
 
     @Override
