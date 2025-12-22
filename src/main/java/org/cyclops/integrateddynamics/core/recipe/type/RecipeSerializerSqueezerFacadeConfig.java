@@ -10,13 +10,13 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  * @author kirjorjos
  *
  */
-public class RecipeSerializerFacadeSqueezeConfig extends RecipeConfig<RecipeFacadeSqueeze> {
+public class RecipeSerializerSqueezerFacadeConfig extends RecipeConfig<RecipeSqueezerFacade> {
 
-    public RecipeSerializerFacadeSqueezeConfig() {
+    public RecipeSerializerSqueezerFacadeConfig() {
         super(
                 IntegratedDynamics._instance,
-                "facade_squeeze",
-                eConfig -> new RecipeSerializerFacadeSqueeze()
+                "squeezer_facade",
+                eConfig -> new RecipeSerializerSqueezerFacade()
         );
     }
 

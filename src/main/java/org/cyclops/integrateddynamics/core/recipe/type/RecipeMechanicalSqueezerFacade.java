@@ -12,15 +12,15 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 
-public class RecipeFacadeSqueezeMechanical extends RecipeMechanicalSqueezer {
+public class RecipeMechanicalSqueezerFacade extends RecipeMechanicalSqueezer {
 
-    public RecipeFacadeSqueezeMechanical(ResourceLocation id, Ingredient inputIngredient, NonNullList<IngredientChance> outputItems, FluidStack outputFluid, int duration) {
+    public RecipeMechanicalSqueezerFacade(ResourceLocation id, Ingredient inputIngredient, NonNullList<IngredientChance> outputItems, FluidStack outputFluid, int duration) {
         super(id, inputIngredient, outputItems, outputFluid, duration);
     }
 
     @Override
     public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
-      return RecipeFacadeSqueeze.getOutput(inputItem);
+      return RecipeSqueezerFacade.getOutput(inputItem);
     }
 
     @Override
@@ -30,6 +30,6 @@ public class RecipeFacadeSqueezeMechanical extends RecipeMechanicalSqueezer {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return RegistryEntries.RECIPESERIALIZER_FACADE_SQUEEZE_MECHANICAL;
+        return RegistryEntries.RECIPESERIALIZER_MECHANICAL_SQUEEZER_FACADE;
     }
 }

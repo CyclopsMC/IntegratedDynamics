@@ -15,11 +15,11 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 
-public class RecipeFacadeSqueeze extends RecipeSqueezer {
+public class RecipeSqueezerFacade extends RecipeSqueezer {
 
     private static IngredientChance facadeItemChance = new IngredientChance(Either.<ItemStack, ItemStackFromIngredient>left(new ItemStack(RegistryEntries.ITEM_FACADE)), 1.0f);
 
-    public RecipeFacadeSqueeze(ResourceLocation id, Ingredient inputIngredient, NonNullList<IngredientChance> outputItems, FluidStack outputFluid) {
+    public RecipeSqueezerFacade(ResourceLocation id, Ingredient inputIngredient, NonNullList<IngredientChance> outputItems, FluidStack outputFluid) {
         super(id, inputIngredient, outputItems, outputFluid);
     }
 
@@ -45,6 +45,6 @@ public class RecipeFacadeSqueeze extends RecipeSqueezer {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return RegistryEntries.RECIPESERIALIZER_FACADE_SQUEEZE;
+        return RegistryEntries.RECIPESERIALIZER_SQUEEZER_FACADE;
     }
 }

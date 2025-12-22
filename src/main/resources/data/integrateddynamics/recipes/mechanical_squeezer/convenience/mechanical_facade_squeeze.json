@@ -1,4 +1,4 @@
 {
-  "type": "integrateddynamics:facade_squeeze_mechanical",
+  "type": "integrateddynamics:mechanical_squeezer_facade",
   "duration": 20
 }
