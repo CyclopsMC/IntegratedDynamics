@@ -1,8 +1,5 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import org.cyclops.integrateddynamics.RegistryEntries;
-import org.cyclops.integrateddynamics.item.ItemFacade;
-
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -11,11 +8,13 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
+import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.item.ItemFacade;
 
 public class RecipeMechanicalSqueezerFacade extends RecipeMechanicalSqueezer {
 
-    public RecipeMechanicalSqueezerFacade(ResourceLocation id, Ingredient inputIngredient, NonNullList<IngredientChance> outputItems, FluidStack outputFluid, int duration) {
-        super(id, inputIngredient, outputItems, outputFluid, duration);
+    public RecipeMechanicalSqueezerFacade(ResourceLocation id, Ingredient inputIngredient, int duration) {
+        super(id, inputIngredient, NonNullList.of(RecipeSqueezerFacade.OUTPUT, RecipeSqueezerFacade.OUTPUT), FluidStack.EMPTY, duration);
     }
 
     @Override
