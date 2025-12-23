@@ -218,6 +218,10 @@ public class RegistryEntries {
     public static final RecipeSerializer<RecipeSqueezer> RECIPESERIALIZER_SQUEEZER = null;
     @ObjectHolder(registryName = "recipe_serializer", value = "integrateddynamics:mechanical_squeezer")
     public static final RecipeSerializer<RecipeMechanicalSqueezer> RECIPESERIALIZER_MECHANICAL_SQUEEZER = null;
+    @ObjectHolder(registryName = "recipe_serializer", value = "integrateddynamics:squeezer_facade")
+    public static final RecipeSerializer<RecipeSqueezer> RECIPESERIALIZER_SQUEEZER_FACADE = null;
+    @ObjectHolder(registryName = "recipe_serializer", value = "integrateddynamics:mechanical_squeezer_facade")
+    public static final RecipeSerializer<RecipeMechanicalSqueezer> RECIPESERIALIZER_MECHANICAL_SQUEEZER_FACADE = null;
     @ObjectHolder(registryName = "recipe_serializer", value = "integrateddynamics:crafting_special_nbt_clear")
     public static final RecipeSerializer<RecipeNbtClear> RECIPESERIALIZER_NBT_CLEAR = null;
     @ObjectHolder(registryName = "recipe_serializer", value = "integrateddynamics:crafting_special_energycontainer_combination")
