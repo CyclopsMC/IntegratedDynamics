@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.29.1"></a>
+## [1.19.2-1.29.1](/compare/1.19.2-1.29.0...1.19.2-1.29.1) - 2025-12-23 09:15:43
+
+
+### Fixed
+* Fix facade squeezer recipes breaking infobook
+
 <a name="1.19.2-1.29.0"></a>
-## [1.19.2-1.29.0](/compare/1.19.2-1.28.6...1.19.2-1.29.0) - 2025-12-23 09:04:18
+## [1.19.2-1.29.0](/compare/1.19.2-1.28.6...1.19.2-1.29.0) - 2025-12-23 09:04:18 +0100
 
 
 ### Added
