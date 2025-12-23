@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.29.7"></a>
+## [1.20.1-1.29.7](/compare/1.20.1-1.29.6...1.20.1-1.29.7) - 2025-12-23 09:16:36
+
+
+### Added
+* Add squeezer recipes for clearing facades
+
 <a name="1.20.1-1.29.6"></a>
-## [1.20.1-1.29.6](/compare/1.20.1-1.29.5...1.20.1-1.29.6) - 2025-11-25 16:58:55
+## [1.20.1-1.29.6](/compare/1.20.1-1.29.5...1.20.1-1.29.6) - 2025-11-25 16:58:55 +0100
 
 
 ### Fixed

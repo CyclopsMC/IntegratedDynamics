@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.30.0"></a>
+## [1.21.1-1.30.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.7...1.21.1-1.30.0) - 2025-12-23 09:44:17
+
+
+### Added
+* Add squeezer recipes for clearing facades
+
 <a name="1.21.1-1.29.7"></a>
-## [1.21.1-1.29.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.6...1.21.1-1.29.7) - 2025-12-19 20:04:36
+## [1.21.1-1.29.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.6...1.21.1-1.29.7) - 2025-12-19 20:04:37 +0100
 
 
 ### Fixed

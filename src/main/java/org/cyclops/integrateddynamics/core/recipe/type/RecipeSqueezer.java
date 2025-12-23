@@ -71,6 +71,10 @@ public class RecipeSqueezer implements Recipe<CraftingInput> {
         return this.outputItems.get(0).getIngredientFirst().copy();
     }
 
+    public NonNullList<IngredientChance> assemble(ItemStack inputItem) {
+        return getOutputItems();
+    }
+
     @Override
     public RecipeSerializer<? extends Recipe<CraftingInput>> getSerializer() {
         return RegistryEntries.RECIPESERIALIZER_SQUEEZER.get();
