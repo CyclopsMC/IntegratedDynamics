@@ -1,8 +1,19 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.30.1"></a>
+## [1.21.1-1.30.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.0...1.21.1-1.30.1) - 2025-12-28 09:18:50
+
+
+### Fixed
+* Add safety checks to disable some operators on infinite lists
+  Concretely, contains, reduce, and uniq are disabled on infinite lists.
+  Closes #1582
+* Fix documentation on NBT Path field selector array indexing (#1580)
+  Closes #1579
+
 <a name="1.21.1-1.30.0"></a>
-## [1.21.1-1.30.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.7...1.21.1-1.30.0) - 2025-12-23 09:44:17
+## [1.21.1-1.30.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.29.7...1.21.1-1.30.0) - 2025-12-23 09:44:17 +0100
 
 
 ### Added
