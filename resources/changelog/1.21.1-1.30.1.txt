@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.26.0 or higher.
+
+Fixes:
+* Add safety checks to disable some operators on infinite lists
+  Concretely, contains, reduce, and uniq are disabled on infinite lists.
+  Closes #1582
+* Fix documentation on NBT Path field selector array indexing (#1580)
+  Closes #1579

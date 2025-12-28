@@ -953,16 +953,23 @@ public final class Operators {
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.CATEGORY_ANY})
             .renderPattern(IConfigRenderPattern.PREFIX_2_LONG)
             .output(ValueTypes.BOOLEAN).symbolOperatorInteract("contains")
-            .function(variables -> {
-                ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
-                IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
-                IValue input = variables.getValue(1);
-                for (IValue value : list) {
-                    if (value.equals(input)) {
-                        return ValueTypeBoolean.ValueBoolean.of(true);
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
+                    if (list.isInfinite()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                                LIST_CONTAINS.getLocalizedNameFull()));
                     }
+                    IValue input = variables.getValue(1);
+                    for (IValue value : list) {
+                        if (value.equals(input)) {
+                            return ValueTypeBoolean.ValueBoolean.of(true);
+                        }
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(false);
                 }
-                return ValueTypeBoolean.ValueBoolean.of(false);
             }).build());
 
     /**
@@ -972,18 +979,25 @@ public final class Operators {
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.INFIX)
             .output(ValueTypes.BOOLEAN).symbolOperator("contains_p").interactName("containsPredicate")
-            .function(variables -> {
-                ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
-                IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
-                IOperator operator = OperatorBuilders.getSafePredictate(variables.getValue(1, ValueTypes.OPERATOR));
-                for (IValue value : list) {
-                    IValue result = ValueHelpers.evaluateOperator(operator, value);
-                    ValueHelpers.validatePredicateOutput(operator, result);
-                    if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
-                        return ValueTypeBoolean.ValueBoolean.of(true);
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
+                    if (list.isInfinite()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                                LIST_CONTAINS_PREDICATE.getLocalizedNameFull()));
                     }
+                    IOperator operator = OperatorBuilders.getSafePredictate(variables.getValue(1, ValueTypes.OPERATOR));
+                    for (IValue value : list) {
+                        IValue result = ValueHelpers.evaluateOperator(operator, value);
+                        ValueHelpers.validatePredicateOutput(operator, result);
+                        if (((ValueTypeBoolean.ValueBoolean) result).getRawValue()) {
+                            return ValueTypeBoolean.ValueBoolean.of(true);
+                        }
+                    }
+                    return ValueTypeBoolean.ValueBoolean.of(false);
                 }
-                return ValueTypeBoolean.ValueBoolean.of(false);
             }).build());
 
     /**
@@ -1140,26 +1154,33 @@ public final class Operators {
             .inputTypes(new IValueType[]{ValueTypes.LIST, ValueTypes.OPERATOR})
             .renderPattern(IConfigRenderPattern.INFIX).output(ValueTypes.LIST)
             .symbolOperator("uniq_p").interactName("uniquePredicate")
-            .function(variables -> {
-                ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
-                IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
-                final IOperator operator = OperatorBuilders.getSafePredictate(variables.getValue(1, ValueTypes.OPERATOR));
-                List<IValue> values = new ArrayList<>();
-                outerLoop:
-                for(IValue value : list) {
-                    for(IValue existing : values) {
-                        IValue result;
-                        try {
-                            result = ValueHelpers.evaluateOperator(operator, value, existing);
-                            ValueHelpers.validatePredicateOutput(operator, result);
-                        } catch (EvaluationException e) {
-                            throw Lombok.sneakyThrow(e);
-                        }
-                        if(((ValueTypeBoolean.ValueBoolean) result).getRawValue()) continue outerLoop;
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeList.ValueList valueList = variables.getValue(0, ValueTypes.LIST);
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
+                    if (list.isInfinite()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                                LIST_UNIQ_PREDICATE.getLocalizedNameFull()));
                     }
-                    values.add(value);
+                    final IOperator operator = OperatorBuilders.getSafePredictate(variables.getValue(1, ValueTypes.OPERATOR));
+                    List<IValue> values = new ArrayList<>();
+                    outerLoop:
+                    for(IValue value : list) {
+                        for(IValue existing : values) {
+                            IValue result;
+                            try {
+                                result = ValueHelpers.evaluateOperator(operator, value, existing);
+                                ValueHelpers.validatePredicateOutput(operator, result);
+                            } catch (EvaluationException e) {
+                                throw Lombok.sneakyThrow(e);
+                            }
+                            if(((ValueTypeBoolean.ValueBoolean) result).getRawValue()) continue outerLoop;
+                        }
+                        values.add(value);
+                    }
+                    return ValueTypeList.ValueList.ofList(list.getValueType(), values);
                 }
-                return ValueTypeList.ValueList.ofList(list.getValueType(), values);
             }).build());
 
     /**
@@ -1169,10 +1190,17 @@ public final class Operators {
             .inputType(ValueTypes.LIST)
             .renderPattern(IConfigRenderPattern.PREFIX_1_LONG).output(ValueTypes.LIST)
             .symbolOperator("uniq").interactName("unique")
-            .function(variables -> {
-                ValueTypeList.ValueList valueList =variables.getValue(0, ValueTypes.LIST);
-                IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
-                return ValueTypeList.ValueList.ofList(list.getValueType(), new ArrayList<>(Sets.newLinkedHashSet(list)));
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeList.ValueList valueList =variables.getValue(0, ValueTypes.LIST);
+                    IValueTypeListProxy<IValueType<IValue>, IValue> list = valueList.getRawValue();
+                    if (list.isInfinite()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                                LIST_UNIQ.getLocalizedNameFull()));
+                    }
+                    return ValueTypeList.ValueList.ofList(list.getValueType(), new ArrayList<>(Sets.newLinkedHashSet(list)));
+                }
             }).build());
 
     /**
@@ -3147,15 +3175,22 @@ public final class Operators {
             .renderPattern(IConfigRenderPattern.PREFIX_3_LONG)
             .output(ValueTypes.CATEGORY_ANY).symbolOperatorInteract("reduce")
             .conditionalOutputTypeDeriver((operator, input) -> input[2].getType())
-            .function(variables -> {
-                IValue accumulator = variables.getValue(2);
-                final IOperator innerOperator = OperatorBuilders.getSafeOperator(
-                        variables.getValue(0, ValueTypes.OPERATOR), accumulator.getType());
-                ValueTypeList.ValueList<IValueType<IValue>, IValue> inputList = variables.getValue(1, ValueTypes.LIST);
-                for (IValue listValue : inputList.getRawValue()) {
-                    accumulator = ValueHelpers.evaluateOperator(innerOperator, accumulator, listValue);
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    IValue accumulator = variables.getValue(2);
+                    final IOperator innerOperator = OperatorBuilders.getSafeOperator(
+                            variables.getValue(0, ValueTypes.OPERATOR), accumulator.getType());
+                    ValueTypeList.ValueList<IValueType<IValue>, IValue> inputList = variables.getValue(1, ValueTypes.LIST);
+                    if (inputList.getRawValue().isInfinite()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                                OPERATOR_REDUCE.getLocalizedNameFull()));
+                    }
+                    for (IValue listValue : inputList.getRawValue()) {
+                        accumulator = ValueHelpers.evaluateOperator(innerOperator, accumulator, listValue);
+                    }
+                    return accumulator;
                 }
-                return accumulator;
             }).build());
 
     /**
@@ -3173,22 +3208,29 @@ public final class Operators {
                     return operator.getOutputType();
                 }
             })
-            .function(variables -> {
-                ValueTypeList.ValueList valueList = variables.getValue(1, ValueTypes.LIST);
-                Iterator<IValue> iter = valueList.getRawValue().iterator();
-                if (!iter.hasNext()) {
-                    throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REDUCE_EMPTY));
-                }
+            .function(new OperatorBase.IFunction() {
+                @Override
+                public IValue evaluate(OperatorBase.SafeVariablesGetter variables) throws EvaluationException {
+                    ValueTypeList.ValueList valueList = variables.getValue(1, ValueTypes.LIST);
+                    if (valueList.getRawValue().isInfinite()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_INFINITELIST_ILLEGAL,
+                                OPERATOR_REDUCE1.getLocalizedNameFull()));
+                    }
+                    Iterator<IValue> iter = valueList.getRawValue().iterator();
+                    if (!iter.hasNext()) {
+                        throw new EvaluationException(Component.translatable(L10NValues.OPERATOR_ERROR_REDUCE_EMPTY));
+                    }
 
-                IValue accumulator = iter.next();
-                final IOperator innerOperator = OperatorBuilders.getSafeOperator(
-                        variables.getValue(0, ValueTypes.OPERATOR), accumulator.getType());
+                    IValue accumulator = iter.next();
+                    final IOperator innerOperator = OperatorBuilders.getSafeOperator(
+                            variables.getValue(0, ValueTypes.OPERATOR), accumulator.getType());
 
-                while (iter.hasNext()) {
-                    IValue listValue = iter.next();
-                    accumulator = ValueHelpers.evaluateOperator(innerOperator, accumulator, listValue);
+                    while (iter.hasNext()) {
+                        IValue listValue = iter.next();
+                        accumulator = ValueHelpers.evaluateOperator(innerOperator, accumulator, listValue);
+                    }
+                    return accumulator;
                 }
-                return accumulator;
             }).build());
 
     /**

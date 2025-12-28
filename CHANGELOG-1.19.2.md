@@ -1,8 +1,17 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.29.2"></a>
+## [1.19.2-1.29.2](/compare/1.19.2-1.29.1...1.19.2-1.29.2) - 2025-12-28 09:16:36
+
+
+### Fixed
+* Add safety checks to disable some operators on infinite lists
+  Concretely, contains, reduce, and uniq are disabled on infinite lists.
+  Closes #1582
+
 <a name="1.19.2-1.29.1"></a>
-## [1.19.2-1.29.1](/compare/1.19.2-1.29.0...1.19.2-1.29.1) - 2025-12-23 09:15:43
+## [1.19.2-1.29.1](/compare/1.19.2-1.29.0...1.19.2-1.29.1) - 2025-12-23 09:15:43 +0100
 
 
 ### Fixed
