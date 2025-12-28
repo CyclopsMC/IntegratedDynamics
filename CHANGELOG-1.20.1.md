@@ -1,8 +1,17 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.29.8"></a>
+## [1.20.1-1.29.8](/compare/1.20.1-1.29.7...1.20.1-1.29.8) - 2025-12-28 09:17:57
+
+
+### Fixed
+* Add safety checks to disable some operators on infinite lists
+  Concretely, contains, reduce, and uniq are disabled on infinite lists.
+  Closes #1582
+
 <a name="1.20.1-1.29.7"></a>
-## [1.20.1-1.29.7](/compare/1.20.1-1.29.6...1.20.1-1.29.7) - 2025-12-23 09:16:36
+## [1.20.1-1.29.7](/compare/1.20.1-1.29.6...1.20.1-1.29.7) - 2025-12-23 09:16:36 +0100
 
 
 ### Added
