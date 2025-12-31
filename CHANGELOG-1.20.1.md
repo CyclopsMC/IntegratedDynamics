@@ -1,8 +1,16 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.29.9"></a>
+## [1.20.1-1.29.9](/compare/1.20.1-1.29.8...1.20.1-1.29.9) - 2025-12-31 14:34:39
+
+
+### Changed
+* Keep insertion order of network change observers
+  Required for CyclopsMC/IntegratedCrafting#112
+
 <a name="1.20.1-1.29.8"></a>
-## [1.20.1-1.29.8](/compare/1.20.1-1.29.7...1.20.1-1.29.8) - 2025-12-28 09:17:57
+## [1.20.1-1.29.8](/compare/1.20.1-1.29.7...1.20.1-1.29.8) - 2025-12-28 09:17:57 +0100
 
 
 ### Fixed
