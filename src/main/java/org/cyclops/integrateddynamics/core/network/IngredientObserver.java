@@ -22,11 +22,7 @@ import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,7 +48,7 @@ public class IngredientObserver<T, M> {
     private final IPositionedAddonsNetworkIngredients<T, M> network;
     private final ConcurrentWorldIngredientsProxy<T, M> worldProxy;
 
-    private final Set<IIngredientComponentStorageObservable.IIndexChangeObserver<T, M>> changeObservers;
+    private final List<IIngredientComponentStorageObservable.IIndexChangeObserver<T, M>> changeObservers;
     private final Int2ObjectMap<Map<PartPos, Integer>> observeTargetTickIntervals;
     private final Int2ObjectMap<Map<PartPos, Integer>> observeTargetTicks;
     private final Int2ObjectMap<Map<PrioritizedPartPos, IngredientCollectionDiffManager<T, M>>> channeledDiffManagers;
@@ -67,7 +63,7 @@ public class IngredientObserver<T, M> {
     public IngredientObserver(IPositionedAddonsNetworkIngredients<T, M> network) {
         this.network = network;
         this.worldProxy = new ConcurrentWorldIngredientsProxy<>(network);
-        this.changeObservers = Sets.newIdentityHashSet();
+        this.changeObservers = Lists.newArrayList();
         this.observeTargetTickIntervals = new Int2ObjectOpenHashMap<>();
         this.observeTargetTicks = new Int2ObjectOpenHashMap<>();
         this.channeledDiffManagers = new Int2ObjectOpenHashMap<>();
@@ -104,7 +100,9 @@ public class IngredientObserver<T, M> {
      * @param observer An index change observer.
      */
     public synchronized void addChangeObserver(IIngredientComponentStorageObservable.IIndexChangeObserver<T, M> observer) {
-        changeObservers.add(observer);
+        if (!changeObservers.contains(observer)) {
+            changeObservers.add(observer);
+        }
     }
 
     /**
