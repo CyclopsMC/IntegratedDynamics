@@ -1,8 +1,16 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.30.2"></a>
+## [1.21.1-1.30.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.1...1.21.1-1.30.2) - 2025-12-31 14:35:18
+
+
+### Changed
+* Keep insertion order of network change observers
+  Required for CyclopsMC/IntegratedCrafting#112
+
 <a name="1.21.1-1.30.1"></a>
-## [1.21.1-1.30.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.0...1.21.1-1.30.1) - 2025-12-28 09:18:50
+## [1.21.1-1.30.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.0...1.21.1-1.30.1) - 2025-12-28 09:18:50 +0100
 
 
 ### Fixed
