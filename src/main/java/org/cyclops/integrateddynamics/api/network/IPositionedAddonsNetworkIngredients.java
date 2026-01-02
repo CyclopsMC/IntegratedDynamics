@@ -12,8 +12,10 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.core.network.IIngredientChannelInsertPreConsumer;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -140,5 +142,22 @@ public interface IPositionedAddonsNetworkIngredients<T, M> extends IPositionedAd
      * Reset the last second duration count.
      */
     public void resetLastSecondDurationsIndex();
+
+    /**
+     * Register an insert pre-consumer.
+     * @param preConsumer The consumer.
+     */
+    public void registerInsertPreConsumer(IIngredientChannelInsertPreConsumer<T> preConsumer);
+
+    /**
+     * Unregister an insert pre-consumer.
+     * @param preConsumer The consumer.
+     */
+    public void unregisterInsertPreConsumer(IIngredientChannelInsertPreConsumer<T> preConsumer);
+
+    /**
+     * @return All registered insert pre-consumers.
+     */
+    public Collection<IIngredientChannelInsertPreConsumer<T>> getInsertPreConsumers();
 
 }
