@@ -1,8 +1,19 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.30.3"></a>
+## [1.21.1-1.30.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.2...1.21.1-1.30.3) - 2026-01-02 10:52:15
+
+
+### Added
+* Add translations through Crowdin (#1581)
+
+### Changed
+* Add IIngredientChannelInsertPreConsumer
+  Required for CyclopsMC/IntegratedCrafting#170
+
 <a name="1.21.1-1.30.2"></a>
-## [1.21.1-1.30.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.1...1.21.1-1.30.2) - 2025-12-31 14:35:18
+## [1.21.1-1.30.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.1...1.21.1-1.30.2) - 2025-12-31 14:35:18 +0100
 
 
 ### Changed
