@@ -1403,7 +1403,6 @@
     "info_book.integrateddynamics.manual.logic.variables.variable_store.text1": "일부 동적 변수는 참조된 변수에 접근할 수 있어야 하는 다른 변수를 기반으로 평가됩니다. 두 개의 다른 변수의 덧셈을 나타내는 동적 변수는 평가될 때 해당 두 개의 다른 변수에 접근할 수 있어야 합니다. 다른 변수에 대한 접근은 동적 변수가 평가되는 것과 동일한 네트워크 내에서 가능해야 하며, 이는 다른 변수 카드를 &l변수 저장소&r에 배치하여 수행할 수 있습니다. 네트워크에 여러 &l변수 저장소&r이 있을 수 있습니다. 이러한 다른 변수는 동일한 네트워크에도 있어야 하는 특정 변수를 참조할 수도 있습니다.",
     "info_book.integrateddynamics.manual.logic.advanced": "고급",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path": "NBT 경로",
-    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text2": "가장 간단한 NBT 경로 표현식은 &4.fieldName&0 또는 &4[”fieldName”]&0과 같은 &l필드 선택자&r 체인으로 구성됩니다.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text4": "필드 이름 배열 또는 와일드카드를 제공하여 여러 필드를 선택할 수 있습니다(예: &4[fieldA,fieldB]&0 또는 &4*&0).",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text6": "NBT 목록으로 작업할 때 &4[1]&0과 같은 인덱스를 지정하여 특정 항목을 선택할 수 있습니다.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text7": "예를 들어 &4”.a[1]”&0 표현식을 &3NBT&0 태그 &3{ a: [10,20] }&0에 적용하면 &3”20”&0이 출력됩니다.",
