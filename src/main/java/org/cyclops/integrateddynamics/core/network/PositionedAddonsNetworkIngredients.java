@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -20,12 +21,7 @@ import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollection;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientComponentStorageObservable;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientPositionsIndex;
-import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.INetworkIngredientsChannel;
-import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
-import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
-import org.cyclops.integrateddynamics.api.network.PositionedAddonsNetworkIngredientsFilter;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -33,6 +29,7 @@ import org.cyclops.integrateddynamics.api.path.IPathElement;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -52,6 +49,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     private final Map<PartPos, PositionedAddonsNetworkIngredientsFilter<T>> positionFilters = Maps.newHashMap();
     private final LoadingCache<PartPos, IIngredientComponentStorage<T, M>> cacheStorage;
     private final Int2IntMap cacheChannelSlots;
+    private final Set<IIngredientChannelInsertPreConsumer<T>> insertPreConsumers;
 
     private boolean observe;
     private Map<PartPos, Long> lastSecondDurations = Maps.newHashMap();
@@ -71,6 +69,7 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
             }
         });
         this.cacheChannelSlots = new Int2IntLinkedOpenHashMap();
+        this.insertPreConsumers = Sets.newIdentityHashSet();
 
         this.observe = false;
     }
@@ -342,5 +341,20 @@ public abstract class PositionedAddonsNetworkIngredients<T, M> extends Positione
     @Override
     public void revalidateElement(INetworkElement element) {
 
+    }
+
+    @Override
+    public void registerInsertPreConsumer(IIngredientChannelInsertPreConsumer<T> preConsumer) {
+        insertPreConsumers.add(preConsumer);
+    }
+
+    @Override
+    public void unregisterInsertPreConsumer(IIngredientChannelInsertPreConsumer<T> preConsumer) {
+        insertPreConsumers.remove(preConsumer);
+    }
+
+    @Override
+    public Set<IIngredientChannelInsertPreConsumer<T>> getInsertPreConsumers() {
+        return insertPreConsumers;
     }
 }
