@@ -1,8 +1,16 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.29.10"></a>
+## [1.20.1-1.29.10](/compare/1.20.1-1.29.9...1.20.1-1.29.10) - 2026-01-02 10:49:29
+
+
+### Changed
+* Add IIngredientChannelInsertPreConsumer
+  Required for CyclopsMC/IntegratedCrafting#170
+
 <a name="1.20.1-1.29.9"></a>
-## [1.20.1-1.29.9](/compare/1.20.1-1.29.8...1.20.1-1.29.9) - 2025-12-31 14:34:39
+## [1.20.1-1.29.9](/compare/1.20.1-1.29.8...1.20.1-1.29.9) - 2025-12-31 14:34:39 +0100
 
 
 ### Changed
