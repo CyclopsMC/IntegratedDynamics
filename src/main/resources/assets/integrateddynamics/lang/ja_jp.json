@@ -1426,7 +1426,6 @@
     "info_book.integrateddynamics.manual.logic.variables.variable_store.text1": "一部の動的変数は他の変数に基づいて評価されますが、その場合、参照先の変数へのアクセスが可能でなければなりません。他の2つの変数の追加を表す動的変数は、評価時に他の2つの変数にアクセスできる必要があります。他の変数へのアクセスは、動的変数が評価されているのと同じネットワーク内で可能でなければなりません。これは、他の変数カードを&l変数ストア&rに配置することで実現できます。ネットワークには複数の&l変数ストア&rが存在する場合があります。これらの他の変数は、同じネットワークに存在する必要がある特定の変数を参照することもできます。",
     "info_book.integrateddynamics.manual.logic.advanced": "上級者向け",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path": "NBTパス",
-    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text2": "最も単純なNBTパス式は、&4.fieldName&0や&4[”fieldName”]&0などの&lフィールドセレクター&rのチェーンで構成されます。",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text3": "たとえば、式&4\".root.child1.child2”&0を&3NBT&0タグ&3{ root: { child1: { child2: ”some value” }}}&0に適用すると、&3”some value”&0が出力されます。",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text4": "フィールド名の配列またはワイルドカードを指定することで、複数のフィールドを選択できます。例: &4[fieldA,fieldB]&0または&4*&0",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text5": "たとえば、式&4\".a[b1,b2]*”&0を&3NBT&0タグ&3{ a: { b1: { c: ”some value” }}}&0に適用すると、&3”some value”&0が出力されます。",

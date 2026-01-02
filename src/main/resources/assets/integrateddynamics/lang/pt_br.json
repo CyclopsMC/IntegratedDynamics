@@ -1652,7 +1652,6 @@
     "info_book.integrateddynamics.manual.logic.advanced": "Avançado",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path": "Caminho NBT",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text1": "Ao trabalhar com tags &3NBT&0 complexas, você pode rapidamente precisar de cadeias de operadores complexas para ler valores NBT profundamente aninhados. Para simplificar esta tarefa, expressões de &lCaminho NBT&r baseadas em &4String&0 podem ser usadas para determinar o caminho dentro de uma tag &3NBT&0.",
-    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text2": "A expressão de Caminho NBT mais simples é composta por uma cadeia de &lseletores de campo&r, como &4.fieldName&0 ou &4[”fieldName”]&0.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text3": "Por exemplo, aplicar a expressão &4”.root.child1.child2”&0 na tag &3NBT&0 &3{ root: { child1: { child2: ”algum valor” }}}&0 resultará em &3”algum valor”&0.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text4": "Múltiplos campos podem ser selecionados fornecendo um array de nomes de campos ou um curinga, por exemplo &4[fieldA,fieldB]&0 ou &4*&0",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text5": "Por exemplo, aplicar a expressão &4”.a[b1,b2]*”&0 na tag &3NBT&0 &3{ a: { b1: { c: ”algum valor” }}}&0 resultará em &3”algum valor”&0.",
