@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.blockentity;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -234,7 +235,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
                         FluidStack fluidStack = blockEntity.getTank().getFluid().copy();
                         fluidStack.setAmount(Math.min(BlockMechanicalSqueezerConfig.autoEjectFluidRate, fluidStack.getAmount()));
                         try (var tx = Transaction.openRoot()) {
-                            int moved = ResourceHandlerUtil.move(blockEntity.getTank(), handler, null, BlockMechanicalSqueezerConfig.autoEjectFluidRate, tx);
+                            int moved = ResourceHandlerUtil.move(blockEntity.getTank(), handler, Predicates.alwaysTrue(), BlockMechanicalSqueezerConfig.autoEjectFluidRate, tx);
                             tx.commit();
                             if (moved > 0) {
                                 break;
