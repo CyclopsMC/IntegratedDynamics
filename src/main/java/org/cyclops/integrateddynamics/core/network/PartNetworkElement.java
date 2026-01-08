@@ -6,8 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
-import java.util.Optional;
-
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.PartStateException;
@@ -113,7 +111,9 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     @Override
     public void revalidate(INetwork network) {
         super.revalidate(network);
-        revalidatePositioned(network, this.center.getPos());
+        if (revalidatePositioned(network, this.center.getPos())) {
+            part.afterNetworkReAlive(network, NetworkHelpers.getPartNetworkChecked(network), PartTarget.fromCenter(this.center), getPartState());
+        }
     }
 
     @Override
