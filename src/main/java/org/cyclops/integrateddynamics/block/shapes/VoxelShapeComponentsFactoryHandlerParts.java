@@ -69,7 +69,7 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         @Override
         public String getStateId(BlockState blockState, BlockGetter world, BlockPos blockPos) {
             return getPart()
-                    .map(part -> "part(" + part.getPartRenderPosition().toCompactString() + ")")
+                    .map(part -> "part(" + part.getPartRenderPosition().toCompactString() + ";dir=" + this.direction.ordinal() + ")")
                     .orElse("part");
         }
 
