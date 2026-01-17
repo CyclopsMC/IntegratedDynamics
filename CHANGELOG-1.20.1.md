@@ -1,8 +1,29 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.29.11"></a>
+## [1.20.1-1.29.11](/compare/1.20.1-1.29.10...1.20.1-1.29.11) - 2026-01-17 14:05:34
+
+
+### Added
+* Add generic number casting operators
+  Closes CyclopsMC/IntegratedScripting#55
+  These new operators make it more convenient to work with return types of
+  Integrated Scripting, where numbers could be integers, doubles, or
+  longs.
+
+### Changed
+* Add safety check for infinite lists in list equals and itemstack count
+  Closes #1583
+  Related to #1582
+
+### Fixed
+* Fix part states not being revalidated, Closes #1588
+* Fix oldest/newest mixup on delayer history in book, Closes #1592
+* Fix cable shape cache having cache collisions when there are two entries that have the same part on two different sides while having the same cable connections
+
 <a name="1.20.1-1.29.10"></a>
-## [1.20.1-1.29.10](/compare/1.20.1-1.29.9...1.20.1-1.29.10) - 2026-01-02 10:49:29
+## [1.20.1-1.29.10](/compare/1.20.1-1.29.9...1.20.1-1.29.10) - 2026-01-02 10:49:29 +0100
 
 
 ### Changed
