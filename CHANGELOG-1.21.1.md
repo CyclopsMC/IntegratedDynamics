@@ -1,8 +1,30 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.30.4"></a>
+## [1.21.1-1.30.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.3...1.21.1-1.30.4) - 2026-01-17 14:10:56
+
+
+### Added
+* Add Almost Unified integration
+* Add generic number casting operators
+  Closes CyclopsMC/IntegratedScripting#55
+  These new operators make it more convenient to work with return types of
+  Integrated Scripting, where numbers could be integers, doubles, or
+  longs.
+
+### Changed
+* Add safety check for infinite lists in list equals and itemstack count
+  Closes #1583
+  Related to #1582
+
+### Fixed
+* Fix part states not being revalidated, Closes #1588
+* Fix oldest/newest mixup on delayer history in book, Closes #1592
+* Fix cable shape cache having cache collisions when there are two entries that have the same part on two different sides while having the same cable connections
+
 <a name="1.21.1-1.30.3"></a>
-## [1.21.1-1.30.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.2...1.21.1-1.30.3) - 2026-01-02 10:52:15
+## [1.21.1-1.30.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.2...1.21.1-1.30.3) - 2026-01-02 10:52:15 +0100
 
 
 ### Added
