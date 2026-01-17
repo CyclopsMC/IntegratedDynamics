@@ -95,8 +95,15 @@ public abstract class NetworkElementBase implements INetworkElement {
         return dimPos.isLoaded();
     }
 
-    protected void revalidatePositioned(INetwork network, DimPos dimPos) {
-        NetworkHelpers.getNetworkCarrier(dimPos.getLevel(true), dimPos.getBlockPos(), null)
-                .ifPresent(networkCarrier -> networkCarrier.setNetwork(network));
+    protected boolean revalidatePositioned(INetwork network, DimPos dimPos) {
+        return NetworkHelpers.getNetworkCarrier(dimPos.getLevel(true), dimPos.getBlockPos(), null)
+                .map(networkCarrier -> {
+                    if (networkCarrier.getNetwork() == null) {
+                        networkCarrier.setNetwork(network);
+                        return true;
+                    }
+                    return false;
+                })
+                .orElse(false);
     }
 }
