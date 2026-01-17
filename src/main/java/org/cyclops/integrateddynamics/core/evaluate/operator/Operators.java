@@ -878,6 +878,30 @@ public final class Operators {
             ).build());
 
     /**
+     * Cast any number to a double
+     */
+    public static final IOperator NUMBER_CAST_DOUBLE = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.DOUBLE)
+            .symbol("(double)").operatorName("cast_double").interactName("toDouble")
+            .function(variables -> variables.getVariables()[0].getValue().cast(ValueTypes.DOUBLE)).build());
+
+    /**
+     * Cast any number to a double
+     */
+    public static final IOperator NUMBER_CAST_LONG = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.LONG)
+            .symbol("(long)").operatorName("cast_long").interactName("toLong")
+            .function(variables -> variables.getVariables()[0].getValue().cast(ValueTypes.LONG)).build());
+
+    /**
+     * Cast any number to a double
+     */
+    public static final IOperator NUMBER_CAST_INTEGER = REGISTRY.register(OperatorBuilders.NUMBER_1_PREFIX
+            .inputType(ValueTypes.CATEGORY_NUMBER).output(ValueTypes.INTEGER)
+            .symbol("(integer)").operatorName("cast_integer").interactName("toInteger")
+            .function(variables -> variables.getVariables()[0].getValue().cast(ValueTypes.INTEGER)).build());
+
+    /**
      * ----------------------------------- NULLABLE OPERATORS -----------------------------------
      */
 

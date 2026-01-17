@@ -1092,6 +1092,12 @@
     "operator.integrateddynamics.number.floor.info": "Round down to the nearest Integer",
     "operator.integrateddynamics.number.compact": "Compact",
     "operator.integrateddynamics.number.compact.info": "Show a shorter, less precise representation of a Number",
+    "operator.integrateddynamics.number.cast_double": "Cast Number to Double",
+    "operator.integrateddynamics.number.cast_double.info": "Cast any Number to a Double",
+    "operator.integrateddynamics.number.cast_long": "Cast Number to Long",
+    "operator.integrateddynamics.number.cast_long.info": "Cast any Number to a Long",
+    "operator.integrateddynamics.number.cast_integer": "Cast Number to Integer",
+    "operator.integrateddynamics.number.cast_integer.info": "Cast any Number to an Integer",
 
     "operator.integrateddynamics.list": "List",
     "operator.integrateddynamics.list.basename": "List %s",
