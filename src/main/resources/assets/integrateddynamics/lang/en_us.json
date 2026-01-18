@@ -1116,6 +1116,12 @@
     "operator.integrateddynamics.number.floor.info": "Round down to the nearest Integer",
     "operator.integrateddynamics.number.compact": "Compact",
     "operator.integrateddynamics.number.compact.info": "Show a shorter, less precise representation of a Number",
+    "operator.integrateddynamics.number.cast_double": "Cast Number to Double",
+    "operator.integrateddynamics.number.cast_double.info": "Cast any Number to a Double",
+    "operator.integrateddynamics.number.cast_long": "Cast Number to Long",
+    "operator.integrateddynamics.number.cast_long.info": "Cast any Number to a Long",
+    "operator.integrateddynamics.number.cast_integer": "Cast Number to Integer",
+    "operator.integrateddynamics.number.cast_integer.info": "Cast any Number to an Integer",
 
     "operator.integrateddynamics.list": "List",
     "operator.integrateddynamics.list.basename": "List %s",
@@ -1904,7 +1910,7 @@
     "info_book.integrateddynamics.manual.machines.delay": "Delayer",
     "info_book.integrateddynamics.manual.machines.delay.text1": "In some situations, you might need to maintain some kind of history of variable values. When you for instance want to take the average or difference over the last values.",
     "info_book.integrateddynamics.manual.machines.delay.text2": "For this, you can use a &lDelayer&r, with which you can maintain the history of the values of a given variable. You can do this by inserting a &lVariable Card&r in the top slot for which you want to maintain the history. You can now create &lVariable Cards&r that will refer to a list of values, which corresponds to the history. The referenced (or any other) &lVariable Card&r must remain in the top slot for the delayer to work.",
-    "info_book.integrateddynamics.manual.machines.delay.text3": "The oldest values correspond to the last elements in the list. You can choose the maximum length of the history from within the gui.",
+    "info_book.integrateddynamics.manual.machines.delay.text3": "The newest values correspond to the last elements in the list. You can choose the maximum length of the history from within the gui.",
 
     "info_book.integrateddynamics.manual.machines.energy_battery": "Energy Battery",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "&lIntegrated Dynamics&r networks can be configured to consume energy. For this, you can attach &lEnergy Batteries&r to the network to add energy storage capacity for it.",

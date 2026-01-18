@@ -1,8 +1,28 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.29.3"></a>
+## [1.19.2-1.29.3](/compare/1.19.2-1.29.2...1.19.2-1.29.3) - 2026-01-17 14:00:53
+
+
+### Added
+* Add generic number casting operators
+  Closes CyclopsMC/IntegratedScripting#55
+  These new operators make it more convenient to work with return types of
+  Integrated Scripting, where numbers could be integers, doubles, or
+  longs.
+
+### Changed
+* Add safety check for infinite lists in list equals and itemstack count
+  Closes #1583
+  Related to #1582
+
+### Fixed
+* Fix part states not being revalidated, Closes #1588
+* Fix oldest/newest mixup on delayer history in book, Closes #1592
+
 <a name="1.19.2-1.29.2"></a>
-## [1.19.2-1.29.2](/compare/1.19.2-1.29.1...1.19.2-1.29.2) - 2025-12-28 09:16:36
+## [1.19.2-1.29.2](/compare/1.19.2-1.29.1...1.19.2-1.29.2) - 2025-12-28 09:16:36 +0100
 
 
 ### Fixed
