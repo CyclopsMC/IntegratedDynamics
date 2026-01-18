@@ -387,6 +387,7 @@ public class CableHelpers {
                         .orElseThrow(() -> new IllegalStateException("Could not find a valid path element capability"));
                 INetwork network = networkCarrier.getNetwork();
                 networkCarrier.setNetwork(null);
+                world.invalidateCapabilities(pos);
                 return network.removePathElement(pathElement, null, blockState);
             }
         }

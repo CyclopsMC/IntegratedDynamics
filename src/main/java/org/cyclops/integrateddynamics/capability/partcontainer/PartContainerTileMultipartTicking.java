@@ -32,6 +32,7 @@ public class PartContainerTileMultipartTicking extends PartContainerDefault {
     @Override
     protected void setChanged() {
         getTile().setChanged();
+        getLevel().invalidateCapabilities(getPos());
     }
 
     @Override

@@ -103,7 +103,7 @@ public class Network implements INetwork {
         this.baseCluster = pathElements;
         gatherCapabilities();
         onConstruct();
-        deriveNetworkElements(baseCluster);
+        deriveNetworkElements(baseCluster, true);
     }
 
     protected void gatherCapabilities() {
@@ -124,7 +124,7 @@ public class Network implements INetwork {
 
     }
 
-    private void deriveNetworkElements(Cluster pathElements) {
+    private void deriveNetworkElements(Cluster pathElements, boolean invalidateCapabilities) {
         if(!killIfEmpty()) {
             for (ISidedPathElement sidedPathElement : pathElements) {
                 Level world = sidedPathElement.getPathElement().getPosition().getLevel(true);
@@ -139,6 +139,9 @@ public class Network implements INetwork {
                     }
                     networkCarrier.setNetwork(null);
                     networkCarrier.setNetwork(this);
+                    if (invalidateCapabilities) {
+                        world.invalidateCapabilities(pos);
+                    }
                 });
                 BlockEntityHelpers.getCapability(world, pos, side, Capabilities.NetworkElementProvider.BLOCK).ifPresent(networkElementProvider -> {
                     for(INetworkElement element : networkElementProvider.createNetworkElements(world, pos)) {
@@ -192,7 +195,7 @@ public class Network implements INetwork {
     public void fromNBTEffective(HolderLookup.Provider provider, CompoundTag tag) {
         this.baseCluster.fromNBT(provider, tag.getCompound("baseCluster"));
         this.crashed = tag.getBoolean("crashed");
-        deriveNetworkElements(baseCluster);
+        deriveNetworkElements(baseCluster, false);
         initialize(true);
     }
 

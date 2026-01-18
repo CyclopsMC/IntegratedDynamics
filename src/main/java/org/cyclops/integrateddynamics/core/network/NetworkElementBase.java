@@ -4,6 +4,7 @@ import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -96,7 +97,12 @@ public abstract class NetworkElementBase implements INetworkElement {
     }
 
     protected void revalidatePositioned(INetwork network, DimPos dimPos) {
-        NetworkHelpers.getNetworkCarrier(dimPos.getLevel(true), dimPos.getBlockPos(), null)
-                .ifPresent(networkCarrier -> networkCarrier.setNetwork(network));
+        Level level = dimPos.getLevel(true);
+        NetworkHelpers.getNetworkCarrier(level, dimPos.getBlockPos(), null).ifPresent(networkCarrier -> {
+            if (networkCarrier.getNetwork() != network) {
+                networkCarrier.setNetwork(network);
+                level.invalidateCapabilities(dimPos.getBlockPos());
+            }
+        });
     }
 }
