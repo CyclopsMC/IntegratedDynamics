@@ -1507,7 +1507,6 @@
     "info_book.integrateddynamics.manual.machines.proxy.text2": "これは一連の&l変数カード&rがあり、1つの値を手動で変更したい場合に便利です。その変数をプロキシするといつでも別の変数と交換できるようになります。",
     "info_book.integrateddynamics.manual.machines.proxy.text3": "&lマテリアライザー&rと同様に、&l変数カード&rをパイプで入出力できます。",
     "info_book.integrateddynamics.manual.machines.delay.text1": "状況によっては、何らかの変数値の履歴を保持する必要がある場合があります。たとえば、最後の値の平均または差を取得したい場合などです。",
-    "info_book.integrateddynamics.manual.machines.delay.text3": "最も古い値はリストの最後の要素に対応します。履歴の最大長はGUI内から選択できます。",
     "info_book.integrateddynamics.manual.machines.energy_battery": "エネルギーバッテリー",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "&lIntegrated Dynamics&rのネットワークは、エネルギーを消費するように構成できます。そのためにはネットワークに&lエネルギーバッテリー&rを接続して、エネルギー貯蔵容量を追加できます。",
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "レッドストーン信号を適用すると、すべての側面へのエネルギーの自動エクスポートモードが有効になります。",

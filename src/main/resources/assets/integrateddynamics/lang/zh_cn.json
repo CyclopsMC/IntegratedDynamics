@@ -996,7 +996,6 @@
     "info_book.integrateddynamics.manual.machines.proxy.text2": "这在您具有&l变量卡&r链的情况下非常有用，但您仍然可以手动更改一个数据。然后，您可以代理该变量，这将允许它随时与另一个变量交换。",
     "info_book.integrateddynamics.manual.machines.proxy.text3": "正如&l复制器&r，&l变量卡&r可以管道输入和输出。",
     "info_book.integrateddynamics.manual.machines.delay.text1": "在某些情况下，您可能需要维护某种变量数据的历史。例如，当您想要获取上一个值的平均值或差值时。",
-    "info_book.integrateddynamics.manual.machines.delay.text3": "最旧的数据对应于列表中的最后一个元素。您可以从gui内选择历史记录的最大长度。",
     "info_book.integrateddynamics.manual.machines.energy_battery": "能量电池",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "&l动态联合&r网络可以配置为消耗能量。为此，您可以将&l能量电池&r连接到网络，为其添加能量存储容量。",
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "应用红石信号将使能量的自动出口模式到所有设置面。",
