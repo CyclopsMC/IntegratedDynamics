@@ -1,8 +1,18 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.30.5"></a>
+## [1.21.1-1.30.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.4...1.21.1-1.30.5) - 2026-01-24 15:18:33
+
+
+### Added
+* Add translations through Crowdin
+
+### Fixed
+* Fix missing capability invalidation on modified parts, #1594
+
 <a name="1.21.1-1.30.4"></a>
-## [1.21.1-1.30.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.3...1.21.1-1.30.4) - 2026-01-17 14:10:56
+## [1.21.1-1.30.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.3...1.21.1-1.30.4) - 2026-01-17 14:10:56 +0100
 
 
 ### Added
