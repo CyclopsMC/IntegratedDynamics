@@ -1740,7 +1740,6 @@
     "info_book.integrateddynamics.manual.machines.delay": "Atrasador",
     "info_book.integrateddynamics.manual.machines.delay.text1": "Em algumas situações, você pode precisar manter algum tipo de histórico de valores de variáveis. Por exemplo, quando você quer calcular a média ou a diferença dos últimos valores.",
     "info_book.integrateddynamics.manual.machines.delay.text2": "Para isso, você pode usar um &lAtrasador&r, com o qual pode manter o histórico dos valores de uma determinada variável. Você pode fazer isso inserindo um &lCartão de Variável&r no slot superior para o qual deseja manter o histórico. Agora você pode criar &lCartões de Variável&r que se referirão a uma lista de valores, que corresponde ao histórico. O &lCartão de Variável&r referenciado (ou qualquer outro) deve permanecer no slot superior para que o atrasador funcione.",
-    "info_book.integrateddynamics.manual.machines.delay.text3": "Os valores mais antigos correspondem aos últimos elementos da lista. Você pode escolher o comprimento máximo do histórico de dentro da GUI.",
     "info_book.integrateddynamics.manual.machines.energy_battery": "Bateria de Energia",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "Redes do &lIntegrated Dynamics&r podem ser configuradas para consumir energia. Para isso, você pode conectar &lBaterias de Energia&r à rede para adicionar capacidade de armazenamento de energia a ela.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text2": "Essas baterias aceitam energia baseada em &lRF&r e &lTesla&r.",

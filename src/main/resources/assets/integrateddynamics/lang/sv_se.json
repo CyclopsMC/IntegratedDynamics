@@ -1023,7 +1023,6 @@
     "info_book.integrateddynamics.manual.machines.proxy.text2": "Detta är användbart i situationer där du har en kedja av &lvariabelkort&r men du vill fortfarande kunna ändra ett värde manuellt. Du kan sedan behandla variabeln i proxyn och låta den bytas ut med en annan variabel när som helst.",
     "info_book.integrateddynamics.manual.machines.proxy.text3": "Precis som med &lmaterialiseraren&r kan &lvariabelkort&r anslutas med rör in och ut från den.",
     "info_book.integrateddynamics.manual.machines.delay.text1": "I vissa situationer behöver du kanske upprätthålla någon slags historik över variabelvärden. När du t.ex. vill ta medelvärdet eller skillnaden över de senaste värdena.",
-    "info_book.integrateddynamics.manual.machines.delay.text3": "De äldsta värdena motsvarar de sista elementen i listan. Du kan välja den maximala längden på historiken från gränssnittet.",
     "info_book.integrateddynamics.manual.machines.energy_battery": "Energibatteri",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "&lIntegrated Dynamics&r-nätverk kan konfigureras till att konsumera energi. För att göra detta kan du fästa &lenergibatterier&r till nätverket för att lägga till energilagringskapacitet.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "När en redstonesignal tillämpas kommer det automatiska energiexporteringsläget aktiveras på alla sidor.",

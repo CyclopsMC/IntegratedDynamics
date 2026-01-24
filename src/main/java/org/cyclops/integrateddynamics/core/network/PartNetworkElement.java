@@ -111,7 +111,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public void revalidate(INetwork network) {
         super.revalidate(network);
         if (revalidatePositioned(network, this.center.getPos())) {
-            part.afterNetworkReAlive(network, NetworkHelpers.getPartNetworkChecked(network), PartTarget.fromCenter(this.center), getPartState());
+            afterNetworkReAlive(network);
         }
     }
 
@@ -187,6 +187,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     @Override
     public void afterNetworkReAlive(INetwork network) {
         part.afterNetworkReAlive(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState());
+        this.center.getPos().getLevel(true).invalidateCapabilities(this.center.getPos().getBlockPos());
     }
 
     @Override
@@ -201,6 +202,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         boolean res = partNetwork.addPart(getPartState().getId(), this.center);
         if(res) {
             part.onNetworkAddition(network, partNetwork, getTarget(), getPartState());
+            this.center.getPos().getLevel(true).invalidateCapabilities(this.center.getPos().getBlockPos());
         }
         return res;
     }
@@ -222,6 +224,7 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public void onPostRemoved(INetwork network) {
         part.onPostRemoved(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(tempState), Objects.requireNonNull(tempState));
         tempState = null;
+        this.center.getPos().getLevel(true).invalidateCapabilities(this.center.getPos().getBlockPos());
     }
 
     @Override
