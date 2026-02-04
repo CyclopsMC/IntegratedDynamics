@@ -2120,7 +2120,7 @@ public final class Operators {
             .function(input -> {
                 ValueObjectTypeItemStack.ValueItemStack itemStack = input.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
                 return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
-                        itemStack.getRawValue().getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.Default.NORMAL).stream()
+                        itemStack.getRawValue().getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.Default.ADVANCED).stream()
                                 .map(c -> ValueTypeString.ValueString.of(c.getString()))
                                 .toList());
             }).build());
@@ -2136,7 +2136,7 @@ public final class Operators {
                 if(a.getRawValue().isPresent() && a.getRawValue().get() instanceof Player) {
                     Player entity = (Player) a.getRawValue().get();
                     return ValueTypeList.ValueList.ofList(ValueTypes.STRING,
-                            itemStack.getRawValue().getTooltipLines(Item.TooltipContext.of(entity.level()), entity, TooltipFlag.Default.NORMAL).stream()
+                            itemStack.getRawValue().getTooltipLines(Item.TooltipContext.of(entity.level()), entity, TooltipFlag.Default.ADVANCED).stream()
                                     .map(c -> ValueTypeString.ValueString.of(c.getString()))
                                     .toList());
                 }

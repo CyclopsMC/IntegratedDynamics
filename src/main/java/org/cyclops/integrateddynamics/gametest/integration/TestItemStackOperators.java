@@ -1314,10 +1314,10 @@ public class TestItemStackOperators {
     public void testItemStackTooltip() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_TOOLTIP.evaluate(new IVariable[]{iPickaxe});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 5, "size(tooltip(pickaxe)) = 5");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 7, "size(tooltip(pickaxe)) = 7");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_TOOLTIP.evaluate(new IVariable[]{iApple});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 1, "size(tooltip(apple)) = 1");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 3, "size(tooltip(apple)) = 3");
     }
 
     @IntegrationTest(expected = EvaluationException.class)
