@@ -121,6 +121,9 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "core", comment = "If network change events should be logged. Only enable this when debugging.", isCommandable = true, configLocation = ModConfig.Type.SERVER)
     public static boolean logChangeEvents = false;
 
+    @ConfigurableProperty(category = "core", comment = "If variable card IDs should be logged during evaluation. This is useful for debugging crashes caused by card evaluation.", isCommandable = true, configLocation = ModConfig.Type.SERVER)
+    public static boolean logCardEvaluation = false;
+
     @ConfigurableProperty(category = "core", comment = "How deep the recursion stack on an operator can become. This is to avoid game crashes when building things like the omega operator.", isCommandable = true, configLocation = ModConfig.Type.SERVER)
     public static int operatorRecursionLimit = 256;
 
