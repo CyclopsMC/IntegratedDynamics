@@ -1,0 +1,51 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    # Steps that will run before the agent starts
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Read Java version from gradle.properties
+        id: java_version
+        run: |
+          if [ -f gradle.properties ] && grep -q '^java_version=' gradle.properties; then
+            VERSION=$(grep '^java_version=' gradle.properties | cut -d'=' -f2)
+          else
+            VERSION=17
+          fi
+          echo "Using Java version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: 'Setup Java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: ${{ steps.java_version.outputs.version }}
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: wrapper
+          cache-read-only: false
+      - name: 'Build'
+        run: ./gradlew build --no-daemon
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_KEY: ${{ secrets.MAVEN_KEY }}
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
