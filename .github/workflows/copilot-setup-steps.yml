@@ -45,8 +45,8 @@ jobs:
       - name: 'Build'
         run: ./gradlew build --no-daemon
         env:
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          MAVEN_KEY: ${{ secrets.MAVEN_KEY }}
+          MAVEN_USERNAME: ${{ github.actor }}
+          MAVEN_KEY: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USER: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Warmup for game test server'
