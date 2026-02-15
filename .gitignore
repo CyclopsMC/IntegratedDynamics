@@ -4,6 +4,7 @@ doc/info.txt
 /build
 /run
 /runs
+/logs
 
 # Ignore project specific files
 .classpath

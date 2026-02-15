@@ -223,7 +223,7 @@ public class AspectWriteBuilders {
 
             PROPERTIES_REDSTONE_PULSE.setValue(PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(false));
             PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_EMIT_VALUE, ValueTypeInteger.ValueInteger.of(15));
-            PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(2));
+            PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(1));
         }
 
         public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void> PROP_SET = input -> {
