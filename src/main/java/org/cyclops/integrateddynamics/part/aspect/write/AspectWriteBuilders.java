@@ -223,7 +223,7 @@ public class AspectWriteBuilders {
 
             PROPERTIES_REDSTONE_PULSE.setValue(PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(false));
             PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_EMIT_VALUE, ValueTypeInteger.ValueInteger.of(15));
-            PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(1));
+            PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(2));
         }
 
         public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void> PROP_SET = input -> {
@@ -238,13 +238,17 @@ public class AspectWriteBuilders {
             int emitLevel = input.getMiddle().getValue(PROP_PULSE_EMIT_VALUE).getRawValue();
             int pulseLength = input.getMiddle().getValue(PROP_PULSE_LENGTH).getRawValue();
             int lastPulseValue = WRITE_REDSTONE_COMPONENT.getLastPulseValue(target);
+            int scheduledPulseRemaining = WRITE_REDSTONE_COMPONENT.getScheduledPulseRemaining(target);
             if (lastPulseValue != pulseValue) {
+                // New pulse triggered
                 WRITE_REDSTONE_COMPONENT.setLastPulseValue(target, pulseValue);
                 WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, emitLevel, strongPower);
                 WRITE_REDSTONE_COMPONENT.setScheduledPulseRemaining(target, pulseLength);
-            } else {
+            } else if (scheduledPulseRemaining == 0) {
+                // No pulse is active, set to 0
                 WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, 0, strongPower);
             }
+            // If scheduledPulseRemaining > 0, the pulse is still active, don't change anything
             return null;
         };
 

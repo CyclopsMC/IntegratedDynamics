@@ -334,15 +334,16 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
             if (blockEntity.getConnected().isEmpty()) {
                 blockEntity.getCable().updateConnections();
             }
+
+            // Handle scheduled pulse resets before aspect evaluation
+            blockEntity.updateScheduledPulses();
+
             blockEntity.getPartContainer().update();
 
             // Revalidate network if that hasn't happened yet
             if (blockEntity.getNetwork() == null) {
                 NetworkHelpers.revalidateNetworkElements(level, pos);
             }
-
-            // Handle scheduled pulse resets
-            blockEntity.updateScheduledPulses();
         }
     }
 }
