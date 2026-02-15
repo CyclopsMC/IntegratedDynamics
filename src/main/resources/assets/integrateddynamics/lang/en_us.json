@@ -1799,6 +1799,8 @@
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text9": "For example, applying the expression &4”.a[1:4:2]”&0 on the &3NBT&0 tag &3{ a: [0,1,2,3,4,5] }&0 will output &3[1,3]&0.",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text10": "More advanced filter expressions are also possible using the filter syntax, for example &4[?(@.childName < 10)]&0 (@ refers to the current tag, .. refers to the parent tag, $ refers to the root tag)",
     "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text11": "For example, applying the expression &4”$.a[?(@ == 3)]”&0 on the &3NBT&0 tag &3{ a: [0,1,2,3,4,5] }&0 will output &3[3]&0.",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text12": "Expressions can be combined using ”&&” (and), ”||” (or), and ”!” (not).",
+    "info_book.integrateddynamics.manual.logic.advanced.nbt_path.text13": "For example, applying the expression &4”$.a[?(@ == 3 || (@ == 5))]”&0 on the &3NBT&0 tag &3{ a: [0,1,2,3,4,5] }&0 will output &3[3,5]&0.",
 
     "info_book.integrateddynamics.manual.parts": "Parts",
 
