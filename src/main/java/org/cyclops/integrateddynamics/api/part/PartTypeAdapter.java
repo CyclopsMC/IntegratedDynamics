@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
@@ -68,12 +69,12 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public int getUpdateInterval(S state) {
-        return state.getUpdateInterval();
+        return Math.max(getMinimumUpdateInterval(state), state.getUpdateInterval());
     }
 
     @Override
     public int getMinimumUpdateInterval(S state) {
-        return 1;
+        return Math.max(GeneralConfig.partsMinimumUpdateInterval, GeneralConfig.partMinimumUpdateIntervalsMap.getOrDefault(this, 1));
     }
 
     @Override
