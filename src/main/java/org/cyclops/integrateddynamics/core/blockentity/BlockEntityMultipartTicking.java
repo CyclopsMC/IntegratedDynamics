@@ -71,6 +71,8 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     @Getter
     @NBTPersist private EnumFacingMap<Integer> lastRedstonePulses = EnumFacingMap.newMap();
     @Getter
+    @NBTPersist private EnumFacingMap<Integer> scheduledPulseRemaining = EnumFacingMap.newMap();
+    @Getter
     @NBTPersist private EnumFacingMap<Integer> lightLevels = EnumFacingMap.newMap();
     private EnumFacingMap<Integer> previousLightLevels;
     @Getter
@@ -251,6 +253,37 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         sendUpdate();
     }
 
+    public void updateScheduledPulses() {
+        if (!getLevel().isClientSide) {
+            EnumFacingMap<Integer> scheduledPulses = getScheduledPulseRemaining();
+            if (!scheduledPulses.isEmpty()) {
+                java.util.List<Direction> toRemove = new java.util.ArrayList<>();
+                for (Map.Entry<Direction, Integer> entry : scheduledPulses.entrySet()) {
+                    Direction side = entry.getKey();
+                    int remaining = entry.getValue();
+                    if (remaining > 0) {
+                        remaining--;
+                        if (remaining == 0) {
+                            // Mark for removal and reset the redstone level to 0
+                            toRemove.add(side);
+                            EnumFacingMap<Integer> redstoneLevels = getRedstoneLevels();
+                            EnumFacingMap<Boolean> redstoneStrongs = getRedstoneStrong();
+                            boolean strongPower = redstoneStrongs.getOrDefault(side, false);
+                            redstoneLevels.put(side, 0);
+                            updateRedstoneInfo(side, strongPower);
+                        } else {
+                            scheduledPulses.put(side, remaining);
+                        }
+                    }
+                }
+                // Remove completed pulses
+                for (Direction side : toRemove) {
+                    scheduledPulses.remove(side);
+                }
+            }
+        }
+    }
+
     public INetwork getNetwork() {
         return networkCarrier.getNetwork();
     }
@@ -304,6 +337,10 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
             if (blockEntity.getConnected().isEmpty()) {
                 blockEntity.getCable().updateConnections();
             }
+
+            // Handle scheduled pulse resets before aspect evaluation
+            blockEntity.updateScheduledPulses();
+
             blockEntity.getPartContainer().update();
 
             // Revalidate network if that hasn't happened yet
