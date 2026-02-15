@@ -20,6 +20,7 @@ repo/*
 out/*
 keystore.jks
 .idea
+logs/
 
 # Ignore IDE specific files
 .vscode
