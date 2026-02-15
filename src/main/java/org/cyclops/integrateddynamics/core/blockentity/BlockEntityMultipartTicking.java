@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.blockentity;
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -70,6 +71,8 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     @NBTPersist private EnumFacingMap<Boolean> redstoneStrong = EnumFacingMap.newMap();
     @Getter
     @NBTPersist private EnumFacingMap<Integer> lastRedstonePulses = EnumFacingMap.newMap();
+    @Getter
+    @NBTPersist private EnumFacingMap<Integer> scheduledPulseRemaining = EnumFacingMap.newMap();
     @Getter
     @NBTPersist private EnumFacingMap<Integer> lightLevels = EnumFacingMap.newMap();
     private EnumFacingMap<Integer> previousLightLevels;
@@ -251,6 +254,33 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         sendUpdate();
     }
 
+    public void updateScheduledPulses() {
+        if (!getLevel().isClientSide) {
+            EnumFacingMap<Integer> scheduledPulses = getScheduledPulseRemaining();
+            if (!scheduledPulses.isEmpty()) {
+                // Iterate over a copy to avoid concurrent modification
+                for (Map.Entry<Direction, Integer> entry : Maps.newHashMap(scheduledPulses).entrySet()) {
+                    Direction side = entry.getKey();
+                    int remaining = entry.getValue();
+                    if (remaining > 0) {
+                        remaining--;
+                        if (remaining == 0) {
+                            // Reset the redstone level to 0
+                            scheduledPulses.remove(side);
+                            EnumFacingMap<Integer> redstoneLevels = getRedstoneLevels();
+                            EnumFacingMap<Boolean> redstoneStrongs = getRedstoneStrong();
+                            boolean strongPower = redstoneStrongs.getOrDefault(side, false);
+                            redstoneLevels.put(side, 0);
+                            updateRedstoneInfo(side, strongPower);
+                        } else {
+                            scheduledPulses.put(side, remaining);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public INetwork getNetwork() {
         return networkCarrier.getNetwork();
     }
@@ -310,6 +340,9 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
             if (blockEntity.getNetwork() == null) {
                 NetworkHelpers.revalidateNetworkElements(level, pos);
             }
+
+            // Handle scheduled pulse resets
+            blockEntity.updateScheduledPulses();
         }
     }
 }

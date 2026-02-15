@@ -206,12 +206,16 @@ public class AspectWriteBuilders {
         public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_PULSE_EMIT_VALUE =
                 new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value",
                         (v) -> v.getRawValue() >= 0 && v.getRawValue() <= 15);
+        public static final IAspectPropertyTypeInstance<ValueTypeInteger, ValueTypeInteger.ValueInteger> PROP_PULSE_LENGTH =
+                new AspectPropertyTypeInstance<>(ValueTypes.INTEGER, "aspect.aspecttypes.integrateddynamics.integer.pulse_length",
+                        (v) -> v.getRawValue() >= 1);
         public static final IAspectProperties PROPERTIES_REDSTONE = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROP_STRONG_POWER
         ));
         public static final IAspectProperties PROPERTIES_REDSTONE_PULSE = new AspectProperties(ImmutableList.<IAspectPropertyTypeInstance>of(
                 PROP_STRONG_POWER,
-                PROP_PULSE_EMIT_VALUE
+                PROP_PULSE_EMIT_VALUE,
+                PROP_PULSE_LENGTH
         ));
 
         static {
@@ -219,6 +223,7 @@ public class AspectWriteBuilders {
 
             PROPERTIES_REDSTONE_PULSE.setValue(PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(false));
             PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_EMIT_VALUE, ValueTypeInteger.ValueInteger.of(15));
+            PROPERTIES_REDSTONE_PULSE.setValue(PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(1));
         }
 
         public static final IAspectValuePropagator<Triple<PartTarget, IAspectProperties, Integer>, Void> PROP_SET = input -> {
@@ -231,10 +236,12 @@ public class AspectWriteBuilders {
             boolean strongPower = input.getMiddle().getValue(PROP_STRONG_POWER).getRawValue();
             int pulseValue = input.getRight();
             int emitLevel = input.getMiddle().getValue(PROP_PULSE_EMIT_VALUE).getRawValue();
+            int pulseLength = input.getMiddle().getValue(PROP_PULSE_LENGTH).getRawValue();
             int lastPulseValue = WRITE_REDSTONE_COMPONENT.getLastPulseValue(target);
             if (lastPulseValue != pulseValue) {
                 WRITE_REDSTONE_COMPONENT.setLastPulseValue(target, pulseValue);
                 WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, emitLevel, strongPower);
+                WRITE_REDSTONE_COMPONENT.setScheduledPulseRemaining(target, pulseLength);
             } else {
                 WRITE_REDSTONE_COMPONENT.setRedstoneLevel(target, 0, strongPower);
             }

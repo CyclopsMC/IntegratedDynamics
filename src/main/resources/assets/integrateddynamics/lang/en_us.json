@@ -960,6 +960,8 @@
     "aspect.aspecttypes.integrateddynamics.boolean.strong_power.info": "If a Redstone Torch should be simulated instead of regular Redstone Dust",
     "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value": "Pulse Value",
     "aspect.aspecttypes.integrateddynamics.integer.pulse_emit_value.info": "The pulse value that should be emitted.",
+    "aspect.aspecttypes.integrateddynamics.integer.pulse_length": "Pulse Length",
+    "aspect.aspecttypes.integrateddynamics.integer.pulse_length.info": "The duration of the pulse in ticks.",
 
     "_comment": "Operators",
     "operator.integrateddynamics": "Operator",

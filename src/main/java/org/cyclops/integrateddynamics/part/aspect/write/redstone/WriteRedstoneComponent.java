@@ -50,6 +50,13 @@ public class WriteRedstoneComponent implements IWriteRedstoneComponent {
     }
 
     @Override
+    public void setScheduledPulseRemaining(PartTarget target, int ticks) {
+        DimPos dimPos = target.getCenter().getPos();
+        getDynamicRedstoneBlock(dimPos, target.getCenter().getSide())
+                .ifPresent(block -> block.setScheduledPulseRemaining(ticks));
+    }
+
+    @Override
     public void deactivate(PartTarget target) {
         if (target.isDefaultTarget()) {
             DimPos dimPos = target.getCenter().getPos();

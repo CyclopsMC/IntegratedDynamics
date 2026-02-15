@@ -168,5 +168,16 @@ public class DynamicRedstoneHolderGlobal {
             // Not required
             return 0;
         }
+
+        @Override
+        public void setScheduledPulseRemaining(int ticks) {
+            // Not required
+        }
+
+        @Override
+        public int getScheduledPulseRemaining() {
+            // Not required
+            return 0;
+        }
     }
 }

@@ -111,4 +111,23 @@ public class DynamicRedstoneTileMultipartTicking implements IDynamicRedstone {
         }
         return 0;
     }
+
+    @Override
+    public void setScheduledPulseRemaining(int ticks) {
+        EnumFacingMap<Integer> scheduledPulses = tile.getScheduledPulseRemaining();
+        if (ticks > 0) {
+            scheduledPulses.put(side, ticks);
+        } else {
+            scheduledPulses.remove(side);
+        }
+    }
+
+    @Override
+    public int getScheduledPulseRemaining() {
+        EnumFacingMap<Integer> scheduledPulses = tile.getScheduledPulseRemaining();
+        if (scheduledPulses.containsKey(side)) {
+            return scheduledPulses.get(side);
+        }
+        return 0;
+    }
 }
