@@ -49,3 +49,5 @@ jobs:
           MAVEN_KEY: ${{ secrets.MAVEN_KEY }}
           GITHUB_USER: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Warmup for game test server'
+        run: ./gradlew runGameTestServer --no-daemon
