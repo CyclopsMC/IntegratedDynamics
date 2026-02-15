@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
@@ -12,10 +13,8 @@ import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.NetworkParams;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 /**
  * World NBT storage for all active networks.
  * @author rubensworks
@@ -24,6 +23,8 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
 
     private final List<NetworkParams> networkParams;
     private Set<Network> networks = Sets.newHashSet();
+    private boolean networksDirty = true;
+    private Set<INetwork> unmodifiableSafeNetworks = null;
 
     public NetworkWorldStorage(List<NetworkParams> networkParams) {
         this.networkParams = Lists.newArrayList(networkParams);
@@ -34,8 +35,10 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
      * @param network The network.
      */
     public synchronized void addNewNetwork(Network network) {
-        networks.add(network);
-        setDirty();
+        if (networks.add(network)) {
+            networksDirty = true;
+            setDirty();
+        }
     }
 
     /**
@@ -44,15 +47,21 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
      * @param network The network.
      */
     public synchronized void removeInvalidatedNetwork(Network network) {
-        networks.remove(network);
-        setDirty();
+        if (networks.remove(network)) {
+            networksDirty = true;
+            setDirty();
+        }
     }
 
     /**
      * @return A thread-safe copy of the current network set.
      */
     public synchronized Set<INetwork> getNetworks() {
-        return Collections.unmodifiableSet(Sets.newHashSet(networks));
+        if (networksDirty || unmodifiableSafeNetworks == null) {
+            unmodifiableSafeNetworks = ImmutableSet.copyOf(networks);
+            networksDirty = false;
+        }
+        return unmodifiableSafeNetworks;
     }
 
     @Override
@@ -65,7 +74,7 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
         }
 
         TickHandler.getInstance().ticked = false;
-        for(INetwork network : networks) {
+        for (INetwork network : networks) {
             network.afterServerLoad();
         }
     }
@@ -108,5 +117,4 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
             ), mod);
         }
     }
-
 }

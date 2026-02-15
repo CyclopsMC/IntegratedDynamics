@@ -1,11 +1,20 @@
 package org.cyclops.integrateddynamics;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import net.minecraft.IdentifierException;
+import net.minecraft.resources.Identifier;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import org.apache.logging.log4j.Level;
 import org.cyclops.cyclopscore.config.ConfigurablePropertyCommon;
 import org.cyclops.cyclopscore.config.ModConfigLocation;
 import org.cyclops.cyclopscore.config.extendedconfig.DummyConfigCommon;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * A config with general options for this mod.
@@ -119,6 +128,9 @@ public class GeneralConfig extends DummyConfigCommon<IntegratedDynamics> {
     @ConfigurablePropertyCommon(category = "core", comment = "If network change events should be logged. Only enable this when debugging.", isCommandable = true, configLocation = ModConfigLocation.SERVER)
     public static boolean logChangeEvents = false;
 
+    @ConfigurablePropertyCommon(category = "core", comment = "If variable card IDs should be logged during evaluation. This is useful for debugging crashes caused by card evaluation.", isCommandable = true, configLocation = ModConfigLocation.SERVER)
+    public static boolean logCardEvaluation = false;
+
     @ConfigurablePropertyCommon(category = "core", comment = "How deep the recursion stack on an operator can become. This is to avoid game crashes when building things like the omega operator.", isCommandable = true, configLocation = ModConfigLocation.SERVER)
     public static int operatorRecursionLimit = 256;
 
@@ -161,9 +173,57 @@ public class GeneralConfig extends DummyConfigCommon<IntegratedDynamics> {
     @ConfigurablePropertyCommon(category = "machine" , comment = "When true, disable the collision for cable.", configLocation = ModConfigLocation.SERVER)
     public static boolean disableCableCollision = false;
 
+    @ConfigurablePropertyCommon(category = "general", comment = "The minimum update interval to enforce for all parts, in number of ticks.", configLocation = ModConfigLocation.SERVER)
+    public static int partsMinimumUpdateInterval = 1;
+    @ConfigurablePropertyCommon(category = "general", comment = "The minimum update intervals to enforce for specific parts. You can add entries in the form of 'integrateddynamics:machine_reader:10', where '10' refers to the number of ticks.", configLocation = ModConfigLocation.SERVER)
+    public static List<String> partMinimumUpdateIntervals = Lists.newArrayList();
+    public static Map<IPartType<?, ?>, Integer> partMinimumUpdateIntervalsMap = Maps.newIdentityHashMap();
 
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
+        IntegratedDynamics._instance.getModEventBus().addListener(this::onConfigLoad);
+        IntegratedDynamics._instance.getModEventBus().addListener(this::onConfigReload);
+    }
+
+    public void onConfigLoad(ModConfigEvent.Loading event) {
+        if (Objects.equals(event.getConfig().getModId(), Reference.MOD_ID)) {
+            recreatePartMinimumUpdateIntervals();
+        }
+    }
+
+    public void onConfigReload(ModConfigEvent.Loading event) {
+        if (Objects.equals(event.getConfig().getModId(), Reference.MOD_ID)) {
+            recreatePartMinimumUpdateIntervals();
+        }
+    }
+
+    private void recreatePartMinimumUpdateIntervals() {
+        partMinimumUpdateIntervalsMap = Maps.newIdentityHashMap();
+        for (String entry : partMinimumUpdateIntervals) {
+            int lastColon = entry.lastIndexOf(":");
+            if (lastColon == -1) {
+                IntegratedDynamics.clog(Level.WARN, "Error while reloading config entry partMinimumUpdateIntervals: Invalid entry " + entry);
+                continue;
+            }
+            String partType = entry.substring(0, lastColon);
+            int interval;
+            try {
+                interval = Integer.parseInt(entry.substring(lastColon + 1));
+            } catch (NumberFormatException e) {
+                IntegratedDynamics.clog(Level.WARN, "Error while reloading config entry partMinimumUpdateIntervals: Invalid interval integer in " + entry);
+                continue;
+            }
+            try {
+                IPartType<?, ?> part = PartTypes.REGISTRY.getPartType(Identifier.tryParse(partType));
+                if (part != null) {
+                    partMinimumUpdateIntervalsMap.put(part, interval);
+                } else {
+                    IntegratedDynamics.clog(Level.WARN, "Error while reloading config entry partMinimumUpdateIntervals: Could not find a part with id " + partType);
+                }
+            } catch (IdentifierException e) {
+                IntegratedDynamics.clog(Level.WARN, "Error while reloading config entry partMinimumUpdateIntervals: " + e.getMessage());
+            }
+        }
     }
 
 }
