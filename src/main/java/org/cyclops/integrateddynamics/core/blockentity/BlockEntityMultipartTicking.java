@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.blockentity;
 
-import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -258,15 +257,15 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         if (!getLevel().isClientSide) {
             EnumFacingMap<Integer> scheduledPulses = getScheduledPulseRemaining();
             if (!scheduledPulses.isEmpty()) {
-                // Iterate over a copy to avoid concurrent modification
-                for (Map.Entry<Direction, Integer> entry : Maps.newHashMap(scheduledPulses).entrySet()) {
+                java.util.List<Direction> toRemove = new java.util.ArrayList<>();
+                for (Map.Entry<Direction, Integer> entry : scheduledPulses.entrySet()) {
                     Direction side = entry.getKey();
                     int remaining = entry.getValue();
                     if (remaining > 0) {
                         remaining--;
                         if (remaining == 0) {
-                            // Reset the redstone level to 0
-                            scheduledPulses.remove(side);
+                            // Mark for removal and reset the redstone level to 0
+                            toRemove.add(side);
                             EnumFacingMap<Integer> redstoneLevels = getRedstoneLevels();
                             EnumFacingMap<Boolean> redstoneStrongs = getRedstoneStrong();
                             boolean strongPower = redstoneStrongs.getOrDefault(side, false);
@@ -276,6 +275,10 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
                             scheduledPulses.put(side, remaining);
                         }
                     }
+                }
+                // Remove completed pulses
+                for (Direction side : toRemove) {
+                    scheduledPulses.remove(side);
                 }
             }
         }
