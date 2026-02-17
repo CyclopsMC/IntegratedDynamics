@@ -47,4 +47,15 @@ public interface IDynamicRedstone {
      */
     public int getLastPulseValue();
 
+    /**
+     * Set the remaining tick duration for an active pulse.
+     * @param ticks The number of ticks remaining, or 0 if no pulse is active.
+     */
+    public void setScheduledPulseRemaining(int ticks);
+
+    /**
+     * @return The number of ticks remaining for an active pulse, or 0 if no pulse is active.
+     */
+    public int getScheduledPulseRemaining();
+
 }

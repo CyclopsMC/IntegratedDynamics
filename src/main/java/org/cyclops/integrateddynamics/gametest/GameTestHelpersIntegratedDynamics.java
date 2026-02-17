@@ -26,6 +26,8 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
@@ -228,6 +230,21 @@ public class GameTestHelpersIntegratedDynamics {
 
     public static <V extends IValue> void testWriteAspectSetup(BlockPos pos, GameTestHelper helper, IPartTypeWriter<?, ?> partType, IAspectWrite<V, ?> aspectWrite, V value) {
         testWriteAspectSetup(pos, helper, partType, aspectWrite, createVariableForValue(helper.getLevel(), value.getType(), value));
+    }
+
+    public static <T extends IValueType<V>, V extends IValue> void setAspectProperty(PartPos partPos, IAspect aspect, IAspectPropertyTypeInstance<T, V> property, V value) {
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
+        IPartState<?> state = partStateHolder.getState();
+
+        // Get or create aspect properties
+        IAspectProperties properties = state.getAspectProperties(aspect);
+        if (properties == null) {
+            properties = aspect.getDefaultProperties();
+        }
+
+        // Set the property value
+        properties.setValue(property, value);
+        state.setAspectProperties(aspect, properties);
     }
 
 }

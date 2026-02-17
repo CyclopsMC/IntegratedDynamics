@@ -18,6 +18,10 @@ public interface IWriteRedstoneComponent {
 
     public int getLastPulseValue(PartTarget target);
 
+    public void setScheduledPulseRemaining(PartTarget target, int ticks);
+
+    public int getScheduledPulseRemaining(PartTarget target);
+
     public void deactivate(PartTarget target);
 
     public Optional<IDynamicRedstone> getDynamicRedstoneBlock(DimPos dimPos, Direction side);

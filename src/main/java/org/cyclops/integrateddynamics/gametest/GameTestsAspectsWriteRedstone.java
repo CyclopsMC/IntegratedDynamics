@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
+import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.*;
 
@@ -96,6 +97,78 @@ public class GameTestsAspectsWriteRedstone {
         helper.startSequence()
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
+                .thenSucceed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsWriteRedstoneBooleanPulseLengthLong(GameTestHelper helper) {
+        helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.EAST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+
+        // Setup part with variable
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST);
+        ItemStack variableClock = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Read.Redstone.BOOLEAN_CLOCK);
+        placeVariableInWriter(helper, helper.getLevel(), partPos, Aspects.Write.Redstone.BOOLEAN_PULSE, variableClock);
+
+        // Set pulse length to 10 ticks
+        setAspectProperty(partPos, Aspects.Write.Redstone.BOOLEAN_PULSE,
+                AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(10));
+
+        helper.startSequence()
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
+                // Verify pulse is still active after several ticks
+                .thenIdle(5)
+                .thenExecute(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
+                .thenSucceed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsWriteRedstoneIntegerPulseLengthLong(GameTestHelper helper) {
+        helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.EAST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+
+        // Place variable store
+        helper.setBlock(POS.north(), RegistryEntries.BLOCK_VARIABLE_STORE.get());
+        BlockEntityVariablestore variableStore = helper.getBlockEntity(POS.north(), BlockEntityVariablestore.class);
+
+        // Writer redstone signal from redstone reader to variable card
+        ItemStack variableClock = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Read.Redstone.BOOLEAN_CLOCK);
+        variableStore.getInventory().setItem(0, variableClock);
+
+        // Create 0 and 3 constants
+        ItemStack variable1 = createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(0));
+        ItemStack variable2 = createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(3));
+        variableStore.getInventory().setItem(1, variable1);
+        variableStore.getInventory().setItem(2, variable2);
+
+        // Create variable card for choice operator that switches between 0 and 3
+        ItemStack variableChoice = createVariableForOperator(helper.getLevel(), Operators.GENERAL_CHOICE, new int[]{
+                getVariableFacade(helper.getLevel(), variableClock).getId(),
+                getVariableFacade(helper.getLevel(), variable1).getId(),
+                getVariableFacade(helper.getLevel(), variable2).getId()
+        });
+
+        // Setup part with variable
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST);
+        placeVariableInWriter(helper, helper.getLevel(), partPos, Aspects.Write.Redstone.INTEGER_PULSE, variableChoice);
+
+        // Set pulse length to 10 ticks
+        setAspectProperty(partPos, Aspects.Write.Redstone.INTEGER_PULSE,
+                AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(10));
+
+        helper.startSequence()
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
+                // Verify pulse is still active after several ticks
+                .thenIdle(5)
+                .thenExecute(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
                 .thenSucceed();
     }

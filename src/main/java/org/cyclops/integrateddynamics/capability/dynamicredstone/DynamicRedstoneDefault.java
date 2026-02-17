@@ -42,4 +42,14 @@ public class DynamicRedstoneDefault implements IDynamicRedstone {
     public int getLastPulseValue() {
         return 0;
     }
+
+    @Override
+    public void setScheduledPulseRemaining(int ticks) {
+
+    }
+
+    @Override
+    public int getScheduledPulseRemaining() {
+        return 0;
+    }
 }

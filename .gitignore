@@ -4,6 +4,7 @@ doc/info.txt
 /build
 /run
 /runs
+/logs
 
 # Ignore project specific files
 .classpath
@@ -19,6 +20,7 @@ repo/*
 out/*
 keystore.jks
 .idea
+logs/
 
 # Ignore IDE specific files
 .vscode
