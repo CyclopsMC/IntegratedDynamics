@@ -116,6 +116,13 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Setter
     private boolean disableCollisionBox = false;
 
+    /**
+     * Flag to skip expensive network initialization during bulk cable placement.
+     * When true, onCableAdded calls are skipped in onPlace.
+     * Network initialization should be done manually after all cables are placed.
+     */
+    public static boolean SKIP_ONPLACE_NETWORK_INIT = false;
+
     public BlockCable(Properties properties) {
         super(properties, BlockEntityMultipartTicking::new);
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
@@ -241,7 +248,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, world, pos, oldState, isMoving);
-        if (!world.isClientSide()) {
+        if (!world.isClientSide() && !SKIP_ONPLACE_NETWORK_INIT) {
             ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, pos, null).orElse(null);
             if (cableFakeable != null && cableFakeable.isRealCable()) {
                 CableHelpers.onCableAdded(world, pos);
