@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.20.0 or higher.
+
+Additions:
+* Document logical NBT expressions, CyclopsMC/CyclopsCore#210
+* Add config options for minimum update intervals for parts, Closes CyclopsMC/IntegratedTunnels#349
+* Add config option to log card IDs during evaluation, Closes #1345
