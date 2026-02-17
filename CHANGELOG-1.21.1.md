@@ -1,8 +1,19 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.31.0"></a>
+## [1.21.1-1.31.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.5...1.21.1-1.31.0) - 2026-02-17 10:58:49
+
+
+### Added
+* Add configurable pulse length property to Redstone Writer, Closes #724 (#1602)
+* Document logical NBT expressions, CyclopsMC/CyclopsCore#210
+* Add config options for minimum update intervals for parts, Closes CyclopsMC/IntegratedTunnels#349
+* Add config option to log card IDs during evaluation, Closes #1345
+* Add translations through Crowdin (#1598)
+
 <a name="1.21.1-1.30.5"></a>
-## [1.21.1-1.30.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.4...1.21.1-1.30.5) - 2026-01-24 15:18:33
+## [1.21.1-1.30.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.4...1.21.1-1.30.5) - 2026-01-24 15:18:33 +0100
 
 
 ### Added
