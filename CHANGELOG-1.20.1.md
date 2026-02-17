@@ -1,8 +1,17 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.30.0"></a>
+## [1.20.1-1.30.0](/compare/1.20.1-1.29.11...1.20.1-1.30.0) - 2026-02-17 10:58:20
+
+
+### Added
+* Document logical NBT expressions, CyclopsMC/CyclopsCore#210
+* Add config options for minimum update intervals for parts, Closes CyclopsMC/IntegratedTunnels#349
+* Add config option to log card IDs during evaluation, Closes #1345
+
 <a name="1.20.1-1.29.11"></a>
-## [1.20.1-1.29.11](/compare/1.20.1-1.29.10...1.20.1-1.29.11) - 2026-01-17 14:05:34
+## [1.20.1-1.29.11](/compare/1.20.1-1.29.10...1.20.1-1.29.11) - 2026-01-17 14:05:34 +0100
 
 
 ### Added
