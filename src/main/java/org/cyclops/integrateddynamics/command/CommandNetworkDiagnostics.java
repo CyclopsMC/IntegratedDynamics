@@ -10,6 +10,7 @@ import net.minecraft.commands.Commands;
 import org.cyclops.cyclopscore.command.argument.ArgumentTypeEnum;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsTriggerClient;
 
 /**
@@ -39,17 +40,45 @@ public class CommandNetworkDiagnostics implements Command<CommandSourceStack> {
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> make() {
-        return Commands.literal("networkdiagnostics")
+        LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("networkdiagnostics")
                 .requires((commandSource) -> commandSource.hasPermission(2))
-                .executes(new CommandNetworkDiagnostics(false, false))
-                .then(Commands.argument("operation", new ArgumentTypeEnum(StartStop.class))
-                        .executes(new CommandNetworkDiagnostics(true, false))
-                        .then(Commands.argument("port", IntegerArgumentType.integer())
-                            .executes(new CommandNetworkDiagnostics(true, true))));
+                .executes(new CommandNetworkDiagnostics(false, false));
+
+        // Add the operation/port subcommand chain
+        builder.then(Commands.argument("operation", new ArgumentTypeEnum(StartStop.class))
+                .executes(new CommandNetworkDiagnostics(true, false))
+                .then(Commands.argument("port", IntegerArgumentType.integer())
+                    .executes(new CommandNetworkDiagnostics(true, true))));
+
+        // Add the measure subcommand
+        builder.then(Commands.literal("measure")
+                .executes(new CommandMeasure(false))
+                .then(Commands.argument("seconds", IntegerArgumentType.integer(1, 600))
+                        .executes(new CommandMeasure(true))));
+
+        return builder;
     }
 
     public static enum StartStop {
         START,
         STOP;
+    }
+
+    /**
+     * Subcommand for measuring network tick times.
+     */
+    public static class CommandMeasure implements Command<CommandSourceStack> {
+        private final boolean hasSecondsArg;
+
+        public CommandMeasure(boolean hasSecondsArg) {
+            this.hasSecondsArg = hasSecondsArg;
+        }
+
+        @Override
+        public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+            int seconds = hasSecondsArg ? IntegerArgumentType.getInteger(context, "seconds") : 10;
+            NetworkDiagnostics.getInstance().startMeasurement(context.getSource().getPlayerOrException(), seconds);
+            return 0;
+        }
     }
 }

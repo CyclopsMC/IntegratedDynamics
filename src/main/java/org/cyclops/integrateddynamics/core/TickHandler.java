@@ -58,6 +58,10 @@ public final class TickHandler {
             for (INetwork network : NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks()) {
                 if (isBeingDiagnozed && (shouldSendTickDurationInfo || network.hasChanged())) {
                     NetworkDiagnostics.getInstance().sendNetworkUpdate(network);
+
+                    // Accumulate measurements before resetting durations
+                    NetworkDiagnostics.getInstance().accumulateMeasurements();
+
                     network.resetLastSecondDurations();
 
                     // Also reset durations of indexes
@@ -67,6 +71,9 @@ public final class TickHandler {
                             networkIngredients.resetLastSecondDurationsIndex();
                         }
                     }
+
+                    // Check if any measurements should complete
+                    NetworkDiagnostics.getInstance().checkCompleteMeasurements();
                 }
                 try {
                     if (!network.isCrashed()) {
