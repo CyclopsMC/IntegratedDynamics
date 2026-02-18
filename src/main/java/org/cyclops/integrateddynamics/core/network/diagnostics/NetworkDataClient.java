@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.gson.*;
-import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -218,7 +217,6 @@ public class NetworkDataClient {
         return PartPos.of(DimPos.of(dimensionString, pos), Direction.byName(sideString.toLowerCase(Locale.ROOT)));
     }
 
-    @Data
     private static class ObservablePartData {
         private final int networkId;
         private final int networkCables;
@@ -227,6 +225,44 @@ public class NetworkDataClient {
         private final Direction side;
         private final String name;
         private final long last20TicksDurationNs;
+
+        public ObservablePartData(int networkId, int networkCables, ResourceKey<Level> dimension, BlockPos pos, Direction side, String name, long last20TicksDurationNs) {
+            this.networkId = networkId;
+            this.networkCables = networkCables;
+            this.dimension = dimension;
+            this.pos = pos;
+            this.side = side;
+            this.name = name;
+            this.last20TicksDurationNs = last20TicksDurationNs;
+        }
+
+        public int getNetworkId() {
+            return networkId;
+        }
+
+        public int getNetworkCables() {
+            return networkCables;
+        }
+
+        public ResourceKey<Level> getDimension() {
+            return dimension;
+        }
+
+        public BlockPos getPos() {
+            return pos;
+        }
+
+        public Direction getSide() {
+            return side;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public long getLast20TicksDurationNs() {
+            return last20TicksDurationNs;
+        }
 
         public PartPos toPartPos() {
             Level world = Minecraft.getInstance().level;
@@ -237,7 +273,6 @@ public class NetworkDataClient {
         }
     }
 
-    @Data
     private static class ObservableObserverData {
         private final int networkId;
         private final ResourceKey<Level> dimension;
@@ -245,6 +280,39 @@ public class NetworkDataClient {
         private final Direction side;
         private final String name;
         private final long last20TicksDurationNs;
+
+        public ObservableObserverData(int networkId, ResourceKey<Level> dimension, BlockPos pos, Direction side, String name, long last20TicksDurationNs) {
+            this.networkId = networkId;
+            this.dimension = dimension;
+            this.pos = pos;
+            this.side = side;
+            this.name = name;
+            this.last20TicksDurationNs = last20TicksDurationNs;
+        }
+
+        public int getNetworkId() {
+            return networkId;
+        }
+
+        public ResourceKey<Level> getDimension() {
+            return dimension;
+        }
+
+        public BlockPos getPos() {
+            return pos;
+        }
+
+        public Direction getSide() {
+            return side;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public long getLast20TicksDurationNs() {
+            return last20TicksDurationNs;
+        }
 
         public PartPos toPartPos() {
             Level world = Minecraft.getInstance().level;

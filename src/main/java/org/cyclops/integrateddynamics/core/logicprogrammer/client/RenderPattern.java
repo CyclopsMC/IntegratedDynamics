@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.client;
 
-import lombok.Getter;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -23,12 +22,15 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPatternCommon;
  */
 public class RenderPattern<E extends IGuiInputElement, G extends Screen, C extends AbstractContainerMenu> extends SubGuiBox implements ISubGuiBox {
 
-    @Getter
     protected final E element;
     private final int x, y;
     protected final G gui;
     protected final C container;
     protected Identifier texture = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/logic_programmer.png");
+
+    public E getElement() {
+        return element;
+    }
 
     public RenderPattern(E element, int baseX, int baseY, int maxWidth, int maxHeight,
                          G gui, C container) {

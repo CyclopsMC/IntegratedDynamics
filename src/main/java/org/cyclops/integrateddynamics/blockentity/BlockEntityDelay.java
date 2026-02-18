@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
@@ -59,18 +57,30 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
 
     protected Queue<IValue> values = null;
     @NBTPersist
-    @Getter
     private int capacity = 5;
     @NBTPersist
-    @Getter
-    @Setter
     private int updateInterval = 1;
     private ValueTypeList.ValueList list = ValueTypes.LIST.getDefault();
     private final IVariable<?> variable;
 
-    @Setter
     private Player lastPlayer = null;
     private EvaluationException lastError = null;
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getUpdateInterval() {
+        return updateInterval;
+    }
+
+    public void setUpdateInterval(int updateInterval) {
+        this.updateInterval = updateInterval;
+    }
+
+    public void setLastPlayer(Player lastPlayer) {
+        this.lastPlayer = lastPlayer;
+    }
 
     public BlockEntityDelay(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_DELAY.get(), blockPos, blockState, BlockEntityDelay.INVENTORY_SIZE);

@@ -3,8 +3,6 @@ package org.cyclops.integrateddynamics.block;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mojang.serialization.MapCodec;
-import lombok.Setter;
-import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -113,8 +111,11 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
             new VoxelShapeComponentsFactoryHandlerFacade()
     );
 
-    @Setter
     private boolean disableCollisionBox = false;
+
+    public void setDisableCollisionBox(boolean disableCollisionBox) {
+        this.disableCollisionBox = disableCollisionBox;
+    }
 
     public BlockCable(Properties properties) {
         super(properties, BlockEntityMultipartTicking::new);
@@ -298,7 +299,6 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
             .expireAfterAccess(1, TimeUnit.MINUTES)
             .build();
 
-    @SneakyThrows
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
         VoxelShapeComponents selectedShape = getSelectedShape(state, world, pos, selectionContext);
@@ -310,7 +310,8 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         String cableState = selectedShape.getStateId();
 
         // Cache the operations below, as they are too expensive to execute each render tick
-        return CACHE_COLLISION_SHAPES.get(cableState, () -> {
+        try {
+            return CACHE_COLLISION_SHAPES.get(cableState, () -> {
             // Combine all VoxelShapes using IBooleanFunction.OR,
             // because for some reason our VoxelShapeComponents aggregator does not handle collisions properly.
             // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
@@ -323,7 +324,10 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
                 shape = Shapes.join(shape, it.next(), BooleanOp.OR);
             }
             return shape.optimize();
-        });
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
-import lombok.Getter;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,11 +21,17 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeBoo
 public class GuiElementValueTypeBooleanRenderPattern<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu> extends RenderPattern<GuiElementValueTypeBoolean<G, C>, G, C>
         implements IRenderPatternValueTypeTooltip {
 
-    @Getter
     protected final GuiElementValueTypeBoolean<G, C> element;
     private boolean renderTooltip = true;
-    @Getter
     private ButtonCheckbox checkbox = null;
+
+    public GuiElementValueTypeBoolean<G, C> getElement() {
+        return element;
+    }
+
+    public ButtonCheckbox getCheckbox() {
+        return checkbox;
+    }
 
     public GuiElementValueTypeBooleanRenderPattern(GuiElementValueTypeBoolean<G, C> element, int baseX, int baseY, int maxWidth, int maxHeight,
                                                    G gui, C container) {

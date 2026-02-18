@@ -47,10 +47,6 @@ public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends Abst
         return validator;
     }
 
-    public IConfigRenderPattern getRenderPattern() {
-        return renderPattern;
-    }
-
     public String getInputString() {
         return inputString;
     }

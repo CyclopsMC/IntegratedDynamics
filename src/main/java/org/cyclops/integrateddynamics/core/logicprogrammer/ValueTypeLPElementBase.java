@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import lombok.Getter;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -37,9 +36,12 @@ import java.util.function.Consumer;
  */
 public abstract class ValueTypeLPElementBase<C extends ValueTypeLPElementBaseClient<?>> implements IValueTypeLogicProgrammerElement<ISubGuiBox, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase, C> {
 
-    @Getter
     private final IValueType<?> valueType;
     private C client;
+
+    public IValueType<?> getValueType() {
+        return valueType;
+    }
 
     public ValueTypeLPElementBase(IValueType<?> valueType) {
         this.valueType = valueType;

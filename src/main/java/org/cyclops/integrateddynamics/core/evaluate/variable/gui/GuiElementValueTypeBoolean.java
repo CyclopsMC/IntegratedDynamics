@@ -42,10 +42,6 @@ public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractCont
         return validator;
     }
 
-    public IConfigRenderPattern getRenderPattern() {
-        return renderPattern;
-    }
-
     public boolean getDefaultInputBoolean() {
         return defaultInputBoolean;
     }

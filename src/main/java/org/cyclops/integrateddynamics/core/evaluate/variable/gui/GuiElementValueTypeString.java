@@ -44,10 +44,6 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
         return validator;
     }
 
-    public IConfigRenderPattern getRenderPattern() {
-        return renderPattern;
-    }
-
     public String getDefaultInputString() {
         return defaultInputString;
     }

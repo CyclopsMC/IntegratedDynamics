@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.blockentity;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
@@ -56,13 +54,22 @@ public class BlockEntityProxy extends BlockEntityActiveVariableBase<ProxyNetwork
     public static final String GLOBALCOUNTER_KEY = "proxy";
 
     @NBTPersist
-    @Getter
-    @Setter
     private int proxyId = -1;
 
-    @Setter
     private Player lastPlayer = null;
     private boolean writeVariable;
+
+    public int getProxyId() {
+        return proxyId;
+    }
+
+    public void setProxyId(int proxyId) {
+        this.proxyId = proxyId;
+    }
+
+    public void setLastPlayer(Player lastPlayer) {
+        this.lastPlayer = lastPlayer;
+    }
 
     public BlockEntityProxy(BlockPos blockPos, BlockState blockState) {
         this(RegistryEntries.BLOCK_ENTITY_PROXY.get(), blockPos, blockState, BlockEntityProxy.INVENTORY_SIZE);

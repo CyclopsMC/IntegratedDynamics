@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderSet;
@@ -68,23 +66,50 @@ public class ValueTypeRecipeLPElement extends ValueTypeLPElementBase<ValueTypeRe
     public static final int SLOT_OFFSET = 4;
     public static final int TICK_DELAY = 30;
 
-    @Getter
     private NonNullList<ItemMatchProperties> inputStacks;
     private ItemStack inputFluid;
-    @Getter
-    @Setter
     private String inputFluidAmount = "0";
-    @Getter
-    @Setter
     private String inputEnergy = "0";
     private NonNullList<ItemStack> outputStacks;
     private ItemStack outputFluid;
-    @Getter
-    @Setter
     private String outputFluidAmount = "0";
-    @Getter
-    @Setter
     private String outputEnergy = "0";
+
+    public NonNullList<ItemMatchProperties> getInputStacks() {
+        return inputStacks;
+    }
+
+    public String getInputFluidAmount() {
+        return inputFluidAmount;
+    }
+
+    public void setInputFluidAmount(String inputFluidAmount) {
+        this.inputFluidAmount = inputFluidAmount;
+    }
+
+    public String getInputEnergy() {
+        return inputEnergy;
+    }
+
+    public void setInputEnergy(String inputEnergy) {
+        this.inputEnergy = inputEnergy;
+    }
+
+    public String getOutputFluidAmount() {
+        return outputFluidAmount;
+    }
+
+    public void setOutputFluidAmount(String outputFluidAmount) {
+        this.outputFluidAmount = outputFluidAmount;
+    }
+
+    public String getOutputEnergy() {
+        return outputEnergy;
+    }
+
+    public void setOutputEnergy(String outputEnergy) {
+        this.outputEnergy = outputEnergy;
+    }
 
     public ValueTypeRecipeLPElement() {
         super(ValueTypes.OBJECT_RECIPE);

@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.blockentity;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
@@ -51,10 +50,13 @@ public class BlockEntitySqueezer extends CyclopsBlockEntity {
     private final SingleUseTank tank;
 
     @NBTPersist
-    @Getter
     private int itemHeight = 1;
 
     private SingleCache<ItemStack, Optional<RecipeHolder<RecipeSqueezer>>> recipeCache;
+
+    public int getItemHeight() {
+        return itemHeight;
+    }
 
     public BlockEntitySqueezer(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_SQUEEZER.get(), blockPos, blockState);

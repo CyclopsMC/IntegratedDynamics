@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.blockentity;
 
-import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
@@ -50,9 +49,12 @@ public class BlockEntityMaterializer extends BlockEntityActiveVariableBase<Mater
     public static final int SLOT_WRITE_IN = 1;
     public static final int SLOT_WRITE_OUT = 2;
 
-    @Setter
     private Player lastPlayer = null;
     private boolean writeVariable;
+
+    public void setLastPlayer(Player lastPlayer) {
+        this.lastPlayer = lastPlayer;
+    }
 
     public BlockEntityMaterializer(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_MATERIALIZER.get(), blockPos, blockState, BlockEntityMaterializer.INVENTORY_SIZE);
