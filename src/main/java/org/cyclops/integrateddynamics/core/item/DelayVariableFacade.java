@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -14,8 +12,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
  * Variable facade for variables determined by delays.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
 public class DelayVariableFacade extends ProxyVariableFacade implements IDelayVariableFacade {
 
     public DelayVariableFacade(boolean generateId, int proxyId) {

@@ -1,16 +1,15 @@
 package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
-import lombok.Data;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author rubensworks
  */
-@Data
 public class RawNetworkData implements IRawData {
 
     private final boolean killed;
@@ -18,6 +17,34 @@ public class RawNetworkData implements IRawData {
     private final int cables;
     private final List<RawPartData> parts;
     private final List<RawObserverData> observers;
+
+    public RawNetworkData(boolean killed, int id, int cables, List<RawPartData> parts, List<RawObserverData> observers) {
+        this.killed = killed;
+        this.id = id;
+        this.cables = cables;
+        this.parts = parts;
+        this.observers = observers;
+    }
+
+    public boolean isKilled() {
+        return killed;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getCables() {
+        return cables;
+    }
+
+    public List<RawPartData> getParts() {
+        return parts;
+    }
+
+    public List<RawObserverData> getObservers() {
+        return observers;
+    }
 
     @Override
     public String toString() {
@@ -67,6 +94,23 @@ public class RawNetworkData implements IRawData {
                 parts,
                 observers
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RawNetworkData that = (RawNetworkData) o;
+        return killed == that.killed
+                && id == that.id
+                && cables == that.cables
+                && Objects.equals(parts, that.parts)
+                && Objects.equals(observers, that.observers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(killed, id, cables, parts, observers);
     }
 
 }

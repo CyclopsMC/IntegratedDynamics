@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
@@ -20,14 +18,14 @@ import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
  * Variable facade for variables determined for operators based on other variables in the network determined by their id.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
 public class OperatorVariableFacade extends VariableFacadeBase implements IOperatorVariableFacade {
 
     private final IOperator operator;
@@ -53,6 +51,38 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
         this.variableIds = variableIds;
         this.validatingVariables = this.variableIds != null ? new boolean[this.variableIds.length] : null;
         this.variables = this.variableIds != null ? new boolean[this.variableIds.length] : null;
+    }
+
+    public IOperator getOperator() {
+        return operator;
+    }
+
+    public int[] getVariableIds() {
+        return variableIds;
+    }
+
+    public IExpression getExpression() {
+        return expression;
+    }
+
+    public void setExpression(IExpression expression) {
+        this.expression = expression;
+    }
+
+    public int getLastNetworkHash() {
+        return lastNetworkHash;
+    }
+
+    public void setLastNetworkHash(int lastNetworkHash) {
+        this.lastNetworkHash = lastNetworkHash;
+    }
+
+    public boolean[] getValidatingVariables() {
+        return validatingVariables;
+    }
+
+    public boolean[] getVariables() {
+        return variables;
     }
 
     @Override
@@ -196,6 +226,20 @@ public class OperatorVariableFacade extends VariableFacadeBase implements IOpera
             tooltipAdder.accept(Component.translatable(L10NValues.OPERATOR_TOOLTIP_VARIABLEIDS, sb.toString()));
         }
         super.appendHoverText(tooltipAdder, context);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        OperatorVariableFacade that = (OperatorVariableFacade) o;
+        return lastNetworkHash == that.lastNetworkHash && Objects.equals(operator, that.operator) && Objects.deepEquals(variableIds, that.variableIds) && Objects.equals(expression, that.expression) && Objects.deepEquals(validatingVariables, that.validatingVariables) && Objects.deepEquals(variables, that.variables);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), operator, Arrays.hashCode(variableIds), expression, lastNetworkHash, Arrays.hashCode(validatingVariables), Arrays.hashCode(variables));
     }
 
 }

@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.network;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -17,16 +15,23 @@ import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Network element for variable stores.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = false)
-@Data
 public class EnergyBatteryNetworkElement extends NetworkElementBase {
 
     private final DimPos pos;
+
+    public EnergyBatteryNetworkElement(DimPos pos) {
+        this.pos = pos;
+    }
+
+    public DimPos getPos() {
+        return pos;
+    }
 
     @Override
     public int getUpdateInterval() {
@@ -125,6 +130,19 @@ public class EnergyBatteryNetworkElement extends NetworkElementBase {
     @Override
     public boolean isLoaded() {
         return INetworkElement.shouldTick(this.getPos());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EnergyBatteryNetworkElement that = (EnergyBatteryNetworkElement) o;
+        return Objects.equals(pos, that.pos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(pos);
     }
 
 }

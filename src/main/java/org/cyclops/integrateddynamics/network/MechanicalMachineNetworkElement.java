@@ -1,22 +1,28 @@
 package org.cyclops.integrateddynamics.network;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetwork;
 import org.cyclops.integrateddynamics.core.network.NetworkElementBase;
 
+import java.util.Objects;
+
 /**
  * Network element for mechanical machines.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = false)
-@Data
 public class MechanicalMachineNetworkElement extends NetworkElementBase {
 
     private final DimPos pos;
+
+    public MechanicalMachineNetworkElement(DimPos pos) {
+        this.pos = pos;
+    }
+
+    public DimPos getPos() {
+        return pos;
+    }
 
     @Override
     public void setPriorityAndChannel(INetwork network, int priority, int channel) {
@@ -55,5 +61,18 @@ public class MechanicalMachineNetworkElement extends NetworkElementBase {
     @Override
     public boolean isLoaded() {
         return INetworkElement.shouldTick(this.getPos());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MechanicalMachineNetworkElement that = (MechanicalMachineNetworkElement) o;
+        return Objects.equals(pos, that.pos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(pos);
     }
 }

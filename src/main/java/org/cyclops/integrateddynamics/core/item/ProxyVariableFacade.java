@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
@@ -20,6 +18,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -27,8 +26,6 @@ import java.util.function.Consumer;
  * Variable facade for variables determined by proxies.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
 public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVariableFacade {
 
     private final int proxyId;
@@ -43,6 +40,26 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
     public ProxyVariableFacade(int id, int proxyId) {
         super(id);
         this.proxyId = proxyId;
+    }
+
+    public int getProxyId() {
+        return proxyId;
+    }
+
+    public boolean isValidatingVariable() {
+        return isValidatingVariable;
+    }
+
+    public void setValidatingVariable(boolean validatingVariable) {
+        isValidatingVariable = validatingVariable;
+    }
+
+    public boolean isGettingVariable() {
+        return isGettingVariable;
+    }
+
+    public void setGettingVariable(boolean gettingVariable) {
+        isGettingVariable = gettingVariable;
     }
 
     protected Optional<BlockEntityProxy> getProxy(IPartNetwork network) {
@@ -141,6 +158,20 @@ public class ProxyVariableFacade extends VariableFacadeBase implements IProxyVar
             tooltipAdder.accept(getProxyTooltip());
         }
         super.appendHoverText(tooltipAdder, context);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ProxyVariableFacade that = (ProxyVariableFacade) o;
+        return proxyId == that.proxyId && isValidatingVariable == that.isValidatingVariable && isGettingVariable == that.isGettingVariable;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), proxyId, isValidatingVariable, isGettingVariable);
     }
 
     public static class VariableRecursionException extends IllegalArgumentException {

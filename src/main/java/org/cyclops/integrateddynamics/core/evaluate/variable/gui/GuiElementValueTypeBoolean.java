@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
-import lombok.Data;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -12,6 +11,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -19,7 +19,6 @@ import java.util.function.Predicate;
  * GUI element for boolean value types that can be read from and written to checkboxes.
  * @author rubensworks
  */
-@Data
 public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeBooleanRenderPattern, G, C, GuiElementValueTypeBooleanClient<G, C>> {
 
     private final ValueTypeBoolean valueType;
@@ -35,8 +34,24 @@ public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractCont
         defaultInputBoolean = valueType.getDefault().getRawValue();
     }
 
+    public ValueTypeBoolean getValueType() {
+        return valueType;
+    }
+
+    public Predicate<IValue> getValidator() {
+        return validator;
+    }
+
+    public IConfigRenderPattern getRenderPattern() {
+        return renderPattern;
+    }
+
     public boolean getDefaultInputBoolean() {
-        return this.inputBoolean;
+        return defaultInputBoolean;
+    }
+
+    public boolean isInputBoolean() {
+        return inputBoolean;
     }
 
     public boolean getInputBoolean() {
@@ -108,6 +123,28 @@ public class GuiElementValueTypeBoolean<G extends Screen, C extends AbstractCont
     @Override
     public String getSymbol() {
         return IModHelpers.get().getL10NHelpers().localize(getValueType().getTranslationKey());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GuiElementValueTypeBoolean<?, ?> that = (GuiElementValueTypeBoolean<?, ?>) o;
+        return defaultInputBoolean == that.defaultInputBoolean
+                && inputBoolean == that.inputBoolean
+                && Objects.equals(valueType, that.valueType)
+                && Objects.equals(validator, that.validator)
+                && Objects.equals(renderPattern, that.renderPattern);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(valueType, validator, renderPattern, defaultInputBoolean, inputBoolean);
+    }
+
+    @Override
+    public String toString() {
+        return "GuiElementValueTypeBoolean(valueType=" + valueType + ", validator=" + validator + ", renderPattern=" + renderPattern + ", defaultInputBoolean=" + defaultInputBoolean + ", inputBoolean=" + inputBoolean + ")";
     }
 
 }

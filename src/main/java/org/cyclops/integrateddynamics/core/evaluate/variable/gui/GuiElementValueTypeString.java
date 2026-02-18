@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
-import lombok.Data;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -14,6 +13,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -21,7 +21,6 @@ import java.util.function.Predicate;
  * GUI element for value type that can be read from and written to strings.
  * @author rubensworks
  */
-@Data
 public class GuiElementValueTypeString<G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeStringRenderPattern, G, C, GuiElementValueTypeStringClient<G, C>> {
 
     private final IValueType valueType;
@@ -34,7 +33,27 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
         this.valueType = valueType;
         this.validator = Predicates.alwaysTrue();
         this.renderPattern = renderPattern;
-        defaultInputString = ValueHelpers.toString(getValueType().getDefault());
+        defaultInputString = ValueHelpers.toString(valueType.getDefault());
+    }
+
+    public IValueType getValueType() {
+        return valueType;
+    }
+
+    public Predicate<IValue> getValidator() {
+        return validator;
+    }
+
+    public IConfigRenderPattern getRenderPattern() {
+        return renderPattern;
+    }
+
+    public String getDefaultInputString() {
+        return defaultInputString;
+    }
+
+    public String getInputString() {
+        return inputString;
     }
 
     @Override
@@ -44,6 +63,10 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
 
     public void setInputString(String inputString) {
         this.inputString = inputString;
+    }
+
+    public void setDefaultInputString(String defaultInputString) {
+        this.defaultInputString = defaultInputString;
     }
 
     @Override
@@ -112,6 +135,28 @@ public class GuiElementValueTypeString<G extends Screen, C extends AbstractConta
     @Override
     public String getSymbol() {
         return IModHelpers.get().getL10NHelpers().localize(getValueType().getTranslationKey());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GuiElementValueTypeString<?, ?> that = (GuiElementValueTypeString<?, ?>) o;
+        return Objects.equals(valueType, that.valueType)
+                && Objects.equals(validator, that.validator)
+                && Objects.equals(renderPattern, that.renderPattern)
+                && Objects.equals(defaultInputString, that.defaultInputString)
+                && Objects.equals(inputString, that.inputString);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(valueType, validator, renderPattern, defaultInputString, inputString);
+    }
+
+    @Override
+    public String toString() {
+        return "GuiElementValueTypeString(valueType=" + valueType + ", validator=" + validator + ", renderPattern=" + renderPattern + ", defaultInputString=" + defaultInputString + ", inputString=" + inputString + ")";
     }
 
 }

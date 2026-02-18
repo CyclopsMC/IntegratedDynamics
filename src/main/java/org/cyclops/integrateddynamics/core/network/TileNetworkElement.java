@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -9,18 +7,25 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPositionedNetworkElement;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityCableConnectableInventory;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Network element for part entities.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = false)
-@Data
 public abstract class TileNetworkElement<T extends BlockEntityCableConnectableInventory> extends ConsumingNetworkElementBase
         implements IPositionedNetworkElement {
 
     private final DimPos pos;
+
+    public TileNetworkElement(DimPos pos) {
+        this.pos = pos;
+    }
+
+    public DimPos getPos() {
+        return pos;
+    }
 
     protected abstract Class<T> getTileClass();
 
@@ -61,5 +66,18 @@ public abstract class TileNetworkElement<T extends BlockEntityCableConnectableIn
     @Override
     public boolean isLoaded() {
         return INetworkElement.shouldTick(this.getPos());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TileNetworkElement<?> that = (TileNetworkElement<?>) o;
+        return Objects.equals(pos, that.pos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(pos);
     }
 }
