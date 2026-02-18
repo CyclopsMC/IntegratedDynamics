@@ -36,7 +36,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("generatenetwork")
                 .requires((commandSource) -> commandSource.hasPermission(2));
 
-        // Add the preset subcommand with optional size argument
+        // Add the preset subcommand with optional size/radius argument
         builder.then(Commands.argument("preset", new ArgumentTypeEnum(NetworkPreset.class))
                 .executes(new CommandGenerateNetworkExecutor(true, false))
                 .then(Commands.argument("size", IntegerArgumentType.integer(1, 1000))
@@ -47,14 +47,15 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
 
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        context.getSource().sendFailure(Component.literal("Please specify a preset: emptynetwork or idlenetwork")
+        context.getSource().sendFailure(Component.literal("Please specify a preset: emptynetwork, idlenetwork, or clear")
                 .withStyle(ChatFormatting.RED));
         return 0;
     }
 
     public enum NetworkPreset {
         EMPTYNETWORK,
-        IDLENETWORK
+        IDLENETWORK,
+        CLEAR
     }
 
     /**
@@ -72,31 +73,48 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         @Override
         public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
             if (!hasPreset) {
-                context.getSource().sendFailure(Component.literal("Please specify a preset: emptynetwork or idlenetwork")
+                context.getSource().sendFailure(Component.literal("Please specify a preset: emptynetwork, idlenetwork, or clear")
                         .withStyle(ChatFormatting.RED));
                 return 0;
             }
 
             NetworkPreset preset = ArgumentTypeEnum.getValue(context, "preset", NetworkPreset.class);
-            int size = hasSize ? IntegerArgumentType.getInteger(context, "size") : 25;
             ServerLevel level = context.getSource().getLevel();
             BlockPos playerPos = BlockPos.containing(context.getSource().getPosition());
-
-            context.getSource().sendSuccess(
-                    () -> Component.literal("Generating network preset: " + preset.name().toLowerCase() + " (size: " + size + "x" + size + "x" + size + ")")
-                            .withStyle(ChatFormatting.GREEN),
-                    true);
+            int size = hasSize ? IntegerArgumentType.getInteger(context, "size") : getDefaultSize(preset);
 
             switch (preset) {
                 case EMPTYNETWORK:
+                    context.getSource().sendSuccess(
+                            () -> Component.literal("Generating network preset: emptynetwork (size: " + size + "x" + size + "x" + size + ")")
+                                    .withStyle(ChatFormatting.GREEN),
+                            true);
                     generateEmptyNetwork(level, playerPos.above(2), size);
                     break;
                 case IDLENETWORK:
+                    context.getSource().sendSuccess(
+                            () -> Component.literal("Generating network preset: idlenetwork (size: " + size + "x" + size + "x" + size + ")")
+                                    .withStyle(ChatFormatting.GREEN),
+                            true);
                     generateIdleNetwork(level, playerPos.above(2), size);
+                    break;
+                case CLEAR:
+                    context.getSource().sendSuccess(
+                            () -> Component.literal("Clearing cables within radius: " + size)
+                                    .withStyle(ChatFormatting.GREEN),
+                            true);
+                    clearCables(level, playerPos, size);
                     break;
             }
 
             return 1;
+        }
+
+        /**
+         * Get the default size/radius for the given preset.
+         */
+        private int getDefaultSize(NetworkPreset preset) {
+            return preset == NetworkPreset.CLEAR ? 50 : 25;
         }
 
         /**
@@ -106,7 +124,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
             List<BlockPos> placedPositions = new ArrayList<>();
 
             // Skip expensive network initialization during bulk placement
-            BlockCable.SKIP_ONPLACE_NETWORK_INIT = true;
+            BlockCable.SKIP_NETWORK_INIT = true;
             try {
                 for (int x = 0; x < size; x++) {
                     for (int y = 0; y < size; y++) {
@@ -119,7 +137,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
                 }
             } finally {
                 // Always reset the flag
-                BlockCable.SKIP_ONPLACE_NETWORK_INIT = false;
+                BlockCable.SKIP_NETWORK_INIT = false;
             }
 
             // Update cable connections for all placed positions
@@ -220,6 +238,43 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
 
             // Collect position for deferred update
             updatePositions.add(pos);
+        }
+
+        /**
+         * Clear all cable blocks within a radius of the given position.
+         */
+        private void clearCables(ServerLevel level, BlockPos centerPos, int radius) {
+            int cleared = 0;
+            int radiusSquared = radius * radius;
+
+            // Skip expensive network initialization during bulk placement
+            BlockCable.SKIP_NETWORK_INIT = true;
+
+            try {
+                // Iterate through all positions within the radius
+                for (int x = centerPos.getX() - radius; x <= centerPos.getX() + radius; x++) {
+                    for (int y = centerPos.getY() - radius; y <= centerPos.getY() + radius; y++) {
+                        for (int z = centerPos.getZ() - radius; z <= centerPos.getZ() + radius; z++) {
+                            BlockPos pos = new BlockPos(x, y, z);
+
+                            // Check if position is within spherical radius
+                            int dx = x - centerPos.getX();
+                            int dy = y - centerPos.getY();
+                            int dz = z - centerPos.getZ();
+                            if (dx * dx + dy * dy + dz * dz <= radiusSquared) {
+                                // Check if block is a cable
+                                if (level.getBlockState(pos).getBlock() == RegistryEntries.BLOCK_CABLE.value()) {
+                                    level.destroyBlock(pos, false);
+                                    cleared++;
+                                }
+                            }
+                        }
+                    }
+                }
+            } finally {
+                // Always reset the flag
+                BlockCable.SKIP_NETWORK_INIT = false;
+            }
         }
     }
 }
