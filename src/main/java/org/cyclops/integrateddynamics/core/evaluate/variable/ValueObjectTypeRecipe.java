@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Iterables;
 import com.google.gson.JsonParseException;
-import lombok.ToString;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.storage.ValueInput;
@@ -107,7 +106,6 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
         return new ValueTypeRecipeLPElement();
     }
 
-    @ToString
     public static class ValueRecipe extends ValueOptionalBase<IRecipeDefinition> {
 
         private ValueRecipe(IRecipeDefinition recipe) {
@@ -121,6 +119,11 @@ public class ValueObjectTypeRecipe extends ValueObjectTypeBase<ValueObjectTypeRe
         @Override
         protected boolean isEqual(IRecipeDefinition a, IRecipeDefinition b) {
             return a.equals(b);
+        }
+
+        @Override
+        public String toString() {
+            return "ValueRecipe()";
         }
     }
 

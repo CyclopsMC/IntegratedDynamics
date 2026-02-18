@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
-import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -164,7 +163,6 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
         return a.getRawValue().getUniqueName().toString();
     }
 
-    @ToString
     public static class ValueOperator extends ValueBase {
 
         private final IOperator value;
@@ -190,6 +188,11 @@ public class ValueTypeOperator extends ValueTypeBase<ValueTypeOperator.ValueOper
         @Override
         public int hashCode() {
             return 37 + value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "ValueOperator(value=" + this.value + ")";
         }
     }
 

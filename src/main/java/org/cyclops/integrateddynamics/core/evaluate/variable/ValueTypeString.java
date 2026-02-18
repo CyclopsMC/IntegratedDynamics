@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -56,7 +55,6 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
         return a.getRawValue();
     }
 
-    @ToString
     public static class ValueString extends ValueBase {
 
         private final String value;
@@ -82,6 +80,11 @@ public class ValueTypeString extends ValueTypeBase<ValueTypeString.ValueString>
         @Override
         public int hashCode() {
             return getType().hashCode() + value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "ValueString(value=" + this.value + ")";
         }
     }
 

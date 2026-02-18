@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -99,7 +98,6 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
                 String.format("%s %s", BuiltInRegistries.FLUID.getKey(fluidStack.getFluid()), fluidStack.getAmount()) : "";
     }
 
-    @ToString
     public static class ValueFluidStack extends ValueBase {
 
         private final FluidStack fluidStack;
@@ -125,6 +123,11 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
         @Override
         public int hashCode() {
             return fluidStack.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "ValueFluidStack(fluidStack=" + this.fluidStack + ")";
         }
 
     }
