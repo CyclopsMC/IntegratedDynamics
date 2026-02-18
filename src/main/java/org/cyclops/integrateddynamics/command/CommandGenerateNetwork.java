@@ -16,7 +16,12 @@ import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.command.argument.ArgumentTypeEnum;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.block.BlockCable;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
@@ -24,6 +29,7 @@ import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
+import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +65,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         EMPTY,
         IDLE,
         REDSTONEIOCLOCK,
+        REDSTONEIOCLOCKVARIABLES,
         CLEAR
     }
 
@@ -104,10 +111,17 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
                     break;
                 case REDSTONEIOCLOCK:
                     context.getSource().sendSuccess(
-                            () -> Component.literal("Generating network preset: redstone (size: " + size + "x" + size + "x" + size + ")")
+                            () -> Component.literal("Generating network preset: redstoneioclock (size: " + size + "x" + size + "x" + size + ")")
                                     .withStyle(ChatFormatting.GREEN),
                             true);
                     NetworkGenerationHelper.generateRedstoneNetwork(level, playerPos.above(2), size);
+                    break;
+                case REDSTONEIOCLOCKVARIABLES:
+                    context.getSource().sendSuccess(
+                            () -> Component.literal("Generating network preset: redstoneioclockvariables (size: " + size + "x" + size + "x" + size + ")")
+                                    .withStyle(ChatFormatting.GREEN),
+                            true);
+                    NetworkGenerationHelper.generateRedstoneNetworkVariables(level, playerPos.above(2), size);
                     break;
                 case CLEAR:
                     context.getSource().sendSuccess(
@@ -290,6 +304,131 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
                         GameTestHelpersIntegratedDynamics.placeVariableInWriter(level, westPartPos,
                                 Aspects.Write.Redstone.BOOLEAN, variableCard);
                     }
+                }
+            }
+        }
+
+        /**
+         * Generate a size x size x size cube of logic cables where all cables on the EAST side
+         * contain redstone readers, and all cables on the WEST side contain redstone writers.
+         * For each reader-writer pair at the same Y and Z coordinates, a CHOICE operator is created
+         * that reads the BOOLEAN_CLOCK aspect from the reader and chooses between constants 0 and 10.
+         * The result is written to the INTEGER aspect of the writer.
+         * Variable cards are stored in variable store blocks placed on the SOUTH side of the network,
+         * stacked vertically. Each variable store can hold multiple CHOICE operator configurations.
+         * All redstone readers have PROPERTY_LENGTH set to 10.
+         */
+        public static void generateRedstoneNetworkVariables(ServerLevel level, BlockPos startPos, int size) {
+            generateEmptyNetwork(level, startPos, size);
+
+            List<BlockPos> updatePositions = new ArrayList<>();
+
+            // Add redstone readers to EAST side and redstone writers to WEST side
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    // EAST side: redstone reader
+                    BlockPos eastPos = startPos.offset(size - 1, y, z);
+                    PartHelpers.addPart(level, eastPos, Direction.EAST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+                    updatePositions.add(eastPos);
+
+                    // WEST side: redstone writer
+                    BlockPos westPos = startPos.offset(0, y, z);
+                    PartHelpers.addPart(level, westPos, Direction.WEST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+                    updatePositions.add(westPos);
+                }
+            }
+
+            // Update all positions
+            for (BlockPos pos : updatePositions) {
+                level.blockUpdated(pos, RegistryEntries.BLOCK_CABLE.value());
+            }
+
+            // Create variable stores on the SOUTH side of the network
+            // Place stores at (z = size, y varying) stacked vertically
+            // Each store can hold 4 items: clock variable, constant 0, constant 10, and choice operator
+            int storeX = startPos.getX(); // Aligned with the network
+            int storeZ = startPos.getZ() + size; // SOUTH side
+            int currentStoreY = startPos.getY();
+            int currentSlot = 0;
+            BlockEntityVariablestore currentVariableStore = null;
+            BlockPos currentStorePos = null;
+
+            // Create variables connecting readers to writers using CHOICE operator
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    BlockPos eastPos = startPos.offset(size - 1, y, z);
+                    BlockPos westPos = startPos.offset(0, y, z);
+
+                    // Get or create a new variable store if current one is full
+                    if (currentVariableStore == null || currentSlot >= BlockEntityVariablestore.INVENTORY_SIZE) {
+                        if (currentSlot >= BlockEntityVariablestore.INVENTORY_SIZE) {
+                            // Current store is full, move to next store (stack vertically)
+                            currentStoreY++;
+                        }
+
+                        currentStorePos = new BlockPos(storeX, currentStoreY, storeZ);
+                        level.setBlock(currentStorePos, RegistryEntries.BLOCK_VARIABLE_STORE.get().defaultBlockState(), 2);
+                        currentVariableStore = (BlockEntityVariablestore) level.getBlockEntity(currentStorePos);
+                        currentSlot = 0;
+                    }
+
+                    if (currentVariableStore != null) {
+                        // Create variable from reader's BOOLEAN_CLOCK aspect
+                        org.cyclops.integrateddynamics.api.part.PartPos eastPartPos = org.cyclops.integrateddynamics.api.part.PartPos.of(level, eastPos, Direction.EAST);
+                        PartHelpers.PartStateHolder<?, ?> eastPartStateHolder = PartHelpers.getPart(eastPartPos);
+
+                        if (eastPartStateHolder != null) {
+                            // Create constant integer variables (0 and 10) - reuse from first slot if already created
+                            ItemStack variable0, variable10;
+                            int variable0Id, variable10Id;
+
+                            int currentSlotIncrement;
+                            if (currentSlot == 0) {
+                                // First time, create and store constants
+                                variable0 = GameTestHelpersIntegratedDynamics.createVariableForValue(level, ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(0));
+                                variable10 = GameTestHelpersIntegratedDynamics.createVariableForValue(level, ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(10));
+                                currentVariableStore.getInventory().setItem(1, variable0);
+                                currentVariableStore.getInventory().setItem(2, variable10);
+                                variable0Id = GameTestHelpersIntegratedDynamics.getVariableFacade(level, variable0).getId();
+                                variable10Id = GameTestHelpersIntegratedDynamics.getVariableFacade(level, variable10).getId();
+                                currentSlotIncrement = 4;
+                            } else {
+                                // Reuse constants from slots 1 and 2
+                                variable0Id = GameTestHelpersIntegratedDynamics.getVariableFacade(level, currentVariableStore.getInventory().getItem(1)).getId();
+                                variable10Id = GameTestHelpersIntegratedDynamics.getVariableFacade(level, currentVariableStore.getInventory().getItem(2)).getId();
+                                currentSlotIncrement = 2;
+                            }
+
+                            // Create variable from reader's BOOLEAN_CLOCK aspect
+                            ItemStack variableClock = GameTestHelpersIntegratedDynamics.createVariableFromReader(level,
+                                    Aspects.Read.Redstone.BOOLEAN_CLOCK, eastPartStateHolder.getState());
+                            currentVariableStore.getInventory().setItem(currentSlot, variableClock);
+
+                            // Create CHOICE operator variable
+                            ItemStack variableChoice = GameTestHelpersIntegratedDynamics.createVariableForOperator(level, Operators.GENERAL_CHOICE, new int[]{
+                                    GameTestHelpersIntegratedDynamics.getVariableFacade(level, variableClock).getId(),
+                                    variable0Id,
+                                    variable10Id
+                            });
+                            currentVariableStore.getInventory().setItem(currentSlot + currentSlotIncrement - 1, variableChoice);
+
+                            // Place CHOICE variable in writer's INTEGER aspect
+                            org.cyclops.integrateddynamics.api.part.PartPos westPartPos = org.cyclops.integrateddynamics.api.part.PartPos.of(level, westPos, Direction.WEST);
+                            GameTestHelpersIntegratedDynamics.placeVariableInWriter(level, westPartPos,
+                                    Aspects.Write.Redstone.INTEGER, variableChoice);
+
+                            currentSlot += currentSlotIncrement;
+                        }
+                    }
+                }
+            }
+
+            // Set PROPERTY_LENGTH to 10 for all redstone readers
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    BlockPos eastPos = startPos.offset(size - 1, y, z);
+                    PartPos eastPartPos = PartPos.of(level, eastPos, Direction.EAST);
+                    GameTestHelpersIntegratedDynamics.setAspectProperty(eastPartPos, Aspects.Read.Redstone.BOOLEAN_CLOCK, AspectReadBuilders.Redstone.PROPERTY_LENGTH, ValueTypeInteger.ValueInteger.of(10));
                 }
             }
         }

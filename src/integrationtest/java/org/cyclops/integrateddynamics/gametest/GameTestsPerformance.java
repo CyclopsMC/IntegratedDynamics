@@ -74,6 +74,11 @@ public class GameTestsPerformance {
         testPerformance(helper, "redstoneioclock", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetwork(helper.getLevel(), START_POS, RADIUS));
     }
 
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_redstoneioclockvariables")
+    public void testPerformanceRedstoneNetworkVariables(GameTestHelper helper) {
+        testPerformance(helper, "redstoneioclock_choice", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetworkVariables(helper.getLevel(), START_POS, RADIUS));
+    }
+
     public static void testPerformance(GameTestHelper helper, String networkName, Runnable networkConstructor) {
         if (!isBenchmarkingEnabled()) {
             IntegratedDynamics.clog(Level.INFO, "Performance benchmarking disabled (PERFORMANCE_BENCHMARK_ENABLED not set)");

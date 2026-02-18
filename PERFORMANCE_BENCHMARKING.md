@@ -37,9 +37,15 @@ The performance benchmarking system consists of three main components:
 - **Sizes tested**: 25×25×25
 
 ### Redstone IO Clock Network
-- **Preset**: `idle`
+- **Preset**: `redstoneioclock`
 - **Description**: A cube of logic cables with redstone readers on the east side connected to redstone writers on the west side, creating a clock signal
 - **Benchmark**: Measures performance with active parts
+- **Sizes tested**: 25×25×25
+
+### Redstone IO Clock with Variables Network
+- **Preset**: `redstoneioclockvariables`
+- **Description**: A cube of logic cables with redstone readers on the east side connected to redstone writers on the west side, creating a clock signal with variables in between.
+- **Benchmark**: Measures performance with active parts and operator variables
 - **Sizes tested**: 25×25×25
 
 ## Performance Metrics
