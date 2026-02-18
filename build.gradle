@@ -154,12 +154,6 @@ dependencies {
         transitive = false
     }
     shadow "io.netty:netty-codec-http:4.1.77.Final"
-
-    // Project lombok
-	compileOnly 'org.projectlombok:lombok:1.18.30'
-	annotationProcessor 'org.projectlombok:lombok:1.18.30'
-	testCompileOnly 'org.projectlombok:lombok:1.18.30'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 test {
