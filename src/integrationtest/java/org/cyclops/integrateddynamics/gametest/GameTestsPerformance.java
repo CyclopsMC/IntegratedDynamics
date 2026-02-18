@@ -59,14 +59,19 @@ public class GameTestsPerformance {
         writeResults(new ArrayList<>(), false);
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_empty_network")
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_empty")
     public void testPerformanceEmptyNetwork(GameTestHelper helper) {
-        testPerformance(helper, "emptynetwork", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), START_POS, RADIUS));
+        testPerformance(helper, "empty", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), START_POS, RADIUS));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_idle_network")
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_idle")
     public void testPerformanceIdleNetwork(GameTestHelper helper) {
-        testPerformance(helper, "idlenetwork", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateIdleNetwork(helper.getLevel(), START_POS, RADIUS));
+        testPerformance(helper, "idle", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateIdleNetwork(helper.getLevel(), START_POS, RADIUS));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_redstoneioclock")
+    public void testPerformanceRedstoneNetwork(GameTestHelper helper) {
+        testPerformance(helper, "redstoneioclock", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetwork(helper.getLevel(), START_POS, RADIUS));
     }
 
     public static void testPerformance(GameTestHelper helper, String networkName, Runnable networkConstructor) {

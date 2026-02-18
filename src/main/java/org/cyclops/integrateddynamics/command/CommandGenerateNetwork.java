@@ -21,6 +21,9 @@ import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypeRegistry;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +50,15 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
 
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        context.getSource().sendFailure(Component.literal("Please specify a preset: emptynetwork, idlenetwork, or clear")
+        context.getSource().sendFailure(Component.literal("Please specify a preset: empty, idle, redstoneioclock, or clear")
                 .withStyle(ChatFormatting.RED));
         return 0;
     }
 
     public enum NetworkPreset {
-        EMPTYNETWORK,
-        IDLENETWORK,
+        EMPTY,
+        IDLE,
+        REDSTONEIOCLOCK,
         CLEAR
     }
 
@@ -73,7 +77,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         @Override
         public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
             if (!hasPreset) {
-                context.getSource().sendFailure(Component.literal("Please specify a preset: emptynetwork, idlenetwork, or clear")
+                context.getSource().sendFailure(Component.literal("Please specify a preset: empty, idle, redstoneioclock, or clear")
                         .withStyle(ChatFormatting.RED));
                 return 0;
             }
@@ -84,19 +88,26 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
             int size = hasSize ? IntegerArgumentType.getInteger(context, "size") : getDefaultSize(preset);
 
             switch (preset) {
-                case EMPTYNETWORK:
+                case EMPTY:
                     context.getSource().sendSuccess(
-                            () -> Component.literal("Generating network preset: emptynetwork (size: " + size + "x" + size + "x" + size + ")")
+                            () -> Component.literal("Generating network preset: empty (size: " + size + "x" + size + "x" + size + ")")
                                     .withStyle(ChatFormatting.GREEN),
                             true);
                     NetworkGenerationHelper.generateEmptyNetwork(level, playerPos.above(2), size);
                     break;
-                case IDLENETWORK:
+                case IDLE:
                     context.getSource().sendSuccess(
-                            () -> Component.literal("Generating network preset: idlenetwork (size: " + size + "x" + size + "x" + size + ")")
+                            () -> Component.literal("Generating network preset: idle (size: " + size + "x" + size + "x" + size + ")")
                                     .withStyle(ChatFormatting.GREEN),
                             true);
                     NetworkGenerationHelper.generateIdleNetwork(level, playerPos.above(2), size);
+                    break;
+                case REDSTONEIOCLOCK:
+                    context.getSource().sendSuccess(
+                            () -> Component.literal("Generating network preset: redstone (size: " + size + "x" + size + "x" + size + ")")
+                                    .withStyle(ChatFormatting.GREEN),
+                            true);
+                    NetworkGenerationHelper.generateRedstoneNetwork(level, playerPos.above(2), size);
                     break;
                 case CLEAR:
                     context.getSource().sendSuccess(
@@ -226,6 +237,61 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
             ItemStack itemStack = new ItemStack(partType.getItem());
             PartHelpers.addPart(level, pos, side, partType, itemStack);
             updatePositions.add(pos);
+        }
+
+        /**
+         * Generate a size x size x size cube of logic cables where all cables on the EAST side
+         * contain redstone readers, and all cables on the WEST side contain redstone writers.
+         * For each reader-writer pair at the same Y and Z coordinates, a variable is created
+         * that reads the BOOLEAN_CLOCK aspect from the reader and connects it to the
+         * BOOLEAN aspect of the writer at the opposite side.
+         */
+        public static void generateRedstoneNetwork(ServerLevel level, BlockPos startPos, int size) {
+            generateEmptyNetwork(level, startPos, size);
+
+            List<BlockPos> updatePositions = new ArrayList<>();
+
+            // Add redstone readers to EAST side and redstone writers to WEST side
+            // EAST side is at x = size - 1, WEST side is at x = 0
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    // EAST side: redstone reader
+                    BlockPos eastPos = startPos.offset(size - 1, y, z);
+                    PartHelpers.addPart(level, eastPos, Direction.EAST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+                    updatePositions.add(eastPos);
+
+                    // WEST side: redstone writer
+                    BlockPos westPos = startPos.offset(0, y, z);
+                    PartHelpers.addPart(level, westPos, Direction.WEST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+                    updatePositions.add(westPos);
+                }
+            }
+
+            // Update all positions and create variable connections
+            for (BlockPos pos : updatePositions) {
+                level.blockUpdated(pos, RegistryEntries.BLOCK_CABLE.value());
+            }
+
+            // Create variables connecting readers to writers
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    BlockPos eastPos = startPos.offset(size - 1, y, z);
+                    BlockPos westPos = startPos.offset(0, y, z);
+
+                    // Create variable from reader's BOOLEAN_CLOCK aspect
+                    org.cyclops.integrateddynamics.api.part.PartPos eastPartPos = org.cyclops.integrateddynamics.api.part.PartPos.of(level, eastPos, Direction.EAST);
+                    PartHelpers.PartStateHolder<?, ?> eastPartStateHolder = PartHelpers.getPart(eastPartPos);
+                    if (eastPartStateHolder != null) {
+                        ItemStack variableCard = GameTestHelpersIntegratedDynamics.createVariableFromReader(level,
+                                Aspects.Read.Redstone.BOOLEAN_CLOCK, eastPartStateHolder.getState());
+
+                        // Place variable in writer's BOOLEAN aspect
+                        org.cyclops.integrateddynamics.api.part.PartPos westPartPos = org.cyclops.integrateddynamics.api.part.PartPos.of(level, westPos, Direction.WEST);
+                        GameTestHelpersIntegratedDynamics.placeVariableInWriter(level, westPartPos,
+                                Aspects.Write.Redstone.BOOLEAN, variableCard);
+                    }
+                }
+            }
         }
     }
 }

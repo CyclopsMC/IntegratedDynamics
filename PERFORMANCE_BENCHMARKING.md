@@ -25,15 +25,21 @@ The performance benchmarking system consists of three main components:
 ## Network Presets
 
 ### Empty Network
-- **Preset**: `emptynetwork`
+- **Preset**: `empty`
 - **Description**: A cube of logic cables with no parts attached
 - **Benchmark**: Measures baseline performance with cable networks only
 - **Sizes tested**: 25×25×25
 
 ### Idle Network
-- **Preset**: `idlenetwork`
+- **Preset**: `idle`
 - **Description**: A cube of logic cables with random parts on all outer surfaces
 - **Benchmark**: Measures performance with active network elements (parts)
+- **Sizes tested**: 25×25×25
+
+### Redstone IO Clock Network
+- **Preset**: `idle`
+- **Description**: A cube of logic cables with redstone readers on the east side connected to redstone writers on the west side, creating a clock signal
+- **Benchmark**: Measures performance with active parts
 - **Sizes tested**: 25×25×25
 
 ## Performance Metrics
@@ -61,8 +67,8 @@ This command:
 
 Results are written in the following format:
 ```
-preset=emptynetwork size=25 avgTickTime=6.25
-preset=idlenetwork size=25 avgTickTime=7.50
+preset=empty size=25 avgTickTime=6.25
+preset=idle size=25 avgTickTime=7.50
 ```
 
 Results are then converted to JSON format for the benchmark action:
@@ -92,12 +98,12 @@ To manually test network performance in a Minecraft world:
 
 1. **Generate an empty network**:
    ```
-   /integrateddynamics generatenetwork emptynetwork 50
+   /integrateddynamics generatenetwork empty 50
    ```
 
 2. **Generate an idle network**:
    ```
-   /integrateddynamics generatenetwork idlenetwork 50
+   /integrateddynamics generatenetwork idle 50
    ```
 
 3. **Measure network performance**:
