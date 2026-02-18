@@ -89,21 +89,21 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
                             () -> Component.literal("Generating network preset: emptynetwork (size: " + size + "x" + size + "x" + size + ")")
                                     .withStyle(ChatFormatting.GREEN),
                             true);
-                    generateEmptyNetwork(level, playerPos.above(2), size);
+                    NetworkGenerationHelper.generateEmptyNetwork(level, playerPos.above(2), size);
                     break;
                 case IDLENETWORK:
                     context.getSource().sendSuccess(
                             () -> Component.literal("Generating network preset: idlenetwork (size: " + size + "x" + size + "x" + size + ")")
                                     .withStyle(ChatFormatting.GREEN),
                             true);
-                    generateIdleNetwork(level, playerPos.above(2), size);
+                    NetworkGenerationHelper.generateIdleNetwork(level, playerPos.above(2), size);
                     break;
                 case CLEAR:
                     context.getSource().sendSuccess(
                             () -> Component.literal("Clearing cables within radius: " + size)
                                     .withStyle(ChatFormatting.GREEN),
                             true);
-                    clearCables(level, playerPos, size);
+                    NetworkGenerationHelper.clearCables(level, playerPos, size);
                     break;
             }
 
@@ -116,14 +116,18 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         private int getDefaultSize(NetworkPreset preset) {
             return preset == NetworkPreset.CLEAR ? 50 : 25;
         }
+    }
 
+    /**
+     * Helper class for network generation logic, shared between command and game tests.
+     */
+    public static class NetworkGenerationHelper {
         /**
          * Generate a size x size x size cube of only logic cables.
          */
-        private void generateEmptyNetwork(ServerLevel level, BlockPos startPos, int size) {
+        public static void generateEmptyNetwork(ServerLevel level, BlockPos startPos, int size) {
             List<BlockPos> placedPositions = new ArrayList<>();
 
-            // Skip expensive network initialization during bulk placement
             BlockCable.SKIP_NETWORK_INIT = true;
             try {
                 for (int x = 0; x < size; x++) {
@@ -136,16 +140,13 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
                     }
                 }
             } finally {
-                // Always reset the flag
                 BlockCable.SKIP_NETWORK_INIT = false;
             }
 
-            // Update cable connections for all placed positions
             for (BlockPos pos : placedPositions) {
                 CableHelpers.updateConnectionsNeighbours(level, pos, CableHelpers.ALL_SIDES);
             }
 
-            // Initialize the network for the entire cube
             NetworkHelpers.initNetwork(level, startPos, null);
         }
 
@@ -153,128 +154,78 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
          * Generate a size x size x size cube of logic cables where all cables on the outer sides
          * contain random parts facing outwards.
          */
-        private void generateIdleNetwork(ServerLevel level, BlockPos startPos, int size) {
-            Random random = new Random();
-
-            // Collect all positions that need updates
-            List<BlockPos> updatePositions = new ArrayList<>();
-
-            // First, create the cable cube
+        public static void generateIdleNetwork(ServerLevel level, BlockPos startPos, int size) {
             generateEmptyNetwork(level, startPos, size);
 
-            // Add parts to outer sides (collected for deferred updates)
-            // Top face (y = size - 1)
-            for (int x = 0; x < size; x++) {
-                for (int z = 0; z < size; z++) {
-                    BlockPos pos = startPos.offset(x, size - 1, z);
-                    addRandomPartDeferred(level, pos, Direction.UP, random, updatePositions);
-                }
-            }
+            Random random = new Random();
+            List<BlockPos> updatePositions = new ArrayList<>();
 
-            // Bottom face (y = 0)
-            for (int x = 0; x < size; x++) {
-                for (int z = 0; z < size; z++) {
-                    BlockPos pos = startPos.offset(x, 0, z);
-                    addRandomPartDeferred(level, pos, Direction.DOWN, random, updatePositions);
-                }
-            }
+            addPartsToFace(level, startPos, size, 0, size - 1, size - 1, size - 1, 0, size - 1, Direction.UP, random, updatePositions);
+            addPartsToFace(level, startPos, size, 0, size - 1, 0, 0, 0, size - 1, Direction.DOWN, random, updatePositions);
+            addPartsToFace(level, startPos, size, 0, size - 1, 0, size - 1, 0, 0, Direction.NORTH, random, updatePositions);
+            addPartsToFace(level, startPos, size, 0, size - 1, 0, size - 1, size - 1, size - 1, Direction.SOUTH, random, updatePositions);
+            addPartsToFace(level, startPos, size, 0, 0, 0, size - 1, 0, size - 1, Direction.WEST, random, updatePositions);
+            addPartsToFace(level, startPos, size, size - 1, size - 1, 0, size - 1, 0, size - 1, Direction.EAST, random, updatePositions);
 
-            // Front face (z = 0)
-            for (int x = 0; x < size; x++) {
-                for (int y = 0; y < size; y++) {
-                    BlockPos pos = startPos.offset(x, y, 0);
-                    addRandomPartDeferred(level, pos, Direction.NORTH, random, updatePositions);
-                }
-            }
-
-            // Back face (z = size - 1)
-            for (int x = 0; x < size; x++) {
-                for (int y = 0; y < size; y++) {
-                    BlockPos pos = startPos.offset(x, y, size - 1);
-                    addRandomPartDeferred(level, pos, Direction.SOUTH, random, updatePositions);
-                }
-            }
-
-            // Left face (x = 0)
-            for (int y = 0; y < size; y++) {
-                for (int z = 0; z < size; z++) {
-                    BlockPos pos = startPos.offset(0, y, z);
-                    addRandomPartDeferred(level, pos, Direction.WEST, random, updatePositions);
-                }
-            }
-
-            // Right face (x = size - 1)
-            for (int y = 0; y < size; y++) {
-                for (int z = 0; z < size; z++) {
-                    BlockPos pos = startPos.offset(size - 1, y, z);
-                    addRandomPartDeferred(level, pos, Direction.EAST, random, updatePositions);
-                }
-            }
-
-            // Trigger all updates at once
             for (BlockPos pos : updatePositions) {
                 level.blockUpdated(pos, RegistryEntries.BLOCK_CABLE.value());
             }
         }
 
         /**
-         * Add a random part to the given position and side without triggering updates.
-         * Positions are collected for deferred update triggering.
-         */
-        private void addRandomPartDeferred(ServerLevel level, BlockPos pos, Direction side, Random random, List<BlockPos> updatePositions) {
-            // Get all available part types from the registry
-            List<IPartType> partTypes = new ArrayList<>(PartTypeRegistry.getInstance().getPartTypes());
-
-            if (partTypes.isEmpty()) {
-                return;
-            }
-
-            // Choose a random part type
-            IPartType partType = partTypes.get(random.nextInt(partTypes.size()));
-
-            // Add the part
-            ItemStack itemStack = new ItemStack(partType.getItem());
-            PartHelpers.addPart(level, pos, side, partType, itemStack);
-
-            // Collect position for deferred update
-            updatePositions.add(pos);
-        }
-
-        /**
          * Clear all cable blocks within a radius of the given position.
          */
-        private void clearCables(ServerLevel level, BlockPos centerPos, int radius) {
-            int cleared = 0;
+        public static void clearCables(ServerLevel level, BlockPos centerPos, int radius) {
             int radiusSquared = radius * radius;
 
-            // Skip expensive network initialization during bulk placement
             BlockCable.SKIP_NETWORK_INIT = true;
 
             try {
-                // Iterate through all positions within the radius
                 for (int x = centerPos.getX() - radius; x <= centerPos.getX() + radius; x++) {
                     for (int y = centerPos.getY() - radius; y <= centerPos.getY() + radius; y++) {
                         for (int z = centerPos.getZ() - radius; z <= centerPos.getZ() + radius; z++) {
                             BlockPos pos = new BlockPos(x, y, z);
 
-                            // Check if position is within spherical radius
                             int dx = x - centerPos.getX();
                             int dy = y - centerPos.getY();
                             int dz = z - centerPos.getZ();
                             if (dx * dx + dy * dy + dz * dz <= radiusSquared) {
-                                // Check if block is a cable
                                 if (level.getBlockState(pos).getBlock() == RegistryEntries.BLOCK_CABLE.value()) {
                                     level.destroyBlock(pos, false);
-                                    cleared++;
                                 }
                             }
                         }
                     }
                 }
             } finally {
-                // Always reset the flag
                 BlockCable.SKIP_NETWORK_INIT = false;
             }
+        }
+
+        private static void addPartsToFace(ServerLevel level, BlockPos startPos, int size,
+                                          int minX, int maxX, int minY, int maxY, int minZ, int maxZ,
+                                          Direction side, Random random, List<BlockPos> updatePositions) {
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) {
+                    for (int z = minZ; z <= maxZ; z++) {
+                        BlockPos pos = startPos.offset(x, y, z);
+                        addRandomPartDeferred(level, pos, side, random, updatePositions);
+                    }
+                }
+            }
+        }
+
+        private static void addRandomPartDeferred(ServerLevel level, BlockPos pos, Direction side, Random random, List<BlockPos> updatePositions) {
+            List<IPartType> partTypes = new ArrayList<>(PartTypeRegistry.getInstance().getPartTypes());
+
+            if (partTypes.isEmpty()) {
+                return;
+            }
+
+            IPartType partType = partTypes.get(random.nextInt(partTypes.size()));
+            ItemStack itemStack = new ItemStack(partType.getItem());
+            PartHelpers.addPart(level, pos, side, partType, itemStack);
+            updatePositions.add(pos);
         }
     }
 }

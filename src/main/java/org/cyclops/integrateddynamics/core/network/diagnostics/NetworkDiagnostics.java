@@ -2,24 +2,18 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.network.IFullNetworkListener;
-import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.INetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
-import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
+import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsNetworkPacket;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author rubensworks
@@ -30,6 +24,8 @@ public class NetworkDiagnostics {
 
     private final List<UUID> players = Lists.newArrayList();
     private final Map<UUID, MeasurementSession> activeMeasurements = Maps.newHashMap();
+    private final Set<UUID> playerMeasurements = Sets.newHashSet(); // Track which measurements are player-based
+    private final Map<UUID, UUID> playerToMeasurement = Maps.newHashMap(); // Map player UUID to measurement UUID
 
     private NetworkDiagnostics() {
 
@@ -108,20 +104,116 @@ public class NetworkDiagnostics {
     }
 
     /**
+     * Check if a measurement session is complete for the given player.
+     * @param playerId The UUID of the player
+     * @return true if the measurement is complete, false otherwise
+     */
+    public synchronized boolean isMeasurementComplete(UUID playerId) {
+        MeasurementSession session = activeMeasurements.get(playerId);
+        if (session == null) {
+            return false;
+        }
+        return session.isComplete();
+    }
+
+    /**
+     * Get the total tick time in milliseconds for a completed measurement.
+     * @param playerId The UUID of the player
+     * @return The total tick time in milliseconds, or 0.0 if measurement not complete or not found
+     */
+    public synchronized double getMeasurementTotalTickTime(UUID playerId) {
+        MeasurementSession session = activeMeasurements.get(playerId);
+        if (session == null || !session.isComplete()) {
+            return 0.0;
+        }
+
+        long totalNanoseconds = 0;
+        for (Long time : session.getPartTimes().values()) {
+            totalNanoseconds += time;
+        }
+        for (Long time : session.getObserverTimes().values()) {
+            totalNanoseconds += time;
+        }
+
+        return totalNanoseconds / 1_000_000.0;
+    }
+
+    /**
+     * Get the average tick time in milliseconds for a completed measurement.
+     * @param playerId The UUID of the player
+     * @return The average tick time per game tick in milliseconds, or 0.0 if measurement not complete or not found
+     */
+    public synchronized double getMeasurementAverageTickTime(UUID playerId) {
+        MeasurementSession session = activeMeasurements.get(playerId);
+        if (session == null || !session.isComplete()) {
+            return 0.0;
+        }
+
+        long totalNanoseconds = 0;
+        for (Long time : session.getPartTimes().values()) {
+            totalNanoseconds += time;
+        }
+        for (Long time : session.getObserverTimes().values()) {
+            totalNanoseconds += time;
+        }
+
+        double totalMilliseconds = totalNanoseconds / 1_000_000.0;
+        int totalTicks = session.getDurationSeconds() * 20;
+        return totalMilliseconds / totalTicks;
+    }
+
+    /**
+     * Clear a measurement after it has been read.
+     * This is useful for non-player measurements that persist until explicitly cleared.
+     * @param measurementId The UUID of the measurement to clear
+     */
+    public synchronized void clearMeasurement(UUID measurementId) {
+        activeMeasurements.remove(measurementId);
+        playerMeasurements.remove(measurementId);
+    }
+
+    /**
+     * Start a measurement session without a player.
+     * This is useful for automated benchmarking where no player is online.
+     * Measurements started this way will persist until explicitly cleared via {@link #clearMeasurement(UUID)}.
+     * @param measurementId A unique identifier for the measurement (e.g., a UUID or string)
+     * @param durationSeconds Duration of the measurement in seconds
+     * @return The UUID used internally for tracking this measurement
+     */
+    public synchronized UUID startMeasurementWithoutPlayer(String measurementId, int durationSeconds) {
+        UUID internalId = UUID.nameUUIDFromBytes(measurementId.getBytes());
+        if (activeMeasurements.containsKey(internalId)) {
+            return null; // Measurement already running
+        }
+
+        MeasurementSession session = new MeasurementSession(internalId, durationSeconds);
+        activeMeasurements.put(internalId, session);
+        // Note: NOT adding to playerMeasurements, so it won't be auto-removed
+        return internalId;
+    }
+
+    /**
      * Start a measurement session for a player.
      * @param player The player initiating the measurement
      * @param durationSeconds Duration of the measurement in seconds
      */
     public synchronized void startMeasurement(ServerPlayer player, int durationSeconds) {
         UUID playerId = player.getUUID();
-        if (activeMeasurements.containsKey(playerId)) {
+
+        // Check if this player already has an active measurement
+        if (playerToMeasurement.containsKey(playerId)) {
             player.sendSystemMessage(Component.literal("A measurement is already running for you. Please wait for it to complete.")
                     .withStyle(ChatFormatting.RED));
             return;
         }
 
-        MeasurementSession session = new MeasurementSession(playerId, durationSeconds);
-        activeMeasurements.put(playerId, session);
+        UUID measurementUUID = startMeasurementWithoutPlayer("player:" + playerId, durationSeconds);
+
+        if (measurementUUID != null) {
+            playerMeasurements.add(measurementUUID); // Mark as player measurement for auto-removal
+            playerToMeasurement.put(playerId, measurementUUID); // Track which measurement belongs to this player
+        }
+
         player.sendSystemMessage(Component.literal("Started measuring network tick times for " + durationSeconds + " seconds...")
                 .withStyle(ChatFormatting.GREEN));
     }
@@ -190,19 +282,40 @@ public class NetworkDiagnostics {
 
     /**
      * Check and complete any finished measurements.
+     * Player-based measurements are automatically removed after completion and results are sent.
+     * Non-player measurements (e.g., from automated tests) persist until explicitly cleared.
      */
     public synchronized void checkCompleteMeasurements() {
         Iterator<Map.Entry<UUID, MeasurementSession>> it = activeMeasurements.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<UUID, MeasurementSession> entry = it.next();
+            UUID measurementId = entry.getKey();
             MeasurementSession session = entry.getValue();
 
             if (session.isComplete()) {
-                ServerPlayer player = getPlayer(entry.getKey());
-                if (player != null) {
-                    sendMeasurementResults(player, session);
+                // Only auto-remove player-based measurements
+                if (playerMeasurements.contains(measurementId)) {
+                    // Find the player who owns this measurement
+                    UUID playerId = null;
+                    for (Map.Entry<UUID, UUID> playerEntry : playerToMeasurement.entrySet()) {
+                        if (playerEntry.getValue().equals(measurementId)) {
+                            playerId = playerEntry.getKey();
+                            break;
+                        }
+                    }
+
+                    if (playerId != null) {
+                        ServerPlayer player = getPlayer(playerId);
+                        if (player != null) {
+                            sendMeasurementResults(player, session);
+                        }
+                        playerToMeasurement.remove(playerId);
+                    }
+
+                    playerMeasurements.remove(measurementId);
+                    it.remove();
                 }
-                it.remove();
+                // Non-player measurements persist for explicit reading
             }
         }
     }
