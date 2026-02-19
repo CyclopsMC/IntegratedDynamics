@@ -137,7 +137,7 @@ public class GameTestsPerformance {
     }
 
     public static void testPerformance(GameTestHelper helper, String networkName, Consumer<Runnable> networkConstructor) {
-        if (!isBenchmarkingEnabled() && false) { // TODO
+        if (!isBenchmarkingEnabled()) {
             IntegratedDynamics.clog(Level.INFO, "Performance benchmarking disabled (PERFORMANCE_BENCHMARK_ENABLED not set)");
             helper.succeed();
             return;
