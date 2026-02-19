@@ -56,6 +56,7 @@ import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -326,7 +327,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
             return shape.optimize();
             });
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Helpers.sneakyThrow(e);
         }
     }
 

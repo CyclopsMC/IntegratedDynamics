@@ -1196,7 +1196,7 @@ public final class Operators {
                                 result = ValueHelpers.evaluateOperator(operator, value, existing);
                                 ValueHelpers.validatePredicateOutput(operator, result);
                             } catch (EvaluationException e) {
-                                throw new RuntimeException(e);
+                                return Helpers.sneakyThrow(e);
                             }
                             if(((ValueTypeBoolean.ValueBoolean) result).getRawValue()) continue outerLoop;
                         }
