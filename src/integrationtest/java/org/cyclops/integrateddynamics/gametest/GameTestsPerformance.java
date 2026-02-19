@@ -80,6 +80,12 @@ public class GameTestsPerformance {
     }
 
     public static void testPerformance(GameTestHelper helper, String networkName, Runnable networkConstructor) {
+        testPerformance(helper, networkName, networkConstructor, () -> {
+            // No post-warmup action needed
+        });
+    }
+
+    public static void testPerformance(GameTestHelper helper, String networkName, Runnable networkConstructor, Runnable postWarmupAction) {
         if (!isBenchmarkingEnabled()) {
             IntegratedDynamics.clog(Level.INFO, "Performance benchmarking disabled (PERFORMANCE_BENCHMARK_ENABLED not set)");
             helper.succeed();
@@ -100,6 +106,8 @@ public class GameTestsPerformance {
             if (measurementUUID.get() == null) {
                 throw new IllegalStateException("Failed to start measurement: " + measurementId);
             }
+
+            postWarmupAction.run();
         });
 
         // Wait for measurement to complete, then retrieve results
