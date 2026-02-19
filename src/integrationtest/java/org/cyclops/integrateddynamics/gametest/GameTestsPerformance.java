@@ -103,6 +103,24 @@ public class GameTestsPerformance {
         });
     }
 
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_empty_remove")
+    public void testPerformanceEmptyNetworkRemove(GameTestHelper helper) {
+        testPerformance(helper, "empty_remove", (measureServerTickTimeNow) -> {
+            CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
+            removeCablesPostWarmup(helper, RADIUS, 100, WARMUP_TICKS);
+            helper.runAfterDelay(WARMUP_TICKS + 100, measureServerTickTimeNow); // Measure server tick time right after cables have been removed
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_redstoneioclock_remove")
+    public void testPerformanceRedstoneNetworkRemove(GameTestHelper helper) {
+        testPerformance(helper, "redstoneioclock_remove", (measureServerTickTimeNow) -> {
+            CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
+            removeCablesPostWarmup(helper, RADIUS, 100, WARMUP_TICKS);
+            helper.runAfterDelay(WARMUP_TICKS + 100, measureServerTickTimeNow); // Measure server tick time right after cables have been removed
+        });
+    }
+
     public static void testPerformance(GameTestHelper helper, String networkName, Consumer<Runnable> networkConstructor) {
         if (!isBenchmarkingEnabled()) {
             IntegratedDynamics.clog(Level.INFO, "Performance benchmarking disabled (PERFORMANCE_BENCHMARK_ENABLED not set)");
@@ -176,6 +194,13 @@ public class GameTestsPerformance {
                 BlockPos pos = helper.absolutePos(START_POS).offset(0, index, - 1);
                 CommandGenerateNetwork.NetworkGenerationHelper.placeCable(helper.getLevel(), pos);
             });
+        }
+    }
+
+    private static void removeCablesPostWarmup(GameTestHelper helper, int radius, int count, int delayOffset) {
+        for (int i = 0; i < count; i++) {
+            final int index = i;
+            helper.runAfterDelay(delayOffset + i, () -> helper.destroyBlock(START_POS.offset(index / radius, index % radius, 0)));
         }
     }
 }
