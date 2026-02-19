@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -66,7 +65,6 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
         return ValueBoolean.of(b);
     }
 
-    @ToString
     public static class ValueBoolean extends ValueBase {
 
         private static final ValueBoolean TRUE = new ValueBoolean(true);
@@ -95,6 +93,11 @@ public class ValueTypeBoolean extends ValueTypeBase<ValueTypeBoolean.ValueBoolea
         @Override
         public int hashCode() {
             return getType().hashCode() + (value ? 1 : 0);
+        }
+
+        @Override
+        public String toString() {
+            return "ValueBoolean(value=" + this.value + ")";
         }
     }
 

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueCastRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -9,7 +8,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
  * Base implementation of a variable.
  * @author rubensworks
  */
-@ToString
 public abstract class ValueBase implements IValue {
 
     private final IValueType type;
@@ -40,5 +38,10 @@ public abstract class ValueBase implements IValue {
     @Override
     public <V extends IValue> boolean canCast(IValueType<V> valueType) {
         return getValueCastRegistry().canCast(valueType, this);
+    }
+
+    @Override
+    public String toString() {
+        return "ValueBase(type=" + this.type + ")";
     }
 }

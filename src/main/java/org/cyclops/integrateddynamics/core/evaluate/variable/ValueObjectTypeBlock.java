@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -112,7 +111,6 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         return "";
     }
 
-    @ToString
     public static class ValueBlock extends ValueOptionalBase<BlockState> {
 
         private ValueBlock(BlockState blockState) {
@@ -126,6 +124,11 @@ public class ValueObjectTypeBlock extends ValueObjectTypeBase<ValueObjectTypeBlo
         @Override
         protected boolean isEqual(BlockState a, BlockState b) {
             return a.equals(b);
+        }
+
+        @Override
+        public String toString() {
+            return "ValueBlock()";
         }
     }
 

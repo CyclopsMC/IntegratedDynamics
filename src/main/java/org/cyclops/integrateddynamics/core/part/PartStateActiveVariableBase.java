@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -40,14 +38,26 @@ public abstract class PartStateActiveVariableBase<P extends IPartType> extends P
     private boolean checkedForWriteVariable = false;
     protected IVariableFacade currentVariableFacade = null;
     private final IVariableContainer variableContainer;
-    @Getter
-    @Setter
     private boolean deactivated = false;
     private SimpleInventory inventory;
     private List<Component> globalErrorMessages = Lists.newLinkedList();
-    @Getter
-    @Setter
     private boolean retryEvaluation = false;
+
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
+    public void setDeactivated(boolean deactivated) {
+        this.deactivated = deactivated;
+    }
+
+    public boolean isRetryEvaluation() {
+        return retryEvaluation;
+    }
+
+    public void setRetryEvaluation(boolean retryEvaluation) {
+        this.retryEvaluation = retryEvaluation;
+    }
 
     public PartStateActiveVariableBase(int inventorySize) {
         this.inventory = new SingularInventory(inventorySize);

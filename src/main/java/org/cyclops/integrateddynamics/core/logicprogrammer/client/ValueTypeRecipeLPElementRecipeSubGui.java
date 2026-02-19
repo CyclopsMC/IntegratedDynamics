@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.client;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -36,17 +34,35 @@ import java.util.List;
 public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTypeRecipeLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
         implements IRenderPatternValueTypeTooltip {
 
-    @Getter
-    @Setter
     private boolean renderTooltip = true;
-    @Getter
     private WidgetTextFieldExtended inputFluidAmountBox = null;
-    @Getter
     private WidgetTextFieldExtended inputEnergyBox = null;
-    @Getter
     private WidgetTextFieldExtended outputFluidAmountBox = null;
-    @Getter
     private WidgetTextFieldExtended outputEnergyBox = null;
+
+    public boolean isRenderTooltip() {
+        return renderTooltip;
+    }
+
+    public void setRenderTooltip(boolean renderTooltip) {
+        this.renderTooltip = renderTooltip;
+    }
+
+    public WidgetTextFieldExtended getInputFluidAmountBox() {
+        return inputFluidAmountBox;
+    }
+
+    public WidgetTextFieldExtended getInputEnergyBox() {
+        return inputEnergyBox;
+    }
+
+    public WidgetTextFieldExtended getOutputFluidAmountBox() {
+        return outputFluidAmountBox;
+    }
+
+    public WidgetTextFieldExtended getOutputEnergyBox() {
+        return outputEnergyBox;
+    }
 
     public ValueTypeRecipeLPElementRecipeSubGui(ValueTypeRecipeLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                                 ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {

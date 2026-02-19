@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.IEnergyConsumingNetworkElement;
@@ -16,9 +14,15 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 public class EnergyNetwork extends PositionedAddonsNetworkIngredients<Long, Boolean>
         implements IEnergyNetwork {
 
-    @Getter
-    @Setter
     private INetwork network;
+
+    public INetwork getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(INetwork network) {
+        this.network = network;
+    }
 
     public EnergyNetwork(IngredientComponent<Long, Boolean> component) {
         super(component);

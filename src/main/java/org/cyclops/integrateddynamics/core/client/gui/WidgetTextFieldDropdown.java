@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,17 +31,32 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     private Set<IDropdownEntry<T>> possibilities;
     private List<IDropdownEntry<T>> visiblePossibilities = Collections.emptyList();
     private int visiblePossibilitiesIndex = -1;
-    @Getter
     private IDropdownEntry<T> selectedDropdownPossibility = null;
-    @Getter
-    @Setter
     private int dropdownSize = 5;
-    @Getter
-    @Setter
     private IDropdownEntryListener<T> dropdownEntryListener;
 
     private int enabledColor = ARGB.opaque(14737632);
     private int disabledColor = ARGB.opaque(7368816);
+
+    public IDropdownEntry<T> getSelectedDropdownPossibility() {
+        return selectedDropdownPossibility;
+    }
+
+    public int getDropdownSize() {
+        return dropdownSize;
+    }
+
+    public void setDropdownSize(int dropdownSize) {
+        this.dropdownSize = dropdownSize;
+    }
+
+    public IDropdownEntryListener<T> getDropdownEntryListener() {
+        return dropdownEntryListener;
+    }
+
+    public void setDropdownEntryListener(IDropdownEntryListener<T> dropdownEntryListener) {
+        this.dropdownEntryListener = dropdownEntryListener;
+    }
 
     public WidgetTextFieldDropdown(Font fontrenderer, int x, int y, int width, int height,
                                    Component narrationMessage, boolean background, Set<IDropdownEntry<T>> possibilities) {

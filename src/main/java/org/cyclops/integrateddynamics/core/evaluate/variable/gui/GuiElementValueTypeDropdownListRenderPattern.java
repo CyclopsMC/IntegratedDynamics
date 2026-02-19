@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
-import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,10 +29,16 @@ import java.util.Set;
 public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu>
         extends RenderPattern<GuiElementValueTypeDropdownList<T, G, C>, G, C> implements IDropdownEntryListener<T> {
 
-    @Getter
     protected final GuiElementValueTypeDropdownList<T, G, C> element;
-    @Getter
     private WidgetTextFieldDropdown<T> searchField = null;
+
+    public GuiElementValueTypeDropdownList<T, G, C> getElement() {
+        return element;
+    }
+
+    public WidgetTextFieldDropdown<T> getSearchField() {
+        return searchField;
+    }
 
     public GuiElementValueTypeDropdownListRenderPattern(GuiElementValueTypeDropdownList<T, G, C> element,
                                                         int baseX, int baseY, int maxWidth, int maxHeight,

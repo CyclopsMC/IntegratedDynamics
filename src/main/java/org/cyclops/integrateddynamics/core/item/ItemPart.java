@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.item;
 
 import com.google.common.collect.Lists;
-import lombok.EqualsAndHashCode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -31,13 +30,13 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
  * An item that can place parts.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = false)
 public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extends Item {
 
     private static final List<IUseAction> USE_ACTIONS = Lists.newArrayList();
@@ -160,6 +159,19 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
         getPart().loadTooltip(itemStack, tooltipAdder);
         super.appendHoverText(itemStack, context, tooltipDisplay, tooltipAdder, flag);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemPart<?, ?> itemPart = (ItemPart<?, ?>) o;
+        return Objects.equals(part, itemPart.part);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(part);
     }
 
     public static interface IUseAction {

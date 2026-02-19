@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.network.diagnostics;
 
-import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -9,10 +8,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
+import java.util.Objects;
+
 /**
  * @author rubensworks
  */
-@Data
 public class RawPartData implements IRawData {
 
     private final ResourceKey<Level> dimension;
@@ -20,6 +20,34 @@ public class RawPartData implements IRawData {
     private final Direction side;
     private final String name;
     private final long last20TicksDurationNs;
+
+    public RawPartData(ResourceKey<Level> dimension, BlockPos pos, Direction side, String name, long last20TicksDurationNs) {
+        this.dimension = dimension;
+        this.pos = pos;
+        this.side = side;
+        this.name = name;
+        this.last20TicksDurationNs = last20TicksDurationNs;
+    }
+
+    public ResourceKey<Level> getDimension() {
+        return dimension;
+    }
+
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    public Direction getSide() {
+        return side;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getLast20TicksDurationNs() {
+        return last20TicksDurationNs;
+    }
 
     @Override
     public String toString() {
@@ -44,6 +72,23 @@ public class RawPartData implements IRawData {
                 tag.getString("name").orElseThrow(),
                 tag.getLong("last20TicksDurationNs").orElseThrow()
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RawPartData that = (RawPartData) o;
+        return last20TicksDurationNs == that.last20TicksDurationNs
+                && Objects.equals(dimension, that.dimension)
+                && Objects.equals(pos, that.pos)
+                && Objects.equals(side, that.side)
+                && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dimension, pos, side, name, last20TicksDurationNs);
     }
 
 }

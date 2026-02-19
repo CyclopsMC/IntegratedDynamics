@@ -3,8 +3,6 @@ package org.cyclops.integrateddynamics.block;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mojang.serialization.MapCodec;
-import lombok.Setter;
-import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -58,6 +56,7 @@ import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -113,8 +112,11 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
             new VoxelShapeComponentsFactoryHandlerFacade()
     );
 
-    @Setter
     private boolean disableCollisionBox = false;
+
+    public void setDisableCollisionBox(boolean disableCollisionBox) {
+        this.disableCollisionBox = disableCollisionBox;
+    }
 
     /**
      * Flag to skip expensive network initialization during bulk cable placement.
@@ -305,7 +307,6 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
             .expireAfterAccess(1, TimeUnit.MINUTES)
             .build();
 
-    @SneakyThrows
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext selectionContext) {
         VoxelShapeComponents selectedShape = getSelectedShape(state, world, pos, selectionContext);
@@ -317,7 +318,8 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         String cableState = selectedShape.getStateId();
 
         // Cache the operations below, as they are too expensive to execute each render tick
-        return CACHE_COLLISION_SHAPES.get(cableState, () -> {
+        try {
+            return CACHE_COLLISION_SHAPES.get(cableState, () -> {
             // Combine all VoxelShapes using IBooleanFunction.OR,
             // because for some reason our VoxelShapeComponents aggregator does not handle collisions properly.
             // This can probably be fixed, but I spent too much time on this already, and the current solution works just fine.
@@ -330,7 +332,10 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
                 shape = Shapes.join(shape, it.next(), BooleanOp.OR);
             }
             return shape.optimize();
-        });
+            });
+        } catch (Exception e) {
+            return Helpers.sneakyThrow(e);
+        }
     }
 
     @Override

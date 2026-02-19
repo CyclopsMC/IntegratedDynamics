@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -93,7 +92,6 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         return new ValueTypeListLPElement();
     }
 
-    @ToString
     public static class ValueList<T extends IValueType<V>, V extends IValue> extends ValueBase {
 
         private final IValueTypeListProxy<T, V> value;
@@ -131,6 +129,11 @@ public class ValueTypeList extends ValueObjectTypeBase<ValueTypeList.ValueList> 
         @Override
         public int hashCode() {
             return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "ValueList(value=" + this.value + ")";
         }
 
     }

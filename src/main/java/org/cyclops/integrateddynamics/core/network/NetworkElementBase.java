@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.network;
 
-import lombok.Data;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -18,7 +17,6 @@ import java.util.List;
  * Base implementation for a network element.
  * @author rubensworks
  */
-@Data
 public abstract class NetworkElementBase implements INetworkElement {
 
     @Override

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -158,7 +157,6 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
         return toCompactString(a).getString();
     }
 
-    @ToString
     public static class ValueDouble extends ValueBase {
 
         private final double value;
@@ -184,6 +182,11 @@ public class ValueTypeDouble extends ValueTypeBase<ValueTypeDouble.ValueDouble> 
         @Override
         public int hashCode() {
             return getType().hashCode() + ((int) value * 100);
+        }
+
+        @Override
+        public String toString() {
+            return "ValueDouble(value=" + this.value + ")";
         }
     }
 

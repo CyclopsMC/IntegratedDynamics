@@ -3,8 +3,6 @@ package org.cyclops.integrateddynamics.core.network;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -39,10 +37,16 @@ import java.util.Map;
  */
 public class PartNetwork extends FullNetworkListenerAdapter implements IPartNetwork {
 
-    @Getter
-    @Setter
     private INetwork network;
     private Int2ObjectMap<PartPos> partPositions = new Int2ObjectOpenHashMap<>();
+
+    public INetwork getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(INetwork network) {
+        this.network = network;
+    }
     private List<DimPos> variableContainerPositions = Lists.newArrayList();
     private Map<Integer, IVariableFacade> compositeVariableCache = null;
     private Int2ObjectMap<IValue> lazyExpressionValueCache = new Int2ObjectOpenHashMap<>();

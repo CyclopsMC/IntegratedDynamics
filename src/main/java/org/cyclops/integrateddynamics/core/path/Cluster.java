@@ -2,8 +2,6 @@ package org.cyclops.integrateddynamics.core.path;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import lombok.Data;
-import lombok.experimental.Delegate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -19,19 +17,14 @@ import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 import org.cyclops.integrateddynamics.api.path.SidedPathElementParams;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * A cluster for a collection of path elements.
  * @author rubensworks
  */
-@Data
 public class Cluster implements Collection<ISidedPathElement> {
 
-    @Delegate
     private final Set<ISidedPathElement> elements;
 
     /**
@@ -43,6 +36,96 @@ public class Cluster implements Collection<ISidedPathElement> {
 
     public Cluster(TreeSet<ISidedPathElement> elements) {
         this.elements = elements;
+    }
+
+    public Set<ISidedPathElement> getElements() {
+        return elements;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cluster that = (Cluster) o;
+        return Objects.equals(elements, that.elements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(elements);
+    }
+
+    @Override
+    public String toString() {
+        return "Cluster{" +
+                "elements=" + elements +
+                '}';
+    }
+
+    // Delegate methods to elements Set
+    @Override
+    public int size() {
+        return elements.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return elements.isEmpty();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return elements.contains(o);
+    }
+
+    @Override
+    public Iterator<ISidedPathElement> iterator() {
+        return elements.iterator();
+    }
+
+    @Override
+    public Object[] toArray() {
+        return elements.toArray();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        return elements.toArray(a);
+    }
+
+    @Override
+    public boolean add(ISidedPathElement iSidedPathElement) {
+        return elements.add(iSidedPathElement);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return elements.remove(o);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return elements.containsAll(c);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends ISidedPathElement> c) {
+        return elements.addAll(c);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return elements.removeAll(c);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return elements.retainAll(c);
+    }
+
+    @Override
+    public void clear() {
+        elements.clear();
     }
 
     public void fromParams(List<SidedPathElementParams> pathElements) {

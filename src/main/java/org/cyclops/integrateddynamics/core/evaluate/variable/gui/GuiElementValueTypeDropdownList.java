@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import com.google.common.base.Predicates;
-import lombok.Data;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -16,6 +15,7 @@ import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntryListener;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -24,7 +24,6 @@ import java.util.function.Predicate;
  * GUI element for value type that are displayed using a dropdown list.
  * @author rubensworks
  */
-@Data
 public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends AbstractContainerMenu> implements IGuiInputElementValueType<GuiElementValueTypeDropdownListRenderPattern, G, C, GuiElementValueTypeDropdownListClient<T, G, C>>, IDropdownEntryListener<T> {
 
     private final IValueType valueType;
@@ -40,9 +39,41 @@ public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends Abst
         this.renderPattern = renderPattern;
     }
 
+    public IValueType getValueType() {
+        return valueType;
+    }
+
+    public Predicate<IValue> getValidator() {
+        return validator;
+    }
+
+    public String getInputString() {
+        return inputString;
+    }
+
+    public Set<IDropdownEntry<T>> getDropdownPossibilities() {
+        return dropdownPossibilities;
+    }
+
+    public IDropdownEntryListener<T> getDropdownEntryListener() {
+        return dropdownEntryListener;
+    }
+
     @Override
     public void setValidator(Predicate<IValue> validator) {
         this.validator = validator;
+    }
+
+    public void setInputString(String inputString) {
+        this.inputString = inputString;
+    }
+
+    public void setDropdownPossibilities(Set<IDropdownEntry<T>> dropdownPossibilities) {
+        this.dropdownPossibilities = dropdownPossibilities;
+    }
+
+    public void setDropdownEntryListener(IDropdownEntryListener<T> dropdownEntryListener) {
+        this.dropdownEntryListener = dropdownEntryListener;
     }
 
     @Override
@@ -113,5 +144,28 @@ public class GuiElementValueTypeDropdownList<T, G extends Screen, C extends Abst
         if (dropdownEntryListener != null) {
             dropdownEntryListener.onSetDropdownPossiblity(dropdownEntry);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GuiElementValueTypeDropdownList<?, ?, ?> that = (GuiElementValueTypeDropdownList<?, ?, ?>) o;
+        return Objects.equals(valueType, that.valueType)
+                && Objects.equals(validator, that.validator)
+                && Objects.equals(renderPattern, that.renderPattern)
+                && Objects.equals(inputString, that.inputString)
+                && Objects.equals(dropdownPossibilities, that.dropdownPossibilities)
+                && Objects.equals(dropdownEntryListener, that.dropdownEntryListener);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(valueType, validator, renderPattern, inputString, dropdownPossibilities, dropdownEntryListener);
+    }
+
+    @Override
+    public String toString() {
+        return "GuiElementValueTypeDropdownList(valueType=" + valueType + ", validator=" + validator + ", renderPattern=" + renderPattern + ", inputString=" + inputString + ", dropdownPossibilities=" + dropdownPossibilities + ", dropdownEntryListener=" + dropdownEntryListener + ")";
     }
 }

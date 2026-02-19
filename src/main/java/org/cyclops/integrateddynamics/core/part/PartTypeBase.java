@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.part;
 
-import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -48,14 +47,23 @@ import java.util.function.Consumer;
 public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartState<P>>
         extends PartTypeAdapter<P, S> {
 
-    @Getter
     private Item item;
-    @Getter
     private Block block;
     private final String name;
-    @Getter
     private final PartRenderPosition partRenderPosition;
     private final Map<Class<? extends INetworkEvent>, IEventAction> networkEventActions;
+
+    public Item getItem() {
+        return item;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public PartRenderPosition getPartRenderPosition() {
+        return partRenderPosition;
+    }
 
     public PartTypeBase(String name, PartRenderPosition partRenderPosition) {
         this.name = name;

@@ -6,7 +6,6 @@ import com.google.re2j.Pattern;
 import com.google.re2j.PatternSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.logging.LogUtils;
-import lombok.Lombok;
 import net.minecraft.IdentifierException;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
@@ -1197,7 +1196,7 @@ public final class Operators {
                                 result = ValueHelpers.evaluateOperator(operator, value, existing);
                                 ValueHelpers.validatePredicateOutput(operator, result);
                             } catch (EvaluationException e) {
-                                throw Lombok.sneakyThrow(e);
+                                return Helpers.sneakyThrow(e);
                             }
                             if(((ValueTypeBoolean.ValueBoolean) result).getRawValue()) continue outerLoop;
                         }

@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -14,7 +13,6 @@ import java.util.Set;
 /**
  * @author rubensworks
  */
-@Slf4j
 public class NbtHelpers {
 
     /**

@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.blockentity;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -63,39 +61,81 @@ import java.util.Optional;
  */
 public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements PartHelpers.IPartStateHolderCallback {
 
-    @Getter
     @NBTPersist private EnumFacingMap<Boolean> connected = EnumFacingMap.newMap();
     @NBTPersist private EnumFacingMap<Boolean> forceDisconnected = EnumFacingMap.newMap();
-    @Getter
     @NBTPersist private EnumFacingMap<Integer> redstoneLevels = EnumFacingMap.newMap();
-    @Getter
     @NBTPersist private EnumFacingMap<Boolean> redstoneInputs = EnumFacingMap.newMap();
-    @Getter
     @NBTPersist private EnumFacingMap<Boolean> redstoneStrong = EnumFacingMap.newMap();
-    @Getter
     @NBTPersist private EnumFacingMap<Integer> lastRedstonePulses = EnumFacingMap.newMap();
-    @Getter
     @NBTPersist private EnumFacingMap<Integer> scheduledPulseRemaining = EnumFacingMap.newMap();
-    @Getter
     @NBTPersist private EnumFacingMap<Integer> lightLevels = EnumFacingMap.newMap();
     private EnumFacingMap<Integer> previousLightLevels;
-    @Getter
-    @Setter
     @NBTPersist private CompoundTag facadeBlockTag = null;
 
-    @Getter
     private final PartContainerTileMultipartTicking partContainer;
-    @Getter
     private final CableTileMultipartTicking cable;
-    @Getter
     private final INetworkCarrier networkCarrier;
-    @Getter
     private final ICableFakeable cableFakeable;
     @NBTPersist
-    @Setter
     private boolean forceLightCheckAtClient;
 
     private ModelData cachedState = null;
+
+    public EnumFacingMap<Boolean> getConnected() {
+        return connected;
+    }
+
+    public EnumFacingMap<Integer> getRedstoneLevels() {
+        return redstoneLevels;
+    }
+
+    public EnumFacingMap<Boolean> getRedstoneInputs() {
+        return redstoneInputs;
+    }
+
+    public EnumFacingMap<Boolean> getRedstoneStrong() {
+        return redstoneStrong;
+    }
+
+    public EnumFacingMap<Integer> getLastRedstonePulses() {
+        return lastRedstonePulses;
+    }
+
+    public EnumFacingMap<Integer> getScheduledPulseRemaining() {
+        return scheduledPulseRemaining;
+    }
+
+    public EnumFacingMap<Integer> getLightLevels() {
+        return lightLevels;
+    }
+
+    public CompoundTag getFacadeBlockTag() {
+        return facadeBlockTag;
+    }
+
+    public void setFacadeBlockTag(CompoundTag facadeBlockTag) {
+        this.facadeBlockTag = facadeBlockTag;
+    }
+
+    public PartContainerTileMultipartTicking getPartContainer() {
+        return partContainer;
+    }
+
+    public CableTileMultipartTicking getCable() {
+        return cable;
+    }
+
+    public INetworkCarrier getNetworkCarrier() {
+        return networkCarrier;
+    }
+
+    public ICableFakeable getCableFakeable() {
+        return cableFakeable;
+    }
+
+    public void setForceLightCheckAtClient(boolean forceLightCheckAtClient) {
+        this.forceLightCheckAtClient = forceLightCheckAtClient;
+    }
 
     public BlockEntityMultipartTicking(BlockPos blockPos, BlockState blockState) {
         super(RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING.get(), blockPos, blockState);

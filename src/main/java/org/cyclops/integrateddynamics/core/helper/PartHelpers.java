@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.collect.ImmutableMap;
-import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -554,14 +553,47 @@ public class PartHelpers {
      * @param <P> The part type type.
      * @param <S> The part state type.
      */
-    @Data
     public static class PartStateHolder<P extends IPartType<P, S>, S extends IPartState<P>> {
 
         private final IPartType<P, S> part;
         private final S state;
 
+        public PartStateHolder(IPartType<P, S> part, S state) {
+            this.part = part;
+            this.state = state;
+        }
+
+        public IPartType<P, S> getPart() {
+            return part;
+        }
+
+        public S getState() {
+            return state;
+        }
+
         public static PartStateHolder<?, ?> of(IPartType part, IPartState partState) {
             return new PartStateHolder(part, partState);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PartStateHolder<?, ?> that = (PartStateHolder<?, ?>) o;
+            return Objects.equals(part, that.part) && Objects.equals(state, that.state);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(part, state);
+        }
+
+        @Override
+        public String toString() {
+            return "PartStateHolder{" +
+                    "part=" + part +
+                    ", state=" + state +
+                    '}';
         }
 
     }

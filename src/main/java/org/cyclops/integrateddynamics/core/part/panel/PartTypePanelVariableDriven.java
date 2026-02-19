@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.panel;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -285,12 +283,24 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
 
     public static abstract class State<P extends PartTypePanelVariableDriven<P, S>, S extends PartTypePanelVariableDriven.State<P, S>> extends PartStateActiveVariableBase<P> {
 
-        @Getter
-        @Setter
         private IValue displayValue;
-        @Getter
-        @Setter
         private Direction facingRotation = Direction.NORTH;
+
+        public IValue getDisplayValue() {
+            return displayValue;
+        }
+
+        public void setDisplayValue(IValue displayValue) {
+            this.displayValue = displayValue;
+        }
+
+        public Direction getFacingRotation() {
+            return facingRotation;
+        }
+
+        public void setFacingRotation(Direction facingRotation) {
+            this.facingRotation = facingRotation;
+        }
 
         public State() {
             super(1);

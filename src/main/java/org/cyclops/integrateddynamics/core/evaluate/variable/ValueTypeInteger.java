@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -159,7 +158,6 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
         return toCompactString(a).getString();
     }
 
-    @ToString
     public static class ValueInteger extends ValueBase {
 
         private final int value;
@@ -185,6 +183,11 @@ public class ValueTypeInteger extends ValueTypeBase<ValueTypeInteger.ValueIntege
         @Override
         public int hashCode() {
             return getType().hashCode() + value;
+        }
+
+        @Override
+        public String toString() {
+            return "ValueInteger(value=" + this.value + ")";
         }
     }
 

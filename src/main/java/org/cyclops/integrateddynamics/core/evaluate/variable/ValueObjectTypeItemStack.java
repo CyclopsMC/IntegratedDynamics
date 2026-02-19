@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -130,7 +129,6 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         return !itemStack.isEmpty() ? BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString() : "";
     }
 
-    @ToString
     public static class ValueItemStack extends ValueBase {
 
         private final ItemStack itemStack;
@@ -156,6 +154,11 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         @Override
         public int hashCode() {
             return 37 + IModHelpers.get().getItemStackHelpers().getItemStackHashCode(itemStack);
+        }
+
+        @Override
+        public String toString() {
+            return "ValueItemStack(itemStack=" + this.itemStack + ")";
         }
     }
 

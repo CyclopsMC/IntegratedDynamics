@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.item;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -16,14 +14,13 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
  * Variable facade for variables determined by part aspects.
  * @author rubensworks
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
 public class AspectVariableFacade extends VariableFacadeBase implements IAspectVariableFacade {
 
     private final int partId;
@@ -39,6 +36,14 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
         super(id);
         this.partId = partId;
         this.aspect = aspect;
+    }
+
+    public int getPartId() {
+        return partId;
+    }
+
+    public IAspect getAspect() {
+        return aspect;
     }
 
     @Override
@@ -88,5 +93,19 @@ public class AspectVariableFacade extends VariableFacadeBase implements IAspectV
             tooltipAdder.accept(Component.translatable(L10NValues.ASPECT_TOOLTIP_PARTID, getPartId()));
         }
         super.appendHoverText(tooltipAdder, context);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AspectVariableFacade that = (AspectVariableFacade) o;
+        return partId == that.partId && Objects.equals(aspect, that.aspect);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), partId, aspect);
     }
 }

@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.core.part.aspect.property;
 
 import com.google.common.base.Predicates;
-import lombok.Data;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
@@ -12,7 +11,6 @@ import java.util.function.Predicate;
  * An instance of a property type with a onLabelPacket.
  * @author rubensworks
  */
-@Data
 public class AspectPropertyTypeInstance<T extends IValueType<V>, V extends IValue> implements IAspectPropertyTypeInstance<T, V> {
 
     private final T type;
@@ -27,6 +25,18 @@ public class AspectPropertyTypeInstance<T extends IValueType<V>, V extends IValu
         this.type = type;
         this.translationKey = translationKey;
         this.validator = validator;
+    }
+
+    public T getType() {
+        return type;
+    }
+
+    public String getTranslationKey() {
+        return translationKey;
+    }
+
+    public Predicate<V> getValidator() {
+        return validator;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
-import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,10 +24,16 @@ import org.cyclops.integrateddynamics.network.packet.LogicProgrammerValueTypeStr
  */
 public class GuiElementValueTypeStringRenderPattern<S extends ISubGuiBox, G extends Screen, C extends AbstractContainerMenu> extends RenderPattern<GuiElementValueTypeString<G, C>, G, C> {
 
-    @Getter
     protected final GuiElementValueTypeString<G, C> element;
-    @Getter
     private WidgetTextFieldExtended textField = null;
+
+    public GuiElementValueTypeString<G, C> getElement() {
+        return element;
+    }
+
+    public WidgetTextFieldExtended getTextField() {
+        return textField;
+    }
 
     public GuiElementValueTypeStringRenderPattern(GuiElementValueTypeString<G, C> element, int baseX, int baseY, int maxWidth, int maxHeight,
                                                   G gui, C container) {

@@ -4,8 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -28,10 +26,16 @@ import java.util.TreeSet;
  */
 public abstract class PositionedAddonsNetwork implements IPositionedAddonsNetwork {
 
-    @Getter
-    @Setter
     private INetwork network;
     private final Set<PrioritizedPartPos> allPositions = Sets.newTreeSet();
+
+    public INetwork getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(INetwork network) {
+        this.network = network;
+    }
     private final Int2ObjectMap<Set<PrioritizedPartPos>> positions = new Int2ObjectOpenHashMap<>();
     private final Map<PartPos, Integer> positionChannels = Maps.newHashMap();
     // We store the thread id together with the disabled position.

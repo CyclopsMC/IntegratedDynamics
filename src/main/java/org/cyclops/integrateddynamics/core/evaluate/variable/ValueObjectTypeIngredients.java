@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.storage.ValueInput;
@@ -79,7 +78,6 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         return new ValueTypeIngredientsLPElement();
     }
 
-    @ToString
     public static class ValueIngredients extends ValueOptionalBase<IMixedIngredients> {
 
         private ValueIngredients(IMixedIngredients recipe) {
@@ -93,6 +91,11 @@ public class ValueObjectTypeIngredients extends ValueObjectTypeBase<ValueObjectT
         @Override
         protected boolean isEqual(IMixedIngredients a, IMixedIngredients b) {
             return a.equals(b);
+        }
+
+        @Override
+        public String toString() {
+            return "ValueIngredients()";
         }
     }
 

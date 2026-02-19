@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
-import lombok.ToString;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -95,7 +94,6 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
         return "";
     }
 
-    @ToString
     public static class ValueEntity extends ValueBase {
 
         private final Optional<UUID> value;
@@ -156,6 +154,11 @@ public class ValueObjectTypeEntity extends ValueObjectTypeBase<ValueObjectTypeEn
 
         public static ValueEntity of(@Nullable UUID entityUuid) {
             return new ValueEntity(entityUuid);
+        }
+
+        @Override
+        public String toString() {
+            return "ValueEntity(value=" + this.value + ")";
         }
 
     }

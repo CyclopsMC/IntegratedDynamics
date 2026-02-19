@@ -1,7 +1,5 @@
 package org.cyclops.integrateddynamics.core.part.aspect;
 
-import lombok.Getter;
-import lombok.NonNull;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -26,10 +24,10 @@ import java.util.function.Supplier;
  */
 public abstract class LazyAspectVariable<V extends IValue> extends VariableAdapter<V> implements IAspectVariable<V> {
 
-    @Getter private final IValueType<V> type;
+    private final IValueType<V> type;
     private final Supplier<PartTarget> targetSupplier;
-    @Getter private final IAspectRead<V, ?> aspect;
-    @NonNull private V value;
+    private final IAspectRead<V, ?> aspect;
+    private V value;
     private IAspectProperties cachedProperties = null;
 
     private boolean isGettingValue = false;
@@ -38,6 +36,14 @@ public abstract class LazyAspectVariable<V extends IValue> extends VariableAdapt
         this.type = type;
         this.targetSupplier = targetSupplier;
         this.aspect = aspect;
+    }
+
+    public IValueType<V> getType() {
+        return type;
+    }
+
+    public IAspectRead<V, ?> getAspect() {
+        return aspect;
     }
 
     public PartTarget getTarget() {
