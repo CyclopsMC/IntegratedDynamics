@@ -1,8 +1,14 @@
 name: "Fuzzing"
 on:
   schedule:
-    - cron: '0 2 * * *'  # Run at 2 AM UTC every night
+    - cron: '0 * * * *'  # Run every hour
   workflow_dispatch:  # Allow manual triggering for testing
+  push:
+    paths:
+      - src/integrationtest/java/org/cyclops/integrateddynamics/gametest/GameTestsFuzzing.java
+  pull_request:
+    paths:
+      - src/integrationtest/java/org/cyclops/integrateddynamics/gametest/GameTestsFuzzing.java
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
