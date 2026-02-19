@@ -10,6 +10,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.GeneralConfig;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -189,7 +190,7 @@ public interface INetworkElement extends Comparable<INetworkElement> {
      * @return If it should tick.
      */
     public static boolean shouldTick(DimPos pos) {
-        return pos.isLoaded() && pos.getLevel(true).shouldTickBlocksAt(pos.getBlockPos());
+        return pos.isLoaded() && (GeneralConfig.tickUnloadedNetworkElements || pos.getLevel(true).shouldTickBlocksAt(pos.getBlockPos()));
     }
 
 }
