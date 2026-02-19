@@ -179,6 +179,9 @@ public class GeneralConfig extends DummyConfigCommon<IntegratedDynamics> {
     public static List<String> partMinimumUpdateIntervals = Lists.newArrayList();
     public static Map<IPartType<?, ?>, Integer> partMinimumUpdateIntervalsMap = Maps.newIdentityHashMap();
 
+    @ConfigurablePropertyCommon(category = "core" , comment = "When true, network elements will tick, irrespective of whether their chunk is loaded or not.", configLocation = ModConfigLocation.SERVER, isCommandable = true)
+    public static boolean tickUnloadedNetworkElements = false;
+
     public GeneralConfig() {
         super(IntegratedDynamics._instance, "general");
         IntegratedDynamics._instance.getModEventBus().addListener(this::onConfigLoad);

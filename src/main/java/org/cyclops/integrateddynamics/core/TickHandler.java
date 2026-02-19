@@ -53,11 +53,15 @@ public final class TickHandler {
             boolean isBeingDiagnozed = NetworkDiagnostics.getInstance().isBeingDiagnozed();
             if (isBeingDiagnozed) {
                 tick = (tick + 1) % IModHelpers.get().getMinecraftHelpers().getSecondInTicks();
+                if (tick == 0) {
+                    NetworkDiagnostics.getInstance().accumulateMeasurements();
+                }
             }
             boolean shouldSendTickDurationInfo = isBeingDiagnozed && tick == 0;
             for (INetwork network : NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getNetworks()) {
                 if (isBeingDiagnozed && (shouldSendTickDurationInfo || network.hasChanged())) {
                     NetworkDiagnostics.getInstance().sendNetworkUpdate(network);
+
                     network.resetLastSecondDurations();
 
                     // Also reset durations of indexes
@@ -76,6 +80,11 @@ public final class TickHandler {
                     network.setCrashed(true);
                     throw e;
                 }
+            }
+
+            if (isBeingDiagnozed) {
+                // Check if any measurements should complete
+                NetworkDiagnostics.getInstance().checkCompleteMeasurements();
             }
         }
 
