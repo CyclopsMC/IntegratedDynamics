@@ -20,13 +20,10 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.part.PartPos;
-import org.cyclops.integrateddynamics.block.BlockCable;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
-import org.cyclops.integrateddynamics.core.helper.CableHelpers;
-import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -35,12 +32,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Fuzz testing game tests for Integrated Dynamics networks.
@@ -79,7 +71,7 @@ public class GameTestsFuzzing {
         return sysProp != null && "true".equalsIgnoreCase(sysProp);
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = RUN_TICKS + 100, batch = "fuzzing")
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = RUN_TICKS + 100)
     public void testFuzzedNetwork(GameTestHelper helper) {
         if (!isFuzzingEnabled()) {
             IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Disabled (FUZZING_ENABLED not set)");
@@ -133,24 +125,14 @@ public class GameTestsFuzzing {
                                                int cableCount, int numParts, int maxOperators, Random random) {
         // Place cables in a compact grid (CABLE_GRID_X x CABLE_GRID_Z per layer)
         List<BlockPos> cables = new ArrayList<>();
-        BlockCable.SKIP_NETWORK_INIT = true;
-        try {
-            for (int i = 0; i < cableCount; i++) {
-                int x = i % CABLE_GRID_X;
-                int z = (i / CABLE_GRID_X) % CABLE_GRID_Z;
-                int y = i / (CABLE_GRID_X * CABLE_GRID_Z);
-                BlockPos pos = startPos.offset(x, y, z);
-                level.setBlock(pos, RegistryEntries.BLOCK_CABLE.value().defaultBlockState(), 2);
-                cables.add(pos);
-            }
-        } finally {
-            BlockCable.SKIP_NETWORK_INIT = false;
+        for (int i = 0; i < cableCount; i++) {
+            int x = i % CABLE_GRID_X;
+            int z = (i / CABLE_GRID_X) % CABLE_GRID_Z;
+            int y = i / (CABLE_GRID_X * CABLE_GRID_Z);
+            BlockPos pos = startPos.offset(x, y, z);
+            level.setBlock(pos, RegistryEntries.BLOCK_CABLE.value().defaultBlockState(), 2);
+            cables.add(pos);
         }
-
-        for (BlockPos pos : cables) {
-            CableHelpers.updateConnectionsNeighbours(level, pos, CableHelpers.ALL_SIDES);
-        }
-        NetworkHelpers.initNetwork(level, startPos, null);
 
         if (cables.isEmpty()) {
             return;
