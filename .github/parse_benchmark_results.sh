@@ -43,8 +43,8 @@ while IFS= read -r line; do
 
         cat >> "$BENCH_FILE" << EOF
   {
-    "name": "${preset}_size_${size}_network_tick_time",
-    "unit": "ms",
+    "name": "NETWORK LOAD: ${preset}_size_${size}",
+    "unit": "tick time (ms)",
     "value": $networkTickTime
   }
 EOF
@@ -55,8 +55,8 @@ EOF
         echo "," >> "$BENCH_FILE"
         cat >> "$BENCH_FILE" << EOF
   {
-    "name": "${preset}_size_${size}_server_tick_time",
-    "unit": "ms",
+    "name": "SERVER LOAD: ${preset}_size_${size}",
+    "unit": "tick time (ms)",
     "value": $serverTickTime
   }
 EOF
