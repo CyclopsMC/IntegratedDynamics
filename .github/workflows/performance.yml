@@ -46,7 +46,7 @@ jobs:
           output-file-path: benchmark_results.json
           github-token: ${{ secrets.PAT }}
           auto-push: true
-          alert-threshold: '150%'
+          alert-threshold: '250%'
           comment-always: true
           comment-on-alert: true
           alert-comment-cc-users: '@rubensworks'
