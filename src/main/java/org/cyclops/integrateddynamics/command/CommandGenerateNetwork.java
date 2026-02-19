@@ -198,6 +198,13 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         }
 
         /**
+         * Place a single cable block at the given position.
+         */
+        public static void placeCable(ServerLevel level, BlockPos pos) {
+            level.setBlock(pos, RegistryEntries.BLOCK_CABLE.value().defaultBlockState(), 2);
+        }
+
+        /**
          * Clear all cable blocks within a radius of the given position.
          */
         public static void clearCables(ServerLevel level, BlockPos centerPos, int radius) {

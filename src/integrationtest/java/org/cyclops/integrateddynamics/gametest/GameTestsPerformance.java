@@ -31,6 +31,7 @@ import java.util.UUID;
 public class GameTestsPerformance {
 
     public static final int EXECUTION_SECONDS = 10;
+    public static final int WARMUP_TICKS = 200;
     public static final int RADIUS = 10; // Max 10, as it would otherwise leak out of the template.
     public static final String TEMPLATE_EMPTY = "empty10";
     public static final BlockPos START_POS = BlockPos.ZERO.offset(1, 1, 1);
@@ -79,6 +80,22 @@ public class GameTestsPerformance {
         testPerformance(helper, "redstoneioclock_choice", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetworkVariables(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
     }
 
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_empty_append")
+    public void testPerformanceEmptyNetworkAppend(GameTestHelper helper) {
+        testPerformance(helper, "empty_append", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS), () -> {
+            // Add 10 cables over 10 ticks on the NORTH side
+            addCablesPostWarmup(helper, 20);
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_idle_append")
+    public void testPerformanceIdleNetworkAppend(GameTestHelper helper) {
+        testPerformance(helper, "idle_append", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateIdleNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS), () -> {
+            // Add 10 cables over 10 ticks on the NORTH side
+            addCablesPostWarmup(helper, 20);
+        });
+    }
+
     public static void testPerformance(GameTestHelper helper, String networkName, Runnable networkConstructor) {
         testPerformance(helper, networkName, networkConstructor, () -> {
             // No post-warmup action needed
@@ -99,7 +116,7 @@ public class GameTestsPerformance {
         // Measure the network performance
         String measurementId = networkName + "_" + System.currentTimeMillis();
         Wrapper<UUID> measurementUUID = new Wrapper<>();
-        helper.runAfterDelay(200, () -> {
+        helper.runAfterDelay(WARMUP_TICKS, () -> {
             // Wait a few seconds to warm up the code before starting measurement
             measurementUUID.set(NetworkDiagnostics.getInstance().startMeasurementWithoutPlayer(measurementId, EXECUTION_SECONDS));
 
@@ -145,6 +162,17 @@ public class GameTestsPerformance {
             Files.write(Paths.get(RESULTS_FILE), content.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void addCablesPostWarmup(GameTestHelper helper, int count) {
+        for (int i = 0; i < count; i++) {
+            final int index = i;
+            helper.runAfterDelay(i * 2, () -> {
+                // Add a cable at the correct position
+                BlockPos pos = helper.absolutePos(START_POS).offset(0, index, - 1);
+                CommandGenerateNetwork.NetworkGenerationHelper.placeCable(helper.getLevel(), pos);
+            });
         }
     }
 }
