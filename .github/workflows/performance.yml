@@ -1,0 +1,64 @@
+name: "Performance"
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    name: Benchmark
+    if: github.event.repository.fork != true && (startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/feature'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: 'Setup Java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: 21
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: wrapper
+          cache-read-only: false
+      - name: 'Build'
+        run: ./gradlew build -x test --no-daemon
+        env:
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Run performance benchmarks'
+        run: ./gradlew runGameTestServer
+        env:
+          PERFORMANCE_BENCHMARK_ENABLED: 'true'
+        continue-on-error: true
+      - name: 'Parse benchmark results'
+        run: bash .github/parse_benchmark_results.sh
+      - name: Determine benchmarks total results target directory name
+        run: echo "BENCHMARK_DATA_DIR_PATH=CyclopsMC/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}/benchmarks" >> $GITHUB_ENV
+      - name: 'Store benchmark result'
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Integrated Dynamics Network Benchmark
+          tool: customSmallerIsBetter
+          output-file-path: benchmark_results.json
+          github-token: ${{ secrets.PAT }}
+          auto-push: true
+          alert-threshold: '250%'
+          comment-always: true
+          comment-on-alert: true
+          alert-comment-cc-users: '@rubensworks'
+          summary-always: true
+          gh-repository: github.com/CyclopsMC/cyclops-performance-results
+          gh-pages-branch: master
+          benchmark-data-dir-path: ${{ env.BENCHMARK_DATA_DIR_PATH }}
+      - name: Prepare comment on commit with link to performance results
+        run: echo -e "Performance benchmarks succeeded! 🚀\n\n\[[Results](https://CyclopsMC.github.io/cyclops-performance-results/CyclopsMC/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}/benchmarks/)\]" > ./commit-comment-body.txt
+      - name: Comment on commit with link to performance results
+        uses: peter-evans/commit-comment@v4
+        with:
+          body-path: ./commit-comment-body.txt
+

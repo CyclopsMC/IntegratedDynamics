@@ -49,6 +49,7 @@ import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRendererRegistry;
 import org.cyclops.integrateddynamics.client.render.valuetype.ValueTypeWorldRenderers;
 import org.cyclops.integrateddynamics.command.CommandCrash;
+import org.cyclops.integrateddynamics.command.CommandGenerateNetwork;
 import org.cyclops.integrateddynamics.command.CommandNetworkDiagnostics;
 import org.cyclops.integrateddynamics.command.CommandTest;
 import org.cyclops.integrateddynamics.core.NoteBlockEventReceiver;
@@ -150,6 +151,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
         LiteralArgumentBuilder<CommandSourceStack> root = super.constructBaseCommand(selection, context);
 
         root.then(CommandCrash.make());
+        root.then(CommandGenerateNetwork.make());
         root.then(CommandNetworkDiagnostics.make());
         root.then(CommandTest.make());
 
@@ -244,6 +246,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
                 GameTestsNetwork.class,
                 GameTestsOffsets.class,
                 GameTestsParts.class,
+                GameTestsPerformance.class,
                 GameTestsProxy.class,
                 GameTestsSqueezer.class,
                 GameTestsWrench.class,
