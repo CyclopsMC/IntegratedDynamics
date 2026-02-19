@@ -26,13 +26,15 @@ while IFS= read -r line; do
         continue
     fi
 
-    # Parse the line: preset=<preset> size=<size> avgTickTime=<time>
+    # Parse the line: preset=<preset> size=<size> avgNetworkTickTime=<time> avgServerTickTime=<time>
     # Using sed instead of grep -oP for macOS compatibility
     preset=$(echo "$line" | sed -n 's/.*preset=\([^ ]*\).*/\1/p')
     size=$(echo "$line" | sed -n 's/.*size=\([0-9]*\).*/\1/p')
-    tickTime=$(echo "$line" | sed -n 's/.*avgTickTime=\([0-9.]*\).*/\1/p')
+    networkTickTime=$(echo "$line" | sed -n 's/.*avgNetworkTickTime=\([0-9.]*\).*/\1/p')
+    serverTickTime=$(echo "$line" | sed -n 's/.*avgServerTickTime=\([0-9.]*\).*/\1/p')
 
-    if [ -n "$preset" ] && [ -n "$size" ] && [ -n "$tickTime" ]; then
+    if [ -n "$preset" ] && [ -n "$size" ] && [ -n "$networkTickTime" ]; then
+        # Output network tick time metric
         if [ "$FIRST" = true ]; then
             FIRST=false
         else
@@ -41,9 +43,21 @@ while IFS= read -r line; do
 
         cat >> "$BENCH_FILE" << EOF
   {
-    "name": "${preset}_size_${size}",
+    "name": "${preset}_size_${size}_network_tick_time",
     "unit": "ms",
-    "value": $tickTime
+    "value": $networkTickTime
+  }
+EOF
+    fi
+
+    # Output server tick time metric if available
+    if [ -n "$serverTickTime" ]; then
+        echo "," >> "$BENCH_FILE"
+        cat >> "$BENCH_FILE" << EOF
+  {
+    "name": "${preset}_size_${size}_server_tick_time",
+    "unit": "ms",
+    "value": $serverTickTime
   }
 EOF
     fi

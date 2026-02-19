@@ -50,9 +50,13 @@ The performance benchmarking system consists of three main components:
 
 ## Performance Metrics
 
-The benchmarking system measures:
-- **Average Tick Time (ms)**: The average time it takes the network to process one game tick
+The benchmarking system measures two key metrics:
+
+- **Average Network Tick Time (ms)**: The average time the Integrated Dynamics network subsystem takes to process one game tick. This measures the network-specific performance impact.
+- **Average Server Tick Time (ms)**: The average time the entire Minecraft server takes per game tick. This measures the overall server performance impact, including both Integrated Dynamics and all other server operations.
 - **Network Size**: The dimensions of the generated network cube
+
+These metrics are tracked separately in the benchmark results to distinguish between network-specific performance and overall server performance impact.
 
 ## Game Test Execution
 
@@ -73,19 +77,22 @@ This command:
 
 Results are written in the following format:
 ```
-preset=empty size=25 avgTickTime=6.25
-preset=idle size=25 avgTickTime=7.50
+preset=empty size=25 avgNetworkTickTime=6.25 avgServerTickTime=3.50
+preset=idle size=25 avgNetworkTickTime=7.50 avgServerTickTime=4.20
 ```
 
-Results are then converted to JSON format for the benchmark action:
+Results are then converted to JSON format for the benchmark action. Each preset generates two metrics - one for network tick time and one for server tick time:
 ```json
 [
   {
-    "name": "emptynetwork_size_25",
+    "name": "empty_size_25_network_tick_time",
     "unit": "ms",
-    "value": 6.25,
-    "preset": "emptynetwork",
-    "size": 25
+    "value": 6.25
+  },
+  {
+    "name": "empty_size_25_server_tick_time",
+    "unit": "ms",
+    "value": 3.50
   }
 ]
 ```

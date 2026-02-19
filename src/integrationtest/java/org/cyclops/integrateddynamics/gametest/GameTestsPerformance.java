@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.gametest;
 
+import com.google.common.math.Stats;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.util.TimeUtil;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.apache.logging.log4j.Level;
@@ -19,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * Game tests for performance benchmarking of network operations.
@@ -56,53 +59,51 @@ public class GameTestsPerformance {
     }
 
     static {
-        // Initialize empty file
-        writeResults(new ArrayList<>(), false);
+        if (isBenchmarkingEnabled()) {
+            // Initialize empty file
+            writeResults(new ArrayList<>(), false);
+        }
     }
 
     @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_empty")
     public void testPerformanceEmptyNetwork(GameTestHelper helper) {
-        testPerformance(helper, "empty", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
+        testPerformance(helper, "empty", (measureServerTickTimeNow) -> CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_idle")
     public void testPerformanceIdleNetwork(GameTestHelper helper) {
-        testPerformance(helper, "idle", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateIdleNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
+        testPerformance(helper, "idle", (measureServerTickTimeNow) -> CommandGenerateNetwork.NetworkGenerationHelper.generateIdleNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_redstoneioclock")
     public void testPerformanceRedstoneNetwork(GameTestHelper helper) {
-        testPerformance(helper, "redstoneioclock", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
+        testPerformance(helper, "redstoneioclock", (measureServerTickTimeNow) -> CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_redstoneioclockvariables")
     public void testPerformanceRedstoneNetworkVariables(GameTestHelper helper) {
-        testPerformance(helper, "redstoneioclock_choice", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetworkVariables(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
+        testPerformance(helper, "redstoneioclock_choice", (measureServerTickTimeNow) -> CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetworkVariables(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_empty_append")
     public void testPerformanceEmptyNetworkAppend(GameTestHelper helper) {
-        testPerformance(helper, "empty_append", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS), () -> {
-            // Add 10 cables over 10 ticks on the NORTH side
-            addCablesPostWarmup(helper, 20);
+        testPerformance(helper, "empty_append", (measureServerTickTimeNow) -> {
+            CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
+            addCablesPostWarmup(helper, 100, WARMUP_TICKS);
+            helper.runAfterDelay(WARMUP_TICKS + 100, measureServerTickTimeNow); // Measure server tick time right after cables have been added
         });
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_idle_append")
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_redstoneioclock_append")
     public void testPerformanceIdleNetworkAppend(GameTestHelper helper) {
-        testPerformance(helper, "idle_append", () -> CommandGenerateNetwork.NetworkGenerationHelper.generateIdleNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS), () -> {
-            // Add 10 cables over 10 ticks on the NORTH side
-            addCablesPostWarmup(helper, 20);
+        testPerformance(helper, "redstoneioclock_append", (measureServerTickTimeNow) -> {
+            CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
+            addCablesPostWarmup(helper, 100, WARMUP_TICKS);
+            helper.runAfterDelay(WARMUP_TICKS + 100, measureServerTickTimeNow); // Measure server tick time right after cables have been added
         });
     }
 
-    public static void testPerformance(GameTestHelper helper, String networkName, Runnable networkConstructor) {
-        testPerformance(helper, networkName, networkConstructor, () -> {
-            // No post-warmup action needed
-        });
-    }
-
-    public static void testPerformance(GameTestHelper helper, String networkName, Runnable networkConstructor, Runnable postWarmupAction) {
+    public static void testPerformance(GameTestHelper helper, String networkName, Consumer<Runnable> networkConstructor) {
         if (!isBenchmarkingEnabled()) {
             IntegratedDynamics.clog(Level.INFO, "Performance benchmarking disabled (PERFORMANCE_BENCHMARK_ENABLED not set)");
             helper.succeed();
@@ -111,7 +112,10 @@ public class GameTestsPerformance {
 
         ensureResultsDirectory();
 
-        networkConstructor.run();
+        // Calculate average server-wide tick time
+        Wrapper<Double> avgServerTickTime = new Wrapper<>(0D);
+        Runnable measureServerTickTimeNow = () -> avgServerTickTime.set(Stats.meanOf(helper.getLevel().getServer().getTickTimesNanos()) / TimeUtil.NANOSECONDS_PER_MILLISECOND);
+        networkConstructor.accept(measureServerTickTimeNow);
 
         // Measure the network performance
         String measurementId = networkName + "_" + System.currentTimeMillis();
@@ -119,12 +123,6 @@ public class GameTestsPerformance {
         helper.runAfterDelay(WARMUP_TICKS, () -> {
             // Wait a few seconds to warm up the code before starting measurement
             measurementUUID.set(NetworkDiagnostics.getInstance().startMeasurementWithoutPlayer(measurementId, EXECUTION_SECONDS));
-
-            if (measurementUUID.get() == null) {
-                throw new IllegalStateException("Failed to start measurement: " + measurementId);
-            }
-
-            postWarmupAction.run();
         });
 
         // Wait for measurement to complete, then retrieve results
@@ -136,8 +134,13 @@ public class GameTestsPerformance {
             double avgTickTime = NetworkDiagnostics.getInstance().getMeasurementAverageTickTime(measurementUUID.get());
             NetworkDiagnostics.getInstance().clearMeasurement(measurementUUID.get());
 
+            // Calculate average server-wide tick time
+            if (avgServerTickTime.get() == 0D) {
+                measureServerTickTimeNow.run();
+            }
+
             List<String> results = new ArrayList<>();
-            results.add(String.format("preset=%s size=%d avgTickTime=%.2f", networkName, RADIUS, avgTickTime));
+            results.add(String.format("preset=%s size=%d avgNetworkTickTime=%.2f avgServerTickTime=%.2f", networkName, RADIUS, avgTickTime, avgServerTickTime.get()));
             writeResults(results, true);
 
             CommandGenerateNetwork.NetworkGenerationHelper.clearCables(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
@@ -165,10 +168,10 @@ public class GameTestsPerformance {
         }
     }
 
-    private static void addCablesPostWarmup(GameTestHelper helper, int count) {
+    private static void addCablesPostWarmup(GameTestHelper helper, int count, int delayOffset) {
         for (int i = 0; i < count; i++) {
             final int index = i;
-            helper.runAfterDelay(i * 2, () -> {
+            helper.runAfterDelay(delayOffset + i, () -> {
                 // Add a cable at the correct position
                 BlockPos pos = helper.absolutePos(START_POS).offset(0, index, - 1);
                 CommandGenerateNetwork.NetworkGenerationHelper.placeCable(helper.getLevel(), pos);

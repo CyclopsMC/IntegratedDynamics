@@ -183,7 +183,7 @@ public class NetworkDiagnostics {
     public synchronized UUID startMeasurementWithoutPlayer(String measurementId, int durationSeconds) {
         UUID internalId = UUID.nameUUIDFromBytes(measurementId.getBytes());
         if (activeMeasurements.containsKey(internalId)) {
-            return null; // Measurement already running
+            throw new IllegalStateException(String.format("Measurement with id %s (%s) already exists", internalId, measurementId));
         }
 
         MeasurementSession session = new MeasurementSession(internalId, durationSeconds);
