@@ -1,0 +1,46 @@
+name: "Fuzzing"
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Run at 2 AM UTC every night
+  workflow_dispatch:  # Allow manual triggering for testing
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fuzz:
+    name: Fuzz
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: 'Setup Java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: 21
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: wrapper
+          cache-read-only: false
+      - name: 'Build'
+        run: ./gradlew build -x test --no-daemon
+        env:
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Run fuzzing game tests'
+        run: ./gradlew runGameTestServer
+        env:
+          FUZZING_ENABLED: 'true'
+        continue-on-error: true
+      - name: 'Upload fuzzing crash structures'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fuzzing-crash-structures
+          path: runs/gameTestServer/fuzzing_crashes/
+          if-no-files-found: ignore
