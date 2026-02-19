@@ -121,8 +121,26 @@ public class GameTestsPerformance {
         });
     }
 
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_empty_appendparts")
+    public void testPerformanceEmptyNetworkAppendParts(GameTestHelper helper) {
+        testPerformance(helper, "empty_appendparts", (measureServerTickTimeNow) -> {
+            CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
+            addPartsPostWarmup(helper, RADIUS, 100, WARMUP_TICKS);
+            helper.runAfterDelay(WARMUP_TICKS + 100, measureServerTickTimeNow); // Measure server tick time right after parts have been added
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_redstoneioclock_appendparts")
+    public void testPerformanceRedstoneNetworkAppendParts(GameTestHelper helper) {
+        testPerformance(helper, "redstoneioclock_appendparts", (measureServerTickTimeNow) -> {
+            CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
+            addPartsPostWarmup(helper, RADIUS, 100, WARMUP_TICKS);
+            helper.runAfterDelay(WARMUP_TICKS + 100, measureServerTickTimeNow); // Measure server tick time right after parts have been added
+        });
+    }
+
     public static void testPerformance(GameTestHelper helper, String networkName, Consumer<Runnable> networkConstructor) {
-        if (!isBenchmarkingEnabled()) {
+        if (!isBenchmarkingEnabled() && false) { // TODO
             IntegratedDynamics.clog(Level.INFO, "Performance benchmarking disabled (PERFORMANCE_BENCHMARK_ENABLED not set)");
             helper.succeed();
             return;
@@ -201,6 +219,17 @@ public class GameTestsPerformance {
         for (int i = 0; i < count; i++) {
             final int index = i;
             helper.runAfterDelay(delayOffset + i, () -> helper.destroyBlock(START_POS.offset(index / radius, index % radius, 0)));
+        }
+    }
+
+    private static void addPartsPostWarmup(GameTestHelper helper, int radius, int count, int delayOffset) {
+        for (int i = 0; i < count; i++) {
+            final int index = i;
+            helper.runAfterDelay(delayOffset + i, () -> {
+                // Add a part to NORTH-facing cable at the correct position
+                BlockPos pos = helper.absolutePos(START_POS).offset(index / radius, index % radius, 0);
+                CommandGenerateNetwork.NetworkGenerationHelper.addPartToNorthFace(helper.getLevel(), pos);
+            });
         }
     }
 }

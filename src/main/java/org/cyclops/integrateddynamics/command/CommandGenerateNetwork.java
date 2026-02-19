@@ -205,6 +205,22 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         }
 
         /**
+         * Add a random part to the NORTH face of a cable at the given position.
+         */
+        public static void addPartToNorthFace(ServerLevel level, BlockPos pos) {
+            List<IPartType> partTypes = new ArrayList<>(PartTypeRegistry.getInstance().getPartTypes());
+
+            if (partTypes.isEmpty()) {
+                return;
+            }
+
+            Random random = new Random();
+            IPartType partType = partTypes.get(random.nextInt(partTypes.size()));
+            ItemStack itemStack = new ItemStack(partType.getItem());
+            PartHelpers.addPart(level, pos, Direction.NORTH, partType, itemStack);
+        }
+
+        /**
          * Clear all cable blocks within a radius of the given position.
          */
         public static void clearCables(ServerLevel level, BlockPos centerPos, int radius) {
