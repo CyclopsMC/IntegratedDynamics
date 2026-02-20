@@ -11,17 +11,20 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
+import org.cyclops.integrateddynamics.gametest.fuzzing.NetworkFuzzer;
+import org.cyclops.integrateddynamics.gametest.fuzzing.NetworkFuzzerException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Fuzz testing game tests for Integrated Dynamics networks.
@@ -77,13 +80,11 @@ public class GameTestsFuzzing {
                 + ", numParts=" + numParts + ", maxOperatorDepth=" + maxOperatorDepth);
 
         BlockPos absStartPos = helper.absolutePos(START_POS);
-        Wrapper<Throwable> generationError = new Wrapper<>(null);
 
         try {
             generateFuzzedNetwork(helper.getLevel(), absStartPos, networkSize, numParts, maxOperatorDepth, random);
-        } catch (Throwable e) {
-            generationError.set(e);
-            IntegratedDynamics.clog(Level.ERROR, "[Fuzzing] Exception during network generation: " + e);
+        } catch (NetworkFuzzerException e) {
+            throw new GameTestAssertException("Fuzzed network generation threw exception: " + e.getMessage());
         }
 
         // Always save the structure so it is available as a CI artifact for inspection.
@@ -97,10 +98,6 @@ public class GameTestsFuzzing {
             IntegratedDynamics.clog(Level.WARN, "[Fuzzing] Failed to save structure: " + e);
         }
 
-        if (generationError.get() != null) {
-            throw new GameTestAssertException("Fuzzed network generation threw exception: "
-                    + generationError.get().getMessage());
-        }
 
         // Let the network run for RUN_TICKS; if no crash occurs the test succeeds.
         helper.runAfterDelay(RUN_TICKS, helper::succeed);
@@ -112,9 +109,11 @@ public class GameTestsFuzzing {
      * 1. Creates a cable grid
      * 2. Creates a variable store connected to the grid
      * 3. Instantiates NetworkFuzzer to generate diverse reader-operator-writer connections
+     *
+     * @throws NetworkFuzzerException if network generation fails
      */
     private static void generateFuzzedNetwork(net.minecraft.server.level.ServerLevel level, BlockPos startPos,
-                                               int cableCount, int numParts, int maxOperatorDepth, Random random) {
+                                               int cableCount, int numParts, int maxOperatorDepth, Random random) throws NetworkFuzzerException {
         // Place cables in a compact grid (CABLE_GRID_X x CABLE_GRID_Z per layer)
         List<BlockPos> cables = new ArrayList<>();
         for (int i = 0; i < cableCount; i++) {
@@ -140,7 +139,7 @@ public class GameTestsFuzzing {
 
         BlockEntityVariablestore varStore = (BlockEntityVariablestore) level.getBlockEntity(varStorePos);
         if (varStore == null) {
-            return;
+            throw new NetworkFuzzerException("[Fuzzing] Failed to create variable store at " + varStorePos);
         }
 
         // Use NetworkFuzzer to generate the network
@@ -149,11 +148,7 @@ public class GameTestsFuzzing {
         // Generate multiple random connections based on numParts
         int connectionsToMake = Math.min(numParts, 10); // Limit to reasonable number
         for (int i = 0; i < connectionsToMake; i++) {
-            try {
-                fuzzer.generate();
-            } catch (Exception e) {
-                IntegratedDynamics.clog(Level.WARN, "[Fuzzing] Failed to generate connection " + i + ": " + e.getMessage());
-            }
+            fuzzer.generate();
         }
     }
 

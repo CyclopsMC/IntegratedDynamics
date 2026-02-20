@@ -1,4 +1,4 @@
-package org.cyclops.integrateddynamics.gametest;
+package org.cyclops.integrateddynamics.gametest.fuzzing;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -6,8 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -19,7 +17,9 @@ import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -66,65 +66,53 @@ public class NetworkFuzzer {
      * 1. Select a random writer part and aspect
      * 2. Build an operator chain that produces the required input type
      * 3. Select random readers to provide inputs to the operator chain
+     *
+     * @throws NetworkFuzzerException if an error occurs during network generation
      */
-    public void generate() {
-        try {
-            // Phase 1: Select writer
-            Pair<IPartTypeWriter<?, ?>, IAspectWrite<?, ?>> writerAspect = selectRandomWriter();
-            if (writerAspect == null) {
-                IntegratedDynamics.clog(Level.WARN, "[Fuzzing] No valid writers found");
-                return;
-            }
+    public void generate() throws NetworkFuzzerException {
+        // Phase 1: Select writer
+        Pair<IPartTypeWriter<?, ?>, IAspectWrite<?, ?>> writerAspect = selectRandomWriter();
 
-            IPartTypeWriter<?, ?> writerType = writerAspect.getLeft();
-            IAspectWrite<?, ?> writeAspect = writerAspect.getRight();
-            IValueType<?> writerInputType = writeAspect.getValueType();
+        IPartTypeWriter<?, ?> writerType = writerAspect.getLeft();
+        IAspectWrite<?, ?> writeAspect = writerAspect.getRight();
+        IValueType<?> writerInputType = writeAspect.getValueType();
 
-            // Place writer part
-            Pair<BlockPos, Direction> writerPos = selectRandomOuterFace();
-            if (writerPos == null) {
-                IntegratedDynamics.clog(Level.WARN, "[Fuzzing] No valid writer position found");
-                return;
-            }
-
-            PartHelpers.addPart(level, writerPos.getLeft(), writerPos.getRight(),
-                    writerType, new ItemStack(writerType.getItem()));
-
-            // Phase 2: Build operator chain
-            List<IOperator> operatorChain = buildOperatorChain(writerInputType);
-
-            // Phase 3: Select readers for unmapped inputs
-            List<OperatorInputNeeded> inputsNeeded = determineInputsNeeded(operatorChain);
-            fulfillInputs(inputsNeeded, writerPos.getLeft(), writerPos.getRight(), writeAspect);
-
-        } catch (Exception e) {
-            IntegratedDynamics.clog(Level.ERROR, "[Fuzzing] Error in NetworkFuzzer.generate(): " + e);
+        // Place writer part
+        Pair<BlockPos, Direction> writerPos = selectRandomOuterFace();
+        if (writerPos == null) {
+            throw new NetworkFuzzerException("No valid outer face available to place writer");
         }
+
+        PartHelpers.addPart(level, writerPos.getLeft(), writerPos.getRight(),
+                writerType, new ItemStack(writerType.getItem()));
+
+        // Phase 2: Build operator chain
+        List<IOperator> operatorChain = buildOperatorChain(writerInputType);
+
+        // Phase 3: Select readers for unmapped inputs
+        List<OperatorInputNeeded> inputsNeeded = determineInputsNeeded(operatorChain);
+        fulfillInputs(inputsNeeded, writerPos.getLeft(), writerPos.getRight(), writeAspect);
     }
 
     /**
      * Select a random writer part type and a random aspect from that part.
      */
-    private Pair<IPartTypeWriter<?, ?>, IAspectWrite<?, ?>> selectRandomWriter() {
+    private Pair<IPartTypeWriter<?, ?>, IAspectWrite<?, ?>> selectRandomWriter() throws NetworkFuzzerException {
         List<IPartTypeWriter<?, ?>> writers = new ArrayList<>();
 
         // Collect all registered writer parts by checking if they implement IPartTypeWriter
         for (Object partType : PartTypes.REGISTRY.getPartTypes()) {
-            if (partType instanceof IPartTypeWriter<?, ?>) {
-                writers.add((IPartTypeWriter<?, ?>) partType);
+            if (partType instanceof IPartTypeWriter<?, ?> writer && !writer.getWriteAspects().isEmpty()) {
+                writers.add(writer);
             }
         }
 
         if (writers.isEmpty()) {
-            return null;
+            throw new NetworkFuzzerException("No writer parts are available");
         }
 
         IPartTypeWriter<?, ?> writerType = writers.get(random.nextInt(writers.size()));
         List<?> writeAspects = writerType.getWriteAspects();
-
-        if (writeAspects.isEmpty()) {
-            return null;
-        }
 
         IAspectWrite<?, ?> aspect = (IAspectWrite<?, ?>) writeAspects.get(random.nextInt(writeAspects.size()));
         return Pair.of(writerType, aspect);
@@ -133,6 +121,7 @@ public class NetworkFuzzer {
     /**
      * Select a random outer face on the cable grid.
      */
+    @Nullable
     private Pair<BlockPos, Direction> selectRandomOuterFace() {
         Set<BlockPos> cableSet = new HashSet<>(cables);
         List<Pair<BlockPos, Direction>> outerFaces = new ArrayList<>();
@@ -156,8 +145,10 @@ public class NetworkFuzzer {
     /**
      * Build an operator chain that produces the required value type.
      * Returns a list of operators in order from input to output.
+     *
+     * @throws NetworkFuzzerException if building the chain fails
      */
-    private List<IOperator> buildOperatorChain(IValueType<?> requiredType) {
+    private List<IOperator> buildOperatorChain(IValueType<?> requiredType) throws NetworkFuzzerException {
         List<IOperator> chain = new ArrayList<>();
         IValueType<?> currentType = requiredType;
         int depth = random.nextInt(maxOperatorDepth + 1);
@@ -185,11 +176,11 @@ public class NetworkFuzzer {
     /**
      * Find a random operator that produces the given value type.
      */
-    private IOperator findRandomOperatorProducing(IValueType<?> valueType) {
+    private IOperator findRandomOperatorProducing(IValueType<?> valueType) throws NetworkFuzzerException {
         List<IOperator> matching = new ArrayList<>(findOperatorsProducingType(valueType));
 
         if (matching.isEmpty()) {
-            return null;
+            throw new NetworkFuzzerException("No operators are available");
         }
 
         return matching.get(random.nextInt(matching.size()));
@@ -199,16 +190,18 @@ public class NetworkFuzzer {
      * Find operators producing a specific value type.
      * This method uses Operators.REGISTRY.getOperatorsWithOutputType() to find all operators
      * that produce the given type.
+     *
+     * @throws NetworkFuzzerException if the registry query fails
      */
-    private List<IOperator> findOperatorsProducingType(IValueType<?> valueType) {
+    private List<IOperator> findOperatorsProducingType(IValueType<?> valueType) throws NetworkFuzzerException {
         List<IOperator> result = new ArrayList<>();
 
         try {
             // Use the registry's built-in method to get operators with the specified output type
             result.addAll(Operators.REGISTRY.getOperatorsWithOutputType(valueType));
         } catch (Exception e) {
-            // If the registry query fails, just return empty list
-            IntegratedDynamics.clog(Level.DEBUG, "[Fuzzing] Failed to find operators for type " + valueType + ": " + e.getMessage());
+            // If the registry query fails, throw an exception
+            throw new NetworkFuzzerException("Failed to find operators for type " + valueType, e);
         }
 
         return result;
@@ -234,9 +227,11 @@ public class NetworkFuzzer {
 
     /**
      * Fulfill the operator inputs by selecting random readers.
+     *
+     * @throws NetworkFuzzerException if fulfilling inputs fails
      */
     private void fulfillInputs(List<OperatorInputNeeded> inputsNeeded, BlockPos writerPos, Direction writerDir,
-                               IAspectWrite<?, ?> writeAspect) {
+                               IAspectWrite<?, ?> writeAspect) throws NetworkFuzzerException {
         for (OperatorInputNeeded input : inputsNeeded) {
             if (varStoreSlot >= BlockEntityVariablestore.INVENTORY_SIZE - 1) {
                 break;
@@ -288,6 +283,7 @@ public class NetworkFuzzer {
     /**
      * Select a random reader part type and aspect that produces the required value type.
      */
+    @Nullable
     private Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>> selectRandomReaderWithType(IValueType<?> valueType) {
         List<Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>>> validCombos = new ArrayList<>();
 
@@ -315,8 +311,10 @@ public class NetworkFuzzer {
     /**
      * Set up context blocks for different reader types.
      * This method intelligently places blocks and entities based on reader part type names.
+     *
+     * @throws NetworkFuzzerException if setting up context blocks fails
      */
-    private void setupReaderContextBlocks(IPartTypeReader<?, ?> readerType, BlockPos cablePos, Direction readerDir) {
+    private void setupReaderContextBlocks(IPartTypeReader<?, ?> readerType, BlockPos cablePos, Direction readerDir) throws NetworkFuzzerException {
         BlockPos contextPos = cablePos.relative(readerDir);
 
         if (!level.isEmptyBlock(contextPos)) {
@@ -443,8 +441,10 @@ public class NetworkFuzzer {
     /**
      * Spawn a random entity in front of the reader.
      * Only selects entity types from the minecraft namespace.
+     *
+     * @throws NetworkFuzzerException if spawning an entity fails
      */
-    private void spawnRandomEntity(BlockPos pos) {
+    private void spawnRandomEntity(BlockPos pos) throws NetworkFuzzerException {
         // Filter to only minecraft namespace entity types and get a random one
         var minecraftEntities = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.stream()
                 .filter(entityType -> net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(entityType)
@@ -452,7 +452,7 @@ public class NetworkFuzzer {
                 .toList();
 
         if (minecraftEntities.isEmpty()) {
-            return;
+            throw new NetworkFuzzerException("No entities are available to spawn");
         }
 
         net.minecraft.world.entity.EntityType<?> entityType = minecraftEntities.get(random.nextInt(minecraftEntities.size()));
@@ -464,8 +464,8 @@ public class NetworkFuzzer {
                 level.addFreshEntity(entity);
             }
         } catch (Exception e) {
-            // Some entity types might fail to spawn; that's okay, just skip them
-            IntegratedDynamics.clog(Level.DEBUG, "[Fuzzing] Failed to spawn entity: " + e.getMessage());
+            // Some entity types might fail to spawn
+            throw new NetworkFuzzerException("Failed to spawn entity of type " + entityType, e);
         }
     }
 }
