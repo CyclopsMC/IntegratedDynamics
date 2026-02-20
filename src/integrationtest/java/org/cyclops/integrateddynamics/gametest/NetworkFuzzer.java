@@ -43,11 +43,9 @@ public class NetworkFuzzer {
     private static class OperatorInputNeeded {
         final IOperator operator;
         final int inputIndex;
-        @SuppressWarnings("rawtypes")
-        final IValueType expectedType;
+        final IValueType<?> expectedType;
 
-        @SuppressWarnings("rawtypes")
-        OperatorInputNeeded(IOperator operator, int inputIndex, IValueType expectedType) {
+        OperatorInputNeeded(IOperator operator, int inputIndex, IValueType<?> expectedType) {
             this.operator = operator;
             this.inputIndex = inputIndex;
             this.expectedType = expectedType;
@@ -80,8 +78,7 @@ public class NetworkFuzzer {
 
             IPartTypeWriter<?, ?> writerType = writerAspect.getLeft();
             IAspectWrite<?, ?> writeAspect = writerAspect.getRight();
-            @SuppressWarnings("rawtypes")
-            IValueType writerInputType = writeAspect.getValueType();
+            IValueType<?> writerInputType = writeAspect.getValueType();
 
             // Place writer part
             Pair<BlockPos, Direction> writerPos = selectRandomOuterFace();
@@ -123,14 +120,12 @@ public class NetworkFuzzer {
         }
 
         IPartTypeWriter<?, ?> writerType = writers.get(random.nextInt(writers.size()));
-        @SuppressWarnings("rawtypes")
-        List writeAspects = writerType.getWriteAspects();
+        List<?> writeAspects = writerType.getWriteAspects();
 
         if (writeAspects.isEmpty()) {
             return null;
         }
 
-        @SuppressWarnings("unchecked")
         IAspectWrite<?, ?> aspect = (IAspectWrite<?, ?>) writeAspects.get(random.nextInt(writeAspects.size()));
         return Pair.of(writerType, aspect);
     }
@@ -162,10 +157,9 @@ public class NetworkFuzzer {
      * Build an operator chain that produces the required value type.
      * Returns a list of operators in order from input to output.
      */
-    @SuppressWarnings("rawtypes")
-    private List<IOperator> buildOperatorChain(IValueType requiredType) {
+    private List<IOperator> buildOperatorChain(IValueType<?> requiredType) {
         List<IOperator> chain = new ArrayList<>();
-        IValueType currentType = requiredType;
+        IValueType<?> currentType = requiredType;
         int depth = random.nextInt(maxOperatorDepth + 1);
 
         for (int i = 0; i < depth && varStoreSlot < BlockEntityVariablestore.INVENTORY_SIZE - 1; i++) {
@@ -177,7 +171,7 @@ public class NetworkFuzzer {
             chain.addFirst(op); // Add to front since we're building backwards
 
             // Get the first input type of this operator
-            IValueType[] inputTypes = op.getInputTypes();
+            IValueType<?>[] inputTypes = op.getInputTypes();
             if (inputTypes.length > 0) {
                 currentType = inputTypes[0];
             } else {
@@ -191,8 +185,7 @@ public class NetworkFuzzer {
     /**
      * Find a random operator that produces the given value type.
      */
-    @SuppressWarnings("rawtypes")
-    private IOperator findRandomOperatorProducing(IValueType valueType) {
+    private IOperator findRandomOperatorProducing(IValueType<?> valueType) {
         List<IOperator> matching = new ArrayList<>(findOperatorsProducingType(valueType));
 
         if (matching.isEmpty()) {
@@ -207,8 +200,7 @@ public class NetworkFuzzer {
      * This method uses Operators.REGISTRY.getOperatorsWithOutputType() to find all operators
      * that produce the given type.
      */
-    @SuppressWarnings("rawtypes")
-    private List<IOperator> findOperatorsProducingType(IValueType valueType) {
+    private List<IOperator> findOperatorsProducingType(IValueType<?> valueType) {
         List<IOperator> result = new ArrayList<>();
 
         try {
@@ -229,8 +221,7 @@ public class NetworkFuzzer {
         List<OperatorInputNeeded> result = new ArrayList<>();
 
         for (IOperator op : chain) {
-            @SuppressWarnings("rawtypes")
-            IValueType[] inputTypes = op.getInputTypes();
+            IValueType<?>[] inputTypes = op.getInputTypes();
             for (int i = 0; i < inputTypes.length; i++) {
                 // For now, mark all inputs as needed
                 // In a full implementation, we'd track which are already provided by previous operators
@@ -244,7 +235,6 @@ public class NetworkFuzzer {
     /**
      * Fulfill the operator inputs by selecting random readers.
      */
-    @SuppressWarnings("unchecked")
     private void fulfillInputs(List<OperatorInputNeeded> inputsNeeded, BlockPos writerPos, Direction writerDir,
                                IAspectWrite<?, ?> writeAspect) {
         for (OperatorInputNeeded input : inputsNeeded) {
@@ -298,19 +288,18 @@ public class NetworkFuzzer {
     /**
      * Select a random reader part type and aspect that produces the required value type.
      */
-    @SuppressWarnings("rawtypes")
-    private Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>> selectRandomReaderWithType(IValueType valueType) {
+    private Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>> selectRandomReaderWithType(IValueType<?> valueType) {
         List<Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>>> validCombos = new ArrayList<>();
 
         // Collect all registered reader parts by checking if they implement IPartTypeReader
         for (Object partType : PartTypes.REGISTRY.getPartTypes()) {
-            if (partType instanceof IPartTypeReader<?, ?>) {
-                IPartTypeReader<?, ?> reader = (IPartTypeReader<?, ?>) partType;
-                @SuppressWarnings("unchecked")
-                List<IAspectRead<?, ?>> aspects = (List<IAspectRead<?, ?>>) (List<?>) reader.getReadAspects();
-                for (IAspectRead<?, ?> aspect : aspects) {
-                    if (aspect.getValueType() == valueType) {
-                        validCombos.add(Pair.of(reader, aspect));
+            if (partType instanceof IPartTypeReader<?, ?> reader) {
+                List<?> aspects = reader.getReadAspects();
+                for (Object aspect : aspects) {
+                    if (aspect instanceof IAspectRead<?, ?> readAspect) {
+                        if (readAspect.getValueType() == valueType) {
+                            validCombos.add(Pair.of(reader, readAspect));
+                        }
                     }
                 }
             }
