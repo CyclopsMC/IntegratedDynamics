@@ -314,7 +314,7 @@ public class NetworkFuzzer {
 
     /**
      * Set up context blocks for different reader types.
-     * This method intelligently places blocks based on reader part type names.
+     * This method intelligently places blocks and entities based on reader part type names.
      */
     private void setupReaderContextBlocks(IPartTypeReader<?, ?> readerType, BlockPos cablePos, Direction readerDir) {
         BlockPos contextPos = cablePos.relative(readerDir);
@@ -327,20 +327,145 @@ public class NetworkFuzzer {
 
         // Place context blocks based on reader type
         if (readerName.contains("inventory")) {
-            level.setBlock(contextPos, Blocks.CHEST.defaultBlockState(), 2);
+            placeChestWithItems(contextPos);
         } else if (readerName.contains("fluid")) {
-            level.setBlock(contextPos, Blocks.CAULDRON.defaultBlockState(), 2);
+            placeFluidSource(contextPos);
         } else if (readerName.contains("block")) {
-            level.setBlock(contextPos, Blocks.STONE.defaultBlockState(), 2);
+            placeRandomBlock(contextPos);
         } else if (readerName.contains("audio")) {
             level.setBlock(contextPos, Blocks.NOTE_BLOCK.defaultBlockState(), 2);
         } else if (readerName.contains("redstone")) {
-            level.setBlock(contextPos, Blocks.REDSTONE_LAMP.defaultBlockState(), 2);
+            placeRedstoneSource(contextPos);
         } else if (readerName.contains("machine")) {
             level.setBlock(contextPos, Blocks.FURNACE.defaultBlockState(), 2);
+        } else if (readerName.contains("entity")) {
+            spawnRandomEntity(contextPos);
+        }
+        // Network, World, and Extradimensional readers don't need special context blocks
+    }
+
+    /**
+     * Place a chest with random items inside.
+     */
+    private void placeChestWithItems(BlockPos pos) {
+        level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 2);
+
+        // Add some random items to the chest
+        if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity chestEntity) {
+            int itemCount = random.nextInt(3) + 1; // 1-3 random items
+            for (int i = 0; i < itemCount && i < chestEntity.getContainerSize(); i++) {
+                net.minecraft.world.item.ItemStack itemStack = new ItemStack(
+                        getRandomItem(),
+                        random.nextInt(64) + 1
+                );
+                chestEntity.setItem(i, itemStack);
+            }
+        }
+    }
+
+    /**
+     * Get a random item for placing in containers.
+     * Only selects items from the minecraft namespace.
+     */
+    private net.minecraft.world.item.Item getRandomItem() {
+        // Filter to only minecraft namespace items and get a random one
+        var minecraftItems = net.minecraft.core.registries.BuiltInRegistries.ITEM.stream()
+                .filter(item -> net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item)
+                        .getNamespace().equals("minecraft"))
+                .toList();
+
+        if (minecraftItems.isEmpty()) {
+            return net.minecraft.world.item.Items.STONE;
+        }
+
+        return minecraftItems.get(random.nextInt(minecraftItems.size()));
+    }
+
+    /**
+     * Place a fluid source block (cauldron or similar).
+     */
+    private void placeFluidSource(BlockPos pos) {
+        // Randomly choose between cauldron and a fluid block
+        if (random.nextBoolean()) {
+            level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 2);
         } else {
-            // Default for entity, network, world, extradimensional, etc: place stone
-            level.setBlock(contextPos, Blocks.STONE.defaultBlockState(), 2);
+            level.setBlock(pos, Blocks.WATER.defaultBlockState(), 2);
+        }
+    }
+
+    /**
+     * Place a random solid block.
+     * Only selects blocks from the minecraft namespace.
+     */
+    private void placeRandomBlock(BlockPos pos) {
+        // Filter to only minecraft namespace blocks and get a random one
+        var minecraftBlocks = net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream()
+                .filter(block -> net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block)
+                        .getNamespace().equals("minecraft"))
+                .toList();
+
+        if (!minecraftBlocks.isEmpty()) {
+            net.minecraft.world.level.block.Block block = minecraftBlocks.get(random.nextInt(minecraftBlocks.size()));
+            level.setBlock(pos, block.defaultBlockState(), 2);
+        }
+    }
+
+    /**
+     * Place a redstone source block (torch, wire, repeater, etc).
+     */
+    private void placeRedstoneSource(BlockPos pos) {
+        // Randomly choose between different redstone sources
+        int choice = random.nextInt(4);
+        switch (choice) {
+            case 0:
+                // Redstone torch
+                level.setBlock(pos, Blocks.REDSTONE_TORCH.defaultBlockState(), 2);
+                break;
+            case 1:
+                // Redstone wire (place on top of a block)
+                BlockPos basePos = pos.below();
+                if (level.isEmptyBlock(basePos)) {
+                    level.setBlock(basePos, Blocks.STONE.defaultBlockState(), 2);
+                }
+                level.setBlock(pos, Blocks.REDSTONE_WIRE.defaultBlockState(), 2);
+                break;
+            case 2:
+                // Redstone repeater
+                level.setBlock(pos, Blocks.REPEATER.defaultBlockState(), 2);
+                break;
+            case 3:
+                // Redstone comparator
+                level.setBlock(pos, Blocks.COMPARATOR.defaultBlockState(), 2);
+                break;
+        }
+    }
+
+    /**
+     * Spawn a random entity in front of the reader.
+     * Only selects entity types from the minecraft namespace.
+     */
+    private void spawnRandomEntity(BlockPos pos) {
+        // Filter to only minecraft namespace entity types and get a random one
+        var minecraftEntities = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.stream()
+                .filter(entityType -> net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(entityType)
+                        .getNamespace().equals("minecraft"))
+                .toList();
+
+        if (minecraftEntities.isEmpty()) {
+            return;
+        }
+
+        net.minecraft.world.entity.EntityType<?> entityType = minecraftEntities.get(random.nextInt(minecraftEntities.size()));
+
+        try {
+            net.minecraft.world.entity.Entity entity = entityType.create(level);
+            if (entity != null) {
+                entity.setPos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                level.addFreshEntity(entity);
+            }
+        } catch (Exception e) {
+            // Some entity types might fail to spawn; that's okay, just skip them
+            IntegratedDynamics.clog(Level.DEBUG, "[Fuzzing] Failed to spawn entity: " + e.getMessage());
         }
     }
 }
