@@ -6,8 +6,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
@@ -52,6 +54,17 @@ public class NetworkFuzzer {
         }
     }
 
+    // Track variable IDs assigned to each operator's inputs
+    private static class OperatorVariableAssignment {
+        final IOperator operator;
+        final int[] variableIds;
+
+        OperatorVariableAssignment(IOperator operator, int numInputs) {
+            this.operator = operator;
+            this.variableIds = new int[numInputs];
+        }
+    }
+
     public NetworkFuzzer(Random random, int maxOperatorDepth, List<BlockPos> cables,
                          BlockEntityVariablestore varStore, ServerLevel level, BlockPos startPos) {
         this.random = random;
@@ -91,7 +104,11 @@ public class NetworkFuzzer {
 
         // Phase 3: Select readers for unmapped inputs
         List<OperatorInputNeeded> inputsNeeded = determineInputsNeeded(operatorChain);
-        fulfillInputs(inputsNeeded, writerPos.getLeft(), writerPos.getRight(), writeAspect);
+        Map<IOperator, OperatorVariableAssignment> operatorAssignments = new HashMap<>();
+        for (IOperator op : operatorChain) {
+            operatorAssignments.put(op, new OperatorVariableAssignment(op, op.getRequiredInputLength()));
+        }
+        fulfillInputs(inputsNeeded, operatorChain, operatorAssignments, writerPos.getLeft(), writerPos.getRight(), writeAspect);
     }
 
     /**
@@ -227,10 +244,13 @@ public class NetworkFuzzer {
 
     /**
      * Fulfill the operator inputs by selecting random readers.
+     * Tracks which variable IDs are assigned to each operator's inputs.
      *
      * @throws NetworkFuzzerException if fulfilling inputs fails
      */
-    private void fulfillInputs(List<OperatorInputNeeded> inputsNeeded, BlockPos writerPos, Direction writerDir,
+    private void fulfillInputs(List<OperatorInputNeeded> inputsNeeded, List<IOperator> operatorChain,
+                               Map<IOperator, OperatorVariableAssignment> operatorAssignments,
+                               BlockPos writerPos, Direction writerDir,
                                IAspectWrite<?, ?> writeAspect) throws NetworkFuzzerException {
         for (OperatorInputNeeded input : inputsNeeded) {
             if (varStoreSlot >= BlockEntityVariablestore.INVENTORY_SIZE - 1) {
@@ -266,15 +286,41 @@ public class NetworkFuzzer {
 
             ItemStack readerVar = GameTestHelpersIntegratedDynamics.createVariableFromReader(level,
                     readAspect, readerHolder.getState());
+
+            // Store the variable and track its ID
+            int variableId = readerVar.getCapability(Capabilities.VariableFacade.ITEM).getVariableFacade(ValueDeseralizationContext.of(level)).getId();
             varStore.getInventory().setItem(varStoreSlot++, readerVar);
+
+            // Record this variable ID for the operator's input
+            OperatorVariableAssignment assignment = operatorAssignments.get(input.operator);
+            if (assignment != null && input.inputIndex < assignment.variableIds.length) {
+                assignment.variableIds[input.inputIndex] = variableId;
+            }
         }
 
-        // Finally, create the operator variable(s) and place in the writer
+        // Finally, create the variable for the writer based on operator chain or reader
         PartPos writerPartPos = PartPos.of(level, writerPos, writerDir);
         PartHelpers.PartStateHolder<?, ?> writerHolder = PartHelpers.getPart(writerPartPos);
         if (writerHolder != null) {
-            ItemStack writerVar = GameTestHelpersIntegratedDynamics.createVariableFromReader(level,
-                    writeAspect, writerHolder.getState());
+            ItemStack writerVar;
+
+            if (!operatorChain.isEmpty()) {
+                // Create variable from the last operator in the chain
+                IOperator lastOperator = operatorChain.getLast();
+                OperatorVariableAssignment assignment = operatorAssignments.get(lastOperator);
+                writerVar = GameTestHelpersIntegratedDynamics.createVariableForOperator(level, lastOperator, assignment.variableIds);
+            } else {
+                // No operators, create variable directly from a reader aspect
+                Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>> readerAspect = selectRandomReaderWithType(writeAspect.getValueType());
+                if (readerAspect != null) {
+                    writerVar = GameTestHelpersIntegratedDynamics.createVariableFromReader(level,
+                            readerAspect.getRight(), writerHolder.getState());
+                } else {
+                    // Fallback: can't create a suitable variable
+                    return;
+                }
+            }
+
             GameTestHelpersIntegratedDynamics.placeVariableInWriter(level, writerPartPos,
                     writeAspect, writerVar);
         }
