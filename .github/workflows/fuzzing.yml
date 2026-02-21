@@ -70,6 +70,14 @@ jobs:
               crashFiles = fs.readdirSync(crashDir).filter(f => f.endsWith('.nbt'));
             }
             
+            // Extract [Fuzzing] log lines
+            let fuzzingLogs = [];
+            const logFile = 'runs/gameTestServer/logs/latest.log';
+            if (fs.existsSync(logFile)) {
+              const logContent = fs.readFileSync(logFile, 'utf8');
+              fuzzingLogs = logContent.split('\n').filter(line => line.includes('[Fuzzing]'));
+            }
+            
             // Build the issue body
             let issueBody = `## Fuzzing Test Failure
 
@@ -92,6 +100,17 @@ jobs:
                           });
                         } else {
                           issueBody += `No structure files were captured (the error probably occurred during fuzzed network generation)\n`;
+                        }
+            
+                        issueBody += `
+            ### Fuzzing Log Output
+            
+            `;
+            
+                        if (fuzzingLogs.length > 0) {
+                          issueBody += `\`\`\`\n${fuzzingLogs.join('\n')}\n\`\`\`\n`;
+                        } else {
+                          issueBody += `No [Fuzzing] log lines found.\n`;
                         }
             
                         issueBody += `

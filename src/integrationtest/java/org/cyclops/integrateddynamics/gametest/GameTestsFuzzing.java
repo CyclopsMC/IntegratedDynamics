@@ -83,8 +83,10 @@ public class GameTestsFuzzing {
 
         try {
             generateFuzzedNetwork(helper.getLevel(), absStartPos, networkSize, numParts, maxOperatorDepth, random);
+        } catch (GameTestAssertException e) {
+            throw new GameTestAssertException("[Fuzzing] " + e.getMessage());
         } catch (NetworkFuzzerException e) {
-            throw new GameTestAssertException("Fuzzed network generation threw exception: " + e.getMessage());
+            throw new GameTestAssertException("[Fuzzing] Fuzzed network generation threw exception: " + e.getMessage());
         }
 
         // Always save the structure so it is available as a CI artifact for inspection.
