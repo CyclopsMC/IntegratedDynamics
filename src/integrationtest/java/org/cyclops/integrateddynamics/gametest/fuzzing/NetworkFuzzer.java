@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.gametest.fuzzing;
 
-import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -9,6 +8,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.Capabilities;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
@@ -24,7 +24,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics;
-import org.cyclops.integrateddynamics.RegistryEntries;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -253,7 +252,10 @@ public class NetworkFuzzer {
     private List<IOperator> findOperatorsProducingType(IValueType<?> valueType) throws NetworkFuzzerException {
         // Narrow down category types
         if (valueType.isCategory()) {
-            List<IValueType<?>> valueTypes = Lists.newArrayList(((IValueTypeCategory) valueType).getElements());
+            IValueTypeCategory<?> valueTypeCategory = (IValueTypeCategory<?>) valueType;
+            List<IValueType> valueTypes = ValueTypes.REGISTRY.getValueTypes().stream()
+                    .filter(valueTypeCategory::correspondsTo)
+                    .toList();
             valueType = valueTypes.get(random.nextInt(valueTypes.size()));
         }
 
