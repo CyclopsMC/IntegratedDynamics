@@ -72,9 +72,9 @@ public class GameTestsFuzzing {
         }
 
         Random random = new Random();
-        int networkSize = 1 + random.nextInt(MAX_NETWORK_SIZE);
-        int numParts = random.nextInt(MAX_PARTS + 1);
-        int maxOperatorDepth = random.nextInt(MAX_OPERATORS + 1);
+        int networkSize = random.nextInt(MAX_NETWORK_SIZE) + 1;
+        int numParts = random.nextInt(MAX_PARTS) + 1;
+        int maxOperatorDepth = random.nextInt(MAX_OPERATORS) + 1;
 
         IntegratedDynamics.clog(Level.INFO, "[Fuzzing] networkSize=" + networkSize
                 + ", numParts=" + numParts + ", maxOperatorDepth=" + maxOperatorDepth);
@@ -148,8 +148,7 @@ public class GameTestsFuzzing {
         NetworkFuzzer fuzzer = new NetworkFuzzer(random, maxOperatorDepth, cables, varStore, level, startPos);
 
         // Generate multiple random connections based on numParts
-        int connectionsToMake = Math.min(numParts, 10); // Limit to reasonable number
-        for (int i = 0; i < connectionsToMake; i++) {
+        for (int i = 0; i < numParts; i++) {
             fuzzer.generate();
         }
     }
