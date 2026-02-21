@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -185,7 +186,7 @@ public class NetworkFuzzer {
         for (BlockPos cable : cables) {
             for (Direction dir : Direction.values()) {
                 BlockPos adjacent = cable.relative(dir);
-                if (!cableSet.contains(adjacent)) {
+                if (!cableSet.contains(adjacent) && PartHelpers.getPart(PartPos.of(DimPos.of(level, cable), dir)) == null) {
                     outerFaces.add(Pair.of(cable, dir));
                 }
             }
