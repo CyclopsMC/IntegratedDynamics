@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.gametest.fuzzing;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
@@ -17,6 +19,7 @@ import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics;
@@ -247,11 +250,21 @@ public class NetworkFuzzer {
      * @throws NetworkFuzzerException if the registry query fails
      */
     private List<IOperator> findOperatorsProducingType(IValueType<?> valueType) throws NetworkFuzzerException {
+        // Narrow down category types
+        if (valueType.isCategory()) {
+            List<IValueType<?>> valueTypes = Lists.newArrayList(((IValueTypeCategory) valueType).getElements());
+            valueType = valueTypes.get(random.nextInt(valueTypes.size()));
+        }
+
         List<IOperator> result = new ArrayList<>();
 
         try {
             // Use the registry's built-in method to get operators with the specified output type
-            result.addAll(Operators.REGISTRY.getOperatorsWithOutputType(valueType));
+            IValueType<?> finalValueType = valueType;
+            result.addAll(Operators.REGISTRY.getOperatorsWithOutputType(valueType)
+                    // Only keep operators that require entity inputs at a 10% chance.
+                    // Otherwise, the TARGETENTITY operator is overwhelmingly common since it is the only one that produces an entity type.
+                    .stream().filter(operator -> random.nextInt(10) == 9 || finalValueType == ValueTypes.OBJECT_ENTITY || Arrays.stream(operator.getInputTypes()).noneMatch(vt -> vt == ValueTypes.OBJECT_ENTITY)).toList());
         } catch (Exception e) {
             // If the registry query fails, throw an exception
             throw new NetworkFuzzerException("Failed to find operators for type " + valueType, e);
