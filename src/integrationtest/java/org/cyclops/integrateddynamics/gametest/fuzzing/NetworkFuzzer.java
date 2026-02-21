@@ -42,17 +42,7 @@ public class NetworkFuzzer {
     private int varStoreSlot = 0;
 
     // Track operator inputs that need reader sources
-    private static class OperatorInputNeeded {
-        final IOperator operator;
-        final int inputIndex;
-        final IValueType<?> expectedType;
-
-        OperatorInputNeeded(IOperator operator, int inputIndex, IValueType<?> expectedType) {
-            this.operator = operator;
-            this.inputIndex = inputIndex;
-            this.expectedType = expectedType;
-        }
-    }
+    private record OperatorInputNeeded(IOperator operator, int inputIndex, IValueType<?> expectedType) {}
 
     // Track variable IDs assigned to each operator's inputs
     private static class OperatorVariableAssignment {
@@ -98,6 +88,9 @@ public class NetworkFuzzer {
 
         PartHelpers.addPart(level, writerPos.getLeft(), writerPos.getRight(),
                 writerType, new ItemStack(writerType.getItem()));
+
+        // Set up context blocks for the writer
+        setupWriterContextBlocks(writerType, writerPos.getLeft(), writerPos.getRight());
 
         // Phase 2: Build operator chain
         List<IOperator> operatorChain = buildOperatorChain(writerInputType);
@@ -386,6 +379,47 @@ public class NetworkFuzzer {
             spawnRandomEntity(contextPos);
         }
         // Network, World, and Extradimensional readers don't need special context blocks
+    }
+
+    /**
+     * Set up context blocks for different writer types.
+     * This method intelligently places blocks based on writer part type names.
+     * Currently supports redstone writers.
+     *
+     * @throws NetworkFuzzerException if setting up context blocks fails
+     */
+    private void setupWriterContextBlocks(IPartTypeWriter<?, ?> writerType, BlockPos cablePos, Direction writerDir) throws NetworkFuzzerException {
+        BlockPos contextPos = cablePos.relative(writerDir);
+
+        if (!level.isEmptyBlock(contextPos)) {
+            return; // Don't overwrite existing blocks
+        }
+
+        String writerName = writerType.getClass().getSimpleName().toLowerCase();
+
+        // Place context blocks based on writer type
+        if (writerName.contains("redstone")) {
+            placeRedstoneWriterTarget(contextPos);
+        }
+        // Other writer types don't need special context blocks for now
+    }
+
+    /**
+     * Place a target block for redstone writers (redstone dust or redstone lamp).
+     */
+    private void placeRedstoneWriterTarget(BlockPos pos) {
+        // Randomly choose between redstone dust and redstone lamp
+        if (random.nextBoolean()) {
+            // Place redstone dust (needs a solid block beneath it)
+            BlockPos basePos = pos.below();
+            if (level.isEmptyBlock(basePos)) {
+                level.setBlock(basePos, Blocks.STONE.defaultBlockState(), 2);
+            }
+            level.setBlock(pos, Blocks.REDSTONE_WIRE.defaultBlockState(), 2);
+        } else {
+            // Place redstone lamp
+            level.setBlock(pos, Blocks.REDSTONE_LAMP.defaultBlockState(), 2);
+        }
     }
 
     /**
