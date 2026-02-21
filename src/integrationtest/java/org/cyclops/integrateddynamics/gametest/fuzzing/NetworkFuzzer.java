@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -35,10 +36,11 @@ public class NetworkFuzzer {
     private final Random random;
     private final int maxOperatorDepth;
     private final List<BlockPos> cables;
-    private final BlockEntityVariablestore varStore;
+    private final List<BlockEntityVariablestore> varStores;
     private final ServerLevel level;
 
-    // Track variable store capacity
+    // Track variable store and slot for current variable
+    private int currentVarStoreIndex = 0;
     private int varStoreSlot = 0;
 
     // Track operator inputs that need reader sources
@@ -60,8 +62,49 @@ public class NetworkFuzzer {
         this.random = random;
         this.maxOperatorDepth = maxOperatorDepth;
         this.cables = cables;
-        this.varStore = varStore;
+        this.varStores = new ArrayList<>();
+        this.varStores.add(varStore);
         this.level = level;
+    }
+
+    /**
+     * Get the current variable store.
+     */
+    private BlockEntityVariablestore getCurrentVarStore() {
+        return varStores.get(currentVarStoreIndex);
+    }
+
+    /**
+     * Advance to the next variable store slot, creating a new store on top if needed.
+     *
+     * @throws NetworkFuzzerException if creating a new store fails
+     */
+    private void advanceVarStoreSlot() throws NetworkFuzzerException {
+        varStoreSlot++;
+
+        if (varStoreSlot >= BlockEntityVariablestore.INVENTORY_SIZE) {
+            // Current store is full, create a new one on top
+            BlockEntityVariablestore currentStore = getCurrentVarStore();
+            BlockPos currentStorePos = currentStore.getBlockPos();
+
+            // Place new variable store on top of the current one
+            BlockPos newStorePos = currentStorePos.above();
+            if (!level.isEmptyBlock(newStorePos)) {
+                throw new NetworkFuzzerException("Cannot place new variable store at " + newStorePos + " - block already exists");
+            }
+
+            level.setBlock(newStorePos, RegistryEntries.BLOCK_VARIABLE_STORE.get().defaultBlockState(), 2);
+
+            // Get the new variable store block entity
+            if (!(level.getBlockEntity(newStorePos) instanceof BlockEntityVariablestore newStore)) {
+                throw new NetworkFuzzerException("Failed to get new variable store block entity at " + newStorePos);
+            }
+
+            // Add it to our list and update indices
+            varStores.add(newStore);
+            currentVarStoreIndex++;
+            varStoreSlot = 0;
+        }
     }
 
     /**
@@ -163,7 +206,7 @@ public class NetworkFuzzer {
         IValueType<?> currentType = requiredType;
         int depth = random.nextInt(maxOperatorDepth + 1);
 
-        for (int i = 0; i < depth && varStoreSlot < BlockEntityVariablestore.INVENTORY_SIZE - 1; i++) {
+        for (int i = 0; i < depth; i++) {
             // Find an operator that produces currentType
             IOperator op = findRandomOperatorProducing(currentType);
             if (op == null) {
@@ -246,10 +289,6 @@ public class NetworkFuzzer {
                                BlockPos writerPos, Direction writerDir,
                                IAspectWrite<?, ?> writeAspect) throws NetworkFuzzerException {
         for (OperatorInputNeeded input : inputsNeeded) {
-            if (varStoreSlot >= BlockEntityVariablestore.INVENTORY_SIZE - 1) {
-                break;
-            }
-
             Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>> readerAspect = selectRandomReaderWithType(input.expectedType);
             if (readerAspect == null) {
                 continue;
@@ -282,7 +321,8 @@ public class NetworkFuzzer {
 
             // Store the variable and track its ID
             int variableId = readerVar.getCapability(Capabilities.VariableFacade.ITEM).getVariableFacade(ValueDeseralizationContext.of(level)).getId();
-            varStore.getInventory().setItem(varStoreSlot++, readerVar);
+            getCurrentVarStore().getInventory().setItem(varStoreSlot, readerVar);
+            advanceVarStoreSlot();
 
             // Record this variable ID for the operator's input
             OperatorVariableAssignment assignment = operatorAssignments.get(input.operator);
