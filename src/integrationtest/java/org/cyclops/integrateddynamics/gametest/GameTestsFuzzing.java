@@ -87,17 +87,19 @@ public class GameTestsFuzzing {
             throw new GameTestAssertException("[Fuzzing] " + e.getMessage());
         } catch (NetworkFuzzerException e) {
             throw new GameTestAssertException("[Fuzzing] Fuzzed network generation threw exception: " + e.getMessage());
-        }
-
-        // Always save the structure so it is available as a CI artifact for inspection.
-        // This is done before runAfterDelay so the file exists even if the JVM crashes during ticking.
-        String structureName = "fuzz_" + System.currentTimeMillis()
-                + "_n" + networkSize + "_p" + numParts + "_d" + maxOperatorDepth;
-        try {
-            saveStructure(helper.getLevel(), absStartPos, networkSize, structureName);
-            IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Structure saved: " + structureName + ".nbt");
-        } catch (Exception e) {
-            IntegratedDynamics.clog(Level.WARN, "[Fuzzing] Failed to save structure: " + e);
+        } catch (RuntimeException e) {
+            throw e;
+        } finally {
+            // Always save the structure so it is available as a CI artifact for inspection.
+            // This is done before runAfterDelay so the file exists even if the JVM crashes during ticking.
+            String structureName = "fuzz_" + System.currentTimeMillis()
+                    + "_n" + networkSize + "_p" + numParts + "_d" + maxOperatorDepth;
+            try {
+                saveStructure(helper.getLevel(), absStartPos, networkSize, structureName);
+                IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Structure saved: " + structureName + ".nbt");
+            } catch (Exception e) {
+                IntegratedDynamics.clog(Level.WARN, "[Fuzzing] Failed to save structure: " + e);
+            }
         }
 
 
