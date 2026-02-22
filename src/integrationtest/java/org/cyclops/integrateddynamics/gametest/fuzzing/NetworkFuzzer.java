@@ -462,13 +462,16 @@ public class NetworkFuzzer {
                 OperatorVariableAssignment assignment = operatorAssignments.get(lastOperator);
                 writerVar = GameTestHelpersIntegratedDynamics.createVariableForOperator(level, lastOperator, assignment.variableIds);
             } else {
-                // No operators, create variable directly from a reader aspect
-                Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>> readerAspect = selectRandomReaderWithType(writeAspect.getValueType());
-                if (readerAspect != null) {
-                    writerVar = GameTestHelpersIntegratedDynamics.createVariableFromReader(level,
-                            readerAspect.getRight(), writerHolder.getState());
+                // No operators, create variable directly from a random constant
+                IValue writerValue = generateRandomConstantValue(writeAspect.getValueType());
+                if (writerValue != null) {
+                    // Create a variable from the constant value
+                    writerVar = GameTestHelpersIntegratedDynamics.createVariableForValue(level, writeAspect.getValueType(), writerValue);
+
+                    // Store the variable
+                    getCurrentVarStore().getInventory().setItem(varStoreSlot, writerVar);
+                    advanceVarStoreSlot();
                 } else {
-                    // Fallback: can't create a suitable variable
                     return;
                 }
             }
