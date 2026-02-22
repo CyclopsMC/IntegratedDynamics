@@ -193,7 +193,7 @@ public class GameTestsFuzzing {
         StructureTemplate template = new StructureTemplate();
         // Start one block before the cable grid to capture context blocks on the WEST and NORTH sides
         BlockPos captureFrom = startPos.offset(-1, -1, -1);
-        template.fillFromWorld(level, captureFrom, size, false, null);
+        template.fillFromWorld(level, captureFrom, size, true, null);
 
         CompoundTag tag = template.save(new CompoundTag());
         Path crashDir = Paths.get(CRASHES_DIR);
