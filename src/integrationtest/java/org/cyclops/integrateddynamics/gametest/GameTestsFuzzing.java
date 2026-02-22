@@ -104,12 +104,10 @@ public class GameTestsFuzzing {
 
         try {
             generateFuzzedNetwork(helper.getLevel(), absStartPos, networkSize, numParts, maxOperatorDepth, random);
-        } catch (GameTestAssertException e) {
+        } catch (RuntimeException e) {
             throw new GameTestAssertException("[Fuzzing] " + e.getMessage());
         } catch (NetworkFuzzerException e) {
             throw new GameTestAssertException("[Fuzzing] Fuzzed network generation threw exception: " + e.getMessage());
-        } catch (RuntimeException e) {
-            throw e;
         } finally {
             // Always save the structure so it is available as a CI artifact for inspection.
             // This is done before runAfterDelay so the file exists even if the JVM crashes during ticking.
