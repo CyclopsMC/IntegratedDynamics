@@ -6,9 +6,13 @@ on:
   push:
     paths:
       - src/integrationtest/java/org/cyclops/integrateddynamics/gametest/GameTestsFuzzing.java
+      - src/integrationtest/java/org/cyclops/integrateddynamics/gametest/fuzzing/**
+      - .github/workflows/fuzzing.yml
   pull_request:
     paths:
       - src/integrationtest/java/org/cyclops/integrateddynamics/gametest/GameTestsFuzzing.java
+      - src/integrationtest/java/org/cyclops/integrateddynamics/gametest/fuzzing/**
+      - .github/workflows/fuzzing.yml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,6 +22,7 @@ jobs:
   fuzz:
     name: Fuzz
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v4
