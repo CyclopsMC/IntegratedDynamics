@@ -149,7 +149,9 @@ public class GameTestsFuzzing {
 
         // Generate multiple random connections based on numParts
         for (int i = 0; i < numParts; i++) {
-            fuzzer.generate();
+            if (!fuzzer.generate()) {
+                break;
+            }
         }
     }
 

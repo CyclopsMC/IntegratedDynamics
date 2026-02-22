@@ -117,8 +117,9 @@ public class NetworkFuzzer {
      * 3. Select random readers to provide inputs to the operator chain
      *
      * @throws NetworkFuzzerException if an error occurs during network generation
+     * @return If the generation succeeded (false if it failed due to lack of space or parts, true otherwise)
      */
-    public void generate() throws NetworkFuzzerException {
+    public boolean generate() throws NetworkFuzzerException {
         // Phase 1: Select writer
         Pair<IPartTypeWriter<?, ?>, IAspectWrite<?, ?>> writerAspect = selectRandomWriter();
 
@@ -129,7 +130,7 @@ public class NetworkFuzzer {
         // Place writer part
         Pair<BlockPos, Direction> writerPos = selectRandomOuterFace();
         if (writerPos == null) {
-            throw new NetworkFuzzerException("No valid outer face available to place writer");
+            return false; // No space to place writer
         }
 
         PartHelpers.addPart(level, writerPos.getLeft(), writerPos.getRight(),
@@ -148,6 +149,8 @@ public class NetworkFuzzer {
             operatorAssignments.put(op, new OperatorVariableAssignment(op, op.getRequiredInputLength()));
         }
         fulfillInputs(inputsNeeded, operatorChain, operatorAssignments, writerPos.getLeft(), writerPos.getRight(), writeAspect);
+
+        return true;
     }
 
     /**
