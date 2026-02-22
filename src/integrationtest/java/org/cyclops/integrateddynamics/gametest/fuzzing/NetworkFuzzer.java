@@ -2,12 +2,23 @@ package org.cyclops.integrateddynamics.gametest.fuzzing;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.cyclopscore.helper.FluidHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -20,6 +31,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectWrite;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
+import org.cyclops.integrateddynamics.blockentity.BlockEntityDryingBasin;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
@@ -536,7 +548,7 @@ public class NetworkFuzzer {
         } else if (readerName.contains("redstone")) {
             placeRedstoneSource(contextPos);
         } else if (readerName.contains("machine")) {
-            level.setBlock(contextPos, Blocks.FURNACE.defaultBlockState(), 2);
+            placeFurnaceWithItems(contextPos);
         } else if (readerName.contains("entity")) {
             spawnRandomEntity(contextPos);
         }
@@ -604,13 +616,78 @@ public class NetworkFuzzer {
     }
 
     /**
+     * Place a furnace block with random valid items in the input slot (0) and fuel slot (1).
+     * Each slot has a 1/10 chance of being left empty.
+     */
+    private void placeFurnaceWithItems(BlockPos pos) {
+        level.setBlock(pos, Blocks.FURNACE.defaultBlockState(), 2);
+
+        if (level.getBlockEntity(pos) instanceof FurnaceBlockEntity furnace) {
+            // Slot 0: input item (smeltable) — 1/10 chance to leave empty
+            if (random.nextInt(10) != 0) {
+                Item inputItem = getRandomSmeltableItem();
+                furnace.setItem(0, new ItemStack(inputItem, random.nextInt(64) + 1));
+            }
+
+            // Slot 1: fuel item — 1/10 chance to leave empty
+            if (random.nextInt(10) != 0) {
+                Item fuelItem = getRandomFuelItem();
+                furnace.setItem(1, new ItemStack(fuelItem, random.nextInt(64) + 1));
+            }
+        }
+    }
+
+    /**
+     * Get a random vanilla smeltable item (valid input for a furnace).
+     */
+    private net.minecraft.world.item.Item getRandomSmeltableItem() {
+        // A curated list of vanilla items that can be smelted
+        Item[] smeltables = {
+                Items.RAW_IRON,
+                Items.RAW_GOLD,
+                Items.RAW_COPPER,
+                Items.IRON_ORE,
+                Items.GOLD_ORE,
+                Items.COPPER_ORE,
+                Items.SAND,
+                Items.COBBLESTONE,
+                Items.NETHERRACK,
+                Items.CLAY_BALL,
+                Items.BEEF,
+                Items.PORKCHOP,
+                Items.POTATO,
+                Items.WET_SPONGE,
+                Items.ANCIENT_DEBRIS,
+        };
+        return smeltables[random.nextInt(smeltables.length)];
+    }
+
+    /**
+     * Get a random vanilla fuel item (valid fuel for a furnace).
+     * Uses getBurnTime to confirm validity, falling back to COAL if no fuel items are found.
+     */
+    private net.minecraft.world.item.Item getRandomFuelItem() {
+        // Filter all minecraft items to those that are valid furnace fuel
+        List<net.minecraft.world.item.Item> fuelItems = BuiltInRegistries.ITEM.stream()
+                .filter(item -> BuiltInRegistries.ITEM.getKey(item)
+                        .getNamespace().equals("minecraft"))
+                .filter(item -> new ItemStack(item).getBurnTime(RecipeType.SMELTING) > 0)
+                .toList();
+
+        if (fuelItems.isEmpty()) {
+            return net.minecraft.world.item.Items.COAL;
+        }
+        return fuelItems.get(random.nextInt(fuelItems.size()));
+    }
+
+    /**
      * Get a random item for placing in containers.
      * Only selects items from the minecraft namespace.
      */
     private net.minecraft.world.item.Item getRandomItem() {
         // Filter to only minecraft namespace items and get a random one
-        var minecraftItems = net.minecraft.core.registries.BuiltInRegistries.ITEM.stream()
-                .filter(item -> net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item)
+        var minecraftItems = BuiltInRegistries.ITEM.stream()
+                .filter(item -> BuiltInRegistries.ITEM.getKey(item)
                         .getNamespace().equals("minecraft"))
                 .toList();
 
@@ -622,14 +699,42 @@ public class NetworkFuzzer {
     }
 
     /**
-     * Place a fluid source block (cauldron or similar).
+     * Place a fluid source block (cauldron, fluid block, or drying basin with fluid).
+     * 50% chance to place a drying basin with a random fluid type and amount.
      */
     private void placeFluidSource(BlockPos pos) {
-        // Randomly choose between cauldron and a fluid block
         if (random.nextBoolean()) {
-            level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 2);
+            // 50% chance: place a drying basin with a random fluid and amount
+            placeDryingBasinWithFluid(pos);
         } else {
-            level.setBlock(pos, Blocks.WATER.defaultBlockState(), 2);
+            // 50% chance: place cauldron or water block (original behavior)
+            if (random.nextBoolean()) {
+                level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 2);
+            } else {
+                level.setBlock(pos, Blocks.WATER.defaultBlockState(), 2);
+            }
+        }
+    }
+
+    /**
+     * Place a drying basin block with a random fluid type and a random amount (1 to BUCKET_VOLUME).
+     */
+    private void placeDryingBasinWithFluid(BlockPos pos) {
+        level.setBlock(pos, RegistryEntries.BLOCK_DRYING_BASIN.get().defaultBlockState(), 2);
+
+        if (level.getBlockEntity(pos) instanceof BlockEntityDryingBasin dryingBasin) {
+            // Pick a random non-empty fluid from the minecraft namespace
+            List<Fluid> fluids = BuiltInRegistries.FLUID.stream()
+                    .filter(fluid -> !fluid.isSame(net.minecraft.world.level.material.Fluids.EMPTY)
+                            && BuiltInRegistries.FLUID.getKey(fluid)
+                                .getNamespace().equals("minecraft"))
+                    .toList();
+
+            if (!fluids.isEmpty()) {
+                Fluid fluid = fluids.get(random.nextInt(fluids.size()));
+                int amount = random.nextInt(FluidHelpers.BUCKET_VOLUME) + 1;
+                dryingBasin.getTank().setFluid(new FluidStack(fluid, amount));
+            }
         }
     }
 
@@ -639,13 +744,13 @@ public class NetworkFuzzer {
      */
     private void placeRandomBlock(BlockPos pos) {
         // Filter to only minecraft namespace blocks and get a random one
-        var minecraftBlocks = net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream()
-                .filter(block -> net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block)
+        var minecraftBlocks = BuiltInRegistries.BLOCK.stream()
+                .filter(block -> BuiltInRegistries.BLOCK.getKey(block)
                         .getNamespace().equals("minecraft"))
                 .toList();
 
         if (!minecraftBlocks.isEmpty()) {
-            net.minecraft.world.level.block.Block block = minecraftBlocks.get(random.nextInt(minecraftBlocks.size()));
+            Block block = minecraftBlocks.get(random.nextInt(minecraftBlocks.size()));
             level.setBlock(pos, block.defaultBlockState(), 2);
         }
     }
@@ -688,8 +793,8 @@ public class NetworkFuzzer {
      */
     private void spawnRandomEntity(BlockPos pos) throws NetworkFuzzerException {
         // Filter to only minecraft namespace entity types and get a random one
-        var minecraftEntities = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.stream()
-                .filter(entityType -> net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(entityType)
+        var minecraftEntities = BuiltInRegistries.ENTITY_TYPE.stream()
+                .filter(entityType -> BuiltInRegistries.ENTITY_TYPE.getKey(entityType)
                         .getNamespace().equals("minecraft"))
                 .toList();
 
@@ -697,10 +802,10 @@ public class NetworkFuzzer {
             throw new NetworkFuzzerException("No entities are available to spawn");
         }
 
-        net.minecraft.world.entity.EntityType<?> entityType = minecraftEntities.get(random.nextInt(minecraftEntities.size()));
+        EntityType<?> entityType = minecraftEntities.get(random.nextInt(minecraftEntities.size()));
 
         try {
-            net.minecraft.world.entity.Entity entity = entityType.create(level);
+            Entity entity = entityType.create(level);
             if (entity != null) {
                 entity.setPos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                 level.addFreshEntity(entity);
