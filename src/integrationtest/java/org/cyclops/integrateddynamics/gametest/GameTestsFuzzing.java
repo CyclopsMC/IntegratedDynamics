@@ -9,6 +9,8 @@ import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.CommandEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.apache.commons.compress.utils.Lists;
@@ -72,6 +74,13 @@ public class GameTestsFuzzing {
         int fuzzingIterations = getFuzzingIterations();
         if (fuzzingIterations == 0) {
             IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Disabled (FUZZING_ITERATIONS not set to a number)");
+        } else {
+            // TODO: check if this hack can be removed in the next MC update.
+            NeoForge.EVENT_BUS.addListener((CommandEvent event) -> {
+                // Block all commands, as the `test runclosest` command is being invoked for some reason,
+                // which causes GameTestTicker#clear to be invoked, which deadlocks the game test runner.
+                event.setCanceled(true);
+            });
         }
         for (int i = 0; i < fuzzingIterations; i++) {
             int finalI = i;

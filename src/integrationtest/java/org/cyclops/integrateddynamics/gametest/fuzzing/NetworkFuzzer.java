@@ -746,8 +746,8 @@ public class NetworkFuzzer {
     private void placeRandomBlock(BlockPos pos) {
         // Filter to only minecraft namespace blocks and get a random one
         var minecraftBlocks = BuiltInRegistries.BLOCK.stream()
-                .filter(block -> BuiltInRegistries.BLOCK.getKey(block)
-                        .getNamespace().equals("minecraft"))
+                .filter(block -> BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals("minecraft"))
+                .filter(block -> !BuiltInRegistries.BLOCK.getKey(block).getPath().equals("command_block"))
                 .toList();
 
         if (!minecraftBlocks.isEmpty()) {
