@@ -71,12 +71,14 @@ public class GameTestsFuzzing {
             return;
         }
 
-        Random random = new Random();
+        long seed = new Random().nextLong();
+        Random random = new Random(seed);
         int networkSize = random.nextInt(MAX_NETWORK_SIZE) + 1;
         int numParts = random.nextInt(MAX_PARTS) + 1;
         int maxOperatorDepth = random.nextInt(MAX_OPERATORS) + 1;
 
-        IntegratedDynamics.clog(Level.INFO, "[Fuzzing] networkSize=" + networkSize
+        IntegratedDynamics.clog(Level.INFO, "[Fuzzing] seed=" + seed
+                + ", networkSize=" + networkSize
                 + ", numParts=" + numParts + ", maxOperatorDepth=" + maxOperatorDepth);
 
         BlockPos absStartPos = helper.absolutePos(START_POS);
