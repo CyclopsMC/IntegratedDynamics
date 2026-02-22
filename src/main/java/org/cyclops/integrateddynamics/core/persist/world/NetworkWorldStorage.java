@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +9,7 @@ import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.TickHandler;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -79,7 +79,7 @@ public class NetworkWorldStorage extends WorldStorage {
      */
     public synchronized Set<INetwork> getNetworks() {
         if (unmodifiableSafeNetworks == null) {
-            unmodifiableSafeNetworks = ImmutableSet.copyOf(networks);
+            unmodifiableSafeNetworks = Collections.unmodifiableSet(Sets.newHashSet(networks));
         }
         return unmodifiableSafeNetworks;
     }
