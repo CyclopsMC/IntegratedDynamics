@@ -1,7 +1,7 @@
 name: "Fuzzing"
 on:
   schedule:
-    - cron: '0 * * * *'  # Run every hour
+    - cron: '30 2 * * *'  # Run every day at 2:30 AM UTC
   workflow_dispatch:  # Allow manual triggering for testing
   push:
     paths:
@@ -42,7 +42,7 @@ jobs:
         id: fuzzing
         run: ./gradlew runGameTestServer
         env:
-          FUZZING_ENABLED: 'true'
+          FUZZING_ITERATIONS: '1000'
       - name: 'Upload fuzzing crash structures'
         uses: actions/upload-artifact@v4
         if: always()
@@ -127,10 +127,10 @@ jobs:
             
             ### How to Debug
             
-            1. Load the structure file in a test world
-            2. Check the Minecraft logs for crash messages or errors
-            3. Enable debug logging in the mod configuration
-            4. Compare the generated network structure with expected behavior
+            1. Download the structure file
+            2. Copy it to `client/saves/<worldname>/generated/minecraft/structures/<template>.nbt`
+            3. Spawn a structure block: `/give @p minecraft:structure_block`
+            4. Load the structure in the structure block GUI: `minecraft:<template>`
             
             ### Additional Context
             

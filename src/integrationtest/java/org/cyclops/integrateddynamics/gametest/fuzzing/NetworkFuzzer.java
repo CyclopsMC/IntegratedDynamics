@@ -249,11 +249,12 @@ public class NetworkFuzzer {
     /**
      * Find a random operator that produces the given value type.
      */
+    @Nullable
     private IOperator findRandomOperatorProducing(IValueType<?> valueType) throws NetworkFuzzerException {
         List<IOperator> matching = new ArrayList<>(findOperatorsProducingType(valueType));
 
         if (matching.isEmpty()) {
-            throw new NetworkFuzzerException("No operators are available");
+            return null;
         }
 
         return matching.get(random.nextInt(matching.size()));

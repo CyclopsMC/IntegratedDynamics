@@ -2,14 +2,16 @@ package org.cyclops.integrateddynamics.gametest;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
+import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.logging.log4j.Level;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
@@ -23,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -40,7 +43,7 @@ public class GameTestsFuzzing {
     public static final int MAX_NETWORK_SIZE = 100;
     public static final int MAX_PARTS = 20;
     public static final int MAX_OPERATORS = 50;
-    public static final int RUN_TICKS = 200;
+    public static final int RUN_TICKS = 50;
     public static final String TEMPLATE_EMPTY = "empty10";
     // Start at (2,1,2) to leave room for context blocks on all sides within the 10x10x10 template
     public static final BlockPos START_POS = BlockPos.ZERO.offset(2, 1, 2);
@@ -54,23 +57,39 @@ public class GameTestsFuzzing {
     /**
      * Check if fuzzing is enabled via environment variable or system property.
      */
-    private static boolean isFuzzingEnabled() {
-        String envVar = System.getenv("FUZZING_ENABLED");
-        if (envVar != null && "true".equalsIgnoreCase(envVar)) {
-            return true;
+    private static int getFuzzingIterations() {
+        String envVar = System.getenv("FUZZING_ITERATIONS");
+        if (envVar != null) {
+            return Integer.parseInt(System.getenv("FUZZING_ITERATIONS"));
         }
-        String sysProp = System.getProperty("FUZZING_ENABLED");
-        return sysProp != null && "true".equalsIgnoreCase(sysProp);
+        String sysProp = System.getProperty("FUZZING_ITERATIONS");
+        return sysProp != null ? Integer.parseInt(sysProp) : 0;
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = RUN_TICKS + 100)
-    public void testFuzzedNetwork(GameTestHelper helper) {
-        if (!isFuzzingEnabled() && false) { // TODO
-            IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Disabled (FUZZING_ENABLED not set)");
-            helper.succeed();
-            return;
+    @GameTestGenerator
+    public Collection<TestFunction> testsFuzzedNetwork() {
+        List<TestFunction> testsList = Lists.newArrayList();
+        int fuzzingIterations = getFuzzingIterations();
+        if (fuzzingIterations == 0) {
+            IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Disabled (FUZZING_ITERATIONS not set to a number)");
         }
+        for (int i = 0; i < fuzzingIterations; i++) {
+            int finalI = i;
+            testsList.add(new TestFunction(
+                    "defaultBatch",
+                    "test_fuzzed_network_" + i,
+                    "integrateddynamics:" + TEMPLATE_EMPTY,
+                    RUN_TICKS + 10,
+                    1,
+                    true,
+                    helper -> this.testFuzzedNetwork(finalI, helper)
+            ));
+        }
+        return testsList;
+    }
 
+//    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = RUN_TICKS + 100)
+    public void testFuzzedNetwork(int gameTestIteration, GameTestHelper helper) {
         long seed = new Random().nextLong();
         Random random = new Random(seed);
         int networkSize = random.nextInt(MAX_NETWORK_SIZE) + 1;
@@ -94,7 +113,7 @@ public class GameTestsFuzzing {
         } finally {
             // Always save the structure so it is available as a CI artifact for inspection.
             // This is done before runAfterDelay so the file exists even if the JVM crashes during ticking.
-            String structureName = "fuzz_" + System.currentTimeMillis()
+            String structureName = "fuzz_" + gameTestIteration + "_" + System.currentTimeMillis()
                     + "_n" + networkSize + "_p" + numParts + "_d" + maxOperatorDepth;
             try {
                 saveStructure(helper.getLevel(), absStartPos, networkSize, structureName);
