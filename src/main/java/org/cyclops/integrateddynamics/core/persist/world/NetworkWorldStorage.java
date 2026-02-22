@@ -2,12 +2,15 @@ package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import java.util.Set;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.core.TickHandler;
+
+import java.util.Set;
 
 /**
  * World NBT storage for all active networks.
@@ -20,7 +23,6 @@ public class NetworkWorldStorage extends WorldStorage {
     @NBTPersist
     private Set<INetwork> networks = Sets.newHashSet();
 
-    private boolean networksDirty = true;
     private Set<INetwork> unmodifiableSafeNetworks = null;
 
     private NetworkWorldStorage(ModBase mod) {
@@ -35,9 +37,14 @@ public class NetworkWorldStorage extends WorldStorage {
     }
 
     @Override
+    public void readGeneratedFieldsFromNBT(CompoundTag arg0, HolderLookup.Provider arg1) {
+        super.readGeneratedFieldsFromNBT(arg0, arg1);
+        unmodifiableSafeNetworks = null;
+    }
+
+    @Override
     public void reset() {
         networks.clear();
-        networksDirty = true;
         unmodifiableSafeNetworks = null;
     }
 
@@ -52,7 +59,7 @@ public class NetworkWorldStorage extends WorldStorage {
      */
     public synchronized void addNewNetwork(INetwork network) {
         if (networks.add(network)) {
-            networksDirty = true;
+            unmodifiableSafeNetworks = null;
         }
     }
 
@@ -63,7 +70,7 @@ public class NetworkWorldStorage extends WorldStorage {
      */
     public synchronized void removeInvalidatedNetwork(INetwork network) {
         if (networks.remove(network)) {
-            networksDirty = true;
+            unmodifiableSafeNetworks = null;
         }
     }
 
@@ -71,9 +78,8 @@ public class NetworkWorldStorage extends WorldStorage {
      * @return A thread-safe copy of the current network set.
      */
     public synchronized Set<INetwork> getNetworks() {
-        if (networksDirty || unmodifiableSafeNetworks == null) {
+        if (unmodifiableSafeNetworks == null) {
             unmodifiableSafeNetworks = ImmutableSet.copyOf(networks);
-            networksDirty = false;
         }
         return unmodifiableSafeNetworks;
     }
