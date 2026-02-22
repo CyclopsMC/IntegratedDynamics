@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.gametest.fuzzing;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -10,6 +11,7 @@ import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -20,7 +22,7 @@ import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics;
@@ -298,8 +300,84 @@ public class NetworkFuzzer {
     }
 
     /**
-     * Fulfill the operator inputs by selecting random readers.
+     * Generate a random constant value for the given value type.
+     * Supports all value types except CATEGORY types.
+     */
+    @Nullable
+    private IValue generateRandomConstantValue(IValueType<?> valueType) {
+        // Skip category types
+        if (valueType.isCategory()) {
+            return null;
+        }
+
+        // Raw value types
+        if (valueType == ValueTypes.BOOLEAN) {
+            return ValueTypeBoolean.ValueBoolean.of(random.nextBoolean());
+        } else if (valueType == ValueTypes.INTEGER) {
+            return ValueTypeInteger.ValueInteger.of(random.nextInt(100) - 50);
+        } else if (valueType == ValueTypes.DOUBLE) {
+            return ValueTypeDouble.ValueDouble.of(random.nextDouble() * 100 - 50);
+        } else if (valueType == ValueTypes.LONG) {
+            return ValueTypeLong.ValueLong.of(random.nextLong());
+        } else if (valueType == ValueTypes.STRING) {
+            String[] examples = {"test", "hello", "world", "value", "data", "abc", "xyz"};
+            return ValueTypeString.ValueString.of(examples[random.nextInt(examples.length)]);
+        } else if (valueType == ValueTypes.LIST) {
+            // Return empty list with CATEGORY_ANY type
+            return ValueTypeList.ValueList.ofList(ValueTypes.CATEGORY_ANY, new ArrayList<>());
+        } else if (valueType == ValueTypes.OPERATOR) {
+            // Return a random operator wrapped as a value
+            try {
+                List<IOperator> operators = new ArrayList<>(Operators.REGISTRY.getOperators());
+                if (!operators.isEmpty()) {
+                    IOperator op = operators.get(random.nextInt(operators.size()));
+                    return ValueTypeOperator.ValueOperator.of(op);
+                }
+            } catch (Exception e) {
+                // If we can't get operators, return null
+            }
+            return null;
+        } else if (valueType == ValueTypes.NBT) {
+            CompoundTag tag = new CompoundTag();
+            tag.putString("fuzzer", "generated");
+            return ValueTypeNbt.ValueNbt.of(tag);
+        }
+        // Object types
+        else if (valueType == ValueTypes.OBJECT_BLOCK) {
+            // Return a random block
+            var blocks = net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream()
+                    .filter(block -> net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block)
+                            .getNamespace().equals("minecraft"))
+                    .toList();
+            if (!blocks.isEmpty()) {
+                return ValueObjectTypeBlock.ValueBlock.of(blocks.get(random.nextInt(blocks.size())).defaultBlockState());
+            }
+            return null;
+        } else if (valueType == ValueTypes.OBJECT_ITEMSTACK) {
+            return ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(getRandomItem(), random.nextInt(64) + 1));
+        } else if (valueType == ValueTypes.OBJECT_ENTITY) {
+            // Return null for entity (can't easily create without spawning)
+            return null;
+        } else if (valueType == ValueTypes.OBJECT_FLUIDSTACK) {
+            // Return a water fluid stack
+            net.neoforged.neoforge.fluids.FluidStack fluidStack = new net.neoforged.neoforge.fluids.FluidStack(
+                    net.minecraft.world.level.material.Fluids.WATER, 1000);
+            return ValueObjectTypeFluidStack.ValueFluidStack.of(fluidStack);
+        } else if (valueType == ValueTypes.OBJECT_INGREDIENTS) {
+            // Return null for ingredients (complex to create)
+            return null;
+        } else if (valueType == ValueTypes.OBJECT_RECIPE) {
+            // Return null for recipe (complex to create)
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Fulfill the operator inputs by selecting random readers or constant values.
      * Tracks which variable IDs are assigned to each operator's inputs.
+     * 50% chance to use a constant value instead of placing a reader.
      *
      * @throws NetworkFuzzerException if fulfilling inputs fails
      */
@@ -308,6 +386,28 @@ public class NetworkFuzzer {
                                BlockPos writerPos, Direction writerDir,
                                IAspectWrite<?, ?> writeAspect) throws NetworkFuzzerException {
         for (OperatorInputNeeded input : inputsNeeded) {
+            // 50% chance to use a constant value instead of a reader
+            if (random.nextBoolean()) {
+                IValue constantValue = generateRandomConstantValue(input.expectedType);
+                if (constantValue != null) {
+                    // Create a variable from the constant value
+                    ItemStack constantVar = GameTestHelpersIntegratedDynamics.createVariableForValue(level, input.expectedType, constantValue);
+
+                    // Store the variable and track its ID
+                    int variableId = constantVar.getCapability(Capabilities.VariableFacade.ITEM).getVariableFacade(ValueDeseralizationContext.of(level)).getId();
+                    getCurrentVarStore().getInventory().setItem(varStoreSlot, constantVar);
+                    advanceVarStoreSlot();
+
+                    // Record this variable ID for the operator's input
+                    OperatorVariableAssignment assignment = operatorAssignments.get(input.operator);
+                    if (assignment != null && input.inputIndex < assignment.variableIds.length) {
+                        assignment.variableIds[input.inputIndex] = variableId;
+                    }
+                    continue;
+                }
+            }
+
+            // Place a reader (original behavior)
             Pair<IPartTypeReader<?, ?>, IAspectRead<?, ?>> readerAspect = selectRandomReaderWithType(input.expectedType);
             if (readerAspect == null) {
                 continue;
