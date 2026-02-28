@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.core.recipe.type.*;
 import org.cyclops.integrateddynamics.entity.item.EntityItemTargettedConfig;
 import org.cyclops.integrateddynamics.fluid.FluidLiquidChorusConfig;
 import org.cyclops.integrateddynamics.fluid.FluidMenrilResinConfig;
+import org.cyclops.integrateddynamics.gametest.fuzzing.FuzzingGameTestInstanceConfig;
 import org.cyclops.integrateddynamics.gametest.integration.IntegrationMethodGameTestInstanceConfig;
 import org.cyclops.integrateddynamics.inventory.container.*;
 import org.cyclops.integrateddynamics.item.*;
@@ -213,6 +214,7 @@ public class Configs {
 
         // Game test instances
         configHandler.addConfigurable(new IntegrationMethodGameTestInstanceConfig(IntegratedDynamics._instance));
+        configHandler.addConfigurable(new FuzzingGameTestInstanceConfig(IntegratedDynamics._instance));
     }
 
 }

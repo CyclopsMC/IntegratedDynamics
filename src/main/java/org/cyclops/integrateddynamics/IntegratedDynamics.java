@@ -263,6 +263,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
             field.setAccessible(true);
             Registry<TestEnvironmentDefinition> testEnvironmentRegistry = (Registry<TestEnvironmentDefinition>) field.get(event);
             GameTester.registerCommonTests(getModId(), event::registerTest, testEnvironmentRegistry);
+            GameTestsFuzzing.registerCommonTests(getModId(), event::registerTest, testEnvironmentRegistry);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

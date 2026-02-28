@@ -1,18 +1,24 @@
 package org.cyclops.integrateddynamics.gametest;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
-import net.minecraft.gametest.framework.GameTestAssertException;
-import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.gametest.framework.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.apache.logging.log4j.Level;
-import org.cyclops.cyclopscore.gametest.GameTest;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
+import org.cyclops.integrateddynamics.gametest.fuzzing.FuzzingGameTestInstance;
 import org.cyclops.integrateddynamics.gametest.fuzzing.NetworkFuzzer;
 import org.cyclops.integrateddynamics.gametest.fuzzing.NetworkFuzzerException;
 
@@ -21,8 +27,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.function.BiConsumer;
 
 /**
  * Fuzz testing game tests for Integrated Dynamics networks.
@@ -60,24 +68,7 @@ public class GameTestsFuzzing {
         return sysProp != null ? Integer.parseInt(sysProp) : 0;
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 600000)
-    public void testsFuzzedNetworks(GameTestHelper helper) {
-        int fuzzingIterations = getFuzzingIterations();
-        if (fuzzingIterations == 0) {
-            IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Disabled (FUZZING_ITERATIONS not set to a number)");
-            helper.succeed();
-            return;
-        }
-
-        runFuzzingIteration(helper, 0, fuzzingIterations);
-    }
-
-    private void runFuzzingIteration(GameTestHelper helper, int index, int total) {
-        if (index >= total) {
-            helper.succeed();
-            return;
-        }
-
+    public static void runFuzzingIteration(GameTestHelper helper, int index) {
         long seed = new Random().nextLong();
         Random random = new Random(seed);
         int networkSize = random.nextInt(MAX_NETWORK_SIZE) + 1;
@@ -109,15 +100,45 @@ public class GameTestsFuzzing {
         }
 
         // Let the network run for RUN_TICKS, then proceed to the next iteration
-        helper.runAfterDelay(RUN_TICKS, () -> {
-            try {
-                // Clear the area for the next iteration
-                clearArea(helper, absStartPos, networkSize);
-                runFuzzingIteration(helper, index + 1, total);
-            } catch (Exception e) {
-                throw new GameTestAssertException(Component.literal("[Fuzzing] Exception during iteration cleanup/next: " + e.getMessage()), (int) helper.getTick());
-            }
-        });
+        helper.runAfterDelay(RUN_TICKS, helper::succeed);
+    }
+
+    public static void registerCommonTests(String modId, BiConsumer<Identifier, GameTestInstance> registrar, Registry<TestEnvironmentDefinition> testEnvironmentRegistry) {
+        for (FuzzingGameTestInstance testInstance : fuzzingTests(modId, testEnvironmentRegistry)) {
+            registrar.accept(testInstance.getId(), testInstance);
+        }
+    }
+
+    public static Collection<FuzzingGameTestInstance> fuzzingTests(String modId, Registry<TestEnvironmentDefinition> testEnvironmentRegistry) {
+        List<FuzzingGameTestInstance> testsList = Lists.newArrayList();
+
+        int fuzzingIterations = getFuzzingIterations();
+        if (fuzzingIterations == 0) {
+            IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Disabled (FUZZING_ITERATIONS not set to a number)");
+        }
+
+        Holder.Reference<TestEnvironmentDefinition> environment = testEnvironmentRegistry.getOrThrow(ResourceKey.create(
+                Registries.TEST_ENVIRONMENT,
+                Identifier.parse("default")
+        ));
+        for (int i = 0; i < fuzzingIterations; i++) {
+            testsList.add(new FuzzingGameTestInstance(
+                    new TestData<>(
+                            environment,
+                            Identifier.parse("integrateddynamics:test"),
+                            RUN_TICKS + 10,
+                            1,
+                            true,
+                            Rotation.NONE,
+                            false,
+                            1,
+                            1,
+                            false
+                    ),
+                    i));
+        }
+
+        return testsList;
     }
 
     /**
