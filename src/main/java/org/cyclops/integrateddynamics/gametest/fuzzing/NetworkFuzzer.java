@@ -5,7 +5,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -16,9 +18,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
-import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -50,6 +53,7 @@ import java.util.*;
  */
 public class NetworkFuzzer {
 
+    private final GameTestHelper helper;
     private final Random random;
     private final int maxOperatorDepth;
     private final List<BlockPos> cables;
@@ -74,8 +78,9 @@ public class NetworkFuzzer {
         }
     }
 
-    public NetworkFuzzer(Random random, int maxOperatorDepth, List<BlockPos> cables,
+    public NetworkFuzzer(GameTestHelper helper, Random random, int maxOperatorDepth, List<BlockPos> cables,
                          BlockEntityVariablestore varStore, ServerLevel level, BlockPos startPos) {
+        this.helper = helper;
         this.random = random;
         this.maxOperatorDepth = maxOperatorDepth;
         this.cables = cables;
@@ -489,7 +494,7 @@ public class NetworkFuzzer {
                 }
             }
 
-            GameTestHelpersIntegratedDynamics.placeVariableInWriter(level, writerPartPos,
+            GameTestHelpersIntegratedDynamics.placeVariableInWriter(helper, level, writerPartPos,
                     writeAspect, writerVar);
         }
     }
@@ -672,7 +677,7 @@ public class NetworkFuzzer {
         List<net.minecraft.world.item.Item> fuelItems = BuiltInRegistries.ITEM.stream()
                 .filter(item -> BuiltInRegistries.ITEM.getKey(item)
                         .getNamespace().equals("minecraft"))
-                .filter(item -> new ItemStack(item).getBurnTime(RecipeType.SMELTING) > 0)
+                .filter(item -> new ItemStack(item).getBurnTime(RecipeType.SMELTING, ServerLifecycleHooks.getCurrentServer().fuelValues()) > 0)
                 .toList();
 
         if (fuelItems.isEmpty()) {
@@ -733,7 +738,7 @@ public class NetworkFuzzer {
 
             if (!fluids.isEmpty()) {
                 Fluid fluid = fluids.get(random.nextInt(fluids.size()));
-                int amount = random.nextInt(FluidHelpers.BUCKET_VOLUME) + 1;
+                int amount = random.nextInt(IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume()) + 1;
                 dryingBasin.getTank().setFluid(new FluidStack(fluid, amount));
             }
         }
@@ -806,7 +811,7 @@ public class NetworkFuzzer {
         EntityType<?> entityType = minecraftEntities.get(random.nextInt(minecraftEntities.size()));
 
         try {
-            Entity entity = entityType.create(level);
+            Entity entity = entityType.create(level, EntitySpawnReason.COMMAND);
             if (entity != null) {
                 entity.setPos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                 level.addFreshEntity(entity);

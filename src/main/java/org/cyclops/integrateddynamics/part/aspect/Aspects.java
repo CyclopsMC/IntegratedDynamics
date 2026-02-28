@@ -319,7 +319,7 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_BOOLEAN, "applicable").buildRead();
 
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_AMOUNT =
-                    AspectReadBuilders.Fluid.BUILDER_LONG_ACTIVATABLE.handle(tankInfo -> tankInfo.getLeft().getAmountAsLong(tankInfo.getRight())
+                    AspectReadBuilders.Fluid.BUILDER_LONG_ACTIVATABLE.handle(tankInfo -> tankInfo != null ? tankInfo.getLeft().getAmountAsLong(tankInfo.getRight()) : 0L
                     ).handle(AspectReadBuilders.PROP_GET_LONG, "amount").buildRead();
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_AMOUNTTOTAL =
                     AspectReadBuilders.Fluid.BUILDER_LONG.handle(tankInfo -> {
