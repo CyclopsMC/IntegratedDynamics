@@ -16,7 +16,7 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_writer_aspect",
       "conditions": {
-        "part_type": "integrateddynamics:audio_writer",
+        "parttype": "integrateddynamics:audio_writer",
         "aspect": "integrateddynamics:write_string_audio_sound",
         "variable": {
           "type": "operator",

@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.gametest;
 
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,13 +14,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.cyclops.commoncapabilities.IngredientComponents;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
-import org.cyclops.cyclopscore.advancement.criterion.GuiContainerOpenTrigger;
-import org.cyclops.cyclopscore.advancement.criterion.ItemCraftedTrigger;
-import org.cyclops.cyclopscore.advancement.criterion.ModItemObtainedTrigger;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -163,10 +161,8 @@ public class GameTestsAdvancements {
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAdvancementRoot(GameTestHelper helper) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
-        ModItemObtainedTrigger trigger = (ModItemObtainedTrigger) BuiltInRegistries.TRIGGER_TYPES
-                .get(ResourceLocation.parse("cyclopscore:mod_item_obtained"));
         ItemStack anyIDItem = new ItemStack(RegistryEntries.ITEM_VARIABLE.get());
-        trigger.trigger(player, instance -> instance.test(player, anyIDItem));
+        NeoForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, anyIDItem, null));
         helper.succeedWhen(() -> assertAdvancement(helper, player, "integrateddynamics:root"));
     }
 
@@ -174,7 +170,7 @@ public class GameTestsAdvancements {
     public void testAdvancementMeneglinDiscovery(GameTestHelper helper) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         ItemStack menrilLog = new ItemStack(RegistryEntries.BLOCK_MENRIL_LOG.get());
-        CriteriaTriggers.INVENTORY_CHANGED.trigger(player, player.getInventory(), menrilLog);
+        player.addItem(menrilLog);
         helper.succeedWhen(() -> assertAdvancement(helper, player, "integrateddynamics:meneglin_basics/meneglin_discovery"));
     }
 
@@ -182,15 +178,13 @@ public class GameTestsAdvancements {
     public void testAdvancementMenrilProduction(GameTestHelper helper) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         ItemStack crystalBlock = new ItemStack(RegistryEntries.BLOCK_CRYSTALIZED_MENRIL_BLOCK.get());
-        CriteriaTriggers.INVENTORY_CHANGED.trigger(player, player.getInventory(), crystalBlock);
+        player.addItem(crystalBlock);
         helper.succeedWhen(() -> assertAdvancement(helper, player, "integrateddynamics:meneglin_basics/menril_production"));
     }
 
     private static void fireItemCraftedTrigger(ServerPlayer player, String itemId) {
-        ItemCraftedTrigger trigger = (ItemCraftedTrigger) BuiltInRegistries.TRIGGER_TYPES
-                .get(ResourceLocation.parse("cyclopscore:item_crafted"));
         ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemId)));
-        trigger.trigger(player, instance -> instance.test(player, stack));
+        NeoForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, stack, null));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -280,10 +274,8 @@ public class GameTestsAdvancements {
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAdvancementLogicProgramming(GameTestHelper helper) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
-        GuiContainerOpenTrigger trigger = (GuiContainerOpenTrigger) BuiltInRegistries.TRIGGER_TYPES
-                .get(ResourceLocation.parse("cyclopscore:container_gui_open"));
         ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
-        trigger.trigger(player, instance -> instance.test(player, container));
+        NeoForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, container));
         helper.succeedWhen(() -> assertAdvancement(helper, player, "integrateddynamics:logic_operations/logic_programming"));
     }
 
