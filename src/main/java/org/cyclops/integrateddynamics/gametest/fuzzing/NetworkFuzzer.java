@@ -111,10 +111,6 @@ public class NetworkFuzzer {
 
             // Place new variable store on top of the current one
             BlockPos newStorePos = currentStorePos.above();
-            if (!level.isEmptyBlock(newStorePos)) {
-                throw new NetworkFuzzerException("Cannot place new variable store at " + newStorePos + " - block already exists");
-            }
-
             level.setBlock(newStorePos, RegistryEntries.BLOCK_VARIABLE_STORE.get().defaultBlockState(), 2);
 
             // Get the new variable store block entity

@@ -53,7 +53,7 @@ jobs:
         if: always()
         with:
           name: fuzzing-crash-structures.zip
-          path: runs/gameTestServer/fuzzing_crashes/
+          path: run/fuzzing_crashes/
           if-no-files-found: ignore
       - name: 'Create issue for fuzzing failure'
         if: failure() && steps.fuzzing.outcome == 'failure'
