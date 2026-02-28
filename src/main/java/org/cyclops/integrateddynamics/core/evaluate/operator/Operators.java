@@ -1913,7 +1913,7 @@ public final class Operators {
             .symbol("inventory_size").operatorName("inventorysize").interactName("inventorySize")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                ResourceHandler<ItemResource> itemHandler = ItemAccess.forStack(a.getRawValue()).getCapability(Capabilities.Item.ITEM);
+                ResourceHandler<ItemResource> itemHandler = a.getRawValue().isEmpty() ? null : ItemAccess.forStack(a.getRawValue()).getCapability(Capabilities.Item.ITEM);
                 return ValueTypeInteger.ValueInteger.of(itemHandler != null ? itemHandler.size() : 0);
             }).build());
 
@@ -1924,7 +1924,7 @@ public final class Operators {
             .output(ValueTypes.LIST).symbolOperator("inventory").interactName("inventory")
             .function(variables -> {
                 ValueObjectTypeItemStack.ValueItemStack a = variables.getValue(0, ValueTypes.OBJECT_ITEMSTACK);
-                ResourceHandler<ItemResource> itemHandler = ItemAccess.forStack(a.getRawValue()).getCapability(Capabilities.Item.ITEM);
+                ResourceHandler<ItemResource> itemHandler = a.getRawValue().isEmpty() ? null : ItemAccess.forStack(a.getRawValue()).getCapability(Capabilities.Item.ITEM);
                 if (itemHandler != null) {
                     List<ValueObjectTypeItemStack.ValueItemStack> values = Lists.newArrayListWithCapacity(itemHandler.size());
                     for (int i = 0; i < itemHandler.size(); i++) {
