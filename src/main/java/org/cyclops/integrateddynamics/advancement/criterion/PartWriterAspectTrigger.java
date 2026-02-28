@@ -28,7 +28,7 @@ public class PartWriterAspectTrigger extends SimpleCriterionTrigger<PartWriterAs
     public static final Codec<PartWriterAspectTrigger.Instance> CODEC = RecordCodecBuilder.create(
             p_311401_ -> p_311401_.group(
                             EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(PartWriterAspectTrigger.Instance::player),
-                            Codecs.PART_TYPE.optionalFieldOf("parttype").forGetter(PartWriterAspectTrigger.Instance::partType),
+                            Codecs.PART_TYPE.optionalFieldOf("part_type").forGetter(PartWriterAspectTrigger.Instance::partType),
                             Codecs.ASPECT.optionalFieldOf("aspect").forGetter(PartWriterAspectTrigger.Instance::aspect),
                             Codecs.VARIABLE.optionalFieldOf("variable").forGetter(PartWriterAspectTrigger.Instance::variablePredicate)
                     )
