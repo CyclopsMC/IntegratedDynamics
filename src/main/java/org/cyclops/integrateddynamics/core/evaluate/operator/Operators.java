@@ -1728,7 +1728,7 @@ public final class Operators {
             }).build());
 
     /**
-     * If the raw items of the given stacks are equal, ignoring data components but including damage value.
+     * If the raw items of the given stacks are equal, ignoring data components and item count but including damage value.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISITEMEQUALNODATA = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=NoNBT=").operatorName("isitemequalnonbt").interactName("isEqualNonNbt")
@@ -1747,7 +1747,7 @@ public final class Operators {
             }).build());
 
     /**
-     * If the raw items of the given stacks are equal, ignoring data components and damage value.
+     * If the raw items of the given stacks are equal, ignoring data components, item count, and damage value.
      */
     public static final IOperator OBJECT_ITEMSTACK_ISRAWITEMEQUAL = REGISTRY.register(OperatorBuilders.ITEMSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwitemequal").interactName("isEqualRaw")
@@ -2816,7 +2816,7 @@ public final class Operators {
             }).build());
 
     /**
-     * If the fluid types of the two given fluidstacks are equal
+     * If the fluid types of the two given fluidstacks are equal, ignoring quantity
      */
     public static final IOperator OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = REGISTRY.register(OperatorBuilders.FLUIDSTACK_2
             .output(ValueTypes.BOOLEAN).symbol("=Raw=").operatorName("israwfluidequal").interactName("isRawEqual")

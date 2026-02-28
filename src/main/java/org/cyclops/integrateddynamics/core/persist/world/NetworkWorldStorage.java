@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
@@ -13,6 +12,7 @@ import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.network.Network;
 import org.cyclops.integrateddynamics.core.network.NetworkParams;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 /**
@@ -23,7 +23,6 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
 
     private final List<NetworkParams> networkParams;
     private Set<Network> networks = Sets.newHashSet();
-    private boolean networksDirty = true;
     private Set<INetwork> unmodifiableSafeNetworks = null;
 
     public NetworkWorldStorage(List<NetworkParams> networkParams) {
@@ -36,7 +35,7 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
      */
     public synchronized void addNewNetwork(Network network) {
         if (networks.add(network)) {
-            networksDirty = true;
+            unmodifiableSafeNetworks = null;
             setDirty();
         }
     }
@@ -48,7 +47,7 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
      */
     public synchronized void removeInvalidatedNetwork(Network network) {
         if (networks.remove(network)) {
-            networksDirty = true;
+            unmodifiableSafeNetworks = null;
             setDirty();
         }
     }
@@ -57,9 +56,8 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
      * @return A thread-safe copy of the current network set.
      */
     public synchronized Set<INetwork> getNetworks() {
-        if (networksDirty || unmodifiableSafeNetworks == null) {
-            unmodifiableSafeNetworks = ImmutableSet.copyOf(networks);
-            networksDirty = false;
+        if (unmodifiableSafeNetworks == null) {
+            unmodifiableSafeNetworks = Collections.unmodifiableSet(Sets.newHashSet(networks));
         }
         return unmodifiableSafeNetworks;
     }

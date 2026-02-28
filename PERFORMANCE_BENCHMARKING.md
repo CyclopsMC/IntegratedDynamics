@@ -73,6 +73,11 @@ This command:
 4. Measures performance metrics
 5. Writes results to `run/logs/benchmark_results.txt`
 
+Similarly, if you want to run the fuzzing tests, you can use:
+```bash
+FUZZING_ITERATIONS=10 ./gradlew runGameTestServer
+```
+
 ## Result Format
 
 Results are written in the following format:

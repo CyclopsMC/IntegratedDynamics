@@ -1,8 +1,20 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.32.0"></a>
+## [1.21.1-1.32.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.31.0...1.21.1-1.32.0) - 2026-02-22 14:09:45
+
+
+### Added
+* Add config option to force unloaded network elements to tick, Related to #1605, #1571, #1567
+* Add command for generating synthetic networks
+* Add command to measure network tick time
+
+### Fixed
+* Fix parts sometimes becoming invalid, Closes #1605
+
 <a name="1.21.1-1.31.0"></a>
-## [1.21.1-1.31.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.5...1.21.1-1.31.0) - 2026-02-17 10:58:49
+## [1.21.1-1.31.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.30.5...1.21.1-1.31.0) - 2026-02-17 10:58:49 +0100
 
 
 ### Added

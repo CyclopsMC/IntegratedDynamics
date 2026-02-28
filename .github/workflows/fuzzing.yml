@@ -1,0 +1,159 @@
+name: "Fuzzing"
+on:
+  schedule:
+    - cron: '0 * * * *'  # Run every hour
+  workflow_dispatch:  # Allow manual triggering for testing
+  push:
+    paths:
+      - src/main/java/org/cyclops/integrateddynamics/gametest/GameTestsFuzzing.java
+      - src/main/java/org/cyclops/integrateddynamics/gametest/fuzzing/**
+      - .github/workflows/fuzzing.yml
+  pull_request:
+    paths:
+      - src/main/java/org/cyclops/integrateddynamics/gametest/GameTestsFuzzing.java
+      - src/main/java/org/cyclops/integrateddynamics/gametest/fuzzing/**
+      - .github/workflows/fuzzing.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fuzz:
+    name: Fuzz
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: 'Setup Java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: 21
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: wrapper
+          cache-read-only: false
+      - name: 'Build'
+        run: ./gradlew build -x test --no-daemon
+        env:
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Run fuzzing game tests'
+        id: fuzzing
+        run: ./gradlew runGameTestServer
+        env:
+          FUZZING_ITERATIONS: '1000'
+      - name: 'Upload fuzzing crash structures'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fuzzing-crash-structures.zip
+          path: runs/gameTestServer/fuzzing_crashes/
+          if-no-files-found: ignore
+      - name: 'Create issue for fuzzing failure'
+        if: failure() && steps.fuzzing.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Get version from gradle.properties
+            const gradleProps = fs.readFileSync('gradle.properties', 'utf8');
+            const versionMatch = gradleProps.match(/mod_version\s*=\s*(.+)/);
+            const modVersion = versionMatch ? versionMatch[1].trim() : 'unknown';
+            
+            // Find crash structure files
+            const crashDir = 'runs/gameTestServer/fuzzing_crashes/';
+            let crashFiles = [];
+            if (fs.existsSync(crashDir)) {
+              crashFiles = fs.readdirSync(crashDir).filter(f => f.endsWith('.nbt'));
+            }
+            
+            // Extract [Fuzzing] log lines
+            let fuzzingLogs = [];
+            const logFile = 'runs/gameTestServer/logs/latest.log';
+            if (fs.existsSync(logFile)) {
+              const logContent = fs.readFileSync(logFile, 'utf8');
+              fuzzingLogs = logContent.split('\n').filter(line => line.includes('[Fuzzing]'));
+            }
+            
+            // Build the issue body
+            let issueBody = `## Fuzzing Test Failure
+
+            A fuzz test has detected a crash or error in the Integrated Dynamics network generation or execution.
+            
+            ### Reproduction Instructions
+            
+            1. Download the structure file(s) from the [workflow artifacts](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            2. In Minecraft, use a structure block to load the .nbt file
+            3. The crash should occur when the network is placed and begins executing
+            
+            ### Crash Structure Files
+            
+            `;
+            
+                        if (crashFiles.length > 0) {
+                          issueBody += `The following structure file(s) were generated during fuzzing:\n\n`;
+                          crashFiles.forEach(file => {
+                            issueBody += `- \`${file}\`\n`;
+                          });
+                        } else {
+                          issueBody += `No structure files were captured (the error probably occurred during fuzzed network generation)\n`;
+                        }
+            
+                        issueBody += `
+            ### Fuzzing Log Output
+            
+            `;
+            
+                        if (fuzzingLogs.length > 0) {
+                          issueBody += `\`\`\`\n${fuzzingLogs.join('\n')}\n\`\`\`\n`;
+                        } else {
+                          issueBody += `No [Fuzzing] log lines found.\n`;
+                        }
+            
+                        issueBody += `
+            ### Version Information
+            
+            - **Mod Version**: ${modVersion}
+            - **Minecraft Version**: 1.21.1
+            - **Mod Loader**: NeoForge
+            - **Workflow Run**: [#${{ github.run_number }}](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            
+            ### Test Parameters
+            
+            The fuzzing test uses random parameters. Check the workflow logs for specific test configuration used (network size, number of parts, operator depth).
+            
+            ### How to Debug
+            
+            1. Download the structure file
+            2. Copy it to `client/saves/<worldname>/generated/minecraft/structures/<template>.nbt`
+            3. Spawn a structure block: `/give @p minecraft:structure_block`
+            4. Load the structure in the structure block GUI: `minecraft:<template>`
+            
+            ### Additional Context
+            
+            This issue was automatically generated by the fuzzing test workflow. For more details, see the [full workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}).
+            
+            If this is a false positive or environmental issue, please close this issue and mark it accordingly.
+            `;
+
+            // Create the issue
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🐛 Fuzzing detected crash in network generation (run #${{ github.run_number }})`,
+              body: issueBody,
+              labels: ['bug', 'fuzzing'],
+              assignees: []
+            });
+            
+            console.log(`Created issue #${issue.data.number}`);
+            core.setOutput('issue-number', issue.data.number);
+
