@@ -656,4 +656,435 @@ public class GameTestsAdvancements {
         helper.succeedWhen(() -> assertAdvancement(helper, player, "integrateddynamics:challenges/sponge_step_sound"));
     }
 
+    // ---- Negative Tests ----
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRootNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire ItemCraftedEvent with a vanilla item (not an integrateddynamics item) - should NOT trigger root
+        ItemStack stick = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:stick")));
+        NeoForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, stick, null));
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:root"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementMeneglinDiscoveryNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Add a vanilla log instead of menril_log - should NOT trigger meneglin_discovery
+        ItemStack oakLog = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:oak_log")));
+        player.addItem(oakLog);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:meneglin_basics/meneglin_discovery"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementMenrilProductionNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Add a vanilla block instead of crystalized_menril_block - should NOT trigger menril_production
+        ItemStack oakPlanks = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:oak_planks")));
+        player.addItem(oakPlanks);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:meneglin_basics/menril_production"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementSqueezingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft drying_basin instead of squeezer - should NOT trigger squeezing
+        fireItemCraftedTrigger(player, "integrateddynamics:drying_basin");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:meneglin_basics/squeezing"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementDryingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft squeezer instead of drying_basin - should NOT trigger drying
+        fireItemCraftedTrigger(player, "integrateddynamics:squeezer");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:meneglin_basics/drying"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementCablesLogicNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft wrench instead of cable - should NOT trigger cables_logic
+        fireItemCraftedTrigger(player, "integrateddynamics:wrench");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:network_foundations/cables_logic"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementMenrilWrenchingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft cable instead of wrench - should NOT trigger menril_wrenching
+        fireItemCraftedTrigger(player, "integrateddynamics:cable");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:network_foundations/menril_wrenching"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementVariablesNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft variable_transformer_input instead of variable - should NOT trigger variables
+        fireItemCraftedTrigger(player, "integrateddynamics:variable_transformer_input");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:network_foundations/variables"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementVariableInputNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft variable instead of variable_transformer_input - should NOT trigger variable_input
+        fireItemCraftedTrigger(player, "integrateddynamics:variable");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:network_foundations/variable_input"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementVariableOutputNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft variable instead of variable_transformer_output - should NOT trigger variable_output
+        fireItemCraftedTrigger(player, "integrateddynamics:variable");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:network_foundations/variable_output"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementNetworksLogicNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Place only 9 connected cables (not the required 10) - should NOT trigger networks_logic
+        for (int i = 0; i < 9; i++) {
+            helper.setBlock(POS.east(i), RegistryEntries.BLOCK_CABLE.value());
+        }
+        INetwork network = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+        NeoForge.EVENT_BUS.post(new NetworkInitializedEvent(
+                network, helper.getLevel(), helper.absolutePos(POS), player));
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:network_foundations/networks_logic"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementBlockReadingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft inventory_reader instead of block_reader - should NOT trigger block_reading
+        fireItemCraftedTrigger(player, "integrateddynamics:part_inventory_reader");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:basic_network_components/block_reading"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementInventoryReadingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft block_reader instead of inventory_reader - should NOT trigger inventory_reading
+        fireItemCraftedTrigger(player, "integrateddynamics:part_block_reader");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:basic_network_components/inventory_reading"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementMachineReadingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft block_reader instead of machine_reader - should NOT trigger machine_reading
+        fireItemCraftedTrigger(player, "integrateddynamics:part_block_reader");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:basic_network_components/machine_reading"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRedstoneReadingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft block_reader instead of redstone_reader - should NOT trigger redstone_reading
+        fireItemCraftedTrigger(player, "integrateddynamics:part_block_reader");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:basic_network_components/redstone_reading"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementValueDisplayingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Craft block_reader instead of display_panel - should NOT trigger value_displaying
+        fireItemCraftedTrigger(player, "integrateddynamics:part_block_reader");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:basic_network_components/value_displaying"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementLogicProgrammingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Open a different container (player inventory) - should NOT trigger logic_programming
+        NeoForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, player.inventoryMenu));
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:logic_operations/logic_programming"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementConstantDefinitionNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Create a BOOLEAN variable at logic_programmer (not integer type) - should NOT trigger constant_definition
+        ItemStack card = createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(false));
+        IVariableFacade facade = getVariableFacade(helper.getLevel(), card);
+        fireVariableCreatedTrigger(player, facade, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get());
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:logic_operations/constant_definition"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementVariableMaterializationNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Create integer variable at PROXY (not materializer) - should NOT trigger variable_materialization
+        ItemStack card = createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(0));
+        IVariableFacade facade = getVariableFacade(helper.getLevel(), card);
+        fireVariableCreatedTrigger(player, facade, RegistryEntries.BLOCK_PROXY.get());
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:advanced_network_components/variable_materialization"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementVariableProxyingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Create integer variable at MATERIALIZER (not proxy) - should NOT trigger variable_proxying
+        ItemStack card = createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(0));
+        IVariableFacade facade = getVariableFacade(helper.getLevel(), card);
+        fireVariableCreatedTrigger(player, facade, RegistryEntries.BLOCK_MATERIALIZER.get());
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:advanced_network_components/variable_proxying"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRecipeCreationNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Create INTEGER variable at logic_programmer (not recipe type) - should NOT trigger recipe_creation
+        ItemStack card = createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(0));
+        IVariableFacade facade = getVariableFacade(helper.getLevel(), card);
+        fireVariableCreatedTrigger(player, facade, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get());
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:recipe_handling/recipe_creation"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRedstoneCapturingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire reader aspect event with machine_reader (not redstone_reader) - should NOT trigger redstone_capturing
+        fireReaderAspectEvent(helper, player, POS, PartTypes.MACHINE_READER, Aspects.Read.Machine.LIST_GETRECIPES);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:aspects/redstone_capturing"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRecipeReadingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire reader aspect event with redstone_reader (not machine_reader) - should NOT trigger recipe_reading
+        fireReaderAspectEvent(helper, player, POS, PartTypes.REDSTONE_READER, Aspects.Read.Redstone.INTEGER_VALUE);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:recipe_handling/recipe_reading"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRedstoneObservementNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire variable driven event with block NBT aspect (not redstone value aspect) - should NOT trigger redstone_observement
+        IAspectVariable<ValueTypeNbt.ValueNbt> aspectVar = makeAspectVar(Aspects.Read.Block.NBT);
+        fireVariableDrivenEvent(player, aspectVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:aspects/redstone_observement"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementArithmeticAdditionNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire variable driven event with OPERATOR_APPLY (not arithmetic_addition) - should NOT trigger arithmetic_addition
+        LazyExpression<ValueTypeOperator.ValueOperator> opVar =
+                makeOpVar(Operators.OPERATOR_APPLY, ValueTypes.OPERATOR);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:logic_operations/arithmetic_addition"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementItemOriginIdentificationNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire variable driven event with ARITHMETIC_ADDITION (not itemstack_mod) - should NOT trigger item_origin_identification
+        LazyExpression<ValueTypeInteger.ValueInteger> opVar =
+                makeOpVar(Operators.ARITHMETIC_ADDITION, ValueTypes.INTEGER);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:advanced_operations/item_origin_identification"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementLogicalListBuildingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire variable driven event with a list [1, 10, 99] (not [1, 10, 100]) - should NOT trigger logical_list_building
+        ValueTypeList.ValueList listValue = ValueTypeList.ValueList.ofList(ValueTypes.INTEGER,
+                Arrays.asList(
+                        ValueTypeInteger.ValueInteger.of(1),
+                        ValueTypeInteger.ValueInteger.of(10),
+                        ValueTypeInteger.ValueInteger.of(99)));
+        Variable<ValueTypeList.ValueList> listVar = new Variable<>(ValueTypes.LIST, listValue);
+        fireVariableDrivenEvent(player, listVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:advanced_operations/logical_list_building"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementWhatWouldIBeLookingAtNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire variable driven event with ARITHMETIC_ADDITION (not entity_targetblock) - should NOT trigger what_would_i_be_looking_at
+        LazyExpression<ValueTypeInteger.ValueInteger> opVar =
+                makeOpVar(Operators.ARITHMETIC_ADDITION, ValueTypes.INTEGER);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:advanced_operations/what_would_i_be_looking_at"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRecipeLookupNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Same operator_apply with recipe aspect, but iron_ingot instead of chest - should NOT trigger recipe_lookup
+        IAspectVariable<ValueTypeOperator.ValueOperator> input0 =
+                makeAspectVar(Aspects.Read.Machine.OPERATOR_GETRECIPEBYOUTPUT);
+        ValueObjectTypeIngredients.ValueIngredients ingredientsValue =
+                ValueObjectTypeIngredients.ValueIngredients.of(
+                        MixedIngredients.ofInstance(IngredientComponents.ITEMSTACK,
+                                new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:iron_ingot")), 1)));
+        Variable<ValueObjectTypeIngredients.ValueIngredients> input1 =
+                new Variable<>(ValueTypes.OBJECT_INGREDIENTS, ingredientsValue);
+        LazyExpression<ValueTypeOperator.ValueOperator> opVar =
+                makeOpVar(Operators.OPERATOR_APPLY, ValueTypes.OPERATOR, input0, input1);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:recipe_handling/recipe_lookup"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementLecternDataNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Fire variable driven event with redstone aspect (not block NBT aspect) - should NOT trigger lectern_data
+        IAspectVariable<ValueTypeInteger.ValueInteger> aspectVar =
+                makeAspectVar(Aspects.Read.Redstone.INTEGER_VALUE);
+        fireVariableDrivenEvent(player, aspectVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:nbt/lectern_data"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementLecternBookNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Same operator with NBT aspect but wrong key "Page" (not "Book") - should NOT trigger lectern_book
+        IAspectVariable<ValueTypeNbt.ValueNbt> input0 = makeAspectVar(Aspects.Read.Block.NBT);
+        Variable<ValueTypeString.ValueString> input1 =
+                new Variable<>(ValueTypes.STRING, ValueTypeString.ValueString.of("Page"));
+        LazyExpression<ValueTypeNbt.ValueNbt> opVar =
+                makeOpVar(Operators.NBT_COMPOUND_VALUE_COMPOUND, ValueTypes.NBT, input0, input1);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:nbt/lectern_book"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementLecternBookNameNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Same operator with wrong path ".Book.title" (not ".Book.id") - should NOT trigger lectern_book_name
+        Variable<ValueTypeString.ValueString> input0 =
+                new Variable<>(ValueTypes.STRING, ValueTypeString.ValueString.of(".Book.title"));
+        IAspectVariable<ValueTypeNbt.ValueNbt> input1 = makeAspectVar(Aspects.Read.Block.NBT);
+        LazyExpression<ValueTypeNbt.ValueNbt> opVar =
+                makeOpVar(Operators.NBT_PATH_MATCH_FIRST, ValueTypes.NBT, input0, input1);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:nbt/lectern_book_name"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementDynamicAdditionsNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // OPERATOR_APPLY with inner OPERATOR_APPLY but STRING input (not INTEGER) - should NOT trigger dynamic_additions
+        LazyExpression<ValueTypeOperator.ValueOperator> inner =
+                makeOpVar(Operators.OPERATOR_APPLY, ValueTypes.OPERATOR);
+        Variable<ValueTypeString.ValueString> stringVar =
+                new Variable<>(ValueTypes.STRING, ValueTypeString.ValueString.of(""));
+        LazyExpression<ValueTypeString.ValueString> opVar =
+                makeOpVar(Operators.OPERATOR_APPLY, ValueTypes.STRING, inner, stringVar);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:the_value_of_operators/dynamic_additions"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementDynamicListFilteringNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // operator_filter with result list [20] (not [10]) - should NOT trigger dynamic_list_filtering
+        ValueTypeList.ValueList resultList = ValueTypeList.ValueList.ofList(ValueTypes.INTEGER,
+                Arrays.asList(ValueTypeInteger.ValueInteger.of(20)));
+        ILazyExpressionValueCache cache = simpleCache();
+        LazyExpression<ValueTypeList.ValueList> opVar =
+                new LazyExpression<ValueTypeList.ValueList>(0, Operators.OPERATOR_FILTER, new IVariable[0], cache) {
+                    @Override public IValueType<ValueTypeList.ValueList> getType() { return ValueTypes.LIST; }
+                    @Override public ValueTypeList.ValueList getValue() { return resultList; }
+                };
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:the_value_of_operators/dynamic_list_filtering"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementCreeperTamingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Use SHEEP instead of CREEPER - should NOT trigger creeper_taming
+        net.minecraft.world.entity.Entity sheep = helper.spawn(EntityType.SHEEP, POS.above());
+        Variable<ValueObjectTypeEntity.ValueEntity> sheepVar = new Variable<>(
+                ValueTypes.OBJECT_ENTITY, ValueObjectTypeEntity.ValueEntity.of(sheep));
+        LazyExpression<ValueTypeDouble.ValueDouble> opVar =
+                makeOpVar(Operators.OBJECT_ENTITY_HEALTH, ValueTypes.DOUBLE, sheepVar);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:challenges/creeper_taming"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRecursiveRecursionNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Use a finite list (not infinite) - should NOT trigger recursive_recursion
+        ValueTypeList.ValueList finiteList = ValueTypeList.ValueList.ofList(ValueTypes.INTEGER,
+                Arrays.asList(ValueTypeInteger.ValueInteger.of(1), ValueTypeInteger.ValueInteger.of(2)));
+        Variable<ValueTypeList.ValueList> listVar = new Variable<>(ValueTypes.LIST, finiteList);
+        fireVariableDrivenEvent(player, listVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:challenges/recursive_recursion"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementRedstoneTransmissionNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        Level level = helper.getLevel();
+
+        // Same setup but STONE instead of REDSTONE_BLOCK (gives value 0, not 15)
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.west(), Blocks.STONE);
+        PartHelpers.addPart(level, helper.absolutePos(POS), Direction.WEST,
+                PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+        PartPos readerPos = PartPos.of(level, helper.absolutePos(POS), Direction.WEST);
+
+        helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(level, helper.absolutePos(POS.east()), Direction.EAST,
+                PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos writerPos = PartPos.of(level, helper.absolutePos(POS.east()), Direction.EAST);
+
+        ItemStack readerCard = createVariableFromReader(level, readerPos, Aspects.Read.Redstone.INTEGER_VALUE);
+        placeVariableInWriterWithPlayer(level, writerPos, Aspects.Write.Redstone.INTEGER, readerCard, player);
+
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:aspects/redstone_transmission"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementSmartPressurePlateNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        Level level = helper.getLevel();
+
+        // Same redstone writer setup but use a plain boolean variable (not the required operator chain)
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(level, helper.absolutePos(POS.east()), Direction.EAST,
+                PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos writerPos = PartPos.of(level, helper.absolutePos(POS.east()), Direction.EAST);
+
+        ItemStack boolCard = createVariableForValue(level, ValueTypes.BOOLEAN,
+                ValueTypeBoolean.ValueBoolean.of(true));
+        placeVariableInWriterWithPlayer(level, writerPos, Aspects.Write.Redstone.BOOLEAN, boolCard, player);
+
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:challenges/smart_pressure_plate"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementSpongeStepSoundNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        Level level = helper.getLevel();
+
+        // Same setup but with dry SPONGE (not WET_SPONGE) - should NOT trigger sponge_step_sound
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(level, helper.absolutePos(POS), Direction.WEST,
+                PartTypes.AUDIO_WRITER, new ItemStack(PartTypes.AUDIO_WRITER.getItem()));
+        PartPos writerPos = PartPos.of(level, helper.absolutePos(POS), Direction.WEST);
+
+        helper.setBlock(POS.north(), RegistryEntries.BLOCK_VARIABLE_STORE.get());
+        BlockEntityVariablestore varStore = helper.getBlockEntity(POS.north());
+
+        ItemStack spongeCard = createVariableForValue(level, ValueTypes.OBJECT_BLOCK,
+                ValueObjectTypeBlock.ValueBlock.of(Blocks.SPONGE.defaultBlockState()));
+        int spongeId = getVariableFacade(level, spongeCard).getId();
+        varStore.getInventory().setItem(0, spongeCard);
+
+        ItemStack stepSoundCard = createVariableForOperator(level, Operators.OBJECT_BLOCK_STEPSOUND,
+                new int[]{spongeId});
+        placeVariableInWriterWithPlayer(level, writerPos, Aspects.Write.Audio.STRING_SOUND, stepSoundCard, player);
+
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:challenges/sponge_step_sound"));
+    }
+
 }
