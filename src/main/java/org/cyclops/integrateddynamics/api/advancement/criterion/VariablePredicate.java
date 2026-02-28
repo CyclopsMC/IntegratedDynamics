@@ -37,7 +37,7 @@ public class VariablePredicate<V extends IVariable> {
         try {
             return variableClass.isInstance(variable)
                     && (this.valueType.isEmpty() || ValueHelpers.correspondsTo(this.valueType.get(), variable.getType()))
-                    && valuePredicate.orElse(ValuePredicate.ANY).test(variable.getValue())
+                    && (this.valuePredicate.isEmpty() || this.valuePredicate.get().test(variable.getValue()))
                     && testTyped((V) variable);
         } catch (EvaluationException e) {
             return false;
