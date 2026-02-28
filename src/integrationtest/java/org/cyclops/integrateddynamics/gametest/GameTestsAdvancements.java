@@ -81,6 +81,13 @@ public class GameTestsAdvancements {
         }
     }
 
+    private static void assertAdvancementNotDone(GameTestHelper helper, ServerPlayer player, String id) {
+        AdvancementHolder advancement = helper.getLevel().getServer().getAdvancements().get(ResourceLocation.parse(id));
+        if (advancement != null && player.getAdvancements().getOrStartProgress(advancement).isDone()) {
+            throw new GameTestAssertException("Advancement should NOT have been obtained: " + id);
+        }
+    }
+
     private static ILazyExpressionValueCache simpleCache() {
         return new ILazyExpressionValueCache() {
             private final Map<Integer, IValue> values = new HashMap<>();
@@ -524,6 +531,24 @@ public class GameTestsAdvancements {
                 makeOpVar(Operators.OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK, ValueTypes.BOOLEAN, input0, input1);
         fireVariableDrivenEvent(player, opVar);
         helper.succeedWhen(() -> assertAdvancement(helper, player, "integrateddynamics:challenges/tool_for_obsidian"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementToolForObsidianNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // input[0]: bone_meal itemstack value (NOT stone_pickaxe - should NOT trigger the advancement)
+        Variable<ValueObjectTypeItemStack.ValueItemStack> input0 = new Variable<>(
+                ValueTypes.OBJECT_ITEMSTACK,
+                ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(
+                        BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:bone_meal")))));
+        // input[1]: obsidian block value
+        Variable<ValueObjectTypeBlock.ValueBlock> input1 = new Variable<>(
+                ValueTypes.OBJECT_BLOCK,
+                ValueObjectTypeBlock.ValueBlock.of(Blocks.OBSIDIAN.defaultBlockState()));
+        LazyExpression<ValueTypeBoolean.ValueBoolean> opVar =
+                makeOpVar(Operators.OBJECT_ITEMSTACK_CAN_HARVEST_BLOCK, ValueTypes.BOOLEAN, input0, input1);
+        fireVariableDrivenEvent(player, opVar);
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:challenges/tool_for_obsidian"));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
