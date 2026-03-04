@@ -155,7 +155,9 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         if (stateIn.getValue(WATERLOGGED)) {
             worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         }
-        NetworkHelpers.onElementProviderBlockNeighborChange((Level) worldIn, currentPos, facingState.getBlock(), facing, facingPos);
+        if (worldIn instanceof Level level) {
+            NetworkHelpers.onElementProviderBlockNeighborChange(level, currentPos, facingState.getBlock(), facing, facingPos);
+        }
         return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
@@ -269,8 +271,8 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
                                   BlockPos blockPos, Player player) {
         BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, world, blockPos, CollisionContext.of(player))
                 .rayTrace(blockPos, player);
-        if(rayTraceResult != null) {
-            return rayTraceResult.getComponent().getCloneItemStack((Level) world, blockPos);
+        if(rayTraceResult != null && world instanceof Level level) {
+            return rayTraceResult.getComponent().getCloneItemStack(level, blockPos);
         }
         return getCloneItemStack(world, blockPos, state);
     }
