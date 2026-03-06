@@ -209,10 +209,12 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 RecipeDryingBasin recipe = currentRecipe.get().value();
                 if (blockEntity.getProgress() >= recipe.getDuration()) {
                     // Consume input fluid
-                    int amount = IModHelpersNeoForge.get().getFluidHelpers().getAmount(recipe.getInputFluid().orElse(FluidStack.EMPTY));
-                    try (var tx = Transaction.openRoot()) {
-                        blockEntity.getTank().extract(FluidResource.of(recipe.getInputFluid().get()), amount, tx);
-                        tx.commit();
+                    if (recipe.getInputFluid().isPresent()) {
+                        int amount = IModHelpersNeoForge.get().getFluidHelpers().getAmount(recipe.getInputFluid().get());
+                        try (var tx = Transaction.openRoot()) {
+                            blockEntity.getTank().extract(FluidResource.of(recipe.getInputFluid().get()), amount, tx);
+                            tx.commit();
+                        }
                     }
 
                     // Produce output item
