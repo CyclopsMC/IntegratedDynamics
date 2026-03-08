@@ -24,7 +24,7 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_writer_aspect",
       "conditions": {
-        "part_type": "integrateddynamics:redstone_writer",
+        "parttype": "integrateddynamics:redstone_writer",
         "variable": {
           "type": "operator",
           "operator": "integrateddynamics:relational_equals",

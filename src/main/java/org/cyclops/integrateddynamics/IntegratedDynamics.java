@@ -223,6 +223,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
     @Override
     public Class<?>[] getGameTestClasses() {
         return new Class[]{
+                GameTestsAdvancements.class,
                 GameTestsAspectsReadAudio.class,
                 GameTestsAspectsReadBlock.class,
                 GameTestsAspectsReadEntity.class,

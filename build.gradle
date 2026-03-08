@@ -2,7 +2,7 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.137'
     id 'net.darkhax.curseforgegradle' version '1.1.28'
     id 'com.diffplug.spotless' version '6.25.0'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '8.3.8'
 	id 'com.modrinth.minotaur' version '2.+'
 }
 

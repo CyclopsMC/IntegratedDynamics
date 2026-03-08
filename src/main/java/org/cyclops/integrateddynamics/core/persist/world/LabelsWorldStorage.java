@@ -98,7 +98,11 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if(!IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
-            IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (ServerPlayer) event.getEntity());
+            try {
+                IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (ServerPlayer) event.getEntity());
+            } catch (Exception e) {
+                // Ignore if packet cannot be sent (e.g., mock players in game tests have no connection)
+            }
         }
     }
 

@@ -253,8 +253,8 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         BlockRayTraceResultComponent rayTraceResult = getSelectedShape(state, level, pos, CollisionContext.of(player))
                 .rayTrace(pos, player);
-        if(rayTraceResult != null) {
-            return rayTraceResult.getComponent().getCloneItemStack((Level) level, pos);
+        if(rayTraceResult != null && level instanceof Level levelReal) {
+            return rayTraceResult.getComponent().getCloneItemStack(levelReal, pos);
         }
         return super.getCloneItemStack(level, pos, state, includeData, player);
     }

@@ -23,7 +23,7 @@
     "criteria_0": {
       "trigger": "integrateddynamics:part_writer_aspect",
       "conditions": {
-        "part_type": "integrateddynamics:redstone_writer",
+        "parttype": "integrateddynamics:redstone_writer",
         "aspect": "integrateddynamics:write_integer_redstone",
         "variable": {
           "type": "aspect",
