@@ -35,7 +35,7 @@
               "value": {
                 "type": "serialized",
                 "value_type": "integrateddynamics:block",
-                "value": "{Name:\"minecraft:obsidian\"}"
+                "value": "{v:{Name:\"minecraft:obsidian\"}}"
               }
             }
           }
