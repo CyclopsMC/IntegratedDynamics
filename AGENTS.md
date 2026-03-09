@@ -69,6 +69,14 @@ When adding new features or fixing bugs:
 - **Always** add game tests when the feature interacts with Minecraft gameplay systems
 - Look at existing tests in the respective directories for examples of test patterns and conventions
 
+### Testing advancements
+
+When writing game tests for advancements, don't just call criterion triggers directly, but try to simulate actual game logic to invoke the criterion triggers indirectly.
+
+### Test coverage
+
+When adding new tests for the sake of increasing test coverage, you can measure coverage by running `./gradlew test runGameTestServer jacocoTestReport`, and checking the coverage output in `build/reports/jacoco/test/`.
+
 ## Building the Project
 
 ### Prerequisites
@@ -132,8 +140,6 @@ ln -s ../../scripts/pre-commit .git/hooks/pre-commit
 6. **Format code**: `./gradlew spotlessApply`
 7. **Commit**: Use clear, descriptive commit messages
 
-## Project Dependencies
-
 ## Release Management
 
 Version bumping and release management helper scripts are available in the [CyclopsMC/ReleaseHelpers](https://github.com/CyclopsMC/ReleaseHelpers) repository. These bash scripts assist with:
@@ -180,3 +186,18 @@ See `.github/workflows/ci.yml` for the full CI configuration.
 3. **Multi-loader compatibility**: Ensure changes work across all supported loaders
 4. **Build validation**: Never commit without running `build` (and `runGameTestServer` for MC 1.21+)
 5. **Code quality**: Follow existing patterns and conventions in the codebase
+
+## Code changes across Minecraft updates
+
+When I ask you to things such as "fix upmerge issues" or "update to the next Minecraft version",
+this means that I want you to help resolve compilation errors
+that were introduced due to upmerging code from an older minecraft version to a newer minecraft version.
+The old minecraft version can be found in the `.upmerge-src-branch` file of the parent directory,
+and the new minecraft version can be found in `gradle.properties`.
+Changes may also include fixing merge conflicts.
+
+IMPORTANT: Some changes may be non-trivial,
+for which you can find detail background information for each seperate Minecraft update within these primers: https://github.com/neoforged/.github/tree/main/primers
+The blogs of https://neoforged.net/ and https://fabricmc.net/blog/ may also contain useful porting help.
+
+After making all necessary changes, make sure the code fully compiles and the (game) tests pass.
