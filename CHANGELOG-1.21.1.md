@@ -1,8 +1,19 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.32.1"></a>
+## [1.21.1-1.32.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.0...1.21.1-1.32.1) - 2026-03-09 16:15:13
+
+
+### Fixed
+* Fix ClassCastException in BlockCable when sapling grows nearby (#1623), Closes #1622
+* Fix tool_for_obsidian advancement triggering too often (#1620), Related to #1606
+* Fix VariablePredicate skipping getValue() when no value predicate is set (#1619)
+  Required for fixing game tests in CyclopsMC/IntegratedTunnels#354
+* Add game tests for all advancement criteria and fix broken advancements (#1617)
+
 <a name="1.21.1-1.32.0"></a>
-## [1.21.1-1.32.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.31.0...1.21.1-1.32.0) - 2026-02-22 14:09:45
+## [1.21.1-1.32.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.31.0...1.21.1-1.32.0) - 2026-02-22 14:09:45 +0100
 
 
 ### Added

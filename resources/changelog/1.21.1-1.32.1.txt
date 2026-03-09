@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.26.0 or higher.
+
+Fixes:
+* Fix ClassCastException in BlockCable when sapling grows nearby (#1623), Closes #1622
+* Fix tool_for_obsidian advancement triggering too often (#1620), Related to #1606
+* Fix VariablePredicate skipping getValue() when no value predicate is set (#1619)
+  Required for fixing game tests in CyclopsMC/IntegratedTunnels#354
+* Add game tests for all advancement criteria and fix broken advancements (#1617)
