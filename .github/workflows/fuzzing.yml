@@ -133,9 +133,9 @@ jobs:
             ### How to Debug
             
             1. Download the structure file
-            2. Copy it to `client/saves/<worldname>/generated/minecraft/structures/<template>.nbt`
-            3. Spawn a structure block: `/give @p minecraft:structure_block`
-            4. Load the structure in the structure block GUI: `minecraft:<template>`
+            2. Copy it to \`client/saves/<worldname>/generated/minecraft/structures/<template>.nbt\`
+            3. Spawn a structure block: \`/give @p minecraft:structure_block\`
+            4. Load the structure in the structure block GUI: \`minecraft:<template>\`
             
             ### Additional Context
             
