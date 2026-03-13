@@ -68,7 +68,16 @@ def getChangelog() {
     if (System.getenv().RELEASE) {
         return file("./CHANGELOG-${project.minecraft_version}.md").getText();
     } else {
-        return "Changes since last release: ${project.github_url}/compare/${project.minecraft_version}-${project.mod_version}...${System.getenv().GITHUB_SHA}"
+        // Check if any release tag exists for this Minecraft version
+        def proc = ['git', 'tag', '--list', "${project.minecraft_version}-*"].execute([], project.rootProject.projectDir)
+        def tags = proc.text.trim()
+        if (tags) {
+            return "Changes since last release: ${project.github_url}/compare/${project.minecraft_version}-${project.mod_version}...${System.getenv().GITHUB_SHA}"
+        } else {
+            // No release has been made yet for this Minecraft version, link to all commits on the branch
+            def branch = System.getenv().GITHUB_REF_NAME ?: 'HEAD'
+            return "Changes since last release: ${project.github_url}/commits/${branch}"
+        }
     }
 }
 //ext {
