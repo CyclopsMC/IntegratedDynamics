@@ -32,6 +32,11 @@ public abstract class PartTypeConnector<P extends PartTypeConnector<P, S>, S ext
     }
 
     @Override
+    public boolean isUpdate(S state) {
+        return getConsumptionRate(state) > 0 || super.isUpdate(state);
+    }
+
+    @Override
     protected Block createBlock(BlockConfig blockConfig) {
         return new IgnoredBlockStatus();
     }
