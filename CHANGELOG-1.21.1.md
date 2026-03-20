@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.32.2"></a>
+## [1.21.1-1.32.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.1...1.21.1-1.32.2) - 2026-03-20 20:04:49
+
+
+### Fixed
+* Fix Mono & Omni Directional connectors not consuming energy (#1631), Closes #1630
+
 <a name="1.21.1-1.32.1"></a>
-## [1.21.1-1.32.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.0...1.21.1-1.32.1) - 2026-03-09 16:15:13
+## [1.21.1-1.32.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.0...1.21.1-1.32.1) - 2026-03-09 16:15:13 +0100
 
 
 ### Fixed
