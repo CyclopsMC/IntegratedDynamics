@@ -58,7 +58,9 @@ public class EnergyNetwork extends PositionedAddonsNetworkIngredients<Long, Bool
         if(multiplier == 0) return 0;
         int consumption = 0;
         for(INetworkElement element : getNetwork().getElements()) {
-            consumption += ((IEnergyConsumingNetworkElement) element).getConsumptionRate() * multiplier;
+            if (element instanceof IEnergyConsumingNetworkElement consuming) {
+                consumption += consuming.getConsumptionRate() * multiplier;
+            }
         }
         return consumption;
     }
