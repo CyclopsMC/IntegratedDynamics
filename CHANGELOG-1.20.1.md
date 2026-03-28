@@ -1,8 +1,26 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.30.2"></a>
+## [1.20.1-1.30.2](/compare/1.20.1-1.30.1...1.20.1-1.30.2) - 2026-03-28 09:55:51
+
+
+### Added
+* Add configurable energy production rate for coal generator (#1635), Closes #1634
+
+### Fixed
+* Fix Variable Store, Proxy, Materializer, and Static Light Panel not consuming energy (#1633), Closes #1632
+* Fix energy battery texture overflow after NBT manipulation, Closes #1636 (#1637)
+
+<a name="1.20.1-1.30.1"></a>
+## [1.20.1-1.30.1](/compare/1.20.1-1.30.0...1.20.1-1.30.1) - 2026-03-20 20:03:22 +0100
+
+
+### Fixed
+* Fix Mono & Omni Directional connectors not consuming energy (#1631), Closes #1630
+
 <a name="1.20.1-1.30.0"></a>
-## [1.20.1-1.30.0](/compare/1.20.1-1.29.11...1.20.1-1.30.0) - 2026-02-17 10:58:20
+## [1.20.1-1.30.0](/compare/1.20.1-1.29.11...1.20.1-1.30.0) - 2026-02-17 10:58:20 +0100
 
 
 ### Added

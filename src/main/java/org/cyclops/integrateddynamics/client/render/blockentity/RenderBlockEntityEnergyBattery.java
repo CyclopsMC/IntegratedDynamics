@@ -100,8 +100,9 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
     @Override
     public void submit(RenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         if(renderState.energyStored > 0) {
+            float heightBase = Math.min(1.0F, (float) renderState.energyStored / renderState.maxEnergyStored);
             // Re-scale height to [0.125, 0.875] range as the energy bar does not take up 100% of the height.
-            float height = (((float) renderState.energyStored / renderState.maxEnergyStored) * 12 / 16) + 0.125F;;
+            float height = (heightBase * 12 / 16) + 0.125F;
 
             poseStack.pushPose();
 

@@ -162,13 +162,13 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
         protected void update(Level level, BlockPos pos, BlockState blockState, BlockEntityCoalGenerator blockEntity) {
             super.update(level, pos, blockState, blockEntity);
 
-            if((!blockEntity.getInventory().getItem(SLOT_FUEL).isEmpty() || blockEntity.isBurning()) && blockEntity.canAddEnergy(ENERGY_PER_TICK)) {
+            if((!blockEntity.getInventory().getItem(SLOT_FUEL).isEmpty() || blockEntity.isBurning()) && blockEntity.canAddEnergy(BlockEntityCoalGeneratorConfig.energyPerTick)) {
                 if (blockEntity.isBurning()) {
                     if (blockEntity.currentlyBurning++ >= blockEntity.currentlyBurningMax) {
                         blockEntity.currentlyBurning = 0;
                         blockEntity.currentlyBurningMax = 0;
                     }
-                    int toFill = ENERGY_PER_TICK;
+                    int toFill = BlockEntityCoalGeneratorConfig.energyPerTick;
                     blockEntity.addEnergy(toFill);
                     blockEntity.setChanged();
                 }
