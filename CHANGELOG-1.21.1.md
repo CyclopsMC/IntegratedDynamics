@@ -1,8 +1,19 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.32.3"></a>
+## [1.21.1-1.32.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.2...1.21.1-1.32.3) - 2026-03-28 10:18:26
+
+
+### Added
+* Add configurable energy production rate for coal generator (#1635), Closes #1634
+
+### Fixed
+* Fix Variable Store, Proxy, Materializer, and Static Light Panel not consuming energy (#1633), Closes #1632
+* Fix energy battery texture overflow after NBT manipulation, Closes #1636 (#1637)
+
 <a name="1.21.1-1.32.2"></a>
-## [1.21.1-1.32.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.1...1.21.1-1.32.2) - 2026-03-20 20:04:49
+## [1.21.1-1.32.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.1...1.21.1-1.32.2) - 2026-03-20 20:04:50 +0100
 
 
 ### Fixed
