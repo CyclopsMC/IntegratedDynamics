@@ -73,7 +73,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
     public void render(BlockEntityEnergyBattery tile, float partialTicks, PoseStack matrixStack,
                        MultiBufferSource renderTypeBuffer, int combinedLight, int combinedOverlay) {
         if(tile != null && tile.getEnergyStored() > 0) {
-            float height = (float) tile.getEnergyStored() / tile.getMaxEnergyStored();
+            float height = Math.min(1.0F, (float) tile.getEnergyStored() / tile.getMaxEnergyStored());
 
             // Re-scale height to [0.125, 0.875] range as the energy bar does not take up 100% of the height.
             height = (height * 12 / 16) + 0.125F;

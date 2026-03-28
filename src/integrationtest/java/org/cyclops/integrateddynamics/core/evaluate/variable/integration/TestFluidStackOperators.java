@@ -531,7 +531,6 @@ public class TestFluidStackOperators {
     }
 
     /**
-<<<<<<< HEAD
      * ----------------------------------- DATA_KEYS -----------------------------------
      */
 

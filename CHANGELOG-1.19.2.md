@@ -1,8 +1,24 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.30.1"></a>
+## [1.19.2-1.30.1](/compare/1.19.2-1.30.0...1.19.2-1.30.1) - 2026-03-28 09:54:36
+
+
+### Added
+* Add configurable energy production rate for coal generator (#1635), Closes #1634
+
+<a name="1.19.2-1.30.0"></a>
+## [1.19.2-1.30.0](/compare/1.19.2-1.29.3...1.19.2-1.30.0) - 2026-02-17 10:58:05 +0100
+
+
+### Added
+* Document logical NBT expressions, CyclopsMC/CyclopsCore#210
+* Add config options for minimum update intervals for parts, Closes CyclopsMC/IntegratedTunnels#349
+* Add config option to log card IDs during evaluation, Closes #1345
+
 <a name="1.19.2-1.29.3"></a>
-## [1.19.2-1.29.3](/compare/1.19.2-1.29.2...1.19.2-1.29.3) - 2026-01-17 14:00:53
+## [1.19.2-1.29.3](/compare/1.19.2-1.29.2...1.19.2-1.29.3) - 2026-01-17 14:00:53 +0100
 
 
 ### Added

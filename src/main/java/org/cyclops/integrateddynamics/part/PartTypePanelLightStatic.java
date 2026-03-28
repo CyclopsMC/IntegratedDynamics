@@ -40,6 +40,11 @@ public class PartTypePanelLightStatic extends PartTypePanel<PartTypePanelLightSt
     }
 
     @Override
+    public boolean isUpdate(PartStateEmpty<PartTypePanelLightStatic> state) {
+        return getConsumptionRate(state) > 0 || super.isUpdate(state);
+    }
+
+    @Override
     public int getConsumptionRate(PartStateEmpty<PartTypePanelLightStatic> state) {
         return GeneralConfig.panelLightStaticBaseConsumption;
     }
