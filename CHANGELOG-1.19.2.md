@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.19.2
 All notable changes to this project will be documented in this file.
 
+<a name="1.19.2-1.30.1"></a>
+## [1.19.2-1.30.1](/compare/1.19.2-1.30.0...1.19.2-1.30.1) - 2026-03-28 09:54:36
+
+
+### Added
+* Add configurable energy production rate for coal generator (#1635), Closes #1634
+
 <a name="1.19.2-1.30.0"></a>
-## [1.19.2-1.30.0](/compare/1.19.2-1.29.3...1.19.2-1.30.0) - 2026-02-17 10:58:05
+## [1.19.2-1.30.0](/compare/1.19.2-1.29.3...1.19.2-1.30.0) - 2026-02-17 10:58:05 +0100
 
 
 ### Added
