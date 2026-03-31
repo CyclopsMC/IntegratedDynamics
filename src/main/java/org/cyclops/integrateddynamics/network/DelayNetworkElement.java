@@ -24,7 +24,7 @@ public class DelayNetworkElement extends ProxyNetworkElement {
 
     @Override
     public int getConsumptionRate() {
-        return GeneralConfig.delayBaseConsumption;
+        return GeneralConfig.delayerBaseConsumption;
     }
 
 }
