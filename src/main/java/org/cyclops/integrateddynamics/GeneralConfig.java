@@ -78,6 +78,8 @@ public class GeneralConfig extends DummyConfig {
     public static int panelLightDynamicBaseConsumption = 0;
     @ConfigurableProperty(category = "general", comment = "The base energy usage for the static light panel.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
     public static int panelLightStaticBaseConsumption = 0;
+    @ConfigurableProperty(category = "general", comment = "The base energy usage for the delayer.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
+    public static int delayerBaseConsumption = 2;
     @ConfigurableProperty(category = "general", comment = "The base energy usage for the proxy.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
     public static int proxyBaseConsumption = 2;
     @ConfigurableProperty(category = "general", comment = "The base energy usage for the redstone reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)

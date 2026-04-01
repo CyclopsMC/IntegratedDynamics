@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.network;
 
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 
 /**
@@ -19,6 +20,11 @@ public class DelayNetworkElement extends ProxyNetworkElement {
     @Override
     public ResourceLocation getGroup() {
         return DelayNetworkElement.GROUP;
+    }
+
+    @Override
+    public int getConsumptionRate() {
+        return GeneralConfig.delayerBaseConsumption;
     }
 
 }
